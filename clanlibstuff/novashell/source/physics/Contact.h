@@ -1,0 +1,147 @@
+//------------------------------------------------------------------------------------------------ 
+////////////////////////////////////////////////////////////////////////////////////////////////// 
+// 
+// File          : Contact.h
+// 
+// Created by    : OR - 07/02/2004 12:42:04
+// 
+// Copyright (C) : 2004 Rebellion, All Rights Reserved.
+// 
+////////////////////////////////////////////////////////////////////////////////////////////////// 
+// 
+// Description   : 
+// --------------- 
+// 
+// 
+////////////////////////////////////////////////////////////////////////////////////////////////// 
+//------------------------------------------------------------------------------------------------ 
+
+
+#ifdef ASURA_USE_PRAGMA_ONCE
+	#pragma once
+#endif
+
+#ifndef __CONTACT_H__
+#define __CONTACT_H__
+
+#include "Vector.h"
+class CMaterial;
+#include <string>
+using namespace std;
+
+class CContact
+{
+public:
+	enum { eMaxContacts = 2 };
+
+	class CBody* m_pxBodies [2];
+	Vector       m_xContacts[eMaxContacts][2];
+	Vector		 m_xNormal;
+	float		 m_t;
+	int			 m_iNumContacts;
+	const CMaterial *m_pMaterial;
+
+	CContact();
+	
+	CContact(const Vector* CA, const Vector* CB, int iCnum, 
+			 const Vector& N, float t, 
+			 CBody* pxBodyA, CBody* pxBodyB, const CMaterial *mat);
+
+	void Reset();
+		
+	class CBody* GetBody(int i) { return m_pxBodies[i]; }
+
+	void Solve();
+	
+private:
+	void ResolveCollision();
+	void ResolveOverlap  ();
+
+	void ResolveCollision(const Vector& CA, const Vector& CB);
+	void ResolveOverlap  (const Vector& CA, const Vector& CB);
+	void AddContactPair	 (const Vector& CA, const Vector& CB);
+};
+
+
+class CMaterial
+{
+public:
+		CMaterial(float fCoF = 0.2f, float fCoR = 0.3f, float fCoS = 0.4f, float fSep=0.5f)
+
+		: m_fCoF(fCoF)
+	, m_fCoR(fCoR)
+	, m_fCoS(fCoS)
+	, m_fSep(fSep)
+	{
+		m_id = 0;
+		m_type = C_MATERIAL_TYPE_NORMAL;
+		m_special = C_MATERIAL_SPECIAL_NONE;
+	}
+
+	void SetSeparation		(float fSep) { m_fSep = fSep; }
+	void SetFriction		(float fCoF) { m_fCoF = fCoF; }
+	void SetStaticFriction	(float fCoS) { m_fCoS = fCoS; }
+	void SetRestitution		(float fCoR) { m_fCoR = fCoR; }
+
+	float GetSeparation		() const { return m_fSep; }
+	float GetFriction		() const { return m_fCoF; }
+	float GetStaticFriction	() const { return m_fCoS; }
+	float GetRestitution	() const { return m_fCoR; }
+	
+	void SetName(const string &name) {m_name = name;}
+	const string & GetName(){return m_name;}
+
+	void SetColor(unsigned int col) {m_lineColor = col;}
+	unsigned int GetColor() {return m_lineColor;}
+
+	void SetID(unsigned int id){m_id = id;}
+	int GetID() {return m_id;};
+
+	void SetSpecial(int special)
+	{
+		m_special = special;
+	}
+	int GetSpecial() {return m_special;}
+
+	void SetType(int matType)
+	{
+		if (matType < 0 || matType >= C_MATERIAL_TYPE_COUNT)
+		{
+			LogMsg("SetType failed, bad material type");
+			return;
+		}
+		m_type = matType;
+	}
+	int GetType() {return m_type;}
+
+	enum
+	{
+		C_MATERIAL_TYPE_NORMAL = 0,
+		C_MATERIAL_TYPE_VERTICAL_LADDER,
+		C_MATERIAL_TYPE_WARP,
+
+		//add more above here
+		C_MATERIAL_TYPE_COUNT
+
+	};
+
+	enum
+	{
+		C_MATERIAL_SPECIAL_NONE = 0,
+		C_MATERIAL_SPECIAL_FLOOR
+	};
+
+private:
+
+	float m_fCoF, m_fCoR, m_fSep, m_fCoS;
+	unsigned int m_lineColor;
+	string m_name;
+	int m_id;
+	int m_type;
+	int m_special;
+};
+
+// HACK : use a shared material for all objects
+extern CMaterial s_xContactMaterial;
+
+#endif//__CONTACT_H__

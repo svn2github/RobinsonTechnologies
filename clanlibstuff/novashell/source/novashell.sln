@@ -1,0 +1,40 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "novashell", "novashell.vcproj", "{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		DebugDouble|Win32 = DebugDouble|Win32
+		Release|Win32 = Release|Win32
+		ReleaseDouble|Win32 = ReleaseDouble|Win32
+		Static MT Debug|Win32 = Static MT Debug|Win32
+		Static MT Release|Win32 = Static MT Release|Win32
+		Static MTDLL Debug|Win32 = Static MTDLL Debug|Win32
+		Static MTDLL Release|Win32 = Static MTDLL Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Debug|Win32.Build.0 = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.DebugDouble|Win32.ActiveCfg = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.DebugDouble|Win32.Build.0 = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Release|Win32.ActiveCfg = Release|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Release|Win32.Build.0 = Release|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.ReleaseDouble|Win32.ActiveCfg = Release|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.ReleaseDouble|Win32.Build.0 = Release|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MT Debug|Win32.ActiveCfg = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MT Debug|Win32.Build.0 = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MT Release|Win32.ActiveCfg = Release|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MT Release|Win32.Build.0 = Release|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Debug|Win32.ActiveCfg = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Debug|Win32.Build.0 = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Release|Win32.ActiveCfg = Release|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+EndGlobal

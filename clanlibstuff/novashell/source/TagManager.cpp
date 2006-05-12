@@ -1,0 +1,312 @@
+#include "AppPreComp.h"
+#include "TagManager.h"
+#include "WorldManager.h"
+#include "MovingEntity.h"
+
+const string &TagObject::GetMapName()
+{
+	return m_pWorld->GetName();
+}
+
+TagManager::TagManager()
+{
+}
+
+TagManager::~TagManager()
+{
+}
+
+void TagManager::Kill()
+{
+	m_tagMap.clear();
+}
+void TagManager::Update(World *pWorld, MovingEntity *pEnt)
+{
+	if (pEnt->GetNameHash() == 0) return; //don't hash this
+
+	unsigned int hashID = pEnt->GetNameHash();
+	TagObject *pObject = NULL;
+
+	assert(hashID != 0);
+
+	TagResourceMap::iterator itor = m_tagMap.find(hashID);
+
+	if (itor == m_tagMap.end()) 
+	{
+		//couldn't find it, add it
+		list<TagObject> *pList = &m_tagMap[hashID];
+		TagObject o;
+		pList->push_back(o);
+		pObject = &(*pList->begin());
+		//LogMsg("Creating hash for id %d", pEnt->ID());
+
+	} else
+	{
+		//an entry exists.  but is it the right one?
+		list<TagObject> *pTagList = &m_tagMap[hashID];
+		list<TagObject>::iterator itorO = pTagList->begin();
+
+		//go through each item and see if it's supposed to be us or not
+		while (itorO != pTagList->end())
+		{
+			if (itorO->m_entID == pEnt->ID() 
+				||
+				(
+				    (itorO->m_pos == pEnt->GetPos())
+				&&  (itorO->m_pWorld == pWorld)
+				)
+				)
+			{
+				//note, if itorO->m_entID == 0, it means we're overwriting temp cache data that we loaded
+				//as a way to know about entities that don't really exist yet
+
+				//this is it
+				pObject = &(*itorO);
+
+				//not only that, but let's move it up on  the list
+				//LogMsg("updating existing (id %d)", pEnt->ID());
+				break;
+			}
+			itorO++;
+		}
+
+	   if (!pObject)
+	   {
+			//this must be a new entry, add it
+		   TagObject o;
+		   pTagList->push_front(o);
+		   pObject = &(*pTagList->begin());
+		  // LogMsg("Added new (%d)",pEnt->ID());
+	   }
+		
+	}
+
+	//there may be more than one, for now return the "top one"
+
+	pObject->m_pos = pEnt->GetPos();
+	pObject->m_pWorld = pWorld;
+	pObject->m_entID = pEnt->ID();
+}
+
+TagObject * TagManager::GetFromHash(unsigned int hashID)
+{
+	TagResourceMap::iterator itor = m_tagMap.find(hashID);
+	
+	if (itor == m_tagMap.end()) 
+	{
+		return NULL;
+	}
+
+	//there may be more than one, for now return the "top one"
+
+	return & (*itor->second.rbegin());
+}
+
+TagObject * TagManager::GetFromString(const string &name)
+{
+	return GetFromHash(HashString(name.c_str()) );
+}
+
+void TagManager::Remove(MovingEntity *pEnt)
+{
+	if (!pEnt || pEnt->GetNameHash() == 0) return;
+	
+	int hashID = pEnt->GetNameHash();
+	
+	if (pEnt->GetNameHash() == 0) return;
+
+	//remove it, but make sure it's the right one
+
+	TagResourceMap::iterator itor = m_tagMap.find(hashID);
+
+	if (itor == m_tagMap.end()) 
+	{
+		//it's not in here
+		LogMsg("Failed to remove hash %d (ID %d)", hashID, pEnt->ID());
+		return;
+	} else
+	{
+		//an entry exists.  but is it the right one?
+		list<TagObject> *pTagList = &m_tagMap[hashID];
+		list<TagObject>::iterator itorO = pTagList->begin();
+
+		//go through each item and see if it's supposed to be us or not
+		while (itorO != pTagList->end())
+		{
+			if (itorO->m_entID == pEnt->ID())
+			{
+				//this is it, remove it
+				if (pTagList->size() == 1)
+				{
+					//remove the whole entry
+					m_tagMap.erase(itor);
+					//LogMsg("Removed %d", pEnt->ID());
+					return;
+				} else
+				{
+					//only remove this one from the list
+					pTagList->erase(itorO);
+					//LogMsg("Removed %d", pEnt->ID());
+					return;
+				}
+			}
+			itorO++;
+		}
+	}
+
+		LogMsg("Failed to remove hash %d (ID %d) in list search", hashID, pEnt->ID());
+
+}
+
+void TagManager::PrintStatistics()
+{
+	LogMsg("\n ** TagManager Statistics **");
+
+	//count instances
+
+	string name;
+	TagResourceMap::iterator itor = m_tagMap.begin();
+	while (itor != m_tagMap.end()) 
+	{
+		//an entry exists.  but is it the right one?
+		list<TagObject> *pTagList = &itor->second;
+		list<TagObject>::iterator itorO = pTagList->begin();
+		while (itorO != pTagList->end())
+		{
+			if (itorO->m_entID != 0)
+			{
+				MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(itorO->m_entID);
+				if (pEnt)
+				{
+					name = pEnt->GetName();
+				} else
+				{
+					name = "Unable to locate! ";
+				}
+			} else
+			{
+				name = "(Not loaded yet)";
+			}
+			LogMsg("    Entity %s (%d) located at %s (in %s)", name.c_str(), itorO->m_entID, PrintVector(itorO->m_pos).c_str(), itorO->m_pWorld->GetName().c_str());
+			itorO++;
+		}
+
+  	itor++;	
+	}
+
+	LogMsg("  %d names hashed.", m_tagMap.size());
+}
+
+void TagManager::Save(World *pWorld)
+{
+  //cycle through and save all tag data applicable
+	
+	CL_OutputSource *pFile = g_VFManager.PutFile(pWorld->GetDirPath()+C_TAGCACHE_FILENAME);
+	
+	
+	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
+
+    helper.process_const(C_TAG_DATA_VERSION);
+
+	int tag = E_TAG_RECORD;
+
+	TagResourceMap::iterator itor = m_tagMap.begin();
+	while (itor != m_tagMap.end()) 
+	{
+		//an entry exists.
+		list<TagObject> *pTagList = &itor->second;
+		list<TagObject>::iterator itorO = pTagList->begin();
+		while (itorO != pTagList->end())
+		{
+			   //save out our entries if this is really from our world
+				if (itorO->m_pWorld == pWorld)
+				{
+					helper.process(tag);
+					helper.process_const( itor->first);
+					helper.process(itorO->m_pos);
+				}
+				itorO++;
+		}
+
+		itor++;	
+	}
+
+	tag = E_TAG_DONE;
+	helper.process(tag);
+
+	SAFE_DELETE(pFile);
+}
+
+void TagManager::AddCachedNameTag(unsigned int hashID, TagObject &o)
+{
+	TagResourceMap::iterator itor = m_tagMap.find(hashID);
+
+	if (itor == m_tagMap.end()) 
+	{
+		//couldn't find it, add it
+		list<TagObject> *pList = &m_tagMap[hashID];
+		pList->push_back(o);
+	} else
+	{
+		//add it to the end of whatever is here
+		list<TagObject> *pTagList = &m_tagMap[hashID];
+		pTagList->push_front(o);
+	}
+
+}
+
+void TagManager::Load(World *pWorld)
+{
+	//LogMsg("Loading tag data..");
+	CL_InputSource *pFile = g_VFManager.GetFile(pWorld->GetDirPath()+C_TAGCACHE_FILENAME);
+
+	if (!pFile) return;
+	
+	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
+
+	//load everything we can find
+
+	int version;
+	helper.process(version);
+
+	CL_Vector2 pos;
+	int tag;
+	TagObject o;
+	o.m_entID = 0;
+	o.m_pWorld = pWorld;
+
+	unsigned int hashID;
+
+	try
+	{
+
+	while(1)
+	{
+		helper.process(tag);
+		switch (tag)
+		{
+		case E_TAG_DONE:
+			SAFE_DELETE(pFile);
+			return;
+
+		case E_TAG_RECORD:
+
+			helper.process(hashID);
+			helper.process(o.m_pos);
+			AddCachedNameTag(hashID, o);
+			break;
+
+		default:
+			throw CL_Error("Error reading tagdata");
+		}
+	}
+	} catch(CL_Error error)
+	{
+		LogMsg(error.message.c_str());
+		ShowMessage(error.message.c_str(), "Error loading tagcache data.  Corrupted?");
+		SAFE_DELETE(pFile);
+		return;
+	}
+	
+
+}

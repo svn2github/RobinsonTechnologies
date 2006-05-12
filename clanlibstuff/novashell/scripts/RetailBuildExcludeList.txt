@@ -1,0 +1,16 @@
+ts*.jpg
+ts*.dat
+*.lib
+*\as_debug\total.txt
+game_debug*.*
+*\dink\*.*
+
+
+
+
+
+
+
+
+
+

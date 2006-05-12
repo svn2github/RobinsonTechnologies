@@ -1,0 +1,172 @@
+
+#include "appPrecomp.h"
+#include "MovingEntity.h"
+#include "DataManager.h"
+
+#include "VisualProfile.h"
+#include "MaterialManager.h"
+#include "MessageManager.h"
+#include "TextManager.h"
+#include "TagManager.h"
+#include "ScriptKeyManager.h"
+
+using namespace luabind;
+
+
+CL_Vector2 ScreenToWorld(CL_Vector2 v)
+{
+	if (GetWorld)
+	{
+		return GetWorldCache->ScreenToWorld(v);
+	}	
+
+	LogMsg("ScreenToWorld error: No world active");
+	return v;
+
+}
+
+CL_Vector2 WorldToScreen(CL_Vector2 v)
+{
+	if (GetWorld)
+	{
+		return GetWorldCache->WorldToScreen(v);
+	} 
+
+	LogMsg("WorldToScreen error: No world active");
+	return v;
+}
+
+MovingEntity * GetEntityByWorldPos(CL_Vector2 v)
+{
+
+	if (!GetWorld)
+	{
+
+		LogMsg("GetEntityByWorldPos: Error, no world is active right now.");
+		return NULL;
+	}
+
+	Tile *pTile = NULL;
+
+	CL_Rect recArea(v.x, v.y, v.x + 0.1f, v.y + 0.1f);
+
+	//returns a list of tile pointers, we shouldn't free them!
+	tile_list tileList;
+
+	GetWorldCache->AddTilesByRect(recArea, &tileList, GetWorld->GetLayerManager().GetDrawList());
+
+	//now we need to sort them
+	tileList.sort(compareTileByLayer);
+
+	if (tileList.rbegin() != tileList.rend())
+	{
+		pTile = (*tileList.rbegin());
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			//looks good to me!
+			return ((TileEntity*)pTile)->GetEntity();
+		}
+	}
+
+	//couldn't find anything
+	return NULL;
+}
+
+
+//more class definitions
+void luabindMisc(lua_State *pState)
+{
+	module(pState)
+		[
+
+		class_<CL_Color>("Color")
+		.def(constructor<>())
+		.def(constructor<unsigned int, unsigned int, unsigned int, unsigned int>())
+		.def("GetRed", &CL_Color::get_red)
+		.def("GetGreen", &CL_Color::get_green)
+		.def("GetBlue", &CL_Color::get_blue)
+		.def("Getalpha", &CL_Color::get_alpha)
+
+		.def("SetRed", &CL_Color::set_red)
+		.def("SetGreen", &CL_Color::set_green)
+		.def("SetBlue", &CL_Color::set_blue)
+		.def("Setalpha", &CL_Color::set_alpha)
+
+		.def("Set", &CL_Color::set_color)
+
+		,class_<MaterialManager>("MaterialManager")
+		.def("AddMaterial", &MaterialManager::AddMaterial)
+		.def("GetMaterial", &MaterialManager::GetMaterial)
+
+
+		,class_<CMaterial>("Material")
+		.def("SetType", &CMaterial::SetType)
+		.def("GetType", &CMaterial::GetType)
+		.def("SetSpecial", &CMaterial::SetSpecial)
+		.def("GetSpecial", &CMaterial::GetSpecial)
+
+		,class_<GameLogic>("GameLogic")
+		.def("SetLeftMouseButtonCallback", &GameLogic::SetLeftMouseButtonCallback)
+		.def("ToggleEditMode", &GameLogic::ToggleEditMode)
+		.def("SetUserProfileName", &GameLogic::SetUserProfileName)
+		.def("GetUserProfileName", &GameLogic::GetUserProfileName)
+		.def("ResetUserProfile", &GameLogic::ResetUserProfile)
+		.def("ClearAllMapsFromMemory", &GameLogic::ClearAllMapsFromMemory)
+		.def("UserProfileExists", &GameLogic::UserProfileExists)
+
+
+		,class_<App>("App")
+		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)
+		.def("SetGameSpeed", &App::SetGameSpeed)
+		.def("GetGameTick", &App::GetGameTick)
+
+		,class_<ISoundManager>("SoundManager")
+		.def("PlayMusic", &ISoundManager::PlayMusic)
+		.def("Play", &ISoundManager::Play)
+		.def("PlayMixed", &ISoundManager::PlayMixed)
+		.def("MuteAll", &ISoundManager::MuteAll)
+
+		,class_<TextManager>("TextManager")
+		.def("Add", &TextManager::Add)
+
+		,class_<WorldManager>("MapManager")
+		.def("SetActiveMapByName", &WorldManager::SetActiveWorldByName)
+
+
+		,class_<TagManager>("TagManager")
+		.def("GetFromString", &TagManager::GetFromString)
+		.def("GetFromHash", &TagManager::GetFromHash)
+
+		,class_<Camera>("Camera")
+		.def("SetPos", &Camera::SetPos)
+		.def("GetPos", &Camera::GetPos)
+		.def("GetPosCentered", &Camera::GetPosCentered)
+		.def("SetPosCentered", &Camera::SetPosCentered)
+		.def("SetTargetPos", &Camera::SetTargetPos)
+		.def("SetTargetPosCentered", &Camera::SetTargetPosCentered)
+		.def("SetEntityTrackingByID", &Camera::SetEntTracking)
+		.def("InstantUpdate", &Camera::InstantUpdate)
+		.def("SetScale", &Camera::SetScale)
+		.def("GetScale", &Camera::GetScale)
+
+		,class_<TagObject>("TagObject")
+		.def("GetMapName", &TagObject::GetMapName)
+		.def("GetID", &TagObject::GetID)
+		.def("GetPos", &TagObject::GetPos)
+
+		,class_<ScriptKeyManager>("KeyManager")
+		.def("AssignKey", &ScriptKeyManager::AssignKey)
+
+
+		,
+		//stand alone functions
+
+		def("CreateEntity", &CreateEntity),
+		def("Schedule", &Schedule),
+		def("ScheduleSystem", &ScheduleSystem),
+		def("ScreenToWorld", &ScreenToWorld),
+		def("WorldToScreen", &WorldToScreen),
+		def("GetEntityByWorldPos", &GetEntityByWorldPos),
+		def("ShowMessage", &ShowMessage)
+		];
+}

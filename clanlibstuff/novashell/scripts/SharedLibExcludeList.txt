@@ -1,0 +1,10 @@
+seths_cdx_fixes.zip
+\cdx\
+.obj
+.pch
+.idb\
+.sbr
+.pdb
+\cdx\lib\
+.ncb
+\lib\clanlib\
