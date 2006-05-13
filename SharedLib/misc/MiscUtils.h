@@ -8,8 +8,10 @@
 */
 
 
-#include "core.h"
-#include "display.h"
+
+#include "Clanlib/core.h"
+#include "Clanlib/display.h"
+
 
 using namespace std;
 //misc stuff Seth Added
