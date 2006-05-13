@@ -1,5 +1,4 @@
 /* -------------------------------------------------
-* Copyright 2005 Machineworks Northwest - All Rights reserved
 * Programmer(s):  Seth A. Robinson (seth@rtsoft.com): 
 * Created Wednesday, August 24, 2004 7:24:40 PM
 */

@@ -28,6 +28,9 @@
 #define LUA_ANSI
 #endif
 
+#ifdef __APPLE__
+#define LUA_USE_MACOSX
+#endif
 
 #if !defined(LUA_ANSI) && defined(_WIN32)
 #define LUA_WIN
