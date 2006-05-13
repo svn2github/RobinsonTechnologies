@@ -37,7 +37,8 @@ public:
 	static Vector*	BuildBox	(int& iNumVertices, float width, float height);
 	static Vector*	BuildBlob	(int iNumVertices, float radiusx, float radiusy);
 
-	static void		Render		(const Vector& xOffset, float angle, u_int ARGBfill, u_int ARGBline, const Vector* axVertices, int iNumVertices);
+	//static void		Render		(const Vector& xOffset, float angle, u_int ARGBfill, u_int ARGBline, const Vector* axVertices, int iNumVertices);
+	
 	static bool		Collide		(const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA,
 								 const Vector* B, int Bnum, const Vector& PB, const Vector& VB, const Matrix& OB,
 								 Vector& N, float& t);

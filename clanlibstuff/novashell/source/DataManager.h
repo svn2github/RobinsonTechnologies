@@ -28,7 +28,7 @@ public:
 		
 	}
 	
-	UINT8 m_dataType;
+	cl_uint8 m_dataType;
 
 	string m_key;
 	string m_value;

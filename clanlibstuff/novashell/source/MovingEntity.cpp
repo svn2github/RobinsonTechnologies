@@ -136,7 +136,7 @@ void MovingEntity::SetName(const std::string &name)
 void MovingEntity::Serialize(CL_FileHelper &helper)
 {
 	//load/save needed data
-	UINT8 ver = m_pTile->GetParentScreen()->GetVersion();
+	cl_uint8 ver = m_pTile->GetParentScreen()->GetVersion();
 
     helper.process(m_mainScript);
 

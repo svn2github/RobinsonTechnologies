@@ -53,7 +53,7 @@ public:
 	bool RemoveTileByPosition(const CL_Vector2 &vecPos, unsigned int layer);
     void AddTile(Tile *pTile);
 	void DeleteAllTilesOnLayer(unsigned int layer);
-	UINT8 GetVersion() {return m_version;}
+	cl_uint8 GetVersion() {return m_version;}
 	void GetPtrToAllTiles(tile_list *pTileList); //this adds pointers to all this screen's tiles to the list sent in
 	
 private:
@@ -66,7 +66,7 @@ private:
 
   bool m_bIsEmpty;
   bool m_bReCheckIfEmpty;
-  UINT8 m_version;
+  cl_uint8 m_version;
 };
 
 bool CloneTileList(const tile_list &srcList, tile_list &destList);

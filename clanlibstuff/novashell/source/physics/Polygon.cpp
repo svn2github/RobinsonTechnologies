@@ -629,7 +629,7 @@ bool PolyColl::ClipSegment(const Vector* A, int Anum, const Vector& PA, const Ve
 
 
 
-
+/*
 #include "Perlin.h"
 
 GLuint BindTexture()
@@ -738,4 +738,4 @@ void PolyColl::Render(const Vector& xOffset, float angle, u_int ARGBfill, u_int 
 	}
 	glPopMatrix();
 }	
-
+*/

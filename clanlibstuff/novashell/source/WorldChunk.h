@@ -85,7 +85,7 @@ protected:
 	cl_uint32 m_uintArray[e_uintCount];
 	Screen * m_pScreen; //null if not loaded yet (they don't have to be)
 	CL_PixelBuffer *m_pThumb; //thumbnail of the screenshot
-	byte *m_pThumbPixelData; //the raw data, PixelBuffers won't delete this for us when we
+	cl_uint8 *m_pThumbPixelData; //the raw data, PixelBuffers won't delete this for us when we
 	//construct them manually so we have to remember this data for later
 	bool m_bIsEmpty;
 	CL_Rect m_rect; //the bounds of this screen

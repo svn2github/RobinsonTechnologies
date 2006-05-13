@@ -205,10 +205,12 @@ void CBody::Update(float dt)
 
 void CBody::Render() const
 {
+/*
 	u_int uFill = (IsUnmovable())? 0x808080FF : 0x8080FF80;
 	u_int uLine = (IsUnmovable())? 0xFF8080FF : 0xFF00A000;
 
 	PolyColl::Render(m_xPosition, m_fOrientation, uFill, uLine, m_axVertices, m_iNumVertices);
+	*/
 }
 
 bool CBody::IntersectSegment(const Vector& xStart, const Vector& xEnd, float fDist, Vector& N, float& t) const

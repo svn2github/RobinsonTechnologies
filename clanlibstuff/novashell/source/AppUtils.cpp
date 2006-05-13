@@ -117,7 +117,7 @@ CL_Color StringToColor(const string &stColor)
 	//break it apart and recreate it as a color
 #define C_CL_COLOR_COUNT 4
 
-	byte colors[C_CL_COLOR_COUNT];
+	cl_uint8 colors[C_CL_COLOR_COUNT];
 	unsigned int i;
 	for (i=0; i < C_CL_COLOR_COUNT; i++)
 	{

@@ -34,19 +34,19 @@ class Layer
 public:
 	Layer();
 
-	byte IsDisplayed(){return m_byteArray[e_byteIsDisplayed];}
+	cl_uint8 IsDisplayed(){return m_byteArray[e_byteIsDisplayed];}
 	void SetIsDisplayed(byte isDisplayed){m_byteArray[e_byteIsDisplayed] = isDisplayed;}
 
-	byte IsEditActive(){return m_byteArray[e_byteEditActive];}
+	cl_uint8 IsEditActive(){return m_byteArray[e_byteEditActive];}
 	void SetIsEditActive(byte isEditActive){m_byteArray[e_byteEditActive] = isEditActive;}
 
-	byte GetShowInEditorOnly() {return m_byteArray[e_byteShowInEditorOnly];};
+	cl_uint8 GetShowInEditorOnly() {return m_byteArray[e_byteShowInEditorOnly];};
 	void SetShowInEditorOnly(byte showInEditorOnly) {m_byteArray[e_byteShowInEditorOnly] = showInEditorOnly;}
 
-	byte GetUseInThumbnail() {return m_byteArray[e_byteUseInThumbnail];};
+	cl_uint8 GetUseInThumbnail() {return m_byteArray[e_byteUseInThumbnail];};
 	void SetUseInThumbnail(byte useInThumbnail) {m_byteArray[e_byteUseInThumbnail] = useInThumbnail;}
 
-	byte GetUseParallaxInThumbnail() {return m_byteArray[e_byteUseParallaxInThumbnail];};
+	cl_uint8 GetUseParallaxInThumbnail() {return m_byteArray[e_byteUseParallaxInThumbnail];};
 	void SetUseParallaxInThumbnail(byte useParallaxInThumbnail) {m_byteArray[e_byteUseParallaxInThumbnail] = useParallaxInThumbnail;}
 
 	const string & GetName(){return m_stName;}

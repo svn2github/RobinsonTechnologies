@@ -9,7 +9,7 @@
 #ifndef Message_HEADER_INCLUDED // include guard
 #define Message_HEADER_INCLUDED  // include guard
 
-#include <signals.h>
+#include <clanlib/signals.h>
 #include "MovingEntity.h"
 
 class Message

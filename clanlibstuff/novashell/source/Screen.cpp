@@ -201,7 +201,7 @@ bool Screen::Load()
 		}
 
 		unsigned int count;
-		byte type;
+		cl_uint8 type;
 		Tile *pTile = NULL;
 		tile_list *pList;
 

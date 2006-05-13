@@ -35,8 +35,8 @@ public:
 	cl_uint8 GetType() {return m_type;}
 	const cl_uint8 GetLayer() const {return m_layer;}
 	void SetLayer(cl_uint8 layer) {m_layer = layer;}
-	bool GetBit(byte bit) {return m_bitField.get_bit(bit);}
-	void SetBit(byte bit, bool bNew) {m_bitField.set_bit(bit, bNew);}
+	bool GetBit(cl_uint8 bit) {return m_bitField.get_bit(bit);}
+	void SetBit(cl_uint8 bit, bool bNew) {m_bitField.set_bit(bit, bNew);}
 	const CL_Vector2 & GetScale() {return m_vecScale;}
 	virtual const CL_Vector2 & GetPos() {return m_vecPos;}
 	virtual void SetPos(const CL_Vector2 &vecPos) {m_vecPos = vecPos;}

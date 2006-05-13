@@ -96,7 +96,7 @@ public:
 	void PreloadMap();
 	LayerManager & GetLayerManager() {return m_layerManager;}
 	bool IsValidCoordinate(CL_Vector2 vec);
-	UINT8 GetVersion(){return m_version;}
+	cl_uint8 GetVersion(){return m_version;}
 	const string & GetName(){return m_strMapName;}
 	bool GetSnapEnabled() {return m_byteArray[e_byteSnapOn] != 0;}
 	void SetSnapEnabled(bool bNew) {m_byteArray[e_byteSnapOn] = bNew;}

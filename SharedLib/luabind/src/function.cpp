@@ -24,7 +24,7 @@
 
 #include <luabind/config.hpp>
 #include <luabind/luabind.hpp>
-#include <core.h> //SETH added to report clanlib exceptions
+#include <Clanlib/core.h> //SETH added to report clanlib exceptions
 
 namespace luabind { namespace detail { namespace free_functions {
 
