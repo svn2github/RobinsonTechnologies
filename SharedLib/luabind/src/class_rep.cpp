@@ -25,7 +25,7 @@
 #include <luabind/detail/stack_utils.hpp>
 #include <luabind/luabind.hpp>
 #include <utility>
-#include <ClanLib/core.h> //SETH added to report clanlib exceptions
+#include <core.h> //SETH added to report clanlib exceptions
 
 using namespace luabind::detail;
 

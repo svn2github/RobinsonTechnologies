@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include <ClanLib/core.h>
-#include <ClanLib/application.h>
-#include <ClanLib/display.h>
-#include <ClanLib/gl.h> 
+#include <core.h>
+#include <application.h>
+#include <display.h>
+#include <gl.h> 
 #include <misc/MiscUtils.h>
-#include <ClanLib/gui.h>
-#include <ClanLib/guistylesilver.h>
-#include <ClanLib/signals.h>
+#include <gui.h>
+#include <guistylesilver.h>
+#include <signals.h>
 
 #include <misc/CL_VirtualFileManager.h>
 #include "EntityManager.h"
