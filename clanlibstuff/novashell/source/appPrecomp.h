@@ -6,7 +6,7 @@
 #pragma once
 
 #include "lua/etc/lua.hpp"
-//#include <luabind/luabind.hpp>
+#include <luabind/luabind.hpp>
 //#include <luabind/operator.hpp>
 
 #include <Clanlib/core.h>

@@ -90,7 +90,7 @@ void CollisionData::Serialize(CL_FileHelper &helper)
 	if (helper.IsWriting())
 	{
 		//write how many linelists are coming
-		helper.process_const(m_lineList.size());
+		helper.process_const(cl_uint32(m_lineList.size()));
 
 		line_list::iterator listItor = m_lineList.begin();
 
@@ -100,7 +100,7 @@ void CollisionData::Serialize(CL_FileHelper &helper)
 			helper.process_const(listItor->GetType());
 			
 			//write how many points are in this list
-			helper.process_const(listItor->GetPointList()->size());
+			helper.process_const(cl_uint32(listItor->GetPointList()->size()));
 			helper.process(listItor->GetOffset());
 			//write 'em
 			helper.process_array(&listItor->GetPointList()->at(0), listItor->GetPointList()->size());

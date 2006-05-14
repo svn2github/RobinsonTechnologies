@@ -20,7 +20,7 @@ struct dink_map_info
 struct dink_tile
 {
 	int num, property, althard, more2;
-	byte  more3,more4;
+	unsigned char  more3,more4;
 
 	int buff[15];
 };
@@ -38,7 +38,7 @@ struct dink_sprite_placement
 	char talk[13];
 	int speed, base_walk,base_idle,base_attack,base_hit,timer,que;
 	int hard;
-	RECT alt;
+	CL_Rect alt;
 	int prop;
 	int warp_map;
 	int warp_x;

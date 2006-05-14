@@ -24,7 +24,6 @@ public:
 	void OnModeEnded(int id);
     void Render(void *pTarget);
     void Update(float step);
-    bool HandleMessage(const Telegram& msg);
     void Write(std::ostream&  os)const{/*not implemented*/}
     void Read (std::ifstream& is){/*not implemented*/}
 	void SetTipLabel(std::string tip);  //so different modes can overwrite this with useful info

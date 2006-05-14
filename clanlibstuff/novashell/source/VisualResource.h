@@ -25,7 +25,7 @@ public:
 
 protected:
 
-	friend VisualProfile;
+	friend class VisualProfile;
 
 	CL_ResourceManager *m_pResourceManager;
 	vec_visual_profile m_profileVec;

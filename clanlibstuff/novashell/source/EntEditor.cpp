@@ -983,10 +983,7 @@ void EntEditor::ForceChooseScreenMode(bool bOn)
 	}
 }
 
-bool EntEditor::HandleMessage(const Telegram& msg)
-{
-    return false;
-}
+
 
 void EntEditor::Render(void *pTarget)
 {
