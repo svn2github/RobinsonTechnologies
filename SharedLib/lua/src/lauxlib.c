@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <cassert>
+//#include <assert>
 
 /* This file uses only the official API of Lua.
 ** Any function declared here could be written as an application function.
@@ -635,7 +635,7 @@ static int panic (lua_State *L) {
   (void)L;  /* to avoid warnings */
   fprintf(stderr, "PANIC: unprotected error in call to Lua API (%s)\n",
                    lua_tostring(L, -1));
-  assert(0);
+  //assert(0);
   return 0;
 }
 
