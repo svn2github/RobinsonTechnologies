@@ -443,7 +443,7 @@
 		5D8778210A1555F600363BAA /* ISoundManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ISoundManager.h; sourceTree = "<group>"; };
 		5D8778220A1555F600363BAA /* MiscUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MiscUtils.cpp; sourceTree = "<group>"; };
 		5D8778230A1555F600363BAA /* MiscUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MiscUtils.h; sourceTree = "<group>"; };
-		8D0C4E970486CD37000505A6 /* novashell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D0C4E970486CD37000505A6 /* novashell.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
