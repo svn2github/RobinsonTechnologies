@@ -443,7 +443,7 @@
 		5D8778210A1555F600363BAA /* ISoundManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ISoundManager.h; sourceTree = "<group>"; };
 		5D8778220A1555F600363BAA /* MiscUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MiscUtils.cpp; sourceTree = "<group>"; };
 		5D8778230A1555F600363BAA /* MiscUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MiscUtils.h; sourceTree = "<group>"; };
-		8D0C4E970486CD37000505A6 /* novashell.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D0C4E970486CD37000505A6 /* novashell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -489,9 +489,8 @@
 		20286C2AFDCF999611CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				5D8777B70A1555F600363BAA /* src */,
-				5D8777B80A1555F600363BAA /* luabind */,
-				5D8778030A1555F600363BAA /* src */,
+				5DC490540A16EB3B007BE8D2 /* lua */,
+				5DC490510A16EAF6007BE8D2 /* luabind */,
 				5D8778170A1555F600363BAA /* misc */,
 				5D8776D50A15555400363BAA /* source */,
 			);
@@ -863,6 +862,23 @@
 			path = ../../../SharedLib/misc;
 			sourceTree = SOURCE_ROOT;
 		};
+		5DC490510A16EAF6007BE8D2 /* luabind */ = {
+			isa = PBXGroup;
+			children = (
+				5D8777B80A1555F600363BAA /* luabind */,
+				5D8778030A1555F600363BAA /* src */,
+			);
+			name = luabind;
+			sourceTree = "<group>";
+		};
+		5DC490540A16EB3B007BE8D2 /* lua */ = {
+			isa = PBXGroup;
+			children = (
+				5D8777B70A1555F600363BAA /* src */,
+			);
+			name = lua;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1043,19 +1059,8 @@
 				FRAMEWORK_SEARCH_PATHS = "~/dev/Clanlib-0.8/MacOSXDebug";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
-				GCC_PREFIX_HEADER = novashell_Prefix.pch;
-				HEADER_SEARCH_PATHS = (
-					"~/dev/include",
-					"~/dev/Clanlib-0.8/MacOSXDebug",
-					"~/dev/boost_1_33_1",
-					../../../SharedLib,
-					../../../SharedLib/luabind,
-					"$(HEADER_SEARCH_PATHS)",
-					../../../SharedLib/lua/src,
-				);
 				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				KEEP_PRIVATE_EXTERNS = YES;
@@ -1074,9 +1079,7 @@
 				);
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = novashell_Prefix.pch;
 				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				PRODUCT_NAME = novashell;

@@ -17,8 +17,8 @@ public:
 
 	Brain(MovingEntity * pParent);
 	virtual ~Brain();
-	virtual void Update(float step) = NULL;
-	virtual void PostUpdate(float step) = NULL;
+	virtual void Update(float step) = 0;
+	virtual void PostUpdate(float step) = 0;
 
 	enum eBrainType
 	{
