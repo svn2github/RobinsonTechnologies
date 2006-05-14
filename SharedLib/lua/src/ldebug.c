@@ -265,22 +265,22 @@ LUA_API int lua_getinfo (lua_State *L, const char *what, lua_Debug *ar) {
 ** =======================================================
 */
 
-#define check(x)		if (!(x)) return 0;
+#define sethcheck(x)		if (!(x)) return 0;
 
-#define checkjump(pt,pc)	check(0 <= pc && pc < pt->sizecode)
+#define checkjump(pt,pc)	sethcheck(0 <= pc && pc < pt->sizecode)
 
-#define checkreg(pt,reg)	check((reg) < (pt)->maxstacksize)
+#define checkreg(pt,reg)	sethcheck((reg) < (pt)->maxstacksize)
 
 
 
 static int precheck (const Proto *pt) {
-  check(pt->maxstacksize <= MAXSTACK);
+  sethcheck(pt->maxstacksize <= MAXSTACK);
   lua_assert(pt->numparams+(pt->is_vararg & VARARG_HASARG) <= pt->maxstacksize);
   lua_assert(!(pt->is_vararg & VARARG_NEEDSARG) ||
               (pt->is_vararg & VARARG_HASARG));
-  check(pt->sizeupvalues <= pt->nups);
-  check(pt->sizelineinfo == pt->sizecode || pt->sizelineinfo == 0);
-  check(GET_OPCODE(pt->code[pt->sizecode-1]) == OP_RETURN);
+  sethcheck(pt->sizeupvalues <= pt->nups);
+  sethcheck(pt->sizelineinfo == pt->sizecode || pt->sizelineinfo == 0);
+  sethcheck(GET_OPCODE(pt->code[pt->sizecode-1]) == OP_RETURN);
   return 1;
 }
 
@@ -293,7 +293,7 @@ int luaG_checkopenop (Instruction i) {
     case OP_TAILCALL:
     case OP_RETURN:
     case OP_SETLIST: {
-      check(GETARG_B(i) == 0);
+      sethcheck(GETARG_B(i) == 0);
       return 1;
     }
     default: return 0;  /* invalid instruction after an open call */
@@ -303,11 +303,11 @@ int luaG_checkopenop (Instruction i) {
 
 static int checkArgMode (const Proto *pt, int r, enum OpArgMask mode) {
   switch (mode) {
-    case OpArgN: check(r == 0); break;
+    case OpArgN: sethcheck(r == 0); break;
     case OpArgU: break;
     case OpArgR: checkreg(pt, r); break;
     case OpArgK:
-      check(ISK(r) ? INDEXK(r) < pt->sizek : r < pt->maxstacksize);
+      sethcheck(ISK(r) ? INDEXK(r) < pt->sizek : r < pt->maxstacksize);
       break;
   }
   return 1;
@@ -318,37 +318,37 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
   int pc;
   int last;  /* stores position of last instruction that changed `reg' */
   last = pt->sizecode-1;  /* points to final return (a `neutral' instruction) */
-  check(precheck(pt));
+  sethcheck(precheck(pt));
   for (pc = 0; pc < lastpc; pc++) {
     Instruction i = pt->code[pc];
     OpCode op = GET_OPCODE(i);
     int a = GETARG_A(i);
     int b = 0;
     int c = 0;
-    check(op < NUM_OPCODES);
+    sethcheck(op < NUM_OPCODES);
     checkreg(pt, a);
     switch (getOpMode(op)) {
       case iABC: {
         b = GETARG_B(i);
         c = GETARG_C(i);
-        check(checkArgMode(pt, b, getBMode(op)));
-        check(checkArgMode(pt, c, getCMode(op)));
+        sethcheck(checkArgMode(pt, b, getBMode(op)));
+        sethcheck(checkArgMode(pt, c, getCMode(op)));
         break;
       }
       case iABx: {
         b = GETARG_Bx(i);
-        if (getBMode(op) == OpArgK) check(b < pt->sizek);
+        if (getBMode(op) == OpArgK) sethcheck(b < pt->sizek);
         break;
       }
       case iAsBx: {
         b = GETARG_sBx(i);
         if (getBMode(op) == OpArgR) {
           int dest = pc+1+b;
-          check(0 <= dest && dest < pt->sizecode);
+          sethcheck(0 <= dest && dest < pt->sizecode);
           if (dest > 0) {
             /* cannot jump to a setlist count */
             Instruction d = pt->code[dest-1];
-            check(!(GET_OPCODE(d) == OP_SETLIST && GETARG_C(d) == 0));
+            sethcheck(!(GET_OPCODE(d) == OP_SETLIST && GETARG_C(d) == 0));
           }
         }
         break;
@@ -358,12 +358,12 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
       if (a == reg) last = pc;  /* change register `a' */
     }
     if (testTMode(op)) {
-      check(pc+2 < pt->sizecode);  /* check skip */
-      check(GET_OPCODE(pt->code[pc+1]) == OP_JMP);
+      sethcheck(pc+2 < pt->sizecode);  /* check skip */
+      sethcheck(GET_OPCODE(pt->code[pc+1]) == OP_JMP);
     }
     switch (op) {
       case OP_LOADBOOL: {
-        check(c == 0 || pc+2 < pt->sizecode);  /* check its jump */
+        sethcheck(c == 0 || pc+2 < pt->sizecode);  /* check its jump */
         break;
       }
       case OP_LOADNIL: {
@@ -373,12 +373,12 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
       }
       case OP_GETUPVAL:
       case OP_SETUPVAL: {
-        check(b < pt->nups);
+        sethcheck(b < pt->nups);
         break;
       }
       case OP_GETGLOBAL:
       case OP_SETGLOBAL: {
-        check(ttisstring(&pt->k[b]));
+        sethcheck(ttisstring(&pt->k[b]));
         break;
       }
       case OP_SELF: {
@@ -387,11 +387,11 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         break;
       }
       case OP_CONCAT: {
-        check(b < c);  /* at least two operands */
+        sethcheck(b < c);  /* at least two operands */
         break;
       }
       case OP_TFORLOOP: {
-        check(c >= 1);  /* at least one result (control variable) */
+        sethcheck(c >= 1);  /* at least one result (control variable) */
         checkreg(pt, a+2+c);  /* space for results */
         if (reg >= a+2) last = pc;  /* affect all regs above its base */
         break;
@@ -414,7 +414,7 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
         }
         c--;  /* c = num. returns */
         if (c == LUA_MULTRET) {
-          check(checkopenop(pt, pc));
+          sethcheck(checkopenop(pt, pc));
         }
         else if (c != 0)
           checkreg(pt, a+c-1);
@@ -433,20 +433,20 @@ static Instruction symbexec (const Proto *pt, int lastpc, int reg) {
       }
       case OP_CLOSURE: {
         int nup;
-        check(b < pt->sizep);
+        sethcheck(b < pt->sizep);
         nup = pt->p[b]->nups;
-        check(pc + nup < pt->sizecode);
+        sethcheck(pc + nup < pt->sizecode);
         for (; nup>0; nup--) {
           OpCode op1 = GET_OPCODE(pt->code[pc+nup]);
-          check(op1 == OP_GETUPVAL || op1 == OP_MOVE);
+          sethcheck(op1 == OP_GETUPVAL || op1 == OP_MOVE);
         }
         break;
       }
       case OP_VARARG: {
-        check((pt->is_vararg & VARARG_ISVARARG) &&
+        sethcheck((pt->is_vararg & VARARG_ISVARARG) &&
              !(pt->is_vararg & VARARG_NEEDSARG));
         b--;
-        if (b == LUA_MULTRET) check(checkopenop(pt, pc));
+        if (b == LUA_MULTRET) sethcheck(checkopenop(pt, pc));
         checkreg(pt, a+b-1);
         break;
       }

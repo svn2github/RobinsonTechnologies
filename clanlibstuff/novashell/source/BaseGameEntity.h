@@ -14,9 +14,8 @@
 #include <vector>
 #include <string>
 #include <iosfwd>
-#include "../../SharedLib/include/ClanLib/signals.h"
+#include <ClanLib/signals.h>
 
-struct Telegram;
 class TileEntity;
 
 class BaseGameEntity

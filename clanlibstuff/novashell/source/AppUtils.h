@@ -8,7 +8,6 @@ CL_Color StringToColor(const string &stColor);
 CL_Rect StringToRect(const string &stColor);
 string RectToString(const CL_Rect &r);
 
-
 void RenderVertexList(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCount, CL_Color &colr, CL_GraphicContext *pGC);
 CL_Vector2 MakeNormal(CL_Vector2 &a, CL_Vector2 &b);
 void RenderVertexListRotated(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCount, CL_Color &colr, CL_GraphicContext *pGC,  float angleRad);

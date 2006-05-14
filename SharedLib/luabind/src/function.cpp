@@ -25,6 +25,7 @@
 #include <luabind/config.hpp>
 #include <luabind/luabind.hpp>
 #include <Clanlib/core.h> //SETH added to report clanlib exceptions
+#include <Clanlib/Core/System/error.h>
 
 namespace luabind { namespace detail { namespace free_functions {
 
@@ -136,6 +137,7 @@ namespace luabind { namespace detail { namespace free_functions {
 #endif
         overload_rep const& ov_rep = rep->overloads()[match_index];
 
+
 #ifndef LUABIND_NO_EXCEPTIONS
         try
         {
@@ -154,11 +156,13 @@ namespace luabind { namespace detail { namespace free_functions {
         {
             lua_pushstring(L, s);
         }
-		catch (CL_Error error) //SETH added this to handle clanlib exceptions more gracefully
+		
+		catch (CL_Error errord) //SETH added this to handle clanlib exceptions more gracefully
 		{
-			lua_pushstring(L, error.message.c_str());
+			lua_pushstring(L, errord.message.c_str());
 
 		}
+		
 	   catch(...)
         {
             std::string msg = rep->name();
@@ -284,9 +288,9 @@ int luabind::detail::free_functions::function_dispatcher(lua_State* L)
     {
         lua_pushstring(L, s);
     }
-	catch (CL_Error error) //SETH added this to handle clanlib exceptions more gracefully
+	catch (CL_Error errord) //SETH added this to handle clanlib exceptions more gracefully
 	{
-		lua_pushstring(L, error.message);
+		lua_pushstring(L, errord.message);
 
 	}
 	catch(...)

@@ -28,7 +28,7 @@ $History: $
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <glut.h>
+
 
 typedef unsigned char   u_char;
 typedef unsigned short  u_short;

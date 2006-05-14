@@ -64,6 +64,7 @@ string GetStrippedFilename(string str)
 	return CL_String::to_lower(temp);
 }
 
+
 unsigned int FileNameToID(const char * filename)
 {
 	unsigned int resourceID = 0;

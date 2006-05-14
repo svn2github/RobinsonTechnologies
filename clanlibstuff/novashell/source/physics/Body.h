@@ -28,7 +28,7 @@ $History: $
 #include "Vector.h"
 #include "Matrix.h"
 #include "Polygon.h"
-#include "../../SharedLib/include/ClanLib/signals.h"
+#include <ClanLib/signals.h>
 
 class CMaterial;
 class MovingEntity;

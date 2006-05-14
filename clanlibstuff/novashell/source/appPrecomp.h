@@ -1,15 +1,28 @@
 //precompiled headers that shouldn't change much
 
+#ifndef _APPPRE
+#define _APPPRE
+
 #pragma once
+
+#include "lua/etc/lua.hpp"
+//#include <luabind/luabind.hpp>
+//#include <luabind/operator.hpp>
 
 #include <Clanlib/core.h>
 #include <Clanlib/application.h>
-#include <Clanlib/display.h>
+
+
+#define Zone CarbonZone
+#include <ClanLib/display.h>
+
 #include <Clanlib/gl.h> 
 #include <misc/MiscUtils.h>
 #include <Clanlib/gui.h>
 #include <Clanlib/guistylesilver.h>
 #include <Clanlib/signals.h>
+#undef Zone
+
 
 #include <misc/CL_VirtualFileManager.h>
 #include "EntityManager.h"
@@ -25,8 +38,8 @@ using namespace std;
 #include <vector>
 #include <map>
 
-#include "lua/etc/lua.hpp"
-#include <luabind/luabind.hpp>
-#include <luabind/operator.hpp>
+
 
 #pragma warning (disable:4244)
+
+#endif

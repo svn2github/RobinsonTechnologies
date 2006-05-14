@@ -1,8 +1,6 @@
 #ifndef MOVING_ENTITY
 #define MOVING_ENTITY
 
-
-
 #include "BaseGameEntity.h"
 #include "physics/Body.h"
 #include "CollisionData.h"

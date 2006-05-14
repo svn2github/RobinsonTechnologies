@@ -25,7 +25,7 @@
 #include <luabind/detail/stack_utils.hpp>
 #include <luabind/luabind.hpp>
 #include <utility>
-#include <Clanlib/core.h> //SETH added to report clanlib exceptions
+#include <Clanlib/System/error.h> //SETH added to report clanlib exceptions
 
 using namespace luabind::detail;
 
@@ -551,11 +551,14 @@ int luabind::detail::class_rep::constructor_dispatcher(lua_State* L)
 	{
 		lua_pushstring(L, s);
 	}
-	catch (CL_Error error) //SETH added this to handle clanlib exceptions more gracefully
+	
+	
+	catch (CL_Error  cerror) //SETH added this to handle clanlib exceptions more gracefully
 	{
-		lua_pushstring(L, error.message.c_str());
+		lua_pushstring(L, cerror.message.c_str());
 
 	}
+	
 	catch(...)
 	{
 		{
@@ -715,10 +718,12 @@ int luabind::detail::class_rep::function_dispatcher(lua_State* L)
 	{
 		lua_pushstring(L, s);
 	}
-	catch (CL_Error error) //SETH added this to handle clanlib exceptions more gracefully
+	
+	catch (CL_Error errord) //SETH added this to handle clanlib exceptions more gracefully
 	{
-		lua_pushstring(L, error.message.c_str());
+		lua_pushstring(L, errord.message.c_str());
 	}
+	
 	catch(...)
 	{
 		std::string msg = rep->crep->name();
@@ -1120,10 +1125,12 @@ int luabind::detail::class_rep::super_callback(lua_State* L)
 		{
 			lua_pushstring(L, s);
 		}
-		catch (CL_Error error) //SETH added this to handle clanlib exceptions more gracefully
+		
+		catch (CL_Error errord) //SETH added this to handle clanlib exceptions more gracefully
 		{
-			lua_pushstring(L, error.message.c_str());
+			lua_pushstring(L, errord.message.c_str());
 		}
+		
 		catch(...)
 		{
 			std::string msg = base->m_name;
