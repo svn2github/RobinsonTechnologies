@@ -22,6 +22,12 @@ void ResetFont(CL_Font *pFont); //set the centering, color and alpha back to def
 string ExtractFinalDirName(string path); //not tested with paths with filenames yet
 bool compareLayerBySort(unsigned int pA, unsigned int pB); //for use with stl::sort
 
+typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
+
+#define CL_MAKELONG(a, b)      ((cl_uint32)(((cl_uint16)((CL_DWORD_PTR)(a) & 0xffff)) | ((cl_uint32)((cl_uint16)((CL_DWORD_PTR)(b) & 0xffff))) << 16))
+#define CL_LOWORD(l)           ((cl_uint16)((cl_uint32)(l) & 0xffff))
+#define CL_HIWORD(l)           ((cl_uint16)((cl_uint32)(l) >> 16))
+
 #endif                  // include guard
 
 

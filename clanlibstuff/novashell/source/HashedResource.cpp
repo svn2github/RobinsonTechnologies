@@ -12,16 +12,9 @@ HashedResource::HashedResource()
 CollisionData * HashedResource::GetCollisionDataByRect(const CL_Rect &rectSource)
 {
 
-
-typedef cl_uint32 DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
-
-#define MAKELONG(a, b)      ((cl_uint32)(((cl_uint16)((DWORD_PTR)(a) & 0xffff)) | ((cl_uint32)((cl_uint16)((DWORD_PTR)(b) & 0xffff))) << 16))
-#define LOWORD(l)           ((cl_uint16)((cl_uint32)(l) & 0xffff))
-#define HIWORD(l)           ((cl_uint16)((cl_uint32)(l) >> 16))
-
-//#define MAKELONG(a, b)      ((LONG)(((WORD)((DWORD_PTR)(a) & 0xffff)) | ((DWORD)((WORD)((DWORD_PTR)(b) & 0xffff))) << 16))
-//#define LOWORD(l)           ((WORD)((DWORD_PTR)(l) & 0xffff))
-//#define HIWORD(l)           ((WORD)((DWORD_PTR)(l) >> 16))
+//#define CL_MAKELONG(a, b)      ((LONG)(((WORD)((CL_DWORD_PTR)(a) & 0xffff)) | ((DWORD)((WORD)((CL_DWORD_PTR)(b) & 0xffff))) << 16))
+//#define CL_LOWORD(l)           ((WORD)((CL_DWORD_PTR)(l) & 0xffff))
+//#define CL_HIWORD(l)           ((WORD)((CL_DWORD_PTR)(l) >> 16))
 
 	if (!m_pImage)
 	{
@@ -29,7 +22,7 @@ typedef cl_uint32 DWORD_PTR; //note, for a 64 bit compiler we'll need to make su
 		Init();
 	}
 	
-	unsigned int hash = MAKELONG(rectSource.left, rectSource.top);
+	unsigned int hash = CL_MAKELONG(rectSource.left, rectSource.top);
 	CollisionDataMap::iterator colItor = m_collisionMap.find(hash);
 	if (colItor == m_collisionMap.end()) 
 	{
