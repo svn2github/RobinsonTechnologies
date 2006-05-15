@@ -16,7 +16,9 @@ void TextObject::Init(const string &text, MovingEntity * pEnt)
 	m_text = text;
 	m_timeCreated = GetApp()->GetGameTick();
 	m_timeToShowMS = text.size()* 60;
-	m_timeToShowMS = max(m_timeToShowMS, 3000);
+  
+   //TODO: Figure out where the max macro is?
+  if (m_timeToShowMS < 3000) m_timeToShowMS = 3000;
 
 	m_pEntity = pEnt;
 

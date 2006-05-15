@@ -193,7 +193,7 @@ void LayerManager::Save(const string &fileName)
 	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
 
 	helper.process_const(C_LAYER_VERSION);
-	helper.process_const(m_layerVec.size()); //let them know how many are coming
+	helper.process_const((cl_uint32)m_layerVec.size()); //let them know how many are coming
 
 	//cycle through and let them save themselves
 

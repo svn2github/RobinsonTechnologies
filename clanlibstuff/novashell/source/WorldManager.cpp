@@ -33,7 +33,6 @@ void WorldManager::ScanWorlds(const string &stPath)
 		{
 			if (scanner.get_name()[0] != '_')
 				if (scanner.get_name()[0] != '.')
-					if (scanner.get_name()[0] != '..')
 			{
 					//no underscore at the start, let's show it
 				AddWorld(stPath+scanner.get_name()+"/");

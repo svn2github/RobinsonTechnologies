@@ -139,7 +139,7 @@ bool Screen::Save()
 
 	//might be helpful to remember these later
 	helper.process_const(GetParentWorldChunk()->GetParentWorld()->GetWorldChunkPixelSize());
-	helper.process_const(m_vecLayerList.size());
+	helper.process_const(cl_uint32(m_vecLayerList.size()));
 	m_version = C_WORLD_FILE_VERSION;
 	helper.process(m_version);
 
@@ -150,7 +150,7 @@ bool Screen::Save()
 	{
 		pList = &m_vecLayerList[i];
 		
-		helper.process_const(pList->size()); //save how many pieces are in this tile list
+		helper.process_const(cl_uint32(pList->size())); //save how many pieces are in this tile list
 
 		for (itor = pList->begin(); itor != pList->end(); ++itor)
 		{

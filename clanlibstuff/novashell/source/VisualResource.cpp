@@ -37,7 +37,7 @@ VisualProfile * VisualResource::GetProfile(const string &profileName)
 	pProf = new VisualProfile();
 	if (!pProf || !pProf->Init(this, profileName))
 	{
-		LogMsg("Error initializing profile %s", profileName);
+		LogMsg("Error initializing profile %s", profileName.c_str());
 		SAFE_DELETE(pProf);
 		return NULL;
 	}

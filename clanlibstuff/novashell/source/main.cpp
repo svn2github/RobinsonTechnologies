@@ -35,7 +35,10 @@ void LogMsg(const char *lpFormat, ...)
 
 	sprintf(stTemp, "%s\r\n", szBuf);
 #ifdef _DEBUG
-	OutputDebugString(stTemp);
+	
+	#ifdef _WIN32
+		OutputDebugString(stTemp);
+	#endif
 #endif    
 	std::cout << stTemp;
 }
@@ -52,7 +55,9 @@ void LogError(const char *lpFormat, ...)
 
 	sprintf(stTemp, "Error: %s\r\n", szBuf);
 #ifdef _DEBUG
-	OutputDebugString(stTemp);
+	#ifdef _WIN32
+		OutputDebugString(stTemp);
+	#endif
 #endif    
     std::cout << stTemp;
 
@@ -265,9 +270,9 @@ void App::OnLoseFocus()
         //m_pWindow->
 #ifdef _WIN32
 		SendMessage(m_Hwnd, WM_SYSCOMMAND, SC_MINIMIZE,0);
-#endif
         
 		ChangeDisplaySettings(NULL, 0);
+#endif
     }
 }
 
@@ -492,7 +497,7 @@ int App::main(int argc, char **argv)
     }
     catch(CL_Error error)
     {
-        std::cout << "Exception caught : " << error.message.c_str() << std::endl;			
+        std::cout << "CL_Error Exception caught : " << error.message.c_str() << std::endl;			
         
         // Display console close message and wait for a key
 
@@ -503,7 +508,7 @@ int App::main(int argc, char **argv)
 #ifdef _DEBUG
         console.display_close_message();
 #endif
-        PostQuitMessage(0);
+        //PostQuitMessage(0);
     }
     
     OneTimeDeinit();
@@ -511,16 +516,19 @@ int App::main(int argc, char **argv)
     {
 	#ifdef _WIN32
         MessageBox(NULL, error.message.c_str(), "Early Error!", MB_ICONEXCLAMATION);
+#else
+        std::cout << "Early Exception caught : " << error.message.c_str() << std::endl;			
+
 #endif
         return 0;
     }
 catch (int param)
 {
-	std::cout << "Exception caught : " << param << std::endl;			
+	std::cout << "Int Exception caught : " << param << std::endl;			
 }
 	catch (...)
 	{
-		std::cout << "Exception caught : " << std::endl;			
+		std::cout << "Unknown Exception caught : " << std::endl;			
 		
 	}
     return 0;

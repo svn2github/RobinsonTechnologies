@@ -3,11 +3,9 @@
 #ifndef _APPPRE
 #define _APPPRE
 
-#pragma once
-
 #include "lua/etc/lua.hpp"
 #include <luabind/luabind.hpp>
-//#include <luabind/operator.hpp>
+#include <luabind/operator.hpp>
 
 #include <Clanlib/core.h>
 #include <Clanlib/application.h>

@@ -145,10 +145,17 @@ bool World::IsValidCoordinate(CL_Vector2 vec)
 	return true;
 }
 
+typedef cl_uint32 DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
+
+#define MAKELONG(a, b)      ((cl_uint32)(((cl_uint16)((DWORD_PTR)(a) & 0xffff)) | ((cl_uint32)((cl_uint16)((DWORD_PTR)(b) & 0xffff))) << 16))
+#define LOWORD(l)           ((cl_uint16)((cl_uint32)(l) & 0xffff))
+#define HIWORD(l)           ((cl_uint16)((cl_uint32)(l) >> 16))
+
 
 ScreenID World::GetScreenID(short x, short y)
 {
- return MAKELPARAM( *(unsigned short*) &x, *(unsigned short*) &y);
+ return MAKELONG( *(unsigned short*) &x, *(unsigned short*) &y);
+// return MAKELPARAM( *(unsigned short*) &x, *(unsigned short*) &y);
 }
 
 

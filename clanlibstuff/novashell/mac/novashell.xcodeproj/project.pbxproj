@@ -33,8 +33,6 @@
 		5D58A7D60A15832C005974C1 /* ltable.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7B60A15832C005974C1 /* ltable.c */; };
 		5D58A7D70A15832C005974C1 /* ltablib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7B70A15832C005974C1 /* ltablib.c */; };
 		5D58A7D80A15832C005974C1 /* ltm.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7B80A15832C005974C1 /* ltm.c */; };
-		5D58A7D90A15832C005974C1 /* lua.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7B90A15832C005974C1 /* lua.c */; };
-		5D58A7DA0A15832C005974C1 /* luac.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BA0A15832C005974C1 /* luac.c */; };
 		5D58A7DB0A15832C005974C1 /* lundump.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BB0A15832C005974C1 /* lundump.c */; };
 		5D58A7DC0A15832C005974C1 /* lvm.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BC0A15832C005974C1 /* lvm.c */; };
 		5D58A7DD0A15832C005974C1 /* lzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BD0A15832C005974C1 /* lzio.c */; };
@@ -96,7 +94,6 @@
 		5D8777960A15555400363BAA /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777270A15555400363BAA /* Screen.cpp */; };
 		5D8777980A15555400363BAA /* ScriptKeyManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777290A15555400363BAA /* ScriptKeyManager.cpp */; };
 		5D87779A0A15555400363BAA /* ScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87772B0A15555400363BAA /* ScriptManager.cpp */; };
-		5D87779D0A15555400363BAA /* SteeringBehaviors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87772E0A15555400363BAA /* SteeringBehaviors.cpp */; };
 		5D87779F0A15555400363BAA /* TagManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777300A15555400363BAA /* TagManager.cpp */; };
 		5D8777A10A15555400363BAA /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777320A15555400363BAA /* TextManager.cpp */; };
 		5D8777A30A15555400363BAA /* Tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777340A15555400363BAA /* Tile.cpp */; };
@@ -128,7 +125,6 @@
 		5D87787D0A1555F600363BAA /* stack_content_by_name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778140A1555F600363BAA /* stack_content_by_name.cpp */; };
 		5D87787E0A1555F600363BAA /* weak_ref.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778150A1555F600363BAA /* weak_ref.cpp */; };
 		5D87787F0A1555F600363BAA /* wrapper_base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778160A1555F600363BAA /* wrapper_base.cpp */; };
-		5D8778810A1555F600363BAA /* CL_AGGBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778190A1555F600363BAA /* CL_AGGBuffer.cpp */; };
 		5D8778830A1555F600363BAA /* CL_SoundManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781B0A1555F600363BAA /* CL_SoundManager.cpp */; };
 		5D8778850A1555F600363BAA /* CL_VirtualFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781D0A1555F600363BAA /* CL_VirtualFileManager.cpp */; };
 		5D87788A0A1555F600363BAA /* MiscUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778220A1555F600363BAA /* MiscUtils.cpp */; };
@@ -199,8 +195,6 @@
 		5D58A7B60A15832C005974C1 /* ltable.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ltable.c; sourceTree = "<group>"; };
 		5D58A7B70A15832C005974C1 /* ltablib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ltablib.c; sourceTree = "<group>"; };
 		5D58A7B80A15832C005974C1 /* ltm.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ltm.c; sourceTree = "<group>"; };
-		5D58A7B90A15832C005974C1 /* lua.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lua.c; sourceTree = "<group>"; };
-		5D58A7BA0A15832C005974C1 /* luac.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = luac.c; sourceTree = "<group>"; };
 		5D58A7BB0A15832C005974C1 /* lundump.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lundump.c; sourceTree = "<group>"; };
 		5D58A7BC0A15832C005974C1 /* lvm.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lvm.c; sourceTree = "<group>"; };
 		5D58A7BD0A15832C005974C1 /* lzio.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lzio.c; sourceTree = "<group>"; };
@@ -314,9 +308,6 @@
 		5D87772A0A15555400363BAA /* ScriptKeyManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScriptKeyManager.h; sourceTree = "<group>"; };
 		5D87772B0A15555400363BAA /* ScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptManager.cpp; sourceTree = "<group>"; };
 		5D87772C0A15555400363BAA /* ScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScriptManager.h; sourceTree = "<group>"; };
-		5D87772D0A15555400363BAA /* Shape.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shape.h; sourceTree = "<group>"; };
-		5D87772E0A15555400363BAA /* SteeringBehaviors.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SteeringBehaviors.cpp; sourceTree = "<group>"; };
-		5D87772F0A15555400363BAA /* SteeringBehaviors.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SteeringBehaviors.h; sourceTree = "<group>"; };
 		5D8777300A15555400363BAA /* TagManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagManager.cpp; sourceTree = "<group>"; };
 		5D8777310A15555400363BAA /* TagManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TagManager.h; sourceTree = "<group>"; };
 		5D8777320A15555400363BAA /* TextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextManager.cpp; sourceTree = "<group>"; };
@@ -434,8 +425,6 @@
 		5D8778150A1555F600363BAA /* weak_ref.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = weak_ref.cpp; sourceTree = "<group>"; };
 		5D8778160A1555F600363BAA /* wrapper_base.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = wrapper_base.cpp; sourceTree = "<group>"; };
 		5D8778180A1555F600363BAA /* CBit8.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CBit8.h; sourceTree = "<group>"; };
-		5D8778190A1555F600363BAA /* CL_AGGBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CL_AGGBuffer.cpp; sourceTree = "<group>"; };
-		5D87781A0A1555F600363BAA /* CL_AGGBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CL_AGGBuffer.h; sourceTree = "<group>"; };
 		5D87781B0A1555F600363BAA /* CL_SoundManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CL_SoundManager.cpp; sourceTree = "<group>"; };
 		5D87781C0A1555F600363BAA /* CL_SoundManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CL_SoundManager.h; sourceTree = "<group>"; };
 		5D87781D0A1555F600363BAA /* CL_VirtualFileManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CL_VirtualFileManager.cpp; sourceTree = "<group>"; };
@@ -606,9 +595,6 @@
 				5D87772A0A15555400363BAA /* ScriptKeyManager.h */,
 				5D87772B0A15555400363BAA /* ScriptManager.cpp */,
 				5D87772C0A15555400363BAA /* ScriptManager.h */,
-				5D87772D0A15555400363BAA /* Shape.h */,
-				5D87772E0A15555400363BAA /* SteeringBehaviors.cpp */,
-				5D87772F0A15555400363BAA /* SteeringBehaviors.h */,
 				5D8777300A15555400363BAA /* TagManager.cpp */,
 				5D8777310A15555400363BAA /* TagManager.h */,
 				5D8777320A15555400363BAA /* TextManager.cpp */,
@@ -698,8 +684,6 @@
 				5D58A7B60A15832C005974C1 /* ltable.c */,
 				5D58A7B70A15832C005974C1 /* ltablib.c */,
 				5D58A7B80A15832C005974C1 /* ltm.c */,
-				5D58A7B90A15832C005974C1 /* lua.c */,
-				5D58A7BA0A15832C005974C1 /* luac.c */,
 				5D58A7BB0A15832C005974C1 /* lundump.c */,
 				5D58A7BC0A15832C005974C1 /* lvm.c */,
 				5D58A7BD0A15832C005974C1 /* lzio.c */,
@@ -848,8 +832,6 @@
 			isa = PBXGroup;
 			children = (
 				5D8778180A1555F600363BAA /* CBit8.h */,
-				5D8778190A1555F600363BAA /* CL_AGGBuffer.cpp */,
-				5D87781A0A1555F600363BAA /* CL_AGGBuffer.h */,
 				5D87781B0A1555F600363BAA /* CL_SoundManager.cpp */,
 				5D87781C0A1555F600363BAA /* CL_SoundManager.h */,
 				5D87781D0A1555F600363BAA /* CL_VirtualFileManager.cpp */,
@@ -978,7 +960,6 @@
 				5D8777960A15555400363BAA /* Screen.cpp in Sources */,
 				5D8777980A15555400363BAA /* ScriptKeyManager.cpp in Sources */,
 				5D87779A0A15555400363BAA /* ScriptManager.cpp in Sources */,
-				5D87779D0A15555400363BAA /* SteeringBehaviors.cpp in Sources */,
 				5D87779F0A15555400363BAA /* TagManager.cpp in Sources */,
 				5D8777A10A15555400363BAA /* TextManager.cpp in Sources */,
 				5D8777A30A15555400363BAA /* Tile.cpp in Sources */,
@@ -1010,7 +991,6 @@
 				5D87787D0A1555F600363BAA /* stack_content_by_name.cpp in Sources */,
 				5D87787E0A1555F600363BAA /* weak_ref.cpp in Sources */,
 				5D87787F0A1555F600363BAA /* wrapper_base.cpp in Sources */,
-				5D8778810A1555F600363BAA /* CL_AGGBuffer.cpp in Sources */,
 				5D8778830A1555F600363BAA /* CL_SoundManager.cpp in Sources */,
 				5D8778850A1555F600363BAA /* CL_VirtualFileManager.cpp in Sources */,
 				5D87788A0A1555F600363BAA /* MiscUtils.cpp in Sources */,
@@ -1040,8 +1020,6 @@
 				5D58A7D60A15832C005974C1 /* ltable.c in Sources */,
 				5D58A7D70A15832C005974C1 /* ltablib.c in Sources */,
 				5D58A7D80A15832C005974C1 /* ltm.c in Sources */,
-				5D58A7D90A15832C005974C1 /* lua.c in Sources */,
-				5D58A7DA0A15832C005974C1 /* luac.c in Sources */,
 				5D58A7DB0A15832C005974C1 /* lundump.c in Sources */,
 				5D58A7DC0A15832C005974C1 /* lvm.c in Sources */,
 				5D58A7DD0A15832C005974C1 /* lzio.c in Sources */,
@@ -1060,10 +1038,13 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ../source/AppPrecomp.h;
+				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				KEEP_PRIVATE_EXTERNS = YES;
+				KEEP_PRIVATE_EXTERNS = NO;
 				PRODUCT_NAME = novashell;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
