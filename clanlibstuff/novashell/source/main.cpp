@@ -161,6 +161,7 @@ void App::OneTimeInit()
     
 	g_Console.Init();
 
+
     m_pResourceManager = new CL_ResourceManager("media/resources.xml", false);
     
 	CL_ResourceManager temp("media/editor/editor_resources.xml", false);
@@ -402,8 +403,6 @@ void App::Update()
 int App::main(int argc, char **argv)
 {
     //first move to our current dir
-	CL_Directory::change_to(CL_System::get_exe_path());
-
 
 #ifndef _DEBUG
 	stream_redirector redirect("log.txt", "log.txt");
@@ -419,7 +418,19 @@ int App::main(int argc, char **argv)
 #ifdef _DEBUG
     CL_ConsoleWindow console("Console");
     console.redirect_stdio();
-#endif      
+#endif  
+
+#ifdef __APPLE__
+ LogMsg("System path is %s", CL_System::get_exe_path().c_str());
+char stTemp[512];
+getcwd((char*)&stTemp, 512);
+LogMsg("Current working dir is %s", stTemp);
+
+ CL_Directory::change_to("../../../bin");
+getcwd((char*)&stTemp, 512);
+LogMsg("Current working dir is %s", stTemp);
+#endif
+
     try
     {
         OneTimeInit();

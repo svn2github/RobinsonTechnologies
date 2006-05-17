@@ -27,6 +27,7 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 	{
 
 	case 192: //VK_OEM_3, backtick for US keyboards
+		case 134: //backtick on MAC keyboards in OSX
 		m_bOnScreen = !m_bOnScreen;
 		//LogMsg("Toggling console display");
 	}

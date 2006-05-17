@@ -329,7 +329,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		break;
 
 
-	case  CL_KEY_F11:
+	case  CL_KEY_F1:
 		{
 			ToggleEditMode();
 			break;
