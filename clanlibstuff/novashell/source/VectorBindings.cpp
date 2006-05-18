@@ -1,5 +1,8 @@
 
-#include "appPrecomp.h"
+#include "AppPrecomp.h"
+
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
 
 using namespace luabind;
 

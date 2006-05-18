@@ -1,9 +1,16 @@
+
+
 #include "AppPrecomp.h"
+
+
 #include "BrainPlayer.h"
 #include "VisualProfile.h"
 #include "physics/Contact.h"
 #include "TextManager.h"
 #include "MaterialManager.h"
+
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
 
 #define C_PLAYER_DESIRED_SPEED 4.0f
 #define C_PLAYER_ACCEL_POWER 0.7

@@ -1,4 +1,4 @@
-#include "appPrecomp.h"
+#include "AppPrecomp.h"
 #include "main.h"
 #include "EntChooseScreenMode.h"
 #include "GameLogic.h"
@@ -10,6 +10,8 @@
 #ifdef _WIN32
   #define C_USE_FMOD
 #endif
+
+
 
 ISoundManager *g_pSoundManager;
 
@@ -41,6 +43,7 @@ void LogMsg(const char *lpFormat, ...)
 	#endif
 #endif    
 	std::cout << stTemp;
+
 }
 
 void LogError(const char *lpFormat, ...)
@@ -162,7 +165,7 @@ void App::OneTimeInit()
 	g_Console.Init();
 
 
-    m_pResourceManager = new CL_ResourceManager("media/resources.xml", false);
+    m_pResourceManager = new CL_ResourceManager("fmedia/resources.xml", false);
     
 	CL_ResourceManager temp("media/editor/editor_resources.xml", false);
     m_pResourceManager->add_resources(temp);
@@ -406,7 +409,9 @@ int App::main(int argc, char **argv)
 CL_Directory::change_to(CL_System::get_exe_path());
 
 #ifndef _DEBUG
+#define C_APP_REDIRECT_STREAM
 	stream_redirector redirect("log.txt", "log.txt");
+	
 #endif
 
     try
@@ -423,12 +428,15 @@ CL_Directory::change_to(CL_System::get_exe_path());
 
 #ifdef __APPLE__
 
- CL_Directory::change_to("../../../bin");
-
- char stTemp[512];
-getcwd((char*)&stTemp, 512);
-LogMsg("Current working dir is %s", stTemp);
+	char stTemp[512];
+	getcwd((char*)&stTemp, 512);
+//	LogMsg("Current working dir is %s", stTemp);
+	CL_Directory::change_to("../../../../bin");
+  getcwd((char*)&stTemp, 512);
+  LogMsg("Game: Set working dir to %s", stTemp);
 #endif
+
+printf("Running game..");
 
     try
     {
@@ -518,7 +526,15 @@ LogMsg("Current working dir is %s", stTemp);
 #ifdef _DEBUG
         console.display_close_message();
 #endif
-        //PostQuitMessage(0);
+        
+#ifdef __APPLE__
+#ifdef C_APP_REDIRECT_STREAM
+		redirect.DisableRedirection();
+		std::cout << "CL_Error Exception caught : " << error.message.c_str() << std::endl;			
+#endif
+#endif
+		
+		//PostQuitMessage(0);
     }
     
     OneTimeDeinit();
@@ -530,7 +546,17 @@ LogMsg("Current working dir is %s", stTemp);
         std::cout << "Early Exception caught : " << error.message.c_str() << std::endl;			
 
 #endif
-        return 0;
+
+#ifdef __APPLE__
+#ifdef C_APP_REDIRECT_STREAM
+		redirect.DisableRedirection();
+	       std::cout << "Early Exception caught : " << error.message.c_str() << std::endl;			
+		
+#endif
+#endif
+		
+		
+		return 0;
     }
 catch (int param)
 {
@@ -539,6 +565,13 @@ catch (int param)
 	catch (...)
 	{
 		std::cout << "Unknown Exception caught : " << std::endl;			
+#ifdef __APPLE__
+#ifdef C_APP_REDIRECT_STREAM
+		redirect.DisableRedirection();
+	       std::cout << "Unknown Exception caught : " << std::endl;	
+		
+#endif
+#endif
 		
 	}
     return 0;

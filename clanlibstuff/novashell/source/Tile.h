@@ -47,7 +47,7 @@ public:
 	virtual void Serialize(CL_FileHelper &helper){}; //must be handled in derived class
 	virtual void SerializeBase(CL_FileHelper &helper);
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(64,64);}
-	virtual CL_Rect GetBoundsRect() {return CL_Rect(m_vecPos.x, m_vecPos.y, m_vecPos.x+64,m_vecPos.y+64);}
+	virtual CL_Rect GetBoundsRect() {return CL_Rect(int(m_vecPos.x), int(m_vecPos.y), int(m_vecPos.x+64),int(m_vecPos.y+64));}
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, m_vecPos.x+64,m_vecPos.y+64);}
 	Tile * CreateReference(Screen *pScreen);
 	void RemoveReference(Tile *pTileRef);
@@ -103,8 +103,8 @@ public:
 	virtual void Serialize(CL_FileHelper &helper);
 	//TODO optimize these to be precached
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width(), m_rectSrc.get_height());}
-	virtual CL_Rect GetBoundsRect() {return CL_Rect(m_vecPos.x, m_vecPos.y, 
-		m_vecPos.x + m_rectSrc.get_width(), m_vecPos.y + m_rectSrc.get_height());}
+	virtual CL_Rect GetBoundsRect() {return CL_Rect(int(m_vecPos.x), int(m_vecPos.y), 
+		int(m_vecPos.x + m_rectSrc.get_width()), int(m_vecPos.y + m_rectSrc.get_height()));}
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, 
 		m_vecPos.x + m_rectSrc.get_width(), m_vecPos.y + m_rectSrc.get_height());}
 	virtual CollisionData * GetCollisionData();

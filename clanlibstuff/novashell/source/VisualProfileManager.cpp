@@ -15,7 +15,7 @@ void VisualProfileManager::Kill()
 {
 
 	VisualResourceMap::iterator ent = m_hashedResourceMap.begin();
-	for (ent; ent != m_hashedResourceMap.end(); ++ent)
+	for (; ent != m_hashedResourceMap.end(); ++ent)
 	{
 		delete (*ent).second;
 	}

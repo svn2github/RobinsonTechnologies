@@ -14,6 +14,9 @@
 #include "MaterialManager.h"
 #include "VisualProfileManager.h"
 
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
+
 #define C_PROFILE_DAT_FILENAME "profile.dat"
 const unsigned int C_PROFILE_DAT_VERSION = 0;
 
@@ -135,7 +138,7 @@ bool GameLogic::UserProfileExists(const string &name)
 
 	CL_DirectoryScanner scanner;
 
-	scanner.scan(stPath, "*");
+	if (!scanner.scan(stPath, "*")) return false;
 	while (scanner.next())
 	{
 		if (scanner.get_name() == ".") return true;
@@ -158,7 +161,8 @@ void GameLogic::ResetUserProfile(string name)
 
 	LogMsg("Resetting!");
 
-	scanner.scan(stPath, "*");
+	if (scanner.scan(stPath, "*"))
+	{
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
@@ -169,6 +173,7 @@ void GameLogic::ResetUserProfile(string name)
 			//now remove the directory
 			CL_Directory::remove(stPath+"/"+scanner.get_name(), false, false);
 		}
+	}
 	}
 
 	RemoveFile(stPath+"/"+string(C_PROFILE_DAT_FILENAME));

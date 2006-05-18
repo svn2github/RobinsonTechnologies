@@ -21,7 +21,6 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <luabind/lua_include.hpp>
-
 #include <luabind/config.hpp>
 #include <luabind/class.hpp>
 

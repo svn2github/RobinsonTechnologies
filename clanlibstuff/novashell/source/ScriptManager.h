@@ -67,7 +67,7 @@ lua_State * m_pMainState;
 
 extern ScriptKeyManager g_keyManager;
 
-static int luaPrint(lua_State *L);
+int luaPrint(lua_State *L);
 void ShowLUAMessagesIfNeeded(lua_State *pState, int result);
 
 #endif                  // include guard

@@ -133,7 +133,7 @@ public:
 
 private:
 
-	float m_fCoF, m_fCoR, m_fSep, m_fCoS;
+	float m_fCoF, m_fCoR, m_fCoS, m_fSep;
 	unsigned int m_lineColor;
 	string m_name;
 	int m_id;

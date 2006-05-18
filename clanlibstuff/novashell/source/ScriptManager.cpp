@@ -1,8 +1,11 @@
 
-#include "appPrecomp.h"
+#include "AppPrecomp.h"
 #include "ScriptManager.h"
 #include "main.h"
 #include "MovingEntity.h"
+
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
 
 using namespace luabind;
 
@@ -297,7 +300,7 @@ void ScriptManager::Kill()
 	}
 }
 
-static int luaPrint(lua_State *L)
+int luaPrint(lua_State *L)
 {
 	string str;
 

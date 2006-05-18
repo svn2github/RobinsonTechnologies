@@ -1,6 +1,9 @@
 #include "AppPreComp.h"
 #include "main.h"
 
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
+
 using namespace luabind;
 
 #include "VectorBindings.h"

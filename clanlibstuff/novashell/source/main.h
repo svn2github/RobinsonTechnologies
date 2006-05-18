@@ -36,15 +36,23 @@ public:
 		  outbuf = std::cout.rdbuf(logFile.rdbuf());
 		  errbuf = std::cerr.rdbuf(errFile.rdbuf());
 	  }
-	  ~stream_redirector()
+	 
+	
+    void DisableRedirection()
+	{
+		std::cout.rdbuf(outbuf);
+		std::cerr.rdbuf(errbuf);
+	 	
+	}
+	
+	~stream_redirector()
 	  {
-		  std::cout.rdbuf(outbuf);
-		  std::cerr.rdbuf(errbuf);
+		DisableRedirection();
 	  }
 
 private:
-	std::ofstream errFile;
 	std::ofstream logFile;
+	std::ofstream errFile;
 	std::streambuf *outbuf;
 	std::streambuf *errbuf;
 };

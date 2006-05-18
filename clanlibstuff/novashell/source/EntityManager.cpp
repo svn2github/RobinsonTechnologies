@@ -34,7 +34,7 @@ BaseGameEntity* EntityManager::GetEntityByName(std::string name)
 {
     
     EntityMap::const_iterator ent = m_EntityMap.begin();
-    for (ent; ent != m_EntityMap.end(); ++ent)
+    for (; ent != m_EntityMap.end(); ++ent)
     {
         {
             if ( (*ent).second->GetName() == name) return (*ent).second;

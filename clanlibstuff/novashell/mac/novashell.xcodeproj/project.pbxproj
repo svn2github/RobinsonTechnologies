@@ -127,6 +127,10 @@
 		5D8778830A1555F600363BAA /* CL_SoundManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781B0A1555F600363BAA /* CL_SoundManager.cpp */; };
 		5D8778850A1555F600363BAA /* CL_VirtualFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781D0A1555F600363BAA /* CL_VirtualFileManager.cpp */; };
 		5D87788A0A1555F600363BAA /* MiscUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778220A1555F600363BAA /* MiscUtils.cpp */; };
+		5DC415F20A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
+		5DC415F30A1B33AA00E9A026 /* appPrecomp.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC415F10A1B33AA00E9A026 /* appPrecomp.h */; };
+		5DC415F40A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
+		5DC415F50A1B33AA00E9A026 /* appPrecomp.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC415F10A1B33AA00E9A026 /* appPrecomp.h */; };
 		5DCDB1F90A19FA810043DCFA /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */; };
 		5DCDB1FA0A19FA810043DCFA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F80A19FA810043DCFA /* OpenGL.framework */; };
 		5DCDB2050A19FEAA0043DCFA /* libjpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D8775490A1553AA00363BAA /* libjpeg.framework */; };
@@ -252,7 +256,6 @@
 		5DCDB5EF0A1A05480043DCFA /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCDB4800A1A00090043DCFA /* ClanGUI.framework */; };
 		5DCDB5F00A1A05480043DCFA /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCDB4810A1A00090043DCFA /* ClanGUIStyleSilver.framework */; };
 		5DCDB5F10A1A05480043DCFA /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCDB4820A1A00090043DCFA /* ClanLib.framework */; };
-		8D0C4E920486CD37000505A6 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20286C33FDCF999611CA2CEA /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -270,93 +273,6 @@
 		};
 /* End PBXBuildStyle section */
 
-/* Begin PBXContainerItemProxy section */
-		5DCDB7D20A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB6ED209116C82001218AD /* ClanLib.framework */;
-			remoteInfo = ClanLib;
-		};
-		5DCDB7D40A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB6F7E09116EB0001218AD /* ClanCore.framework */;
-			remoteInfo = ClanCore;
-		};
-		5DCDB7D60A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB702A09117122001218AD /* ClanApp.framework */;
-			remoteInfo = ClanApp;
-		};
-		5DCDB7D80A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB70C60911741E001218AD /* ClanNetwork.framework */;
-			remoteInfo = ClanNetwork;
-		};
-		5DCDB7DA0A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB70400911725C001218AD /* ClanDisplay.framework */;
-			remoteInfo = ClanDisplay;
-		};
-		5DCDB7DC0A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB7111091174ED001218AD /* ClanGL.framework */;
-			remoteInfo = ClanGL;
-		};
-		5DCDB7DE0A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB743F091178E0001218AD /* ClanGUI.framework */;
-			remoteInfo = ClanGUI;
-		};
-		5DCDB7E00A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB750109117B92001218AD /* ClanGUIStyleSilver.framework */;
-			remoteInfo = ClanGUIStyleSilver;
-		};
-		5DCDB7E20A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB754409117C75001218AD /* ClanSound.framework */;
-			remoteInfo = ClanSound;
-		};
-		5DCDB7E40A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB75BB09117D92001218AD /* ClanMikMod.framework */;
-			remoteInfo = ClanMikMod;
-		};
-		5DCDB7E60A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB75EB09117E79001218AD /* ClanSDL.framework */;
-			remoteInfo = ClanSDL;
-		};
-		5DCDB7E80A1AC2270043DCFA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 14FB764009118020001218AD /* ClanVorbis.framework */;
-			remoteInfo = ClanVorbis;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		5D8776C50A15549400363BAA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -373,6 +289,7 @@
 				5D8776CE0A1554C400363BAA /* ClanCore.framework in CopyFiles */,
 				5D8776CF0A1554C400363BAA /* ClanDisplay.framework in CopyFiles */,
 				5D8776D00A1554C400363BAA /* ClanApp.framework in CopyFiles */,
+				5DC415F50A1B33AA00E9A026 /* appPrecomp.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,6 +308,7 @@
 				5DCDB5F10A1A05480043DCFA /* ClanLib.framework in CopyFiles */,
 				5DCDB2050A19FEAA0043DCFA /* libjpeg.framework in CopyFiles */,
 				5DCDB2060A19FEAA0043DCFA /* libpng.framework in CopyFiles */,
+				5DC415F30A1B33AA00E9A026 /* appPrecomp.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,6 +544,8 @@
 		5D8778210A1555F600363BAA /* ISoundManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ISoundManager.h; sourceTree = "<group>"; };
 		5D8778220A1555F600363BAA /* MiscUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MiscUtils.cpp; sourceTree = "<group>"; };
 		5D8778230A1555F600363BAA /* MiscUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MiscUtils.h; sourceTree = "<group>"; };
+		5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AppPrecomp.cpp; path = ../source/AppPrecomp.cpp; sourceTree = SOURCE_ROOT; };
+		5DC415F10A1B33AA00E9A026 /* appPrecomp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = appPrecomp.h; path = ../source/appPrecomp.h; sourceTree = SOURCE_ROOT; };
 		5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		5DCDB1F80A19FA810043DCFA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		5DCDB2860A19FEAA0043DCFA /* novashell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -636,8 +556,7 @@
 		5DCDB4800A1A00090043DCFA /* ClanGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUI.framework; path = "../../../../dev/Clanlib-0.8/MacOSX/ClanGUI.framework"; sourceTree = SOURCE_ROOT; };
 		5DCDB4810A1A00090043DCFA /* ClanGUIStyleSilver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUIStyleSilver.framework; path = "../../../../dev/Clanlib-0.8/MacOSX/ClanGUIStyleSilver.framework"; sourceTree = SOURCE_ROOT; };
 		5DCDB4820A1A00090043DCFA /* ClanLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanLib.framework; path = "../../../../dev/Clanlib-0.8/MacOSX/ClanLib.framework"; sourceTree = SOURCE_ROOT; };
-		5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ClanLib.xcodeproj; path = "../../../../dev/Clanlib-0.8/ClanLib.xcodeproj"; sourceTree = SOURCE_ROOT; };
-		8D0C4E970486CD37000505A6 /* novashell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D0C4E970486CD37000505A6 /* novashell_debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell_debug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -673,7 +592,6 @@
 				5D87755B0A1553AA00363BAA /* ClanCore.framework in Frameworks */,
 				5D87755C0A1553AA00363BAA /* ClanDisplay.framework in Frameworks */,
 				5D87755D0A1553AA00363BAA /* ClanApp.framework in Frameworks */,
-				8D0C4E920486CD37000505A6 /* Carbon.framework in Frameworks */,
 				5DCDB1F90A19FA810043DCFA /* CoreAudio.framework in Frameworks */,
 				5DCDB1FA0A19FA810043DCFA /* OpenGL.framework in Frameworks */,
 			);
@@ -685,7 +603,7 @@
 		195DF8CFFE9D517E11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D0C4E970486CD37000505A6 /* novashell.app */,
+				8D0C4E970486CD37000505A6 /* novashell_debug.app */,
 				5DCDB2860A19FEAA0043DCFA /* novashell.app */,
 			);
 			name = Products;
@@ -694,7 +612,6 @@
 		20286C29FDCF999611CA2CEA /* novashell */ = {
 			isa = PBXGroup;
 			children = (
-				5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */,
 				20286C32FDCF999611CA2CEA /* External Frameworks and Libraries */,
 				20286C2AFDCF999611CA2CEA /* Sources */,
 				20286C2CFDCF999611CA2CEA /* Resources */,
@@ -706,6 +623,8 @@
 		20286C2AFDCF999611CA2CEA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */,
+				5DC415F10A1B33AA00E9A026 /* appPrecomp.h */,
 				5DC490540A16EB3B007BE8D2 /* lua */,
 				5DC490510A16EAF6007BE8D2 /* luabind */,
 				5D8778170A1555F600363BAA /* misc */,
@@ -761,8 +680,6 @@
 				5D8777080A15555400363BAA /* main.cpp */,
 				5D87770C0A15555400363BAA /* Message.cpp */,
 				5D8777180A15555400363BAA /* physics */,
-				5D8777250A15555400363BAA /* Profiler */,
-				5D8777260A15555400363BAA /* ProfilerGame */,
 			);
 			name = source;
 			path = ../source;
@@ -783,20 +700,6 @@
 				5D8777220A15555400363BAA /* vector.h */,
 			);
 			path = physics;
-			sourceTree = "<group>";
-		};
-		5D8777250A15555400363BAA /* Profiler */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Profiler;
-			sourceTree = "<group>";
-		};
-		5D8777260A15555400363BAA /* ProfilerGame */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ProfilerGame;
 			sourceTree = "<group>";
 		};
 		5D8777B70A1555F600363BAA /* src */ = {
@@ -1066,25 +969,6 @@
 			name = Release;
 			sourceTree = "<group>";
 		};
-		5DCDB7C20A1AC2270043DCFA /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5DCDB7D30A1AC2270043DCFA /* ClanLib.framework */,
-				5DCDB7D50A1AC2270043DCFA /* ClanCore.framework */,
-				5DCDB7D70A1AC2270043DCFA /* ClanApp.framework */,
-				5DCDB7D90A1AC2270043DCFA /* ClanNetwork.framework */,
-				5DCDB7DB0A1AC2270043DCFA /* ClanDisplay.framework */,
-				5DCDB7DD0A1AC2270043DCFA /* ClanGL.framework */,
-				5DCDB7DF0A1AC2270043DCFA /* ClanGUI.framework */,
-				5DCDB7E10A1AC2270043DCFA /* ClanGUIStyleSilver.framework */,
-				5DCDB7E30A1AC2270043DCFA /* ClanSound.framework */,
-				5DCDB7E50A1AC2270043DCFA /* ClanMikMod.framework */,
-				5DCDB7E70A1AC2270043DCFA /* ClanSDL.framework */,
-				5DCDB7E90A1AC2270043DCFA /* ClanVorbis.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		5DCDB81D0A1AE5080043DCFA /* Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1164,7 +1048,7 @@
 			name = novashell_debug;
 			productInstallPath = "$(HOME)/Applications";
 			productName = novashell;
-			productReference = 8D0C4E970486CD37000505A6 /* novashell.app */;
+			productReference = 8D0C4E970486CD37000505A6 /* novashell_debug.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1182,105 +1066,12 @@
 			hasScannedForEncodings = 1;
 			mainGroup = 20286C29FDCF999611CA2CEA /* novashell */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 5DCDB7C20A1AC2270043DCFA /* Products */;
-					ProjectRef = 5DCDB7C10A1AC2270043DCFA /* ClanLib.xcodeproj */;
-				},
-			);
 			targets = (
 				8D0C4E890486CD37000505A6 /* novashell_debug */,
 				5DCDB2030A19FEAA0043DCFA /* novashell_release */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		5DCDB7D30A1AC2270043DCFA /* ClanLib.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanLib.framework;
-			remoteRef = 5DCDB7D20A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7D50A1AC2270043DCFA /* ClanCore.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanCore.framework;
-			remoteRef = 5DCDB7D40A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7D70A1AC2270043DCFA /* ClanApp.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanApp.framework;
-			remoteRef = 5DCDB7D60A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7D90A1AC2270043DCFA /* ClanNetwork.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanNetwork.framework;
-			remoteRef = 5DCDB7D80A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7DB0A1AC2270043DCFA /* ClanDisplay.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanDisplay.framework;
-			remoteRef = 5DCDB7DA0A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7DD0A1AC2270043DCFA /* ClanGL.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanGL.framework;
-			remoteRef = 5DCDB7DC0A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7DF0A1AC2270043DCFA /* ClanGUI.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanGUI.framework;
-			remoteRef = 5DCDB7DE0A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7E10A1AC2270043DCFA /* ClanGUIStyleSilver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanGUIStyleSilver.framework;
-			remoteRef = 5DCDB7E00A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7E30A1AC2270043DCFA /* ClanSound.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanSound.framework;
-			remoteRef = 5DCDB7E20A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7E50A1AC2270043DCFA /* ClanMikMod.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanMikMod.framework;
-			remoteRef = 5DCDB7E40A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7E70A1AC2270043DCFA /* ClanSDL.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanSDL.framework;
-			remoteRef = 5DCDB7E60A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5DCDB7E90A1AC2270043DCFA /* ClanVorbis.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = ClanVorbis.framework;
-			remoteRef = 5DCDB7E80A1AC2270043DCFA /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5DCDB20E0A19FEAA0043DCFA /* Resources */ = {
@@ -1406,6 +1197,7 @@
 				5DCDB2730A19FEAA0043DCFA /* lvm.c in Sources */,
 				5DCDB2740A19FEAA0043DCFA /* lzio.c in Sources */,
 				5DCDB2750A19FEAA0043DCFA /* print.c in Sources */,
+				5DC415F20A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1515,152 +1307,91 @@
 				5D58A7DC0A15832C005974C1 /* lvm.c in Sources */,
 				5D58A7DD0A15832C005974C1 /* lzio.c in Sources */,
 				5D58A7DE0A15832C005974C1 /* print.c in Sources */,
+				5DC415F40A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		5DCDB2840A19FEAA0043DCFA /* Debug */ = {
+		5DCDB2840A19FEAA0043DCFA /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"~/dev/Clanlib-0.8/MacOSXDebug",
-					"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks",
-					"$(SRCROOT)/../../../../dev/Clanlib-0.8/MacOSX",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
-				INFOPLIST_FILE = "";
-				INSTALL_PATH = "";
-				KEEP_PRIVATE_EXTERNS = NO;
-				OTHER_CPLUSPLUSFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
-				PRODUCT_NAME = novashell;
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
-			};
-			name = Debug;
-		};
-		5DCDB2850A19FEAA0043DCFA /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS)",
-					"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks",
-					"$(SRCROOT)/../../../../dev/Clanlib-0.8/MacOSX",
-				);
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "";
-				INSTALL_PATH = "";
-				PRODUCT_NAME = novashell_release;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		C0E91AC608A95435008D54AB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"~/dev/Clanlib-0.8/MacOSXDebug",
-					"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "";
-				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
-				INFOPLIST_FILE = "";
-				INSTALL_PATH = "";
-				KEEP_PRIVATE_EXTERNS = NO;
-				OTHER_CPLUSPLUSFLAGS = "";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Carbon,
-				);
-				PRODUCT_NAME = novashell;
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
-			};
-			name = Debug;
-		};
-		C0E91AC708A95435008D54AB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(FRAMEWORK_SEARCH_PATHS)",
-					"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks",
-				);
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				INFOPLIST_FILE = "";
-				INSTALL_PATH = "";
-				PRODUCT_NAME = novashell;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		C0E91ACA08A95435008D54AB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				COPY_PHASE_STRIP = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../../SharedLib/lua",
-					"$(SRCROOT)/../../../SharedLib/lua/src",
-					"$(SRCROOT)/../../../SharedLib/luabind",
-					"$(SRCROOT)/../../../SharedLib",
-					"~/dev/boost_1_33_1",
-					"$(HEADER_SEARCH_PATHS)",
-				);
-				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-			};
-			name = Debug;
-		};
-		C0E91ACB08A95435008D54AB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"~/dev/Clanlib-0.8/MacOSX",
+					"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ../source/AppPrecomp.h;
+				INFOPLIST_FILE = "";
+				INSTALL_PATH = "";
+				KEEP_PRIVATE_EXTERNS = NO;
+				LINKER_DISPLAYS_FILES_FOR_UNDEFINED_SYMBOLS = NO;
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PRODUCT_NAME = novashell;
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = debugging;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		C0E91AC608A95435008D54AB /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"~/dev/Clanlib-0.8/MacOSXDebug",
+					"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PFE_FILE_C_DIALECTS = "c++";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = ../source/AppPrecomp.h;
+				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
+				INFOPLIST_FILE = "";
+				INSTALL_PATH = "";
+				OTHER_CPLUSPLUSFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				PRODUCT_NAME = novashell_debug;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Default;
+		};
+		C0E91ACA08A95435008D54AB /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				COPY_PHASE_STRIP = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1675,7 +1406,7 @@
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
-			name = Release;
+			name = Default;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1683,29 +1414,26 @@
 		5DCDB2830A19FEAA0043DCFA /* Build configuration list for PBXNativeTarget "novashell_release" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5DCDB2840A19FEAA0043DCFA /* Debug */,
-				5DCDB2850A19FEAA0043DCFA /* Release */,
+				5DCDB2840A19FEAA0043DCFA /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Default;
 		};
 		C0E91AC508A95435008D54AB /* Build configuration list for PBXNativeTarget "novashell_debug" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C0E91AC608A95435008D54AB /* Debug */,
-				C0E91AC708A95435008D54AB /* Release */,
+				C0E91AC608A95435008D54AB /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Default;
 		};
 		C0E91AC908A95435008D54AB /* Build configuration list for PBXProject "novashell" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C0E91ACA08A95435008D54AB /* Debug */,
-				C0E91ACB08A95435008D54AB /* Release */,
+				C0E91ACA08A95435008D54AB /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Default;
 		};
 /* End XCConfigurationList section */
 	};

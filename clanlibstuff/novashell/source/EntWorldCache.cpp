@@ -112,7 +112,7 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 	}
 
 	bool bWasOriginallyInMem = pWorldChunk->IsScreenLoaded();
-	Screen *pScreen = pWorldChunk->GetScreen();
+	//Screen *pScreen = pWorldChunk->GetScreen();
 
 	//make thumbnail
 
@@ -291,12 +291,12 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 	//viewable area in world coords
 	CL_Rect viewRect;
 	CL_Vector2 posTmp = ScreenToWorld(CL_Vector2(recScreen.left,recScreen.top));
-	viewRect.left = posTmp.x;
-	viewRect.top = posTmp.y;
+	viewRect.left = int(posTmp.x);
+	viewRect.top = int(posTmp.y);
 
 	posTmp = ScreenToWorld(CL_Vector2(recScreen.right,recScreen.bottom));
-	viewRect.right = posTmp.x;
-	viewRect.bottom = posTmp.y;
+	viewRect.right = int(posTmp.x);
+	viewRect.bottom = int(posTmp.y);
 
 	m_tileLayerDrawList.clear();
 	ResetPendingEntityMovementAndDeletions();

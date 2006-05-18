@@ -26,6 +26,7 @@
 
 #include <boost/config.hpp>
 
+
 #ifdef BOOST_MSVC
 	#define LUABIND_ANONYMOUS_FIX static
 #else

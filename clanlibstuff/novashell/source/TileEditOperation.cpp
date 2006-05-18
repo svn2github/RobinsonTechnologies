@@ -1,4 +1,4 @@
-#include "appPrecomp.h"
+#include "AppPrecomp.h"
 #include "TileEditOperation.h"
 #include "EntWorldCache.h"
 #include "GameLogic.h"

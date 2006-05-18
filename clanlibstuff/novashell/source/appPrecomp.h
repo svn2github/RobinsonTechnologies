@@ -3,15 +3,14 @@
 #ifndef _APPPRE
 #define _APPPRE
 
-#include "lua/etc/lua.hpp"
-#include <luabind/luabind.hpp>
-#include <luabind/operator.hpp>
+#ifdef __cplusplus
 
 #include <Clanlib/core.h>
 #include <Clanlib/application.h>
 
-
 #define Zone CarbonZone
+#define check CarbonCheck
+
 #include <ClanLib/display.h>
 
 #include <Clanlib/gl.h> 
@@ -20,6 +19,11 @@
 #include <Clanlib/guistylesilver.h>
 #include <Clanlib/signals.h>
 #undef Zone
+#undef check
+
+#include "lua/etc/lua.hpp"
+
+
 
 
 #include <misc/CL_VirtualFileManager.h>
@@ -39,5 +43,6 @@ using namespace std;
 
 
 #pragma warning (disable:4244)
+#endif
 
 #endif

@@ -1,6 +1,9 @@
-#include "appPrecomp.h"
+#include "AppPrecomp.h"
 #include "MovingEntity.h"
 #include "DataManager.h"
+
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
 
 using namespace luabind;
 

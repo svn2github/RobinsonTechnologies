@@ -93,7 +93,7 @@ World::~World()
 void World::Kill()
 {
    WorldMap::iterator ent = m_worldMap.begin();
-    for (ent; ent != m_worldMap.end(); ++ent)
+    for (; ent != m_worldMap.end(); ++ent)
     {
         {
               delete (*ent).second;

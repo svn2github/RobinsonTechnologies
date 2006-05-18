@@ -10,6 +10,9 @@
 #include "physics/Contact.h"
 #include "MaterialManager.h"
 
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
+
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
 //there are issues with sliding along walls thinking it's a ground when they are built out of small blocks, this
@@ -387,7 +390,7 @@ bool MovingEntity::LoadScript(const char *pFileName)
 {
 	SAFE_DELETE(m_pScriptObject);
 	m_pScriptObject = new ScriptObject();
-	string s = "media\\script\\";
+	string s = "media/script/";
 	s += pFileName;
 	
 	if (!m_pScriptObject->Load(s.c_str()))
