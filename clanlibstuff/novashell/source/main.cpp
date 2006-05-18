@@ -165,7 +165,7 @@ void App::OneTimeInit()
 	g_Console.Init();
 
 
-    m_pResourceManager = new CL_ResourceManager("fmedia/resources.xml", false);
+    m_pResourceManager = new CL_ResourceManager("media/resources.xml", false);
     
 	CL_ResourceManager temp("media/editor/editor_resources.xml", false);
     m_pResourceManager->add_resources(temp);
