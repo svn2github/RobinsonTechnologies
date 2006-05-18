@@ -24,7 +24,9 @@
 #include "lua/etc/lua.hpp"
 
 
-
+#ifdef _WIN32
+#include <float.h> //need FLT_MAX const
+#endif
 
 #include <misc/CL_VirtualFileManager.h>
 #include "EntityManager.h"

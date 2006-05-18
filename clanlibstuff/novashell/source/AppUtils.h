@@ -1,6 +1,5 @@
 #ifndef AppUtils_HEADER_INCLUDED // include guard
 #define AppUtils_HEADER_INCLUDED  // include guard
-
 #include "Screen.h"
 void BlitMessage(string msg);
 string ColorToString(const CL_Color &colr);

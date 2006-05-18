@@ -298,6 +298,14 @@
 				<File
 					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.h"
