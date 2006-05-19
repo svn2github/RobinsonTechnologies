@@ -76,12 +76,14 @@ public:
 	{
 		m_pOutput = NULL;
 		m_pInput = pInput;
+		m_pInput->set_little_endian_mode();
 	}
 
 	CL_FileHelper(CL_OutputSource *pOutput)
 	{
 		m_pOutput = pOutput;
 		m_pInput = NULL;
+		m_pOutput->set_little_endian_mode();
 	}
 
 	bool IsWriting()
