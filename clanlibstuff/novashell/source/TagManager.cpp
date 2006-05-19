@@ -268,21 +268,13 @@ void TagManager::Load(World *pWorld)
 
 	int version;
 	helper.process(version);
-	LogMsg("Loaded version %d of tag data", version);
-	
+		
 	CL_Vector2 pos;
 	int tag;
 	TagObject o;
 	o.m_entID = 0;
 	o.m_pWorld = pWorld;
 
-	if (CL_Endian::is_system_big())
-	{
-		LogMsg("System is big endian.");
-	} else
-	{
-		LogMsg("System is little endian");
-	}
 	
 	unsigned int hashID;
 
@@ -293,8 +285,6 @@ void TagManager::Load(World *pWorld)
 	{
 		helper.process(tag);
 
-		LogMsg("Found tag %d", tag);
-
 		switch (tag)
 		{
 		case E_TAG_DONE:
@@ -304,11 +294,9 @@ void TagManager::Load(World *pWorld)
 		case E_TAG_RECORD:
 
 			helper.process(hashID);
-			LogMsg("Hash ID is %d", hashID);
 			
 			helper.process(o.m_pos);
 			
-			LogMsg("Loaded vector2: %s", PrintVector(o.m_pos).c_str());
 			AddCachedNameTag(hashID, o);
 			break;
 
