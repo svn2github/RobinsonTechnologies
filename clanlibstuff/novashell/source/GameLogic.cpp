@@ -195,6 +195,7 @@ bool GameLogic::SetUserProfileName(const string &name)
 	//first close down any open map files
 
 	m_strUserProfileName = name;
+	CL_Directory::create( m_strBaseUserProfilePath); //just in case it wasn't created yet
 	m_strUserProfilePathWithName = m_strBaseUserProfilePath + "/" + m_strUserProfileName;
 
 	//make all dirs that will be needed
