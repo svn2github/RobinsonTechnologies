@@ -48,10 +48,10 @@ public:
 	//were mounted
 	CL_InputSource * GetFile(const string &fname);
 	
-	//these always operate on the LAST thing mounted
-	CL_OutputSource * PutFile(const string &fname);
-	bool RemoveFile(const string &fname);
-	bool CreateDir(const string &fname);
+	CL_OutputSource * PutFile(const string &fname); //puts a file in the newest mounted path
+	bool RemoveFile(const string &fname); //removes a file from the newest mounted path
+	bool CreateDir(const string &fname); //creates a dir in newest mounted path
+	bool LocateFile(string &fnameOut); //returns the correct path to find this file
 	void Reset(); //unmount everything
 
 protected:

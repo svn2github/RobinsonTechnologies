@@ -8,16 +8,16 @@
 #include "Console.h"
 
 #ifdef _WIN32
-  #define C_USE_FMOD
+  //#define C_USE_FMOD
 #endif
-
-
 
 ISoundManager *g_pSoundManager;
 
 #ifdef C_USE_FMOD
 #include "misc/FMSoundManager.h"
 #else
+#include <ClanLib/vorbis.h>
+#include <ClanLib/sound.h>
 #include "misc/CL_SoundManager.h"
 #endif
 
@@ -191,9 +191,12 @@ void App::OneTimeInit()
 #ifdef C_USE_FMOD
 	g_pSoundManager = new CFMSoundManager;
 #else
-    g_pSoundManager = new CL_SoundManager;
+	
+	g_pSoundManager = new CL_SoundManager;
 #endif
 	g_pSoundManager->Init();
+
+
 	m_pScriptManager = new ScriptManager;
 	m_pGameLogic = new GameLogic();
  
@@ -419,6 +422,14 @@ CL_Directory::change_to(CL_System::get_exe_path());
         CL_SetupCore setup_core;
         CL_SetupDisplay setup_display;
         CL_SetupGL setup_gl;
+
+#ifndef C_USE_FMOD
+
+		CL_SetupSound setup_sound;
+		CL_SetupVorbis setup_vorbis;
+		CL_SoundOutput sound_output(44100);
+#endif
+
    
     // Create a console window for text-output if in debug mode
 #ifdef _DEBUG
@@ -436,7 +447,6 @@ CL_Directory::change_to(CL_System::get_exe_path());
   LogMsg("Game: Set working dir to %s", stTemp);
 #endif
 
-printf("Running game..");
 
     try
     {
@@ -510,8 +520,7 @@ printf("Running game..");
             }
             
         }
-        
-        
+         
     }
     catch(CL_Error error)
     {

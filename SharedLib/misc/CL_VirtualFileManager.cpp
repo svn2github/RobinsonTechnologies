@@ -155,7 +155,6 @@ CL_OutputSource * CL_VirtualFileManager::PutFile(const string &fname)
 	return NULL;
 }
 
-
 bool CL_VirtualFileManager::CreateDir(const string &fname)
 {
 	CL_VirtualFileSource *pSource = NULL;
@@ -204,7 +203,34 @@ bool CL_VirtualFileManager::RemoveFile(const string &fname)
 		}	
 	}
 
-
 	return false; //couldn't find it
 }
 
+bool CL_VirtualFileManager::LocateFile(string &fnameOut)
+{
+	CL_VirtualFileSource *pSource = NULL;
+
+	filesource_vector::reverse_iterator itor;
+
+	for (itor = m_vecSource.rbegin(); itor != m_vecSource.rend(); itor++)
+	{
+		pSource = &(*itor);
+
+		switch(pSource->m_type)
+		{
+		case CL_VirtualFileSource::eFilePath:
+
+			if (exist( (pSource->m_strPath+"/"+fnameOut).c_str()))
+			{
+				fnameOut = pSource->m_strPath+"/"+fnameOut;
+				return true;
+			}
+			break;
+
+		default:
+			throw CL_Error("Unsupported virtual file format");
+		}	
+	}
+
+	return false; //couldn't find it
+}

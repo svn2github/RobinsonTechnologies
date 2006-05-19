@@ -11,6 +11,30 @@
 #define CL_SoundManager_h__
 
 #include "ISoundManager.h"
+#include <ClanLib/sound.h>
+
+//these are saved and cached out
+class SoundResource
+{
+public:
+	
+	CL_SoundBuffer m_buffer;
+};
+
+class SoundSession
+{
+public:
+
+	~SoundSession()
+	{
+		m_session.stop();
+	}
+	CL_SoundBuffer_Session m_session;
+};
+
+typedef std::map<string, SoundResource> soundResourceMap;
+
+typedef std::map<int, SoundSession> soundSessionMap;
 
 class CL_SoundManager:public ISoundManager
 {
@@ -24,7 +48,7 @@ public:
 	virtual int PlayMusic(const char *p_fname, int i_loop_count);
 
 	virtual bool Init();
-	virtual void UpdateSounds() {}; //called every frame, only need for fading/3d
+	virtual void UpdateSounds(); //called every frame, only need for fading/3d
 	virtual void MuteAll(bool b_new);
 
 	virtual void Kill(); //kills everything, unloads all sounds and main driver
@@ -36,7 +60,15 @@ public:
 	virtual bool IsMusicPlaying();
 
 protected:
-	
+
+	SoundResource * LocateSound(const char *pFname);
+	int GetUniqueID() {return ++m_baseID;}
+
+	soundResourceMap m_soundResources;
+	soundSessionMap m_soundSessions;
+
+	CL_SoundBuffer_Session m_music;
+	int m_baseID;
 
 private:
 };

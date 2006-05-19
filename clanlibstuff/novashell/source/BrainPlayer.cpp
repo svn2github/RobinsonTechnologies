@@ -13,7 +13,7 @@
 #include <luabind/operator.hpp>
 
 #define C_PLAYER_DESIRED_SPEED 4.0f
-#define C_PLAYER_ACCEL_POWER 0.7
+#define C_PLAYER_ACCEL_POWER 0.7f
 
 //how many frames to apply the jump force
 #define C_PLAYER_JUMP_SECOND_BURST_MS 0
@@ -22,7 +22,7 @@
 #define C_PLAYER_JUMP_INITIAL_FORCE 1
 #define C_PLAYER_JUMP_SECOND_FORCE 1
 #define C_PLAYER_JUMP_DRAG_DOWN 0.32f
-#define C_PLAYER_JUMP_FORCE_WEAKEN_MULT 0.8;
+#define C_PLAYER_JUMP_FORCE_WEAKEN_MULT 0.8f;
 #define C_PLAYER_AIR_DAMPENING 0.4f
 #define C_PLAYER_GROUND_DAMPENING 0.4f //is removed from speed, not multiplied
 

@@ -186,7 +186,7 @@
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\SharedLib\lib;..\..\..\SharedLib\lib\clanlib;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\FMOD\lib"
 				GenerateManifest="true"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/test_debug.pdb"
 				SubSystem="2"
@@ -298,6 +298,14 @@
 				<File
 					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.cpp"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
 						>
