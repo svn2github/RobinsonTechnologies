@@ -8,7 +8,7 @@ extern CL_VirtualFileManager g_VFManager;
 CL_SoundManager::CL_SoundManager()
 {
 
-	int m_baseID = 0;
+	m_baseID = 0;
 }
 
 void CL_SoundManager::MuteAll(bool b_new)
@@ -139,8 +139,10 @@ void CL_SoundManager::UpdateSounds()
 		if (!itor->second.m_session.is_playing())
 		{
 			//delete it I guess
-			itor = m_soundSessions.erase(itor);
-
+			soundSessionMap::iterator itorSave = itor;
+			itorSave++;
+			m_soundSessions.erase(itor);
+			itor = itorSave;
 			//LogMsg("Deleting sound. %d left", m_soundSessions.size());
 			continue;
 		}

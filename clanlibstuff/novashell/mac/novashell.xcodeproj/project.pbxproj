@@ -291,84 +291,84 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB6ED209116C82001218AD /* ClanLib.framework */;
+			remoteGlobalIDString = 14FB6ED209116C82001218AD;
 			remoteInfo = ClanLib;
 		};
 		5DCC363B0A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB6F7E09116EB0001218AD /* ClanCore.framework */;
+			remoteGlobalIDString = 14FB6F7E09116EB0001218AD;
 			remoteInfo = ClanCore;
 		};
 		5DCC363D0A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB702A09117122001218AD /* ClanApp.framework */;
+			remoteGlobalIDString = 14FB702A09117122001218AD;
 			remoteInfo = ClanApp;
 		};
 		5DCC363F0A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB70C60911741E001218AD /* ClanNetwork.framework */;
+			remoteGlobalIDString = 14FB70C60911741E001218AD;
 			remoteInfo = ClanNetwork;
 		};
 		5DCC36410A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB70400911725C001218AD /* ClanDisplay.framework */;
+			remoteGlobalIDString = 14FB70400911725C001218AD;
 			remoteInfo = ClanDisplay;
 		};
 		5DCC36430A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB7111091174ED001218AD /* ClanGL.framework */;
+			remoteGlobalIDString = 14FB7111091174ED001218AD;
 			remoteInfo = ClanGL;
 		};
 		5DCC36450A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB743F091178E0001218AD /* ClanGUI.framework */;
+			remoteGlobalIDString = 14FB743F091178E0001218AD;
 			remoteInfo = ClanGUI;
 		};
 		5DCC36470A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB750109117B92001218AD /* ClanGUIStyleSilver.framework */;
+			remoteGlobalIDString = 14FB750109117B92001218AD;
 			remoteInfo = ClanGUIStyleSilver;
 		};
 		5DCC36490A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB754409117C75001218AD /* ClanSound.framework */;
+			remoteGlobalIDString = 14FB754409117C75001218AD;
 			remoteInfo = ClanSound;
 		};
 		5DCC364B0A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB75BB09117D92001218AD /* ClanMikMod.framework */;
+			remoteGlobalIDString = 14FB75BB09117D92001218AD;
 			remoteInfo = ClanMikMod;
 		};
 		5DCC364D0A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB75EB09117E79001218AD /* ClanSDL.framework */;
+			remoteGlobalIDString = 14FB75EB09117E79001218AD;
 			remoteInfo = ClanSDL;
 		};
 		5DCC364F0A1C8F0500886F30 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5DCC36290A1C8F0500886F30 /* ClanLib.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14FB764009118020001218AD /* ClanVorbis.framework */;
+			remoteGlobalIDString = 14FB764009118020001218AD;
 			remoteInfo = ClanVorbis;
 		};
 /* End PBXContainerItemProxy section */
@@ -1570,6 +1570,7 @@
 		5DCDB2840A19FEAA0043DCFA /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = ppc;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1610,6 +1611,7 @@
 		C0E91AC608A95435008D54AB /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = i386;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"~/dev/Clanlib-0.8/MacOSXDebug",
