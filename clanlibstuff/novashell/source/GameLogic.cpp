@@ -1,4 +1,4 @@
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "GameLogic.h"
 #include "Main.h"
 #include "EntEditor.h"

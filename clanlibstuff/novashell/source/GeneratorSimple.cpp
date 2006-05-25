@@ -1,4 +1,4 @@
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "GeneratorSimple.h"
 #include "GameLogic.h"
 

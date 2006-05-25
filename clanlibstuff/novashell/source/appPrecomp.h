@@ -5,19 +5,19 @@
 
 #ifdef __cplusplus
 
-#include <Clanlib/core.h>
-#include <Clanlib/application.h>
+#include <ClanLib/core.h>
+#include <ClanLib/application.h>
 
 #define Zone CarbonZone
 #define check CarbonCheck
 
 #include <ClanLib/display.h>
 
-#include <Clanlib/gl.h> 
+#include <ClanLib/gl.h> 
 #include <misc/MiscUtils.h>
-#include <Clanlib/gui.h>
-#include <Clanlib/guistylesilver.h>
-#include <Clanlib/signals.h>
+#include <ClanLib/gui.h>
+#include <ClanLib/guistylesilver.h>
+#include <ClanLib/signals.h>
 #undef Zone
 #undef check
 

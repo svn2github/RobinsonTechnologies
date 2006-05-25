@@ -18,7 +18,7 @@
 //SETH
 
 
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "Contact.h"
 #include "Body.h"
 

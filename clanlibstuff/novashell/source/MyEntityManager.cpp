@@ -1,4 +1,4 @@
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "MyEntityManager.h"
 #include "main.h"
 #include "BaseGameEntity.h"

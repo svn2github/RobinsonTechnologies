@@ -1,4 +1,4 @@
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "main.h"
 #include "TextManager.h"
 #include "MovingEntity.h"

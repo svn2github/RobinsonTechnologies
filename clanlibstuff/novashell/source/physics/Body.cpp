@@ -16,7 +16,7 @@ Description:
 $History: $
 ------------------------------------------------------------------
 */
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "Body.h"
 #include "Contact.h"
 

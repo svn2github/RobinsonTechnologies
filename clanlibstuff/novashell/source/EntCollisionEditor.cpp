@@ -1,4 +1,4 @@
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "Screen.h"
 #include "EntCollisionEditor.h"
 #include "Tile.h"

@@ -1,4 +1,4 @@
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "EntChooseScreenMode.h"
 #include "GameLogic.h"
 //#include <strstream>

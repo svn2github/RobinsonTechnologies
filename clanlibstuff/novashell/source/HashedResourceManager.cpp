@@ -1,4 +1,4 @@
-#include "AppPreComp.h"
+#include "AppPrecomp.h"
 #include "HashedResourceManager.h"
 #include "GameLogic.h"
 #include "TileEditOperation.h"
