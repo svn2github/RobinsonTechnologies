@@ -6,7 +6,7 @@
 #ifndef CL_VirtualFileManager_HEADER_INCLUDED // include guard
 #define CL_VirtualFileManager_HEADER_INCLUDED  // include guard
 
-#include "Clanlib/core.h"
+#include "ClanLib/core.h"
 #include "MiscUtils.h"
 
 using namespace std;
