@@ -35,3 +35,4 @@ private:
 };
 
 #define GetMyEntityMgr GetApp()->GetMyGameLogic()->GetMyEntityManager()
+

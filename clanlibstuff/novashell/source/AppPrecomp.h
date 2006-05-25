@@ -28,7 +28,7 @@
 #include <float.h> //need FLT_MAX const
 #endif
 
-#include <misc/CL_VirtualFileManager.h>
+#include "misc/CL_VirtualFileManager.h"
 #include "EntityManager.h"
 
 using namespace std;
