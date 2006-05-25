@@ -42,14 +42,14 @@ void ScriptKeyManager::AssignKey(const string &keyName, const string &callbackFu
 		switch (specialID)
 		{
 		case CL_KEY_CONTROL:
-		case CL_KEY_LCONTROL:
-		case CL_KEY_RCONTROL:
+		//case CL_KEY_LCONTROL:
+		//case CL_KEY_RCONTROL:
 			k.m_bCtrl = true;
 			break;
 
 		case CL_KEY_SHIFT:
-		case CL_KEY_LSHIFT:
-		case CL_KEY_RSHIFT:
+		//case CL_KEY_LSHIFT:
+		//case CL_KEY_RSHIFT:
 			k.m_bShifted = true;
 			break;
 		}

@@ -10,7 +10,7 @@
 #define WorldManager_HEADER_INCLUDED  // include guard
 
 #include "AppPrecomp.h"
-#include "world.h"
+#include "World.h"
 #include "EntWorldCache.h"
 
 //things needed for each world map

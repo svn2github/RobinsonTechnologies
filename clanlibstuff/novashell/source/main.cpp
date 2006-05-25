@@ -2,7 +2,7 @@
 #include "main.h"
 #include "EntChooseScreenMode.h"
 #include "GameLogic.h"
-#include "Apputils.h"
+#include "AppUtils.h"
 #include "ScriptManager.h"
 #include "VisualProfileManager.h"
 #include "Console.h"

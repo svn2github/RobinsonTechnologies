@@ -20,7 +20,7 @@ extern const CL_Vector2 g_worldDefaultCenterPos;
 #define C_WORLD_DAT_FILENAME "world.dat"
 
 #include "main.h"
-#include "screen.h"
+#include "Screen.h"
 #include "Tile.h"
 #include "WorldChunk.h"
 #include "CameraSetting.h"

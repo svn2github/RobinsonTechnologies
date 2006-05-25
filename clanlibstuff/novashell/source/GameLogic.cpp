@@ -1,6 +1,6 @@
 #include "AppPrecomp.h"
 #include "GameLogic.h"
-#include "Main.h"
+#include "main.h"
 #include "EntEditor.h"
 #include "EntWorldCache.h"
 #include "EntChooseScreenMode.h"

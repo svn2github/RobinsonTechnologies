@@ -8,7 +8,7 @@
 
 #include "MyEntityManager.h"
 #include "EntityManager.h"
-#include "world.h"
+#include "World.h"
 #include "WorldManager.h"
 #include "AppUtils.h"
 #include "ScriptManager.h"

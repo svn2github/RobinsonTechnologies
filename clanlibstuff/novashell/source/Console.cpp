@@ -1,6 +1,6 @@
 #include "AppPrecomp.h"
 #include "Console.h"
-#include "Main.h"
+#include "main.h"
 #include "AppUtils.h"
 
 Console g_Console;

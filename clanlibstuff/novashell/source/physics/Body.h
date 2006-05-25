@@ -25,7 +25,7 @@ $History: $
 ------------------------------------------------------------------
 */
 
-#include "Vector.h"
+#include "vector.h"
 #include "Matrix.h"
 #include "Polygon.h"
 #include <ClanLib/signals.h>

@@ -24,7 +24,7 @@
 #ifndef __CONTACT_H__
 #define __CONTACT_H__
 
-#include "Vector.h"
+#include "vector.h"
 class CMaterial;
 #include <string>
 using namespace std;

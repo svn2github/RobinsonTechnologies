@@ -11,6 +11,9 @@
 #define Zone CarbonZone
 #define check CarbonCheck
 
+//for linux header conflicts
+#define Screen X11Screen
+
 #include <ClanLib/display.h>
 
 #include <ClanLib/gl.h> 
@@ -20,11 +23,12 @@
 #include <ClanLib/signals.h>
 #undef Zone
 #undef check
+#undef Screen
 
 #include "lua/etc/lua.hpp"
 
 
-#ifdef _WIN32
+#ifndef __APPLE__
 #include <float.h> //need FLT_MAX const
 #endif
 

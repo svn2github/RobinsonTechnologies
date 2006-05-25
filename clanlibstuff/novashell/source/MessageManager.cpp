@@ -1,5 +1,5 @@
 #include "AppPrecomp.h"
-#include "Main.h"
+#include "main.h"
 #include "MessageManager.h"
 
 

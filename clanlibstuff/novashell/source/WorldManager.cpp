@@ -1,5 +1,5 @@
 #include "AppPrecomp.h"
-#include "world.h"
+#include "World.h"
 #include "EntWorldCache.h"
 #include "WorldManager.h"
 #include "GameLogic.h"

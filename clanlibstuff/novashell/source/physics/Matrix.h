@@ -25,7 +25,7 @@
 #define __MATRIX_H__
 
 
-#include "Vector.h"
+#include "vector.h"
 
 class Matrix
 {
