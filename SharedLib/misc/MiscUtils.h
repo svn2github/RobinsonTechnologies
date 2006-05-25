@@ -9,8 +9,8 @@
 
 
 
-#include "Clanlib/core.h"
-#include "Clanlib/display.h"
+#include "ClanLib/core.h"
+#include "ClanLib/display.h"
 
 
 using namespace std;
