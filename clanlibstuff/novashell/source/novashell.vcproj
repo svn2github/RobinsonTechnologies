@@ -56,7 +56,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="appPrecomp.h"
+				PrecompiledHeaderThrough="AppPrecomp.h"
 				PrecompiledHeaderFile=".\Release/novashell.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
@@ -157,7 +157,7 @@
 				RuntimeLibrary="1"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="appPrecomp.h"
+				PrecompiledHeaderThrough="AppPrecomp.h"
 				PrecompiledHeaderFile=".\Debug/novashell.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -278,7 +278,7 @@
 						Name="VCCLCompilerTool"
 						PreprocessorDefinitions=""
 						UsePrecompiledHeader="2"
-						PrecompiledHeaderThrough="appPrecomp.h"
+						PrecompiledHeaderThrough="AppPrecomp.h"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -288,7 +288,7 @@
 						Name="VCCLCompilerTool"
 						PreprocessorDefinitions=""
 						UsePrecompiledHeader="2"
-						PrecompiledHeaderThrough="appPrecomp.h"
+						PrecompiledHeaderThrough="AppPrecomp.h"
 					/>
 				</FileConfiguration>
 			</File>
@@ -432,7 +432,7 @@
 								Name="VCCLCompilerTool"
 								PreprocessorDefinitions=""
 								UsePrecompiledHeader="2"
-								PrecompiledHeaderThrough="appPrecomp.h"
+								PrecompiledHeaderThrough="AppPrecomp.h"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -457,7 +457,7 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="appPrecomp.h"
+								PrecompiledHeaderThrough="AppPrecomp.h"
 							/>
 						</FileConfiguration>
 					</File>
@@ -470,7 +470,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								PreprocessorDefinitions=""
-								PrecompiledHeaderThrough="appPrecomp.h"
+								PrecompiledHeaderThrough="AppPrecomp.h"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -500,7 +500,7 @@
 									Name="VCCLCompilerTool"
 									PreprocessorDefinitions=""
 									UsePrecompiledHeader="2"
-									PrecompiledHeaderThrough="appPrecomp.h"
+									PrecompiledHeaderThrough="AppPrecomp.h"
 								/>
 							</FileConfiguration>
 							<FileConfiguration
@@ -527,7 +527,7 @@
 							<Tool
 								Name="VCCLCompilerTool"
 								UsePrecompiledHeader="2"
-								PrecompiledHeaderThrough="appPrecomp.h"
+								PrecompiledHeaderThrough="AppPrecomp.h"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -597,7 +597,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PreprocessorDefinitions=""
-							PrecompiledHeaderThrough="appPrecomp.h"
+							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -631,7 +631,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PreprocessorDefinitions=""
-							PrecompiledHeaderThrough="appPrecomp.h"
+							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -659,7 +659,7 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="appPrecomp.h"
+								PrecompiledHeaderThrough="AppPrecomp.h"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -692,7 +692,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							PrecompiledHeaderThrough="appPrecomp.h"
+							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -726,7 +726,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PreprocessorDefinitions=""
-							PrecompiledHeaderThrough="appPrecomp.h"
+							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -748,7 +748,7 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							PrecompiledHeaderThrough="appPrecomp.h"
+							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -778,7 +778,7 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							PreprocessorDefinitions=""
-							PrecompiledHeaderThrough="appPrecomp.h"
+							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -1888,7 +1888,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\appPrecomp.h"
+				RelativePath=".\AppPrecomp.h"
 				>
 			</File>
 			<File
