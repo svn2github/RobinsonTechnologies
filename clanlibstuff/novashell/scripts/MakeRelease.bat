@@ -1,5 +1,5 @@
-set d_fname=ScrollerTest_%DATE:~4,2%_%DATE:~7,2%.zip
-
+cd ..
+set d_fname=novashell_test.zip
 
 call vnet.bat
 set C_TARGET_EXE=bin\game.exe
@@ -46,3 +46,8 @@ REM **************************
 
 if exist %d_fname% del %d_fname%
 wzzip %d_fname% bin -rp -x*.sup -x*.ilk -x*.zip -x*_debug.exe -x*.exp *.lib -xlog.txt -x@Scripts\RetailBuildExcludeList.txt -x*.sfk -x*.sfap0 -xdink.dat -xmap.dat
+
+set C_FILENAME=%d_fname%
+cd scripts
+call FTPToSite.bat
+pause

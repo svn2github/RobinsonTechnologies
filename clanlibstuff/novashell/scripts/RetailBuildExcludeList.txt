@@ -4,6 +4,7 @@ ts*.dat
 *\as_debug\total.txt
 game_debug*.*
 *\dink\*.*
+*\profiles\*.*
 
 
 
