@@ -1,13 +1,29 @@
 #!/bin/bash
 
+packedfilename=novashell_test.tar.gz
+
+echo "Packing final release... $packedfilename"
+
 cd ..
 mkdir dist
 cd bin
 rm log.txt
-strip -s novashell
-#upx-ucl -q --best novashell
-cd ..
-tar cvfz novashell.tar.gz bin
 
-echo Packing final release and FTPing or whatever
+cd ..
+rm -f 
+tar cvfz $packedfilename bin
+
+if [ -f $packedfilename ] 
+then
+
+ echo FTPing file
+	
+   sh ./scripts/linux_upload.sh $packedfilename
+
+ else
+  echo -e "Error with gzipping or something. \a"
+  Pause
+ exit 1;
+fi
+
 cd scripts

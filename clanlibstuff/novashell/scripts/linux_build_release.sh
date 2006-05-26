@@ -1,5 +1,7 @@
 #!/bin/bash
 
+filename="novashell"
+
 Pause()
 {
     key=""
@@ -9,8 +11,7 @@ Pause()
     stty icanon
 }
 
-
-echo Running from $PWD
+echo Running from $PWD - building $filename
 
 sh linux_svn_update.sh
 
@@ -18,15 +19,34 @@ cd ..
 make distclean
 echo Setting up for retail build
 mkdir optimized
+#figure out the bin path ourselves
+binoutputdir=$PWD
+
 cd 'optimized'
 
-CXXFLAGS="-O2 -g0" && ../configure --prefix=/home/mrfun/dev/novashell
+CXXFLAGS="-O2 -g0" && ../configure --prefix=$binoutputdir
 
 #erase file that was there
-rm ../bin/novashell
+rm -f ../bin/$filename
 
 #actually make it
 make install
+
+
+#success?
+
+if [ -f ../bin/$filename ] 
+then
+
+ echo Successfully built it.
+  cd ../bin  
+  strip -s $filename
+
+ else
+  echo -e "Error building executable! \a"
+  Pause
+ exit 1;
+fi
 
 #return to the dir from whence we came
 cd ../scripts
