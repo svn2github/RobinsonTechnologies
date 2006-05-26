@@ -1,5 +1,5 @@
 #include "AppPrecomp.h"
-#include "Vector.h"
+#include "vector.h"
 #include "Matrix.h"
 #include "Polygon.h"
 

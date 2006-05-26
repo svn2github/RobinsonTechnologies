@@ -19,7 +19,7 @@ $History: $
 
 #include "AppPrecomp.h"
 
-#include "Vector.h"
+#include "vector.h"
 #include "Matrix.h"
 
 Vector Vector::operator * (const Matrix& M) const
