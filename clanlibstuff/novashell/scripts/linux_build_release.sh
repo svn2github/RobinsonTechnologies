@@ -13,8 +13,6 @@ Pause()
 
 echo Running from $PWD - building $filename
 
-sh linux_svn_update.sh
-
 cd ..
 make distclean
 echo Setting up for retail build
@@ -50,9 +48,3 @@ fi
 
 #return to the dir from whence we came
 cd ../scripts
-
-sh ./linux_media_update.sh
-
-sh ./linux_package_release.sh
-
-Pause
