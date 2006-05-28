@@ -15,9 +15,8 @@ then
 fi  
 
 Username=rtsoft           # Change to suit.
-Password=`cat /home/mrfun/ftp_pass.file`
-# File containing password.
-echo Got password of $Password
+Password=`cat ~/ftp_pass.file`
+# File containing password in plain text.
 Filename=`basename $1`  # Strips pathname out of file name.
 
 Server="rtsoft.com"
