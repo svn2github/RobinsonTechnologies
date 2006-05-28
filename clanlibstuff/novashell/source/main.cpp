@@ -451,7 +451,7 @@ CL_Directory::change_to(CL_System::get_exe_path());
 	char stTemp[512];
 	getcwd((char*)&stTemp, 512);
 //	LogMsg("Current working dir is %s", stTemp);
-	CL_Directory::change_to("../../../../bin");
+	CL_Directory::change_to("Contents/Resources");
   getcwd((char*)&stTemp, 512);
   LogMsg("Game: Set working dir to %s", stTemp);
 #endif
