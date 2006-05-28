@@ -78,7 +78,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="fmodvc.lib"
 				OutputFile="../bin/game.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -180,7 +179,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fmodvc.lib "
 				OutputFile="../bin/game_debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -338,30 +336,6 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\SharedLib\misc\FMSoundManager.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\SharedLib\misc\FMSoundManager.h"
-					>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\misc\ISoundManager.h"

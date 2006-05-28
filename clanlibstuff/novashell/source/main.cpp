@@ -146,7 +146,7 @@ void App::OneTimeInit()
   
     //initalize our main window
 
-	bool bFullscreen = true;
+	bool bFullscreen = false;
 #ifdef _DEBUG
 	bFullscreen = false;
 #endif
@@ -406,10 +406,16 @@ void App::Update()
 	}
 }
 
+void log_to_cout(const std::string &channel, int level, const std::string &message)
+{
+	LogMsg(string("[" + channel + "] " + message).c_str());
+}
+
 int App::main(int argc, char **argv)
 {
     //first move to our current dir
 CL_Directory::change_to(CL_System::get_exe_path());
+
 
 #ifndef _DEBUG
 #define C_APP_REDIRECT_STREAM
@@ -419,7 +425,10 @@ CL_Directory::change_to(CL_System::get_exe_path());
 
     try
     {
-        CL_SetupCore setup_core;
+		//this is so we can trap clanlib log messages too
+		CL_Slot slot_log = CL_Log::sig_log().connect(&log_to_cout);
+		
+		CL_SetupCore setup_core;
         CL_SetupDisplay setup_display;
         CL_SetupGL setup_gl;
 
