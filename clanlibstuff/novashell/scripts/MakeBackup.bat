@@ -32,5 +32,5 @@ REM finish up in the same dir we started in
 c:
 cd \TEMPBACKUP
 
-wzzip %RTBACKUP%\ClanlibStuff\%C_FILENAME% -rp -sjanus
+wzzip %RTBACKUP%\ClanlibStuff\%C_FILENAME% -rp
 pause
