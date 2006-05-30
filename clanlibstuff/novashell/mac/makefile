@@ -17,7 +17,7 @@
 # Customizable variables
 ################################################################################
 
-NAME=Novashell_Engine_Test
+NAME=novashell
 VERSION=0.1
 
 SOURCE_DIR=dist

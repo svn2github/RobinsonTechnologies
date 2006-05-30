@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D130AB70A2BD7B400475F87 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5D130AB60A2BD7B400475F87 /* app.icns */; };
+		5D130AB80A2BD7B400475F87 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5D130AB60A2BD7B400475F87 /* app.icns */; };
 		5D58A7BF0A15832C005974C1 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A79F0A15832C005974C1 /* lapi.c */; };
 		5D58A7C00A15832C005974C1 /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A00A15832C005974C1 /* lauxlib.c */; };
 		5D58A7C10A15832C005974C1 /* lbaselib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A10A15832C005974C1 /* lbaselib.c */; };
@@ -406,6 +408,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5D130AB60A2BD7B400475F87 /* app.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = app.icns; sourceTree = "<group>"; };
+		5D130AC60A2BD86100475F87 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D58A79F0A15832C005974C1 /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
 		5D58A7A00A15832C005974C1 /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lauxlib.c; sourceTree = "<group>"; };
 		5D58A7A10A15832C005974C1 /* lbaselib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lbaselib.c; sourceTree = "<group>"; };
@@ -741,6 +745,8 @@
 		20286C2CFDCF999611CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5D130AC60A2BD86100475F87 /* Info.plist */,
+				5D130AB60A2BD7B400475F87 /* app.icns */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1306,6 +1312,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D130AB70A2BD7B400475F87 /* app.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1313,6 +1320,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D130AB80A2BD7B400475F87 /* app.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1564,7 +1572,6 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../source/AppPrecomp.h;
-				INFOPLIST_FILE = "";
 				INSTALL_PATH = "";
 				KEEP_PRIVATE_EXTERNS = NO;
 				LINKER_DISPLAYS_FILES_FOR_UNDEFINED_SYMBOLS = NO;
@@ -1642,6 +1649,7 @@
 					"~/dev/boost_1_33_1",
 					"$(HEADER_SEARCH_PATHS)",
 				);
+				INFOPLIST_FILE = Info.plist;
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};

@@ -20,7 +20,6 @@ echo Copying files to dist folder
 cp -R build/Default/novashell.app ./dist
 
 rm ./novashell.dmg
-#hdiutil create -volname "Novashell Disk Image" -srcfolder dist novashell.dmg
 #hdiutil internet-enable -yes novashell.dmg
 #return to the script directory
 
