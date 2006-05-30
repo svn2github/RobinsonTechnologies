@@ -7,7 +7,7 @@
 #include "VisualProfileManager.h"
 #include "Console.h"
 
-#ifdef _WIN32
+#ifdef WIN32
   //#define C_USE_FMOD
 #endif
 
@@ -38,7 +38,7 @@ void LogMsg(const char *lpFormat, ...)
 	sprintf(stTemp, "%s\r\n", szBuf);
 #ifdef _DEBUG
 	
-	#ifdef _WIN32
+	#ifdef WIN32
 		OutputDebugString(stTemp);
 	#endif
 #endif    
@@ -58,7 +58,7 @@ void LogError(const char *lpFormat, ...)
 
 	sprintf(stTemp, "Error: %s\r\n", szBuf);
 #ifdef _DEBUG
-	#ifdef _WIN32
+	#ifdef WIN32
 		OutputDebugString(stTemp);
 	#endif
 #endif    
@@ -95,7 +95,7 @@ App::App()
        m_pFonts[i] = 0;
     }
 
-#ifdef _WIN32
+#ifdef WIN32
 	m_Hwnd = false;
 #endif
 
@@ -179,7 +179,7 @@ void App::OneTimeInit()
     m_pGui = new CL_GUIManager(m_pStyle);
   
 	m_pCamera = new Camera; 
-#ifdef _WIN32
+#ifdef WIN32
 	m_Hwnd = GetActiveWindow();
 	if (m_Hwnd == NULL) throw CL_Error("Error getting a valid HWND."); //can that ever happen?  Doubt it. More likely to just be wrong, rather than NULL.
 #endif
@@ -209,21 +209,9 @@ void App::SetupBackground(int x, int y)
 {
     SAFE_DELETE(m_pBackgroundCanvas);
     SAFE_DELETE(m_pBackground);
-
-	/*
-    CL_AGGBuffer aggbuff;
-    
-    aggbuff.Init( new CL_PixelBuffer(x, y,x*4,  CL_PixelFormat::abgr8888));
-    aggbuff.lock();
-    aggbuff.unlock();
-    
-    m_pBackground = new CL_Surface(*aggbuff.GetPixelBuffer());
-    */
-
-   
 	m_pBackground = new CL_Surface(CL_PixelBuffer(x, y,x*4,  CL_PixelFormat::abgr8888));
 
-   m_pBackgroundCanvas = new CL_Canvas(*m_pBackground);
+    m_pBackgroundCanvas = new CL_Canvas(*m_pBackground);
     SetupMouseClipping();
     
     LogMsg("Background rebuilt");
@@ -247,7 +235,7 @@ void App::OnWindowClose()
 void App::SetupMouseClipping()
 {
  
-#ifdef _WIN32
+#ifdef WIN32
 
 	// Confine cursor to fullscreen window
     if( m_bClipCursorWhenFullscreen )
@@ -275,7 +263,7 @@ void App::OnLoseFocus()
     if (m_pWindow->is_fullscreen())
     {
         //m_pWindow->
-#ifdef _WIN32
+#ifdef WIN32
 		SendMessage(m_Hwnd, WM_SYSCOMMAND, SC_MINIMIZE,0);
         
 		ChangeDisplaySettings(NULL, 0);
@@ -537,7 +525,7 @@ CL_Directory::change_to(CL_System::get_exe_path());
         
         // Display console close message and wait for a key
 
-#ifdef _WIN32
+#ifdef WIN32
 		MessageBox(NULL, error.message.c_str(), "Error!", MB_ICONEXCLAMATION);
 #endif
 
@@ -558,7 +546,7 @@ CL_Directory::change_to(CL_System::get_exe_path());
     OneTimeDeinit();
     }    catch(CL_Error error)
     {
-	#ifdef _WIN32
+	#ifdef WIN32
         MessageBox(NULL, error.message.c_str(), "Early Error!", MB_ICONEXCLAMATION);
 #else
         std::cout << "Early Exception caught : " << error.message.c_str() << std::endl;			

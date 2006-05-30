@@ -18,7 +18,7 @@ bool RemoveFile(const std::string &fileName)
 	return true;
 }
 
-#ifdef _WIN32
+#ifdef WIN32
 
 bool open_file(HWND hWnd, const char st_file[])
 {
@@ -41,7 +41,7 @@ bool open_file(HWND hWnd, const char st_file[])
 		s = std::string("Windows doesn't know how to open ")+std::string(st_file)+ 
 			std::string("\n\nYou need to use file explorer and associate this file type with something first.");
 
-#ifdef _WIN32
+#ifdef WIN32
 		MessageBox(hWnd, s.c_str(), st_file, MB_ICONSTOP);
 #else
 LogError(s.c_str());

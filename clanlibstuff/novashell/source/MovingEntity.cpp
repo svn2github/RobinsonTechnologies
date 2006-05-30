@@ -10,8 +10,11 @@
 #include "physics/Contact.h"
 #include "MaterialManager.h"
 
+#ifndef WIN32
+//windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
+#endif
 
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
@@ -996,7 +999,7 @@ void MovingEntity::PostUpdate(float step)
 		*/
 	
 	const static float groundDampening = 1.6f;
-	const static float angleDampening = 0.01;
+	const static float angleDampening = 0.01f;
 	
 	if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
 		&& GetBody()->GetAngVelocity() < 0.01f)

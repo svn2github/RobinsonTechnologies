@@ -9,8 +9,11 @@
 #include "TextManager.h"
 #include "MaterialManager.h"
 
+#ifndef WIN32
+//windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
+#endif
 
 #define C_PLAYER_DESIRED_SPEED 4.0f
 #define C_PLAYER_ACCEL_POWER 0.7f

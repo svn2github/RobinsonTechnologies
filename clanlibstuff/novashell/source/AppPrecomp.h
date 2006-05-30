@@ -27,6 +27,11 @@
 
 #include "lua/etc/lua.hpp"
 
+#ifdef WIN32
+//couldn't get macs to work with luabind in the precompiled header.. !
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
+#endif
 
 #ifndef __APPLE__
 #include <float.h> //need FLT_MAX const

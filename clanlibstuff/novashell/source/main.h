@@ -83,7 +83,7 @@ public:
     CL_Surface * GetBackground() {return m_pBackground;}
     CL_Canvas * GetBackgroundCanvas() { return m_pBackgroundCanvas;}
     
-#ifdef _WIN32
+#ifdef WIN32
 	HWND GetHWND() {return m_Hwnd;}
 #endif
     
@@ -138,7 +138,7 @@ private:
 	bool m_bQuit;
 	bool m_HaveFocus;
 	bool m_bClipCursorWhenFullscreen;
-#ifdef _WIN32
+#ifdef WIN32
 	HWND m_Hwnd; //I can't figure out how to get it from ClanLib so I'll keep my own copy
 #endif
 

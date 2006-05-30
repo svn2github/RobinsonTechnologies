@@ -874,7 +874,7 @@ void EntEditMode::OnPropertiesOK()
 
 void EntEditMode::OnPropertiesEditScript()
 {
-#ifdef _WIN32
+#ifdef WIN32
 	string file = CL_Directory::get_current()+"/"+GetGameLogic->GetScriptRootDir()+"/"+m_pPropertiesInputScript->get_text();
 
 	if (!exist(file.c_str()))

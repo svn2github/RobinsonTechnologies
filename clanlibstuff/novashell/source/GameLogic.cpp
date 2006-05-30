@@ -14,8 +14,11 @@
 #include "MaterialManager.h"
 #include "VisualProfileManager.h"
 
+#ifndef WIN32
+//windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
+#endif
 
 #define C_PROFILE_DAT_FILENAME "profile.dat"
 const unsigned int C_PROFILE_DAT_VERSION = 0;
@@ -215,6 +218,22 @@ bool GameLogic::SetUserProfileName(const string &name)
 	return true;
 }
 
+bool IsOnReadOnlyDisk()
+{
+	const char *pfName = "readonlychk.tmp";
+	FILE *fp = fopen(pfName, "wb");
+	if (!fp)
+	{
+		return true;
+	}
+
+	//successfully opened it, disk is not read only
+	fclose(fp);
+	RemoveFile(pfName);
+	
+	return false;
+}
+
 bool GameLogic::Init()
 {
 
@@ -232,12 +251,20 @@ bool GameLogic::Init()
 	CL_Display::clear(CL_Color(0,0,255));
     BlitMessage("... loading ...");
 
+
+	if (IsOnReadOnlyDisk())
+	{
+		ShowMessage("Hold on!", "You must drag this out of the DMG before running it.\n\n(all prefs and saves are contained inside for easy deletion for now)");
+		return false;
+	}
+
 	//GetMyEntityManager()->Init();
 
 	g_textManager.Reset();
 
 	if (!GetHashedResourceManager->Init()) throw CL_Error("Error initting hashed resource manager");
-	
+
+
 	GetScriptManager->Init();
 	//bind app specific functions at the global level
 	RegisterLuabindBindings(GetScriptManager->GetMainState());
