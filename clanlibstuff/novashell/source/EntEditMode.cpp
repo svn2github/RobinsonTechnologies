@@ -8,6 +8,7 @@
 #include "TileEntity.h"
 #include "MovingEntity.h"
 #include "MessageManager.h"
+#include <X11/keysym.h>
 
 TileEditOperation g_EntEditModeCopyBuffer; //ctrl-c puts it here
 

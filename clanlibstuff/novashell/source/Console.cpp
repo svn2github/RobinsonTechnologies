@@ -7,9 +7,10 @@ Console g_Console;
 #define C_MAX_LOG_LINES 50
 
 Console::Console()
-{
+{ 
 	m_bOnScreen = false;
 }
+
 
 void Console::Init()
 {

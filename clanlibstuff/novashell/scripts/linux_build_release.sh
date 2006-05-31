@@ -13,7 +13,10 @@ Pause()
 
 echo Running from $PWD - building $filename
 
+sh ./linux_svn_update.sh
+
 cd ..
+svn update
 make distclean
 echo Setting up for retail build
 mkdir optimized

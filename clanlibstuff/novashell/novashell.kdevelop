@@ -22,9 +22,9 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>novashell</mainprogram>
-      <terminal>true</terminal>
-      <directoryradio>custom</directoryradio>
+      <mainprogram>../bin/novashell</mainprogram>
+      <terminal>false</terminal>
+      <directoryradio>executable</directoryradio>
       <runarguments>
         <novashell/>
       </runarguments>
@@ -220,7 +220,7 @@
     </display>
   </kdevdebugger>
   <ctagspart>
-    <customArguments></customArguments>
-    <customTagfilePath></customTagfilePath>
+    <customArguments/>
+    <customTagfilePath/>
   </ctagspart>
 </kdevelop>
