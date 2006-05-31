@@ -25,10 +25,7 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 {
 	switch (key.id)
 	{
-
-		case 192: //VK_OEM_3, backtick for US keyboards for Windows
-		case 134: //backtick on MAC keyboards in OSX
-		case 96: //backtick on linux with US layout
+		case CL_KEY_TILDE: //aka GRAVE or backtick
 		m_bOnScreen = !m_bOnScreen;
 		//LogMsg("Toggling console display");
 	}
