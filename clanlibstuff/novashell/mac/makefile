@@ -17,7 +17,7 @@
 # Customizable variables
 ################################################################################
 
-NAME=novashell
+NAME=novashell_test
 VERSION=0.1
 
 SOURCE_DIR=dist
@@ -68,6 +68,7 @@ $(MASTER_DMG): $(WC_DMG) $(addprefix $(SOURCE_DIR)/,$(SOURCE_FILES))
 	rm -f "$(MASTER_DMG)"
 	hdiutil convert "$(WC_DMG)" -quiet -format UDZO -imagekey zlib-level=9 -o "$@"
 	rm -rf $(WC_DIR)
+	rm $(TEMPLATE_DMG) $(WC_DMG)
 	@echo
 
 .PHONY: clean

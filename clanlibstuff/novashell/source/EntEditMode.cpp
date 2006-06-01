@@ -331,6 +331,10 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 			m_vecDragStop =  GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
 			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) &&
 				!CL_Keyboard::get_keycode(CL_KEY_SHIFT) &&
+#ifdef __APPLE__
+				!CL_Keyboard::get_keycode(CL_KEY_COMMAND) &&
+#endif
+
 				!CL_Keyboard::get_keycode(CL_KEY_MENU)
 				)
 			{
