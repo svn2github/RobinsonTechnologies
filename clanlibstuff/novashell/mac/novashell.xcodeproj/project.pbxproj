@@ -111,26 +111,26 @@
 		5D8778830A1555F600363BAA /* CL_SoundManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781B0A1555F600363BAA /* CL_SoundManager.cpp */; };
 		5D8778850A1555F600363BAA /* CL_VirtualFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781D0A1555F600363BAA /* CL_VirtualFileManager.cpp */; };
 		5D87788A0A1555F600363BAA /* MiscUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778220A1555F600363BAA /* MiscUtils.cpp */; };
+		5DB974520A30630B00CBAA15 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F20A30630A00CBAA15 /* ClanApp.framework */; };
+		5DB974530A30630B00CBAA15 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F30A30630A00CBAA15 /* ClanCore.framework */; };
+		5DB974540A30630B00CBAA15 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F40A30630A00CBAA15 /* ClanDisplay.framework */; };
+		5DB974550A30630B00CBAA15 /* ClanGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F50A30630A00CBAA15 /* ClanGL.framework */; };
+		5DB974560A30630B00CBAA15 /* ClanGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F60A30630A00CBAA15 /* ClanGUI.framework */; };
+		5DB974570A30630B00CBAA15 /* ClanGUIStyleSilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F70A30630A00CBAA15 /* ClanGUIStyleSilver.framework */; };
+		5DB974580A30630B00CBAA15 /* ClanLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F80A30630A00CBAA15 /* ClanLib.framework */; };
+		5DB974590A30630B00CBAA15 /* ClanSound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F90A30630A00CBAA15 /* ClanSound.framework */; };
+		5DB9745A0A30630B00CBAA15 /* ClanVorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972FA0A30630A00CBAA15 /* ClanVorbis.framework */; };
+		5DB9747E0A30633800CBAA15 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F20A30630A00CBAA15 /* ClanApp.framework */; };
+		5DB9747F0A30633800CBAA15 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F30A30630A00CBAA15 /* ClanCore.framework */; };
+		5DB974800A30633800CBAA15 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F40A30630A00CBAA15 /* ClanDisplay.framework */; };
+		5DB974810A30633800CBAA15 /* ClanGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F50A30630A00CBAA15 /* ClanGL.framework */; };
+		5DB974820A30633800CBAA15 /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F60A30630A00CBAA15 /* ClanGUI.framework */; };
+		5DB974830A30633800CBAA15 /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F70A30630A00CBAA15 /* ClanGUIStyleSilver.framework */; };
+		5DB974840A30633800CBAA15 /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F80A30630A00CBAA15 /* ClanLib.framework */; };
+		5DB974850A30633800CBAA15 /* ClanSound.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972F90A30630A00CBAA15 /* ClanSound.framework */; };
+		5DB974860A30633800CBAA15 /* ClanVorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB972FA0A30630A00CBAA15 /* ClanVorbis.framework */; };
 		5DC415F20A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
 		5DC415F40A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
-		5DCC31730A1C83E800886F30 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC316A0A1C83E800886F30 /* ClanApp.framework */; };
-		5DCC31740A1C83E900886F30 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC316B0A1C83E800886F30 /* ClanCore.framework */; };
-		5DCC31750A1C83E900886F30 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC316C0A1C83E800886F30 /* ClanDisplay.framework */; };
-		5DCC31760A1C83E900886F30 /* ClanGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC316D0A1C83E800886F30 /* ClanGL.framework */; };
-		5DCC31770A1C83E900886F30 /* ClanGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC316E0A1C83E800886F30 /* ClanGUI.framework */; };
-		5DCC31780A1C83E900886F30 /* ClanGUIStyleSilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC316F0A1C83E800886F30 /* ClanGUIStyleSilver.framework */; };
-		5DCC31790A1C83E900886F30 /* ClanLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC31700A1C83E800886F30 /* ClanLib.framework */; };
-		5DCC317A0A1C83E900886F30 /* ClanSound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC31710A1C83E800886F30 /* ClanSound.framework */; };
-		5DCC317B0A1C83E900886F30 /* ClanVorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC31720A1C83E800886F30 /* ClanVorbis.framework */; };
-		5DCC32EB0A1C841800886F30 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC316A0A1C83E800886F30 /* ClanApp.framework */; };
-		5DCC32EC0A1C841800886F30 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC316B0A1C83E800886F30 /* ClanCore.framework */; };
-		5DCC32ED0A1C841800886F30 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC316C0A1C83E800886F30 /* ClanDisplay.framework */; };
-		5DCC32EE0A1C841800886F30 /* ClanGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC316D0A1C83E800886F30 /* ClanGL.framework */; };
-		5DCC32EF0A1C841800886F30 /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC316E0A1C83E800886F30 /* ClanGUI.framework */; };
-		5DCC32F00A1C841800886F30 /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC316F0A1C83E800886F30 /* ClanGUIStyleSilver.framework */; };
-		5DCC32F10A1C841800886F30 /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC31700A1C83E800886F30 /* ClanLib.framework */; };
-		5DCC32F20A1C841800886F30 /* ClanSound.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC31710A1C83E800886F30 /* ClanSound.framework */; };
-		5DCC32F30A1C841800886F30 /* ClanVorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC31720A1C83E800886F30 /* ClanVorbis.framework */; };
 		5DCC32FD0A1C845200886F30 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC32F40A1C845200886F30 /* ClanApp.framework */; };
 		5DCC32FE0A1C845200886F30 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC32F50A1C845200886F30 /* ClanCore.framework */; };
 		5DCC32FF0A1C845200886F30 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC32F60A1C845200886F30 /* ClanDisplay.framework */; };
@@ -389,19 +389,19 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				5DB9747E0A30633800CBAA15 /* ClanApp.framework in CopyFiles */,
+				5DB9747F0A30633800CBAA15 /* ClanCore.framework in CopyFiles */,
+				5DB974800A30633800CBAA15 /* ClanDisplay.framework in CopyFiles */,
+				5DB974810A30633800CBAA15 /* ClanGL.framework in CopyFiles */,
+				5DB974820A30633800CBAA15 /* ClanGUI.framework in CopyFiles */,
+				5DB974830A30633800CBAA15 /* ClanGUIStyleSilver.framework in CopyFiles */,
+				5DB974840A30633800CBAA15 /* ClanLib.framework in CopyFiles */,
+				5DB974850A30633800CBAA15 /* ClanSound.framework in CopyFiles */,
+				5DB974860A30633800CBAA15 /* ClanVorbis.framework in CopyFiles */,
 				5DCC34CE0A1C86D200886F30 /* libjpeg.framework in CopyFiles */,
 				5DCC34CF0A1C86D200886F30 /* libpng.framework in CopyFiles */,
 				5DCC34D00A1C86D200886F30 /* Ogg.framework in CopyFiles */,
 				5DCC34D10A1C86D200886F30 /* Vorbis.framework in CopyFiles */,
-				5DCC32EB0A1C841800886F30 /* ClanApp.framework in CopyFiles */,
-				5DCC32EC0A1C841800886F30 /* ClanCore.framework in CopyFiles */,
-				5DCC32ED0A1C841800886F30 /* ClanDisplay.framework in CopyFiles */,
-				5DCC32EE0A1C841800886F30 /* ClanGL.framework in CopyFiles */,
-				5DCC32EF0A1C841800886F30 /* ClanGUI.framework in CopyFiles */,
-				5DCC32F00A1C841800886F30 /* ClanGUIStyleSilver.framework in CopyFiles */,
-				5DCC32F10A1C841800886F30 /* ClanLib.framework in CopyFiles */,
-				5DCC32F20A1C841800886F30 /* ClanSound.framework in CopyFiles */,
-				5DCC32F30A1C841800886F30 /* ClanVorbis.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -629,17 +629,17 @@
 		5D8778210A1555F600363BAA /* ISoundManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ISoundManager.h; sourceTree = "<group>"; };
 		5D8778220A1555F600363BAA /* MiscUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MiscUtils.cpp; sourceTree = "<group>"; };
 		5D8778230A1555F600363BAA /* MiscUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MiscUtils.h; sourceTree = "<group>"; };
+		5DB972F20A30630A00CBAA15 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972F30A30630A00CBAA15 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972F40A30630A00CBAA15 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972F50A30630A00CBAA15 /* ClanGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGL.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanGL.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972F60A30630A00CBAA15 /* ClanGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUI.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanGUI.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972F70A30630A00CBAA15 /* ClanGUIStyleSilver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUIStyleSilver.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanGUIStyleSilver.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972F80A30630A00CBAA15 /* ClanLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanLib.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanLib.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972F90A30630A00CBAA15 /* ClanSound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanSound.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanSound.framework"; sourceTree = SOURCE_ROOT; };
+		5DB972FA0A30630A00CBAA15 /* ClanVorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanVorbis.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanVorbis.framework"; sourceTree = SOURCE_ROOT; };
 		5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AppPrecomp.cpp; path = ../source/AppPrecomp.cpp; sourceTree = SOURCE_ROOT; };
 		5DC415F10A1B33AA00E9A026 /* appPrecomp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = appPrecomp.h; path = ../source/appPrecomp.h; sourceTree = SOURCE_ROOT; };
-		5DCC316A0A1C83E800886F30 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC316B0A1C83E800886F30 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC316C0A1C83E800886F30 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC316D0A1C83E800886F30 /* ClanGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGL.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanGL.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC316E0A1C83E800886F30 /* ClanGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUI.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanGUI.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC316F0A1C83E800886F30 /* ClanGUIStyleSilver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUIStyleSilver.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanGUIStyleSilver.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC31700A1C83E800886F30 /* ClanLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanLib.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanLib.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC31710A1C83E800886F30 /* ClanSound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanSound.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanSound.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC31720A1C83E800886F30 /* ClanVorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanVorbis.framework; path = "../../../../dev/Clanlib-0.8/build/Deployment/ClanVorbis.framework"; sourceTree = SOURCE_ROOT; };
 		5DCC32F40A1C845200886F30 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/Clanlib-0.8/build/Development/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
 		5DCC32F50A1C845200886F30 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/Clanlib-0.8/build/Development/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
 		5DCC32F60A1C845200886F30 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/Clanlib-0.8/build/Development/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
@@ -667,19 +667,19 @@
 			files = (
 				5DCDB2810A19FEAA0043DCFA /* CoreAudio.framework in Frameworks */,
 				5DCDB2820A19FEAA0043DCFA /* OpenGL.framework in Frameworks */,
-				5DCC31730A1C83E800886F30 /* ClanApp.framework in Frameworks */,
-				5DCC31740A1C83E900886F30 /* ClanCore.framework in Frameworks */,
-				5DCC31750A1C83E900886F30 /* ClanDisplay.framework in Frameworks */,
-				5DCC31760A1C83E900886F30 /* ClanGL.framework in Frameworks */,
-				5DCC31770A1C83E900886F30 /* ClanGUI.framework in Frameworks */,
-				5DCC31780A1C83E900886F30 /* ClanGUIStyleSilver.framework in Frameworks */,
-				5DCC31790A1C83E900886F30 /* ClanLib.framework in Frameworks */,
-				5DCC317A0A1C83E900886F30 /* ClanSound.framework in Frameworks */,
-				5DCC317B0A1C83E900886F30 /* ClanVorbis.framework in Frameworks */,
 				5DCC34AF0A1C86A200886F30 /* libjpeg.framework in Frameworks */,
 				5DCC34B00A1C86A200886F30 /* libpng.framework in Frameworks */,
 				5DCC34B10A1C86A200886F30 /* Ogg.framework in Frameworks */,
 				5DCC34B20A1C86A200886F30 /* Vorbis.framework in Frameworks */,
+				5DB974520A30630B00CBAA15 /* ClanApp.framework in Frameworks */,
+				5DB974530A30630B00CBAA15 /* ClanCore.framework in Frameworks */,
+				5DB974540A30630B00CBAA15 /* ClanDisplay.framework in Frameworks */,
+				5DB974550A30630B00CBAA15 /* ClanGL.framework in Frameworks */,
+				5DB974560A30630B00CBAA15 /* ClanGUI.framework in Frameworks */,
+				5DB974570A30630B00CBAA15 /* ClanGUIStyleSilver.framework in Frameworks */,
+				5DB974580A30630B00CBAA15 /* ClanLib.framework in Frameworks */,
+				5DB974590A30630B00CBAA15 /* ClanSound.framework in Frameworks */,
+				5DB9745A0A30630B00CBAA15 /* ClanVorbis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1107,15 +1107,15 @@
 		5DCDB5E10A1A00150043DCFA /* Release */ = {
 			isa = PBXGroup;
 			children = (
-				5DCC316A0A1C83E800886F30 /* ClanApp.framework */,
-				5DCC316B0A1C83E800886F30 /* ClanCore.framework */,
-				5DCC316C0A1C83E800886F30 /* ClanDisplay.framework */,
-				5DCC316D0A1C83E800886F30 /* ClanGL.framework */,
-				5DCC316E0A1C83E800886F30 /* ClanGUI.framework */,
-				5DCC316F0A1C83E800886F30 /* ClanGUIStyleSilver.framework */,
-				5DCC31700A1C83E800886F30 /* ClanLib.framework */,
-				5DCC31710A1C83E800886F30 /* ClanSound.framework */,
-				5DCC31720A1C83E800886F30 /* ClanVorbis.framework */,
+				5DB972F20A30630A00CBAA15 /* ClanApp.framework */,
+				5DB972F30A30630A00CBAA15 /* ClanCore.framework */,
+				5DB972F40A30630A00CBAA15 /* ClanDisplay.framework */,
+				5DB972F50A30630A00CBAA15 /* ClanGL.framework */,
+				5DB972F60A30630A00CBAA15 /* ClanGUI.framework */,
+				5DB972F70A30630A00CBAA15 /* ClanGUIStyleSilver.framework */,
+				5DB972F80A30630A00CBAA15 /* ClanLib.framework */,
+				5DB972F90A30630A00CBAA15 /* ClanSound.framework */,
+				5DB972FA0A30630A00CBAA15 /* ClanVorbis.framework */,
 			);
 			name = Release;
 			sourceTree = "<group>";
@@ -1565,7 +1565,9 @@
 					"$(SRCROOT)/../../../../dev/Clanlib-0.8/build/Development",
 					"$(SRCROOT)/../../../../dev/Clanlib-0.8/build/Deployment",
 					"$(SRCROOT)/../../../../dev/Clanlib-0.8/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../dev/ClanLib-0.8/build/Deployment\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;

@@ -26,6 +26,17 @@ else
 echo "Success!"
 fi 
 
+#First check to see if our network drive is available
+
+if [ -d /Volumes/PROJECTS/clanlibstuff/novashell/bin/media ] 
+then
+
+ echo Located network drive.
+ else
+  echo -e "Network drive not available!!  Turn it on now and hit a key! \a"
+  Pause
+fi
+
 #refresh media data from the main server (first deleting the old stuff)
 rm ./build/Default/novashell.app/log.txt
 rm -R ./build/Default/novashell.app/Contents/Resources/media
