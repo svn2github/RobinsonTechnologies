@@ -148,11 +148,11 @@ void App::OneTimeInit()
 
 	bool bFullscreen = false;
 #ifdef _DEBUG
-	bFullscreen = false;
+	//bFullscreen = false;
 #endif
     m_WindowDescription.set_fullscreen(bFullscreen);
     m_WindowDescription.set_bpp(32);
-    m_WindowDescription.set_title("Nova Shell Engine Test");
+    m_WindowDescription.set_title("Novashell Engine Test");
     m_WindowDescription.set_allow_resize(false);
     m_WindowDescription.set_size(CL_Size(1024,768));
 //	m_WindowDescription.set_size(CL_Size(800,600));
