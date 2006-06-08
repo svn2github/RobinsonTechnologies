@@ -12,12 +12,8 @@ sh mac_svn_update.sh
 cd ../mac
 echo Building universal release game binaries
 
-BuildLogFileName=./build.txt
-rm $BuildLogFileName
-xcodebuild -target novashell_release | tee $BuildLogFileName | cat
-
-#scan build log for errors
-if fgrep 'error:' $BuildLogFileName > /dev/null
+xcodebuild -target novashell_release
+if [ $? -ne 0 ]
 then
 echo -e "Error building game, check it out. \a"
 Pause

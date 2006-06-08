@@ -9,6 +9,14 @@
 /* Begin PBXBuildFile section */
 		5D130AB70A2BD7B400475F87 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5D130AB60A2BD7B400475F87 /* app.icns */; };
 		5D130AB80A2BD7B400475F87 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5D130AB60A2BD7B400475F87 /* app.icns */; };
+		5D1A38520A382D48005FF1C0 /* BrainManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */; };
+		5D1A38530A382D48005FF1C0 /* BrainManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1A384F0A382D48005FF1C0 /* BrainManager.h */; };
+		5D1A38540A382D48005FF1C0 /* BrainShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A38500A382D48005FF1C0 /* BrainShake.cpp */; };
+		5D1A38550A382D48005FF1C0 /* BrainShake.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1A38510A382D48005FF1C0 /* BrainShake.h */; };
+		5D1A38560A382D48005FF1C0 /* BrainManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */; };
+		5D1A38570A382D48005FF1C0 /* BrainManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1A384F0A382D48005FF1C0 /* BrainManager.h */; };
+		5D1A38580A382D48005FF1C0 /* BrainShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A38500A382D48005FF1C0 /* BrainShake.cpp */; };
+		5D1A38590A382D48005FF1C0 /* BrainShake.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1A38510A382D48005FF1C0 /* BrainShake.h */; };
 		5D58A7BF0A15832C005974C1 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A79F0A15832C005974C1 /* lapi.c */; };
 		5D58A7C00A15832C005974C1 /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A00A15832C005974C1 /* lauxlib.c */; };
 		5D58A7C10A15832C005974C1 /* lbaselib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A10A15832C005974C1 /* lbaselib.c */; };
@@ -380,6 +388,8 @@
 				5DCC346D0A1C847500886F30 /* ClanLib.framework in CopyFiles */,
 				5DCC346E0A1C847500886F30 /* ClanSound.framework in CopyFiles */,
 				5DCC346F0A1C847500886F30 /* ClanVorbis.framework in CopyFiles */,
+				5D1A38570A382D48005FF1C0 /* BrainManager.h in CopyFiles */,
+				5D1A38590A382D48005FF1C0 /* BrainShake.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,6 +412,8 @@
 				5DCC34CF0A1C86D200886F30 /* libpng.framework in CopyFiles */,
 				5DCC34D00A1C86D200886F30 /* Ogg.framework in CopyFiles */,
 				5DCC34D10A1C86D200886F30 /* Vorbis.framework in CopyFiles */,
+				5D1A38530A382D48005FF1C0 /* BrainManager.h in CopyFiles */,
+				5D1A38550A382D48005FF1C0 /* BrainShake.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,6 +422,10 @@
 /* Begin PBXFileReference section */
 		5D130AB60A2BD7B400475F87 /* app.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = app.icns; sourceTree = "<group>"; };
 		5D130AC60A2BD86100475F87 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainManager.cpp; sourceTree = "<group>"; };
+		5D1A384F0A382D48005FF1C0 /* BrainManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainManager.h; sourceTree = "<group>"; };
+		5D1A38500A382D48005FF1C0 /* BrainShake.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainShake.cpp; sourceTree = "<group>"; };
+		5D1A38510A382D48005FF1C0 /* BrainShake.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainShake.h; sourceTree = "<group>"; };
 		5D58A79F0A15832C005974C1 /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
 		5D58A7A00A15832C005974C1 /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lauxlib.c; sourceTree = "<group>"; };
 		5D58A7A10A15832C005974C1 /* lbaselib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lbaselib.c; sourceTree = "<group>"; };
@@ -762,6 +778,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		5D1A384D0A382D17005FF1C0 /* Brains */ = {
+			isa = PBXGroup;
+			children = (
+				5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */,
+				5D1A384F0A382D48005FF1C0 /* BrainManager.h */,
+				5D1A38500A382D48005FF1C0 /* BrainShake.cpp */,
+				5D1A38510A382D48005FF1C0 /* BrainShake.h */,
+				5D8776DC0A15555400363BAA /* Brain.cpp */,
+				5D8776DD0A15555400363BAA /* Brain.h */,
+				5D8776DE0A15555400363BAA /* BrainPlayer.cpp */,
+				5D8776DF0A15555400363BAA /* BrainPlayer.h */,
+			);
+			name = Brains;
+			sourceTree = "<group>";
+		};
 		5D8775300A15531A00363BAA /* Debug */ = {
 			isa = PBXGroup;
 			children = (
@@ -1065,10 +1096,7 @@
 				5D8776FD0A15555400363BAA /* GeneratorSimple.cpp */,
 				5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */,
 				5D8776DB0A15555400363BAA /* BaseGameEntity.h */,
-				5D8776DC0A15555400363BAA /* Brain.cpp */,
-				5D8776DD0A15555400363BAA /* Brain.h */,
-				5D8776DE0A15555400363BAA /* BrainPlayer.cpp */,
-				5D8776DF0A15555400363BAA /* BrainPlayer.h */,
+				5D1A384D0A382D17005FF1C0 /* Brains */,
 				5D8776EA0A15555400363BAA /* EntChooseScreenMode.cpp */,
 				5D8776EB0A15555400363BAA /* EntChooseScreenMode.h */,
 				5D8776EC0A15555400363BAA /* EntCollisionEditor.cpp */,
@@ -1434,6 +1462,8 @@
 				5DCDB2740A19FEAA0043DCFA /* lzio.c in Sources */,
 				5DCDB2750A19FEAA0043DCFA /* print.c in Sources */,
 				5DC415F20A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */,
+				5D1A38520A382D48005FF1C0 /* BrainManager.cpp in Sources */,
+				5D1A38540A382D48005FF1C0 /* BrainShake.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1544,6 +1574,8 @@
 				5D58A7DD0A15832C005974C1 /* lzio.c in Sources */,
 				5D58A7DE0A15832C005974C1 /* print.c in Sources */,
 				5DC415F40A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */,
+				5D1A38560A382D48005FF1C0 /* BrainManager.cpp in Sources */,
+				5D1A38580A382D48005FF1C0 /* BrainShake.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

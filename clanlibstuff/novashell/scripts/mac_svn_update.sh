@@ -13,12 +13,8 @@ echo Updating Clanlib from SVN
 cd ../../../../dev/ClanLib-0.8
 svn update
 echo Building clanlib...
-BuildLogFileName=./build.txt
-rm $BuildLogFileName
-xcodebuild -configuration Deployment | tee $BuildLogFileName | cat
-
-#scan build log for errors
-if fgrep 'error:' $BuildLogFileName > /dev/null
+xcodebuild -configuration Deployment
+if [ $? -ne 0 ]
 then
 echo -e "Error building clanlib. \a"
 Pause
