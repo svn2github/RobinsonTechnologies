@@ -22,6 +22,9 @@ public:
 		if (rhs.m_pSprite)
 		{
 			m_pSprite = new CL_Sprite(*rhs.m_pSprite);
+			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+			//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+
 		}
 		m_name = rhs.m_name;
 	   return *this;

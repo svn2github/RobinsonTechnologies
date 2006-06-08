@@ -7,7 +7,10 @@
 * Programmer(s):  Seth A. Robinson (seth@rtsoft.com): 
 */
 
-
+template<class T1, class T2> inline T1 Lerp( const T1& v1, const T1& v2, const T2& lerp )
+{
+	return v1 + ( v2 - v1 ) * lerp;
+}
 
 #include "ClanLib/core.h"
 #include "ClanLib/display.h"
@@ -28,6 +31,12 @@ using namespace std;
 
 unsigned int HashString(const char *str);
 int random(int range);
+int random_range(int rangeMin, int rangeMax);
+
+inline float frandom(float x=1.0f)
+{
+	return (rand() / (float) RAND_MAX) * x;
+}
 
 bool exist(const char * name);
 void add_text(const char *tex ,const char *filename);

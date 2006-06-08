@@ -35,6 +35,7 @@
 
 BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 {
+	m_brainType = PLAYER_SIDE_VIEW;
 	ResetKeys();
 	m_SlotKeyUp = CL_Keyboard::sig_key_up().connect( this, &BrainPlayer::OnKeyUp);
 	m_SlotKeyDown = CL_Keyboard::sig_key_down().connect( this, &BrainPlayer::OnKeyDown);
@@ -266,7 +267,7 @@ void BrainPlayer::CheckForLadder()
 					//able to enter ladder mode
 					m_pParent->SetOnLadder(true);
 					m_bRequestJump = false;
-					m_pParent->SetSpriteData(pProfile->GetSpriteByAnimID(pProfile->TextToAnimID("climb")));
+					if (pProfile) m_pParent->SetSpriteData(pProfile->GetSpriteByAnimID(pProfile->TextToAnimID("climb")));
 
 					m_jumpTimer = 0;
 				}
@@ -312,7 +313,7 @@ void BrainPlayer::CheckForLadder()
 
 void BrainPlayer::UpdateMovement(float step)
 {
-	assert(m_pParent->GetVisualProfile());
+	//assert(m_pParent->GetVisualProfile());
 
 	VisualProfile *pProfile = m_pParent->GetVisualProfile();
 
@@ -450,7 +451,8 @@ if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 			}
 	} else
 	{
-		m_pParent->SetSpriteData(pProfile->GetSprite(m_state,m_facing));
+		
+		if (pProfile) m_pParent->SetSpriteData(pProfile->GetSprite(m_state,m_facing));
 
 	}
 	

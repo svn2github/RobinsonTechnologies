@@ -155,7 +155,7 @@ bool Screen::Save()
 		for (itor = pList->begin(); itor != pList->end(); ++itor)
 		{
 			//these exist for all tile types
-			if (  (*itor)->GetBit(Tile::e_notPersistant))
+			if (  (*itor)->GetBit(Tile::e_notPersistent))
 			{
 				//we don't want to save this one.. uh.. but we already said how many tiles
 				//were here and we don't want to traverse the list twice to count them..

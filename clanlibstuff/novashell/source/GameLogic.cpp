@@ -354,7 +354,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 				if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 		{
-			m_bRestartEngineFlag = true;
+			SetRestartEngineFlag(true);
 			return;
 
 			
@@ -517,6 +517,7 @@ void GameLogic::Render()
 void GameLogic::HandleMessageString(const string &msg)
 {
   LogMsg("Gamelogic got %s", msg.c_str());
+  GetScriptManager->RunString(msg.c_str());
 }
 
 

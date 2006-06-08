@@ -54,21 +54,15 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    BuildWorldListBox();
 #endif
 
-
 }
 
 EntEditor::~EntEditor()
 {
 	GetScriptManager->RunFunction("OnCloseEditor");
- 
-    
-	SetCameraToTrackPlayer();
-	
+ 	SetCameraToTrackPlayer();
 	DisableAllModes();
-
 	GetApp()->GetGUI()->close();
 
-	//SAFE_DELETE(m_pMapNode); //I don't think we have to delete this
 	SAFE_DELETE(m_pListBoxWorld);
 	SAFE_DELETE(m_pWorldListWindow);
 
@@ -82,8 +76,6 @@ EntEditor::~EntEditor()
     SAFE_DELETE(m_pWindow);
 	GetGameLogic->SetGamePaused(false); //unpause the game if it was
 	GetGameLogic->SetEditorActive(false);
-
-
 }
 
 void EntEditor::KillLayerListStuff()
@@ -145,7 +137,7 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 				BuildWorldListBox();
 			}
 
-			int selection = key.id-'1';
+			int selection = key.id-CL_KEY_1;
 			//LogMsg("Chose %d", selection);
 			m_pListBoxWorld->set_current_item(selection);
 
@@ -208,6 +200,7 @@ void EntEditor::MapOptionsDialog()
 	CL_InputBox *pThumb = dlg.add_input_box("Auto Thumbnail Size: (0 for none):", CL_String::from_int(GetWorld->GetThumbnailWidth()));
 	CL_InputBox *pBGColor = dlg.add_input_box("BG Color: (in the format of r g b a)", ColorToString(GetWorld->GetBGColor()));
 	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", CL_String::from_float(GetWorld->GetGravity()));
+	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (save changes during play)", GetWorld->GetPersistent(), 200);
 
 	CL_SlotContainer slots;
 
@@ -280,6 +273,7 @@ void EntEditor::MapOptionsDialog()
 		GetWorld->SetCacheSensitivity(CL_String::to_float(pCache->get_text()));
 		GetWorld->SetBGColor(StringToColor(pBGColor->get_text()));
 		GetWorld->SetGravity(CL_String::to_float(pGravity->get_text()));
+		GetWorld->SetPersistent(pPersistent->is_checked());
 
 		if (requireClear)
 		{
@@ -381,6 +375,61 @@ void EntEditor::OnDumpEngineStatistics()
 	g_Console.SetOnScreen(true);
 }
 
+void EntEditor::OnRestart()
+{
+//	if (ConfirmMessage("Restart Engine", "Save all and restart engine?")) return;
+	GetGameLogic->SetRestartEngineFlag(true);
+}
+
+void OpenScriptForEditing(string scriptName)
+{
+#ifdef WIN32
+	string file = scriptName;
+
+	if (!exist(file.c_str()))
+	{
+		if (ConfirmMessage(file + " not found", "Would you like to create this script?")) return;
+		add_text("function Init()\r\n\r\n", file.c_str());
+		add_text("end\r\n", file.c_str());
+	}
+	open_file(GetApp()->GetHWND(), file.c_str());
+#else
+	LogError("Only implemented in windows.");
+#endif
+
+
+}
+
+
+void EntEditor::OnOpenScript()
+{
+	string original_dir = CL_Directory::get_current();
+	string dir = original_dir + "/" + GetGameLogic->GetScriptRootDir();
+	CL_Directory::change_to(dir);
+	CL_FileDialog dlg("Open LUA Script", "", "*.lua", GetApp()->GetGUI());
+
+	//dlg.set_behavior(CL_FileDialog::quit_file_selected);
+	dlg.set_event_passing(false);
+	dlg.run();
+	CL_Directory::change_to(original_dir);
+
+	if (dlg.get_pressed_button() == CL_FileDialog::button_ok)
+	{
+		string fname = dlg.get_path() +"/" + dlg.get_file();
+
+		if (fname.size() < dir.size())
+		{
+			//imprecise way to figure out if they went to a wrong directory and avoids an STL crash.  really, I
+			//need to convert the slashes to forward slashes in both strings and check if dir is in fname.
+
+			LogMsg("Can't open this file, outside of our media dir.");
+			return;
+		}
+
+		OpenScriptForEditing(fname);
+	}
+}
+
 bool EntEditor::Init()
 {
 assert(!m_pWindow);
@@ -398,20 +447,27 @@ if (GetGameLogic->GetUserProfileName().empty())
 m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGHT), windowLabel, CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
    // m_slotClose = m_pWindow->sig_close().connect(this, &EntEditor::OnClose);
     m_pWindow->set_event_passing(false);
+	m_pWindow->set_topmost_flag(true);
 	m_slotClose = m_pWindow->sig_close_button_clicked().connect_virtual(this, &EntEditor::OnCloseButton);
 
     m_pMenu = new CL_Menu(m_pWindow->get_client_area());
 	m_pMenu->set_event_passing(false);
 	
 	CL_MenuNode *pItem;
-	pItem = m_pMenu->create_item("File/Close Edit Bar (F11)");
+	pItem = m_pMenu->create_item("File/Close Edit Bar (F1)");
     m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnClose);
+
+	pItem = m_pMenu->create_item("File/Open Script");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnOpenScript);
 
 	pItem = m_pMenu->create_item("File/Save All Now");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnSaveMap);
 
 	pItem = m_pMenu->create_item("File/Save And Exit (Alt+F4)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnExit);
+
+	pItem = m_pMenu->create_item("File/Save All and Restart Engine (Ctrl+Shift+R)");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnRestart);
 
 	pItem = m_pMenu->create_toggle_item("Mode/Map Info");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnChooseScreenMode);
@@ -807,7 +863,7 @@ void EntEditor::OnToggleFullScreen()
 	GetApp()->RequestToggleFullscreen();
 }
 
-bool EntEditor::ConfirmMessage(string title, string msg)
+bool ConfirmMessage(string title, string msg)
 {
 	CL_MessageBox message(title, msg, "Continue", "Abort", "", GetApp()->GetGUI());
 	message.set_event_passing(false);
@@ -1023,7 +1079,4 @@ void EntEditor::OnMapChange()
 	GetWorldCache->SetDrawCollision(m_bShowCollision);
 	PopulateLayerListMenu();
 }
-
-
-
 

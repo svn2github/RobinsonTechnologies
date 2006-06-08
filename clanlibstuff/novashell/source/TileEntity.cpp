@@ -10,7 +10,7 @@ TileEntity::TileEntity()
 {
 	m_type = C_TILE_TYPE_ENTITY;
 	m_pEntity = NULL;
-	//SetBit(Tile::e_notPersistant, true); //don't save this, we don't know how yet
+	//SetBit(Tile::e_notPersistent, true); //don't save this, we don't know how yet
 	SetLayer(C_LAYER_ENTITY);
 }
 

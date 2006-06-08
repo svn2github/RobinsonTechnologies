@@ -5,6 +5,7 @@
 #include "GameLogic.h"
 #include "EntWorldCache.h"
 #include "MovingEntity.h"
+#define C_DEFAULT_LERP 0.3f
 
 Camera::Camera()
 {
@@ -19,7 +20,8 @@ void Camera::SetCameraSettings(CameraSetting &camSetting)
 {
   m_vecPos = camSetting.VecPos();
   m_vecTargetPos = camSetting.VecTargetPos();
-  m_vecScale = camSetting.VecScale();
+  m_vecScale = ClampScaleToRange(camSetting.VecScale());
+  m_vecScaleTarget = ClampScaleToRange(camSetting.VecTargetScale());
 }
 
 CL_Rectf Camera::GetViewRectWorld()
@@ -40,6 +42,7 @@ void Camera::GetCameraSettings(CameraSetting &camSettingOut)
 	camSettingOut.VecPos() = m_vecPos;
 	camSettingOut.VecTargetPos() = m_vecTargetPos;
 	camSettingOut.VecScale() = m_vecScale;
+	camSettingOut.VecTargetScale() = m_vecScaleTarget;
 
 }
 void Camera::Reset()
@@ -48,7 +51,10 @@ void Camera::Reset()
 	m_vecPos = g_worldDefaultCenterPos;
 	m_vecTargetPos = g_worldDefaultCenterPos;
 	m_vecScale.x = m_vecScale.y = 1;
+	m_vecScaleTarget = m_vecScale;
 	m_entTrackID = 0;
+	m_moveLerp = C_DEFAULT_LERP;
+	m_scaleLerp = C_DEFAULT_LERP;
 }
 
 void Camera::SetPos(CL_Vector2 vecPos)
@@ -60,29 +66,45 @@ void Camera::SetPos(CL_Vector2 vecPos)
 void Camera::SetScaleRaw(CL_Vector2 vecScale)
 {
 	m_vecScale = vecScale;
+	m_vecScaleTarget = m_vecScale;
 }
+
+void Camera::SetScaleTarget(CL_Vector2 vecScale)
+{
+	if (!GetWorld) return;
+
+	m_vecScaleTarget = ClampScaleToRange(vecScale);
+}
+
+
+CL_Vector2 Camera::ClampScaleToRange(CL_Vector2 vecScale)
+{
+
+	const float maxZoom = 30.0f; //larger the number, the closer we can zoom in
+	const float minZoom = 0.010f; //smaller the #, the farther we can zoom out
+
+	//make sure current zoom level is within acceptable range
+	vecScale.x = min(vecScale.x, maxZoom);
+	vecScale.y = min(vecScale.y, maxZoom);
+
+	vecScale.x = max(vecScale.x, minZoom);
+	vecScale.y = max(vecScale.y, minZoom);
+
+	return vecScale;
+}
+
 void Camera::SetScale(CL_Vector2 vecScale)
 {
 	if (!GetWorld) return;
-	
-	const float maxZoom = 30.0f; //larger the number, the closer we can zoom in
-	const float minZoom = 0.010f; //smaller the #, the farther we can zoom out
 	CL_Vector2 vecPosBefore;
-
 	if (m_entTrackID == 0)
 	{
 		vecPosBefore = GetWorldCache->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
 	}
 	
-	m_vecScale = vecScale;
+	m_vecScale = ClampScaleToRange(vecScale);
 
-	//make sure current zoom level is within acceptable range
-	m_vecScale.x = min(m_vecScale.x, maxZoom);
-	m_vecScale.y = min(m_vecScale.y, maxZoom);
-
-	m_vecScale.x = max(m_vecScale.x, minZoom);
-	m_vecScale.y = max(m_vecScale.y, minZoom);
-
+	m_vecScaleTarget = m_vecScale;
 	if (m_entTrackID == 0)
 	{
 		m_vecTargetPos +=  (vecPosBefore-GetWorldCache->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY)))/2;
@@ -100,8 +122,16 @@ void Camera::UpdateTarget()
 {
 	if (m_entTrackID != 0)
 	{
-		CL_Vector2 vPos = ((MovingEntity*) EntityMgr->GetEntityFromID(m_entTrackID))->GetPos();
-		SetTargetPosCentered(vPos);
+		MovingEntity *pEnt = ((MovingEntity*) EntityMgr->GetEntityFromID(m_entTrackID));
+		if (pEnt)
+		{
+			CL_Vector2 vPos = pEnt->GetPos();
+			SetTargetPosCentered(vPos);
+		} else
+		{
+			LogMsg("Camera can't find Entity %d, disabling camera tracking.", m_entTrackID);
+			m_entTrackID = 0;
+		}
 	} 
 }
 
@@ -144,5 +174,6 @@ void Camera::Update(float step)
 		InstantUpdate();
 	}
 	
-	SetPos((m_vecPos + m_vecTargetPos)/2);
+	m_vecScale = Lerp(m_vecScale, m_vecScaleTarget, m_scaleLerp);
+	m_vecPos = Lerp(m_vecPos,m_vecTargetPos, m_moveLerp);
 }

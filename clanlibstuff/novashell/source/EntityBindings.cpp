@@ -1,6 +1,7 @@
 #include "AppPrecomp.h"
 #include "MovingEntity.h"
 #include "DataManager.h"
+#include "BrainManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -31,6 +32,8 @@ void luabindEntity(lua_State *pState)
 			.def("Clear", &DataManager::Clear)
 			.def("SetIfNull", &DataManager::SetIfNull)
 
+			,class_<BrainManager>("BrainManager")
+			.def("Add", &BrainManager::Add)
 
 			,class_<MovingEntity>("Entity")
 			.def(constructor<>())
@@ -41,7 +44,7 @@ void luabindEntity(lua_State *pState)
 			.def("SetName", &MovingEntity::SetName)
 			.def("SetPosAndMap", &MovingEntity::SetPosAndMap)
 			.def("SetVisualProfile", &MovingEntity::SetVisualProfile)
-			.def("AddBrain", &MovingEntity::AddBrain)
+			.def("GetBrainManager", &MovingEntity::GetBrainManager)
 			.def("__tostring", &MovingEntityToString)
 			.def("InitCollisionDataBySize", &MovingEntity::InitCollisionDataBySize)
 			.def("LoadCollisionInfo", &MovingEntity::LoadCollisionInfo)
@@ -57,8 +60,8 @@ void luabindEntity(lua_State *pState)
 			.def("AddForce", &MovingEntity::AddForce)
 			.def("AddForceAndTorque", &MovingEntity::AddForceAndTorque)
 			.def("GetLinearVelocity", &MovingEntity::GetLinearVelocity)
-			.def("SetPersistant", &MovingEntity::SetPersistant)
-			.def("GetPersistant", &MovingEntity::GetPersistant)
+			.def("SetPersistent", &MovingEntity::SetPersistent)
+			.def("GetPersistent", &MovingEntity::GetPersistent)
 			.def("InZoneByMaterialType", &MovingEntity::InZoneByMaterialType)
 			.def("GetOnLadder", &MovingEntity::GetOnLadder)
 			.def("SetDefaultTextColor", &MovingEntity::SetDefaultTextColor)

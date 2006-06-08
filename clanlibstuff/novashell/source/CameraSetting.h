@@ -19,6 +19,7 @@ public:
 	CL_Vector2 & VecPos(){return m_vec2Array[e_vec2Pos];}
 	CL_Vector2 & VecTargetPos(){return m_vec2Array[e_vec2TargetPos];}
 	CL_Vector2 & VecScale(){return m_vec2Array[e_vec2Scale];}
+	CL_Vector2 & VecTargetScale(){return m_vec2Array[e_vec2TargetScale];}
 
 	int & TrackID(){return m_intArray[e_intTrackID];};
 	bool Serialize(CL_FileHelper &helper);
@@ -37,6 +38,7 @@ protected:
 		e_vec2Pos = 0,
 		e_vec2TargetPos,
 		e_vec2Scale,
+		e_vec2TargetScale,
 		e_vec2Count
 	};
 

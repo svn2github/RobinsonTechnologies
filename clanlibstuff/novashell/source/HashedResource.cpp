@@ -215,6 +215,9 @@ bool HashedResource::Init()
 
 	SAFE_DELETE(m_pImage);
 	m_pImage = new CL_Surface(m_strFilename);
+	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+
 	if (!m_pImage) return false;
 	LoadDefaults(); //if applicable
 	return true;

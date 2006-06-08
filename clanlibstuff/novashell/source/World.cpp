@@ -422,6 +422,14 @@ bool World::Save(bool bSaveTagCacheAlso)
 {
 	if (m_defaultTileSize == 0) return false; //don't actually save.. nothing was loaded
 
+
+	if (GetGameLogic->UserProfileActive())
+	{
+		//do we really want to save this?  We aren't in the official editor...
+		if (!GetPersistent()) return false;
+
+	}
+
 	LogMsg("Saving world map (%d world chunks to look at, map size %d by %d)", m_worldMap.size(),
 		GetWorldX(), GetWorldY());
 	assert(m_strDirPath[m_strDirPath.length()-1] == '/' && "Save needs a path with an ending backslash on it");
@@ -473,7 +481,6 @@ bool World::Save(bool bSaveTagCacheAlso)
 
 	helper.process_const(C_DATA_WORLD_END_OF_CHUNKS); //signal the end
 	SAFE_DELETE(pFile);
-
 	return true;
 }
 

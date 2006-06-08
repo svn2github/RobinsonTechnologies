@@ -136,6 +136,33 @@ Tile * Tile::CreateReference(Screen *pScreen)
 }
 
 
+class CL_OpenGLStateDataCustom: public CL_OpenGLStateData
+{
+public:
+	//: Save state information needed to restore this OpenGL state.
+	virtual void on_save()
+	{
+		LogMsg("Saving state");
+	}
+
+	//: Load state information and setup OpenGL to this state.
+	virtual void on_load()
+	{
+		clTranslated(0.38, 0.38, 0.0);	
+		LogMsg("Loading state");
+	}
+
+	//: Flush current rendering batch.
+	//- <p>This is a hint from clanDisplay that it needs to perform some state changes.
+	//- Usually this happens if translate, viewport or scissor needs updating.</p>
+	//- <p>Internally ClanLib uses this to end any open glBegin render batches.</p>
+	virtual void on_flush()
+	{
+		LogMsg("flushing state");
+	}
+
+};
+
 void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 {
 	static CL_OpenGLSurface *pSurf;
@@ -184,19 +211,6 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 		vecPos.x+ ( float(pTile->m_rectSrc.get_width()) * vecScale.x * pTile->GetScale().x),
 		vecPos.y+ float(pTile->m_rectSrc.get_height()) * vecScale.y* pTile->GetScale().y);
 
-	//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_WRAP_S, CL_CLAMP_TO_EDGE);
-	//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_WRAP_T, CL_CLAMP_TO_EDGE);
-
-	//CLfloat color[4] = { 255, 0, 0, 255 };
-	//clTexParameterfv(CL_TEXTURE_2D, CL_TEXTURE_BORDER_COLOR, color);
-
-	//if we want to disable the magnification filtering we can..
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_LINEAR);
-
-	//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_WRAP_T, CL_CLAMP);
-	//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_WRAP_S, CL_CLAMP);
-
 	if (pTile->GetBit(Tile::e_flippedX))
 	{
 		pSurf->set_angle_yaw(-180);
@@ -214,25 +228,36 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	}
 
 	//fix holes that can appear when zoomed way in.  I suspect this is due to a pixel rounding error when
-	//doing the blit?  Need to add support to clanlib for subpixel src?
-
+	//doing the blit? 
+	
 	CL_Rect src;
 	src = pTile->m_rectSrc;
-	if (pTile->GetBit(Tile::e_flippedX))
-	{
-	} else
-	{
-		src.right--;
-	}
+   
+	rectDest.bottom = int(rectDest.bottom);
+	rectDest.right = int(rectDest.right);
+	rectDest.top = int(rectDest.top);
+	rectDest.left = int(rectDest.left);
 
-	if (pTile->GetBit(Tile::e_flippedY))
-	{
-	} else
-	{
-		src.bottom--;
-	}
 
+//		rectDest.bottom = ceil(rectDest.bottom);
+//		rectDest.right = ceil(rectDest.right);
+
+//	CL_OpenGLStateDataCustom data;
+
+//	CL_OpenGLState st(pGC);
+//	st.attach_data(&data, false);
+//	st.set_active();
+
+
+	
+	CL_OpenGLWindow *pGLW = (CL_OpenGLWindow*) GetApp()->GetMainWindow();
+
+//	pGLW->
+
+//	clMatrixMode(CL_TEXTURE_MATRIX);
+//	clTranslated(-0.38, -0.38, 0.0);
 	pSurf->draw(src, rectDest, pGC);
+//	clTranslated(0.38, 0.38, 0.0);
 }
 
 

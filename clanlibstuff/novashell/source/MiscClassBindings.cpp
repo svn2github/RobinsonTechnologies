@@ -133,6 +133,8 @@ void luabindMisc(lua_State *pState)
 		.def("Play", &ISoundManager::Play)
 		.def("PlayMixed", &ISoundManager::PlayMixed)
 		.def("MuteAll", &ISoundManager::MuteAll)
+		.def("KillMusic", &ISoundManager::KillMusic)
+		.def("KillChannel", &ISoundManager::KillChannel)
 
 		,class_<TextManager>("TextManager")
 		.def("Add", &TextManager::Add)
@@ -155,6 +157,10 @@ void luabindMisc(lua_State *pState)
 		.def("SetEntityTrackingByID", &Camera::SetEntTracking)
 		.def("InstantUpdate", &Camera::InstantUpdate)
 		.def("SetScale", &Camera::SetScale)
+		.def("SetScaleTarget", &Camera::SetScaleTarget)
+		.def("SetMoveLerp", &Camera::SetMoveLerp)
+		.def("SetScaleLerp", &Camera::SetScaleLerp)
+		.def("Reset", &Camera::Reset)
 		.def("GetScale", &Camera::GetScale)
 
 		,class_<TagObject>("TagObject")
@@ -164,7 +170,6 @@ void luabindMisc(lua_State *pState)
 
 		,class_<ScriptKeyManager>("KeyManager")
 		.def("AssignKey", &ScriptKeyManager::AssignKey)
-
 
 		,
 		//stand alone functions

@@ -1,9 +1,16 @@
 #include "MiscUtils.h"
 
+
 int random(int range)
 {
 	return static_cast<int>(double(rand()) / RAND_MAX * range);
 }
+
+int random_range(int rangeMin, int rangeMax)
+{
+	return static_cast<int>(double(rand()) / RAND_MAX * (rangeMax-rangeMin)+rangeMin);
+}
+
 
 bool RemoveFile(const std::string &fileName)
 {

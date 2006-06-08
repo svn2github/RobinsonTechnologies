@@ -52,8 +52,6 @@ private:
 	void OnExit();
 	void OnSaveMap();
 	void OnToggleFullScreen();
-	bool ConfirmMessage(string title, string msg);
-
 	void OnCloseButton(CL_SlotParent_v0 &parent_handler);
 	void OnSelectMap();
 	void OnListLoseFocus(const CL_InputEvent &key);
@@ -74,6 +72,8 @@ private:
 	void PopUpLayerPropertiesDialog(int layerID);
 	void OnResetCamera();
 	void OnDumpEngineStatistics();
+	void OnRestart();
+	void OnOpenScript();
 
 	
     enum
@@ -90,6 +90,7 @@ private:
 	CL_ListBox *m_pListLayerDisplay; //control which worls are drawn
 	CL_ListBox *m_pListLayerActive; //which layer has active focus
 	CL_Label *m_pLayerLabel;
+
 	void KillLayerListStuff();
 	void OnLayerChange();
 	void PopulateLayerListMenu();
@@ -125,5 +126,5 @@ private:
 };
 
 
-
-
+void OpenScriptForEditing(string scriptName);
+bool ConfirmMessage(string title, string msg);

@@ -284,6 +284,12 @@ void ScriptManager::RunFunction(const char *pFuncName)
 
 }
 
+void ScriptManager::RunString(const char *pString)
+{
+	int result = luaL_dostring(m_pMainState, pString);
+	ShowLUAMessagesIfNeeded(m_pMainState, result);
+}
+
 void ScriptManager::Kill()
 {
 

@@ -6,6 +6,7 @@
 #include "EntCollisionEditor.h"
 #include "ScriptManager.h"
 #include "BrainPlayer.h"
+#include "BrainShake.h"
 #include "VisualProfileManager.h"
 #include "physics/Contact.h"
 #include "MaterialManager.h"
@@ -35,6 +36,7 @@ MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_defaultTextColor = CL_Color(255,100,200,255);
 	m_hashedName = 0;
 	m_bUsingCustomCollisionData = false;
+	m_brainManager.SetParent(this);
 	SetDefaults();
 }
 
@@ -45,6 +47,9 @@ MovingEntity::~MovingEntity()
 
 void MovingEntity::Kill()
 {
+
+	m_brainManager.Kill(); //reset it
+
 	m_pVisualProfile = NULL;
 	
 	if (m_bUsingCustomCollisionData)
@@ -54,7 +59,6 @@ void MovingEntity::Kill()
 	}
 	
 	SAFE_DELETE(m_pSprite);
-	SAFE_DELETE(m_pBrain);
 	SAFE_DELETE(m_pScriptObject);
 	SetDefaults();
 }
@@ -82,7 +86,6 @@ void MovingEntity::SetDefaults()
 	m_groundTimer = 0;
 	m_bMovedFlag = true;
 	m_pScriptObject = NULL;
-	m_pBrain = NULL;
 	m_timeLastActive = INT_MAX;
 	m_pSprite = NULL;
 	m_pVisualProfile = NULL; //note, we don't init or delete this ourself, visual manager handles it
@@ -290,20 +293,7 @@ void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
 	m_pSprite->get_alignment(origin, x, y);
 }
 
-void MovingEntity::AddBrain(int brainType)
-{
-  SAFE_DELETE(m_pBrain);
-  switch (brainType)
-  {
-	  case Brain::PLAYER:
-		  m_pBrain = new BrainPlayer(this);
-		  break;
 
-	  default:
-
-		  LogMsg("Unknown brain type: %d", brainType);
-  }
-}
 
 tile_list & MovingEntity::GetNearbyTileList()
 {
@@ -334,6 +324,7 @@ bool MovingEntity::Init()
 		
 			m_pSprite = new CL_Sprite();
 			m_pSprite->add_frame(*pSurf, picSrcRect);
+	
 			m_pSprite->set_alignment(origin_top_left,0,0);
 
 			assert(!m_pCollisionData);
@@ -653,7 +644,12 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 
 void MovingEntity::InitCollisionDataBySize(float x, float y)
 {
-	SAFE_DELETE(m_pCollisionData);
+	if (m_bUsingCustomCollisionData)
+	{
+		SAFE_DELETE(m_pCollisionData);
+	}
+
+	
 	m_pCollisionData = new CollisionData;
 	
 	PointList pl;
@@ -670,6 +666,8 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 	pActiveLine->CalculateOffsets();
 	//get notified of collisions
  	m_collisionSlot = m_body.sig_collision.connect(this, &MovingEntity::OnCollision);
+	m_bUsingCustomCollisionData = true;
+
 	GetBody()->SetDensity(1);
 
 }
@@ -808,7 +806,13 @@ void MovingEntity::ApplyGenericMovement(float step)
 {
 	m_nearbyTileList.clear();
 	m_zoneVec.clear();
-	
+
+	if (!m_pCollisionData->GetLineList()->size())
+	{
+		LogError("No collision data in entity %d.", ID());
+		return;
+	}
+
 	if (m_pScriptObject)
 	{
 	    //m_pScriptObject->RunFunction("Think");
@@ -903,10 +907,6 @@ void MovingEntity::Render(void *pTarget)
  		vecPos = pWorldCache->WorldToScreen(GetPos());
 	}
 
-
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_LINEAR);
-
 	m_pSprite->draw( vecPos.x, vecPos.y, pGC);
 
 	/*
@@ -943,7 +943,7 @@ void MovingEntity::Render(void *pTarget)
 
 void MovingEntity::Update(float step)
 {
-	if (m_pBrain) m_pBrain->Update(step);
+	m_brainManager.Update(step);
 	
 	if (!m_bAnimPaused)
 	m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
@@ -961,7 +961,7 @@ void MovingEntity::Update(float step)
 
 void MovingEntity::PostUpdate(float step)
 {
-	if (m_pBrain) m_pBrain->PostUpdate(step);
+	m_brainManager.PostUpdate(step);
 
 	
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
@@ -1001,7 +1001,8 @@ void MovingEntity::PostUpdate(float step)
 	const static float groundDampening = 1.6f;
 	const static float angleDampening = 0.01f;
 	
-	if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
+	//FIXME if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
+	if (IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
 		&& GetBody()->GetAngVelocity() < 0.01f)
 	{
 		//slow down

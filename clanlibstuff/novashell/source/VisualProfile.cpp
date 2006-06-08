@@ -121,6 +121,8 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 	try
 	{
 		m_animArray[animID].m_pSprite = new CL_Sprite(stSpriteName, m_pParent->m_pResourceManager);
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+		//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 	} catch(CL_Error error)
 	{
 		LogMsg("Error with putting anim %s as state %s while building profile %s.  Make sure you spelled it right and it's in the xml. (%s)",

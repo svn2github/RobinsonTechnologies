@@ -8,6 +8,7 @@
 #include "GameLogic.h"
 #include "TileEntity.h"
 #include "DataManager.h"
+#include "BrainManager.h"
 
 #define C_MAX_FALLING_DOWN_SPEED 20 //gravity won't be applied to objects going faster than this
 
@@ -42,7 +43,6 @@ public:
   void SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName);
   int GetSizeX(){ return m_pSprite->get_width(); };
   int GetSizeY(){ return m_pSprite->get_height(); };
-  void AddBrain(int brainType);
   void ApplyGenericMovement(float step);
   tile_list & GetNearbyTileList(); //note, this may not be valid if you're deleting tiles!  For debug only
   CL_Rectf & GetLastScanArea(){return m_scanArea;}
@@ -86,8 +86,8 @@ public:
 	  (*(Vector*)&torque)*m_body.GetMass());}
   CL_Vector2 GetForce() {return *(CL_Vector2*)&m_body.GetNetForce();};
   CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_body.GetLinVelocity();}
-  void SetPersistant(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistant, !bOn);}
-  bool GetPersistant() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistant);}
+  void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}
+  bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
   Zone * GetZoneWeAreOnByMaterialType(int matType);
   bool InZoneByMaterialType(int matType) {return GetZoneWeAreOnByMaterialType(matType) != NULL;}
@@ -106,6 +106,7 @@ public:
   bool GetUsingImageFromTilePic() {return m_bUsingSimpleSprite;}
   bool UsingCustomCollisionData() {return m_bUsingCustomCollisionData;}
   int GetFloorMaterialID() {return m_floorMaterialID;}
+  BrainManager * GetBrainManager() {return &m_brainManager;}
 
 
 enum ListenCollision
@@ -146,7 +147,6 @@ protected:
 	unsigned int m_groundTimer; //relax when we say they are on the  ground or not to take care of tiny bounces
 	CollisionData * m_pCollisionData; //null if we don't collide
 	ScriptObject *m_pScriptObject;
-	Brain * m_pBrain;
 	CL_Sprite *m_pSprite, *m_pSpriteLastUsed;
 	VisualProfile *m_pVisualProfile;
 	string m_mainScript;
@@ -168,6 +168,7 @@ protected:
 	bool m_bUsingSimpleSprite; //no animation, just a still taken from a tile pic
 	bool m_bUsingCustomCollisionData; //if true, we need to delete it
 	int m_floorMaterialID;
+	BrainManager m_brainManager;
 
 };
 

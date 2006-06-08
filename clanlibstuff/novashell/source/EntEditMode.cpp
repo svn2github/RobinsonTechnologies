@@ -41,13 +41,11 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	
 	SetName("edit mode");
 	Init();
-	
 }
 
 EntEditMode::~EntEditMode()
 {
 	Kill();
-	
 }
 
 void EntEditMode::OnMouseMove(const CL_InputEvent &key)
@@ -67,7 +65,6 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 			CL_Vector2 oldWorldPos = GetWorldCache->ScreenToWorld(CL_Vector2(m_vecLastMousePos.x,m_vecLastMousePos.y));
 			//let's move our start by the amount they dragged with space bar down, old photshop trick
 			m_vecDragStart -= (oldWorldPos-m_vecDragStop);
-
 		}
 	}
 
@@ -145,7 +142,6 @@ void EntEditMode::Init()
 	CL_Point tmp = offset+CL_Point(m_pCheckBoxSnap->get_width(), -2);
 	CL_Rect recSize(tmp, CL_Size(50,16));
 	
-
 	m_pInputBoxSnapSize = new CL_InputBox(CL_String::from_int(m_snapSize), m_pWindow->get_client_area());
 	
     m_pInputBoxSnapSize->set_position(recSize);
@@ -157,7 +153,6 @@ void EntEditMode::Init()
 	//m_pInputBoxSnapSize->set_position()
 	offset.y += m_pCheckBoxSnap->get_height();
 	GetSettingsFromWorld();
-
 	UpdateMenuStatus();
 }
 
@@ -878,21 +873,7 @@ void EntEditMode::OnPropertiesOK()
 
 void EntEditMode::OnPropertiesEditScript()
 {
-#ifdef WIN32
-	string file = CL_Directory::get_current()+"/"+GetGameLogic->GetScriptRootDir()+"/"+m_pPropertiesInputScript->get_text();
-
-	if (!exist(file.c_str()))
-	{
-		add_text("function Init()\r\n\r\n", file.c_str());
-		add_text("end\r\n", file.c_str());
-	}
-
-	open_file(GetApp()->GetHWND(), file.c_str());
-
-#else
-
-	LogError("Only implemented in windows.");
-#endif
+	OpenScriptForEditing(CL_Directory::get_current()+"/"+GetGameLogic->GetScriptRootDir()+"/"+m_pPropertiesInputScript->get_text());
 }
 
 void EntEditMode::OnPropertiesOpenScript()
@@ -922,9 +903,8 @@ void EntEditMode::OnPropertiesOpenScript()
 	{
 		path += ("/"+fname.substr(0, offset));
 	}
-	CL_Directory::change_to(path);
 
-	
+	CL_Directory::change_to(path);
 	CL_FileDialog dlg("Open LUA Script", fileNameWithoutPath, "*.lua", GetApp()->GetGUI());
 	
 	//dlg.set_behavior(CL_FileDialog::quit_file_selected);
@@ -975,9 +955,7 @@ void EntEditMode::OnPropertiesRemoveData()
 			m_pPropertiesListData->remove_item(i);
 			i = -1;
 		}
-
 	}
-		
 }
 
 /*

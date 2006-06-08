@@ -1,3 +1,4 @@
+.DS_Store
 ts*.jpg
 ts*.dat
 *.lib

@@ -526,11 +526,27 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainManager.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainPlayer.cpp"
 						>
 					</File>
 					<File
 						RelativePath=".\BrainPlayer.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainShake.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainShake.h"
 						>
 					</File>
 				</Filter>
@@ -1876,6 +1892,10 @@
 			<Filter
 				Name="EntitiesH"
 				>
+				<File
+					RelativePath=".\MovingEntity.h"
+					>
+				</File>
 				<Filter
 					Name="MapH"
 					>

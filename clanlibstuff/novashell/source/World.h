@@ -1,16 +1,13 @@
 
 /* -------------------------------------------------
-* Copyright 2005 Robinson Technologies
+* Copyright 2006 Robinson Technologies
 * Programmer(s):  Seth A. Robinson (seth@rtsoft.com): 
-* Created 7:1:2006   9:40
 */
 
 #pragma once
 
 /*
-This world class keeps track of the individual chunks that make up the world.  Each chunk contains
-8X8 64X64 tiles by default.
-
+This world class keeps track of the individual chunks that make up the world.  
 */
 
 #define C_DEFAULT_WORLD_X 1 //how many screens we start with by default
@@ -101,8 +98,9 @@ public:
 	bool GetSnapEnabled() {return m_byteArray[e_byteSnapOn] != 0;}
 	void SetSnapEnabled(bool bNew) {m_byteArray[e_byteSnapOn] = bNew;}
 	void SetMyWorldCache(EntWorldCache *pWorldCache) {m_pWorldCache = pWorldCache;}
+	bool GetPersistent() {return m_byteArray[e_byteNotPersistent] == 0;}
+	void SetPersistent(bool bNew) {m_byteArray[e_byteNotPersistent] = !bNew;}
 	EntWorldCache * GetMyWorldCache(){return m_pWorldCache;}
-
 	void ReInitEntities(); //reinits all cached entities in this world, useful after 
 	//changing a script
 
@@ -110,15 +108,21 @@ private:
 
 	bool TestCoordPacker(int x, int y);
 
+	//you can add new variables by adding enums, the datafile will stay compatible automatically
 	enum
 	{
 		e_intThumbnailWidth = 0,
 		e_intThumbnailHeight,
+	
+		//add more above here
 		e_intCount
 	};
 	enum
 	{
 		e_byteSnapOn = 0,
+		e_byteNotPersistent,
+		
+		//add more above here
 		e_byteCount
 	};
 
@@ -127,12 +131,16 @@ private:
 		e_floatCacheSensitivity = 0,
 		e_floatViewSensitivity,
 		e_floatGravity,
+
+		//add more above here
 		e_floatCount
 	};
 
 	enum
 	{
 		e_uintBGColor = 0, //what color the background clear should be
+		
+		//add more above here
 		e_uintCount
 	};
 

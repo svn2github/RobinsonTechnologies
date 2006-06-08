@@ -30,23 +30,29 @@ public:
 	void SetCameraSettings(CameraSetting &camSetting); //i want to const it but then my CameraSetting stuff will be a hassle...
 	void SetScaleRaw(CL_Vector2 vecScale); //no bounds checking, no auto centering the camera to the new scale
 	void SetScale(CL_Vector2 vecScale);
+	void SetScaleTarget(CL_Vector2 vecScale);
 	void Reset();
 	void SetEntTracking(int entID); //set to 0 to disable
 	void SetInstantUpdateOnNextFrame(bool bNew){m_bInstantUpdateASAP = bNew;}
 	void Update(float step);
 
+	void SetMoveLerp(float lerp){m_moveLerp = lerp;}
+	void SetScaleLerp(float lerp){m_scaleLerp = lerp;}
 	void InstantUpdate(); //move camera instantly without lerping, useful after a focus change
 
 protected:
 
 	void UpdateTarget();
+	CL_Vector2 ClampScaleToRange(CL_Vector2 vecScale);
 
 
 	CL_Vector2 m_vecPos;
 	CL_Vector2 m_vecTargetPos; 
 	CL_Vector2 m_vecScale; //controls the zoom.  1.0 is normal
+	CL_Vector2 m_vecScaleTarget;
 	int m_entTrackID;
 	bool m_bInstantUpdateASAP;
+	float m_moveLerp, m_scaleLerp;
 };
 
 #endif                  // include guard

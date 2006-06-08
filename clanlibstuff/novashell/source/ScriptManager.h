@@ -56,6 +56,7 @@ public:
 	void Kill();
 	void LoadMainScript(const char *pScriptName);
     void RunFunction(const char *pFuncName);
+	void RunString(const char *pString);
 
 	lua_State * GetMainState() {return m_pMainState;}
 

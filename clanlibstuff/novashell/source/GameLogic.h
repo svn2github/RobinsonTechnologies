@@ -67,6 +67,7 @@ public:
 	  void ResetUserProfile(string name);
 	  const string & GetUserProfilePathWithName() {return m_strUserProfilePathWithName;}
 	  const string & GetUserProfileName() {return m_strUserProfileName;}
+	  bool UserProfileActive() {return !m_strUserProfileName.empty();}
 	  bool UserProfileExists(const string &name);
 	  void HandleMessageString(const string &msg);
 	  void ClearAllMapsFromMemory();
@@ -76,6 +77,7 @@ public:
 	  void SetShowFPS(bool bNew) {m_bShowFPS = bNew;}
 	  bool GetShowFPS() {return m_bShowFPS;}
 	  void ToggleShowFPS() {m_bShowFPS = !m_bShowFPS;}
+	  void SetRestartEngineFlag(bool bNew) { 			m_bRestartEngineFlag = bNew;}
 
 private:
 

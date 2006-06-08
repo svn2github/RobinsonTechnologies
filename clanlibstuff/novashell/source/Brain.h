@@ -22,12 +22,15 @@ public:
 
 	enum eBrainType
 	{
-	 PLAYER = 0
+	 PLAYER_SIDE_VIEW = 0,
+	 PLAYER_TOP_VIEW,
+	 SHAKE
 	};
 
 protected:
 
 	MovingEntity *m_pParent;
+	int m_brainType;
 };
 
 #endif                  // include guard

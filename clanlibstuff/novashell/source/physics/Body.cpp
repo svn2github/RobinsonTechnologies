@@ -19,6 +19,7 @@ $History: $
 #include "AppPrecomp.h"
 #include "Body.h"
 #include "Contact.h"
+#include "MovingEntity.h"
 
 CBody::CBody()
 {
@@ -154,7 +155,8 @@ void CBody::AddForce(const Vector& F)
 {
 	if (IsUnmovable())
 	{
-		assert(!"huh?");
+		LogError("AddForce can't be called on Entity %d, it's not movable.  Give it collision data and call SetDensity to make it movable.",
+			GetParentEntity()->ID());
 		return;
 	}
 
