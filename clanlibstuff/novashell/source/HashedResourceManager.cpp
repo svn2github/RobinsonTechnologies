@@ -5,6 +5,8 @@
 #include "CollisionData.h"
 #include "HashedResource.h"
 
+#define C_USED_RESOURCES_FILENAME "used_resources.dat"
+
 HashedResourceManager::HashedResourceManager()
 {
 	
@@ -53,7 +55,6 @@ bool HashedResourceManager::Init()
 			
 		}
 	}
-	
 	return true; //success
 }
 
@@ -87,7 +88,6 @@ void HashedResourceManager::PrintStatistics()
 
 void HashedResourceManager::Kill()
 {
-	
 	HashedResourceMap::iterator ent = m_hashedResourceMap.begin();
 	for (ent; ent != m_hashedResourceMap.end(); ++ent)
 	{
@@ -103,8 +103,7 @@ CL_Surface * HashedResourceManager::GetResourceByHashedID(unsigned int resourceI
 
 	if (itor == m_hashedResourceMap.end()) 
 	{
-		LogMsg("Unable to find graphic resourceID %u", resourceID);
-		//throw ("Error finding hashed resource graphic");
+		ShowResourceNotFoundError(resourceID);
 		return NULL;
 	}
 	
@@ -142,7 +141,7 @@ CollisionData * HashedResourceManager::GetCollisionDataByHashedIDAndRect(unsigne
 
 	if (itor == m_hashedResourceMap.end()) 
 	{
-		LogMsg("Unable to find resourceID %u", resourceID);
+		ShowResourceNotFoundError(resourceID);
 		//throw ("Error finding hashed resource " + CL_String::from_int(resourceID));
 		return NULL;
 	}
@@ -151,8 +150,6 @@ CollisionData * HashedResourceManager::GetCollisionDataByHashedIDAndRect(unsigne
 	//convert the rect info into a single number to use as a hash
 
   return pResource->GetCollisionDataByRect(rectSource);
-
-
 }
 
 //here we manually break up a vanilla image into tiles and put it in the buffer given for easy copy and
@@ -183,10 +180,84 @@ void HashedResourceManager::PutGraphicIntoTileBuffer(int resourceID, TileEditOpe
 			pTilePic = new TilePic();
 			pTilePic->m_rectSrc = CL_Rect(x,y,x+sizeGrid.width,y+sizeGrid.height);
 			pTilePic->m_resourceID = resourceID;
-			pTilePic->SetLayer(C_LAYER_DETAIL1);
+			pTilePic->SetLayer(C_LAYER_ENTITY);
 			pTilePic->SetPos(CL_Vector2(pTilePic->m_rectSrc.left,pTilePic->m_rectSrc.bottom));
 			op.AddTileToSelection(TileEditOperation::C_OPERATION_ADD, false, pTilePic);
 			
 		}
 	}
+}
+
+//the only problem with using # hashes for everything is if an image is missing, 237827382 doesn't tell
+//you a whole lot about where to find it.  We'll save out the textures used, these will only be read and
+//checked if there is an error.  We can figure out filenames this way.
+
+void HashedResourceManager::SaveUsedResources(World *pWorld, string path)
+{
+
+	//save out our globals
+	CL_OutputSource *pSource = g_VFManager.PutFile(path+C_USED_RESOURCES_FILENAME);
+	CL_FileHelper helper(pSource);
+
+
+	HashedResourceMap::iterator ent = m_hashedResourceMap.begin();
+	for (ent; ent != m_hashedResourceMap.end(); ++ent)
+	{
+		//LogMsg("Found %s", ent->second->m_strFilename.c_str());
+		helper.process_const(ent->first);
+		helper.process_const(ent->second->m_strFilename.c_str());
+	}
+
+//	helper.process_const(C_PROFILE_DAT_VERSION);
+	SAFE_DELETE(pSource);
+	
+}
+
+
+void HashedResourceManager::ShowResourceNotFoundError(unsigned int resourceID)
+{
+	//do a slow look up to find the resource.  It's not like this should be called much or speed matters.
+	//If it ever is, load the file into a hash-map and keep it cached after the first call.
+	
+	World *pWorld = GetWorld;
+	string stExtraInfo = "extra info not available";
+	
+	if (pWorld)
+	{
+		//does extra data exist?	
+		CL_InputSource *pSource = g_VFManager.GetFile(pWorld->GetDirPath()+ C_USED_RESOURCES_FILENAME);
+
+		if (pSource)
+		{
+			CL_FileHelper helper(pSource);
+
+			string stTemp;
+			unsigned int storedResourceID;
+
+			while (pSource->tell() < pSource->size())
+			{
+				helper.process(storedResourceID);
+				helper.process(stTemp);
+
+				if (storedResourceID == resourceID)
+				{
+					//this is it
+					stExtraInfo = stTemp;
+					break; //don't scan anymore
+				}
+			}
+
+			SAFE_DELETE(pSource);
+		}
+	}
+
+		//couldn't find extra data
+		LogError("Unable to find resourceID %u (%s)", resourceID, stExtraInfo.c_str());
+		return;
+	
+
+	//scan for more info
+
+	
+
 }

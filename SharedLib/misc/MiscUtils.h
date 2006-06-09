@@ -108,7 +108,6 @@ public:
 	}
 	void process(std::string &val)
 	{
-
 		if (m_pInput)
 		{	
 			//first load the array count
@@ -398,6 +397,19 @@ public:
 			m_pOutput->write_float32(val.y);
 		}
 	}
+
+	void process_const(const std::string &val)
+	{
+		if (m_pInput)
+		{	
+			cl_assert(0);
+		} else
+		{	
+			//save it out
+			process_smart_array((cl_uint8*)val.c_str(), val.size());
+		}
+	}
+
 
 	void process(CL_Rect &val)
 	{

@@ -213,12 +213,10 @@ void App::SetupBackground(int x, int y)
 
     m_pBackgroundCanvas = new CL_Canvas(*m_pBackground);
     SetupMouseClipping();
-    
-    LogMsg("Background rebuilt");
+    //LogMsg("Background rebuilt");
     m_pGameLogic->RebuildBuffers();
 
     ClearTimingAfterLongPause();
-    
 }
 
 void App::OnWindowResize(int x, int y)
@@ -242,14 +240,14 @@ void App::SetupMouseClipping()
     {
         if (m_pWindow->is_fullscreen() && m_HaveFocus)
         {
-            std::cout << "Clipped curser.";
+            //std::cout << "Clipped curser.";
             RECT rcWindow;
             GetWindowRect(GetHWND(), &rcWindow );
             ClipCursor( &rcWindow );
         }
         else
         {
-            std::cout << "Freed curser.";
+            //std::cout << "Freed curser.";
            ClipCursor( NULL );
         }
     }

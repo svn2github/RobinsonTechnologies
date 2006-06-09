@@ -124,7 +124,7 @@ void EntChooseScreenMode::Init()
 	m_pMenu = new CL_Menu(m_pWindow->get_client_area());
 
 	CL_MenuNode  *pItem;
-	pItem = m_pMenu->create_item("Utilities/Auto Size Map (removes dead space)");
+	pItem = m_pMenu->create_item("Utilities/Auto Size Map (removes dead space and saves)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntChooseScreenMode::OnAutoResize);
 
 	pItem = m_pMenu->create_item("Utilities/Refresh All Thumbnails");
@@ -153,10 +153,12 @@ void EntChooseScreenMode::OnClose(CL_SlotParent_v0 &parent_handler)
 
 void EntChooseScreenMode::OnAutoResize()
 {
-	BlitMessage("Saving and loading map\nto detect bounds...");
+	BlitMessage("Removing blank space and saving map...");
+	
 	GetWorld->Save(false);
 	GetWorld->Load();
 	GetWorldCache->ClearCache();
+	GetWorld->Save(true);
 	QuickInit();
 
 }

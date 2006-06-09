@@ -44,9 +44,26 @@ CL_Vector2 WorldToScreen(CL_Vector2 v)
 	return v;
 }
 
+MovingEntity * GetEntityByID(int ID)
+{
+	return (MovingEntity*)EntityMgr->GetEntityFromID(ID);
+}
+
+MovingEntity * GetEntityByName(const string &name)
+{
+	TagObject *t = GetTagManager->GetFromString(name);
+	if (!t) return false; //can't find it?
+	if (t->m_entID == 0)
+	{
+		LogMsg("Found entity %s, but he hasn't been loaded yet. Hrm.  Returning NIL", name.c_str());
+		return false; //not loaded yet
+	}
+	
+	return (MovingEntity*)EntityMgr->GetEntityFromID(t->m_entID);
+}
+
 MovingEntity * GetEntityByWorldPos(CL_Vector2 v)
 {
-
 	if (!GetWorld)
 	{
 
@@ -121,6 +138,8 @@ void luabindMisc(lua_State *pState)
 		.def("ResetUserProfile", &GameLogic::ResetUserProfile)
 		.def("ClearAllMapsFromMemory", &GameLogic::ClearAllMapsFromMemory)
 		.def("UserProfileExists", &GameLogic::UserProfileExists)
+		.def("SetRestartEngineFlag", &GameLogic::SetRestartEngineFlag)
+
 
 
 		,class_<App>("App")
@@ -139,10 +158,19 @@ void luabindMisc(lua_State *pState)
 		,class_<TextManager>("TextManager")
 		.def("Add", &TextManager::Add)
 
+		,class_<World>("Map")
+		.def("SetPersistent", &World::SetPersistent)
+		.def("GetPersistent", &World::GetPersistent)
+		.def("SetAutoSave", &World::SetAutoSave)
+		.def("GetAutoSave", &World::GetAutoSave)
+		.def("GetName", &World::GetName)
+		
+
 		,class_<WorldManager>("MapManager")
 		.def("SetActiveMapByName", &WorldManager::SetActiveWorldByName)
-
-
+		.def("GetActiveMap", &WorldManager::GetActiveWorld)
+		.def("UnloadMapByName", &WorldManager::UnloadWorldByName)
+		
 		,class_<TagManager>("TagManager")
 		.def("GetFromString", &TagManager::GetFromString)
 		.def("GetFromHash", &TagManager::GetFromHash)
@@ -180,6 +208,8 @@ void luabindMisc(lua_State *pState)
 		def("ScreenToWorld", &ScreenToWorld),
 		def("WorldToScreen", &WorldToScreen),
 		def("GetEntityByWorldPos", &GetEntityByWorldPos),
+		def("GetEntityByID", &GetEntityByID),
+		def("GetEntityByName", &GetEntityByName),
 		def("ShowMessage", &ShowMessage)
 		];
 }

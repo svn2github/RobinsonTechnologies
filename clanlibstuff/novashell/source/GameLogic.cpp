@@ -238,6 +238,7 @@ bool GameLogic::Init()
 {
 
 	LogMsg("Initializing GameLogic");
+	m_strUserProfileName.clear();
 	m_worldManager.Kill();
 	g_materialManager.Init();
 	GetVisualProfileManager->Kill();
@@ -343,12 +344,6 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 	switch (key.id)
 	{
 
-	case CL_KEY_F:
-		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
-		{
-			ToggleShowFPS();
-		}
-		break;
 
 	case CL_KEY_R:
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
@@ -404,6 +399,13 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 				{
 					GetWorldCache->SetDrawCollision(!GetWorldCache->GetDrawCollision());
 				}
+			}
+			break;
+	
+		case CL_KEY_F:
+			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+			{
+				ToggleShowFPS();
 			}
 			break;
 

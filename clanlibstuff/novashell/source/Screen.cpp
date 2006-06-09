@@ -39,7 +39,11 @@ void Screen::DeleteAllTilesOnLayer(unsigned int layer)
 Screen::~Screen()
 {
 	//LogMsg("Killing screen");
-  	Save(); //if something changed, it will be written to disk
+	//this checks map settings like persistancy and skip next save
+	if (GetParentWorldChunk()->GetParentWorld()->SaveRequested())
+	{
+ 		Save(); //if something changed, it will be written to disk
+	}
 	DeleteTileData();
 }
 
@@ -125,6 +129,7 @@ string Screen::GetFileName()
 
 bool Screen::Save()
 {
+	//first see if saving is even applicable
 	if (!GetParentWorldChunk()->GetDataChanged()) return false; //nothing changed, we don't have to save
 
 	if (IsEmpty())

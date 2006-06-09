@@ -9,7 +9,7 @@
 #pragma once
 
 #include "BaseGameEntity.h"
-#define C_EDITOR_MAIN_MENU_BAR_HEIGHT 105
+#define C_EDITOR_MAIN_MENU_BAR_HEIGHT 95
 
 class GeneratorInterface;
 
@@ -110,6 +110,7 @@ private:
 	CL_MenuItem *m_modeCheckBoxArray[e_modeCount];
 	CL_MenuItem *m_pMenuLockAtRefreshCheckbox;
 	CL_MenuItem *m_pMenuParallaxCheckbox;
+	CL_MenuItem *m_pMenuShowFPSCheckbox;
 
 	CL_Slot m_slotClose;
 	CL_SlotContainer m_slot; //generic one, easier

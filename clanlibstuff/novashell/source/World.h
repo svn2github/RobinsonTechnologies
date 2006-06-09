@@ -100,6 +100,10 @@ public:
 	void SetMyWorldCache(EntWorldCache *pWorldCache) {m_pWorldCache = pWorldCache;}
 	bool GetPersistent() {return m_byteArray[e_byteNotPersistent] == 0;}
 	void SetPersistent(bool bNew) {m_byteArray[e_byteNotPersistent] = !bNew;}
+	bool GetAutoSave() {return m_byteArray[e_byteAutoSave] == 0;}
+	void SetAutoSave(bool bNew) {m_byteArray[e_byteAutoSave] = !bNew;}
+	bool SaveRequested();
+
 	EntWorldCache * GetMyWorldCache(){return m_pWorldCache;}
 	void ReInitEntities(); //reinits all cached entities in this world, useful after 
 	//changing a script
@@ -121,6 +125,7 @@ private:
 	{
 		e_byteSnapOn = 0,
 		e_byteNotPersistent,
+		e_byteAutoSave,
 		
 		//add more above here
 		e_byteCount

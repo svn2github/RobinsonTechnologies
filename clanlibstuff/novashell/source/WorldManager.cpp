@@ -126,6 +126,49 @@ WorldInfo * WorldManager::GetWorldInfoByName(const string &stName)
 	//failed
 	return NULL;
 }
+void WorldManager::UnloadWorldByName(const string &stName)
+{
+
+	world_info_list::iterator itor =m_worldInfoList.begin();
+	bool bMapChanged = false;
+	
+	string worldPath;
+
+	while (itor != m_worldInfoList.end())
+	{
+		if ( (*itor)->m_world.GetName() == stName)
+		{
+			worldPath = (*itor)->m_world.GetDirPath();
+			if (GetActiveWorld() == &(*itor)->m_world)
+			{
+				//we're about to delete something currently active, let the rest of the world know
+				bMapChanged = true;
+			}
+			
+			delete *itor;
+			m_worldInfoList.erase(itor);
+			break;
+
+		}
+		itor++;
+	}
+	
+	if (!worldPath.empty())
+	{
+		//well, even though we deleted it, let's put it back without loading it so future things can find it by name
+		AddWorld(worldPath);
+	}
+
+	if (bMapChanged)
+	{
+		sig_map_changed(); //broadcast this to anybody who is interested
+		m_pActiveWorld = NULL;
+		m_pActiveWorldCache = NULL;
+	}
+	
+	return;
+
+}
 
 bool WorldManager::SetActiveWorldByName(const string &stName)
 {

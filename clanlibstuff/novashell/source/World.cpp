@@ -67,8 +67,6 @@ World::World()
 
 }
 
-
-
 bool World::TestCoordPacker(int x, int y)
 {
 	CL_Point pt(x,y);
@@ -86,7 +84,10 @@ bool World::TestCoordPacker(int x, int y)
 
 World::~World()
 {
-	Save(true);
+	if (SaveRequested())
+	{
+		Save(true);
+	}
 	Kill();
 }
 
@@ -414,34 +415,41 @@ bool World::Load(string dirPath)
 	LogMsg("Loaded map.  %d non-empty chunks, size is %d by %d.", m_worldMap.size(), GetWorldX(), GetWorldY());
 	SAFE_DELETE(pFile);
 
-	//GetCamera->SetCameraSettings(m_cameraSetting);
 	return true; //actually loaded something
+}
+
+bool World::SaveRequested()
+{
+	if (!GetAutoSave()) return false; //we're told not save 
+	if (GetGameLogic->UserProfileActive())
+	{
+		//do we really want to save this?  We aren't in the official editor...
+		if (!GetPersistent()) return false;
+	}
+
+	return true;
 }
 
 bool World::Save(bool bSaveTagCacheAlso)
 {
 	if (m_defaultTileSize == 0) return false; //don't actually save.. nothing was loaded
 
-
-	if (GetGameLogic->UserProfileActive())
-	{
-		//do we really want to save this?  We aren't in the official editor...
-		if (!GetPersistent()) return false;
-
-	}
-
 	LogMsg("Saving world map (%d world chunks to look at, map size %d by %d)", m_worldMap.size(),
 		GetWorldX(), GetWorldY());
 	assert(m_strDirPath[m_strDirPath.length()-1] == '/' && "Save needs a path with an ending backslash on it");
-	//save out our data, but create the dir if it doesn't exit
-	//CL_Directory direc;
-	
+
 	g_VFManager.CreateDir(m_strDirPath); //creates the dir if needed in the last mounted file tree
 	
 	if (bSaveTagCacheAlso)
 	{
 		//first save our cached tag data
 		GetTagManager->Save(this);
+
+		if (!GetApp()->GetMyGameLogic()->UserProfileActive())
+		{
+			//also a good time to save out used textures, used for missing texture errors
+			GetHashedResourceManager->SaveUsedResources(this, m_strDirPath);
+		}
 	}
 
 	m_layerManager.Save(m_strDirPath+C_LAYER_FILENAME);

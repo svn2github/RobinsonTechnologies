@@ -317,7 +317,7 @@ bool MovingEntity::Init()
 		CL_Surface *pSurf = GetHashedResourceManager->GetResourceByHashedID(picID);
 		if (!pSurf)
 		{
-			LogMsg("Error, entity is unable to find image with hash %d to use.", picID);
+			LogError("Error, entity %d (%s) is unable to find image with hash %d to use.", ID(), GetName().c_str(), picID);
 		} else
 		{
 			CL_Rect picSrcRect = StringToRect(m_dataManager.Get(C_ENT_TILE_RECT_KEY));
@@ -352,7 +352,14 @@ bool MovingEntity::Init()
 		//avoid a crash
 		if (!m_pVisualProfile)
 		{
-			LogMsg("No visual profile was set in script %s's init!  Maybe it had a syntax error, go check the log. (trying to load default)", m_mainScript.c_str());
+			
+			if (m_mainScript.empty())
+			{
+				LogError("(giving entity %d (%s) the default script so you can see it to delete it)", ID(), GetName().c_str());
+			} else
+			{
+				LogError("No visual profile was set in script %s's init!  Maybe it had a syntax error, go check the log. (trying to load default)", m_mainScript.c_str());
+			}
 			SetVisualProfile(GetGameLogic->GetScriptRootDir()+"/system/system.xml", "ent_default");
 		}
 
@@ -374,7 +381,11 @@ bool MovingEntity::Init()
 	//override settings with certain things found
 	if (m_dataManager.Exists(C_ENT_DENSITY_KEY))
 	{
-		SetDensity(CL_String::to_float(m_dataManager.Get(C_ENT_DENSITY_KEY)));
+		
+		if (GetCollisionData() && GetCollisionData()->HasData())
+		{
+			SetDensity(CL_String::to_float(m_dataManager.Get(C_ENT_DENSITY_KEY)));
+		}
 	}
 
 	return true;
@@ -633,7 +644,6 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 	if (pActiveLine)
 	{
 		pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
-
 		GetBody()->SetDensity(m_fDensity);
 	} else
 	{
@@ -649,6 +659,12 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 		SAFE_DELETE(m_pCollisionData);
 	}
 
+	if (x == 0 && y == 0)
+	{
+		//let's guess here
+		x = m_pTile->GetBoundsSize().x;
+		y = m_pTile->GetBoundsSize().y;
+	}
 	
 	m_pCollisionData = new CollisionData;
 	
@@ -809,7 +825,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 
 	if (!m_pCollisionData->GetLineList()->size())
 	{
-		LogError("No collision data in entity %d.", ID());
+		LogError("No collision data in entity %d. (%s)", ID(), GetName());
 		return;
 	}
 
@@ -1025,8 +1041,18 @@ void MovingEntity::SetImageFromTilePic(TilePic *pTilePic)
 
 	m_dataManager.Set(C_ENT_TILE_PIC_ID_KEY, CL_String::from_int(pTilePic->m_resourceID));
 	m_dataManager.Set(C_ENT_TILE_RECT_KEY, RectToString(pTilePic->m_rectSrc));
-	m_dataManager.Set(C_ENT_DENSITY_KEY, CL_String::from_float(m_fDensity));
 
+/*
+	m_pCollisionData = pTilePic->GetCollisionData();
+
+	if (m_pCollisionData->GetLineList()->size() == 0)
+	{
+		//doesn't have any collision data, let's disable phyics.  They can always update the density to
+		//something higher later.
+		m_fDensity = 0;
+	} 
+*/
+	m_dataManager.Set(C_ENT_DENSITY_KEY, CL_String::from_float(m_fDensity));
 }
 
 //************ global utils

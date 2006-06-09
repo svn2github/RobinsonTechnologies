@@ -11,11 +11,6 @@ HashedResource::HashedResource()
 
 CollisionData * HashedResource::GetCollisionDataByRect(const CL_Rect &rectSource)
 {
-
-//#define CL_MAKELONG(a, b)      ((LONG)(((WORD)((CL_DWORD_PTR)(a) & 0xffff)) | ((DWORD)((WORD)((CL_DWORD_PTR)(b) & 0xffff))) << 16))
-//#define CL_LOWORD(l)           ((WORD)((CL_DWORD_PTR)(l) & 0xffff))
-//#define CL_HIWORD(l)           ((WORD)((CL_DWORD_PTR)(l) >> 16))
-
 	if (!m_pImage)
 	{
 		//need to load stuff first

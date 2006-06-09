@@ -90,9 +90,9 @@ void EntEditMode::Init()
 	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
 	if (!pEditor) throw CL_Error("Unable to locate editor entity");
 	pEditor->SetTipLabel(
-		"Tile Edit Mode - Hold and drag or click with the left mouse button to make a selection.\n"\
-		"Ctrl+Right Mouse Click to open tile properties menu.\n"\
-		"Hold Shift,Alt, or Ctrl while clicking to add/remove/toggle from selection.\n"\
+		"Tile Edit Mode - Use the mouse wheel or +/- to zoom in/out.  Hold the middle mouse button and drag to move.  Hold and drag or click with the left mouse button to make a selection.\n" \
+		"\n"\
+		"Hold Shift,Alt, or Ctrl while clicking to add/remove/toggle from selection.  Use arrow keys to nudge selection one pixel.  (think photoshop controls)\n"\
 		"");
 
 	m_pWindow->set_event_passing(false);
@@ -120,7 +120,8 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Edit/ ");
 	pItem = m_pMenu->create_item("Edit/(Ctrl-V or right mouse button to paste selection)");
 	pItem->enable(false);
-	pItem = m_pMenu->create_item("Utilities/Get Base Tile Page");
+
+	pItem = m_pMenu->create_item("Utilities/Get Image (puts in copy buffer)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::BuildBaseTilePageBox);
 
 	pItem = m_pMenu->create_item("Utilities/Get Default Entity (puts in copy buffer)");
@@ -220,7 +221,6 @@ void EntEditMode::Kill()
 	SAFE_DELETE(m_pWindow);
 }
 
-
 void EntEditMode::OnSelectBaseTilePage()
 {
 	int resourceID = FileNameToID(m_pListBaseTile->get_current_text().c_str());
@@ -230,6 +230,7 @@ void EntEditMode::OnSelectBaseTilePage()
 	if (m_pCheckBoxSnap->is_checked()) snap = m_snapSize;
 	GetHashedResourceManager->PutGraphicIntoTileBuffer(resourceID, g_EntEditModeCopyBuffer, snap);
 }
+
 void EntEditMode::BuildBaseTilePageBox()
 {
 	SAFE_DELETE(m_pListBaseTile);

@@ -90,7 +90,14 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 {
 	switch(key.id)
 	{
-	
+	case CL_KEY_F:
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			GetGameLogic->ToggleShowFPS();
+			m_pMenuShowFPSCheckbox->set_selected(GetGameLogic->GetShowFPS());
+		}
+		break;
+
 	case CL_KEY_G:
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 		{
@@ -200,7 +207,8 @@ void EntEditor::MapOptionsDialog()
 	CL_InputBox *pThumb = dlg.add_input_box("Auto Thumbnail Size: (0 for none):", CL_String::from_int(GetWorld->GetThumbnailWidth()));
 	CL_InputBox *pBGColor = dlg.add_input_box("BG Color: (in the format of r g b a)", ColorToString(GetWorld->GetBGColor()));
 	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", CL_String::from_float(GetWorld->GetGravity()));
-	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (save changes during play)", GetWorld->GetPersistent(), 200);
+	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (changes saved for each player profile)", GetWorld->GetPersistent(), 200);
+	CL_CheckBox *pAutoSave = dlg.add_check_box("Auto Save (if false, must use File->Save)", GetWorld->GetAutoSave(), 200);
 
 	CL_SlotContainer slots;
 
@@ -274,6 +282,7 @@ void EntEditor::MapOptionsDialog()
 		GetWorld->SetBGColor(StringToColor(pBGColor->get_text()));
 		GetWorld->SetGravity(CL_String::to_float(pGravity->get_text()));
 		GetWorld->SetPersistent(pPersistent->is_checked());
+		GetWorld->SetAutoSave(pAutoSave->is_checked());
 
 		if (requireClear)
 		{
@@ -335,7 +344,6 @@ void EntEditor::OnSaveMap()
 
 void EntEditor::OnExit()
 {
-	BlitMessage("Saving map...");
 	GetApp()->RequestAppExit();
 }
 
@@ -454,19 +462,19 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	m_pMenu->set_event_passing(false);
 	
 	CL_MenuNode *pItem;
-	pItem = m_pMenu->create_item("File/Close Edit Bar (F1)");
+	pItem = m_pMenu->create_item("File/Toggle Edit Mode (F1)");
     m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnClose);
 
 	pItem = m_pMenu->create_item("File/Open Script");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnOpenScript);
 
-	pItem = m_pMenu->create_item("File/Save All Now");
+	pItem = m_pMenu->create_item("File/Save Active Map Now");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnSaveMap);
 
-	pItem = m_pMenu->create_item("File/Save And Exit (Alt+F4)");
+	pItem = m_pMenu->create_item("File/Quick Exit (Alt+F4)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnExit);
 
-	pItem = m_pMenu->create_item("File/Save All and Restart Engine (Ctrl+Shift+R)");
+	pItem = m_pMenu->create_item("File/Restart Engine (Ctrl+Shift+R)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnRestart);
 
 	pItem = m_pMenu->create_toggle_item("Mode/Map Info");
@@ -491,6 +499,10 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	m_pMenuLockAtRefreshCheckbox->set_selected(GetApp()->GetRefreshType() == App::FPS_AT_REFRESH);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleLockAtRefresh);
 
+	pItem = m_pMenu->create_toggle_item("Display/Video Options/Toggle FPS Display (Ctrl-F)");
+	m_pMenuShowFPSCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
+	m_pMenuShowFPSCheckbox->set_selected(GetGameLogic->GetShowFPS());
+	m_slot.connect(pItem->sig_clicked(),GetGameLogic, &GameLogic::ToggleShowFPS);
 
 	pItem = m_pMenu->create_toggle_item("Display/Show Map Collision Data (Ctrl+H)");
 	m_pMenuShowCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
@@ -516,6 +528,11 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	pItem = m_pMenu->create_item("Display/Dump Engine Statistics");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnDumpEngineStatistics);
 
+	pItem = m_pMenu->create_item("Display/ ");
+	pItem = m_pMenu->create_item("Display/(Grave aka backtick aka Unshifted-Tilde to toggle the debug console");
+	pItem->enable(false);
+
+
 	pItem = m_pMenu->create_item("MapGen/Generate Small Map");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateSmall);
 
@@ -534,7 +551,7 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	pItem = m_pMenu->create_item("Tool Window/Layer Control");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::BuildLayerControlBox);
 
-	m_pLabel = new CL_Label (CL_Point(350,25), "", m_pWindow->get_client_area());
+	m_pLabel = new CL_Label (CL_Point(5,25), "", m_pWindow->get_client_area());
 
 	pItem = m_pMenu->create_toggle_item("Game/Game Paused (Ctrl+P)");
 	m_pMenuGamePausedCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
@@ -983,7 +1000,9 @@ void EntEditor::DisableAllModes()
 
 void EntEditor::OnChooseScreenMode()
 {
-    if (!EntityMgr->GetEntityByName("choose screen mode"))
+	m_pMenu->collapse_submenus();
+
+	if (!EntityMgr->GetEntityByName("choose screen mode"))
     {
         //it doesn't exist, so let's create this mode
         DisableAllModes();
@@ -995,15 +1014,17 @@ void EntEditor::OnChooseScreenMode()
 
     } else
 	{
-		GetMyEntityMgr->TagEntityForDeletionByName("choose screen mode");
-		m_bGenerateActive = false;
-		m_modeCheckBoxArray[e_modeMap]->set_selected(false);
+		//GetMyEntityMgr->TagEntityForDeletionByName("choose screen mode");
+		//m_bGenerateActive = false;
+		m_modeCheckBoxArray[e_modeMap]->set_selected(true);
 	}
 }
 
 
 void EntEditor::OnToggleEditMode()
 {
+	m_pMenu->collapse_submenus();
+
 	if (!EntityMgr->GetEntityByName("edit mode"))
 	{
 		DisableAllModes();
@@ -1015,9 +1036,11 @@ void EntEditor::OnToggleEditMode()
 
 	} else
 	{
-		GetMyEntityMgr->TagEntityForDeletionByName("edit mode");
-		m_bGenerateActive = false;
-		m_modeCheckBoxArray[e_modeTileEdit]->set_selected(false);
+		//no reason to allow no modes
+
+		//GetMyEntityMgr->TagEntityForDeletionByName("edit mode");
+		//m_bGenerateActive = false;
+		m_modeCheckBoxArray[e_modeTileEdit]->set_selected(true);
 	}
 	
 }
