@@ -2,6 +2,8 @@
 #include "VisualProfileManager.h"
 #include "GameLogic.h"
 
+
+
 VisualProfileManager::VisualProfileManager()
 {
 }
@@ -64,4 +66,28 @@ VisualResource * VisualProfileManager::GetVisualResource(const string &fileName)
 	}
 
 	return pRes; //error
+}
+
+
+
+
+//utils
+
+CL_Vector2 FacingToVector(int facing)
+{
+	switch (facing)	
+	{
+	case VisualProfile::FACING_LEFT:
+		return CL_Vector2(-1,0);
+
+	case VisualProfile::FACING_RIGHT:
+		return CL_Vector2(1,0);
+
+	default:
+
+		throw CL_Error("Unknown facing");
+		break;
+	}
+
+	return CL_Vector2(0,0);
 }

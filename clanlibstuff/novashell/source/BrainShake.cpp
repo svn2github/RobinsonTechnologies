@@ -1,9 +1,18 @@
 #include "AppPrecomp.h"
 #include "BrainShake.h"
+#include "MovingEntity.h"
+
+BrainShake registryInstance(NULL); //self register ourselves in the brain registry
 
 BrainShake::BrainShake(MovingEntity * pParent):Brain(pParent)
 {
-	m_brainType = SHAKE;
+	if (!pParent)
+	{
+		//this is a dummy for our blind factory to get info from
+		RegisterClass();
+		return;
+	}
+
 	m_lastDisplacement = CL_Vector2(0,0);
 }
 

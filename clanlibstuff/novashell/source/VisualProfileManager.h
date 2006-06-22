@@ -37,4 +37,7 @@ private:
 
 };
 
+
+CL_Vector2 FacingToVector(int facing);
+
 #endif                  // include guard

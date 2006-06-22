@@ -526,6 +526,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainAISideSimpleWalk.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainAISideSimpleWalk.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainManager.cpp"
 						>
 					</File>
@@ -547,6 +555,14 @@
 					</File>
 					<File
 						RelativePath=".\BrainShake.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainSideBase.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainSideBase.h"
 						>
 					</File>
 				</Filter>

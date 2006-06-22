@@ -63,7 +63,7 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 
 	if (!IsActive(animID))
 	{
-		throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID) );
+		throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)+" (" + m_animArray[animID].m_name+")" );
 	}
 	return m_animArray[animID].m_pSprite;
 

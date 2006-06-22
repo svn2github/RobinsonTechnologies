@@ -101,12 +101,13 @@ public:
   CL_Color GetDefaultTextColor() {return m_defaultTextColor;}
   DataManager * GetData() {return &m_dataManager;}
   unsigned int GetNameHash() {return m_hashedName;}
-  bool SetPosAndMapByName(const string &name);
+  bool SetPosAndMapByTagName(const string &name);
   void SetImageFromTilePic(TilePic *pTilePic);
   bool GetUsingImageFromTilePic() {return m_bUsingSimpleSprite;}
   bool UsingCustomCollisionData() {return m_bUsingCustomCollisionData;}
   int GetFloorMaterialID() {return m_floorMaterialID;}
   BrainManager * GetBrainManager() {return &m_brainManager;}
+  string MovingEntity::ProcessPath(const string &st); //replaces ~ with current script path
 
 
 enum ListenCollision

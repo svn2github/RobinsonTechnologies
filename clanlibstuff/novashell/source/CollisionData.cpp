@@ -149,6 +149,8 @@ void CollisionData::Clear()
 
 void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 {
+	
+	//perform the copy
 	colOut = *pTile->GetCollisionData();
 
 	line_list *pLineList = colOut.GetLineList();
@@ -156,16 +158,35 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 //	int needsFlip;
 	CL_Vector2 vecTemp;
 	
-	/*
+    //modify it in place
+
 	while (itor != pLineList->end())
 	{
 		//modify each vert on each line
 
 		for (unsigned int i=0; i < itor->GetPointList()->size(); i++)
 		{
-			needsFlip = 0;
-			pWall = &itor->GetPointList()->at(i);
+			
+		//	itor->RemoveOffsets();
+			CL_Vector2 *p = &itor->GetPointList()->at(i);
+
+
 			//do each vert
+			if (pTile->GetBit(Tile::e_flippedX))
+			{
+				p->x = -p->x;
+			//	p->x += itor->GetOffset().x;
+			}
+
+			if (pTile->GetBit(Tile::e_flippedY))
+			{
+				p->y = -p->y;
+			}
+
+			//itor->CalculateOffsets();
+			/*
+			needsFlip = 0;
+				//do each vert
 			if (pTile->GetBit(Tile::e_flippedX))
 			{
 				pWall->m_vA.x = pTile->GetBoundsSize().x - pWall->m_vA.x;
@@ -190,10 +211,11 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 			} 
 
 			pWall->CalculateNormal();
+			*/
 		}
 
 		itor++;
 	}
-	*/
+	
 
 }

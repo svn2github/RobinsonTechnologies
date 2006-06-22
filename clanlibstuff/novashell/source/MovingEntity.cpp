@@ -18,6 +18,7 @@
 #endif
 
 #define C_GROUND_RELAX_TIME_MS 150
+#define C_DEFAULT_SCRIPT_PATH "media/script/"
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
 //there are issues with sliding along walls thinking it's a ground when they are built out of small blocks, this
 //provides a work around
@@ -77,6 +78,7 @@ void MovingEntity::HandleMessageString(const string &msg)
 
 void MovingEntity::SetDefaults()
 {
+	m_nearbyTileList.clear();
 	m_floorMaterialID = -1;
 	m_bUsingSimpleSprite = false;
 	m_listenCollision = LISTEN_COLLISION_NONE;
@@ -213,9 +215,19 @@ CL_Rectf MovingEntity::GetWorldRect()
 	return r;
 }
 
+string MovingEntity::ProcessPath(const string &st)
+{
+	if (st[0] == '~')
+	{
+		return C_DEFAULT_SCRIPT_PATH + CL_String::get_path(m_mainScript) + (st.c_str()+1);
+	}
+
+	return st;
+}
+
 bool MovingEntity::SetVisualProfile(const string &resourceFileName, const string &profileName)
 {
-	VisualResource *pResource = GetVisualProfileManager->GetVisualResource(resourceFileName);
+	VisualResource *pResource = GetVisualProfileManager->GetVisualResource(ProcessPath(resourceFileName));
 	if (!pResource) return false; //failed that big time
 
 	//now we need to get the actual profile
@@ -230,7 +242,7 @@ void MovingEntity::SetPos(const CL_Vector2 &new_pos)
 	m_bMovedFlag = true;
 }
 
-bool MovingEntity::SetPosAndMapByName(const string &name)
+bool MovingEntity::SetPosAndMapByTagName(const string &name)
 {
 	TagObject *pO = GetTagManager->GetFromString(name);
 
@@ -248,11 +260,7 @@ bool MovingEntity::SetPosAndMapByName(const string &name)
 	if (GetCollisionData() && GetCollisionData()->GetLineList()->size() > 0 )
 	{
 		PointList *m_pActiveLine = &(*GetCollisionData()->GetLineList()->begin());
-		CL_Rectf r;
-		m_pActiveLine->BuildBoundingRect(r);
-		//LogMsg(PrintRect(r).c_str());
-		
-		offsetY = r.bottom + m_pActiveLine->GetOffset().y;
+		offsetY = m_pActiveLine->GetRect().bottom + m_pActiveLine->GetOffset().y;
 	}
 
 	SetPosAndMap(pO->m_pos - CL_Vector2(0, offsetY), pO->m_pWorld->GetName());
@@ -294,6 +302,9 @@ void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
 }
 
 
+
+//Note, this is NOT safe to use except in the postupdate functions.  An entity might have
+//been deleted otherwise.
 
 tile_list & MovingEntity::GetNearbyTileList()
 {
@@ -395,7 +406,7 @@ bool MovingEntity::LoadScript(const char *pFileName)
 {
 	SAFE_DELETE(m_pScriptObject);
 	m_pScriptObject = new ScriptObject();
-	string s = "media/script/";
+	string s = C_DEFAULT_SCRIPT_PATH;
 	s += pFileName;
 	
 	if (!m_pScriptObject->Load(s.c_str()))
@@ -578,7 +589,7 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 	m_pCollisionData = new CollisionData;
     m_bUsingCustomCollisionData = true;
 	
-	m_pCollisionData->Load(fileName); //it will init a default if the file is not found, and automatically handle
+	m_pCollisionData->Load(ProcessPath(fileName)); //it will init a default if the file is not found, and automatically handle
 
 	PointList pl;
 	PointList *pActiveLine;
@@ -715,7 +726,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 	}
 	
 
-	/*
+	
 	static CollisionData colCustomized;
 	if (pTile->UsesTileProperties())
 	{
@@ -723,7 +734,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 		CreateCollisionDataWithTileProperties(pTile, colCustomized);
 		pCol = &colCustomized; //replacement version
 	}
-*/
+
 
 	line_list::iterator lineListItor = pCol->GetLineList()->begin();
 	CBody *pWallBody;
@@ -750,9 +761,11 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 		} else
 		{
 			//might be a ladder zone or something else we should take note of
-			CL_Rectf r;
-			if (lineListItor->BuildBoundingRect(r))
+			static CL_Rectf r;
+			if (lineListItor->HasData())
 			{
+				r = lineListItor->GetRect();
+
 				if (r.is_inside( *(CL_Pointf*)&(GetPos()- pTile->GetPos())))
 				{
 					//LogMsg("Inside: Rect is %s", PrintRect(r).c_str());
@@ -829,11 +842,6 @@ void MovingEntity::ApplyGenericMovement(float step)
 		return;
 	}
 
-	if (m_pScriptObject)
-	{
-	    //m_pScriptObject->RunFunction("Think");
-	}
-
 	//apply world gravity?
 	
 	int padding = GetSizeX();
@@ -849,6 +857,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
 	pWorld->GetLayerManager().PopulateIDVectorWithAllLayers(layerIDVec);
+
 	//TODO: Optimize this to only scan the rects that hold collision data, main, details and entity probably
 	pWorld->GetMyWorldCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, layerIDVec);
 	
@@ -950,9 +959,7 @@ void MovingEntity::Render(void *pTarget)
 		}
 
 		CL_Color col(255,255,0);
-		
 		RenderTileListCollisionData(GetNearbyTileList(), pGC, false, &col);
-		
 	}
 
 }
@@ -979,10 +986,8 @@ void MovingEntity::PostUpdate(float step)
 {
 	m_brainManager.PostUpdate(step);
 
-	
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
 	{
-
 	if (m_body.GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
 	{
 		m_body.AddForce(Vector(0, m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity()* m_body.GetMass()));

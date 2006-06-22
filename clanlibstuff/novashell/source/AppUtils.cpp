@@ -4,7 +4,6 @@
 #include "MaterialManager.h"
 
 
-
 bool compareLayerBySort(unsigned int pA, unsigned int pB) 
 {
 	LayerManager *pLayerManager = &GetWorld->GetLayerManager();

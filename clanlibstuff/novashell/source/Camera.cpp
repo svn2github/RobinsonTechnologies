@@ -80,7 +80,7 @@ void Camera::SetScaleTarget(CL_Vector2 vecScale)
 CL_Vector2 Camera::ClampScaleToRange(CL_Vector2 vecScale)
 {
 
-	const float maxZoom = 30.0f; //larger the number, the closer we can zoom in
+	const float maxZoom = 40.0f; //larger the number, the closer we can zoom in
 	const float minZoom = 0.010f; //smaller the #, the farther we can zoom out
 
 	//make sure current zoom level is within acceptable range

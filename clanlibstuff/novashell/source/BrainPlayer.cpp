@@ -1,13 +1,10 @@
-
-
 #include "AppPrecomp.h"
-
-
 #include "BrainPlayer.h"
 #include "VisualProfile.h"
 #include "physics/Contact.h"
 #include "TextManager.h"
 #include "MaterialManager.h"
+#include "VisualProfileManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -33,9 +30,18 @@
 								//ending
 
 
+BrainPlayer registryInstance(NULL); //self register ourselves in the brain registry
+
+
 BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 {
-	m_brainType = PLAYER_SIDE_VIEW;
+	if (!pParent)
+	{
+		//this is a dummy for our blind factory to get info from
+		RegisterClass();
+		return;
+	}
+
 	ResetKeys();
 	m_SlotKeyUp = CL_Keyboard::sig_key_up().connect( this, &BrainPlayer::OnKeyUp);
 	m_SlotKeyDown = CL_Keyboard::sig_key_down().connect( this, &BrainPlayer::OnKeyDown);
@@ -469,24 +475,6 @@ if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 }
 
 
-CL_Vector2 FacingToVector(int facing)
-{
-	switch (facing)	
-	{
-	case VisualProfile::FACING_LEFT:
-		return CL_Vector2(-1,0);
-
-	case VisualProfile::FACING_RIGHT:
-		return CL_Vector2(1,0);
-
-	default:
-
-		throw CL_Error("Unknown facing");
-		break;
-	}
-
-	return CL_Vector2(0,0);
-}
 
 void BrainPlayer::OnAction()
 {
@@ -576,9 +564,7 @@ void BrainPlayer::PostUpdate(float step)
 	if (m_Keys & C_KEY_SELECT)
 	{
 		m_Keys &= ~C_KEY_SELECT; //turn it off
-
 		OnAction();
-
 	}
 
 }

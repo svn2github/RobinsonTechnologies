@@ -83,9 +83,7 @@ int simpleHull_2D( CL_Vector2* V, int n, CL_Vector2* H )
 
 void PointList::RemoveDuplicateVerts()
 {
-
 	point_list::iterator itor = m_points.begin();
-	
 
 	while (itor != m_points.end())
 	{
@@ -105,7 +103,8 @@ void PointList::RemoveDuplicateVerts()
 
 bool PointList::ComputeConvexHull()
 {
-	
+	m_bNeedsToRecalculateRect = true;
+
 	if (m_points.size() < 2)
 	{
 		LogMsg("Not enough points, aborting computing convex hull.");
@@ -122,7 +121,6 @@ bool PointList::ComputeConvexHull()
 		m_points[i] = ptsVec[i];
 	}
 
-
 	RemoveDuplicateVerts();
 	return true;
 }
@@ -132,14 +130,24 @@ CBody g_Body; //a global for now, until I put in the real definitions
 
 PointList::PointList()
 {
-  m_type = C_POINT_LIST_HARD;	
-  m_vecOffset = CL_Vector2(0,0);
+	m_bNeedsToRecalculateRect = true;
+	m_type = C_POINT_LIST_HARD;	
+    m_vecOffset = CL_Vector2(0,0);
 }
 
 PointList::~PointList()
 {
 }
 
+const CL_Rectf & PointList::GetRect()
+{
+	if (m_bNeedsToRecalculateRect)
+	{
+		BuildBoundingRect();
+	}
+
+	return m_boundingRect;
+}
 
 void PointList::SetType(int myType)
 {
@@ -151,24 +159,28 @@ void PointList::SetType(int myType)
 	}
 }
 
-bool PointList::BuildBoundingRect(CL_Rectf &rectOut)
+bool PointList::BuildBoundingRect()
 {
-    if (!HasData()) return false;
+	if (!HasData()) 
+	{
+		m_boundingRect.left = m_boundingRect.right = m_boundingRect.top = m_boundingRect.bottom = 0;	
+		return false;
+	}
 
-	rectOut.left = FLT_MAX;
-	rectOut.top = FLT_MAX;
-	rectOut.bottom = -FLT_MAX;
-	rectOut.right = -FLT_MAX;
+	m_bNeedsToRecalculateRect = false;
 
-	assert(HasData() && "Up to you to validate this before calling it!");
+	m_boundingRect.left = FLT_MAX;
+	m_boundingRect.top = FLT_MAX;
+	m_boundingRect.bottom = -FLT_MAX;
+	m_boundingRect.right = -FLT_MAX;
 
 	for (unsigned int i=0; i < m_points.size(); i++)
 	{
-		rectOut.left = min(rectOut.left, m_points[i].x + m_vecOffset.x);
-		rectOut.right = max(rectOut.right, m_points[i].x + m_vecOffset.x);
+		m_boundingRect.left = min(m_boundingRect.left, m_points[i].x + m_vecOffset.x);
+		m_boundingRect.right = max(m_boundingRect.right, m_points[i].x + m_vecOffset.x);
 
-		rectOut.top = min(rectOut.top, m_points[i].y + m_vecOffset.y);
-		rectOut.bottom = max(rectOut.bottom, m_points[i].y + m_vecOffset.y);
+		m_boundingRect.top = min(m_boundingRect.top, m_points[i].y + m_vecOffset.y);
+		m_boundingRect.bottom = max(m_boundingRect.bottom, m_points[i].y + m_vecOffset.y);
 	}
 	return true;
 }
@@ -180,13 +192,26 @@ void PointList::RemoveOffsets()
 		m_points[i] += m_vecOffset;
 	}
 	m_vecOffset = CL_Vector2(0,0);
+	
+	m_bNeedsToRecalculateRect = true;
 }
 
 void PointList::CalculateOffsets()
 {
 	RemoveOffsets();
-
 	if (m_points.size() == 0) return;
+
+	m_bNeedsToRecalculateRect = true; //force recalulation to happen now	
+
+	m_vecOffset = CL_Vector2(GetRect().get_width()/2, GetRect().get_height()/2);
+
+	for (unsigned int i=0; i < m_points.size(); i++)
+	{
+	m_points[i] -= m_vecOffset;
+	}
+
+	/*
+	
 	m_vecOffset = CL_Vector2(200000,20000);
 	//run through the array and find the center point
 	CL_Vector2 vTotal = CL_Vector2(0,0);
@@ -202,6 +227,8 @@ void PointList::CalculateOffsets()
 		m_points[i] -= m_vecOffset;
 	}
 
+	m_bNeedsToRecalculateRect = true;
+	*/
 }
 
 void PointList::PrintPoints()

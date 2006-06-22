@@ -10,7 +10,7 @@
 #define BrainPlayer_HEADER_INCLUDED  // include guard
 
 #include "Brain.h"
-
+#include "MovingEntity.h"
 
 enum
 {
@@ -35,6 +35,8 @@ public:
     virtual ~BrainPlayer();
 	
 	virtual void Update(float step);
+	virtual const char * GetName(){return "SidePlayer";};
+	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainPlayer(pParent);}
 
 protected:
 	

@@ -9,7 +9,7 @@
 #ifndef Brain_HEADER_INCLUDED // include guard
 #define Brain_HEADER_INCLUDED  // include guard
 
-#include "MovingEntity.h"
+class MovingEntity;
 
 class Brain
 {
@@ -19,18 +19,18 @@ public:
 	virtual ~Brain();
 	virtual void Update(float step) = 0;
 	virtual void PostUpdate(float step) = 0;
-
-	enum eBrainType
-	{
-	 PLAYER_SIDE_VIEW = 0,
-	 PLAYER_TOP_VIEW,
-	 SHAKE
-	};
-
+	virtual const char * GetName()=0;
+	virtual Brain * CreateInstance(MovingEntity *pParent)=0;
+	int GetSort() const {return m_sort;}
+	void SetSort(int sort){m_sort = sort;}
+	virtual void OnAdd(){}; //called once when brain is inserted
+ 
 protected:
 
+	void RegisterClass();
+
+	int m_sort; //higher # gets run first
 	MovingEntity *m_pParent;
-	int m_brainType;
 };
 
 #endif                  // include guard

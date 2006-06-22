@@ -103,7 +103,7 @@ void ResolveCollision(Vector Ncoll, float t, float fCoF, float fCoR,
 	//seth's hack for stability
 
 	
-	const float epsilon = 0.1f;
+	const float epsilon = 0.2f;
 
 	if (fabs(double(Ncoll.x)) < epsilon ) Ncoll.x = 0;
 	if (fabs(double(Ncoll.y)) < epsilon ) Ncoll.y = 0;
@@ -200,11 +200,12 @@ void ResolveCollision(Vector Ncoll, float t, float fCoF, float fCoR,
 			Vector Nfriction = -Vt.Direction();
 			//float fCoS = s_xContactMaterial.GetStaticFriction();
 			//printf("fric is %f, dir is %f, %f\n", fCoS, Vt.x, Vt.y);
+			
 			ResolveCollision(Nfriction, 0.0f, 0.0f, fCoS,
-							 C0, P0, V0, w0, m0, i0, 
-							 C1, P1, V1, w1, m1, i1, fCoS);
-							 
-		}
+				C0, P0, V0, w0, m0, i0, 
+				C1, P1, V1, w1, m1, i1, fCoS);
+
+				}
 	}
 
 //	LogMsg("w0: %.2f, V0: %.2f, %.2f", w0, V0.x, V0.y );

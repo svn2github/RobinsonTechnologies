@@ -66,7 +66,7 @@ void luabindEntity(lua_State *pState)
 			.def("GetOnLadder", &MovingEntity::GetOnLadder)
 			.def("SetDefaultTextColor", &MovingEntity::SetDefaultTextColor)
 			.def("Data", &MovingEntity::GetData)
-			.def("SetPosAndMapByName", &MovingEntity::SetPosAndMapByName)
+			.def("SetPosAndMapByTagName", &MovingEntity::SetPosAndMapByTagName)
 
 		];
 }

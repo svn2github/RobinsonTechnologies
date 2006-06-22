@@ -20,6 +20,8 @@ public:
 
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
+	virtual const char * GetName(){return "Shake";};
+	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainShake(pParent);}
 
 protected:
 

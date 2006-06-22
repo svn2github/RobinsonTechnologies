@@ -15,13 +15,34 @@ class MovingEntity;
 
 typedef list<Brain*> brain_vector;
 
+//This is setup so if a Brain .cpp file is compiled, it automatically can add itself
+//to our brain registry without any changes in here.  This shared between all classes
+//and never modified during the duration of the game.
+
+typedef std::map<string, Brain*> brainMap;
+
+class BrainRegistry
+{
+public:
+	void Add(Brain *pBrain);
+	void ListAllBrains();
+	static BrainRegistry * GetInstance();
+	Brain * CreateBrainByName(const string &brainName, MovingEntity * pParent);
+
+private:
+
+	BrainRegistry(); //private constructor, must be access though BrainRegistry::GetInstance, to
+	//avoid problems with order of instantiation (singleton pattern)
+
+	brainMap m_brainMap; //we store one of each brain to get info from it later
+};
 
 class BrainManager
 {
 public:
 	BrainManager();
 	virtual ~BrainManager();
-	void Add(int brainType);
+	void Add(const string &brainName);
 	void SetParent(MovingEntity *pEnt) {m_pParent = pEnt;}
 
 	void Kill();
@@ -29,7 +50,11 @@ public:
 	void Update(float step);
 	void PostUpdate(float step);
 
+	Brain * GetBrainByName(const string &brainName);
+
 protected:
+
+	void Sort(); 
 
 private:
 
