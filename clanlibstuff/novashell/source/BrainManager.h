@@ -12,6 +12,7 @@
 
 class Brain;
 class MovingEntity;
+class State;
 
 typedef list<Brain*> brain_vector;
 
@@ -37,6 +38,26 @@ private:
 	brainMap m_brainMap; //we store one of each brain to get info from it later
 };
 
+typedef std::map<string, State*> stateMap;
+
+class StateRegistry
+{
+public:
+	void Add(State *pState);
+	void ListAllStates();
+	static StateRegistry * GetInstance();
+	State * CreateStateByName(const string &stateName, MovingEntity * pParent);
+
+private:
+
+	StateRegistry(); //private constructor, must be access though StateRegistry::GetInstance, to
+	//avoid problems with order of instantiation (singleton pattern)
+
+	stateMap m_stateMap; //we store one of each State to get info from it later
+};
+
+
+
 class BrainManager
 {
 public:
@@ -49,8 +70,14 @@ public:
 
 	void Update(float step);
 	void PostUpdate(float step);
-
+	string SendToBrainByName(const string &brainName, const string &msg);
 	Brain * GetBrainByName(const string &brainName);
+
+	State * GetState() {return m_pActiveState;} //null if not active
+	bool InState(const string &stateName);
+	State * SetState(State *pState);
+	State * SetStateByName(const string &stateName);
+
 
 protected:
 
@@ -60,6 +87,7 @@ private:
 
 	MovingEntity *m_pParent;
 	brain_vector m_brainVec;
+	State * m_pActiveState;
 };
 
 #endif // BrainManager_h__

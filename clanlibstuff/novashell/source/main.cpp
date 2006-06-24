@@ -312,12 +312,12 @@ void App::ToggleWindowedMode()
 
 void App::OnKeyUp(const CL_InputEvent &key)
 {
- 
+ /*
 	if (key.id == CL_KEY_ESCAPE)
 	{
 		OnWindowClose();
 	}
-
+*/
 	if(CL_Keyboard::get_keycode(CL_KEY_MENU))
     {
         //system message?  We should really process these somewhere else
@@ -378,12 +378,17 @@ void App::Update()
 {
 	//figure out our average delta frame
 	unsigned int deltaTick = CL_System::get_time() -  m_lastFrameTime;
-	m_gameTick += deltaTick;
+
 	m_thinkTicksToUse += deltaTick;
 	m_lastFrameTime = CL_System::get_time();
     m_thinkTicksToUse = min(m_thinkTicksToUse, GetGameLogicSpeed()*5);
 
 	m_delta = GetGameLogicSpeed()/GetGameSpeed();
+
+	if (!m_pGameLogic->GetGamePaused())
+	{
+		m_gameTick += deltaTick;
+	}
 
 	while (m_thinkTicksToUse >= GetGameLogicSpeed())
 	{

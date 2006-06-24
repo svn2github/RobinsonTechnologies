@@ -162,6 +162,7 @@ void Camera::InstantUpdate()
 {
 	UpdateTarget();
 	SetPos(m_vecTargetPos);
+	SetScale(m_vecScaleTarget);
 }
 
 void Camera::Update(float step)

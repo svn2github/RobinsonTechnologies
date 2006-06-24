@@ -39,6 +39,7 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 		pList->push_back(o);
 		pObject = &(*pList->begin());
 		//LogMsg("Creating hash for id %d", pEnt->ID());
+		pObject->m_tagName = pEnt->GetName();
 
 	} else
 	{
@@ -76,7 +77,8 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 		   TagObject o;
 		   pTagList->push_front(o);
 		   pObject = &(*pTagList->begin());
-		  // LogMsg("Added new (%d)",pEnt->ID());
+		   pObject->m_tagName = pEnt->GetName();
+	  // LogMsg("Added new (%d)",pEnt->ID());
 	   }
 		
 	}
@@ -185,7 +187,7 @@ void TagManager::PrintStatistics()
 				}
 			} else
 			{
-				name = "(Not loaded yet)";
+				name = itorO->m_tagName;
 			}
 			LogMsg("    Entity %s (%d) located at %s (in %s)", name.c_str(), itorO->m_entID, PrintVector(itorO->m_pos).c_str(), itorO->m_pWorld->GetName().c_str());
 			itorO++;
@@ -224,6 +226,7 @@ void TagManager::Save(World *pWorld)
 					helper.process(tag);
 					helper.process_const( itor->first);
 					helper.process(itorO->m_pos);
+					helper.process(itorO->m_tagName);
 				}
 				itorO++;
 		}
@@ -296,7 +299,8 @@ void TagManager::Load(World *pWorld)
 			helper.process(hashID);
 			
 			helper.process(o.m_pos);
-			
+			helper.process(o.m_tagName);
+
 			AddCachedNameTag(hashID, o);
 			break;
 

@@ -526,14 +526,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainAISideSimpleWalk.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainAISideSimpleWalk.h"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainManager.cpp"
 						>
 					</File>
@@ -563,6 +555,26 @@
 					</File>
 					<File
 						RelativePath=".\BrainSideBase.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="States"
+					>
+					<File
+						RelativePath=".\State.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\State.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateSideSimpleWalk.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateSideSimpleWalk.h"
 						>
 					</File>
 				</Filter>

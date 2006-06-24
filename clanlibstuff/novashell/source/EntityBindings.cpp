@@ -34,6 +34,7 @@ void luabindEntity(lua_State *pState)
 
 			,class_<BrainManager>("BrainManager")
 			.def("Add", &BrainManager::Add)
+			.def("SendToBrainByName", &BrainManager::SendToBrainByName)
 
 			,class_<MovingEntity>("Entity")
 			.def(constructor<>())
@@ -67,6 +68,9 @@ void luabindEntity(lua_State *pState)
 			.def("SetDefaultTextColor", &MovingEntity::SetDefaultTextColor)
 			.def("Data", &MovingEntity::GetData)
 			.def("SetPosAndMapByTagName", &MovingEntity::SetPosAndMapByTagName)
+			.def("OnDamage", &MovingEntity::OnDamage)
+			.def("SetAnimByName", &MovingEntity::SetAnimByName)
+
 
 		];
 }

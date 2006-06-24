@@ -55,6 +55,8 @@ void BrainSideBase::OnAdd()
 {
 	m_facing = VisualProfile::FACING_LEFT;
 	ResetForNextFrame();
+
+	m_pParent->GetBrainManager()->SetStateByName("SideSimpleWalk");
 }
 
 
@@ -63,7 +65,7 @@ void BrainSideBase::Update(float step)
 	CL_Vector2 pos = m_pParent->GetPos();
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
-	#define C_SIDE_ACCEL_POWER 0.7f
+	#define C_SIDE_ACCEL_POWER 0.17f
 	Clamp(m_force.x, -C_SIDE_ACCEL_POWER, C_SIDE_ACCEL_POWER); //limit force to accel power
 	
 	if (m_pParent->IsOnGround())
@@ -79,10 +81,10 @@ void BrainSideBase::Update(float step)
 
 	if (m_pParent->GetLinearVelocity().length() < 0.3f)
 	{
-		m_state = VisualProfile::STATE_IDLE;
+		m_state = VisualProfile::VISUAL_STATE_IDLE;
 	} else
 	{
-		m_state = VisualProfile::STATE_RUN;
+		m_state = VisualProfile::VISUAL_STATE_RUN;
 	}
 
 	if (pProfile) m_pParent->SetSpriteData(pProfile->GetSprite(m_state,m_facing));

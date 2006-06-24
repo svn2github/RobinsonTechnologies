@@ -23,6 +23,7 @@ public:
 	CL_Vector2 m_pos;
 	World *m_pWorld;
 	int m_entID; //so we can keep track of the owner of a tag, even with multiple tags of the same name
+	string m_tagName; //purely for debug info, not really needed
 };
 
 typedef std::map<unsigned int, std::list<TagObject> > TagResourceMap;

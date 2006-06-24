@@ -1,5 +1,7 @@
 #include "AppPrecomp.h"
 #include "ScriptKeyManager.h"
+#include "GameLogic.h"
+#include "ScriptManager.h"
 
 ScriptKeyManager::ScriptKeyManager()
 {
@@ -21,9 +23,29 @@ void ScriptKeyManager::AssignKey(const string &keyName, const string &callbackFu
 		LogError("AssignKey: Didn't specify a key?");
 		return;
 	}
+
+	int keyId = 0;
+
 	//parse key string into virtual id
-	int keyId =  pKeyboard->string_to_keyid(word[0]);
-	
+	for (unsigned int i=0; i < word.size(); i++)
+	{
+		int id = pKeyboard->string_to_keyid(word[i]);
+
+		if ( id != CL_KEY_CONTROL && id != CL_KEY_SHIFT)
+		{
+			keyId = id;
+			break;
+		}
+	}
+
+	if (keyId == 0)
+	{
+		LogError("AssignKey: Error assigning key %s. (must be lower case!)", keyName.c_str());
+		return;
+
+	}
+
+
 	if (callbackFunction.empty())
 	{
 		//remove it completely
@@ -35,9 +57,11 @@ void ScriptKeyManager::AssignKey(const string &keyName, const string &callbackFu
 	k.m_callback = callbackFunction;
 
 	//check for special keys
-	for (unsigned int i=1; i < word.size(); i++)
+	for (unsigned int i=0; i < word.size(); i++)
 	{
 		int specialID = pKeyboard->string_to_keyid(word[i]);
+
+		if (specialID == keyId) continue; //we already handled this one..
 
 		switch (specialID)
 		{
@@ -65,8 +89,22 @@ bool ScriptKeyManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 	ScriptKeyMap::iterator itor = m_map.find(key.id);
 	if (itor == m_map.end()) return false; //we don't have it
 
-	//otherwise
-	LogMsg("We have something here!");
+	//otherwise, send all the callbacks
+
+	for (unsigned int i=0; i < itor->second.size(); i++)
+	{
+		KeyInfo *pKeyInfo = &itor->second.at(i);
+
+		if (pKeyInfo->m_bCtrl == CL_Keyboard::get_keycode(CL_KEY_CONTROL)
+			&& pKeyInfo->m_bShifted == CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+		{
+
+
+			try {luabind::call_function<void>(GetScriptManager->GetMainState(), 
+				pKeyInfo->m_callback.c_str(), bKeyDown);
+			}  LUABIND_CATCH(pKeyInfo->m_callback);
+		}
+	}
 
 	return false; //didn't handle event
 }

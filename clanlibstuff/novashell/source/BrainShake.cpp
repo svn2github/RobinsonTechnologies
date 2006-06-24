@@ -22,7 +22,6 @@ BrainShake::~BrainShake()
 
 void BrainShake::Update(float step)
 {
-	
 	CL_Vector2 pos = m_pParent->GetPos();
 
 	pos -= m_lastDisplacement; //undo the last displacement
@@ -31,12 +30,8 @@ void BrainShake::Update(float step)
 
 	//move it somewhere crazy
 	m_pParent->SetPos(pos);
-	
-	//if we moved it like this, it would have physics
-	//m_pParent->AddForce(CL_Vector2( (frandom()-0.5)*0.1f, (frandom()-0.5)*0.1f));
 }
 
 void BrainShake::PostUpdate(float step)
 {
-	
 }

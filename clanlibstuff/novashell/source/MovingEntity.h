@@ -67,7 +67,7 @@ public:
   void Serialize(CL_FileHelper &helper);
   void LoadCollisionInfo(const string &fileName);
   void SetCollisionInfoFromPic(unsigned int picID, const CL_Rect &recPic);
-
+  void SetAnimByName(const string &name);
   void EnableRotation(bool bRotate);
   bool GetEnableRotation();
   unsigned int GetDrawID() {return m_drawID;}
@@ -108,7 +108,7 @@ public:
   int GetFloorMaterialID() {return m_floorMaterialID;}
   BrainManager * GetBrainManager() {return &m_brainManager;}
   string MovingEntity::ProcessPath(const string &st); //replaces ~ with current script path
-
+  void OnDamage(const CL_Vector2 &normal, float depth, const MovingEntity * enemy, int damage, int uservar);
 
 enum ListenCollision
 {

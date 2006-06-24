@@ -318,7 +318,7 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 
 void GameLogic::OnKeyUp(const CL_InputEvent &key)
 {
-	if (!GetGamePaused())
+//	if (!GetGamePaused())
 	{
 		if (g_keyManager.HandleEvent(key, false) )
 		{
@@ -331,7 +331,7 @@ void GameLogic::OnKeyUp(const CL_InputEvent &key)
 
 void GameLogic::OnKeyDown(const CL_InputEvent &key)
 {
-	if (!GetGamePaused())
+//	if (!GetGamePaused())
 	{
 		if (g_keyManager.HandleEvent(key, true))
 		{
@@ -343,25 +343,13 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 	
 	switch (key.id)
 	{
-
-
-	case CL_KEY_R:
-		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
-				if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
-		{
-			SetRestartEngineFlag(true);
-			return;
-
-			
-		}
-		break;
-
-
+/*
 	case  CL_KEY_F1:
 		{
 			ToggleEditMode();
 			break;
 		}
+		*/
 #ifdef __APPLE__
 	case CL_KEY_NUMPAD_SUBTRACT:
 #endif

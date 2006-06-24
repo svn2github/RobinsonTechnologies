@@ -1,5 +1,5 @@
 //  ***************************************************************
-//  BrainAISideSimpleWalk - Creation date: 06/19/2006
+//  StateSideSimpleWalk - Creation date: 06/24/2006
 //  -------------------------------------------------------------
 //  Robinson Technologies Copyright (C) 2006 - All Rights Reserved
 //
@@ -7,30 +7,28 @@
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)
 //  ***************************************************************
 
-#ifndef BrainAISideSimpleWalk_h__
-#define BrainAISideSimpleWalk_h__
+#ifndef StateSideSimpleWalk_h__
+#define StateSideSimpleWalk_h__
 
-#include "Brain.h"
+#include "State.h"
+#include "BrainSideBase.h"
 
-class BrainSideBase;
-
-class BrainAISideSimpleWalk: public Brain
+class StateSideSimpleWalk: public State
 {
 public:
-	BrainAISideSimpleWalk(MovingEntity * pParent);
-	virtual ~BrainAISideSimpleWalk();
+	StateSideSimpleWalk(MovingEntity * pParent);
+	virtual ~StateSideSimpleWalk();
 
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);	
 	virtual const char * GetName(){return "SideSimpleWalk";};
-	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainAISideSimpleWalk(pParent);}
+	virtual State * CreateInstance(MovingEntity *pParent) {return new StateSideSimpleWalk(pParent);}
 	virtual void OnAdd();
 
 protected:
 
-
 private:
-	
+
 	void WalkLeft();
 	void WalkRight();
 	void LookAround();
@@ -41,5 +39,4 @@ private:
 	unsigned int m_thinkTimer;
 
 };
-
-#endif // BrainAISideSimpleWalk_h__
+#endif // StateSideSimpleWalk_h__

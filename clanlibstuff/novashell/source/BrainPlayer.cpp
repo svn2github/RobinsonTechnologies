@@ -46,9 +46,10 @@ BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 	m_SlotKeyUp = CL_Keyboard::sig_key_up().connect( this, &BrainPlayer::OnKeyUp);
 	m_SlotKeyDown = CL_Keyboard::sig_key_down().connect( this, &BrainPlayer::OnKeyDown);
 	m_jumpTimer= 0;
+	m_bFrozen = false;
 	m_jumpBurstTimer = 0;
 	m_bRequestJump = false;
-	m_state = VisualProfile::STATE_IDLE;
+	m_state = VisualProfile::VISUAL_STATE_IDLE;
 	m_facing = VisualProfile::FACING_LEFT;
 	//LogMsg("Making player %x (parent %x)", this, m_pParent);
 
@@ -119,7 +120,6 @@ void BrainPlayer::OnKeyDown(const CL_InputEvent &key)
 
 }
 
-
 void BrainPlayer::OnKeyUp(const CL_InputEvent &key)
 {
 	switch(key.id)
@@ -146,14 +146,10 @@ void BrainPlayer::OnKeyUp(const CL_InputEvent &key)
 	}
 }
 
-
-
-
 void BrainPlayer::AttemptToJump()
 {
 	if (m_pParent->IsOnGround() && m_jumpTimer < GetApp()->GetGameTick())
 	{
-		
 		//looks ok to jump now
 		m_jumpTimer = GetApp()->GetGameTick()+C_PLAYER_JUMP_AGAIN_LENGTH_MS;
 		m_jumpBurstTimer = GetApp()->GetGameTick()+C_PLAYER_JUMP_SECOND_BURST_MS;
@@ -162,11 +158,7 @@ void BrainPlayer::AttemptToJump()
 		m_pParent->SetIsOnGround(false); //don't wait for the ground timer to run out
 		g_pSoundManager->PlayMixed(m_jumpSound.c_str());
 		m_pParent->GetBody()->GetLinVelocity().y = 0;
-		//	LogMsg("Started jump");
-	} else
-	{
-		//LogMsg("NOT ON GROUND");
-	}
+	} 
 }
 
 void BrainPlayer::CheckForDoor()
@@ -273,8 +265,7 @@ void BrainPlayer::CheckForLadder()
 					//able to enter ladder mode
 					m_pParent->SetOnLadder(true);
 					m_bRequestJump = false;
-					if (pProfile) m_pParent->SetSpriteData(pProfile->GetSpriteByAnimID(pProfile->TextToAnimID("climb")));
-
+					m_pParent->SetAnimByName("climb");
 					m_jumpTimer = 0;
 				}
 
@@ -314,23 +305,46 @@ void BrainPlayer::CheckForLadder()
 	{
 		m_climbSound.Play(false);
 	}
-
 }
 
-void BrainPlayer::UpdateMovement(float step)
+string BrainPlayer::HandleMsg(const string &msg)
 {
-	//assert(m_pParent->GetVisualProfile());
+	vector<string> messages = CL_String::tokenize(msg, ";",true);
 
-	VisualProfile *pProfile = m_pParent->GetVisualProfile();
+	string stReturn;
 
-	m_moveAngle = CL_Vector2(0,0);
+	for (unsigned int i=0; i < messages.size(); i++)
+	{
+		vector<string> words = CL_String::tokenize(messages[i], "=",true);
 
+		if (words[0] == "get_freeze")
+		{
+			stReturn += CL_String::from_bool(m_bFrozen);
+		} else
+		if (words[0] == "state")
+		{
+			m_state = CL_String::to_int(words[1]);
+		} else
+		if (words[0] == "freeze")
+		{
+			SetFreeze(CL_String::to_bool(words[1]));
+		} else
+		{
+			LogMsg("Brain %s doesn't understand keyword %s", words[0].c_str());
+		}
+	}
+
+	return stReturn;
+}
+
+void BrainPlayer::CheckForMovement()
+{
 	if (m_Keys & C_KEY_LEFT)
 	{
 		m_moveAngle = CL_Vector2(-1,0);
 		if (m_pParent->IsOnGround())
 		{
-			m_state = VisualProfile::STATE_RUN;
+			m_state = VisualProfile::VISUAL_STATE_RUN;
 			m_facing = VisualProfile::FACING_LEFT;
 		}
 	}
@@ -340,33 +354,16 @@ void BrainPlayer::UpdateMovement(float step)
 		m_moveAngle = CL_Vector2(1,0);
 		if (m_pParent->IsOnGround())
 		{
-			m_state = VisualProfile::STATE_RUN;
+			m_state = VisualProfile::VISUAL_STATE_RUN;
 			m_facing = VisualProfile::FACING_RIGHT;
 		}
 	}
-	
-	CheckForLadder();
-	CheckForDoor();
-	
-if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
-{
-	m_bRequestJump = false;
-	AttemptToJump();
 }
-	
-	if (m_moveAngle == CL_Vector2::ZERO)
-	{
-		if (m_pParent->IsOnGround() && !m_pParent->GetOnLadder())
-		{
-			m_state = VisualProfile::STATE_IDLE;
-		}
-	}
-	
-	CL_Vector2 force = CL_Vector2(0,0);
 
+void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
+{
 	float desiredSpeed = C_PLAYER_DESIRED_SPEED;
 	float accelPower = C_PLAYER_ACCEL_POWER;
-
 	float airDampening = C_PLAYER_AIR_DAMPENING;
 
 	if (m_moveAngle != CL_Vector2::ZERO)
@@ -383,18 +380,16 @@ if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 			//air jumps should be weaker
 			force.y = 0;
 			force.x *= airDampening;
-			//m_state = VisualProfile::STATE_IDLE;
-
+			//mVISUAL_VISUAL_STATE_ = VisualProfile::VISUAL_STATE_IDLE;
 		} 
 
 		//LogMsg("WIth mass, it'd be %.2f, %.2f", force.x*step, force.y*step);
 	}
-	
+
 	if (m_jumpTimer > GetApp()->GetGameTick())
 	{
-	
 		//we're jumping right now, apply steady force
-		
+
 		if ( m_jumpBurstTimer < GetApp()->GetGameTick()
 			&& !(m_Keys & C_KEY_UP))
 		{
@@ -411,31 +406,64 @@ if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 				m_bAppliedSecondJumpForce = true;
 			} else
 			{
-			
+
 				force.y = -m_curJumpForce;
-			    m_curJumpForce *= C_PLAYER_JUMP_FORCE_WEAKEN_MULT;
+				m_curJumpForce *= C_PLAYER_JUMP_FORCE_WEAKEN_MULT;
 			}
-			
 		}
-		
 		//m_pParent->GetBody()->SetOrientation(m_pParent->GetBody()->GetOrientation()*.6f);
 	} else
 	{
-		//we're not jumping right now
 
-	//	LogMsg("Mat is %d", m_pParent->GetFloorMaterialID());
+		//we're not jumping right now
 		if (!m_pParent->IsOnGround() || (m_pParent->GetFloorMaterialID() != -1 && g_materialManager.GetMaterial(m_pParent->GetFloorMaterialID())->GetSpecial() == CMaterial::C_MATERIAL_SPECIAL_FLOOR) )
 		{
 			//LogMsg("Player y is %f", m_pParent->GetBody()->GetLinVelocity().y);
 			if (!m_pParent->GetOnLadder())
-			if (m_pParent->GetBody()->GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
-			{
-				//LogMsg("Dragging..");
-				force.y = C_PLAYER_JUMP_DRAG_DOWN;
-			}
+				if (m_pParent->GetBody()->GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
+				{
+					//LogMsg("Dragging..");
+					force.y = C_PLAYER_JUMP_DRAG_DOWN;
+				}
 		}
 
 	}
+
+}
+
+void BrainPlayer::UpdateMovement(float step)
+{
+	VisualProfile *pProfile = m_pParent->GetVisualProfile();
+
+	m_moveAngle = CL_Vector2(0,0);
+
+	if (!m_bFrozen)
+	{
+
+		CheckForMovement();
+		CheckForLadder();
+		CheckForDoor();
+
+		//check for jump
+		if ( m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
+		{
+			m_bRequestJump = false;
+			AttemptToJump();
+		}
+
+		//if not moving, force idle state
+		if (m_moveAngle == CL_Vector2::ZERO)
+		{
+			if (m_pParent->IsOnGround() && !m_pParent->GetOnLadder())
+			{
+				m_state = VisualProfile::VISUAL_STATE_IDLE;
+			}
+		}
+	}
+	
+	CL_Vector2 force = CL_Vector2(0,0);
+	
+	CalculateForce(force, step);
 
 	//LogMsg("Cur Linear: %.2f, %.2f  Impulse: %.2f, %.2f", GetBody()->GetLinVelocity().x, GetBody()->GetLinVelocity().y, force.x, force.y);
 	
@@ -443,7 +471,6 @@ if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 	
 	if (m_pParent->GetOnLadder())
 	{
-
 		if (m_Keys & C_KEY_UP)
 		{
 			m_pParent->SetAnimPause(false);
@@ -457,9 +484,7 @@ if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 			}
 	} else
 	{
-		
 		if (pProfile) m_pParent->SetSpriteData(pProfile->GetSprite(m_state,m_facing));
-
 	}
 	
 	//play walk sound?
@@ -471,10 +496,7 @@ if ( /*m_bRequestJump*/ m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 	{
 		m_walkSound.Play(false);
 	}
-
 }
-
-
 
 void BrainPlayer::OnAction()
 {
@@ -560,6 +582,8 @@ void BrainPlayer::PostUpdate(float step)
 			set_float_with_target(&m_pParent->GetBody()->GetLinVelocity().y, 0, C_PLAYER_GROUND_DAMPENING);
 		}
 	}
+
+	if (m_bFrozen) return;
 
 	if (m_Keys & C_KEY_SELECT)
 	{

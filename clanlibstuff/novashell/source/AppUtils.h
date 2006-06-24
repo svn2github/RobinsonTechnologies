@@ -14,7 +14,7 @@ void DrawRectFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Co
 void DrawRectFromWorldCoordinatesRotated(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC, float angleRad);
 string GetStrippedFilename(string str);
 unsigned int FileNameToID(const char * filename);
-bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore  = NULL);
+bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore  = NULL, int limitSearchToThisTileType = C_TILE_TYPE_BLANK);
 string PrintVector(CL_Vector2 v);
 string PrintRect(CL_Rectf r);
 void ResetFont(CL_Font *pFont); //set the centering, color and alpha back to default 

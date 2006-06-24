@@ -24,6 +24,7 @@ public:
 	int GetSort() const {return m_sort;}
 	void SetSort(int sort){m_sort = sort;}
 	virtual void OnAdd(){}; //called once when brain is inserted
+	virtual string HandleMsg(const string &msg) {return "";}
  
 protected:
 

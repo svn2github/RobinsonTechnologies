@@ -4,7 +4,6 @@
 
 VisualProfile::VisualProfile()
 {
-
 	//build up our default anim data, helps us to quickly understand what NPC's can and can't support, custom
 	//data can also be added by its profile .xml file
 
@@ -12,9 +11,24 @@ VisualProfile::VisualProfile()
 
 	m_animArray[IDLE_LEFT].m_name = "idle_left";
 	m_animArray[IDLE_RIGHT].m_name = "idle_right";
+
+	m_animArray[WALK_LEFT].m_name = "walk_left";
+	m_animArray[WALK_RIGHT].m_name = "walk_right";
+
 	m_animArray[RUN_LEFT].m_name = "run_left";
 	m_animArray[RUN_RIGHT].m_name = "run_right";
 
+	m_animArray[PAIN_LEFT].m_name = "pain_left";
+	m_animArray[PAIN_RIGHT].m_name = "pain_right";
+
+	m_animArray[DIE_LEFT].m_name = "die_left";
+	m_animArray[DIE_RIGHT].m_name = "die_right";
+
+	m_animArray[TURN_LEFT].m_name = "turn_left";
+	m_animArray[TURN_RIGHT].m_name = "turn_right";
+
+	m_animArray[ATTACK1_LEFT].m_name = "attack1_left";
+	m_animArray[ATTACK1_RIGHT].m_name = "attack1_right";
 }
 
 VisualProfile::~VisualProfile()
@@ -49,12 +63,32 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 
 	switch (eState)
 	{
-	case STATE_IDLE:
+	case VISUAL_STATE_IDLE:
 		if (eFacing == FACING_LEFT) animID = IDLE_LEFT; else animID = IDLE_RIGHT;
 		break;
 
-	case STATE_RUN:
+	case VISUAL_STATE_RUN:
 		if (eFacing == FACING_LEFT) animID = RUN_LEFT; else animID = RUN_RIGHT;
+		break;
+
+	case VISUAL_STATE_WALK:
+		if (eFacing == FACING_LEFT) animID = WALK_LEFT; else animID = WALK_RIGHT;
+		break;
+
+	case VISUAL_STATE_PAIN:
+		if (eFacing == FACING_LEFT) animID = PAIN_LEFT; else animID = PAIN_RIGHT;
+		break;
+
+	case VISUAL_STATE_DIE:
+		if (eFacing == FACING_LEFT) animID = DIE_LEFT; else animID = DIE_RIGHT;
+		break;
+
+	case VISUAL_STATE_TURN:
+		if (eFacing == FACING_LEFT) animID = TURN_LEFT; else animID = TURN_RIGHT;
+		break;
+
+	case VISUAL_STATE_ATTACK1:
+		if (eFacing == FACING_LEFT) animID = ATTACK1_LEFT; else animID = ATTACK1_RIGHT;
 		break;
 
 	default:

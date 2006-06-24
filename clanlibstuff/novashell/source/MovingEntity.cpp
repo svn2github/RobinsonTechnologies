@@ -374,11 +374,11 @@ bool MovingEntity::Init()
 			SetVisualProfile(GetGameLogic->GetScriptRootDir()+"/system/system.xml", "ent_default");
 		}
 
-		if (!m_pVisualProfile->GetSprite(VisualProfile::STATE_IDLE, VisualProfile::FACING_LEFT))
+		if (!m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT))
 		{
 			LogMsg("Unable to set default anim of idle_left in profile %s!", m_pVisualProfile->GetName().c_str());
 		}
-		SetSpriteData(m_pVisualProfile->GetSprite(VisualProfile::STATE_IDLE, VisualProfile::FACING_LEFT));
+		SetSpriteData(m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT));
 	}
 
 	if (!stEmergencyMessage.empty())
@@ -469,6 +469,23 @@ void MovingEntity::UpdateTilePosition()
 		m_bMovedFlag = false;
 	} 
 
+}
+
+void MovingEntity::SetAnimByName(const string &name)
+{
+	if (GetVisualProfile())
+	{
+		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(GetVisualProfile()->TextToAnimID(name)));
+	}
+}
+
+
+void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, const MovingEntity * enemy, int damage, int uservar)
+{
+	if (!GetScriptObject() || !GetScriptObject()->FunctionExists("OnDamage")) return;
+
+	try {luabind::call_function<bool>(m_pScriptObject->GetState(), "OnDamage", normal, depth, enemy, damage, uservar);
+	} LUABIND_ENT_CATCH("Error while calling OnDamage(Vector2 normal, float depth, enemy, int damage, int uservar)");
 }
 
 void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollision)
@@ -823,6 +840,7 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 		m_pSprite->set_angle_yaw(pSprite->get_angle_yaw());
 		pSprite->get_alignment(origin, x,y);
 		m_pSprite->set_alignment(origin, x, y);
+		m_pSprite->set_show_on_finish(pSprite->get_show_on_finish());
 
 		pSprite->get_rotation_hotspot(origin, x, y);
 		m_pSprite->set_rotation_hotspot(origin, x, y);

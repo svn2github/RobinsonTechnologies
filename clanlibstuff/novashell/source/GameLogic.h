@@ -78,6 +78,7 @@ public:
 	  bool GetShowFPS() {return m_bShowFPS;}
 	  void ToggleShowFPS() {m_bShowFPS = !m_bShowFPS;}
 	  void SetRestartEngineFlag(bool bNew) { 			m_bRestartEngineFlag = bNew;}
+	  void Quit() {GetApp()->OnWindowClose();}
 
 private:
 

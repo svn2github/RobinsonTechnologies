@@ -262,7 +262,7 @@ void ResetFont(CL_Font *pFont)
 
 //given a start and end point it will tell you the closest tile and where the collision point is.
 
-bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore /* = NULL*/)
+bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore /* = NULL*/, int limitSearchToThisTileType)
 {
 	float lineA[4], lineB[4];
 	lineA[0] = vStart.x;
@@ -283,6 +283,14 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 	for (;listItor != tList.end(); listItor++)
 	{
 
+		if (limitSearchToThisTileType != C_TILE_TYPE_BLANK)
+		{
+			if ( (*listItor)->GetType() != limitSearchToThisTileType)
+			{
+				//LogMsg("Skipping");
+				continue; //skip this one
+			}
+		}
 		CollisionData *pCol = (*listItor)->GetCollisionData();
 		if (!pCol || pCol->GetLineList()->empty()) continue;
 		if ((*listItor) == pTileToIgnore) continue; //don't process ourself, how much sense would that make?

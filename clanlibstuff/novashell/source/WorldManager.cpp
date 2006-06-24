@@ -203,7 +203,7 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 		if (!pCameraSetting)
 		{
 		//let the old focus remember what its camera settings are
-		GetCamera->GetCameraSettings(*m_pActiveWorld->GetCameraSetting());
+			GetCamera->GetCameraSettings(*m_pActiveWorld->GetCameraSetting());
 		}
 	}
 
@@ -216,9 +216,9 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 		if (!m_pActiveWorld->IsInitted())
 		{
 			LoadWorld(stPath);
-			GetWorld->PreloadMap(); //later we might want to do this...
-
+			GetWorld->PreloadMap(); //later we might not want to do this...
 		}
+
 		if (!pCameraSetting)
 		{
 			GetCamera->SetCameraSettings(*m_pActiveWorld->GetCameraSetting());

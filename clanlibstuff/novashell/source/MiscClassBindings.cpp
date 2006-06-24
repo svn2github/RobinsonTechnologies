@@ -139,8 +139,8 @@ void luabindMisc(lua_State *pState)
 		.def("ClearAllMapsFromMemory", &GameLogic::ClearAllMapsFromMemory)
 		.def("UserProfileExists", &GameLogic::UserProfileExists)
 		.def("SetRestartEngineFlag", &GameLogic::SetRestartEngineFlag)
-
-
+		.def("UserProfileActive", &GameLogic::UserProfileActive)
+		.def("Quit", &GameLogic::Quit)
 
 		,class_<App>("App")
 		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)

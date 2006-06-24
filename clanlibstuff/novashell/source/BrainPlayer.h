@@ -37,9 +37,12 @@ public:
 	virtual void Update(float step);
 	virtual const char * GetName(){return "SidePlayer";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainPlayer(pParent);}
+	virtual string HandleMsg(const string &msg);
 
 protected:
 	
+	void SetFreeze(bool freeze) {m_bFrozen = freeze;}
+	bool GetFreeze() {return m_bFrozen;}
 	void ResetKeys();
 	void OnKeyUp(const CL_InputEvent &key);
 	void OnKeyDown(const CL_InputEvent &key);
@@ -51,6 +54,8 @@ protected:
 	void OnAction();
 	void CheckForDoor();
 	void AssignPlayerToCameraIfNeeded();
+	void CheckForMovement();
+	void CalculateForce(CL_Vector2 &force, float step);
 
 	unsigned int m_Keys; //holds current state of player movement keys
 	CL_Slot m_SlotKeyUp;
@@ -69,6 +74,7 @@ protected:
 	LoopingSound m_climbSound;
 	LoopingSound m_walkSound;
 	string m_jumpSound;
+	bool m_bFrozen;
 	
 
 };
