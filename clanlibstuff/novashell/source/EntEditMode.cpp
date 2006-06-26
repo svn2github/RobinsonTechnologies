@@ -162,7 +162,6 @@ void EntEditMode::OnSnapSizeChanged(const string &st)
 	SnapSizeChanged();
 }
 
-
 void EntEditMode::BuildDefaultEntity()
 {
 	MovingEntity *pEnt = new MovingEntity;
@@ -543,19 +542,19 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	
 	//nudging
 	case CL_KEY_RIGHT:
-		g_MessageManager.Schedule(1, ID(), ("offset_selected|1|0|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
+		ScheduleSystem(1, ID(), ("offset_selected|1|0|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
 
 	case CL_KEY_LEFT:
-		g_MessageManager.Schedule(1, ID(), ("offset_selected|-1|0|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
+		ScheduleSystem(1, ID(), ("offset_selected|-1|0|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
 
 	case CL_KEY_UP:
-		g_MessageManager.Schedule(1, ID(), ("offset_selected|0|-1|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
+		ScheduleSystem(1, ID(), ("offset_selected|0|-1|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
 
 	case CL_KEY_DOWN:
-		g_MessageManager.Schedule(1, ID(), ("offset_selected|0|1|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
+		ScheduleSystem(1, ID(), ("offset_selected|0|1|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
 
 	case CL_MOUSE_LEFT:
@@ -575,7 +574,6 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			//two modes of copy, one to cut out subtiles..
 			if (m_dragInProgress)
 			{
-				
 				m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap);
 				m_vecDragStop = GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap);
 				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(m_vecDragStop.x), int(m_vecDragStop.y));

@@ -49,8 +49,6 @@ BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 	m_bFrozen = false;
 	m_jumpBurstTimer = 0;
 	m_bRequestJump = false;
-	m_state = VisualProfile::VISUAL_STATE_IDLE;
-	m_facing = VisualProfile::FACING_LEFT;
 	//LogMsg("Making player %x (parent %x)", this, m_pParent);
 
 	m_walkSound.Init(g_pSoundManager, m_pParent->GetData()->Get("walk_sound"));
@@ -96,6 +94,10 @@ void BrainPlayer::OnKeyDown(const CL_InputEvent &key)
 		m_Keys |= C_KEY_LEFT;
 		break;
 
+	case CL_KEY_CONTROL:
+		m_Keys |= C_KEY_ATTACK;
+		break;
+
 	case CL_KEY_RIGHT:
 		m_Keys |= C_KEY_RIGHT;
 		break;
@@ -124,6 +126,11 @@ void BrainPlayer::OnKeyUp(const CL_InputEvent &key)
 {
 	switch(key.id)
 	{
+	
+	case CL_KEY_CONTROL:
+		m_Keys &= ~C_KEY_ATTACK;
+		break;
+
 	case CL_KEY_LEFT:
 		m_Keys &= ~C_KEY_LEFT;
 		break;
@@ -321,10 +328,6 @@ string BrainPlayer::HandleMsg(const string &msg)
 		{
 			stReturn += CL_String::from_bool(m_bFrozen);
 		} else
-		if (words[0] == "state")
-		{
-			m_state = CL_String::to_int(words[1]);
-		} else
 		if (words[0] == "freeze")
 		{
 			SetFreeze(CL_String::to_bool(words[1]));
@@ -344,8 +347,8 @@ void BrainPlayer::CheckForMovement()
 		m_moveAngle = CL_Vector2(-1,0);
 		if (m_pParent->IsOnGround())
 		{
-			m_state = VisualProfile::VISUAL_STATE_RUN;
-			m_facing = VisualProfile::FACING_LEFT;
+			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
+			m_pParent->SetFacing(VisualProfile::FACING_LEFT);
 		}
 	}
 
@@ -354,8 +357,8 @@ void BrainPlayer::CheckForMovement()
 		m_moveAngle = CL_Vector2(1,0);
 		if (m_pParent->IsOnGround())
 		{
-			m_state = VisualProfile::VISUAL_STATE_RUN;
-			m_facing = VisualProfile::FACING_RIGHT;
+			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
+			m_pParent->SetFacing(VisualProfile::FACING_RIGHT);
 		}
 	}
 }
@@ -431,6 +434,23 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 
 }
 
+void BrainPlayer::CheckForAttack()
+{
+	if (m_Keys & C_KEY_ATTACK)
+	{
+		MovingEntity *pWeapon = CreateEntity(m_pParent->GetPos(), "weapon/slash/slash.lua");
+
+		//tell this weapon entity who shot/swung it
+		try {luabind::call_function<bool>(pWeapon->GetScriptObject()->GetState(), 
+			"SetParent", m_pParent);
+		} LUABIND_ENT_BRAIN_CATCH("Error while calling SetParent in CheckForAttack");
+		
+		m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
+
+	}
+
+}
+
 void BrainPlayer::UpdateMovement(float step)
 {
 	VisualProfile *pProfile = m_pParent->GetVisualProfile();
@@ -439,10 +459,10 @@ void BrainPlayer::UpdateMovement(float step)
 
 	if (!m_bFrozen)
 	{
-
 		CheckForMovement();
 		CheckForLadder();
 		CheckForDoor();
+		CheckForAttack();
 
 		//check for jump
 		if ( m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
@@ -456,7 +476,7 @@ void BrainPlayer::UpdateMovement(float step)
 		{
 			if (m_pParent->IsOnGround() && !m_pParent->GetOnLadder())
 			{
-				m_state = VisualProfile::VISUAL_STATE_IDLE;
+				m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_IDLE);
 			}
 		}
 	}
@@ -484,7 +504,7 @@ void BrainPlayer::UpdateMovement(float step)
 			}
 	} else
 	{
-		if (pProfile) m_pParent->SetSpriteData(pProfile->GetSprite(m_state,m_facing));
+		m_pParent->SetSpriteByVisualStateAndFacing();
 	}
 	
 	//play walk sound?
@@ -500,7 +520,7 @@ void BrainPlayer::UpdateMovement(float step)
 
 void BrainPlayer::OnAction()
 {
-	CL_Vector2 vFacing = FacingToVector(m_facing);
+	CL_Vector2 vFacing = FacingToVector(m_pParent->GetFacing());
 
 	const int actionRange = 60;
 

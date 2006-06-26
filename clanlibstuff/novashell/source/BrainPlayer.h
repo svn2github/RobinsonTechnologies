@@ -19,7 +19,7 @@ enum
 	C_KEY_LEFT  =  0x0004,
 	C_KEY_RIGHT =  0x0008,
 	C_KEY_SELECT =  0x0010,
-	C_KEY_SOFT1 =  0x0020,
+	C_KEY_ATTACK =  0x0020,
 	C_KEY_STRAFE_LEFT =  0x0040,
 	C_KEY_STRAFE_RIGHT =  0x0080,
 	C_KEY_PREV_WEAPON =  0x0100,
@@ -56,6 +56,7 @@ protected:
 	void AssignPlayerToCameraIfNeeded();
 	void CheckForMovement();
 	void CalculateForce(CL_Vector2 &force, float step);
+	void CheckForAttack();
 
 	unsigned int m_Keys; //holds current state of player movement keys
 	CL_Slot m_SlotKeyUp;
@@ -66,8 +67,6 @@ protected:
 
 	float m_curJumpForce; //the start of the jump has stronger force then the end
 
-	int m_state;
-	int m_facing;
 	bool m_bAppliedSecondJumpForce;
 	CL_Vector2 m_moveAngle;
 	bool m_bRequestJump;

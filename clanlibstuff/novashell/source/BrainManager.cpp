@@ -110,6 +110,8 @@ BrainManager::BrainManager()
 {
 	m_pParent = NULL;
 	m_pActiveState = NULL;
+	m_pLastState = NULL;
+	m_pBrainBase = NULL;
 }
 
 BrainManager::~BrainManager()
@@ -117,6 +119,7 @@ BrainManager::~BrainManager()
 	
 	//hmm, do we want to run its OnRemove() here?  Maybe not.
 	SAFE_DELETE(m_pActiveState);
+	SAFE_DELETE(m_pLastState);
 }
 
 void BrainManager::Kill()
@@ -192,17 +195,39 @@ Brain * BrainManager::GetBrainByName(const string &brainName)
 
 	return NULL; //couldn't find this brain
 }
+void BrainManager::SetBrainBase(Brain *pBrain)
+{
+	if (m_pBrainBase)
+	{
+		LogError("Uh, shouldn't you add code to remove brain %s first?", m_pBrainBase->GetName());
+	}
+	m_pBrainBase = pBrain;
+
+	//notify everywhere the base brain changed here?
+}
 
 State * BrainManager::SetState(State *pState)
 {
+	if (!m_pBrainBase)
+	{
+		LogError("Must add a base brain before state %s can be set.", pState->GetName());
+		return NULL;
+	}
+	
+
+	if (!pState)
+	{
+		return NULL;
+	}
 	if (m_pActiveState)
 	{
 		m_pActiveState->OnRemove();
 	}
 
-	SAFE_DELETE(m_pActiveState);
-
+	SAFE_DELETE(m_pLastState);
+	m_pLastState = m_pActiveState; //save this for later queries, might be useful
 	m_pActiveState = pState;
+	m_pActiveState->OnAdd();
 	return m_pActiveState;
 }
 
@@ -211,13 +236,31 @@ State * BrainManager::SetStateByName(const string &stateName)
 	return SetState(StateRegistry::GetInstance()->CreateStateByName(stateName, m_pParent));
 }
 
+const char * BrainManager::GetStateByName()
+{
+	if (!m_pActiveState)
+	{
+		return "";
+	}
+	return m_pActiveState->GetName();
+}
+
+
 bool BrainManager::InState(const string &stateName)
 {
 	 return (m_pActiveState && stateName == m_pActiveState->GetName());
 }
 
+bool BrainManager::LastStateWas(const string &stateName)
+{
+	return (m_pLastState && stateName == m_pLastState->GetName());
+}
+
 void BrainManager::Update(float step)
 {
+
+	if (m_pActiveState) m_pActiveState->Update(step);
+
 	brain_vector::iterator itor = m_brainVec.begin();
 	while (itor != m_brainVec.end())
 	{
@@ -226,10 +269,14 @@ void BrainManager::Update(float step)
 		itor++;
 	}
 
+
 }
 
 void BrainManager::PostUpdate(float step)
 {
+
+	if (m_pActiveState) m_pActiveState->PostUpdate(step);
+
 	brain_vector::iterator itor = m_brainVec.begin();
 	while (itor != m_brainVec.end())
 	{

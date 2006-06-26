@@ -25,7 +25,8 @@ public:
 	void SetSort(int sort){m_sort = sort;}
 	virtual void OnAdd(){}; //called once when brain is inserted
 	virtual string HandleMsg(const string &msg) {return "";}
- 
+	virtual void AddWeightedForce(const CL_Vector2 & force){assert(!"This brain not setup to be a base brain!");};
+
 protected:
 
 	void RegisterClass();

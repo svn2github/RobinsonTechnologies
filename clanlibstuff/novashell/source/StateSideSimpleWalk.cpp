@@ -1,10 +1,5 @@
 #include "AppPrecomp.h"
 #include "StateSideSimpleWalk.h"
-#include "AppPrecomp.h"
-#include "StateSideSimpleWalk.h"
-#include "MovingEntity.h"
-#include "BrainSideBase.h"
-#include "VisualProfileManager.h"
 
 StateSideSimpleWalk registryInstance(NULL); //self register ourselves in the brain registry
 
@@ -16,41 +11,47 @@ StateSideSimpleWalk::StateSideSimpleWalk(MovingEntity * pParent):State(pParent)
 		RegisterClass();
 		return;
 	}
-
-	m_thinkTimer = 0;
-	m_pSideBase = NULL;
+	
 }
 
 void StateSideSimpleWalk::OnAdd()
 {
-	m_pSideBase = (BrainSideBase*)m_pParent->GetBrainManager()->GetBrainByName("SideBase");
-
-	if (!m_pSideBase)
-	{
-		LogError("State SideSimpleWalk requires that brain SideBase be added first!");
-		return;
-	}
-
 	//set some defaults
 	m_weight = 0.6f;
-	WalkLeft();
+
+	if (m_pParent->GetVisualProfile()->IsActive(VisualProfile::WALK_LEFT))
+	{
+		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_WALK);
+	} else
+	{
+		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
+	}
+	
+	m_force = FacingToVector(m_pParent->GetFacing());
+	ResetSlowThinkTimer();
+	m_thinkTimer.SetInterval(400);
 }
 
-void StateSideSimpleWalk::WalkLeft()
+void StateSideSimpleWalk::ResetSlowThinkTimer()
 {
-	m_pSideBase->SetFacing(VisualProfile::FACING_LEFT);
-	m_force = FacingToVector(m_pSideBase->GetFacing());
-}
-
-void StateSideSimpleWalk::WalkRight()
-{
-	m_pSideBase->SetFacing(VisualProfile::FACING_RIGHT);
-	m_force = FacingToVector(m_pSideBase->GetFacing());
+	m_slowThinkTimer.SetInterval(random_range(4*1000, 5*1000));
 }
 
 StateSideSimpleWalk::~StateSideSimpleWalk()
 {
+}
 
+void StateSideSimpleWalk::TurnAround()
+{
+	if (m_pParent->GetFacing() == VisualProfile::FACING_LEFT)
+	{
+		m_pParent->SetFacing(VisualProfile::FACING_RIGHT);
+	} else
+	{
+		m_pParent->SetFacing(VisualProfile::FACING_LEFT);
+	}
+
+	m_force = FacingToVector(m_pParent->GetFacing());
 }
 
 void StateSideSimpleWalk::LookAround()
@@ -58,13 +59,13 @@ void StateSideSimpleWalk::LookAround()
 	//first check straight ahead of us
 	bool bNeedToTurn = false;
 
-	CL_Vector2 vFacing = FacingToVector(m_pSideBase->GetFacing());
+	CL_Vector2 vFacing = FacingToVector(m_pParent->GetFacing());
 	CL_Vector2 vStartPos = m_pParent->GetPos();
 	CL_Vector2 vEndPos;
 
 	CL_Rectf colRect = m_pParent->GetCollisionData()->GetLineList()->begin()->GetRect();
 
-#define C_WALL_SEE_PADDING 20
+	#define C_WALL_SEE_PADDING 20
 
 	const int actionRange = (colRect.get_width()/2) + C_WALL_SEE_PADDING;
 	vEndPos = vStartPos + (vFacing * actionRange);
@@ -83,12 +84,6 @@ void StateSideSimpleWalk::LookAround()
 		//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
 		switch ((pTile)->GetType())
 		{
-
-			/* 
-			case C_TILE_TYPE_ENTITY:
-			LogMsg("Bumped ent");
-			break;
-			*/
 		case C_TILE_TYPE_PIC:
 			//wall in front of us it appears
 			bNeedToTurn = true;	
@@ -96,19 +91,16 @@ void StateSideSimpleWalk::LookAround()
 		}
 	} 
 
-
 	if (!bNeedToTurn)
 	{
 		//do another check for missing ground ahead of us
 		vStartPos.x = vEndPos.x;
 		vEndPos.y += colRect.get_height();
-
 		bNeedToTurn = true;	
 
 		if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(),C_TILE_TYPE_PIC ))
 		{
 			//if a floor ahead is NOT found, let's turn around.
-
 			//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
 			switch ((pTile)->GetType())
 			{
@@ -123,36 +115,36 @@ void StateSideSimpleWalk::LookAround()
 
 	if (bNeedToTurn)
 	{
-		if (m_pSideBase->GetFacing() == VisualProfile::FACING_LEFT)
-		{
-			WalkRight();
-		} else
-		{
-			WalkLeft();
-		}
+		TurnAround();
 	}
-
 }
 
 void StateSideSimpleWalk::Update(float step)
 {
-	if (!m_pSideBase) return;
-
-	m_pSideBase->AddWeightedForce(m_force * m_weight);
+	m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce(m_force * m_weight);
 }
 
 void StateSideSimpleWalk::PostUpdate(float step)
 {
-
 	//turn around if we hit something or we're about to fall
-
-	if (m_thinkTimer < GetApp()->GetGameTick())
+	//if we played the anim all the way through, let's "think" a bit
+	if (AnimIsLooping())
 	{
-		if (m_pParent->IsOnGround())
+
+		//we do a further check here to limit CPU cycles, especially useful for 1 frame anims
+		if (m_thinkTimer.IntervalReached())
 		{
-			LookAround();
+			if (m_pParent->IsOnGround())
+			{
+				LookAround();
+			}
 		}
-		m_thinkTimer = GetApp()->GetGameTick()+400;
+
+		if (m_slowThinkTimer.IntervalReached())
+		{
+			ResetSlowThinkTimer();
+			m_pParent->GetBrainManager()->SetStateByName("SideSimpleIdle");
+		}
 	}
 
 }

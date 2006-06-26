@@ -12,13 +12,20 @@
 
 class MovingEntity;
 
+#include "AppUtils.h"
+#include "VisualProfileManager.h"
+#include "MovingEntity.h"
+#include "BrainManager.h"
+#include "Brain.h"
+
 class State
 {
 public:
 
 	State(MovingEntity * pParent);
 	virtual ~State();
-	virtual void Update(float step) = 0;
+	virtual void Update(float step){};
+	virtual void PostUpdate(float step){};
 	virtual const char * GetName()=0;
 	virtual State * CreateInstance(MovingEntity *pParent)=0;
 	virtual void OnAdd(){}; //called once when State is added
@@ -27,6 +34,7 @@ public:
 
 protected:
 
+	bool AnimIsLooping();
 	void RegisterClass();
 
 	MovingEntity *m_pParent;

@@ -96,6 +96,8 @@ void MovingEntity::SetDefaults()
 	m_ticksOnGround = 0;
 	m_bOnLadder = false;
 	m_bAnimPaused = false;
+	m_visualState = VisualProfile::VISUAL_STATE_IDLE;
+	m_facing = VisualProfile::FACING_LEFT;
 
 }
 
@@ -123,8 +125,11 @@ void MovingEntity::SetName(const std::string &name)
 	{
 		if (name != GetName())
 		{
-			//by setting the world, we signal that we want to make a change to the tag DB now
-			pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+			if (m_pTile->GetParentScreen())
+			{
+				//by setting the world, we signal that we want to make a change to the tag DB now
+				pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+			}
 		}
 	}
 	
@@ -178,9 +183,11 @@ void MovingEntity::SetMainScriptFileName(const string &fileName)
 	m_mainScript = fileName;
 }
 
-BaseGameEntity * MovingEntity::CreateClone()
+BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 {
 	MovingEntity *pNew = new MovingEntity;
+	pTile->SetEntity(pNew);
+
 	pNew->SetMainScriptFileName(m_mainScript);
 	pNew->SetName(GetName());
 	pNew->SetPos(GetPos());
@@ -480,12 +487,17 @@ void MovingEntity::SetAnimByName(const string &name)
 }
 
 
-void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, const MovingEntity * enemy, int damage, int uservar)
+void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity * pProjectile)
 {
 	if (!GetScriptObject() || !GetScriptObject()->FunctionExists("OnDamage")) return;
 
-	try {luabind::call_function<bool>(m_pScriptObject->GetState(), "OnDamage", normal, depth, enemy, damage, uservar);
-	} LUABIND_ENT_CATCH("Error while calling OnDamage(Vector2 normal, float depth, enemy, int damage, int uservar)");
+	try {luabind::call_function<bool>(m_pScriptObject->GetState(), "OnDamage", normal, depth, enemy, damage, uservar, pProjectile);
+	} LUABIND_ENT_CATCH("Error while calling OnDamage(Vector2 normal, float depth, enemy, int damage, int uservar, projectile)");
+}
+
+void MovingEntity::SetSpriteByVisualStateAndFacing()
+{
+	if (GetVisualProfile()) SetSpriteData(GetVisualProfile()->GetSprite(GetVisualState(), GetFacing()));
 }
 
 void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollision)

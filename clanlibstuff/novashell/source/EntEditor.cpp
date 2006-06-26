@@ -207,7 +207,7 @@ void EntEditor::MapOptionsDialog()
 	CL_InputBox *pThumb = dlg.add_input_box("Auto Thumbnail Size: (0 for none):", CL_String::from_int(GetWorld->GetThumbnailWidth()));
 	CL_InputBox *pBGColor = dlg.add_input_box("BG Color: (in the format of r g b a)", ColorToString(GetWorld->GetBGColor()));
 	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", CL_String::from_float(GetWorld->GetGravity()));
-	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (changes saved for each player profile)", GetWorld->GetPersistent(), 200);
+	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (changes saved for each player profile)", GetWorld->GetPersistent(), 270);
 	CL_CheckBox *pAutoSave = dlg.add_check_box("Auto Save (if false, must use File->Save)", GetWorld->GetAutoSave(), 200);
 
 	CL_SlotContainer slots;

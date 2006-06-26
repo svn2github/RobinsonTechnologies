@@ -57,9 +57,8 @@ Tile * TileEntity::CreateClone()
 	if (m_pEntity)
 	{
 		assert(m_pEntity);
-		pNew->m_pEntity = (MovingEntity*) m_pEntity->CreateClone();
+		pNew->m_pEntity = (MovingEntity*) m_pEntity->CreateClone(pNew);
 		assert(pNew->m_pEntity && "No cloning function created for this entity type yet");
-		pNew->m_pEntity->SetTile(pNew);
 	}
 	return pNew;
 }

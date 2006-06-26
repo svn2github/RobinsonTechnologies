@@ -55,7 +55,7 @@ public:
   bool SetVisualProfile(const string &resourceFileName, const string &profileName);
   virtual void  Update(float step);
   virtual void  Render(void *pTarget);
-  BaseGameEntity * CreateClone();
+  BaseGameEntity * CreateClone(TileEntity *pTile);
   void SetIsOnGround(bool bOnGround);
   CBody * GetBody(){return &m_body;}
   void SetSpriteData(CL_Sprite *pSprite);
@@ -108,9 +108,14 @@ public:
   int GetFloorMaterialID() {return m_floorMaterialID;}
   BrainManager * GetBrainManager() {return &m_brainManager;}
   string MovingEntity::ProcessPath(const string &st); //replaces ~ with current script path
-  void OnDamage(const CL_Vector2 &normal, float depth, const MovingEntity * enemy, int damage, int uservar);
+  void OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity *pProjectile);
+  void SetFacing(int facing) {m_facing = facing;}
+  int GetFacing(){return m_facing;}
+  int GetVisualState() {return m_visualState;}
+  void SetVisualState(int visualState) {m_visualState = visualState;}
+  void SetSpriteByVisualStateAndFacing();
 
-enum ListenCollision
+  enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
 	//them syncronized with the lua defines that have to match. So don't
@@ -170,6 +175,9 @@ protected:
 	bool m_bUsingCustomCollisionData; //if true, we need to delete it
 	int m_floorMaterialID;
 	BrainManager m_brainManager;
+	int m_facing;  //may or may not be used
+	int m_visualState; //may or may not be used
+
 
 };
 

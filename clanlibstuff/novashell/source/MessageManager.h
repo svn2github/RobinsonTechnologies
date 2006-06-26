@@ -21,7 +21,11 @@ public:
     MessageManager();
     virtual ~MessageManager();
 
+	//game time
 	void Schedule(unsigned int deliveryMS, unsigned int targetID, const char * pMsg);
+	
+	//system time (game being paused/slowed down won't stop delivery or timing of these)
+	void ScheduleSystem(unsigned int deliveryMS, unsigned int targetID, const char * pMsg);
 	void Update(); //called once a tick or whenever
 
 protected:

@@ -1,6 +1,8 @@
 #ifndef AppUtils_HEADER_INCLUDED // include guard
 #define AppUtils_HEADER_INCLUDED  // include guard
+
 #include "Screen.h"
+
 void BlitMessage(string msg);
 string ColorToString(const CL_Color &colr);
 CL_Color StringToColor(const string &stColor);
@@ -26,6 +28,31 @@ typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make
 #define CL_MAKELONG(a, b)      ((cl_uint32)(((cl_uint16)((CL_DWORD_PTR)(a) & 0xffff)) | ((cl_uint32)((cl_uint16)((CL_DWORD_PTR)(b) & 0xffff))) << 16))
 #define CL_LOWORD(l)           ((cl_uint16)((cl_uint32)(l) & 0xffff))
 #define CL_HIWORD(l)           ((cl_uint16)((cl_uint32)(l) >> 16))
+
+
+class GameTimer
+{
+public:
+
+	GameTimer()
+	{
+		m_timer = 0;
+	}
+	void Reset();
+	bool IntervalReached();
+
+	bool IsActive() {return m_timer != 0;}
+
+	void SetInterval(int interval)
+	{
+		m_interval = interval;
+		Reset();
+	}
+
+	unsigned int m_timer;
+	int m_interval;
+};
+
 
 #endif                  // include guard
 

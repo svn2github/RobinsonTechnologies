@@ -5,6 +5,7 @@
 Message::Message()
 {
 	m_pEnt = NULL;
+	m_timingType = GAME_TIME;
 }
 
 Message::~Message()

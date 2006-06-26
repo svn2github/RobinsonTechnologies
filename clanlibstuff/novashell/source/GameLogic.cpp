@@ -582,7 +582,7 @@ void Schedule(unsigned int deliveryMS, unsigned int targetID, const char * pMsg)
 	g_MessageManager.Schedule(deliveryMS, targetID, pMsg);
 }
 
-void ScheduleSystem(unsigned int deliveryMS, const char * pMsg)
+void ScheduleSystem(unsigned int deliveryMS, unsigned int targetID,const char * pMsg)
 {
-	g_MessageManager.Schedule(deliveryMS, 0, pMsg);
+	g_MessageManager.ScheduleSystem(deliveryMS, targetID, pMsg);
 }

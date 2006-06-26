@@ -11,7 +11,6 @@
 #define StateSideSimpleWalk_h__
 
 #include "State.h"
-#include "BrainSideBase.h"
 
 class StateSideSimpleWalk: public State
 {
@@ -26,17 +25,16 @@ public:
 	virtual void OnAdd();
 
 protected:
+	void TurnAround();
+	void ResetSlowThinkTimer();
 
 private:
 
-	void WalkLeft();
-	void WalkRight();
 	void LookAround();
 
-	BrainSideBase *m_pSideBase;
 	CL_Vector2 m_force;
 	float m_weight;
-	unsigned int m_thinkTimer;
+	GameTimer m_thinkTimer, m_slowThinkTimer;
 
 };
 #endif // StateSideSimpleWalk_h__

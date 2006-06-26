@@ -25,9 +25,7 @@ public:
 	virtual void OnAdd();
 
 //for use by other brains directly
-	void AddWeightedForce(const CL_Vector2 & force);
-	void SetFacing(int facing) {m_facing = facing;}
-	int GetFacing(){return m_facing;}
+	virtual void AddWeightedForce(const CL_Vector2 & force);
 
 protected:
 
@@ -37,8 +35,6 @@ private:
 
 	CL_Vector2 m_force;
 	float m_maxForce;
-	int m_state;
-	int m_facing;
 
 };
 

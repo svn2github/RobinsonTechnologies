@@ -72,12 +72,17 @@ public:
 	void PostUpdate(float step);
 	string SendToBrainByName(const string &brainName, const string &msg);
 	Brain * GetBrainByName(const string &brainName);
+	State * GetLastState() {return m_pLastState;} //null if there wasn't one
+	bool LastStateWas(const string &stateName);
 
 	State * GetState() {return m_pActiveState;} //null if not active
 	bool InState(const string &stateName);
 	State * SetState(State *pState);
 	State * SetStateByName(const string &stateName);
+	const char * GetStateByName();
 
+	Brain * GetBrainBase(){return m_pBrainBase;}
+	void SetBrainBase(Brain *pBrain);
 
 protected:
 
@@ -86,8 +91,10 @@ protected:
 private:
 
 	MovingEntity *m_pParent;
-	brain_vector m_brainVec;
+	brain_vector m_brainVec; //holds all our brains, sorted by priority.
 	State * m_pActiveState;
+	State * m_pLastState;
+	Brain * m_pBrainBase; //quick link to the brain designated as "base" for easy lookup
 };
 
 #endif // BrainManager_h__

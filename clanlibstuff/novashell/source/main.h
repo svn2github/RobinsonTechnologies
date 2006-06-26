@@ -103,6 +103,7 @@ public:
 	void SetGameLogicSpeed(float fNew);
 	void SetGameSpeed(float fNew);
 	void SetGameTick(unsigned int num) {m_gameTick = num;}
+	unsigned int GetTick(){return CL_System::get_time();}
 
 
 	enum eVideoRefresh

@@ -23,10 +23,8 @@ BrainSideBase::~BrainSideBase()
 
 void BrainSideBase::ResetForNextFrame()
 {
-
 	m_maxForce = 4;
 	m_force = CL_Vector2::ZERO;
-
 }
 
 void BrainSideBase::AddWeightedForce(const CL_Vector2 & force)
@@ -53,10 +51,8 @@ void BrainSideBase::AddWeightedForce(const CL_Vector2 & force)
 
 void BrainSideBase::OnAdd()
 {
-	m_facing = VisualProfile::FACING_LEFT;
-	ResetForNextFrame();
-
-	m_pParent->GetBrainManager()->SetStateByName("SideSimpleWalk");
+		m_pParent->GetBrainManager()->SetBrainBase(this);
+		ResetForNextFrame();
 }
 
 
@@ -77,17 +73,7 @@ void BrainSideBase::Update(float step)
 
 	}
 
-	VisualProfile *pProfile = m_pParent->GetVisualProfile();
-
-	if (m_pParent->GetLinearVelocity().length() < 0.3f)
-	{
-		m_state = VisualProfile::VISUAL_STATE_IDLE;
-	} else
-	{
-		m_state = VisualProfile::VISUAL_STATE_RUN;
-	}
-
-	if (pProfile) m_pParent->SetSpriteData(pProfile->GetSprite(m_state,m_facing));
+	m_pParent->SetSpriteByVisualStateAndFacing();
 
 }
 

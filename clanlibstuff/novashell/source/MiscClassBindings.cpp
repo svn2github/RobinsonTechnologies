@@ -9,7 +9,7 @@
 #include "TextManager.h"
 #include "TagManager.h"
 #include "ScriptKeyManager.h"
-
+#include "VisualProfileManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -210,6 +210,7 @@ void luabindMisc(lua_State *pState)
 		def("GetEntityByWorldPos", &GetEntityByWorldPos),
 		def("GetEntityByID", &GetEntityByID),
 		def("GetEntityByName", &GetEntityByName),
-		def("ShowMessage", &ShowMessage)
+		def("ShowMessage", &ShowMessage),
+		def("FacingToVector", &FacingToVector)
 		];
 }

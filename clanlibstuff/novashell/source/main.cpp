@@ -63,7 +63,6 @@ void LogError(const char *lpFormat, ...)
 	#endif
 #endif    
     std::cout << stTemp;
-
 }
 
 App::App()
@@ -447,7 +446,6 @@ CL_Directory::change_to(CL_System::get_exe_path());
   LogMsg("Game: Set working dir to %s", stTemp);
 #endif
 
-
     try
     {
         OneTimeInit();
@@ -563,7 +561,6 @@ CL_Directory::change_to(CL_System::get_exe_path());
 		
 #endif
 #endif
-		
 		
 		return 0;
     }

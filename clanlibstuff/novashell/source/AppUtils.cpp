@@ -4,6 +4,22 @@
 #include "MaterialManager.h"
 
 
+void GameTimer::Reset()
+{
+	m_timer = GetApp()->GetGameTick() + m_interval;
+}
+bool GameTimer::IntervalReached()
+{
+	if (m_timer < GetApp()->GetGameTick())
+	{
+		Reset();
+		return true;
+	}
+
+	return false;
+}
+
+
 bool compareLayerBySort(unsigned int pA, unsigned int pB) 
 {
 	LayerManager *pLayerManager = &GetWorld->GetLayerManager();

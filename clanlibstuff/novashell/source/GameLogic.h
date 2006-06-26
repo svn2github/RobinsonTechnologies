@@ -128,4 +128,4 @@ extern CL_VirtualFileManager g_VFManager;
 extern MessageManager g_MessageManager; //I should make the class a singleton. uh.. 
 
 void Schedule(unsigned int deliveryMS, unsigned int targetID, const char * pMsg);
-void ScheduleSystem(unsigned int deliveryMS, const char * pMsg);
+void ScheduleSystem(unsigned int deliveryMS, unsigned int targetID, const char * pMsg);

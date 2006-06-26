@@ -570,6 +570,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\StateSideSimpleIdle.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateSideSimpleIdle.h"
+						>
+					</File>
+					<File
 						RelativePath=".\StateSideSimpleWalk.cpp"
 						>
 					</File>

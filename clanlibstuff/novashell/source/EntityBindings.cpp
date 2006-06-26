@@ -2,6 +2,7 @@
 #include "MovingEntity.h"
 #include "DataManager.h"
 #include "BrainManager.h"
+#include "State.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -13,7 +14,7 @@ using namespace luabind;
 
 string MovingEntityToString(MovingEntity * pEnt)
 {
-	return "Entity " + CL_String::from_int(pEnt->ID()) + pEnt->GetName();
+	return "Entity " + CL_String::from_int(pEnt->ID()) + " (" + pEnt->GetName()+")";
 }
 
 void luabindEntity(lua_State *pState)
@@ -32,9 +33,17 @@ void luabindEntity(lua_State *pState)
 			.def("Clear", &DataManager::Clear)
 			.def("SetIfNull", &DataManager::SetIfNull)
 
+			,class_<State>("State")
+			.def("GetName", &State::GetName)
+
 			,class_<BrainManager>("BrainManager")
 			.def("Add", &BrainManager::Add)
 			.def("SendToBrainByName", &BrainManager::SendToBrainByName)
+			.def("SetStateByName", &BrainManager::SetStateByName)
+			.def("GetStateByName", &BrainManager::GetStateByName)
+			.def("LastStateWas", &BrainManager::LastStateWas)
+			.def("InState", &BrainManager::InState)
+			
 
 			,class_<MovingEntity>("Entity")
 			.def(constructor<>())
@@ -70,8 +79,12 @@ void luabindEntity(lua_State *pState)
 			.def("SetPosAndMapByTagName", &MovingEntity::SetPosAndMapByTagName)
 			.def("OnDamage", &MovingEntity::OnDamage)
 			.def("SetAnimByName", &MovingEntity::SetAnimByName)
-
-
+			.def("SetSpriteByVisualStateAndFacing", &MovingEntity::SetSpriteByVisualStateAndFacing)
+			.def("GetFacing", &MovingEntity::GetFacing)
+			.def("SetFacing", &MovingEntity::SetFacing)
+			.def("SetVisualState", &MovingEntity::SetVisualState)
+			.def("GetVisualState", &MovingEntity::GetVisualState)
+	
 		];
 }
 
