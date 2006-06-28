@@ -74,6 +74,8 @@ protected:
 	LoopingSound m_walkSound;
 	string m_jumpSound;
 	bool m_bFrozen;
+
+	GameTimer m_attackTimer;
 	
 
 };

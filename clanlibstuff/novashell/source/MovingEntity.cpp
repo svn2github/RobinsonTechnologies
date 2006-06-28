@@ -258,8 +258,6 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 		LogMsg("SetPosAndMapByName: Unable to locate entity by name: %s", name.c_str());
 		return false;
 	} 
-
-
 	float offsetY = GetWorldRect().bottom - GetPos().y;
 	//we have to deduct half the height because this is written to move our FEET to the point
 	//to warp to. 
@@ -273,16 +271,24 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 	SetPosAndMap(pO->m_pos - CL_Vector2(0, offsetY), pO->m_pWorld->GetName());
 	return true; 
 }
+
 void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName)
 {
-	m_body.GetPosition().x = new_pos.x;
-	m_body.GetPosition().y = new_pos.y;
+	
+	
+
 
 	if (worldName != m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetName())
 	{
-		LogMsg("Changing world to %s", worldName.c_str());
+//		LogMsg("Changing world to %s", worldName.c_str());
 		//we also need to move it to a new world
 		m_strWorldToMoveTo = worldName; //can't do it now, but we'll do it asap
+		//we can't just move now, because we still need to finish drawing this frame
+		m_moveToAtEndOfFrame = new_pos;
+	} else
+	{
+		m_body.GetPosition().x = new_pos.x;
+		m_body.GetPosition().y = new_pos.y;
 	}
 	
 	m_bMovedFlag = true;
@@ -297,7 +303,6 @@ Zone * MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
 		{
 			return &m_zoneVec[i]; //valid for the rest of this frame
 		}
-
 	}
 
  return NULL; //nothing found
@@ -309,8 +314,7 @@ void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
 }
 
 
-
-//Note, this is NOT safe to use except in the postupdate functions.  An entity might have
+//Note, this is NOT safe to use except in the post update functions.  An entity might have
 //been deleted otherwise.
 
 tile_list & MovingEntity::GetNearbyTileList()
@@ -443,6 +447,8 @@ void MovingEntity::UpdateTilePosition()
 			 if (pInfo)
 			 {
 				pWorldToMoveTo = &pInfo->m_world;
+				m_body.GetPosition().x = m_moveToAtEndOfFrame.x;
+				m_body.GetPosition().y = m_moveToAtEndOfFrame.y;
 
 				if (this == GetPlayer)
 				{
@@ -470,9 +476,7 @@ void MovingEntity::UpdateTilePosition()
 
 		//add it back
 		pTileEnt->SetEntity(this); //this will set our m_pTile automatically
-		
 		pWorldToMoveTo->AddTile(m_pTile);
-
 		m_bMovedFlag = false;
 	} 
 
@@ -500,12 +504,31 @@ void MovingEntity::SetSpriteByVisualStateAndFacing()
 	if (GetVisualProfile()) SetSpriteData(GetVisualProfile()->GetSprite(GetVisualState(), GetFacing()));
 }
 
+void MovingEntity::LastCollisionWasInvalidated()
+{
+	m_bTouchedAGroundThisFrame = m_bOldTouchedAGroundThisFrame;
+	m_floorMaterialID = m_oldFloorMaterialID;
+
+}
+
 void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollision)
 {
-	
+
+
+	m_bOldTouchedAGroundThisFrame = m_bTouchedAGroundThisFrame;
+	m_oldFloorMaterialID = m_floorMaterialID;
+
+
+	if (N.y < -0.7f) //higher # here means allows a stronger angled surface to count as "ground"
+	{
+		m_bTouchedAGroundThisFrame = true;
+		m_floorMaterialID = pOtherBody->GetMaterial()->GetID();
+
+	}
 	//assert(m_pScriptObject && "No script object yet?");
 //	assert(m_pScriptObject->GetState() && "No state?!");
 
+	
 	/*
 if (pOtherBody->GetParentEntity())
 {
@@ -519,12 +542,6 @@ if (pOtherBody->GetParentEntity())
 		LogMsg("Normal is %f, %f", N.x, N.y);
 	}
 */
-
-	if (N.y < -0.7f) //higher # here means allows a stronger angled surface to count as "ground"
-	{
-		m_bTouchedAGroundThisFrame = true;
-		m_floorMaterialID = pOtherBody->GetMaterial()->GetID();
-	}
 
 	if (pOtherBody->GetParentEntity() != 0)
 	{
@@ -548,11 +565,8 @@ if (pOtherBody->GetParentEntity())
 			} LUABIND_ENT_CATCH("Error while calling OnCollision(Vector2, float, materialID, Entity)");
 
 			break;
-
-
 		default:
 			assert(!"Bad collision listen value");
-
 		}
 	} else
 	{
@@ -777,6 +791,8 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			{
 				//it's a real entity
 				pWallBody = &lineListItor->GetAsBody(pTile->GetPos() /*-lineListItor->GetOffset()*/, pTile->GetCustomBody());
+				//LogMsg("Colliding %d and %d at drawID %d, time: %d, delta: %.2f", ID(), ((TileEntity*)pTile)->GetEntity()->ID(), GetDrawID(),
+				//	GetApp()->GetGameTick(), GetApp()->GetDelta());
 
 			} else
 			{
@@ -787,6 +803,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			
 			//examine each line list for suitability
  		    m_body.Collide(*pWallBody, step);
+			
 		} else
 		{
 			//might be a ladder zone or something else we should take note of
@@ -860,7 +877,6 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 
 }
 
-
 void MovingEntity::ApplyGenericMovement(float step)
 {
 	m_nearbyTileList.clear();
@@ -910,7 +926,6 @@ void MovingEntity::ApplyGenericMovement(float step)
 	
 	//schedule tile update if needed
 	 m_bMovedFlag = true;
-
 }
 
 void MovingEntity::Render(void *pTarget)
@@ -962,7 +977,13 @@ void MovingEntity::Render(void *pTarget)
  		vecPos = pWorldCache->WorldToScreen(GetPos());
 	}
 
-	m_pSprite->draw( vecPos.x, vecPos.y, pGC);
+//vecPos.x = RoundNearest(vecPos.x, 1.0f);
+//vecPos.y = RoundNearest(vecPos.y, 1.0f);
+
+	//vecPos.x = int(vecPos.x);
+	//vecPos.y =  int(vecPos.y);
+
+	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 
 	/*
 	//***** debug, draw rect
@@ -996,6 +1017,9 @@ void MovingEntity::Render(void *pTarget)
 
 void MovingEntity::Update(float step)
 {
+
+if (GetGameLogic->GetGamePaused()) return;
+
 	m_brainManager.Update(step);
 	
 	if (!m_bAnimPaused)
@@ -1014,6 +1038,9 @@ void MovingEntity::Update(float step)
 
 void MovingEntity::PostUpdate(float step)
 {
+
+	if (GetGameLogic->GetGamePaused()) return;
+
 	m_brainManager.PostUpdate(step);
 
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
@@ -1023,32 +1050,6 @@ void MovingEntity::PostUpdate(float step)
 		m_body.AddForce(Vector(0, m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity()* m_body.GetMass()));
 	}
 
-	/*
-		if ( IsOnGround())
-		{
-		
-			const float baseFrictionStrength = 0.01;
-		
-			//add a little friction
-			float fricMult =  (( fabs(m_body.GetLinVelocity().Length())/step) * 7);
-			fricMult = clampf(fricMult, 0, 0.9);
-
-		    float friction = (1-fricMult)*baseFrictionStrength;
-			set_float_with_target(&m_body.GetLinVelocity().x, 0, friction);
-			set_float_with_target(&m_body.GetLinVelocity().y, 0, friction*6);
-			
-			set_float_with_target(&m_body.GetAngVelocity(), 0, friction/7);
-
-			if (!m_pBrain)
-			{
-			
-			//LogMsg("Adding %f friction, final LinVelX: %f, %f, Ang: %f", friction, m_body.GetLinVelocity().x, m_body.GetLinVelocity().y,
-			//	m_body.GetAngVelocity());
-			}
-			
-		}
-		*/
-	
 	const static float groundDampening = 1.6f;
 	const static float angleDampening = 0.01f;
 	
@@ -1061,12 +1062,11 @@ void MovingEntity::PostUpdate(float step)
 		set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening);
 		set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening);
 	}
-	
 
-	GetBody()->Update(step);
+		GetBody()->Update(step);
 
-	//get ready for next frame
-	m_bTouchedAGroundThisFrame = false;
+		//get ready for next frame
+		m_bTouchedAGroundThisFrame = false;
 	}
 
 }

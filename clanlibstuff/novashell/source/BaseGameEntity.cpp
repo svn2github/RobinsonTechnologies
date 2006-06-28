@@ -14,12 +14,10 @@ BaseGameEntity::BaseGameEntity(int ID):m_iType(C_ENTITY_TYPE_BASE),
 	m_pTile = NULL;
     SetID(ID);
 	EntityMgr->RegisterEntity(this);
-
 }
 
 BaseGameEntity::~BaseGameEntity()
 {
-
 	if (!m_deleteFlag)
 	{
 		//special case for when we're abruptly deleted without using SetDeleteFlag
@@ -43,7 +41,6 @@ void BaseGameEntity::SetDeleteFlag(bool bNew)
 	}
 	
 	m_deleteFlag = bNew;	
-
 }
 
 
@@ -58,8 +55,6 @@ void BaseGameEntity::SetID(int val)
 {
   //make sure the val is equal to or greater than the next available ID
   assert ( (val >= m_iNextValidID) && "<BaseGameEntity::SetID>: invalid ID");
-
   m_ID = val;
-    
   m_iNextValidID = m_ID + 1;
 }

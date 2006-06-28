@@ -88,6 +88,10 @@ public:
   CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_body.GetLinVelocity();}
   void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
+
+  int GetLayerID() {assert(m_pTile); return m_pTile->GetLayer();}
+  void SetLayerID(int id) {assert(m_pTile); m_pTile->SetLayer(id); m_bMovedFlag = true;}
+
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
   Zone * GetZoneWeAreOnByMaterialType(int matType);
   bool InZoneByMaterialType(int matType) {return GetZoneWeAreOnByMaterialType(matType) != NULL;}
@@ -114,7 +118,8 @@ public:
   int GetVisualState() {return m_visualState;}
   void SetVisualState(int visualState) {m_visualState = visualState;}
   void SetSpriteByVisualStateAndFacing();
-
+  void LastCollisionWasInvalidated();
+  
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -163,7 +168,8 @@ protected:
 	unsigned int m_drawID; //if this matches GetWorldCache->GetUniqueDrawID() it means they have
 	//already "thought" this cycle
 	vector<Zone> m_zoneVec;
-
+	bool m_bOldTouchedAGroundThisFrame;
+	int m_oldFloorMaterialID;
 	int m_listenCollision, m_listenCollisionStatic;
 	bool m_bOnLadder;
 	bool m_bAnimPaused;
@@ -177,7 +183,7 @@ protected:
 	BrainManager m_brainManager;
 	int m_facing;  //may or may not be used
 	int m_visualState; //may or may not be used
-
+	CL_Vector2 m_moveToAtEndOfFrame;
 
 };
 

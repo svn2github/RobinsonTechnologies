@@ -118,8 +118,8 @@ BrainManager::~BrainManager()
 {
 	
 	//hmm, do we want to run its OnRemove() here?  Maybe not.
-	SAFE_DELETE(m_pActiveState);
-	SAFE_DELETE(m_pLastState);
+	
+	Kill();	
 }
 
 void BrainManager::Kill()
@@ -134,6 +134,10 @@ void BrainManager::Kill()
 	}
 
 	m_brainVec.clear();
+
+	SAFE_DELETE(m_pActiveState);
+	SAFE_DELETE(m_pLastState);
+	m_pBrainBase = NULL;
 
 }
 

@@ -526,6 +526,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainFadeOutAndDie.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainFadeOutAndDie.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainManager.cpp"
 						>
 					</File>

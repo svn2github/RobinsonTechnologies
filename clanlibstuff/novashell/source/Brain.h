@@ -18,7 +18,7 @@ public:
 	Brain(MovingEntity * pParent);
 	virtual ~Brain();
 	virtual void Update(float step) = 0;
-	virtual void PostUpdate(float step) = 0;
+	virtual void PostUpdate(float step) {};
 	virtual const char * GetName()=0;
 	virtual Brain * CreateInstance(MovingEntity *pParent)=0;
 	int GetSort() const {return m_sort;}

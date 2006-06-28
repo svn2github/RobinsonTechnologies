@@ -54,6 +54,30 @@ public:
 };
 
 
+//RoundNearest written by Extrarius - http://www.gamedev.net/community/forums/topic.asp?topic_id=377593&whichpage=1&#2492400
+#include <cmath>
+
+template <typename NumberType>
+const NumberType RoundNearest(
+							  const NumberType &p_Number,
+							  const NumberType &p_Precision,
+							  const NumberType &p_Center = NumberType(0))
+{
+	if(p_Number >= p_Center)
+	{
+		const NumberType Intermediate = (p_Number - p_Center) + (p_Precision / NumberType(2));
+		return (floor(Intermediate / p_Precision) * p_Precision) + p_Center;
+	}
+	else
+	{
+		const NumberType Intermediate = (p_Number - p_Center) - (p_Precision / NumberType(2));
+		return (ceil(Intermediate / p_Precision) * p_Precision) + p_Center;
+	}
+}
+
+
+
+
 #endif                  // include guard
 
 

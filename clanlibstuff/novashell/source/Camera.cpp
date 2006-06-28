@@ -177,4 +177,7 @@ void Camera::Update(float step)
 	
 	m_vecScale = Lerp(m_vecScale, m_vecScaleTarget, m_scaleLerp);
 	m_vecPos = Lerp(m_vecPos,m_vecTargetPos, m_moveLerp);
+	m_vecPos.x = RoundNearest(m_vecPos.x,1.0f);
+	m_vecPos.y = RoundNearest(m_vecPos.y,1.0f);
+
 }

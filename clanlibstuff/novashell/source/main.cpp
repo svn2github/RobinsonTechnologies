@@ -378,19 +378,20 @@ void App::Update()
 	//figure out our average delta frame
 	unsigned int deltaTick = CL_System::get_time() -  m_lastFrameTime;
 
-	m_thinkTicksToUse += deltaTick;
 	m_lastFrameTime = CL_System::get_time();
-    m_thinkTicksToUse = min(m_thinkTicksToUse, GetGameLogicSpeed()*5);
 
 	m_delta = GetGameLogicSpeed()/GetGameSpeed();
+	m_thinkTicksToUse += deltaTick;
+	m_thinkTicksToUse = min(m_thinkTicksToUse, GetGameLogicSpeed()*5);
 
-	if (!m_pGameLogic->GetGamePaused())
-	{
-		m_gameTick += deltaTick;
-	}
 
 	while (m_thinkTicksToUse >= GetGameLogicSpeed())
 	{
+		if (!m_pGameLogic->GetGamePaused())
+		{
+			m_gameTick += GetGameLogicSpeed();
+		}
+
 		m_pGameLogic->Update(m_delta);
 		m_thinkTicksToUse -= GetGameLogicSpeed();
 	}

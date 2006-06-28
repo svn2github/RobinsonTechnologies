@@ -84,6 +84,8 @@ void luabindEntity(lua_State *pState)
 			.def("SetFacing", &MovingEntity::SetFacing)
 			.def("SetVisualState", &MovingEntity::SetVisualState)
 			.def("GetVisualState", &MovingEntity::GetVisualState)
+			.def("GetLayerID", &MovingEntity::GetLayerID)
+			.def("SetLayerID", &MovingEntity::SetLayerID)
 	
 		];
 }

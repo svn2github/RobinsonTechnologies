@@ -271,7 +271,19 @@ bool CBody::Collide(CBody& xBody, float dt)
 		bool bAllowCollision = true;
 		sig_collision(N, t, &xBody, &bAllowCollision);
 		xBody.sig_collision(-N, t, this, &bAllowCollision);
-		if (!bAllowCollision) return true; //ignore collision
+		
+		if (!bAllowCollision) 
+		{
+			//ugly hack to fix problems with registering "we touched the ground" and then having
+			//the collision be invalidated later
+			
+			if (sig_collision.has_slots_connected())
+			GetParentEntity()->LastCollisionWasInvalidated();		
+			
+			if (xBody.sig_collision.has_slots_connected())
+			xBody.GetParentEntity()->LastCollisionWasInvalidated();		
+			return true; //ignore collision
+		}
 
 		Vector CA[4];
 		Vector CB[4];

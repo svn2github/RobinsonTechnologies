@@ -233,31 +233,21 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	CL_Rect src;
 	src = pTile->m_rectSrc;
    
+/*
 	rectDest.bottom = int(rectDest.bottom);
 	rectDest.right = int(rectDest.right);
 	rectDest.top = int(rectDest.top);
 	rectDest.left = int(rectDest.left);
+*/
+/*
+	rectDest.bottom = RoundNearest(rectDest.bottom, 1.0f);
+	rectDest.right = RoundNearest(rectDest.right, 1.0f);
+	rectDest.top = RoundNearest(rectDest.top, 1.0f);
+	rectDest.left = RoundNearest(rectDest.left, 1.0f);
+*/	
 
-
-//		rectDest.bottom = ceil(rectDest.bottom);
-//		rectDest.right = ceil(rectDest.right);
-
-//	CL_OpenGLStateDataCustom data;
-
-//	CL_OpenGLState st(pGC);
-//	st.attach_data(&data, false);
-//	st.set_active();
-
-
-	
 	CL_OpenGLWindow *pGLW = (CL_OpenGLWindow*) GetApp()->GetMainWindow();
-
-//	pGLW->
-
-//	clMatrixMode(CL_TEXTURE_MATRIX);
-//	clTranslated(-0.38, -0.38, 0.0);
 	pSurf->draw(src, rectDest, pGC);
-//	clTranslated(0.38, 0.38, 0.0);
 }
 
 

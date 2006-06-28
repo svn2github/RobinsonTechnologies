@@ -32,6 +32,3 @@ void BrainShake::Update(float step)
 	m_pParent->SetPos(pos);
 }
 
-void BrainShake::PostUpdate(float step)
-{
-}

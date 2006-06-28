@@ -16,6 +16,11 @@ string VectorToString(const CL_Vector2 * pVec)
 	return string(stTemp);
 }
 
+void NormalizeVector2(CL_Vector2 &v)
+{
+	v.unitize();
+}
+
 void luabindVector(lua_State *pState)
 {
 	module(pState)
@@ -34,7 +39,13 @@ void luabindVector(lua_State *pState)
 			.def("length", &CL_Vector2::length)
 			.def("dot", &CL_Vector2::dot)
 			.def("cross", &CL_Vector2::cross)
-			.def("unitize", &CL_Vector2::unitize)
 		    .def("__tostring", &VectorToString)
+		
+		
+			,
+			//stand alone functions
+
+			def("Normalize", &NormalizeVector2)
+
 		];
 }

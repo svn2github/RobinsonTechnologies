@@ -55,6 +55,7 @@ BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 	m_climbSound.Init(g_pSoundManager, m_pParent->GetData()->Get("climb_sound"));
 	m_jumpSound = m_pParent->GetData()->Get("jump_sound");
 
+	m_attackTimer.SetInterval(200);
 }
 
 void BrainPlayer::AssignPlayerToCameraIfNeeded()
@@ -90,13 +91,16 @@ void BrainPlayer::OnKeyDown(const CL_InputEvent &key)
 
 	switch(key.id)
 	{
+	case CL_KEY_CONTROL:
+		
+		m_Keys |= C_KEY_ATTACK;
+		break;
+
+
 	case CL_KEY_LEFT:
 		m_Keys |= C_KEY_LEFT;
 		break;
 
-	case CL_KEY_CONTROL:
-		m_Keys |= C_KEY_ATTACK;
-		break;
 
 	case CL_KEY_RIGHT:
 		m_Keys |= C_KEY_RIGHT;
@@ -333,7 +337,7 @@ string BrainPlayer::HandleMsg(const string &msg)
 			SetFreeze(CL_String::to_bool(words[1]));
 		} else
 		{
-			LogMsg("Brain %s doesn't understand keyword %s", words[0].c_str());
+			LogMsg("Brain %s doesn't understand keyword %s", GetName(), words[0].c_str());
 		}
 	}
 
@@ -438,6 +442,8 @@ void BrainPlayer::CheckForAttack()
 {
 	if (m_Keys & C_KEY_ATTACK)
 	{
+		if (m_attackTimer.IntervalReached())
+		{
 		MovingEntity *pWeapon = CreateEntity(m_pParent->GetPos(), "weapon/slash/slash.lua");
 
 		//tell this weapon entity who shot/swung it
@@ -446,6 +452,7 @@ void BrainPlayer::CheckForAttack()
 		} LUABIND_ENT_BRAIN_CATCH("Error while calling SetParent in CheckForAttack");
 		
 		m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
+		}
 
 	}
 
