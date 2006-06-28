@@ -90,7 +90,7 @@ void EntEditMode::Init()
 	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
 	if (!pEditor) throw CL_Error("Unable to locate editor entity");
 	pEditor->SetTipLabel(
-		"Tile Edit Mode - Use the mouse wheel or +/- to zoom in/out.  Hold the middle mouse button and drag to move.  Hold and drag or click with the left mouse button to make a selection.\n" \
+		"Tile Edit Mode - Use the mouse wheel or +/- to zoom in/out.  Hold the middle mouse button and drag to move camera.  Hold and drag or click with the left mouse button to make a selection.\n" \
 		"\n"\
 		"Hold Shift,Alt, or Ctrl while clicking to add/remove/toggle from selection.  Use arrow keys to nudge selection one pixel.  (think photoshop controls)\n"\
 		"");
@@ -1188,7 +1188,7 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	CL_Label labelLayer(CL_Point(buttonOffsetX, offsetY), "Changing layer affects all selected", window.get_client_area());
 
 	offsetY += 20;
-	rPos = CL_Rect(0,0, 100, 150);
+	rPos = CL_Rect(0,0, 85, 150);
 	ptOffset = CL_Point(buttonOffsetX, offsetY);
 	rPos.apply_alignment(origin_top_left, -ptOffset.x, -ptOffset.y);
 
@@ -1216,6 +1216,16 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 
 	CL_InputBox *pScript = &inputEntity;
      m_pPropertiesInputScript = NULL;
+
+	 CL_Label labelName3(CL_Point(SecondOffsetX, offsetY), "Color tint:", window.get_client_area());
+	 rPos = CL_Rect(0,0,100,16);
+	 rPos.apply_alignment(origin_top_left, - (labelName3.get_width()+labelName3.get_client_x()+5), -(offsetY));
+	 
+	 string originalColor = ColorToString(pTile->GetColor());
+	 CL_InputBox inputColor(rPos, originalColor, window.get_client_area());
+
+
+
 
 if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 {
@@ -1314,6 +1324,11 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 			flags = flags | TileEditOperation::eBitFlipY;
 		}
 
+		if (inputColor.get_text() != originalColor)
+		{
+			pTile->SetColor(StringToColor(inputColor.get_text()));
+			flags = flags | TileEditOperation::eBitColor;
+		}
 	
 		//run through and copy these properties to all the valid tiles in the selection
 		pTileList->CopyTilePropertiesToSelection(pTile, flags);

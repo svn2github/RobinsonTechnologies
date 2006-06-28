@@ -18,6 +18,8 @@ Tile::Tile()
 	m_pFatherTile = NULL; //if not null, our type must be C_TILE_REFERENCE
 	m_bitField.clear();
 	m_pCollisionData = NULL;
+	m_color = CL_Color(255,255,255);
+
 }
 
 Tile::~Tile()
@@ -100,6 +102,8 @@ void Tile::SerializeBase(CL_FileHelper &helper)
 		SetPos(m_vecPos);
 	}
 	helper.process(m_vecScale);
+	helper.process(*(cl_uint32*)&m_color);
+
 }
 //sometimes with blank/placeholders we need copy a blank tile
 Tile * Tile::CreateClone()
@@ -115,6 +119,7 @@ Tile * Tile::CopyFromBaseToClone(Tile *pNew)
 	pNew->m_bitField = m_bitField;
 	pNew->m_vecPos = m_vecPos;
 	pNew->m_vecScale = m_vecScale;
+	pNew->m_color = m_color;
 	return pNew;
 }
 Tile * Tile::CreateReference(Screen *pScreen)
@@ -134,34 +139,6 @@ Tile * Tile::CreateReference(Screen *pScreen)
 	m_pEdgeCaseList->push_back(pNew);
 	return pNew;
 }
-
-
-class CL_OpenGLStateDataCustom: public CL_OpenGLStateData
-{
-public:
-	//: Save state information needed to restore this OpenGL state.
-	virtual void on_save()
-	{
-		LogMsg("Saving state");
-	}
-
-	//: Load state information and setup OpenGL to this state.
-	virtual void on_load()
-	{
-		clTranslated(0.38, 0.38, 0.0);	
-		LogMsg("Loading state");
-	}
-
-	//: Flush current rendering batch.
-	//- <p>This is a hint from clanDisplay that it needs to perform some state changes.
-	//- Usually this happens if translate, viewport or scissor needs updating.</p>
-	//- <p>Internally ClanLib uses this to end any open glBegin render batches.</p>
-	virtual void on_flush()
-	{
-		LogMsg("flushing state");
-	}
-
-};
 
 void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 {
@@ -246,6 +223,7 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	rectDest.left = RoundNearest(rectDest.left, 1.0f);
 */	
 
+	pSurf->set_color(pTile->GetColor());
 	CL_OpenGLWindow *pGLW = (CL_OpenGLWindow*) GetApp()->GetMainWindow();
 	pSurf->draw(src, rectDest, pGC);
 }
@@ -276,6 +254,7 @@ Tile * TilePic::CreateClone()
 	pNew->m_resourceID = m_resourceID;
 	pNew->m_rectSrc = m_rectSrc;
 	pNew->m_rot = m_rot;
+	pNew->m_color = m_color;
 	//LogMsg("Copying resource %u", m_resourceID);
 	return pNew;
 }
@@ -288,6 +267,7 @@ void TilePic::Serialize(CL_FileHelper &helper)
 	helper.process(m_rectSrc);
 	helper.process(m_resourceID);
 	helper.process(m_rot);
+	
 }
 
 

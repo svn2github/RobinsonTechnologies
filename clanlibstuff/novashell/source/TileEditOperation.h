@@ -86,6 +86,7 @@ public:
 	{
 		eBitFlipX = D_BIT_0,
 		eBitFlipY = D_BIT_1,
+		eBitColor = D_BIT_2
 	};
 
 	selectedTile_list m_selectedTileList;

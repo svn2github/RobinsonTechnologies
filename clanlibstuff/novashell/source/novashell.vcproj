@@ -526,6 +526,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainColorFlash.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainColorFlash.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainFadeOutAndDie.cpp"
 						>
 					</File>
@@ -575,6 +583,14 @@
 					</File>
 					<File
 						RelativePath=".\State.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateDie.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateDie.h"
 						>
 					</File>
 					<File

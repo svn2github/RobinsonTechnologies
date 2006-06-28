@@ -11,12 +11,42 @@ TextObject::TextObject(TextManager *pTextManager)
 	m_pEntity = NULL;
 }
 
-void TextObject::Init(const string &text, MovingEntity * pEnt)
+void TextObject::InitCustom(const string &text, MovingEntity * pEnt, const CL_Vector2 &vecPos,
+							const CL_Vector2 &vecMovement, const CL_Color &col, int timetoShowMS,
+							int fontID)
 {
 	m_text = text;
 	m_timeCreated = GetApp()->GetGameTick();
+	m_timeToShowMS = timetoShowMS;
+	m_pEntity = pEnt;
+	m_worldPos = vecPos;
+	m_vecMovement = vecMovement;
+	m_color = col;
+	SetMode(CUSTOM);
+
+	//looks like we're going to draw, let's setup where in advance
+	m_boundingRect = CL_Rect(0,0,1024,1024);
+	m_fontID = fontID;
+
+	CL_Font *pFont = GetApp()->GetFont(m_fontID);
+	//get the real size of what we have to draw
+	m_boundingRect = pFont->bounding_rect(m_boundingRect, m_text);
+
+	if (pEnt)
+	{
+		//kill the text when this ent dies or is off the screen
+		m_slots.connect(pEnt->sig_delete, this, &TextObject::EntDeleted);
+	}
+}
+
+void TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
+{
+	assert(pEnt);
+	m_text = text;
+	m_timeCreated = GetApp()->GetGameTick();
 	m_timeToShowMS = text.size()* 60;
-  
+	SetMode(DIALOG);
+
    //TODO: Figure out where the max macro is?
   if (m_timeToShowMS < 3000) m_timeToShowMS = 3000;
 
@@ -31,14 +61,8 @@ void TextObject::Init(const string &text, MovingEntity * pEnt)
 	{
 		m_bColorOdd = false;
 	}
-	
-	if (m_pEntity)
-	{
-		m_color = m_pEntity->GetDefaultTextColor();
-	} else
-	{
-		m_color = CL_Color(255,255,255,255);
-	}
+
+	m_color = m_pEntity->GetDefaultTextColor();
 	
 	if (m_bColorOdd)
 	{
@@ -50,7 +74,9 @@ void TextObject::Init(const string &text, MovingEntity * pEnt)
 
 	//looks like we're going to draw, let's setup where in advance
 	m_boundingRect = CL_Rect(0,0,400,400);
-	CL_Font *pFont = GetApp()->GetFont(C_FONT_NORMAL);
+	m_fontID = fontID;
+
+	CL_Font *pFont = GetApp()->GetFont(fontID);
 	//get the real size of what we have to draw
 	m_boundingRect = pFont->bounding_rect(m_boundingRect, m_text);
 
@@ -72,7 +98,7 @@ CL_Point TextObject::CalculateTextAvoidenceOffset()
 	textObject_list::iterator itor;
 	for (itor = m_pTextManager->GetTextList().begin(); itor != m_pTextManager->GetTextList().end();)
 	{
-		if (itor->GetEntity() == m_pEntity)
+		if (itor->GetEntity() == m_pEntity && itor->GetMode() == DIALOG)
 		{
 			//it's our same guy!  Wait, is it actually this instance?
 			if ( &(*itor) == this)
@@ -90,25 +116,21 @@ CL_Point TextObject::CalculateTextAvoidenceOffset()
 
 	return ptOffset;
 }
-bool TextObject::Update()
+
+//return false to delete this object
+bool TextObject::UpdateDialog()
 {
 	if (!m_pEntity) return false;
-	
-	int timeLeft = (m_timeCreated+m_timeToShowMS) - GetApp()->GetGameTick();
-	
-	if (timeLeft < 0)
-	{
-		//done showing
-		return false;
-	}
-	
-	m_rect = m_boundingRect;
 
+	m_bVisible = true;
+	m_rect = m_boundingRect;
+	
 	//now we need to position it
 
 	CL_Vector2 entPos = GetWorldCache->WorldToScreen(m_pEntity->GetPos());
-	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - (m_rect.bottom));
 	
+	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - (m_rect.bottom));
+
 	m_pos.y -= ( (m_pEntity->GetSizeY()/2) * GetCamera->GetScale().x);
 
 	//clip to screen
@@ -123,9 +145,47 @@ bool TextObject::Update()
 
 	m_rect.apply_alignment(origin_top_left, -m_pos.x, -m_pos.y);
 	//LogMsg(PrintRect(m_rect).c_str());
+	return true;
+}
 
-	//calculate the color/alpha
+//return false to delete this object
+bool TextObject::UpdateCustom()
+{
+	m_bVisible = true;
+	m_rect = m_boundingRect;
 
+	//apply movement
+	m_vecDisplacement += m_vecMovement;
+
+	CL_Vector2 entPos = GetWorldCache->WorldToScreen(m_worldPos);
+	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - (m_rect.bottom));
+
+	m_pos += CL_Point(m_vecDisplacement.x, m_vecDisplacement.y);
+	m_rect.apply_alignment(origin_top_left, -m_pos.x, -m_pos.y);
+	
+	//LogMsg(PrintRect(m_rect).c_str());
+	return true;
+}
+
+bool TextObject::Update()
+{
+
+	if (m_pEntity)
+	{
+		if (m_pEntity->GetTile()->GetParentScreen()->GetParentWorldChunk()->GetParentWorld() != GetWorld)
+		{
+			m_bVisible = false;
+			return true;
+		}
+	}
+	int timeLeft = (m_timeCreated+m_timeToShowMS) - GetApp()->GetGameTick();
+	
+	if (timeLeft < 0)
+	{
+		//done showing
+		return false;
+	}
+	
 	int fadeOutTimeMS = 1000;
 	if (timeLeft < fadeOutTimeMS)
 	{
@@ -135,7 +195,21 @@ bool TextObject::Update()
 		m_alpha = 1;
 	}
 
-	m_bVisible = true;
+
+	switch (m_mode)
+	{
+	case DIALOG:
+		return UpdateDialog();
+		break;
+
+	case CUSTOM:
+		return UpdateCustom();
+		break;
+
+	default:
+		assert(0);
+	}
+
 	return true; //don't delete yet
 }
 
@@ -143,7 +217,7 @@ void TextObject::Render()
 {
 	if (!m_bVisible) return;
 
-	CL_Font *pFont = GetApp()->GetFont(C_FONT_NORMAL);
+	CL_Font *pFont = GetApp()->GetFont(m_fontID);
 	pFont->set_color(m_color);
 	pFont->set_alpha(m_alpha);
 	pFont->draw(m_rect, m_text);
@@ -163,12 +237,22 @@ void TextManager::Reset()
 	m_textList.clear();
 }
 
+void TextManager::AddCustom(const string &text, const MovingEntity *pEnt, const CL_Vector2 &vecPos,
+					  const CL_Vector2 &vecMovement, const CL_Color &col, int timeToShowMS, int fontID)
+{
+	TextObject t(this);
+	m_textList.push_back(t);
+
+	m_textList.rbegin()->InitCustom(text, const_cast<MovingEntity*>(pEnt),
+		vecPos, vecMovement, col, timeToShowMS, fontID);
+
+}
 void TextManager::Add(const string &text, const MovingEntity *pEnt)
 {
 	TextObject t(this);
 	m_textList.push_back(t);
 
-	m_textList.rbegin()->Init(text, const_cast<MovingEntity*>(pEnt));
+	m_textList.rbegin()->Init(text, const_cast<MovingEntity*>(pEnt), C_FONT_NORMAL);
 
 }
 
@@ -225,7 +309,6 @@ void TextManager::Update(float step)
 		if (!itor->Update())
 		{
 			//time to delete it
-
 			itor = m_textList.erase(itor);
 			continue;
 		}

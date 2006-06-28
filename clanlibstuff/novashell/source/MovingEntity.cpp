@@ -941,7 +941,7 @@ void MovingEntity::Render(void *pTarget)
 	}
 
 	m_pSprite->set_scale(GetCamera->GetScale().x, GetCamera->GetScale().y);
-	
+	m_pSprite->set_color(m_pTile->GetColor());
 	static bool bUseParallax;
 	static Layer *pLayer;
 	static World *pWorld;

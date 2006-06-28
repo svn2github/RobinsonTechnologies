@@ -9,7 +9,6 @@
 //this class helps us display the player or NPC's text in a controlled way, so it stays
 //on the screen and is always readable
 
-
 class MovingEntity;
 class TextManager;
 
@@ -20,7 +19,7 @@ public:
 	TextObject(TextManager *pTextManager);
 
 	void EntDeleted(int ID);
-	void Init(const string &text, MovingEntity *pEnt);
+	void Init(const string &text, MovingEntity *pEnt, int fontID);
 	void Render();
 	bool Update(); //return false to delete
 	unsigned int GetTimeCreated() const {return m_timeCreated;}
@@ -28,10 +27,22 @@ public:
 	const MovingEntity * GetEntity(){return m_pEntity;}
 	const CL_Rect & GetTextRect(){return m_rect;}
 	bool GetColorOdd() {return m_bColorOdd;};
-
+	void InitCustom(const string &text, MovingEntity * pEnt, const CL_Vector2 &vecPos,
+		const CL_Vector2 &vecMovement, const CL_Color &col, int timetoShowMS, int fontID);
+	
+	enum Mode
+	{
+		DIALOG,
+		CUSTOM
+	};
+	
 private:
 
 	CL_Point CalculateTextAvoidenceOffset();
+	void SetMode(Mode mode) {m_mode = mode;}
+	Mode GetMode(){return m_mode;}
+	bool UpdateDialog();
+	bool UpdateCustom();
 
 	unsigned int m_timeCreated;
 	unsigned int m_timeToShowMS;
@@ -46,7 +57,10 @@ private:
 	CL_Color m_color;
 	float m_alpha;
 	bool m_bColorOdd; //i want to alternate the color sometimes
-
+	Mode m_mode;
+	CL_Vector2 m_worldPos, m_vecMovement; //applicable to CUSTOM mode
+	int m_fontID;
+	CL_Vector2 m_vecDisplacement;
 };
 
 typedef std::list<TextObject> textObject_list;
@@ -65,6 +79,8 @@ public:
 	int GetCountOfTextActiveForEntity(const MovingEntity *pEnt);
 	TextObject * GetLastTextForEntity(const MovingEntity *pEnt);
 	void Reset();
+	void AddCustom(const string &text, const MovingEntity *pEnt, const CL_Vector2 &vecPos,
+		const CL_Vector2 &vecMovement, const CL_Color &col, int timeToShowMS, int fontID);
 
 protected:
 

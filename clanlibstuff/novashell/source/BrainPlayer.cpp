@@ -302,7 +302,6 @@ void BrainPlayer::CheckForLadder()
 			//move down the ladder
 			m_moveAngle = m_moveAngle +CL_Vector2(0,1);
 			m_moveAngle.unitize();
-
 		}
 
 	}
@@ -349,20 +348,23 @@ void BrainPlayer::CheckForMovement()
 	if (m_Keys & C_KEY_LEFT)
 	{
 		m_moveAngle = CL_Vector2(-1,0);
+	
+		m_pParent->SetFacing(VisualProfile::FACING_LEFT);
+
 		if (m_pParent->IsOnGround())
 		{
 			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
-			m_pParent->SetFacing(VisualProfile::FACING_LEFT);
 		}
 	}
 
 	if (m_Keys & C_KEY_RIGHT)
 	{
 		m_moveAngle = CL_Vector2(1,0);
+		m_pParent->SetFacing(VisualProfile::FACING_RIGHT);
+
 		if (m_pParent->IsOnGround())
 		{
 			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
-			m_pParent->SetFacing(VisualProfile::FACING_RIGHT);
 		}
 	}
 }
@@ -375,7 +377,6 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 
 	if (m_moveAngle != CL_Vector2::ZERO)
 	{
-
 		force = CL_Vector2(m_moveAngle)*desiredSpeed;
 		CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
 		force = force-curForce;
@@ -435,7 +436,6 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 		}
 
 	}
-
 }
 
 void BrainPlayer::CheckForAttack()
@@ -455,7 +455,6 @@ void BrainPlayer::CheckForAttack()
 		}
 
 	}
-
 }
 
 void BrainPlayer::UpdateMovement(float step)

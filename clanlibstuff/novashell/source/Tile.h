@@ -61,6 +61,8 @@ public:
 	Screen * GetParentScreen();
 	void SetParentScreen(Screen *pScreen) {m_pParentScreen = pScreen;}
 	virtual CBody * GetCustomBody() {return NULL;}
+	void SetColor(CL_Color color) {m_color = color;}
+	CL_Color GetColor() {return m_color;}
 	
 enum
 {
@@ -69,6 +71,8 @@ enum
  e_customCollision = D_BIT_2,
  e_needsUpdate = D_BIT_3,
  e_notPersistent = D_BIT_4 //if true, won't be saved to disk
+
+//can add more bits here, up to D_BIT_7
 };
 
 protected:
@@ -87,6 +91,8 @@ protected:
 	cl_uint8 m_layer; //higher means on top
 	CBit8 m_bitField;
 	CollisionData * m_pCollisionData; //null if it hasn't been researched yet
+	CL_Color m_color;
+
 };
 
 class TilePic: public Tile

@@ -18,7 +18,7 @@ public:
 	BrainFadeOutAndDie(MovingEntity *pParent);
 	virtual ~BrainFadeOutAndDie();
 	virtual void Update(float step);
-	virtual const char * GetName() {return "FadeOutAndDie";};
+	virtual const char * GetName() {return "FadeOutAndDelete";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainFadeOutAndDie(pParent);}
 
 protected:
