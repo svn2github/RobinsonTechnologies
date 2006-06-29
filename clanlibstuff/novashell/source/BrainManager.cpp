@@ -152,7 +152,7 @@ void BrainManager::Sort()
 	m_brainVec.sort(compareBrainBySort);
 }
 
-void BrainManager::Add(const string &brainName)
+void BrainManager::Add(const string &brainName, const string &initMsg)
 {
 
 	Brain *pNewBrain = BrainRegistry::GetInstance()->CreateBrainByName(brainName, m_pParent);
@@ -168,19 +168,34 @@ void BrainManager::Add(const string &brainName)
 	 Sort();
 
 	 pNewBrain->OnAdd();
+	 if (initMsg.size() > 0)
+	 {
+		 pNewBrain->HandleMsg(initMsg);
+	 }
 }
 
-string BrainManager::SendToBrainByName(const string &brainName, const string &msg)
+void BrainManager::SendToBrainByName(const string &brainName, const string &msg)
 {
 	Brain *pBrain = GetBrainByName(brainName);
 	if (!pBrain)
 	{
 		LogMsg("Can't locate brain %s to send %s to it.", brainName.c_str(), msg.c_str());
+		return;
+	}
+
+	pBrain->HandleMsg(msg);
+}
+
+string BrainManager::AskBrainByName(const string &brainName, const string &msg)
+{
+	Brain *pBrain = GetBrainByName(brainName);
+	if (!pBrain)
+	{
+		LogMsg("Can't locate brain %s to ask it %s.", brainName.c_str(), msg.c_str());
 		return "";
 	}
 
-	return pBrain->HandleMsg(msg);
-
+	return pBrain->HandleAskMsg(msg);
 }
 
 Brain * BrainManager::GetBrainByName(const string &brainName)
@@ -286,6 +301,16 @@ void BrainManager::PostUpdate(float step)
 	{
 
 		(*itor)->PostUpdate(step);
+
+		if ((*itor)->GetDeleteFlag())
+		{
+		//	(*itor)->OnRemove();
+			delete *itor;
+
+			itor = m_brainVec.erase(itor);
+			continue;
+		}
+
 		itor++;
 	}
 

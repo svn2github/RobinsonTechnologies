@@ -37,7 +37,7 @@ void BrainFadeOutAndDie::Update(float step)
 		alpha = 1;
 	}
 	
-	m_pParent->GetSprite()->set_alpha( min (alpha, m_pParent->GetSprite()->get_alpha()));
+	m_pParent->AddColorModAlpha( (1-alpha)*-255);
 
 	if (alpha <= 0)
 	{

@@ -397,7 +397,16 @@ static int llex (LexState *ls, SemInfo *seminfo) {
         if (ls->current != '=') return '~';
         else { next(ls); return TK_NE; }
       }
-      case '"':
+	 
+	  //SETH added != style inequality support
+	  case '!': {
+		  next(ls);
+		  if (ls->current != '=') return '!';
+		  else { next(ls); return TK_NE; }
+				}
+      //****************
+
+	  case '"':
       case '\'': {
         read_string(ls, ls->current, seminfo);
         return TK_STRING;

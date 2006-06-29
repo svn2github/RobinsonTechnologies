@@ -28,6 +28,7 @@ private:
 
   int m_fadeOutTimeMS;
   int m_timeCreated;
+ 
 };
 
 #endif // BrainFadeOutAndDie_h__

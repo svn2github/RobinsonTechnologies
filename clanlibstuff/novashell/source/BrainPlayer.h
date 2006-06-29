@@ -37,7 +37,8 @@ public:
 	virtual void Update(float step);
 	virtual const char * GetName(){return "SidePlayer";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainPlayer(pParent);}
-	virtual string HandleMsg(const string &msg);
+	virtual void HandleMsg(const string &msg);
+	virtual string HandleAskMsg(const string &msg);
 
 protected:
 	

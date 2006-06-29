@@ -24,8 +24,11 @@ public:
 	int GetSort() const {return m_sort;}
 	void SetSort(int sort){m_sort = sort;}
 	virtual void OnAdd(){}; //called once when brain is inserted
-	virtual string HandleMsg(const string &msg) {return "";}
+	virtual void HandleMsg(const string &msg) {return;}
+	virtual string HandleAskMsg(const string &msg) {return "";}
 	virtual void AddWeightedForce(const CL_Vector2 & force){assert(!"This brain not setup to be a base brain!");};
+	void SetDeleteFlag(bool bFlag) {m_bDeleteFlag = bFlag;}
+	bool GetDeleteFlag() {return m_bDeleteFlag;}
 
 protected:
 
@@ -33,6 +36,7 @@ protected:
 
 	int m_sort; //higher # gets run first
 	MovingEntity *m_pParent;
+	bool m_bDeleteFlag;
 };
 
 #endif                  // include guard

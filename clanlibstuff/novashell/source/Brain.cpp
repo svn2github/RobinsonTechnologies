@@ -6,7 +6,9 @@
 
 Brain::Brain(MovingEntity * pParent): m_pParent(pParent)
 {
-  SetSort(C_DEFAULT_SORT);
+	m_bDeleteFlag = false;
+	SetSort(C_DEFAULT_SORT);
+  
 }
 
 Brain::~Brain()

@@ -25,15 +25,20 @@ public:
 	virtual void Update(float step);
 	virtual const char * GetName() {return "ColorFlash";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainColorFlash(pParent);}
-
+	void HandleMsg(const string &msg);
+	
 protected:
 	
-
 private:
+
+	void SetPulseRate(int pulseRate);
 
 	GameTimer m_flashTimer;
 	bool m_bOn;
-	CL_Color m_color;
+	short m_r, m_g, m_b, m_a;
+	int m_pulseRate;
+	int m_remove_brain_by_pulses;
+
 };
 
 #endif // BrainColorFlash_h__

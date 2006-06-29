@@ -98,13 +98,14 @@ void StateSideSimpleWalk::LookAround()
 		vEndPos.y += colRect.get_height();
 		bNeedToTurn = true;	
 
-		if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(),C_TILE_TYPE_PIC ))
+		if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile()))
 		{
 			//if a floor ahead is NOT found, let's turn around.
 			//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
 			switch ((pTile)->GetType())
 			{
 
+			case C_TILE_TYPE_ENTITY:
 			case C_TILE_TYPE_PIC:
 				//looks there is a floor up there
 				bNeedToTurn = false;	

@@ -46,6 +46,14 @@ MovingEntity::~MovingEntity()
 	Kill();
 }
 
+void MovingEntity::ClearColorMods()
+{
+	m_colorModRed = 0;
+	m_colorModGreen = 0;
+	m_colorModBlue = 0;
+	m_colorModAlpha = 0;
+}
+
 void MovingEntity::Kill()
 {
 
@@ -78,6 +86,7 @@ void MovingEntity::HandleMessageString(const string &msg)
 
 void MovingEntity::SetDefaults()
 {
+	ClearColorMods();
 	m_nearbyTileList.clear();
 	m_floorMaterialID = -1;
 	m_bUsingSimpleSprite = false;
@@ -941,7 +950,25 @@ void MovingEntity::Render(void *pTarget)
 	}
 
 	m_pSprite->set_scale(GetCamera->GetScale().x, GetCamera->GetScale().y);
-	m_pSprite->set_color(m_pTile->GetColor());
+	
+	
+	//construct the final color with tinting mods, insuring it is in range
+	short r,g,b,a;
+
+	r = m_pTile->GetColor().get_red() + m_colorModRed;
+	g = m_pTile->GetColor().get_green() + m_colorModGreen;
+	b = m_pTile->GetColor().get_blue() + m_colorModBlue;
+	a = m_pTile->GetColor().get_alpha() + m_colorModAlpha;
+
+	//force them to be within range
+	r = min(r, 255); r = max(0, r);
+	g = min(g, 255); g = max(0, g);
+	b = min(b, 255); b = max(0, b);
+	a = min(a, 255); a = max(0, a);
+
+	m_pSprite->set_color(CL_Color(r,g,b,a));
+	
+	
 	static bool bUseParallax;
 	static Layer *pLayer;
 	static World *pWorld;
@@ -977,11 +1004,8 @@ void MovingEntity::Render(void *pTarget)
  		vecPos = pWorldCache->WorldToScreen(GetPos());
 	}
 
-//vecPos.x = RoundNearest(vecPos.x, 1.0f);
-//vecPos.y = RoundNearest(vecPos.y, 1.0f);
-
-	//vecPos.x = int(vecPos.x);
-	//vecPos.y =  int(vecPos.y);
+	//vecPos.x = RoundNearest(vecPos.x, 1.0f);
+	//vecPos.y = RoundNearest(vecPos.y, 1.0f);
 
 	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 
@@ -1019,6 +1043,8 @@ void MovingEntity::Update(float step)
 {
 
 if (GetGameLogic->GetGamePaused()) return;
+
+	ClearColorMods();
 
 	m_brainManager.Update(step);
 	

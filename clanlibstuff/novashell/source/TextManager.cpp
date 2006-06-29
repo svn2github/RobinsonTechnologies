@@ -247,8 +247,15 @@ void TextManager::AddCustom(const string &text, const MovingEntity *pEnt, const 
 		vecPos, vecMovement, col, timeToShowMS, fontID);
 
 }
-void TextManager::Add(const string &text, const MovingEntity *pEnt)
+void TextManager::Add(const string &text, MovingEntity *pEnt)
 {
+	
+	if (!pEnt->GetTile()->GetParentScreen())
+	{
+		LogMsg("Error: TextManager type things shouldn't go into the visual Init(), use GameInit()");
+		return;
+	}
+	
 	TextObject t(this);
 	m_textList.push_back(t);
 

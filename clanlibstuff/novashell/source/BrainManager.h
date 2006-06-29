@@ -63,14 +63,16 @@ class BrainManager
 public:
 	BrainManager();
 	virtual ~BrainManager();
-	void Add(const string &brainName);
+	void Add(const string &brainName, const string &initMsg);
 	void SetParent(MovingEntity *pEnt) {m_pParent = pEnt;}
 
 	void Kill();
 
 	void Update(float step);
 	void PostUpdate(float step);
-	string SendToBrainByName(const string &brainName, const string &msg);
+	void SendToBrainByName(const string &brainName, const string &msg);
+	string AskBrainByName(const string &brainName, const string &msg);
+
 	Brain * GetBrainByName(const string &brainName);
 	State * GetLastState() {return m_pLastState;} //null if there wasn't one
 	bool LastStateWas(const string &stateName);

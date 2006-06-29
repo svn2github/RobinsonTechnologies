@@ -64,7 +64,7 @@ void Console::Render()
 	if (!m_bOnScreen) return;
 	//figure out overall size
 	CL_Rect r(0,GetScreenY/6, GetScreenX, GetScreenY);
-	CL_Display::fill_rect(r, CL_Color(255,255,255,235));
+	CL_Display::fill_rect(r, CL_Color(10,10,10,170));
 
 	CL_Font *pFont = GetApp()->GetFont(C_FONT_GRAY);
 	ResetFont(pFont);

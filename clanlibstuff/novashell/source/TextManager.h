@@ -72,7 +72,7 @@ public:
 
 	TextManager();
 	virtual ~TextManager();
-	void Add(const string &text, const MovingEntity *pEnt);
+	void Add(const string &text, MovingEntity *pEnt);
 	void Update(float step);
 	void Render();
 	textObject_list & GetTextList(){return m_textList;};

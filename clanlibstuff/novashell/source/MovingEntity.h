@@ -119,7 +119,14 @@ public:
   void SetVisualState(int visualState) {m_visualState = visualState;}
   void SetSpriteByVisualStateAndFacing();
   void LastCollisionWasInvalidated();
-  
+
+  void AddColorModRed(short mod) {m_colorModRed += mod;}
+  void AddColorModGreen(short mod) {m_colorModGreen += mod;}
+  void AddColorModBlue(short mod) {m_colorModBlue += mod;}
+  void AddColorModAlpha(short mod) {m_colorModAlpha += mod;}
+
+  void ClearColorMods();
+
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -184,6 +191,11 @@ protected:
 	int m_facing;  //may or may not be used
 	int m_visualState; //may or may not be used
 	CL_Vector2 m_moveToAtEndOfFrame;
+	
+	short m_colorModRed;
+	short m_colorModGreen;
+	short m_colorModBlue;
+	short m_colorModAlpha;
 
 };
 

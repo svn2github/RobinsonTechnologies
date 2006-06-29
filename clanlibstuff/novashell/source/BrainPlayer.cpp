@@ -317,7 +317,7 @@ void BrainPlayer::CheckForLadder()
 	}
 }
 
-string BrainPlayer::HandleMsg(const string &msg)
+string BrainPlayer::HandleAskMsg(const string &msg)
 {
 	vector<string> messages = CL_String::tokenize(msg, ";",true);
 
@@ -331,7 +331,24 @@ string BrainPlayer::HandleMsg(const string &msg)
 		{
 			stReturn += CL_String::from_bool(m_bFrozen);
 		} else
-		if (words[0] == "freeze")
+			{
+				LogMsg("Brain %s doesn't understand ask keyword %s", GetName(), words[0].c_str());
+			}
+	}
+
+	return stReturn;
+}
+
+
+void BrainPlayer::HandleMsg(const string &msg)
+{
+	vector<string> messages = CL_String::tokenize(msg, ";",true);
+
+		for (unsigned int i=0; i < messages.size(); i++)
+	{
+		vector<string> words = CL_String::tokenize(messages[i], "=",true);
+
+			if (words[0] == "freeze")
 		{
 			SetFreeze(CL_String::to_bool(words[1]));
 		} else
@@ -339,8 +356,6 @@ string BrainPlayer::HandleMsg(const string &msg)
 			LogMsg("Brain %s doesn't understand keyword %s", GetName(), words[0].c_str());
 		}
 	}
-
-	return stReturn;
 }
 
 void BrainPlayer::CheckForMovement()
