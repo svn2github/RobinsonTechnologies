@@ -594,6 +594,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\StateFrozen.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateFrozen.h"
+						>
+					</File>
+					<File
 						RelativePath=".\StateSideSimpleIdle.cpp"
 						>
 					</File>

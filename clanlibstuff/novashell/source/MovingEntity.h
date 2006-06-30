@@ -48,6 +48,10 @@ public:
   CL_Rectf & GetLastScanArea(){return m_scanArea;}
   bool IsAtRest() {return m_bIsAtRest;}
   bool IsOnGround() {return m_groundTimer > GetApp()->GetGameTick();}
+  luabind::object RunFunction(const string &func);
+  luabind::object RunFunction(const string &func, luabind::object obj1);
+  luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2);
+  luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3);
   virtual CL_Rectf GetWorldRect();
   void GetAlignment(CL_Origin &origin, int &x, int &y);
   void UpdateTilePosition();

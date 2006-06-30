@@ -10,6 +10,8 @@
 #include <luabind/operator.hpp>
 #endif
 
+#include <luabind/object.hpp>
+
 using namespace luabind;
 
 string MovingEntityToString(MovingEntity * pEnt)
@@ -87,6 +89,10 @@ void luabindEntity(lua_State *pState)
 			.def("GetVisualState", &MovingEntity::GetVisualState)
 			.def("GetLayerID", &MovingEntity::GetLayerID)
 			.def("SetLayerID", &MovingEntity::SetLayerID)
+			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&)) &MovingEntity::RunFunction)
+			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object)) &MovingEntity::RunFunction)
+			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
 	
 		];
 }

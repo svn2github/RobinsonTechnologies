@@ -9,6 +9,7 @@ TextObject::TextObject(TextManager *pTextManager)
 {
 	m_pTextManager = pTextManager;
 	m_pEntity = NULL;
+	m_vecDisplacement = CL_Vector2::ZERO;
 }
 
 void TextObject::InitCustom(const string &text, MovingEntity * pEnt, const CL_Vector2 &vecPos,
@@ -22,6 +23,7 @@ void TextObject::InitCustom(const string &text, MovingEntity * pEnt, const CL_Ve
 	m_worldPos = vecPos;
 	m_vecMovement = vecMovement;
 	m_color = col;
+	
 	SetMode(CUSTOM);
 
 	//looks like we're going to draw, let's setup where in advance
@@ -66,10 +68,19 @@ void TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
 	
 	if (m_bColorOdd)
 	{
-		//odd number, let's color is slightly differently
-			m_color.set_red(min(m_color.get_red(), m_color.get_red()-10));
-			m_color.set_green(min( m_color.get_green(), m_color.get_green()-40));
-			m_color.set_blue( max(m_color.get_blue(), m_color.get_blue() + 20));
+		//odd number, let's color it slightly differently
+		short r,g,b;
+
+		r = m_color.get_red() - 30;
+		g = m_color.get_green() - 30;
+		b = m_color.get_blue() - 30;
+
+		//force them to be within range
+		r = min(r, 255); r = max(0, r);
+		g = min(g, 255); g = max(0, g);
+		b = min(b, 255); b = max(0, b);
+
+		m_color = CL_Color(r,g,b);
 	} 
 
 	//looks like we're going to draw, let's setup where in advance
@@ -249,10 +260,15 @@ void TextManager::AddCustom(const string &text, const MovingEntity *pEnt, const 
 }
 void TextManager::Add(const string &text, MovingEntity *pEnt)
 {
-	
+	if (!pEnt)
+	{
+		LogError("NULL entity passed into TextManager::Add, ignoring it.");
+		return;
+	}
+
 	if (!pEnt->GetTile()->GetParentScreen())
 	{
-		LogMsg("Error: TextManager type things shouldn't go into the visual Init(), use GameInit()");
+		LogMsg("Warning: TextManager type things shouldn't go into the visual Init(), use GameInit()");
 		return;
 	}
 	

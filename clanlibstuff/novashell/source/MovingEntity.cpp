@@ -439,6 +439,71 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	m_pScriptObject->RunFunction("Init");
 	return true;
 }
+luabind::object MovingEntity::RunFunction(const string &func)
+{
+	luabind::object ret;
+	
+	if (!m_pScriptObject)
+	{
+		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
+			func.c_str(), ID(), GetName().c_str());
+		return ret;
+	}
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str());
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1)
+{
+	luabind::object ret;
+
+	if (!m_pScriptObject)
+	{
+		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
+			func.c_str(), ID(), GetName().c_str());
+		return ret;
+	}
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2)
+{
+
+	luabind::object ret;
+
+	if (!m_pScriptObject)
+	{
+		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
+			func.c_str(), ID(), GetName().c_str());
+		return ret;
+	}
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3)
+{
+	luabind::object ret;
+
+	if (!m_pScriptObject)
+	{
+		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
+			func.c_str(), ID(), GetName().c_str());
+		return ret;
+	}
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
 
 void MovingEntity::UpdateTilePosition()
 {
@@ -777,8 +842,6 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 
 	}
 	
-
-	
 	static CollisionData colCustomized;
 	if (pTile->UsesTileProperties())
 	{
@@ -786,7 +849,6 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 		CreateCollisionDataWithTileProperties(pTile, colCustomized);
 		pCol = &colCustomized; //replacement version
 	}
-
 
 	line_list::iterator lineListItor = pCol->GetLineList()->begin();
 	CBody *pWallBody;
@@ -811,7 +873,23 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			}
 			
 			//examine each line list for suitability
- 		    m_body.Collide(*pWallBody, step);
+ 		  
+			if (m_pTile->UsesTileProperties())
+			{
+				//OPTIMIZE slow hack to allow X/Y flipping for an entity, redo later?  Depends on if we'll use this much.
+				static CollisionData colMyCustomized;
+				CreateCollisionDataWithTileProperties(m_pTile, colMyCustomized);
+				colMyCustomized.GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
+				m_body.Collide(*pWallBody, step);
+
+				//fix it
+				m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
+
+			} else
+			{
+				m_body.Collide(*pWallBody, step);
+
+			}
 			
 		} else
 		{
@@ -874,7 +952,7 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 		int x,y;
 
 		m_pSprite->set_angle(pSprite->get_angle());
-	//	m_pSprite->set_angle_pitch(pSprite->get_angle_pitch());
+		m_pSprite->set_angle_pitch(pSprite->get_angle_pitch());
 		m_pSprite->set_angle_yaw(pSprite->get_angle_yaw());
 		pSprite->get_alignment(origin, x,y);
 		m_pSprite->set_alignment(origin, x, y);
@@ -941,7 +1019,36 @@ void MovingEntity::Render(void *pTarget)
 {
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	
-	if (m_pSprite->get_angle_yaw() == 0)
+	static float yawHold, pitchHold;
+
+	yawHold = m_pSprite->get_angle_yaw();
+	pitchHold = m_pSprite->get_angle_pitch();
+
+
+	bool bNeedsReversed = false;
+
+	if (m_pTile->GetBit(Tile::e_flippedX))
+	{
+		m_pSprite->set_angle_yaw(m_pSprite->get_angle_yaw() -180);
+	}
+
+	if (m_pTile->GetBit(Tile::e_flippedY))
+	{
+		m_pSprite->set_angle_pitch(m_pSprite->get_angle_pitch() -180);
+	}
+
+
+	if (m_pSprite->get_angle_yaw() != 0)
+	{
+		bNeedsReversed = !bNeedsReversed;
+	}
+
+	if (m_pSprite->get_angle_pitch() != 0)
+	{
+		bNeedsReversed = !bNeedsReversed;
+	}
+
+	if (!bNeedsReversed)
 	{
 		m_pSprite->set_base_angle( RadiansToDegrees(m_body.GetOrientation()));
 	} else
@@ -1009,6 +1116,8 @@ void MovingEntity::Render(void *pTarget)
 
 	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 
+	m_pSprite->set_angle_yaw(yawHold);
+	m_pSprite->set_angle_pitch(pitchHold);
 	/*
 	//***** debug, draw rect
 	CL_Rectf worldRect =GetWorldRect();

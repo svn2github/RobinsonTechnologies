@@ -56,7 +56,7 @@ GameLogic::~GameLogic()
 
 void GameLogic::SaveGlobals()
 {
-	if (!GetUserProfileName().empty())
+	if (UserProfileActive())
 	{
 		m_data.Set("gameTick", CL_String::from_int(GetApp()->GetGameTick()));
 
@@ -75,7 +75,7 @@ void GameLogic::LoadGlobals()
 
 	m_data.Clear();
 	
-	if (!GetUserProfileName().empty())
+	if (UserProfileActive())
 	{
 	
 		CL_InputSource *pSource = g_VFManager.GetFile(C_PROFILE_DAT_FILENAME);
@@ -95,6 +95,7 @@ void GameLogic::LoadGlobals()
 	//if we got here, let's init the defaults
 		//init defaults if we couldn't load them
 	m_data.Set("gameTick", "0");
+	GetApp()->SetGameTick(0);
 
 }
 
@@ -179,6 +180,7 @@ void GameLogic::ResetUserProfile(string name)
 	}
 	}
 
+	stPath = m_strBaseUserProfilePath + "/" + name + string("/");
 	RemoveFile(stPath+"/"+string(C_PROFILE_DAT_FILENAME));
 	m_data.Clear();
 }
@@ -238,6 +240,7 @@ bool GameLogic::Init()
 {
 
 	LogMsg("Initializing GameLogic");
+	g_MessageManager.Reset();
 	m_strUserProfileName.clear();
 	m_worldManager.Kill();
 	g_materialManager.Init();
@@ -318,38 +321,24 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 
 void GameLogic::OnKeyUp(const CL_InputEvent &key)
 {
-//	if (!GetGamePaused())
-	{
 		if (g_keyManager.HandleEvent(key, false) )
 		{
 			//they handled it, let's ignore it
 			return;
 		}
-
-	}
 }
 
 void GameLogic::OnKeyDown(const CL_InputEvent &key)
 {
-//	if (!GetGamePaused())
-	{
 		if (g_keyManager.HandleEvent(key, true))
 		{
 			//they handled it, let's ignore it
 			return;
 		}
-
-	}
 	
 	switch (key.id)
 	{
-/*
-	case  CL_KEY_F1:
-		{
-			ToggleEditMode();
-			break;
-		}
-		*/
+
 #ifdef __APPLE__
 	case CL_KEY_NUMPAD_SUBTRACT:
 #endif
@@ -365,7 +354,6 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		Zoom(true);
 		break;
 	}
-
 
 	if (!GetEditorActive())
 	{
@@ -421,7 +409,7 @@ void GameLogic::Zoom(bool zoomCloser)
 
 void GameLogic::OnMouseUp(const CL_InputEvent &key)
 {
-	
+
 	switch(key.id)
 	{
 	case CL_MOUSE_LEFT:
@@ -478,7 +466,6 @@ void GameLogic::Kill()
 
 void GameLogic::Update(float step)
 {
-	
 	if (m_bRestartEngineFlag)
 	{
 		m_bRestartEngineFlag = false;
@@ -504,12 +491,14 @@ void GameLogic::Render()
 	g_Console.Render();
 }
 
+//generally, this means a script sent us a text message through the message scheduler. 
+//Which we'll let the main script instance run..
+
 void GameLogic::HandleMessageString(const string &msg)
 {
   LogMsg("Gamelogic got %s", msg.c_str());
   GetScriptManager->RunString(msg.c_str());
 }
-
 
 void SetCameraToTrackPlayer()
 {
@@ -526,8 +515,8 @@ void SetCameraToTrackPlayer()
 			//he's not from our world
 		}
 	}
-
 }
+
 void MovePlayerToCamera()
 {
 	MovingEntity * pEnt = (MovingEntity *)GetGameLogic->GetMyPlayer();
@@ -550,7 +539,6 @@ void GameLogic::ClearAllMapsFromMemory()
 {
    LogMsg("Clearing all maps");
    m_worldManager.Kill();
- 
 }
 
 void MoveCameraToPlayer()

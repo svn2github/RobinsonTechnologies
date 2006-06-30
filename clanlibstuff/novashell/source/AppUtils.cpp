@@ -19,6 +19,18 @@ bool GameTimer::IntervalReached()
 	return false;
 }
 
+//snippet from Zahlman's post on gamedev:  http://www.gamedev.net/community/forums/topic.asp?topic_id=372125
+void StringReplace(const std::string& what, const std::string& with, std::string& in)
+{
+	int pos = 0;
+	int whatLen = what.length();
+	int withLen = with.length();
+	while ((pos = in.find(what, pos)) != std::string::npos)
+	{
+		in.replace(pos, whatLen, with);
+		pos += withLen;
+	}
+}
 
 bool compareLayerBySort(unsigned int pA, unsigned int pB) 
 {

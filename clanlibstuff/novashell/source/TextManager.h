@@ -72,6 +72,7 @@ public:
 
 	TextManager();
 	virtual ~TextManager();
+
 	void Add(const string &text, MovingEntity *pEnt);
 	void Update(float step);
 	void Render();

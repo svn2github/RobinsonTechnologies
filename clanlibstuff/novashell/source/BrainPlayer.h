@@ -58,6 +58,7 @@ protected:
 	void CheckForMovement();
 	void CalculateForce(CL_Vector2 &force, float step);
 	void CheckForAttack();
+	bool TryToDoActionAtPoint(const CL_Vector2 &vecPos);
 
 	unsigned int m_Keys; //holds current state of player movement keys
 	CL_Slot m_SlotKeyUp;

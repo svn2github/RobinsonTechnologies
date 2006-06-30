@@ -218,6 +218,7 @@ bool ScriptObject::FunctionExists(const char *pFuncName)
 void ScriptObject::RunFunction(const char *pFuncName)
 {
 //	DumpTable(m_pLuaState, NULL, LUA_REGISTRYINDEX);
+	
 	try { 
 		luabind::call_function<void>(m_pLuaState, pFuncName);
 	} catch 
@@ -225,6 +226,8 @@ void ScriptObject::RunFunction(const char *pFuncName)
 	{
 		ShowLUAMessagesIfNeeded(e.state(), 1);
 		
+
+	
 		MovingEntity *pEnt = object_cast<MovingEntity*>(luabind::globals(m_pLuaState)["this"]);
 
 		if (pEnt)

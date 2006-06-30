@@ -396,7 +396,7 @@ void OpenScriptForEditing(string scriptName)
 
 	if (!exist(file.c_str()))
 	{
-		if (ConfirmMessage(file + " not found", "Would you like to create this script?")) return;
+		if (!ConfirmMessage("Script doesn't exist", file + " not found.\n\nWould you like to create this script?")) return;
 		add_text("function Init()\r\n\r\n", file.c_str());
 		add_text("end\r\n", file.c_str());
 	}

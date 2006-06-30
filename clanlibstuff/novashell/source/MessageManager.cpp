@@ -10,10 +10,14 @@ MessageManager::MessageManager()
 MessageManager::~MessageManager()
 {
 }
+void MessageManager::Reset()
+{
+	m_messageList.clear();
+}
 
 void MessageManager::Schedule(unsigned int deliveryMS, unsigned int targetID, const char * pMsg)
 {
-	//LogMsg("scheduling message to %u", targetID);
+	//LogMsg("scheduling message to %u at %d", targetID, GetApp()->GetGameTick());
 
 	Message m;
 	m.m_deliveryTime = GetApp()->GetGameTick()+deliveryMS;
@@ -44,7 +48,6 @@ void MessageManager::Update()
 {
 	message_list::iterator itor = m_messageList.begin();
 
-	unsigned int timeNow = GetApp()->GetGameTick();
 	unsigned int systemTimeNow = GetApp()->GetTick();
 	
 	while (itor != m_messageList.end())
@@ -52,9 +55,10 @@ void MessageManager::Update()
 		switch (itor->GetTimingType())	
 		{
 		case Message::GAME_TIME:
-			if ( itor->m_deliveryTime < timeNow)
+			//note, GetGameTick() *CAN* change from a script command, so don't
+			//try to put that in a temp to save time
+			if ( itor->m_deliveryTime < GetApp()->GetGameTick())
 			{
-
 				itor->Deliver();
 				//delete it
 				itor = m_messageList.erase(itor);

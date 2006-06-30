@@ -933,8 +933,12 @@ void EntEditMode::OnPropertiesOpenScript()
 	//remove the part we don't want
 	fname = fname.substr(dir.size(), (fname.size()-dir.size()));
 	
+
+	//let's just convert all the slashes
+	StringReplace("\\", "/", fname);
+
 	//remove slash at the front if applicable
-	if (fname[0] == '/' || fname[0] == '\\')
+	if (fname[0] == '/')
 	{
 		fname = fname.substr(1, fname.size()-1);
 	}
@@ -987,10 +991,10 @@ void CreateEditDataDialog(DataObject &o)
    CL_InputDialog dlg("Edit Data Dialog", "Ok", "Cancel", "",GetApp()->GetGUI());
    dlg.set_event_passing(false);
 
-   CL_InputBox *pName = dlg.add_input_box("Name", o.m_key);
+   CL_InputBox *pName = dlg.add_input_box("Name", o.m_key, 600);
    pName->set_tab_id(0);
 
-   CL_InputBox *pValue = dlg.add_input_box("Value", o.Get());
+   CL_InputBox *pValue = dlg.add_input_box("Value", o.Get(), 600);
    pValue->set_tab_id(1);
    dlg.get_button(0)->set_tab_id(2);
    dlg.get_button(1)->set_tab_id(3);

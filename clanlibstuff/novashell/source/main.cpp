@@ -372,6 +372,10 @@ void App::SetGameSpeed(float fNew)
 	m_baseGameSpeed = fNew;
 	ComputeSpeed();
 }
+void App::SetGameTick(unsigned int num)
+{
+	 m_gameTick = num;
+}
 
 void App::Update()
 {
