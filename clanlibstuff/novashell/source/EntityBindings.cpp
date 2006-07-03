@@ -93,6 +93,10 @@ void luabindEntity(lua_State *pState)
 			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object)) &MovingEntity::RunFunction)
 			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object)) &MovingEntity::RunFunction)
 			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+			.def("GetScale", &MovingEntity::GetScale)
+			.def("SetScale", &MovingEntity::SetScale)
+			.def("SetCollisionScale", &MovingEntity::SetCollisionScale)
+			.def("GetCollisionScale", &MovingEntity::GetCollisionScale)
 	
 		];
 }

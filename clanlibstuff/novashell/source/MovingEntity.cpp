@@ -46,6 +46,28 @@ MovingEntity::~MovingEntity()
 	Kill();
 }
 
+void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
+{
+	if (!m_pCollisionData)
+	{
+		LogError("Error, can't ScaleCollisionInfo, there is no collision data here");
+		return;
+	}
+
+	m_pCollisionData->SetScale(vScale);
+}
+
+CL_Vector2 MovingEntity::GetCollisionScale()
+{
+	if (!m_pCollisionData)
+	{
+		LogError("Error, can't GetCollisionScale, there is no collision data here");
+		return CL_Vector2(0,0);
+	}
+
+	return m_pCollisionData->GetScale();
+}
+
 void MovingEntity::ClearColorMods()
 {
 	m_colorModRed = 0;
@@ -105,6 +127,7 @@ void MovingEntity::SetDefaults()
 	m_ticksOnGround = 0;
 	m_bOnLadder = false;
 	m_bAnimPaused = false;
+	
 	m_visualState = VisualProfile::VISUAL_STATE_IDLE;
 	m_facing = VisualProfile::FACING_LEFT;
 
@@ -213,21 +236,9 @@ CL_Rectf MovingEntity::GetWorldRect()
 	int x,y;
 	m_pSprite->get_alignment(origin, x, y);
 	CL_Pointf offset = calc_origin(origin, r.get_size());
-	
-	/*
-	if (m_pCollisionData && m_pCollisionData->HasData())
-	{
-		static CL_Vector2 colOffset;
-		colOffset = m_pCollisionData->GetLineList()->begin()->GetOffset();
-		offset.x += colOffset.x;
-		offset.y += colOffset.y;
-	}
-	*/
-	
+
 	r -= offset;
 	r += *(const CL_Pointf*)(&GetPos());
-	
-	
 	return r;
 }
 
@@ -283,9 +294,6 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 
 void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName)
 {
-	
-	
-
 
 	if (worldName != m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetName())
 	{
@@ -408,7 +416,6 @@ bool MovingEntity::Init()
 		LogMsg("ERROR - %s", stEmergencyMessage.c_str());
 	}
 
-
 	//override settings with certain things found
 	if (m_dataManager.Exists(C_ENT_DENSITY_KEY))
 	{
@@ -439,6 +446,7 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	m_pScriptObject->RunFunction("Init");
 	return true;
 }
+
 luabind::object MovingEntity::RunFunction(const string &func)
 {
 	luabind::object ret;
@@ -543,7 +551,6 @@ void MovingEntity::UpdateTilePosition()
 			 m_strWorldToMoveTo.clear();	 
 		} 
 		
-		
 		m_pTile->SetEntity(NULL); //so it won't delete us
 		TileEntity *pTileEnt = (TileEntity*) m_pTile->CreateClone();
 		m_pTile->GetParentScreen()->RemoveTileByPointer(m_pTile);
@@ -563,7 +570,6 @@ void MovingEntity::SetAnimByName(const string &name)
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(GetVisualProfile()->TextToAnimID(name)));
 	}
 }
-
 
 void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity * pProjectile)
 {
@@ -588,7 +594,6 @@ void MovingEntity::LastCollisionWasInvalidated()
 void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollision)
 {
 
-
 	m_bOldTouchedAGroundThisFrame = m_bTouchedAGroundThisFrame;
 	m_oldFloorMaterialID = m_floorMaterialID;
 
@@ -599,23 +604,7 @@ void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bo
 		m_floorMaterialID = pOtherBody->GetMaterial()->GetID();
 
 	}
-	//assert(m_pScriptObject && "No script object yet?");
-//	assert(m_pScriptObject->GetState() && "No state?!");
-
 	
-	/*
-if (pOtherBody->GetParentEntity())
-{
-	LogMsg("Ent %d processed hit from ent %d", ID(), pOtherBody->GetParentEntity()->ID());
-}
-*/
-
-	/*
-	if (m_pBrain)
-	{
-		LogMsg("Normal is %f, %f", N.x, N.y);
-	}
-*/
 
 	if (pOtherBody->GetParentEntity() != 0)
 	{
@@ -697,6 +686,11 @@ bool MovingEntity::GetEnableRotation()
 	return GetBody()->GetInertia() != 0;
 }
 
+void MovingEntity::SetScale(const CL_Vector2 &vScale)
+{
+	m_pTile->SetScale(vScale);
+}
+
 void MovingEntity::LoadCollisionInfo(const string &fileName)
 {
 	if (m_bUsingCustomCollisionData)
@@ -734,6 +728,7 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 	pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
 	GetBody()->SetDensity(m_fDensity);
 	
+	m_pCollisionData->SetScale(GetScale());
 }
 
 void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic)
@@ -813,7 +808,6 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 	m_bUsingCustomCollisionData = true;
 
 	GetBody()->SetDensity(1);
-
 }
 
 void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
@@ -888,7 +882,6 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			} else
 			{
 				m_body.Collide(*pWallBody, step);
-
 			}
 			
 		} else
@@ -1018,12 +1011,10 @@ void MovingEntity::ApplyGenericMovement(float step)
 void MovingEntity::Render(void *pTarget)
 {
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
-	
 	static float yawHold, pitchHold;
 
 	yawHold = m_pSprite->get_angle_yaw();
 	pitchHold = m_pSprite->get_angle_pitch();
-
 
 	bool bNeedsReversed = false;
 
@@ -1056,7 +1047,8 @@ void MovingEntity::Render(void *pTarget)
 		m_pSprite->set_base_angle( -RadiansToDegrees(m_body.GetOrientation()));
 	}
 
-	m_pSprite->set_scale(GetCamera->GetScale().x, GetCamera->GetScale().y);
+	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
+		* m_pTile->GetScale().y);
 	
 	
 	//construct the final color with tinting mods, insuring it is in range

@@ -152,6 +152,7 @@ void Camera::SetPosCentered(CL_Vector2 vecPos)
 	m_vecPos = vecPos;
 	m_vecPos.x -= (GetScreenX/2)/m_vecScale.x;
 	m_vecPos.y -= (GetScreenY/2)/m_vecScale.y;
+	m_vecTargetPos = m_vecPos;
 }
 
 void Camera::SetTargetPos(CL_Vector2 vecTarget)

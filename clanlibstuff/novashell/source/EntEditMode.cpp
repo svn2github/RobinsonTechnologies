@@ -192,7 +192,6 @@ void EntEditMode::SnapSizeChanged()
 	{
 		m_pInputBoxSnapSize->enable(false);
 		GetWorld->SetSnapEnabled(false);
-
 	}
 
 	m_snapSize = GetWorld->GetDefaultTileSize();
@@ -1221,13 +1220,21 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	CL_InputBox *pScript = &inputEntity;
      m_pPropertiesInputScript = NULL;
 
-	 CL_Label labelName3(CL_Point(SecondOffsetX, offsetY), "Color tint:", window.get_client_area());
-	 rPos = CL_Rect(0,0,100,16);
+	 CL_Label labelName3(CL_Point(SecondOffsetX, offsetY), "Base Color:", window.get_client_area());
+	 rPos = CL_Rect(0,0,110,16);
 	 rPos.apply_alignment(origin_top_left, - (labelName3.get_width()+labelName3.get_client_x()+5), -(offsetY));
 	 
 	 string originalColor = ColorToString(pTile->GetColor());
 	 CL_InputBox inputColor(rPos, originalColor, window.get_client_area());
 
+	 offsetY += 20;
+
+	 CL_Label labelName4(CL_Point(SecondOffsetX, offsetY), "Scale X/Y:", window.get_client_area());
+	 rPos = CL_Rect(0,0,110,16);
+	 rPos.apply_alignment(origin_top_left, - (labelName4.get_width()+labelName3.get_client_x()+5), -(offsetY));
+
+	 string originalScale =  CL_String::from_float(pTile->GetScale().x) + " " + CL_String::from_float(pTile->GetScale().y);
+	 CL_InputBox inputScale(rPos, originalScale, window.get_client_area());
 
 
 
@@ -1334,6 +1341,25 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 			flags = flags | TileEditOperation::eBitColor;
 		}
 	
+		if (inputScale.get_text() != originalScale)
+		{
+			CL_Vector2 vScale = StringToVector(inputScale.get_text());
+			//ensure it's not 0, otherwise it will be invisible...
+			if (vScale.x == 0) 
+			{
+				LogError("Bad scale input, setting X to 1 instead of 0.");
+				vScale.x = 1;
+			}
+
+			if (vScale.y == 0) 
+			{
+				LogError("Bad scale input, setting Y to 1 instead of 0.");
+				vScale.y = 1;
+			}
+			pTile->SetScale(vScale);
+			
+			flags = flags | TileEditOperation::eBitScale;
+		}
 		//run through and copy these properties to all the valid tiles in the selection
 		pTileList->CopyTilePropertiesToSelection(pTile, flags);
 

@@ -34,10 +34,13 @@ public:
 	void RemoveOffsets();
 	void Load(const string &fileName);
 	void SetDataChanged(bool bNew) {m_dataChanged = bNew;}
+	void SetScale(const CL_Vector2 &vScale);
+	const CL_Vector2 & GetScale() {return m_vecScale;}
 
 protected:
 
 	void SaveIfNeeded();
+	void ApplyScaleToAll(const CL_Vector2 &vScale);
 
 private:
 	CL_Rect m_rect;
@@ -45,6 +48,8 @@ private:
 	string m_fileName; //if not empty, it means we were loaded from disk and should also
 	//save if changed
 	bool m_dataChanged;
+	CL_Vector2 m_vecScale;
+
 };
 
 void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut);

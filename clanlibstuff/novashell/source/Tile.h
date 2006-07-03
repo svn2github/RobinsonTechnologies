@@ -38,6 +38,7 @@ public:
 	bool GetBit(cl_uint8 bit) {return m_bitField.get_bit(bit);}
 	void SetBit(cl_uint8 bit, bool bNew) {m_bitField.set_bit(bit, bNew);}
 	const CL_Vector2 & GetScale() {return m_vecScale;}
+	virtual void SetScale(const CL_Vector2 &v);
 	virtual const CL_Vector2 & GetPos() {return m_vecPos;}
 	virtual void SetPos(const CL_Vector2 &vecPos) {m_vecPos = vecPos;}
 	bool IsEdgeCase() {return m_pEdgeCaseList != NULL;}
@@ -108,16 +109,17 @@ public:
 	virtual Tile * CreateClone();
 	virtual void Serialize(CL_FileHelper &helper);
 	//TODO optimize these to be precached
-	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width(), m_rectSrc.get_height());}
+	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);}
 	virtual CL_Rect GetBoundsRect() {return CL_Rect(int(m_vecPos.x), int(m_vecPos.y), 
-		int(m_vecPos.x + m_rectSrc.get_width()), int(m_vecPos.y + m_rectSrc.get_height()));}
+		int(m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x), int(m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y));}
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, 
-		m_vecPos.x + m_rectSrc.get_width(), m_vecPos.y + m_rectSrc.get_height());}
+		m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x, m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y);}
 	virtual CollisionData * GetCollisionData();
 	virtual void Render(CL_GraphicContext *pGC);
 	unsigned int m_resourceID;
 	CL_Rect m_rectSrc;
 	float m_rot; //rotation
+
 
 };
 

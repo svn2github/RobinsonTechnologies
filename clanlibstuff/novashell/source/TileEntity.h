@@ -23,7 +23,7 @@ public:
 	virtual CL_Vector2 GetBoundsSize();
 	virtual CL_Rect GetBoundsRect();
 	virtual CL_Rectf GetWorldRect(); //like above but in floats
-
+	virtual void SetScale(const CL_Vector2 &v);
 	virtual CollisionData * GetCollisionData();
 	void SetEntity(MovingEntity *pEnt);
 	MovingEntity * GetEntity(){return m_pEntity;}

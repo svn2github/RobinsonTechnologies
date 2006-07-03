@@ -122,6 +122,11 @@ Tile * Tile::CopyFromBaseToClone(Tile *pNew)
 	pNew->m_color = m_color;
 	return pNew;
 }
+
+void Tile::SetScale(const CL_Vector2 &v)
+{
+	m_vecScale = v;
+}
 Tile * Tile::CreateReference(Screen *pScreen)
 {
     Tile *pNew = new Tile();
@@ -143,8 +148,10 @@ Tile * Tile::CreateReference(Screen *pScreen)
 void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 {
 	static CL_OpenGLSurface *pSurf;
-	CL_Vector2 vecScale = GetCamera->GetScale();
-
+	static CL_Vector2 vecScale;
+	
+	vecScale = GetCamera->GetScale();
+	
 	pSurf = (CL_OpenGLSurface*) GetHashedResourceManager->GetResourceByHashedID(pTile->m_resourceID);
 	if (!pSurf) return; //error
 
@@ -184,9 +191,11 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 		vecPos = pWorldCache->WorldToScreen(pTile->GetPos());
 	}
 
-	CL_Rectf rectDest(vecPos.x, vecPos.y, 
-		vecPos.x+ ( float(pTile->m_rectSrc.get_width()) * vecScale.x * pTile->GetScale().x),
-		vecPos.y+ float(pTile->m_rectSrc.get_height()) * vecScale.y* pTile->GetScale().y);
+	static CL_Rectf rectDest;
+	rectDest.left = vecPos.x;
+	rectDest.top = vecPos.y;
+	rectDest.right = vecPos.x+ ( float(pTile->m_rectSrc.get_width()) * vecScale.x * pTile->GetScale().x);
+	rectDest.bottom = vecPos.y+ float(pTile->m_rectSrc.get_height()) * vecScale.y* pTile->GetScale().y;
 
 	if (pTile->GetBit(Tile::e_flippedX))
 	{
@@ -206,9 +215,6 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 
 	//fix holes that can appear when zoomed way in.  I suspect this is due to a pixel rounding error when
 	//doing the blit? 
-	
-	CL_Rect src;
-	src = pTile->m_rectSrc;
    
 /*
 	rectDest.bottom = int(rectDest.bottom);
@@ -216,16 +222,17 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	rectDest.top = int(rectDest.top);
 	rectDest.left = int(rectDest.left);
 */
-/*
+
+	//this fixes glitches with tiling when the scale isn't exactly 1.0
+
 	rectDest.bottom = RoundNearest(rectDest.bottom, 1.0f);
 	rectDest.right = RoundNearest(rectDest.right, 1.0f);
 	rectDest.top = RoundNearest(rectDest.top, 1.0f);
 	rectDest.left = RoundNearest(rectDest.left, 1.0f);
-*/	
 
 	pSurf->set_color(pTile->GetColor());
 	CL_OpenGLWindow *pGLW = (CL_OpenGLWindow*) GetApp()->GetMainWindow();
-	pSurf->draw(src, rectDest, pGC);
+	pSurf->draw(pTile->m_rectSrc, rectDest, pGC);
 }
 
 

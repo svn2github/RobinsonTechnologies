@@ -161,6 +161,24 @@ CL_Color StringToColor(const string &stColor)
 	return CL_Color(colors[0], colors[1], colors[2], colors[3]);
 }
 
+CL_Vector2 StringToVector(const string &stVec)
+{
+	//break it apart and recreate it as a vector
+	CL_Vector2 v = CL_Vector2::ZERO;
+
+	std::vector<string> stTok = CL_String::tokenize(stVec, " ", true);
+
+	if (stTok.size() < 2)
+	{
+		LogError("StringToVector: Malformed string, can't convert it");
+		return v;
+	}
+
+	v.x = CL_String::to_float(stTok[0]);
+	v.y = CL_String::to_float(stTok[1]);
+
+	return v;
+}
 
 CL_Rect StringToRect(const string &stColor)
 {

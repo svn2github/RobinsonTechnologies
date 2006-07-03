@@ -4,10 +4,28 @@
 CollisionData::CollisionData()
 {
 	m_dataChanged = false;
+	m_vecScale = CL_Vector2(1,1);
 }
 CollisionData::~CollisionData()
 {
 	SaveIfNeeded();
+}
+
+void CollisionData::SetScale(const CL_Vector2 &vScale)
+{
+	
+	if (m_vecScale != CL_Vector2(1,1))
+	{
+		//remove current scaling
+		ApplyScaleToAll(CL_Vector2(1 /m_vecScale.x, 1 / m_vecScale.y));
+	}
+	m_vecScale = vScale;
+
+	if (m_vecScale != CL_Vector2(1,1))
+	{
+		ApplyScaleToAll(m_vecScale);
+
+	}
 }
 
 void CollisionData::Load(const string &fileName)
@@ -15,6 +33,7 @@ void CollisionData::Load(const string &fileName)
 
 	m_dataChanged = false;
 	m_fileName = fileName;
+	m_vecScale = CL_Vector2(1,1);
 
 	CL_InputSource_File *pFile = NULL;
 
@@ -37,7 +56,9 @@ void CollisionData::Load(const string &fileName)
 void CollisionData::SaveIfNeeded()
 {
 	if (m_fileName.empty() || !m_dataChanged) return;
-	
+
+	SetScale(CL_Vector2(1,1)); //remove any scaling operations we had done
+
 	CL_OutputSource_File file(m_fileName);
 	CL_FileHelper helper(&file); 
 
@@ -46,6 +67,17 @@ void CollisionData::SaveIfNeeded()
 	m_dataChanged = false;
 }
 
+
+void CollisionData::ApplyScaleToAll(const CL_Vector2 &vScale)
+{
+	line_list::iterator listItor = m_lineList.begin();
+
+	while (listItor != m_lineList.end())
+	{
+		listItor->ApplyScale(vScale);
+		listItor++;
+	}
+}
 
 void CollisionData::RecalculateOffsets()
 {
@@ -57,6 +89,8 @@ void CollisionData::RecalculateOffsets()
 		listItor++;
 	}
 }
+
+
 void CollisionData::RemoveOffsets()
 {
 	line_list::iterator listItor = m_lineList.begin();

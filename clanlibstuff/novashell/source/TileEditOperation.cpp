@@ -436,6 +436,7 @@ void TileEditOperation::CopyTilePropertiesToSelection(Tile *pSrcTile, unsigned i
 			if (flags & eBitFlipX) pDestTile->SetBit(Tile::e_flippedX, pSrcTile->GetBit(Tile::e_flippedX));
 			if (flags & eBitFlipY) pDestTile->SetBit(Tile::e_flippedY, pSrcTile->GetBit(Tile::e_flippedY));
 			if (flags & eBitColor) pDestTile->SetColor(pSrcTile->GetColor());
+			if (flags & eBitScale) pDestTile->SetScale(pSrcTile->GetScale());
 			
 	itor++;
 	}

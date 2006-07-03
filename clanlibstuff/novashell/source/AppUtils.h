@@ -6,6 +6,7 @@
 void BlitMessage(string msg);
 string ColorToString(const CL_Color &colr);
 CL_Color StringToColor(const string &stColor);
+CL_Vector2 StringToVector(const string &stVec);
 CL_Rect StringToRect(const string &stColor);
 string RectToString(const CL_Rect &r);
 

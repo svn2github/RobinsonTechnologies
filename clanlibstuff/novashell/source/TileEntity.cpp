@@ -42,6 +42,12 @@ void TileEntity::Render(CL_GraphicContext *pGC)
 	m_pEntity->Render(pGC);
 }
 
+void TileEntity::SetScale(const CL_Vector2 &v)
+{
+	m_vecScale = v;
+	m_pEntity->SetCollisionScale(v);
+}
+
 void TileEntity::Update(float step)
 {
 	m_pEntity->Update(step);

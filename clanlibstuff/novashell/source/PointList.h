@@ -32,6 +32,7 @@ public:
 	CL_Vector2 & GetOffset() {return m_vecOffset;}
 	void SetOffset(CL_Vector2 &v) {m_vecOffset = v;}
 	void RemoveOffsets();
+	void ApplyScale(const CL_Vector2 &vScale);
 	void PrintPoints(); //debug thing
 
 	CBody & GetAsBody(const CL_Vector2 &vPos, CBody *pCustomBody = NULL);
