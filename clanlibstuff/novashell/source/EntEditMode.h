@@ -64,6 +64,9 @@ protected:
 	virtual void HandleMessageString(const string &msg);
 	void OnMapChange();
 	void GetSettingsFromWorld();
+	void ScaleUpSelected();
+	void ScaleDownSelected();
+	void ScaleSelection(CL_Vector2 vMod, bool bBigMovement);
 
 	CL_Slot m_slotClose;
 	

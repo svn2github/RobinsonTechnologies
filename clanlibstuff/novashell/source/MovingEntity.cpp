@@ -54,6 +54,7 @@ void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
 		return;
 	}
 
+	if (m_bUsingCustomCollisionData)
 	m_pCollisionData->SetScale(vScale);
 }
 
@@ -231,14 +232,34 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 
 CL_Rectf MovingEntity::GetWorldRect()
 {
-	CL_Rectf r(0, 0, GetSizeX(),GetSizeY());
-	CL_Origin origin;
-	int x,y;
+	static CL_Rectf r;
+	r.left = 0;
+	r.top = 0;
+	r.right = GetSizeX();
+	r.bottom = GetSizeY();
+	static CL_Origin origin;
+	static int x,y;
 	m_pSprite->get_alignment(origin, x, y);
-	CL_Pointf offset = calc_origin(origin, r.get_size());
-
+	static CL_Pointf offset;
+	offset = calc_origin(origin, r.get_size());
 	r -= offset;
 	r += *(const CL_Pointf*)(&GetPos());
+	return r;
+}
+
+const CL_Rect & MovingEntity::GetBoundsRect()
+{
+	static CL_Rect r;
+	r.left = 0;
+	r.top = 0;
+	r.right = GetSizeX();
+	r.bottom = GetSizeY();
+	static CL_Origin origin;
+	static int x,y;
+	m_pSprite->get_alignment(origin, x, y);
+	static CL_Point offset;
+	offset = calc_origin(origin, r.get_size());
+	r -= offset;
 	return r;
 }
 
@@ -323,6 +344,25 @@ Zone * MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
 	}
 
  return NULL; //nothing found
+}
+
+Zone * MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType)
+{
+	static CL_Vector2 v;
+	for (unsigned int i=0; i < m_zoneVec.size(); i++)
+	{
+		if (g_materialManager.GetMaterial(m_zoneVec[i].m_materialID)->GetType() == matType)
+		{
+			v = vPos;
+			v -= m_zoneVec[i].m_vPos;
+			if (m_zoneVec[i].m_boundingRect.is_inside(*(CL_Pointf*)&(v)))
+			{
+				return &m_zoneVec[i]; //valid for the rest of this frame
+			}
+		}
+	}
+
+	return NULL; //nothing found
 }
 
 void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
@@ -887,19 +927,27 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 		} else
 		{
 			//might be a ladder zone or something else we should take note of
-			static CL_Rectf r;
 			if (lineListItor->HasData())
 			{
-				r = lineListItor->GetRect();
+				/*
+				static CL_Rectf r;
+				static CL_Rectf myRect;
 
-				if (r.is_inside( *(CL_Pointf*)&(GetPos()- pTile->GetPos())))
+				r = lineListItor->GetRect();
+				r += *(CL_Pointf*)&(pTile->GetPos());
+
+				myRect = m_pCollisionData->GetLineList()->begin()->GetRect();
+				myRect += *(CL_Pointf*)&(GetPos());
+				if (r.is_overlapped(myRect))
 				{
-					//LogMsg("Inside: Rect is %s", PrintRect(r).c_str());
+*/				
+				//LogMsg("Inside: Rect is %s, which overlaps %s", PrintRect(r).c_str(),
+					//	PrintRect(myRect).c_str());
 
 					//actually add the data
 					Zone z;
 					z.m_materialID = lineListItor->GetType();
-					z.m_boundingRect = r;
+					z.m_boundingRect = lineListItor->GetRect();
 					z.m_vPos = pTile->GetPos();
 					if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 					{
@@ -911,7 +959,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 					}
 					m_zoneVec.push_back(z);
 					
-				}
+				//}
 			}
 		}
 		

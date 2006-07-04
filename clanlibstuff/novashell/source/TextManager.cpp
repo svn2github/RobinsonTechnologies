@@ -228,6 +228,11 @@ void TextObject::Render()
 {
 	if (!m_bVisible) return;
 
+
+	//draw a semi transparent box around it so we can read the text easier
+
+	CL_Display::fill_rect(m_rect, CL_Color(0,0,0,min(70, (m_alpha*180))));
+
 	CL_Font *pFont = GetApp()->GetFont(m_fontID);
 	pFont->set_color(m_color);
 	pFont->set_alpha(m_alpha);

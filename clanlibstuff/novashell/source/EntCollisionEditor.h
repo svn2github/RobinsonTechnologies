@@ -52,6 +52,7 @@ enum
 	bool GetIndexOfVertAtThisPos(point_list &pList, CL_Vector2 &vLocalPos, CL_Vector2 ** ppVertOut, unsigned int &vertIDOut, float fPadding);
 	void OnChangeLineType();
 	void ApplySnap(CL_Vector2 &vec);
+	void OnClear();
 
 	
 	//GUI

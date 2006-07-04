@@ -22,6 +22,13 @@ Tile::Tile()
 
 }
 
+CL_Rect Tile::GetWorldRectInt()
+{
+	static CL_Rectf r;
+	r = GetWorldRect();
+	return CL_Rect(r);
+}
+
 Tile::~Tile()
 {
 	if (m_pFatherTile)
@@ -51,6 +58,12 @@ Tile::~Tile()
 	}
 
 	assert(!m_pEdgeCaseList);
+}
+
+const CL_Rect & Tile::GetBoundsRect()
+{
+	static CL_Rect r(0,0,64,64);
+	return r;
 }
 
 Screen * Tile::GetParentScreen()
@@ -249,6 +262,15 @@ CollisionData * TilePic::GetCollisionData()
 	m_pCollisionData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(m_resourceID, m_rectSrc);
 
 	return m_pCollisionData;
+}
+
+const CL_Rect & TilePic::GetBoundsRect()
+{
+	static CL_Rect r(0,0,0,0);
+	r.right = m_rectSrc.get_width()*m_vecScale.x;
+	r.bottom = m_rectSrc.get_height()*m_vecScale.y;
+
+	return r;
 }
 
 Tile * TilePic::CreateClone()

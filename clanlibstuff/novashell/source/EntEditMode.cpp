@@ -9,6 +9,9 @@
 #include "MovingEntity.h"
 #include "MessageManager.h"
 
+
+#define C_SCALE_MOD_AMOUNT 0.01f
+
 TileEditOperation g_EntEditModeCopyBuffer; //ctrl-c puts it here
 
 EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
@@ -71,6 +74,44 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 	m_vecLastMousePos = key.mouse_pos;
 }
 
+void EntEditMode::ScaleSelection(CL_Vector2 vMod, bool bBigMovement)
+{
+	if (m_selectedTileList.IsEmpty())
+	{
+		LogMsg("Can't scale, no selection.");
+		return;
+	}
+
+	if (bBigMovement)
+	{
+		vMod.x *= vMod.x; //strengthen the effect
+		vMod.y *= vMod.y; //strengthen the effect
+
+		vMod.x *= vMod.x; //strengthen the effect
+		vMod.y *= vMod.y; //strengthen the effect
+
+		vMod.x *= vMod.x; //strengthen the effect
+		vMod.y *= vMod.y; //strengthen the effect
+	}
+	
+	TileEditOperation temp = m_selectedTileList; //copy whatever is highlighted
+	OnDelete();
+		temp.ApplyScaleMod(vMod);
+		temp.SetIgnoreParallaxOnNextPaste();
+	OnPaste(temp, temp.GetUpperLeftPos());
+	m_selectedTileList = temp;
+}
+
+void EntEditMode::ScaleUpSelected()
+{
+	ScaleSelection(CL_Vector2(1 + C_SCALE_MOD_AMOUNT, 1 + C_SCALE_MOD_AMOUNT), CL_Keyboard::get_keycode(CL_KEY_SHIFT));
+}
+
+void EntEditMode::ScaleDownSelected()
+{
+	ScaleSelection(CL_Vector2(1 - C_SCALE_MOD_AMOUNT, 1 -C_SCALE_MOD_AMOUNT), CL_Keyboard::get_keycode(CL_KEY_SHIFT));
+}
+
 void EntEditMode::Init()
 {
 	Kill();
@@ -131,6 +172,17 @@ void EntEditMode::Init()
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDefaultTileHardness);
 	
 	pItem = m_pMenu->create_item("Utilities/Create Tile From Tile (Ctrl-C while dragging)");
+	pItem->enable(false);
+
+
+	pItem = m_pMenu->create_item("Modify Selected/Scale Down ([)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::ScaleDownSelected);
+
+	pItem = m_pMenu->create_item("Modify Selected/Scale Up (])");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::ScaleUpSelected);
+
+	pItem = m_pMenu->create_item("Modify Selected/ ");
+	pItem = m_pMenu->create_item("Modify Selected/Hold shift to scale/nudge by a larger amount.");
 	pItem->enable(false);
 
 	CL_Point offset = CL_Point(2,30);
@@ -475,8 +527,8 @@ void EntEditMode::CutSubTile(CL_Rect recCut)
 	}
 	//now that we have it, we need to create a new subtile from it, if possible
 	if (
-		(pTile->GetBoundsRect().calc_union(recCut).get_width() != recCut.get_width())
-		|| (pTile->GetBoundsRect().calc_union(recCut).get_height() != recCut.get_height())
+		(pTile->GetWorldRect().calc_union(recCut).get_width() != recCut.get_width())
+		|| (pTile->GetWorldRect().calc_union(recCut).get_height() != recCut.get_height())
 
 		)
 	{
@@ -535,10 +587,20 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		//we must be doing something in a dialog, don't want to delete entities accidently	
 		return;
 	}
+	
+	#define VK_CLOSE_BRACKET 0xDD
+	#define VK_OPEN_BRACKET 0xDB
 
 	switch(key.id)
 	{
+	case VK_OPEN_BRACKET:
+		ScaleDownSelected();
+		break;
 	
+	case VK_CLOSE_BRACKET:
+		ScaleUpSelected();
+		break;
+
 	//nudging
 	case CL_KEY_RIGHT:
 		ScheduleSystem(1, ID(), ("offset_selected|1|0|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
@@ -758,7 +820,7 @@ void EntEditMode::OnDefaultTileHardness()
 	m_pEntCollisionEditor = (EntCollisionEditor*) GetMyEntityMgr->Add(new EntCollisionEditor);
 	m_slots.connect(m_pEntCollisionEditor->sig_delete, this, &EntEditMode::OnCollisionDataEditEnd);
 
-	CL_Rect rec = pTile->GetBoundsRect();
+	CL_Rect rec(pTile->GetWorldRect());
 	
 	CL_Vector2 vEditPos = pTile->GetPos();
 	if (bIsEnt && !bUsesCustomCollisionData)
@@ -779,14 +841,7 @@ void EntEditMode::OnDefaultTileHardness()
 
 	bool useCollisionOffsets = !bIsEnt;
 	
-	if (useCollisionOffsets)
-	{
-		pTile->GetCollisionData()->RemoveOffsets();
-	} else
-	{
-		//pTile->GetCollisionData()->RecalculateOffsets();
-		pTile->GetCollisionData()->RemoveOffsets();
-	}
+	pTile->GetCollisionData()->RemoveOffsets();
 
 	m_pTileWeAreEdittingCollisionOn = pTile; //messy way of remembering this in the
 	//callback that is hit when editing is done
@@ -857,7 +912,7 @@ void EntEditMode::Render(void *pTarget)
 void DrawSelectedTileBorder(Tile *pTile, CL_GraphicContext *pGC)
 {
 	//let's draw a border around this tile
-	CL_Rectf worldRect = pTile->GetBoundsRect();
+	CL_Rectf worldRect(pTile->GetWorldRect());
 	CL_Vector2 vecStart(worldRect.left, worldRect.top);
 	CL_Vector2 vecStop(worldRect.right, worldRect.bottom);
 	
@@ -1367,7 +1422,7 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 		if ( selectedLayer != originalLayer && selectedLayer != -1)
 		{
 			pTileList->SetForceLayerOfNextPaste(selectedLayer);
-//			LogMsg("Changing layer to %d", layerList.get_item(selectedLayer)->user_data);
+			//LogMsg("Changing layer to %d", layerList.get_item(selectedLayer)->user_data);
 		}
 		
 		
@@ -1385,8 +1440,7 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 				CL_MessageBox::info("Error applying changes, did the tile move?", GetApp()->GetGUI());
 			} else
 			{
-
-			
+		
 			pEnt = pEntTile->GetEntity();
 			//apply any changes made to the custom data
 		    PropertiesSetDataManagerFromListBox(pEnt->GetData(), listData);
@@ -1398,11 +1452,9 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 				if (pScript->get_text() != pEnt->GetMainScriptFileName())
 				{
 					//they changed the script, apply it now
-
 					pEnt->SetMainScriptFileName(pScript->get_text());
 					pEnt->Kill();
 					pEnt->Init();
-
 				}
 			} 
 
@@ -1411,8 +1463,6 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 		 }
 		
 			GetWorld->ReInitEntities();
-
-
 		}
 	} else if (m_guiResponse == C_GUI_CONVERT)
 	{
@@ -1436,13 +1486,8 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 		m_selectedTileList.SetIgnoreParallaxOnNextPaste();
 		//paste our selection, this helps by creating an undo for us
 		OnPaste(m_selectedTileList, m_selectedTileList.GetUpperLeftPos());
-
-
-//		GetWorld->AddTile(pNewTile); //add the new
-
-	LogMsg("Converting tile..");
+		LogMsg("Converting tile..");
 	}
-
 
 	m_bDialogIsOpen = false;
 	SAFE_DELETE(pTile);

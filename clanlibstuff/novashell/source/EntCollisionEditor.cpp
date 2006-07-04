@@ -326,6 +326,19 @@ void EntCollisionEditor::OnChangeLineType()
 	}
 }
 
+void EntCollisionEditor::OnClear()
+{
+	if (ConfirmMessage("Clear active line", "Are you sure you want to clear all points on the active line?"))
+	{
+		if (m_pActiveLine)
+		{
+			m_pActiveLine->GetPointList()->clear();
+			m_mode = e_modeAddCreate;
+			m_pRadioGroup->set_checked(m_pRadioArray[m_mode]);
+		}
+	}
+}
+
 void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionData *pCollisionData, bool calcOffsets)
 {
 	m_pCollisionData =  pCollisionData; //remember location of the original and hope it doesn't change
@@ -351,9 +364,11 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 	int buttonOffsetX = 10;
 	m_pButtonOK = new CL_Button(CL_Point(buttonOffsetX,ptSize.y-50), "Save Changes", m_pWindow->get_client_area());
 	m_pButtonCancel = new CL_Button(CL_Point(buttonOffsetX+100,ptSize.y-50), "Cancel", m_pWindow->get_client_area());
+	CL_Button *pButtonClear = new CL_Button(CL_Point(buttonOffsetX+200,ptSize.y-50), "Clear", m_pWindow->get_client_area());
 
 	m_slots.connect(m_pButtonOK->sig_clicked(), this, &EntCollisionEditor::OnOk);
 	m_slots.connect(m_pButtonCancel->sig_clicked(), this, &EntCollisionEditor::OnCancel);
+	m_slots.connect(pButtonClear->sig_clicked(), this, &EntCollisionEditor::OnClear);
 
 	int heightOfBut = 16;
 

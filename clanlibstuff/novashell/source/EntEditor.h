@@ -128,4 +128,3 @@ private:
 
 
 void OpenScriptForEditing(string scriptName);
-bool ConfirmMessage(string title, string msg);

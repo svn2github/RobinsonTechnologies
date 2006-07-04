@@ -44,11 +44,12 @@ public:
 	bool IsEdgeCase() {return m_pEdgeCaseList != NULL;}
 	virtual Tile * CreateClone(); //must be handled in derived class
 	Tile * CopyFromBaseToClone(Tile *pNew);
+	virtual const CL_Rect & GetBoundsRect();
 
 	virtual void Serialize(CL_FileHelper &helper){}; //must be handled in derived class
 	virtual void SerializeBase(CL_FileHelper &helper);
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(64,64);}
-	virtual CL_Rect GetBoundsRect() {return CL_Rect(int(m_vecPos.x), int(m_vecPos.y), int(m_vecPos.x+64),int(m_vecPos.y+64));}
+	CL_Rect GetWorldRectInt();
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, m_vecPos.x+64,m_vecPos.y+64);}
 	Tile * CreateReference(Screen *pScreen);
 	void RemoveReference(Tile *pTileRef);
@@ -109,9 +110,10 @@ public:
 	virtual Tile * CreateClone();
 	virtual void Serialize(CL_FileHelper &helper);
 	//TODO optimize these to be precached
+
+	virtual const CL_Rect & GetBoundsRect();
+
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);}
-	virtual CL_Rect GetBoundsRect() {return CL_Rect(int(m_vecPos.x), int(m_vecPos.y), 
-		int(m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x), int(m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y));}
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, 
 		m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x, m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y);}
 	virtual CollisionData * GetCollisionData();

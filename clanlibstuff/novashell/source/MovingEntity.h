@@ -57,6 +57,7 @@ public:
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3);
   virtual CL_Rectf GetWorldRect();
+  const CL_Rect & GetBoundsRect();
   void GetAlignment(CL_Origin &origin, int &x, int &y);
   void UpdateTilePosition();
   CollisionData * GetCollisionData() {return m_pCollisionData;}
@@ -102,6 +103,7 @@ public:
 
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
   Zone * GetZoneWeAreOnByMaterialType(int matType);
+  Zone * GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType);
   bool InZoneByMaterialType(int matType) {return GetZoneWeAreOnByMaterialType(matType) != NULL;}
   bool GetOnLadder() {return m_bOnLadder;}
   void SetOnLadder(bool bOnLadder) {m_bOnLadder = bOnLadder;}
@@ -119,7 +121,7 @@ public:
   bool UsingCustomCollisionData() {return m_bUsingCustomCollisionData;}
   int GetFloorMaterialID() {return m_floorMaterialID;}
   BrainManager * GetBrainManager() {return &m_brainManager;}
-  string MovingEntity::ProcessPath(const string &st); //replaces ~ with current script path
+  string ProcessPath(const string &st); //replaces ~ with current script path
   void OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity *pProjectile);
   void SetFacing(int facing) {m_facing = facing;}
   int GetFacing(){return m_facing;}

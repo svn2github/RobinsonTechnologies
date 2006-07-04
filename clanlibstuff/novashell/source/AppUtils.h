@@ -24,6 +24,7 @@ void ResetFont(CL_Font *pFont); //set the centering, color and alpha back to def
 string ExtractFinalDirName(string path); //not tested with paths with filenames yet
 bool compareLayerBySort(unsigned int pA, unsigned int pB); //for use with stl::sort
 void StringReplace(const std::string& what, const std::string& with, std::string& in);
+bool ConfirmMessage(string title, string msg);
 
 typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
 

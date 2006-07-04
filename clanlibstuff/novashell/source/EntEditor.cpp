@@ -880,13 +880,7 @@ void EntEditor::OnToggleFullScreen()
 	GetApp()->RequestToggleFullscreen();
 }
 
-bool ConfirmMessage(string title, string msg)
-{
-	CL_MessageBox message(title, msg, "Continue", "Abort", "", GetApp()->GetGUI());
-	message.set_event_passing(false);
-	message.run();
-	return message.get_result_button() == 0;
-}
+
 
 void EntEditor::OnGenerateSmall()
 {

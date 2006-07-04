@@ -81,6 +81,7 @@ public:
 	void SetLayerOfSelection(unsigned int layer);
 	void SetForceLayerOfNextPaste(int layer) {m_forceLayerOfNextPaste = layer;}
 	void SetIgnoreParallaxOnNextPaste() {m_bIgnoreParallaxOnNextPaste = true;}
+	void ApplyScaleMod(CL_Vector2 vMod);
 
 	enum
 	{

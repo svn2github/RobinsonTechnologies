@@ -103,7 +103,8 @@ void TileEditOperation::RecomputeBoundsIfNeeded()
 	m_bNeedsFullBoundsCheck = false;
 	m_vecUpLeft = CL_Vector2(FLT_MAX, FLT_MAX);
 	m_vecDownRight = CL_Vector2(-FLT_MAX,-FLT_MAX);
-	LogMsg("Recomputing full bounds..");
+	
+	//LogMsg("Recomputing full bounds..");
 	selectedTile_list::iterator itor = m_selectedTileList.begin();
 
 	while (itor != m_selectedTileList.end())
@@ -475,5 +476,22 @@ void TileEditOperation::ApplyOffset(CL_Vector2 vOffset)
 
 	m_vecUpLeft += vOffset;
 	m_vecDownRight += vOffset;
+
+}
+
+void TileEditOperation::ApplyScaleMod(CL_Vector2 vMod)
+{
+	selectedTile_list::iterator itor = m_selectedTileList.begin();
+	Tile *pTile;
+
+	while (itor != m_selectedTileList.end())
+	{
+		pTile = (*itor)->m_pTile;
+		pTile->SetScale(CL_Vector2(pTile->GetScale().x * vMod.x, pTile->GetScale().y * vMod.y));
+		itor++;
+	}
+
+	//and finally, adjust our bounding boxes
+	SetNeedsFullBoundsCheck(true);
 
 }

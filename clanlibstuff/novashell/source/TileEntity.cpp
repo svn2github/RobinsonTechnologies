@@ -74,19 +74,16 @@ CL_Vector2 TileEntity::GetBoundsSize()
 	return CL_Vector2(m_pEntity->GetSizeX(),m_pEntity->GetSizeY());
 }
 
-CL_Rect TileEntity::GetBoundsRect()
+const CL_Rect & TileEntity::GetBoundsRect()
 {
-	CL_Rectf rf(m_pEntity->GetWorldRect());
-	CL_Rect r(rf.left, rf.top, rf.right, rf.bottom);
-	return r;
-
+	return m_pEntity->GetBoundsRect();
 }
 
 CL_Rectf TileEntity::GetWorldRect()
 {
 	return m_pEntity->GetWorldRect();
-
 }
+
 const CL_Vector2 & TileEntity::GetPos()
 {
 	assert(m_pEntity);

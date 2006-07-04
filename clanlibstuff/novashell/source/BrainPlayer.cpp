@@ -26,7 +26,7 @@
 #define C_PLAYER_AIR_DAMPENING 0.4f
 #define C_PLAYER_GROUND_DAMPENING 0.4f //is removed from speed, not multiplied
 
-#define C_LADDER_SENSITIVITY 20 //how many pixels to look up and down to verify a ladder really is starting or
+#define C_LADDER_SENSITIVITY 10 //how many pixels to look up and down to verify a ladder really is starting or
 								//ending
 
 
@@ -165,7 +165,7 @@ void BrainPlayer::AttemptToJump()
 		m_jumpTimer = GetApp()->GetGameTick()+C_PLAYER_JUMP_AGAIN_LENGTH_MS;
 		m_jumpBurstTimer = GetApp()->GetGameTick()+C_PLAYER_JUMP_SECOND_BURST_MS;
 		m_bAppliedSecondJumpForce = false;
-		m_curJumpForce = C_PLAYER_JUMP_INITIAL_FORCE;
+		m_curJumpForce = C_PLAYER_JUMP_INITIAL_FORCE * m_pParent->GetScale().y;
 		m_pParent->SetIsOnGround(false); //don't wait for the ground timer to run out
 		g_pSoundManager->PlayMixed(m_jumpSound.c_str());
 		m_pParent->GetBody()->GetLinVelocity().y = 0;
@@ -176,8 +176,10 @@ void BrainPlayer::CheckForDoor()
 {
 	if ( !m_pParent->GetOnLadder() && m_Keys & C_KEY_DOWN && m_pParent->IsOnGround())
 	{
-	
-		Zone *pZone = m_pParent->GetZoneWeAreOnByMaterialType(CMaterial::C_MATERIAL_TYPE_WARP);
+		CL_Vector2 vPos = m_pParent->GetPos(); 
+		vPos.y += m_pParent->GetCollisionData()->GetLineList()->begin()->GetRect().bottom; //work from the position of our feet, instead of middle
+
+		Zone *pZone = m_pParent->GetNearbyZoneByPointAndType(vPos, CMaterial::C_MATERIAL_TYPE_WARP);
 
 		if (pZone)
 		{
@@ -205,15 +207,19 @@ void BrainPlayer::CheckForLadder()
 {
 	VisualProfile *pProfile = m_pParent->GetVisualProfile();
 
+	CL_Vector2 vPos = m_pParent->GetPos(); 
+	vPos.y += m_pParent->GetCollisionData()->GetLineList()->begin()->GetRect().bottom; //work from the position of our feet, instead of middle
+	
 	if (m_pParent->GetOnLadder())
 	{
 		//should we stop being in ladder mode?
-		Zone *pZone = m_pParent->GetZoneWeAreOnByMaterialType(CMaterial::C_MATERIAL_TYPE_VERTICAL_LADDER);
+		Zone *pZone = m_pParent->GetNearbyZoneByPointAndType(vPos, CMaterial::C_MATERIAL_TYPE_VERTICAL_LADDER);
+
 		if (!pZone || 
-			   (
-			     (m_Keys & C_KEY_LEFT || m_Keys & C_KEY_RIGHT)
-				 && (! (m_Keys & C_KEY_UP)) && (! (m_Keys & C_KEY_DOWN))
-			   )
+			(
+			(m_Keys & C_KEY_LEFT || m_Keys & C_KEY_RIGHT)
+			&& (! (m_Keys & C_KEY_UP)) && (! (m_Keys & C_KEY_DOWN))
+			) 
 			)
 		{
 			//disengage from ladder
@@ -230,59 +236,55 @@ void BrainPlayer::CheckForLadder()
 				CL_Vector2 pos = m_pParent->GetPos();
 				float centerOfLadderX = pZone->m_vPos.x + pZone->m_boundingRect.left + (pZone->m_boundingRect.get_width()/2);
 				//center them a bit
-				set_float_with_target(&pos.x, centerOfLadderX, 1);
+				set_float_with_target(&pos.x, centerOfLadderX, 1.5);
 				m_pParent->SetPos(pos);
 			}
 		}
 
 	} else
 	{
-		if (m_Keys & C_KEY_DOWN || m_Keys & C_KEY_UP)
+
+		//see if they are trying to mount the ladder	
+
+		//we need some special checks here to see if this is the start or end of a ladder, otherwise
+		//we can't smoothly jump up while standing on a ladder, because it will mount it if even for
+		//an extremely short time
+
+		bool bAllowed = false;
+
+		if (m_Keys & C_KEY_UP)
 		{
-
-			//can we enter ladder mode at this point?
-			Zone *pZone = m_pParent->GetZoneWeAreOnByMaterialType(CMaterial::C_MATERIAL_TYPE_VERTICAL_LADDER);
-
-			if (pZone)
+			//is there really a ladder going up here?
+			if (m_pParent->GetNearbyZoneByPointAndType(vPos, CMaterial::C_MATERIAL_TYPE_VERTICAL_LADDER))
+			if (m_pParent->GetNearbyZoneByPointAndType(vPos - CL_Vector2(0,C_LADDER_SENSITIVITY), CMaterial::C_MATERIAL_TYPE_VERTICAL_LADDER))
 			{
-
-				//we need some special checks here to see if this is the start or end of a ladder, otherwise
-				//we can't smoothly jump up while standing on a ladder, because it will mount it if even for
-				//an extremely short time
-
-				CL_Vector2 vPos = m_pParent->GetPos() - pZone->m_vPos; //translate to the zone's local coordinates
-				bool bAllowed = false;
-
-				if (m_Keys & C_KEY_UP)
-				{
-					//is there really a ladder going up here?
-					if (pZone->m_boundingRect.is_inside( *(CL_Pointf*)&(vPos-CL_Vector2(0,C_LADDER_SENSITIVITY))) )
-					{
-						bAllowed = true;
-					}
-				}
-
-				if (m_Keys & C_KEY_DOWN)
-				{
-					//is there really a ladder going down here?
-					if (pZone->m_boundingRect.is_inside( *(CL_Pointf*)&(vPos+CL_Vector2(0,C_LADDER_SENSITIVITY))) )
-					{
-						bAllowed = true;
-					}
-				}
-
-				if (bAllowed)
-				{
-					//able to enter ladder mode
-					m_pParent->SetOnLadder(true);
-					m_bRequestJump = false;
-					m_pParent->SetAnimByName("climb");
-					m_jumpTimer = 0;
-				}
-
+				bAllowed = true;
 			}
 		}
+
+		if (m_Keys & C_KEY_DOWN)
+		{
+			
+			//LogMsg("Feet are at %s", PrintVector(vPos).c_str());
+			//is there really a ladder going down here?
+			if (m_pParent->GetNearbyZoneByPointAndType(vPos, CMaterial::C_MATERIAL_TYPE_VERTICAL_LADDER))
+			if (m_pParent->GetNearbyZoneByPointAndType(vPos+ CL_Vector2(0,C_LADDER_SENSITIVITY), CMaterial::C_MATERIAL_TYPE_VERTICAL_LADDER))
+			{
+				bAllowed = true;
+			}
+		}
+
+		if (bAllowed)
+		{
+			//able to enter ladder mode
+			m_pParent->SetOnLadder(true);
+			m_bRequestJump = false;
+			m_pParent->SetAnimByName("climb");
+			m_jumpTimer = 0;
+		}
+
 	}
+
 
 	if (m_pParent->GetOnLadder())
 	{
@@ -293,7 +295,6 @@ void BrainPlayer::CheckForLadder()
 			//move up the ladder
 			m_moveAngle = m_moveAngle +CL_Vector2(0,-1);
 			m_moveAngle.unitize();
-
 		}
 
 		if (m_Keys & C_KEY_DOWN)
@@ -306,15 +307,7 @@ void BrainPlayer::CheckForLadder()
 
 	}
 
-//handle the sounds for the ladder here
 
-	if (m_pParent->GetOnLadder() && m_moveAngle != CL_Vector2::ZERO)
-	{
-		m_climbSound.Play(true);
-	} else
-	{
-		m_climbSound.Play(false);
-	}
 }
 
 string BrainPlayer::HandleAskMsg(const string &msg)
@@ -545,6 +538,16 @@ void BrainPlayer::UpdateMovement(float step)
 	} else
 	{
 		m_walkSound.Play(false);
+	}
+
+	//handle the sounds for the ladder here
+
+	if (m_pParent->GetOnLadder() && m_moveAngle != CL_Vector2::ZERO)
+	{
+		m_climbSound.Play(true);
+	} else
+	{
+		m_climbSound.Play(false);
 	}
 }
 
