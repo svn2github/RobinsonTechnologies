@@ -131,6 +131,7 @@ void MovingEntity::SetDefaults()
 	
 	m_visualState = VisualProfile::VISUAL_STATE_IDLE;
 	m_facing = VisualProfile::FACING_LEFT;
+	m_trigger.Reset();
 
 }
 
@@ -1188,12 +1189,31 @@ void MovingEntity::Render(void *pTarget)
 
 }
 
+void MovingEntity::SetTrigger(int triggerType, int typeVar, int triggerBehavior, int behaviorVar)
+{
+	m_trigger.Set(this, triggerType, typeVar, triggerBehavior, behaviorVar);
+}
+
+void MovingEntity::DumpScriptInfo()
+{
+	if (m_pScriptObject)
+	{
+		LogMsg("Script %s loaded in entity %d (%s).", m_pScriptObject, ID(), GetName().c_str());
+		DumpTable(m_pScriptObject->GetState());
+	} else
+	{
+		LogMsg("No script is loaded in ent %d. (%s)", ID(), GetName().c_str());
+	}
+}
+
 void MovingEntity::Update(float step)
 {
 
 if (GetGameLogic->GetGamePaused()) return;
 
 	ClearColorMods();
+
+	m_trigger.Update(step);
 
 	m_brainManager.Update(step);
 	

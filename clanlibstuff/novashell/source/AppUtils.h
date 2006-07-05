@@ -42,10 +42,11 @@ public:
 		m_timer = 0;
 	}
 	void Reset();
+	void SetIntervalReached();
 	bool IntervalReached();
 
 	bool IsActive() {return m_timer != 0;}
-
+	
 	void SetInterval(int interval)
 	{
 		m_interval = interval;

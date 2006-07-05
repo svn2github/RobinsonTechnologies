@@ -16,11 +16,11 @@
 	LogError(a.c_str());}
 //this works inside of MovingEntity
 #define LUABIND_ENT_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
-	LogError("Entity %d (visual: %s) : %s", ID(), m_pVisualProfile->GetName().c_str(), a);}
+	LogError("Entity %d (name: %s) : %s", ID(), GetName().c_str(), a);}
 
 //this works inside of brains
 #define LUABIND_ENT_BRAIN_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
-	LogError("Entity %d (visual: %s) : %s", m_pParent->ID(), m_pParent->GetVisualProfile()->GetName().c_str(), a);}
+	LogError("Entity %d (name: %s) : %s", m_pParent->ID(), m_pParent->GetName().c_str(), a);}
 
 #include "ScriptKeyManager.h"
 
@@ -70,5 +70,6 @@ extern ScriptKeyManager g_keyManager;
 
 int luaPrint(lua_State *L);
 void ShowLUAMessagesIfNeeded(lua_State *pState, int result);
+void DumpTable( lua_State *L, const char *pTableName = NULL, int tableIndex = LUA_GLOBALSINDEX);
 
 #endif                  // include guard

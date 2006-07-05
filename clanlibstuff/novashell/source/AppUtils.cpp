@@ -16,6 +16,13 @@ void GameTimer::Reset()
 {
 	m_timer = GetApp()->GetGameTick() + m_interval;
 }
+
+void GameTimer::SetIntervalReached()
+{
+	m_timer = 1; //make sure the next tick will cause it to go. I used 1 in case I want to use 0 to mean
+	//a disabled timer later
+}
+
 bool GameTimer::IntervalReached()
 {
 	if (m_timer < GetApp()->GetGameTick())

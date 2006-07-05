@@ -140,6 +140,12 @@ void LayerManager::BuildDefaultLayers()
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetShowInEditorOnly(true);
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetUseInThumbnail(false);
 
+
+	m_layerVec[C_LAYER_HIDDEN_DATA].SetName("Hidden Data 2");
+	m_layerVec[C_LAYER_HIDDEN_DATA].SetSort(C_LAYER_HIDDEN_DATA2);
+	m_layerVec[C_LAYER_HIDDEN_DATA].SetShowInEditorOnly(true);
+	m_layerVec[C_LAYER_HIDDEN_DATA].SetUseInThumbnail(false);
+
 	BuildLists();
 }
 void LayerManager::Load(const string &filename)

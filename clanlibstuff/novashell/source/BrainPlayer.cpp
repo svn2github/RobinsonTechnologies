@@ -396,7 +396,6 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 			//air jumps should be weaker
 			force.y = 0;
 			force.x *= airDampening;
-			//mVISUAL_VISUAL_STATE_ = VisualProfile::VISUAL_STATE_IDLE;
 		} 
 
 		//LogMsg("WIth mass, it'd be %.2f, %.2f", force.x*step, force.y*step);
@@ -452,23 +451,10 @@ void BrainPlayer::CheckForAttack()
 	{
 		if (m_attackTimer.IntervalReached())
 		{
-	
-		/*	
-		MovingEntity *pWeapon = CreateEntity(m_pParent->GetPos(), "weapon/slash/slash.lua");
-
-		//tell this weapon entity who shot/swung it
-		try {luabind::call_function<bool>(pWeapon->GetScriptObject()->GetState(), 
-			"SetParent", m_pParent);
-		} LUABIND_ENT_BRAIN_CATCH("Error while calling SetParent in CheckForAttack");
-		*/
-
 			try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), 
 				"OnAttack", m_pParent);
 			} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAttack with playerbrain");
-
-
-		
-		m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
+			m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
 		}
 
 	}

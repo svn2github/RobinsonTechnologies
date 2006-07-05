@@ -9,6 +9,7 @@
 #include "TileEntity.h"
 #include "DataManager.h"
 #include "BrainManager.h"
+#include "Trigger.h"
 
 #define C_MAX_FALLING_DOWN_SPEED 20 //gravity won't be applied to objects going faster than this
 
@@ -135,7 +136,9 @@ public:
   void AddColorModBlue(short mod) {m_colorModBlue += mod;}
   void AddColorModAlpha(short mod) {m_colorModAlpha += mod;}
 
+  void SetTrigger(int triggerType, int typeVar, int triggerBehavior, int behaviorVar);
   void ClearColorMods();
+  void DumpScriptInfo();
 
   enum ListenCollision
 {
@@ -206,6 +209,8 @@ protected:
 	short m_colorModGreen;
 	short m_colorModBlue;
 	short m_colorModAlpha;
+
+	Trigger m_trigger;
 
 };
 

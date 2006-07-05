@@ -97,6 +97,8 @@ void luabindEntity(lua_State *pState)
 			.def("SetScale", &MovingEntity::SetScale)
 			.def("SetCollisionScale", &MovingEntity::SetCollisionScale)
 			.def("GetCollisionScale", &MovingEntity::GetCollisionScale)
+			.def("SetTrigger", &MovingEntity::SetTrigger)
+			.def("DumpScriptInfo", &MovingEntity::DumpScriptInfo)
 	
 		];
 }

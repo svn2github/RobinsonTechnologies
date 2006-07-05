@@ -153,8 +153,6 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 	GetApp()->GetBackgroundCanvas()->get_pixeldata(rectSrc).convert(*pbuf);
 	
 	pWorldChunk->SetThumbNail(pbuf);
-	
-
 
 	if (bWasOriginallyInMem)
 	{
@@ -248,6 +246,7 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 	tile_list *pTileList;
 	tile_list::iterator tileListItor;
 	Tile *pTile;
+	Layer *pLayer;
 
 	//build the tile list
 	for (EntWorldChunkVector::iterator itor = m_worldChunkVector.begin(); itor != m_worldChunkVector.end(); itor++)
@@ -256,6 +255,8 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 		{
 			pTileList =  (*itor)->GetScreen()->GetTileList(layerIDVec[i]);
 
+			pLayer = &m_pWorld->GetLayerManager().GetLayerInfo(layerIDVec[i]);
+			
 			tileListItor = pTileList->begin();
 
 			while (tileListItor != pTileList->end())
@@ -270,7 +271,19 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 				if (pTile->GetLastScanID() != renderID)
 				{
 					pTile->SetLastScanID(renderID); //helps us not draw something twice, due to ghost references
-					m_tileLayerDrawList.push_back(pTile);
+
+					if (
+						(!GetGameLogic->GetEditorActive() && pLayer->GetShowInEditorOnly())
+					|| !pLayer->IsDisplayed() )
+					{
+						//don't render this
+				
+					} else
+					{
+						m_tileLayerDrawList.push_back(pTile);
+					}
+
+				
 					if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 					{
 						m_entityList.push_back( ((TileEntity*)pTile)->GetEntity());
@@ -321,14 +334,10 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 		} else
 		{
 			//this way it's possible to have something ONLY rendered in the thumbnail
-			if (!layer.IsDisplayed()) continue; //we're told not to show it
+			if (!layer.IsDisplayed() && !layer.GetShowInEditorOnly()) continue; //we're told not to show it
 		}
 
-		if (!GetGameLogic->GetEditorActive() && layer.GetShowInEditorOnly())
-		{
-			continue;
-		}
-		
+			
 		scrollMod = layer.GetScrollMod();
 
 		 //|| !GetGameLogic->GetEditorActive())
@@ -499,13 +508,14 @@ void EntWorldCache::Update(float step)
 	ProcessPendingEntityMovementAndDeletions();
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 
-
 	if (GetGameLogic->GetGamePaused() == false)
 	{
 
-		for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
+		//note, if tiles ever actually need to DO something in their think phase, this should use
+		//m_tileLayerDrawList instead of entityList
+		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
-			m_tileLayerDrawList.at(i)->Update(step);
+			m_entityList.at(i)->Update(step);
 		}
 
 		for (unsigned int i=0; i < m_entityList.size(); i++)

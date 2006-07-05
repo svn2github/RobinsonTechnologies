@@ -393,6 +393,14 @@
 					RelativePath=".\MovingEntity.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\Trigger.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Trigger.h"
+					>
+				</File>
 				<Filter
 					Name="Editor"
 					>

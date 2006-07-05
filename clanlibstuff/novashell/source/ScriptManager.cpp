@@ -106,7 +106,7 @@ void WalkTable(string tableName, lua_State *L, int depth)
 
 }
 
-void DumpTable( lua_State *L, const char *pTableName = NULL, int tableIndex = LUA_GLOBALSINDEX) //null defaults to the globalsindex
+void DumpTable( lua_State *L, const char *pTableName, int tableIndex) //null defaults to the globalsindex
 {
 	
 	if (pTableName)
@@ -153,6 +153,7 @@ ScriptObject::ScriptObject()
 	m_threadReference = luaL_ref(GetScriptManager->GetMainState(),LUA_GLOBALSINDEX); //store this so it won't GC itself
   
 	//DumpTable(GetScriptManager->GetMainState());
+	//DumpTable(m_pLuaState, "__index");
 
     //not needed, make the ref pops it
     //lua_pop(GetScriptManager->GetMainState(), lua_gettop(GetScriptManager->GetMainState())); //pop the thread off
@@ -249,6 +250,20 @@ ScriptManager::~ScriptManager()
 	Kill();
 } 
 
+
+int DumpInfo(lua_State *L)
+{
+	LogMsg("Dumping base environment");
+
+	if (L != GetScriptManager->GetMainState())
+	{
+		DumpTable(GetScriptManager->GetMainState());
+		LogMsg("Dumping Script environment");
+	}
+	DumpTable(L);
+	return 0;
+}
+
 bool ScriptManager::Init()
 {
 
@@ -265,6 +280,7 @@ bool ScriptManager::Init()
 
 	lua_register(m_pMainState, "print", luaPrint);
 	lua_register(m_pMainState, "LogMsg", luaPrint);
+	lua_register(m_pMainState, "DumpInfo", DumpInfo);
    
 	open(m_pMainState);
 	return true; //success
