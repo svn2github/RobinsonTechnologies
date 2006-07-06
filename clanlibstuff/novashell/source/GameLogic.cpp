@@ -496,7 +496,7 @@ void GameLogic::Render()
 
 void GameLogic::HandleMessageString(const string &msg)
 {
-  LogMsg("Gamelogic got %s", msg.c_str());
+  //LogMsg("Gamelogic got %s", msg.c_str());
   GetScriptManager->RunString(msg.c_str());
 }
 

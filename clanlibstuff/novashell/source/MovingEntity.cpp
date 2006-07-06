@@ -58,6 +58,11 @@ void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
 	m_pCollisionData->SetScale(vScale);
 }
 
+void MovingEntity::SetListenCollision(int eListen)
+{
+	m_listenCollision = eListen;
+}
+
 CL_Vector2 MovingEntity::GetCollisionScale()
 {
 	if (!m_pCollisionData)
@@ -614,6 +619,8 @@ void MovingEntity::SetAnimByName(const string &name)
 
 void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity * pProjectile)
 {
+	SetOnLadder(false);
+
 	if (!GetScriptObject() || !GetScriptObject()->FunctionExists("OnDamage")) return;
 
 	try {luabind::call_function<bool>(m_pScriptObject->GetState(), "OnDamage", normal, depth, enemy, damage, uservar, pProjectile);

@@ -24,6 +24,7 @@
 #define LUA_INCLUDE_HPP_INCLUDED
 
 #include "lua/etc/lua.hpp"
+#include "lauxlib.h"
 
 #endif
 

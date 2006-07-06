@@ -20,6 +20,7 @@ public:
 	virtual void Update(float step);
 	virtual const char * GetName() {return "FadeOutAndDelete";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainFadeOutAndDie(pParent);}
+	virtual void HandleMsg(const string &msg);
 
 protected:
 	

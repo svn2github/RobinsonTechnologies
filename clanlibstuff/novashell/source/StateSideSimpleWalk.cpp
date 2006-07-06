@@ -79,7 +79,7 @@ void StateSideSimpleWalk::LookAround()
 	CL_Vector2 vColPos;
 	Tile * pTile = NULL;
 
-	if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_PIC))
+	if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile()))
 	{
 		//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
 		switch ((pTile)->GetType())
@@ -87,6 +87,13 @@ void StateSideSimpleWalk::LookAround()
 		case C_TILE_TYPE_PIC:
 			//wall in front of us it appears
 			bNeedToTurn = true;	
+			break;
+		case C_TILE_TYPE_ENTITY:
+			if (GetPlayer != ((TileEntity*)pTile)->GetEntity())
+			{
+				//wall in front of us it appears
+				bNeedToTurn = true;	
+			}
 			break;
 		}
 	} 

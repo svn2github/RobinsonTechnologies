@@ -65,7 +65,8 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 			if (m_state == STATE_OUTSIDE)
 			{
 				m_state = STATE_INSIDE;
-				m_pParent->RunFunction("OnTriggerEnter");
+				try {luabind::call_function<luabind::object>(m_pParent->GetScriptObject()->GetState(), "OnTriggerEnter");
+				} LUABIND_ENT_BRAIN_CATCH( "Error while calling function OnTriggerEnter");
 			}
 
 			if (m_behaviorType == BEHAVIOR_PULSE)
@@ -99,6 +100,8 @@ void Trigger::Update(float step)
 		break;
 
 	case TYPE_REGION_IMAGE:
+		
+		if (GetPlayer)
 		SetTriggerState(m_pParent->GetWorldRect().is_overlapped(GetPlayer->GetWorldRect()));
 		break;
 

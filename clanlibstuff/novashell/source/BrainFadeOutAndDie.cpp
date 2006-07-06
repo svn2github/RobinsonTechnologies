@@ -22,6 +22,26 @@ BrainFadeOutAndDie::~BrainFadeOutAndDie()
 {
 }
 
+void BrainFadeOutAndDie::HandleMsg(const string &msg)
+{
+	vector<string> messages = CL_String::tokenize(msg, ";",true);
+
+	for (unsigned int i=0; i < messages.size(); i++)
+	{
+		vector<string> words = CL_String::tokenize(messages[i], "=",true);
+
+		if (words[0] == "fade_speed_ms")
+		{
+			m_fadeOutTimeMS = CL_String::to_int(words[1]);
+		} 
+		 else
+			{
+				LogMsg("Brain %s doesn't understand keyword %s", GetName(), words[0].c_str());
+			}
+	}
+
+}
+
 void BrainFadeOutAndDie::Update(float step)
 {
 	//set alpha for fading

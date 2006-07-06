@@ -590,6 +590,9 @@ int luabind::detail::class_rep::constructor_dispatcher(lua_State* L)
 
 int luabind::detail::class_rep::function_dispatcher(lua_State* L)
 {
+
+	static char stError[512];
+
 #ifndef NDEBUG
 
 /*	lua_Debug tmp_;
@@ -636,7 +639,14 @@ int luabind::detail::class_rep::function_dispatcher(lua_State* L)
 	if (!found)
 	{
 		{
+
+		//SETH> i switched this around to use a mem stack because I think luabind is corrupted
+		//memory before this is called when an error happens, and it causes crashes here
+		//during the stl string stuff
+
+			/*
 			std::string msg = "no overload of  '";
+			
 			msg += rep->crep->name();
 			msg += ":";
 			msg += rep->name;
@@ -651,8 +661,16 @@ int luabind::detail::class_rep::function_dispatcher(lua_State* L)
 
 			msg += get_overload_signatures(L, rep->overloads().begin()
 				, rep->overloads().end(), function_name);
+				lua_pushstring(L, msg.c_str());
 
-			lua_pushstring(L, msg.c_str());
+		*/
+		
+			
+		sprintf(stError, "no overload of '%s:%s' matched the arguments (%s).  Did you forget a parm?",
+				rep->crep->name(), rep->name,
+				stack_content_by_name(L, 1).c_str()
+				);
+			lua_pushstring(L, stError);
 		}
 		lua_error(L);
 	}

@@ -22,7 +22,7 @@ LogError("---------------- Lua Error! Stack Dump ----------------\n");
 for (i = 1; i <= top; i++) {
 	int t = lua_type(L, i);
 	switch (t) {
-		  case LUA_TSTRING:  LogError("-%d:`%s'", i, lua_tostring(L, i));        break;
+		  case LUA_TSTRING:  LogError("-%d: %s", i, lua_tostring(L, i));        break;
 		  case LUA_TBOOLEAN: LogError("-%d: %s",  i, lua_toboolean(L, i) ? "true" : "false");     break;
 		  case LUA_TNUMBER:  LogError("-%d: %g",  i, lua_tonumber(L, i));         break;
 		  default:           LogError("-%d: %s",  i, lua_typename(L, t));       break;
@@ -37,6 +37,7 @@ for (i = 1; i <= top; i++) {
 
 void ShowLUAMessagesIfNeeded(lua_State *pState, int result)
 {
+	
 	if (result == 0) return;
 	if (lua_gettop(pState) == 0) return;
 	stackDump(pState);

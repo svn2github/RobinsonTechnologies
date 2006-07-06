@@ -12,7 +12,7 @@
 #include <luabind/operator.hpp>
 #endif
 
-#define C_PLAYER_DESIRED_SPEED 4.0f
+#define C_PLAYER_DESIRED_SPEED 3.3f
 #define C_PLAYER_ACCEL_POWER 0.7f
 
 //how many frames to apply the jump force

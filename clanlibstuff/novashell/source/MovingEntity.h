@@ -86,7 +86,7 @@ public:
   
   void SetDensity(float fDensity);
   void PostUpdate(float step);
-  void SetListenCollision(int eListen) {m_listenCollision = eListen;}
+  void SetListenCollision(int eListen);
   int GetListenCollision() {return m_listenCollision;}
 
   void SetListenCollisionStatic(int eListen) {m_listenCollisionStatic = eListen;}
@@ -149,6 +149,9 @@ public:
 	LISTEN_COLLISION_NONE = 0,
 	LISTEN_COLLISION_PLAYER_ONLY = 1,
 	LISTEN_COLLISION_ALL_ENTITIES = 2,
+
+	//add more above this
+	LISTEN_COLLISION_COUNT
 };
 
 enum ListenStaticCollision
@@ -159,6 +162,9 @@ enum ListenStaticCollision
 
 	LISTEN_COLLISION_STATIC_NONE = 0,
 	LISTEN_COLLISION_STATIC_ALL = 1,
+
+	//add more above this
+	LISTEN_COLLISION_STATIC_COUNT
 };
 
 protected:

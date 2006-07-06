@@ -138,20 +138,24 @@ void Camera::UpdateTarget()
 void Camera::SetTargetPosCentered(CL_Vector2 vecTarget)
 {
 	m_vecTargetPos = vecTarget;
-	m_vecTargetPos.x -= (GetScreenX/2)/m_vecScale.x;
-	m_vecTargetPos.y -= (GetScreenY/2)/m_vecScale.y;
+	m_vecTargetPos.x -= (float(GetScreenX/2))/m_vecScale.x;
+	m_vecTargetPos.y -= (float(GetScreenY/2))/m_vecScale.y;
+
+	//m_vecTargetPos.x = RoundNearest(m_vecTargetPos.x,1.0f);
+	//m_vecTargetPos.y = RoundNearest(m_vecTargetPos.y,1.0f);
+
 }
 
 CL_Vector2 Camera::GetPosCentered()
 {
-	return m_vecPos + CL_Vector2((GetScreenX/2)/m_vecScale.x, (GetScreenX/2)/m_vecScale.y );
+	return m_vecPos + CL_Vector2((float(GetScreenX/2))/m_vecScale.x, (float(GetScreenX/2))/m_vecScale.y );
 }
 
 void Camera::SetPosCentered(CL_Vector2 vecPos)
 {
 	m_vecPos = vecPos;
-	m_vecPos.x -= (GetScreenX/2)/m_vecScale.x;
-	m_vecPos.y -= (GetScreenY/2)/m_vecScale.y;
+	m_vecPos.x -= (float(GetScreenX/2))/m_vecScale.x;
+	m_vecPos.y -= (float(GetScreenY/2))/m_vecScale.y;
 	m_vecTargetPos = m_vecPos;
 }
 
@@ -162,12 +166,14 @@ void Camera::SetTargetPos(CL_Vector2 vecTarget)
 void Camera::InstantUpdate()
 {
 	UpdateTarget();
-	SetPos(m_vecTargetPos);
 	SetScale(m_vecScaleTarget);
+	SetPos(m_vecTargetPos);
 }
 
 void Camera::Update(float step)
 {
+	m_vecScale = Lerp(m_vecScale, m_vecScaleTarget, m_scaleLerp);
+
 	UpdateTarget();
   	
 	if (m_bInstantUpdateASAP)
@@ -176,9 +182,14 @@ void Camera::Update(float step)
 		InstantUpdate();
 	}
 	
-	m_vecScale = Lerp(m_vecScale, m_vecScaleTarget, m_scaleLerp);
 	m_vecPos = Lerp(m_vecPos,m_vecTargetPos, m_moveLerp);
-	m_vecPos.x = RoundNearest(m_vecPos.x,1.0f);
-	m_vecPos.y = RoundNearest(m_vecPos.y,1.0f);
+
+	static const float fuzz = 0.01f;
+
+	if (m_vecScaleTarget.x < m_vecScale.x+fuzz && m_vecScaleTarget.x > m_vecScale.x-fuzz)
+	{
+		m_vecPos.x = RoundNearest(m_vecPos.x,1.0f);
+		m_vecPos.y = RoundNearest(m_vecPos.y,1.0f);
+	}
 
 }
