@@ -1,5 +1,6 @@
 thumbs.dl
 .sfk
+.sfl
 \Debug\
 \Release\
 .ncb

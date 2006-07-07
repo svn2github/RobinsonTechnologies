@@ -6,6 +6,9 @@ ts*.dat
 game_debug*.*
 *\dink\*.*
 *\profiles\*.*
+*.sfk
+*.sfl
+*.thm
 
 
 
