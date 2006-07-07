@@ -11,11 +11,6 @@
 #include "physics/Contact.h"
 #include "MaterialManager.h"
 
-#ifndef WIN32
-//windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
-#include <luabind/luabind.hpp>
-#include <luabind/operator.hpp>
-#endif
 
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT_PATH "media/script/"

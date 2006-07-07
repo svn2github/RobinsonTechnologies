@@ -3,6 +3,13 @@
 #include "MovingEntity.h"
 #include "VisualProfile.h"
 
+#ifndef WIN32
+//windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
+#include <luabind/luabind.hpp>
+#include <luabind/operator.hpp>
+#endif
+
+
 Trigger::Trigger()
 {
 	Reset();
