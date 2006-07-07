@@ -32,13 +32,9 @@ typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make
 #define CL_LOWORD(l)           ((cl_uint16)((cl_uint32)(l) & 0xffff))
 #define CL_HIWORD(l)           ((cl_uint16)((cl_uint32)(l) >> 16))
 
-#ifndef max
-	#define max(a,b)    (((a) > (b)) ? (a) : (b))
-#endif
 
-#ifndef min
-	#define min(a,b)    (((a) < (b)) ? (a) : (b))
-#endif
+	#define cl_max(a,b)    (((a) > (b)) ? (a) : (b))
+	#define cl_min(a,b)    (((a) < (b)) ? (a) : (b))
 
 class GameTimer
 {

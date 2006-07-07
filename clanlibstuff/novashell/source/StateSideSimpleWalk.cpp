@@ -1,7 +1,7 @@
 #include "AppPrecomp.h"
 #include "StateSideSimpleWalk.h"
 
-StateSideSimpleWalk registryInstance(NULL); //self register ourselves in the brain registry
+StateSideSimpleWalk registryInstanceSimpleWalk(NULL); //self register ourselves in the brain registry
 
 StateSideSimpleWalk::StateSideSimpleWalk(MovingEntity * pParent):State(pParent)
 {

@@ -2,7 +2,7 @@
 #include "BrainFadeOutAndDelete.h"
 #include "MovingEntity.h"
 
-BrainFadeOutAndDelete registryInstance(NULL); //self register ourselves i nthe brain registry
+BrainFadeOutAndDelete registryInstanceFadeOutAndDelete(NULL); //self register ourselves i nthe brain registry
 
 BrainFadeOutAndDelete::BrainFadeOutAndDelete(MovingEntity * pParent):Brain(pParent)
 {

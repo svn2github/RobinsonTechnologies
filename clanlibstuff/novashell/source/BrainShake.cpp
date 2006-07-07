@@ -2,7 +2,7 @@
 #include "BrainShake.h"
 #include "MovingEntity.h"
 
-BrainShake registryInstance(NULL); //self register ourselves in the brain registry
+BrainShake registryInstanceShake(NULL); //self register ourselves in the brain registry
 
 BrainShake::BrainShake(MovingEntity * pParent):Brain(pParent)
 {

@@ -2,7 +2,7 @@
 #include "StateFrozen.h"
 #include "MovingEntity.h"
 
-StateFrozen registryInstance(NULL); //self register ourselves i nthe brain registry
+StateFrozen registryInstanceFrozen(NULL); //self register ourselves i nthe brain registry
 
 StateFrozen::StateFrozen(MovingEntity * pParent):State(pParent)
 {

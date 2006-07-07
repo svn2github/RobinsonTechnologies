@@ -2,7 +2,7 @@
 #include "StateDie.h"
 #include "MovingEntity.h"
 
-StateDie registryInstance(NULL); //self register ourselves i nthe brain registry
+StateDie registryInstanceDie(NULL); //self register ourselves i nthe brain registry
 
 StateDie::StateDie(MovingEntity * pParent):State(pParent)
 {

@@ -30,7 +30,7 @@
 								//ending
 
 
-BrainPlayer registryInstance(NULL); //self register ourselves in the brain registry
+BrainPlayer registryInstancePlayer(NULL); //self register ourselves in the brain registry
 
 
 BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)

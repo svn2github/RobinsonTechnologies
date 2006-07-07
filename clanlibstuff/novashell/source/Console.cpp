@@ -8,7 +8,7 @@ Console g_Console;
 
 Console::Console()
 { 
-	m_bOnScreen = false;
+	m_bOnScreen = false; 
 }
 
 

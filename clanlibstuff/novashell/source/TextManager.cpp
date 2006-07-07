@@ -78,9 +78,9 @@ void TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
 		b = m_color.get_blue() - 30;
 
 		//force them to be within range
-		r = min(r, 255); r = max(0, r);
-		g = min(g, 255); g = max(0, g);
-		b = min(b, 255); b = max(0, b);
+		r = cl_min(r, 255); r = cl_max(0, r);
+		g = cl_min(g, 255); g = cl_max(0, g);
+		b = cl_min(b, 255); b = cl_max(0, b);
 
 		m_color = CL_Color(r,g,b);
 	} 
@@ -252,7 +252,7 @@ void TextObject::Render()
 	if (!m_bVisible) return;
 
 	//draw a semi transparent box around it so we can read the text easier
-	CL_Display::fill_rect(m_rect, CL_Color(0,0,0,min(130, (m_alpha*180))));
+	CL_Display::fill_rect(m_rect, CL_Color(0,0,0,cl_min(130, (m_alpha*180))));
 	CL_Font *pFont = GetApp()->GetFont(m_fontID);
 	pFont->set_color(m_color);
 	pFont->set_alpha(m_alpha);

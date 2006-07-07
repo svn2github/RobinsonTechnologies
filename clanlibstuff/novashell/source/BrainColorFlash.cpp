@@ -2,7 +2,7 @@
 #include "BrainColorFlash.h"
 #include "MovingEntity.h"
 
-BrainColorFlash registryInstance(NULL); //self register ourselves i nthe brain registry
+BrainColorFlash registryInstanceColorFlash(NULL); //self register ourselves i nthe brain registry
 
 BrainColorFlash::BrainColorFlash(MovingEntity * pParent):Brain(pParent)
 {

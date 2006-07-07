@@ -1,7 +1,7 @@
 #include "AppPrecomp.h"
 #include "StateSideSimpleIdle.h"
 
-StateSideSimpleIdle registryInstance(NULL); //self register ourselves in the brain registry
+StateSideSimpleIdle registryInstanceSimpleSideIdle(NULL); //self register ourselves in the brain registry
 
 StateSideSimpleIdle::StateSideSimpleIdle(MovingEntity * pParent):State(pParent)
 {

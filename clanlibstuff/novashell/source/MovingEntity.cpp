@@ -1111,10 +1111,10 @@ void MovingEntity::Render(void *pTarget)
 	a = m_pTile->GetColor().get_alpha() + m_colorModAlpha;
 
 	//force them to be within range
-	r = min(r, 255); r = max(0, r);
-	g = min(g, 255); g = max(0, g);
-	b = min(b, 255); b = max(0, b);
-	a = min(a, 255); a = max(0, a);
+	r = cl_min(r, 255); r = cl_max(0, r);
+	g = cl_min(g, 255); g = cl_max(0, g);
+	b = cl_min(b, 255); b = cl_max(0, b);
+	a = cl_min(a, 255); a = cl_max(0, a);
 
 	m_pSprite->set_color(CL_Color(r,g,b,a));
 	
