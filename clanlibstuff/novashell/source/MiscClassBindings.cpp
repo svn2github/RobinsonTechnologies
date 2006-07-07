@@ -159,6 +159,7 @@ void luabindMisc(lua_State *pState)
 		,class_<TextManager>("TextManager")
 		.def("Add", &TextManager::Add)
 		.def("AddCustom", &TextManager::AddCustom)
+		.def("AddCustomScreen", &TextManager::AddCustomScreen)
 
 		,class_<World>("Map")
 		.def("SetPersistent", &World::SetPersistent)

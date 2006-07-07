@@ -29,18 +29,21 @@ public:
 	bool GetColorOdd() {return m_bColorOdd;};
 	void InitCustom(const string &text, MovingEntity * pEnt, const CL_Vector2 &vecPos,
 		const CL_Vector2 &vecMovement, const CL_Color &col, int timetoShowMS, int fontID);
-	
+
 	enum Mode
 	{
 		DIALOG,
-		CUSTOM
+		CUSTOM,
+		CUSTOM_SCREEN
 	};
+
+	void SetMode(Mode mode) {m_mode = mode;}
+	Mode GetMode(){return m_mode;}
 	
+
 private:
 
 	CL_Point CalculateTextAvoidenceOffset();
-	void SetMode(Mode mode) {m_mode = mode;}
-	Mode GetMode(){return m_mode;}
 	bool UpdateDialog();
 	bool UpdateCustom();
 
@@ -80,7 +83,13 @@ public:
 	int GetCountOfTextActiveForEntity(const MovingEntity *pEnt);
 	TextObject * GetLastTextForEntity(const MovingEntity *pEnt);
 	void Reset();
+	
+	//Like Add, but gives more control, allows you to set the font, color, scrolling speed
 	void AddCustom(const string &text, const MovingEntity *pEnt, const CL_Vector2 &vecPos,
+		const CL_Vector2 &vecMovement, const CL_Color &col, int timeToShowMS, int fontID);
+	
+	//Like AddCustom but uses screen coordinates, won't scroll with world movement
+	void AddCustomScreen(const string &text, const CL_Vector2 &vecPos,
 		const CL_Vector2 &vecMovement, const CL_Color &col, int timeToShowMS, int fontID);
 
 protected:

@@ -127,9 +127,13 @@ CL_Vector2 MakeNormal(CL_Vector2 &a, CL_Vector2 &b)
 }
 void BlitMessage(string msg)
 {
+
+	CL_Font *pFont = GetApp()->GetFont(C_FONT_NORMAL);
+
+	ResetFont(pFont);
 	CL_GlyphBuffer gb;
 	CL_TextStyler ts;
-	ts.add_font("default", *GetApp()->GetFont(C_FONT_NORMAL));
+	ts.add_font("default", *pFont);
 	ts.draw_to_gb(msg, gb);
 	gb.set_alignment(origin_center);
 	gb.set_scale(1.5,1.5);

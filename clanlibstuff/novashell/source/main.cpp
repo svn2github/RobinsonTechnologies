@@ -117,6 +117,7 @@ unsigned int App::GetUniqueNumber()
 void App::OneTimeDeinit()
 {
    
+	SAFE_DELETE(g_pSoundManager);
 	SAFE_DELETE(m_pGameLogic);
 	SAFE_DELETE(m_pScriptManager);
 

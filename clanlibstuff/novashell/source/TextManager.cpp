@@ -3,6 +3,8 @@
 #include "TextManager.h"
 #include "MovingEntity.h"
 
+#define C_TEXT_FADE_IN_SPEED_MS 200
+
 TextManager g_textManager;
 
 TextObject::TextObject(TextManager *pTextManager)
@@ -168,9 +170,19 @@ bool TextObject::UpdateCustom()
 	//apply movement
 	m_vecDisplacement += m_vecMovement;
 
-	CL_Vector2 entPos = GetWorldCache->WorldToScreen(m_worldPos);
+	
+	CL_Vector2 entPos;
+	
+	if (GetMode() == CUSTOM)
+	{
+		entPos = GetWorldCache->WorldToScreen(m_worldPos);
+	} else
+	{
+		entPos = m_worldPos;
+		//screen coordinates used
+	}
+	
 	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - (m_rect.bottom));
-
 	m_pos += CL_Point(m_vecDisplacement.x, m_vecDisplacement.y);
 	m_rect.apply_alignment(origin_top_left, -m_pos.x, -m_pos.y);
 	
@@ -203,7 +215,17 @@ bool TextObject::Update()
 		m_alpha = ( float(timeLeft) / float(fadeOutTimeMS));
 	} else
 	{
+		
 		m_alpha = 1;
+
+		//but wait, should we fade in now?
+		
+		int timeElapsed = m_timeToShowMS - timeLeft;
+		
+		if (timeElapsed < C_TEXT_FADE_IN_SPEED_MS)
+		{
+			m_alpha = float(timeElapsed)/ float(C_TEXT_FADE_IN_SPEED_MS);
+		}
 	}
 
 
@@ -214,6 +236,7 @@ bool TextObject::Update()
 		break;
 
 	case CUSTOM:
+	case CUSTOM_SCREEN:
 		return UpdateCustom();
 		break;
 
@@ -228,11 +251,8 @@ void TextObject::Render()
 {
 	if (!m_bVisible) return;
 
-
 	//draw a semi transparent box around it so we can read the text easier
-
-	CL_Display::fill_rect(m_rect, CL_Color(0,0,0,min(70, (m_alpha*180))));
-
+	CL_Display::fill_rect(m_rect, CL_Color(0,0,0,min(130, (m_alpha*180))));
 	CL_Font *pFont = GetApp()->GetFont(m_fontID);
 	pFont->set_color(m_color);
 	pFont->set_alpha(m_alpha);
@@ -261,8 +281,20 @@ void TextManager::AddCustom(const string &text, const MovingEntity *pEnt, const 
 
 	m_textList.rbegin()->InitCustom(text, const_cast<MovingEntity*>(pEnt),
 		vecPos, vecMovement, col, timeToShowMS, fontID);
+}
+
+void TextManager::AddCustomScreen(const string &text, const CL_Vector2 &vecPos,
+							const CL_Vector2 &vecMovement, const CL_Color &col, int timeToShowMS, int fontID)
+{
+	TextObject t(this);
+	m_textList.push_back(t);
+
+	m_textList.rbegin()->InitCustom(text, NULL,
+		vecPos, vecMovement, col, timeToShowMS, fontID);
+	m_textList.rbegin()->SetMode(TextObject::CUSTOM_SCREEN);
 
 }
+
 void TextManager::Add(const string &text, MovingEntity *pEnt)
 {
 	if (!pEnt)
@@ -279,9 +311,7 @@ void TextManager::Add(const string &text, MovingEntity *pEnt)
 	
 	TextObject t(this);
 	m_textList.push_back(t);
-
 	m_textList.rbegin()->Init(text, const_cast<MovingEntity*>(pEnt), C_FONT_NORMAL);
-
 }
 
 int TextManager::GetCountOfTextActiveForEntity(const MovingEntity *pEnt)
@@ -356,6 +386,5 @@ void TextManager::Render()
 		itor->Render();
 		itor++;
 	}
-
 }
 
