@@ -8,3 +8,6 @@ seths_cdx_fixes.zip
 \cdx\lib\
 .ncb
 \lib\clanlib\
+.sfk
+.sfl
+.thm

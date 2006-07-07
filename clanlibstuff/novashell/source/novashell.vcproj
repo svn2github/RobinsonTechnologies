@@ -542,11 +542,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainFadeOutAndDie.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainFadeOutAndDie.h"
+						RelativePath=".\BrainFadeOutAndDelete.cpp"
 						>
 					</File>
 					<File

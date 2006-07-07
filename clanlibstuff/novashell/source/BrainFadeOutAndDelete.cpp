@@ -1,10 +1,10 @@
 #include "AppPrecomp.h"
-#include "BrainFadeOutAndDie.h"
+#include "BrainFadeOutAndDelete.h"
 #include "MovingEntity.h"
 
-BrainFadeOutAndDie registryInstance(NULL); //self register ourselves i nthe brain registry
+BrainFadeOutAndDelete registryInstance(NULL); //self register ourselves i nthe brain registry
 
-BrainFadeOutAndDie::BrainFadeOutAndDie(MovingEntity * pParent):Brain(pParent)
+BrainFadeOutAndDelete::BrainFadeOutAndDelete(MovingEntity * pParent):Brain(pParent)
 {
 	if (!pParent)
 	{
@@ -18,11 +18,11 @@ BrainFadeOutAndDie::BrainFadeOutAndDie(MovingEntity * pParent):Brain(pParent)
 
 }
 
-BrainFadeOutAndDie::~BrainFadeOutAndDie()
+BrainFadeOutAndDelete::~BrainFadeOutAndDelete()
 {
 }
 
-void BrainFadeOutAndDie::HandleMsg(const string &msg)
+void BrainFadeOutAndDelete::HandleMsg(const string &msg)
 {
 	vector<string> messages = CL_String::tokenize(msg, ";",true);
 
@@ -42,7 +42,7 @@ void BrainFadeOutAndDie::HandleMsg(const string &msg)
 
 }
 
-void BrainFadeOutAndDie::Update(float step)
+void BrainFadeOutAndDelete::Update(float step)
 {
 	//set alpha for fading
 	int timeLeft = (m_timeCreated+ m_fadeOutTimeMS) - GetApp()->GetGameTick();
