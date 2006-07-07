@@ -146,9 +146,9 @@ void App::OneTimeInit()
   
     //initalize our main window
 
-	bool bFullscreen = false;
+	bool bFullscreen = true;
 #ifdef _DEBUG
-	//bFullscreen = false;
+	bFullscreen = false;
 #endif
     m_WindowDescription.set_fullscreen(bFullscreen);
     m_WindowDescription.set_bpp(32);
