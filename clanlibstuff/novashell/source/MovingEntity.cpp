@@ -1157,6 +1157,9 @@ void MovingEntity::Render(void *pTarget)
 	//vecPos.x = RoundNearest(vecPos.x, 1.0f);
 	//vecPos.y = RoundNearest(vecPos.y, 1.0f);
 
+	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+
 	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 
 	m_pSprite->set_angle_yaw(yawHold);

@@ -245,6 +245,9 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 
 	pSurf->set_color(pTile->GetColor());
 	CL_OpenGLWindow *pGLW = (CL_OpenGLWindow*) GetApp()->GetMainWindow();
+	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+
 	pSurf->draw(pTile->m_rectSrc, rectDest, pGC);
 }
 
