@@ -117,12 +117,13 @@ unsigned int App::GetUniqueNumber()
 void App::OneTimeDeinit()
 {
    
-	SAFE_DELETE(g_pSoundManager);
 	SAFE_DELETE(m_pGameLogic);
 	SAFE_DELETE(m_pScriptManager);
 
 	SAFE_DELETE(m_pCamera);
-    SAFE_DELETE(m_pBackgroundCanvas);
+	SAFE_DELETE(g_pSoundManager);
+
+	SAFE_DELETE(m_pBackgroundCanvas);
     SAFE_DELETE(m_pBackground);
 
     for (int i=0; i < C_FONT_COUNT; i++)
@@ -150,11 +151,17 @@ void App::OneTimeInit()
 #ifdef _DEBUG
 	bFullscreen = false;
 #endif
-    m_WindowDescription.set_fullscreen(bFullscreen);
+    
+	if (ParmExists("-window") || ParmExists("-windowed"))
+	{
+		bFullscreen = false;
+	}
+	
+	m_WindowDescription.set_fullscreen(bFullscreen);
     m_WindowDescription.set_bpp(32);
     m_WindowDescription.set_title("Novashell Engine Test");
     m_WindowDescription.set_allow_resize(false);
-    m_WindowDescription.set_size(CL_Size(1024,768));
+    m_WindowDescription.set_size(CL_Size(1024, 768));
 //	m_WindowDescription.set_size(CL_Size(800,600));
     m_WindowDescription.set_flipping_buffers(2);
     m_WindowDescription.set_refresh_rate(75);
@@ -189,13 +196,16 @@ void App::OneTimeInit()
 	m_pVisualProfileManager = new VisualProfileManager;
 
 #ifdef C_USE_FMOD
+	if (!ParmExists("-nosound"))
 	g_pSoundManager = new CFMSoundManager;
 #else
-	
+	if (!ParmExists("-nosound"))
 	g_pSoundManager = new CL_SoundManager;
-#endif
-	g_pSoundManager->Init();
 
+#endif
+	
+	if (g_pSoundManager)
+	g_pSoundManager->Init();
 
 	m_pScriptManager = new ScriptManager;
 	m_pGameLogic = new GameLogic();
@@ -407,17 +417,38 @@ void log_to_cout(const std::string &channel, int level, const std::string &messa
 	LogMsg(string("[" + channel + "] " + message).c_str());
 }
 
+bool App::ParmExists(const string &parm)
+{
+	
+	vector<string>::iterator itor = m_startupParms.begin();
+
+	while (itor != m_startupParms.end())
+	{
+		if (*itor == parm) return true;
+		itor++;
+	}
+
+	return false;
+}
+
+
 int App::main(int argc, char **argv)
 {
-    //first move to our current dir
+ 
+	//first move to our current dir
 CL_Directory::change_to(CL_System::get_exe_path());
-
 
 #ifndef _DEBUG
 #define C_APP_REDIRECT_STREAM
 	stream_redirector redirect("log.txt", "log.txt");
 	
 #endif
+
+	for (int i=1; i < argc; i++)
+	{
+		m_startupParms.push_back(argv[i]);
+		LogMsg("Found parm %s", argv[i]);
+	}
 
     try
     {
@@ -429,6 +460,8 @@ CL_Directory::change_to(CL_System::get_exe_path());
         CL_SetupGL setup_gl;
 
 #ifndef C_USE_FMOD
+
+		//if (!ParmExists("-nosound"))
 
 		CL_SetupSound setup_sound;
 		CL_SetupVorbis setup_vorbis;
@@ -487,7 +520,14 @@ CL_Directory::change_to(CL_System::get_exe_path());
 				    if (m_pGameLogic->GetShowFPS()) 
 					{
 						ResetFont(GetFont(C_FONT_NORMAL));
-						 GetFont(C_FONT_NORMAL)->draw(GetScreenX-120,0, "FPS: " + CL_String::from_int(framerate.get_fps()));
+						
+						int tiles = 0;
+						if (GetWorldCache)
+						{
+							tiles = GetWorldCache->GetTilesRenderedLastFrameCount();
+						}
+						GetFont(C_FONT_NORMAL)->draw(GetScreenX-200,0, "FPS: " + CL_String::from_int(framerate.get_fps())
+							+" T: "+CL_String::from_int(tiles));
 					}
 
 					 // Flip the display, showing on the screen what we have drawed
@@ -531,9 +571,18 @@ CL_Directory::change_to(CL_System::get_exe_path());
         std::cout << "CL_Error Exception caught : " << error.message.c_str() << std::endl;			
         
         // Display console close message and wait for a key
+		OneTimeDeinit();
+
 
 #ifdef WIN32
-		MessageBox(NULL, error.message.c_str(), "Error!", MB_ICONEXCLAMATION);
+		if (error.message.find("WGL_ARB_pbuffer") != std::string::npos)
+		{
+			MessageBox(NULL, (error.message + "\n\nThis can probably be fixed by installing the latest drivers for your video card.").c_str(), "Error!", MB_ICONEXCLAMATION);
+
+		} else
+		{
+			MessageBox(NULL, error.message.c_str(), "Error!", MB_ICONEXCLAMATION);
+		}
 #endif
 
 #ifdef _DEBUG
@@ -546,7 +595,6 @@ CL_Directory::change_to(CL_System::get_exe_path());
 		std::cout << "CL_Error Exception caught : " << error.message.c_str() << std::endl;			
 #endif
 #endif
-		
 		//PostQuitMessage(0);
     }
     
@@ -557,7 +605,6 @@ CL_Directory::change_to(CL_System::get_exe_path());
         MessageBox(NULL, error.message.c_str(), "Early Error!", MB_ICONEXCLAMATION);
 #else
         std::cout << "Early Exception caught : " << error.message.c_str() << std::endl;			
-
 #endif
 
 #ifdef __APPLE__

@@ -66,6 +66,7 @@ public:
 		{
 			if (m_handle == 0)
 			{
+				if (m_pSoundManager)
 				m_handle = m_pSoundManager->PlayLooping(m_file.c_str());
 			}
 		} else
@@ -73,6 +74,7 @@ public:
 			if (m_handle != 0)
 			{
 				//let's shut it off
+				if (m_pSoundManager)
 				m_pSoundManager->KillChannel(m_handle);
 				m_handle = 0;
 			}

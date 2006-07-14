@@ -60,6 +60,7 @@ CL_Vector2 EntWorldCache::ModifiedWorldToWorld(const CL_Vector2 &vecWorld, const
 CL_Vector2 EntWorldCache::ScreenToWorld(const CL_Vector2 &vecScreen)
 {
 
+/*
 #ifdef _DEBUG
 	if (!GetWorld->IsValidCoordinate(GetCamera->GetPos()))
 	{
@@ -68,7 +69,7 @@ CL_Vector2 EntWorldCache::ScreenToWorld(const CL_Vector2 &vecScreen)
 		GetCamera->Reset();
 	}
 #endif
-
+*/
 
 	CL_Vector2 v;
 	v.x =  (GetCamera->GetPos().x)+ (vecScreen.x/GetCamera->GetScale().x);
@@ -236,8 +237,37 @@ void EntWorldCache::ResetPendingEntityMovementAndDeletions()
 	m_entityList.clear();
 }
 
-void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec )
+void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec, bool bDontAddToDrawList )
 {
+	
+	/*
+	//slower way I was testing with
+	
+	//get all screens that we'll be able to see
+
+	tile_list tileList;
+	AddTilesByRect(viewRect, &tileList, layerIDVec);
+
+	static tile_list::iterator itor;
+
+	itor = tileList.begin();
+
+	while (itor != tileList.end())
+	{
+		if (!bDontAddToDrawList)
+		{
+			m_tileLayerDrawList.push_back(*itor);
+		}
+
+		if ( (*itor)->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			m_entityList.push_back(   ((TileEntity*)(*itor))->GetEntity()    );
+		} 
+
+		itor++;
+	}
+	*/
+
 	//get all screens that we'll be able to see
 
 	m_worldChunkVector.clear();
@@ -256,7 +286,7 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 			pTileList =  (*itor)->GetScreen()->GetTileList(layerIDVec[i]);
 
 			pLayer = &m_pWorld->GetLayerManager().GetLayerInfo(layerIDVec[i]);
-			
+
 			tileListItor = pTileList->begin();
 
 			while (tileListItor != pTileList->end())
@@ -272,18 +302,27 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 				{
 					pTile->SetLastScanID(renderID); //helps us not draw something twice, due to ghost references
 
+					if (!pTile->GetWorldRectInt().is_overlapped(viewRect))
+					{
+						tileListItor++;
+						continue;
+					} 
+
 					if (
 						(!GetGameLogic->GetEditorActive() && pLayer->GetShowInEditorOnly())
-					|| !pLayer->IsDisplayed() )
+						|| !pLayer->IsDisplayed() )
 					{
 						//don't render this
-				
+						
 					} else
 					{
+					
+						
 						m_tileLayerDrawList.push_back(pTile);
+						
 					}
 
-				
+
 					if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 					{
 						m_entityList.push_back( ((TileEntity*)pTile)->GetEntity());
@@ -296,7 +335,33 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 		}
 	}
 
+
+
 }
+
+
+//erm, never do this
+
+//only used here!
+LayerManager *g_pLayerManager;
+
+bool compareTileBySortLevelOptimized(const Tile *pA, const Tile *pB) 
+{
+	static int aLayer, bLayer;
+	
+	aLayer = g_pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort();
+	bLayer = g_pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
+
+	if (aLayer == bLayer)
+	{
+		//extra checking for depth queuing
+		return ((Tile*)(pA))->GetWorldRect().bottom < ((Tile*)(pB))->GetWorldRect().bottom;
+	} else
+	{
+		return aLayer < bLayer;
+	}
+}
+
 
 void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail)
 {
@@ -319,13 +384,16 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 	LayerManager &layerMan = m_pWorld->GetLayerManager();
 	CL_Vector2 scrollMod;
 
-	vector<unsigned int> layerIdVecStandard; //default layers clumped together to process faster
-	vector<unsigned int> layerIdVecSpecial; //special layers does separately
-	bool bNoParallax = true;
+	static vector<unsigned int> layerIdVecStandard; //default layers clumped together to process faster
+	static vector<unsigned int> layerIdVecSpecial; //special layers does separately
+	
+	layerIdVecStandard.clear();
+
+	static bool bNoParallax;
+	static bool bDontAddToDrawList;
 
 	for (unsigned int i=0; i < layerMan.GetLayerCount(); i++)
 	{
-		
 		Layer &layer = layerMan.GetLayerInfo(i);
 
 		if (bMakingThumbnail)
@@ -337,14 +405,26 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 			if (!layer.IsDisplayed() && !layer.GetShowInEditorOnly()) continue; //we're told not to show it
 		}
 
-			
+		bNoParallax = true;
+		bDontAddToDrawList = false;
+	
 		scrollMod = layer.GetScrollMod();
-
-		 //|| !GetGameLogic->GetEditorActive())
-		if ( GetGameLogic->GetParallaxActive() || (scrollMod !=  CL_Vector2::ZERO))
+			 
+		if ( GetGameLogic->GetParallaxActive() && (scrollMod !=  CL_Vector2::ZERO))
 		{
 			bNoParallax = false; //we need special handling
 		}
+	
+		if (layer.GetShowInEditorOnly())
+		{
+			if (!GetGameLogic->GetEditorActive() || !layer.IsDisplayed())
+			{
+				//well, we don't want to show this, but we do want its entities to get processed.
+				bNoParallax = false;
+				bDontAddToDrawList = true;
+			}
+		}
+		
 		if (bMakingThumbnail)
 		{
 			if (!layer.GetUseParallaxInThumbnail())
@@ -366,18 +446,29 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 			CL_Rect modViewRect = viewRect;
 			CL_Vector2 vOffset = WorldToModifiedWorld(CL_Vector2(0,0), scrollMod);
 			modViewRect.apply_alignment(origin_top_left, vOffset.x, vOffset.y);
-			AddSectionToDraw(renderID, modViewRect, layerIdVecSpecial);
+			AddSectionToDraw(renderID, modViewRect, layerIdVecSpecial, bDontAddToDrawList );
 			continue;
 		}
 	}
 
+	//LogMsg("Specials gave us %d tiles.", m_tileLayerDrawList.size());
 	//add all the normals
-	AddSectionToDraw(renderID, viewRect, layerIdVecStandard);
+	AddSectionToDraw(renderID, viewRect, layerIdVecStandard, false);
 
+	//LogMsg("Sorting %d tiles.  %d entities found. %d normal layers.", m_tileLayerDrawList.size(), m_entityList.size(),
+	//	layerIdVecStandard.size());
+	//LogMsg("Viewrect is %s.  Drawing %d tiles", PrintRect(viewRect).c_str(), m_tileLayerDrawList.size());
 	//sort the tiles/entities we're going to draw by layer
-	std::sort(m_tileLayerDrawList.begin(), m_tileLayerDrawList.end(), compareTileByLayer);
-}
+	g_pLayerManager = &GetWorld->GetLayerManager();
+	std::sort(m_tileLayerDrawList.begin(), m_tileLayerDrawList.end(), compareTileBySortLevelOptimized);
 
+	if (m_bDrawWorldChunkGrid)
+	{
+		m_worldChunkVector.clear();
+		m_pWorld->GetAllWorldChunksWithinThisRect(m_worldChunkVector, viewRect, false);
+	}
+
+}
 
 void EntWorldCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 {
@@ -389,12 +480,14 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
 {
 	CL_Rect rec(recArea);
 	rec.normalize();
-    int startingX = rec.left;
+    static int startingX;
 	unsigned int scanID = GetApp()->GetUniqueNumber();
-	CL_Rect scanRec;
-	WorldChunk *pWorldChunk;
-	CL_Rect screenRec;
-	bool bScanMoreOnTheRight, bScanMoreOnTheBottom;
+	static CL_Rect scanRec;
+	static WorldChunk *pWorldChunk;
+	static CL_Rect screenRec;
+	static bool bScanMoreOnTheRight, bScanMoreOnTheBottom;
+
+	startingX = rec.left;
 
 	while (1)
 	{

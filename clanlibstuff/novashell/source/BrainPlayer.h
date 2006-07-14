@@ -54,7 +54,6 @@ protected:
 	void CheckForLadder();
 	void OnAction();
 	void CheckForDoor();
-	void AssignPlayerToCameraIfNeeded();
 	void CheckForMovement();
 	void CalculateForce(CL_Vector2 &force, float step);
 	void CheckForAttack();
@@ -78,8 +77,11 @@ protected:
 	bool m_bFrozen;
 
 	GameTimer m_attackTimer;
-	
-
 };
+
+void AssignPlayerToCameraIfNeeded(MovingEntity *pEnt);
+void RemoveActivePlayerIfNeeded(MovingEntity *pEnt);
+
+
 
 #endif                  // include guard

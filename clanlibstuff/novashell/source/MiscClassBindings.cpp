@@ -147,6 +147,7 @@ void luabindMisc(lua_State *pState)
 		.def("SetGameSpeed", &App::SetGameSpeed)
 		.def("GetGameTick", &App::GetGameTick)
 		.def("GetTick", &App::GetTick)
+		.def("ParmExists", &App::ParmExists)
 
 		,class_<ISoundManager>("SoundManager")
 		.def("PlayMusic", &ISoundManager::PlayMusic)

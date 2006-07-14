@@ -160,6 +160,7 @@ Tile * Tile::CreateReference(Screen *pScreen)
 
 void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 {
+	
 	static CL_OpenGLSurface *pSurf;
 	static CL_Vector2 vecScale;
 	

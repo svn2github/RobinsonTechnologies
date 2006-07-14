@@ -474,6 +474,7 @@ void GameLogic::Update(float step)
 		Init();
 	}
 	
+	if (g_pSoundManager)
 	g_pSoundManager->UpdateSounds();
 	g_MessageManager.Update();
 	GetCamera->Update(step);

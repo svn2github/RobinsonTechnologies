@@ -347,6 +347,29 @@ Zone * MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
  return NULL; //nothing found
 }
 
+Zone * MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
+{
+	static CL_Rectf r;
+	r = GetCollisionData()->GetLineList()->begin()->GetRect();
+
+	for (unsigned int i=0; i < m_zoneVec.size(); i++)
+	{
+		if (g_materialManager.GetMaterial(m_zoneVec[i].m_materialID)->GetType() == matType)
+		{
+			r += *(CL_Pointf*)&(GetPos());
+
+			if (r.is_overlapped(m_zoneVec[i].m_boundingRect + *(CL_Pointf*)&(m_zoneVec[i].m_vPos)) )
+			{
+
+				return &m_zoneVec[i]; //valid for the rest of this frame
+			}
+			
+		}
+	}
+
+	return NULL; //nothing found
+}
+
 Zone * MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType)
 {
 	static CL_Vector2 v;

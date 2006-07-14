@@ -83,6 +83,26 @@ CL_Vector2 FacingToVector(int facing)
 	case VisualProfile::FACING_RIGHT:
 		return CL_Vector2(1,0);
 
+	case VisualProfile::FACING_UP:
+		return CL_Vector2(0,-1);
+
+	case VisualProfile::FACING_DOWN:
+		return CL_Vector2(0,1);
+
+	case VisualProfile::FACING_UP_LEFT:
+		return CL_Vector2(-1,-1);
+
+	case VisualProfile::FACING_DOWN_LEFT:
+		return CL_Vector2(-1,1);
+
+
+	case VisualProfile::FACING_UP_RIGHT:
+		return CL_Vector2(1,-1);
+
+	case VisualProfile::FACING_DOWN_RIGHT:
+		return CL_Vector2(1,1);
+
+
 	default:
 
 		throw CL_Error("Unknown facing");

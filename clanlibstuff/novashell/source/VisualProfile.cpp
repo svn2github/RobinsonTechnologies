@@ -12,11 +12,38 @@ VisualProfile::VisualProfile()
 	m_animArray[IDLE_LEFT].m_name = "idle_left";
 	m_animArray[IDLE_RIGHT].m_name = "idle_right";
 
+	m_animArray[IDLE_UP].m_name = "idle_up";
+	m_animArray[IDLE_DOWN].m_name = "idle_down";
+
+	m_animArray[IDLE_UP_LEFT].m_name = "idle_up_left";
+	m_animArray[IDLE_DOWN_LEFT].m_name = "idle_down_left";
+
+	m_animArray[IDLE_UP_RIGHT].m_name = "idle_up_right";
+	m_animArray[IDLE_DOWN_RIGHT].m_name = "idle_down_right";
+
 	m_animArray[WALK_LEFT].m_name = "walk_left";
 	m_animArray[WALK_RIGHT].m_name = "walk_right";
 
+	m_animArray[WALK_UP].m_name = "walk_up";
+	m_animArray[WALK_DOWN].m_name = "walk_down";
+
+	m_animArray[WALK_UP_LEFT].m_name = "walk_up_left";
+	m_animArray[WALK_DOWN_LEFT].m_name = "walk_down_left";
+
+	m_animArray[WALK_UP_RIGHT].m_name = "walk_up_right";
+	m_animArray[WALK_DOWN_RIGHT].m_name = "walk_down_right";
+
 	m_animArray[RUN_LEFT].m_name = "run_left";
 	m_animArray[RUN_RIGHT].m_name = "run_right";
+
+	m_animArray[RUN_UP].m_name = "run_up";
+	m_animArray[RUN_DOWN].m_name = "run_down";
+
+	m_animArray[RUN_UP_LEFT].m_name = "run_up_left";
+	m_animArray[RUN_DOWN_LEFT].m_name = "run_down_left";
+
+	m_animArray[RUN_UP_RIGHT].m_name = "run_up_right";
+	m_animArray[RUN_DOWN_RIGHT].m_name = "run_down_right";
 
 	m_animArray[PAIN_LEFT].m_name = "pain_left";
 	m_animArray[PAIN_RIGHT].m_name = "pain_right";
@@ -50,7 +77,15 @@ CL_Sprite * VisualProfile::GetSpriteByAnimID(int animID)
 
 		if (!IsActive(animID))
 		{
-			throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID) );
+			
+			if (!IsActive(IDLE_LEFT))
+			{
+				throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID));
+			} else
+			{
+				LogError( ("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)).c_str() );
+			}
+			return m_animArray[IDLE_LEFT].m_pSprite;
 		}
 	}
 
@@ -64,15 +99,103 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 	switch (eState)
 	{
 	case VISUAL_STATE_IDLE:
-		if (eFacing == FACING_LEFT) animID = IDLE_LEFT; else animID = IDLE_RIGHT;
+		
+		switch(eFacing)
+		{
+			case FACING_LEFT: animID = IDLE_LEFT; break;
+			case FACING_RIGHT: animID = IDLE_RIGHT;break;
+			case FACING_UP: animID = IDLE_UP;break;
+			case FACING_DOWN: animID = IDLE_DOWN;break;
+
+			case FACING_UP_LEFT: animID = IDLE_UP_LEFT; break;
+			case FACING_DOWN_LEFT: animID = IDLE_DOWN_LEFT; break;
+			case FACING_UP_RIGHT: animID = IDLE_UP_RIGHT; break;
+			case FACING_DOWN_RIGHT: animID = IDLE_DOWN_RIGHT; break;
+		}
+		if (!IsActive(animID))
+		{
+			//if it's something small, let's fix it ourself
+			switch (animID)
+			{
+			case IDLE_UP_RIGHT:
+			case IDLE_UP_LEFT:
+				animID = IDLE_UP;
+				break;
+
+			case IDLE_DOWN_RIGHT:
+			case IDLE_DOWN_LEFT:
+				animID = IDLE_DOWN;
+				break;
+			}
+		}
+		
 		break;
 
 	case VISUAL_STATE_RUN:
-		if (eFacing == FACING_LEFT) animID = RUN_LEFT; else animID = RUN_RIGHT;
+		switch(eFacing)
+		{
+		case FACING_LEFT: animID = RUN_LEFT; break;
+		case FACING_RIGHT: animID = RUN_RIGHT; break;
+		case FACING_UP: animID = RUN_UP; break;
+		case FACING_DOWN: animID = RUN_DOWN; break;
+
+		case FACING_UP_LEFT: animID = RUN_UP_LEFT; break;
+		case FACING_DOWN_LEFT: animID = RUN_DOWN_LEFT; break;
+		case FACING_UP_RIGHT: animID = RUN_UP_RIGHT; break;
+		case FACING_DOWN_RIGHT: animID = RUN_DOWN_RIGHT; break;
+		}
+		if (!IsActive(animID))
+		{
+			//if it's something small, let's fix it ourself
+			switch (animID)
+			{
+			case RUN_UP_RIGHT:
+			case RUN_UP_LEFT:
+				animID = RUN_UP;
+				break;
+
+			case RUN_DOWN_RIGHT:
+			case RUN_DOWN_LEFT:
+				animID = RUN_DOWN;
+				break;
+
+			}
+		}	
+		
 		break;
 
 	case VISUAL_STATE_WALK:
-		if (eFacing == FACING_LEFT) animID = WALK_LEFT; else animID = WALK_RIGHT;
+		switch(eFacing)
+		{
+		case FACING_LEFT: animID = WALK_LEFT; break;
+		case FACING_RIGHT: animID = WALK_RIGHT; break;
+		case FACING_UP: animID = WALK_UP; break;
+		case FACING_DOWN: animID = WALK_DOWN; break;
+
+		case FACING_UP_LEFT: animID = WALK_UP_LEFT; break;
+		case FACING_DOWN_LEFT: animID = WALK_DOWN_LEFT; break;
+		case FACING_UP_RIGHT: animID = WALK_UP_RIGHT; break;
+		case FACING_DOWN_RIGHT: animID = WALK_DOWN_RIGHT; break;
+		}	
+		
+		if (!IsActive(animID))
+		{
+			//if it's something small, let's fix it ourself
+			switch (animID)
+			{
+			case WALK_UP_RIGHT:
+			case WALK_UP_LEFT:
+				animID = WALK_UP;
+				break;
+
+			case WALK_DOWN_RIGHT:
+			case WALK_DOWN_LEFT:
+				animID = WALK_DOWN;
+				break;
+
+			}
+		}
+		
 		break;
 
 	case VISUAL_STATE_PAIN:
@@ -97,8 +220,11 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 
 	if (!IsActive(animID))
 	{
+			
 		throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)+" (" + m_animArray[animID].m_name+")" );
 	}
+
+	
 	return m_animArray[animID].m_pSprite;
 
 }
@@ -159,12 +285,11 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 		//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 	} catch(CL_Error error)
 	{
-		LogMsg("Error with putting anim %s as state %s while building profile %s.  Make sure you spelled it right and it's in the xml. (%s)",
+		LogMsg("Error with putting anim %s as state %s while building profile %s.  Make sure you spelled it right and it's in the xml.\n(%s)",
 			stSpriteName.c_str(), stState.c_str(), GetName().c_str(), error.message.c_str());
 		SAFE_DELETE(m_animArray[animID].m_pSprite);
 		return;
 	}
-
 
 	if (mirrory)
 	{

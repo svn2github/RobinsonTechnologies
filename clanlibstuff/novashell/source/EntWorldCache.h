@@ -48,6 +48,7 @@ public:
 	void RenderViewList(CL_GraphicContext *pGC);
 	void RemoveTileFromList(Tile *pTile);
 	unsigned int GetUniqueDrawID() { return m_uniqueDrawID;}
+	int GetTilesRenderedLastFrameCount() {return m_tileLayerDrawList.size();}
 
 protected:
 
@@ -55,7 +56,7 @@ protected:
 	void RemoveScreenFromCache(ScreenID screenID);
 	void ProcessPendingEntityMovementAndDeletions();
 	void ResetPendingEntityMovementAndDeletions();
-	void AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec );
+	void AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec, bool bDontAddToDrawList );
 
 	World *m_pWorld; 
 	

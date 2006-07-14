@@ -112,6 +112,8 @@ public:
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
   Zone * GetZoneWeAreOnByMaterialType(int matType);
   Zone * GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType);
+  Zone * GetNearbyZoneByCollisionRectAndType(int matType);
+
   bool InZoneByMaterialType(int matType) {return GetZoneWeAreOnByMaterialType(matType) != NULL;}
   bool GetOnLadder() {return m_bOnLadder;}
   void SetOnLadder(bool bOnLadder) {m_bOnLadder = bOnLadder;}

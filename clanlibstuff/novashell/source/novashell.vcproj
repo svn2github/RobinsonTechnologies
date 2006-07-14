@@ -577,6 +577,14 @@
 						RelativePath=".\BrainSideBase.h"
 						>
 					</File>
+					<File
+						RelativePath=".\BrainTopPlayer.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainTopPlayer.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="States"

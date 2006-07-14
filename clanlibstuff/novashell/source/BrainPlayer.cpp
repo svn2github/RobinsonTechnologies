@@ -58,28 +58,31 @@ BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 	m_attackTimer.SetInterval(200);
 }
 
-void BrainPlayer::AssignPlayerToCameraIfNeeded()
+void AssignPlayerToCameraIfNeeded(MovingEntity *pEnt)
 {
 	//there can only be one OFFICIAL player, but I like letting the editor
 	//cut and paste the editor and making dupes so I need to pay special care
 	//like this
 	if (!GetGameLogic->GetEditorActive() && !GetGameLogic->GetMyPlayer())  
 	{
-		GetGameLogic->SetMyPlayer(m_pParent);
+		GetGameLogic->SetMyPlayer(pEnt);
 		SetCameraToTrackPlayer();
 	}
 }
 
-BrainPlayer::~BrainPlayer()
+void RemoveActivePlayerIfNeeded(MovingEntity *pEnt)
 {
-   //LogMsg("Killing player %x (parent %x)", this, m_pParent);
-	if (GetGameLogic && GetGameLogic->GetMyPlayer() == m_pParent)
+	if (GetGameLogic && GetGameLogic->GetMyPlayer() == pEnt)
 	{
 		GetGameLogic->SetMyPlayer(NULL);
 		GetCamera->SetEntTracking(0);
 	}
 }
 
+BrainPlayer::~BrainPlayer()
+{
+ 	RemoveActivePlayerIfNeeded(m_pParent);
+}
 
 void BrainPlayer::ResetKeys()
 {
@@ -96,11 +99,9 @@ void BrainPlayer::OnKeyDown(const CL_InputEvent &key)
 		m_Keys |= C_KEY_ATTACK;
 		break;
 
-
 	case CL_KEY_LEFT:
 		m_Keys |= C_KEY_LEFT;
 		break;
-
 
 	case CL_KEY_RIGHT:
 		m_Keys |= C_KEY_RIGHT;
@@ -285,7 +286,6 @@ void BrainPlayer::CheckForLadder()
 
 	}
 
-
 	if (m_pParent->GetOnLadder())
 	{
 		m_pParent->SetIsOnGround(true); 
@@ -306,8 +306,6 @@ void BrainPlayer::CheckForLadder()
 		}
 
 	}
-
-
 }
 
 string BrainPlayer::HandleAskMsg(const string &msg)
@@ -562,28 +560,19 @@ bool BrainPlayer::TryToDoActionAtPoint(const CL_Vector2 &vecPos)
 		}
 	}
 
-
-
 	return false; //didn't find anything
 }
 
 void BrainPlayer::OnAction()
 {
-
 	CL_Vector2 vStartPos = m_pParent->GetPos();
-
 	//first, look for any entity directly behind us
-
 	if (TryToDoActionAtPoint(vStartPos)) return;
-
 
 	CL_Vector2 vFacing = FacingToVector(m_pParent->GetFacing());
 
 	const int actionRange = 60;
-
-
 	TileEntity *pTileEnt;
-
 	CL_Vector2 vEndPos;
 	vEndPos = vStartPos + (vFacing * actionRange);
 
@@ -593,20 +582,17 @@ void BrainPlayer::OnAction()
 //	LogMsg("Starting ground check from %.2f, %.2f, to %.2f, %.2f", 
 //		vStartPos.x, vStartPos.y, vEndPos.x, vEndPos.y);
 
-
 	CL_Vector2 vColPos;
 	Tile *pTile = NULL;
 
 	if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile() ))
 	{
 		 //LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
-
 		 switch ((pTile)->GetType())
 		 {
 
 		 case C_TILE_TYPE_PIC:
 			 //g_textManager.Add("A wall.", m_pParent);
-
 			 break;
 
 		 case C_TILE_TYPE_ENTITY:
@@ -617,12 +603,10 @@ void BrainPlayer::OnAction()
 					try {luabind::call_function<bool>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
 						"OnAction", m_pParent);
 					} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAction(Entity)");
-
 			 } 
 				return;
 			 break;
 		 }
-
 	}
 
 //on last ditch effort
@@ -631,22 +615,17 @@ void BrainPlayer::OnAction()
 
 	//lower
 	vStartPos.y -= (m_pParent->GetSizeY()/1.6f);
-
 	if (TryToDoActionAtPoint(vStartPos)) return;
-
 
 	//towards where we are facing
 	vStartPos += vFacing*10;
 	if (TryToDoActionAtPoint(vStartPos)) return;
-
 	g_textManager.Add("Hmm?", m_pParent);
-
-
 }
 
 void BrainPlayer::Update(float step)
 {
-	AssignPlayerToCameraIfNeeded();
+	AssignPlayerToCameraIfNeeded(m_pParent);
 
 	if (!m_pParent->GetCollisionData())
 	{
@@ -680,5 +659,4 @@ void BrainPlayer::PostUpdate(float step)
 		m_Keys &= ~C_KEY_SELECT; //turn it off
 		OnAction();
 	}
-
 }

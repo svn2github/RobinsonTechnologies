@@ -104,7 +104,7 @@ public:
 	void SetGameSpeed(float fNew);
 	void SetGameTick(unsigned int num);
 	unsigned int GetTick(){return CL_System::get_time();}
-
+	bool ParmExists(const string &parm);
 
 	enum eVideoRefresh
 	{
@@ -161,6 +161,7 @@ private:
 	eVideoRefresh m_videoflipStyle; //-1 is limited to refresh, 0 is not.  -2 causes problems
 	float m_baseGameSpeed; //faster and we move faster, computed against baselogicmhz
 	float m_baseLogicMhz; //MS between thinks
+	vector<string> m_startupParms;
 
 };
 

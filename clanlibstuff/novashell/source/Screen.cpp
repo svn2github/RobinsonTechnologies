@@ -257,7 +257,7 @@ bool Screen::Load()
 	catch(CL_Error error)
 	{
 		LogMsg(error.message.c_str());
-		ShowMessage(error.message.c_str(), "Error loading tile.  Corrupted?");
+		ShowMessage("Error loading tile.  Corrupted?", error.message.c_str());
 		SAFE_DELETE(pFile);
 		return true;
 	}

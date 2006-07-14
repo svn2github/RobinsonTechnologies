@@ -171,9 +171,8 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Utilities/Toggle Editing Selected Tile's Default Collision Data (Ctrl-D)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDefaultTileHardness);
 	
-	pItem = m_pMenu->create_item("Utilities/Create Tile From Tile (Ctrl-C while dragging)");
+	pItem = m_pMenu->create_item("Utilities/Create Tile From Tile (Ctrl-C while dragging, or Shift-Ctrl-C to use current selection size)");
 	pItem->enable(false);
-
 
 	pItem = m_pMenu->create_item("Modify Selected/Scale Down ([)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::ScaleDownSelected);
@@ -182,7 +181,7 @@ void EntEditMode::Init()
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::ScaleUpSelected);
 
 	pItem = m_pMenu->create_item("Modify Selected/ ");
-	pItem = m_pMenu->create_item("Modify Selected/Hold shift to scale/nudge by a larger amount.");
+	pItem = m_pMenu->create_item("Modify Selected/(Tip: Hold shift to scale by a larger amount)");
 	pItem->enable(false);
 
 	CL_Point offset = CL_Point(2,30);
@@ -638,6 +637,20 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 				m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap);
 				m_vecDragStop = GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap);
 				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(m_vecDragStop.x), int(m_vecDragStop.y));
+				rec.normalize();
+				CutSubTile(rec);
+			} else if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+			{
+				
+				if (m_selectedTileList.IsEmpty())
+				{
+					CL_MessageBox::info("Shift-Ctrl-C makes a subtile from the current selection size.  But you don't have a selection!", GetApp()->GetGUI());
+
+					return;
+				}
+				//cut subtile from current selection, if possible..
+				 CL_Rect rec(int(m_selectedTileList.GetUpperLeftPos().x), int(m_selectedTileList.GetUpperLeftPos().y),
+					 int(m_selectedTileList.GetLowerRightPos().x), int(m_selectedTileList.GetLowerRightPos().y));
 				rec.normalize();
 				CutSubTile(rec);
 			} else
