@@ -1121,9 +1121,7 @@ void MovingEntity::Render(void *pTarget)
 		m_pSprite->set_base_angle( -RadiansToDegrees(m_body.GetOrientation()));
 	}
 
-	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
-		* m_pTile->GetScale().y);
-	
+
 	
 	//construct the final color with tinting mods, insuring it is in range
 	short r,g,b,a;
@@ -1139,9 +1137,7 @@ void MovingEntity::Render(void *pTarget)
 	b = cl_min(b, 255); b = cl_max(0, b);
 	a = cl_min(a, 255); a = cl_max(0, a);
 
-	m_pSprite->set_color(CL_Color(r,g,b,a));
-	
-	
+		
 	static bool bUseParallax;
 	static Layer *pLayer;
 	static World *pWorld;
@@ -1177,14 +1173,43 @@ void MovingEntity::Render(void *pTarget)
  		vecPos = pWorldCache->WorldToScreen(GetPos());
 	}
 
+	
+	
 	//vecPos.x = RoundNearest(vecPos.x, 1.0f);
 	//vecPos.y = RoundNearest(vecPos.y, 1.0f);
 
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
+	//draw the shadow
+
+	m_pSprite->set_color(CL_Color(0,0,0,100));
+	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x * 1.3f, GetCamera->GetScale().y
+		* m_pTile->GetScale().y * 0.2f);
+	
+	//m_pSprite->set_rotation_hotspot(origin_bottom_center, 0,0);
+
+	//create a quad so we can skew it for the shadow
+
+	
+	//pGC->draw_quad()
+	
+	m_pSprite->draw_projected_shadow(vecPos.x, vecPos.y, CL_Color(0,0,0,100), CL_Vector2 v(0,0));
+	
+	m_pSprite->draw_subpixel( vecPos.x, vecPos.y+((GetSizeY()/2)  * GetCamera->GetScale().x * m_pTile->GetScale().x), pGC);
+	
+		
+	//m_pSprite->set_rotation_hotspot(origin_center, 0,0);
+	m_pSprite->set_color(CL_Color(r,g,b,a));
+	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
+		* m_pTile->GetScale().y);
 	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 
+
+		//m_pSprite->set_blend_func(blend_src_alpha, blend_one_minus_src_alpha);
+	
+	
+	
 	m_pSprite->set_angle_yaw(yawHold);
 	m_pSprite->set_angle_pitch(pitchHold);
 	/*

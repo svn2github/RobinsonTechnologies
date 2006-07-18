@@ -71,10 +71,9 @@ CL_Vector2 EntWorldCache::ScreenToWorld(const CL_Vector2 &vecScreen)
 #endif
 */
 
-	CL_Vector2 v;
+	static CL_Vector2 v;
 	v.x =  (GetCamera->GetPos().x)+ (vecScreen.x/GetCamera->GetScale().x);
 	v.y =  (GetCamera->GetPos().y)+ (vecScreen.y/GetCamera->GetScale().y);
-
 
 	return v;
 }
