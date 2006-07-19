@@ -141,8 +141,6 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 	//render out our stuff to it
 	CalculateVisibleList(CL_Rect(0,0,width, height), true);
 
-
-	
 	//ugly, but I need a way for each sprite to know when to use special behavior like ignoring
 	//parallax repositioning when making the thumbnail during its draw phase
 	
@@ -166,7 +164,6 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 	return true;
 }
 
-//TODO: OPTIMIZE this later, we don't need all these look ups
 bool compareTileByLayer(const Tile *pA, const Tile *pB) 
 {
 	LayerManager *pLayerManager = &GetWorld->GetLayerManager();
@@ -174,6 +171,7 @@ bool compareTileByLayer(const Tile *pA, const Tile *pB)
 	return pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort() <
 			pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
 }
+
 void EntWorldCache::RemoveTileFromList(Tile *pTile)
 {
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
@@ -315,12 +313,8 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 						
 					} else
 					{
-					
-						
 						m_tileLayerDrawList.push_back(pTile);
-						
 					}
-
 
 					if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 					{
@@ -333,9 +327,6 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 
 		}
 	}
-
-
-
 }
 
 
@@ -344,17 +335,53 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 //only used here!
 LayerManager *g_pLayerManager;
 
-bool compareTileBySortLevelOptimized(const Tile *pA, const Tile *pB) 
+bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB) 
 {
 	static int aLayer, bLayer;
-	
+	static CollisionData *pCol;
 	aLayer = g_pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort();
 	bLayer = g_pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
+	static float aBottom, bBottom;
 
 	if (aLayer == bLayer)
 	{
-		//extra checking for depth queuing
-		return ((Tile*)(pA))->GetWorldRect().bottom < ((Tile*)(pB))->GetWorldRect().bottom;
+	
+		//extra checking for depth queuing.  We depth cue by the bottom of the
+		//collision box when possible, it's more accurate than the picture.
+
+		pCol = pA->GetCollisionData();
+
+		if (pCol && pCol->GetLineList()->size() > 0)
+		{
+			
+			if (pA->GetType() == C_TILE_TYPE_ENTITY)
+			{
+				aBottom = pA->GetPos().y + (pCol->GetLineList()->begin()->GetRect().get_height()/2);
+			} else
+			{
+				aBottom = pA->GetPos().y + (pCol->GetLineList()->begin()->GetRect().bottom);
+			}
+		} else
+		{
+			aBottom = pA->GetWorldRect().bottom;
+		}
+		pCol = pB->GetCollisionData();
+	
+		if (pCol && pCol->GetLineList()->size() > 0)
+		{
+			if (pB->GetType() == C_TILE_TYPE_ENTITY)
+			{
+				bBottom = pB->GetPos().y + (pCol->GetLineList()->begin()->GetRect().get_height()/2);
+			} else
+			{
+				bBottom = pB->GetPos().y + (pCol->GetLineList()->begin()->GetRect().bottom);
+			}
+		} else
+		{
+			bBottom = pB->GetWorldRect().bottom;
+		}
+
+		return aBottom < bBottom;
 	} else
 	{
 		return aLayer < bLayer;
@@ -562,6 +589,7 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 				if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 				{
 					pBody = ((TileEntity*)pTile)->GetEntity()->GetBody();
+					vOffset = ((TileEntity*)pTile)->GetEntity()->GetVisualOffset();
 				}
 			}
 	 
@@ -570,10 +598,10 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 				CollisionData col;
 				//we need a customized version
 				CreateCollisionDataWithTileProperties(pTile, col);
-				RenderVectorCollisionData(pTile->GetPos(), col, pGC, false, NULL, pBody);
+				RenderVectorCollisionData(pTile->GetPos()+vOffset, col, pGC, false, NULL, pBody);
 			} else
 			{
-				RenderVectorCollisionData(pTile->GetPos() , *pCol, pGC, false, NULL, pBody);
+				RenderVectorCollisionData(pTile->GetPos()+vOffset, *pCol, pGC, false, NULL, pBody);
 			}
 		}
 	}
@@ -583,9 +611,7 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 
 void EntWorldCache::Update(float step)
 {
-
 	m_uniqueDrawID = GetApp()->GetUniqueNumber();
-
 	unsigned int gameTick = GetApp()->GetGameTick();
 	if (gameTick > m_cacheCheckTimer)
 	{

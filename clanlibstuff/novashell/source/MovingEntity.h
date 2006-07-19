@@ -148,6 +148,7 @@ public:
   void SetTrigger(int triggerType, int typeVar, int triggerBehavior, int behaviorVar);
   void ClearColorMods();
   void DumpScriptInfo();
+  CL_Vector2 GetVisualOffset();
 
   enum ListenCollision
 {

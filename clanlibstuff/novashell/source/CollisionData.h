@@ -41,6 +41,7 @@ protected:
 
 	void SaveIfNeeded();
 	void ApplyScaleToAll(const CL_Vector2 &vScale);
+	int CountValidLineLists();
 
 private:
 	CL_Rect m_rect;

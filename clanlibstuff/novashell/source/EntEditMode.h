@@ -97,7 +97,8 @@ protected:
 	CL_Point m_vecLastMousePos;
 	EntCollisionEditor * m_pEntCollisionEditor;
 	Tile *m_pTileWeAreEdittingCollisionOn;
-
+	CL_Vector2 m_collisionEditOldTilePos;
+	MovingEntity *m_pOriginalEditEnt;
 	bool m_bDialogIsOpen; //if true, we know not to respond to DELETE key presses to delete items and things
 
 	float m_dragSnap;

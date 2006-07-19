@@ -199,12 +199,13 @@ bool PointList::BuildBoundingRect()
 
 void PointList::RemoveOffsets()
 {
+
 	for (unsigned int i=0; i < m_points.size(); i++)
 	{
 		m_points[i] += m_vecOffset;
 	}
+
 	m_vecOffset = CL_Vector2(0,0);
-	
 	m_bNeedsToRecalculateRect = true;
 }
 
@@ -222,7 +223,6 @@ void PointList::CalculateOffsets()
 		upperLeftBounds.x = min(upperLeftBounds.x, m_points[i].x);
 		upperLeftBounds.y = min(upperLeftBounds.y, m_points[i].y);
 	}
-
 
 	m_vecOffset = upperLeftBounds + CL_Vector2(GetRect().get_width()/2, GetRect().get_height()/2);
 

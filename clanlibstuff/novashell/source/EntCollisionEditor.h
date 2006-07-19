@@ -53,13 +53,16 @@ enum
 	void OnChangeLineType();
 	void ApplySnap(CL_Vector2 &vec);
 	void OnClear();
-
+	void SetCollisionLineLabel();
+	void OnNextLine();
+	void OnPrevLine();
+	void SetupLineForEdit(int line);
 	
 	//GUI
 	CL_SlotContainer m_slots;
 	CL_Window * m_pWindow;
 	CL_Button *m_pButtonOK, *m_pButtonCancel;
-	CL_Label *m_pLabel;
+	CL_Label *m_pLabel, *m_pLabelCurLine;
 	CL_Rectf m_rectArea; //size we can draw
 	CL_Vector2 m_pos;
 	CollisionData *m_pCollisionData; //the master collision data we should copy to when we're done to save it
@@ -77,6 +80,7 @@ enum
 	CL_CheckBox *m_pCheckBoxClipToImage;
 	CL_Vector2 m_dragStartPos ;
 	bool m_bDataChanged;
+	int m_curLine;
 
 };
 

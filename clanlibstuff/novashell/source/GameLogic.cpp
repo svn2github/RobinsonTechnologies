@@ -459,6 +459,12 @@ void GameLogic::Kill()
 		GetCamera->GetCameraSettings(*GetWorld->GetCameraSetting());
 	}
 	
+	if (EntityMgr->GetEntityByName("coleditor"))
+	{
+		//we were editting collision data, let's kill it without saving
+		EntityMgr->GetEntityByName("coleditor")->SetDeleteFlag(true);
+	}
+
 	g_EntEditModeCopyBuffer.ClearSelection();
 	m_worldManager.Kill();
 	m_myEntityManager.Kill();

@@ -245,6 +245,8 @@ CL_Rectf MovingEntity::GetWorldRect()
 	offset = calc_origin(origin, r.get_size());
 	r -= offset;
 	r += *(const CL_Pointf*)(&GetPos());
+	r += *(const CL_Pointf*)(&GetVisualOffset());
+
 	return r;
 }
 
@@ -328,6 +330,8 @@ void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldNa
 	{
 		m_body.GetPosition().x = new_pos.x;
 		m_body.GetPosition().y = new_pos.y;
+
+		GetCamera->SetInstantUpdateOnNextFrame(true);
 	}
 	
 	m_bMovedFlag = true;
@@ -918,19 +922,8 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			== CMaterial::C_MATERIAL_TYPE_NORMAL)
 		{
 			
-			if (pTile->GetCustomBody())
-			{
-				//it's a real entity
-				pWallBody = &lineListItor->GetAsBody(pTile->GetPos() /*-lineListItor->GetOffset()*/, pTile->GetCustomBody());
-				//LogMsg("Colliding %d and %d at drawID %d, time: %d, delta: %.2f", ID(), ((TileEntity*)pTile)->GetEntity()->ID(), GetDrawID(),
-				//	GetApp()->GetGameTick(), GetApp()->GetDelta());
-
-			} else
-			{
-				//static wall thing
-				pWallBody = &lineListItor->GetAsBody(pTile->GetPos(), NULL);
-
-			}
+			//static objects will send Null for the custombody, which is ok
+			pWallBody = &lineListItor->GetAsBody(pTile->GetPos(), pTile->GetCustomBody());
 			
 			//examine each line list for suitability
  		  
@@ -955,21 +948,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			//might be a ladder zone or something else we should take note of
 			if (lineListItor->HasData())
 			{
-				/*
-				static CL_Rectf r;
-				static CL_Rectf myRect;
-
-				r = lineListItor->GetRect();
-				r += *(CL_Pointf*)&(pTile->GetPos());
-
-				myRect = m_pCollisionData->GetLineList()->begin()->GetRect();
-				myRect += *(CL_Pointf*)&(GetPos());
-				if (r.is_overlapped(myRect))
-				{
-*/				
-				//LogMsg("Inside: Rect is %s, which overlaps %s", PrintRect(r).c_str(),
-					//	PrintRect(myRect).c_str());
-
+			
 					//actually add the data
 					Zone z;
 					z.m_materialID = lineListItor->GetType();
@@ -984,8 +963,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 						z.m_entityID = 0;
 					}
 					m_zoneVec.push_back(z);
-					
-				//}
+				
 			}
 		}
 		
@@ -1001,10 +979,8 @@ void MovingEntity::ProcessCollisionTileList(tile_list &tList, float step)
 
 	while (listItor != tList.end())
 	{
-				
 			ProcessCollisionTile(*listItor, step);
-		
-		listItor++;
+			listItor++;
 	}
 }
 
@@ -1082,10 +1058,23 @@ void MovingEntity::ApplyGenericMovement(float step)
 	 m_bMovedFlag = true;
 }
 
+
+CL_Vector2 MovingEntity::GetVisualOffset()
+{
+		if (GetCollisionData() && GetCollisionData()->GetLineList()->size() > 0)
+		{
+			return -GetCollisionData()->GetLineList()->begin()->GetOffset();
+		}
+
+		return CL_Vector2::ZERO;
+}
+
 void MovingEntity::Render(void *pTarget)
 {
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	static float yawHold, pitchHold;
+
+	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
 
 	yawHold = m_pSprite->get_angle_yaw();
 	pitchHold = m_pSprite->get_angle_pitch();
@@ -1120,8 +1109,6 @@ void MovingEntity::Render(void *pTarget)
 	{
 		m_pSprite->set_base_angle( -RadiansToDegrees(m_body.GetOrientation()));
 	}
-
-
 	
 	//construct the final color with tinting mods, insuring it is in range
 	short r,g,b,a;
@@ -1166,14 +1153,12 @@ void MovingEntity::Render(void *pTarget)
 
 	if (bUseParallax)
 	{
-		vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(GetPos(), 
+		vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
 			pLayer->GetScrollMod()));
 	} else
 	{
- 		vecPos = pWorldCache->WorldToScreen(GetPos());
+ 		vecPos = pWorldCache->WorldToScreen(vVisualPos);
 	}
-
-	
 	
 	//vecPos.x = RoundNearest(vecPos.x, 1.0f);
 	//vecPos.y = RoundNearest(vecPos.y, 1.0f);
@@ -1191,7 +1176,7 @@ void MovingEntity::Render(void *pTarget)
 		//m_pSprite->set_blend_func(blend_src_alpha, blend_one_minus_src_alpha);
 	
 		static CL_Surface_DrawParams1 params1;
-		m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, false);
+		m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, true);
 
 		AddShadowToParam1(params1, m_pTile);
 		m_pSprite->draw(params1, pGC);

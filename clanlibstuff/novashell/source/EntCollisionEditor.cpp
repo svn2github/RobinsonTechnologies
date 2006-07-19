@@ -29,6 +29,7 @@ EntCollisionEditor::EntCollisionEditor(): BaseGameEntity(BaseGameEntity::GetNext
 	m_pButtonOK = m_pButtonCancel = NULL;
 	ClearSelection();
 	m_recalculateOffsetsWhenDone = true;
+	SetName("coleditor");
 
 }
 
@@ -339,6 +340,14 @@ void EntCollisionEditor::OnClear()
 	}
 }
 
+void EntCollisionEditor::SetCollisionLineLabel()
+{
+	m_pLabelCurLine->set_text("(collision line "+ CL_String::from_int(m_curLine) + " of " + CL_String::from_int(
+		m_col.GetLineList()->size())+")");
+
+}
+
+
 void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionData *pCollisionData, bool calcOffsets)
 {
 	m_pCollisionData =  pCollisionData; //remember location of the original and hope it doesn't change
@@ -406,6 +415,7 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 		m_pListType->insert_item(g_materialManager.GetMaterial(i)->GetName());
 	}
 
+	
 	//setup our own tip display
 	m_pLabel = new CL_Label(CL_Point(100,1),"", m_pWindow->get_client_area());
 
@@ -413,21 +423,9 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 
 	m_pWindow->set_event_passing(false);
 
-	if (m_col.GetLineList()->size() == 0)
-	{
-		m_mode = e_modeAddCreate;
-		//add one to get them started
-		PointList pl;
-		m_col.GetLineList()->push_back(pl);
-	} else
-	{
-		m_mode = e_modeAdjust;
-	}
 
-	m_pActiveLine = &(*m_col.GetLineList()->begin());
-	
-	m_pListType->set_selected(m_pActiveLine->GetType(), true);
-	m_pRadioGroup->set_checked(m_pRadioArray[m_mode]); //this will call OnRadioButtonChanged and set the help text too
+
+
 
 	m_slots.connect( m_pListType->sig_selection_changed(), this, &EntCollisionEditor::OnChangeLineType);
 	CL_Point offset = CL_Point(2,40);
@@ -440,6 +438,72 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 	m_pCheckBoxClipToImage ->set_checked(true);
 	m_pCheckBoxClipToImage ->set_focusable(false);
 
+	offset.y += 15;
+
+	CL_Button *pBut;
+	pBut = new CL_Button(CL_Point(2,offset.y), "<", m_pWindow->get_client_area());
+	m_slots.connect(pBut->sig_clicked(), this, &EntCollisionEditor::OnPrevLine);
+
+	pBut = new CL_Button(CL_Point(2 + 2 + pBut->get_width(),offset.y), ">", m_pWindow->get_client_area());
+	m_slots.connect(pBut->sig_clicked(), this, &EntCollisionEditor::OnNextLine);
+
+	m_pLabelCurLine = new CL_Label(CL_Point(pBut->get_client_x() + pBut->get_width() + 2, offset.y), "",  m_pWindow->get_client_area());
+
+	SetCollisionLineLabel();
+
+	m_curLine = 1;
+
+	SetupLineForEdit(m_curLine);
+
+}
+
+void EntCollisionEditor::SetupLineForEdit(int line)
+{
+	m_curLine = line;
+
+	//find the correct one to edit, adding as we go
+
+	line_list::iterator itor = m_col.GetLineList()->begin();
+
+	for (int i=0;;i++)
+	{
+		if (itor == m_col.GetLineList()->end())
+		{
+			PointList pl;
+			m_col.GetLineList()->push_back(pl);
+			itor = m_col.GetLineList()->end();
+			itor--;
+
+			if (i == m_curLine-1)
+			{
+				break; //this is it
+			}
+			
+			continue;
+		}
+		if (i == m_curLine-1)
+		{
+			break; //this is it
+		}
+		itor++;
+	}
+	
+	m_pActiveLine = &(*itor);
+
+	if (m_pActiveLine->GetPointList()->size() == 0)
+	{
+		m_mode = e_modeAddCreate;
+	} else
+	{
+		m_mode = e_modeAdjust;
+	}
+
+	m_pListType->clear_selection();
+	m_pListType->set_selected(m_pActiveLine->GetType(), true);
+	
+	m_pRadioGroup->set_checked(m_pRadioArray[m_mode]); //this will call OnRadioButtonChanged and set the help text too
+
+	SetCollisionLineLabel();
 }
 
 void EntCollisionEditor::Render(void *pTarget)
@@ -451,6 +515,18 @@ void EntCollisionEditor::Render(void *pTarget)
 
 void EntCollisionEditor::Update(float step)
 {
+}
+
+void EntCollisionEditor::OnPrevLine()
+{
+	int line = m_curLine-1;
+	if (line == 0) line = m_col.GetLineList()->size();
+	SetupLineForEdit(line);
+}
+
+void EntCollisionEditor::OnNextLine()
+{
+	SetupLineForEdit(++m_curLine);
 }
 
 void DrawCenteredBox(const CL_Vector2 &a, int size, CL_Color col, CL_GraphicContext *pGC)
@@ -465,9 +541,11 @@ void DrawCenteredBox(const CL_Vector2 &a, int size, CL_Color col, CL_GraphicCont
 
 }
 
+
+
 void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, CBody *pCustomBody)
 {
-	
+
 	CL_Vector2 a,b, firstVert;
 	CL_Color col;
 
@@ -551,16 +629,27 @@ void RenderTileListCollisionData(tile_list &tileList, CL_GraphicContext *pGC, bo
 
 	while (itor != tileList.end())
 	{
-			if ((*itor)->UsesTileProperties())
+		CL_Vector2 vPos = (*itor)->GetPos();
+
+		if ( (*itor)->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			CollisionData *pCol = ((TileEntity*) (*itor))->GetEntity()->GetCollisionData();
+			if (pCol->GetLineList()->size() > 0)
+			{
+				vPos -= pCol->GetLineList()->begin()->GetOffset();
+			}
+		}
+		
+		if ((*itor)->UsesTileProperties())
 		{
 			//we need a customized version
 			CreateCollisionDataWithTileProperties((*itor), col);
-			RenderVectorCollisionData((*itor)->GetPos(), col, pGC, bRenderVertBoxes, pColorOveride, (*itor)->GetCustomBody());
+			RenderVectorCollisionData(vPos, col, pGC, bRenderVertBoxes, pColorOveride, (*itor)->GetCustomBody());
 		} else
 		{
 			pCol = (*itor)->GetCollisionData();
 			if (pCol)
-			RenderVectorCollisionData((*itor)->GetPos(), *pCol, pGC, bRenderVertBoxes, pColorOveride, (*itor)->GetCustomBody());
+			RenderVectorCollisionData(vPos, *pCol, pGC, bRenderVertBoxes, pColorOveride, (*itor)->GetCustomBody());
 		}
 	
 		itor++;

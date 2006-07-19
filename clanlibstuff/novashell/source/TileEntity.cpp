@@ -21,7 +21,6 @@ TileEntity::~TileEntity()
 
 void TileEntity::Serialize(CL_FileHelper &helper)
 {
-
 	if (!helper.IsWriting())
 	{
 		//we're loading so we have to do some extra init stuff
@@ -30,7 +29,6 @@ void TileEntity::Serialize(CL_FileHelper &helper)
 
 	//base class saves
 	SerializeBase(helper);
-
 
 	assert(m_pEntity);
 	//save our own data

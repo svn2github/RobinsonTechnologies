@@ -17,6 +17,7 @@ TileEditOperation g_EntEditModeCopyBuffer; //ctrl-c puts it here
 EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
 	m_pMenu = NULL;
+	m_pOriginalEditEnt = NULL;
 	m_slots.connect(GetApp()->GetGUI()->sig_mouse_down(), this, &EntEditMode::onButtonDown);
 	m_slots.connect (CL_Mouse::sig_key_up(), this, &EntEditMode::onButtonUp);
 	m_slots.connect (CL_Keyboard::sig_key_down(), this, &EntEditMode::onButtonDown);
@@ -812,17 +813,28 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 	m_pEntCollisionEditor = NULL; //back to normal mode
 
 	//need to reinit all script based items possibly
+	if (m_pOriginalEditEnt)
+	{
+		m_pOriginalEditEnt->SetPos(m_collisionEditOldTilePos - m_pOriginalEditEnt->GetVisualOffset());
+		m_pTileWeAreEdittingCollisionOn = m_pOriginalEditEnt->GetTile(); //fix a probably bad pointer, from moving it
+		
+		//also fix our selection box
 
-	
+		m_selectedTileList.ClearSelection();
+		m_selectedTileList.AddTileToSelection(TileEditOperation::C_OPERATION_ADD,
+			false, m_pTileWeAreEdittingCollisionOn);
+		//before
+	}
+
 	if (bDataChanged)
 	{
 
-	
 	if (m_pTileWeAreEdittingCollisionOn->GetType() == C_TILE_TYPE_ENTITY)
 	{
 		TileEntity *pEnt = (TileEntity*)m_pTileWeAreEdittingCollisionOn;
 		if (pEnt->GetEntity())
 		{
+			
 			pEnt->GetEntity()->Kill(); //force it to save out its collision info to disk, so when
 			//we reinit all similar tiles, they will use the changed version
 			GetWorld->ReInitEntities();
@@ -855,23 +867,25 @@ void EntEditMode::OnDefaultTileHardness()
 		return;
 	}
 
-	//convert our tile into a paste operation that will overwrite the old one.  This way it's undo-able, maybe
-    Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile->CreateClone();
+	Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile;
+	pTile  =  GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
+	
+	if (!pTile)
+	{
+		CL_MessageBox::info("Highlighted entity not found, don't try this on something that is moving.", GetApp()->GetGUI());
+		return;
+	}
+ 
+	m_pOriginalEditEnt = 	NULL;
 
 	bool bIsEnt = pTile->GetType()==C_TILE_TYPE_ENTITY;
+	if (bIsEnt)
+	{
+		m_pOriginalEditEnt = ((TileEntity*)pTile)->GetEntity();
+	}
+	
 	bool bUsesCustomCollisionData = bIsEnt &&  ((TileEntity*)pTile)->GetEntity()->UsingCustomCollisionData();
 
-	if (bUsesCustomCollisionData)
-	{
-		//scratch that, operate on the real one, otherwise entities don't get updated (unlike regular tiles,
-		//they don't share collision templates)
-		pTile =  GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
-		if (!pTile)
-		{
-			CL_MessageBox::info("Highlighted entity not found, don't try this on something that is moving.", GetApp()->GetGUI());
-			return;
-		}
-	}
 	//well, now we have the tile that was in our selection buffer.  But that isn't really good enough
 	
 	if (!pTile->GetCollisionData())
@@ -879,7 +893,6 @@ void EntEditMode::OnDefaultTileHardness()
 		//it's an entity but no collision data has been assigned
 		CL_MessageBox::info("This tile/entity doesn't have collision data enabled in it's script.", GetApp()->GetGUI());
 		return;
-
 	}
 
 	m_pEntCollisionEditor = (EntCollisionEditor*) GetMyEntityMgr->Add(new EntCollisionEditor);
@@ -888,24 +901,31 @@ void EntEditMode::OnDefaultTileHardness()
 	CL_Rect rec(pTile->GetWorldRect());
 	
 	CL_Vector2 vEditPos = pTile->GetPos();
-	if (bIsEnt && !bUsesCustomCollisionData)
+
+	if (bIsEnt)
 	{
-		//it's an entity using a tilepic
-		//vEditPos -= pTile->GetCollisionData()->GetLineList()->begin()->GetOffset();
-		//vEditPos  -= CL_Vector2(rec.get_width()/2, rec.get_height()/2);
-	//	vEditPos  -= CL_Vector2(rec.get_width(), rec.get_height());
+		rec.apply_alignment(origin_top_left,m_pOriginalEditEnt->GetVisualOffset().x, m_pOriginalEditEnt->GetVisualOffset().y);
+		vEditPos += m_pOriginalEditEnt->GetVisualOffset();
+		//total hack to fake the visual offset while we're drawing it
+		
+		m_pOriginalEditEnt->SetPos(m_pOriginalEditEnt->GetPos() + m_pOriginalEditEnt->GetVisualOffset());
+		m_collisionEditOldTilePos = m_pOriginalEditEnt->GetPos();
+	
+	} else
+	{
+
 	}
 
 	rec.apply_alignment(origin_top_left, vEditPos.x, vEditPos.y);
-	
 
 	//the collision shape MUST be have point 0,0 inside of it, so if we want a shape to start at offset
 	//50,50 in an image, it breaks.  To fix, we automatically handle creating an offset from the real 
 	//position.  But for entities, this isn't needed as the shape is always going to be centered around
 	//0,0
 
-	bool useCollisionOffsets = !bIsEnt;
-	
+//	bool useCollisionOffsets = !bIsEnt;
+	bool useCollisionOffsets = true;
+
 	pTile->GetCollisionData()->RemoveOffsets();
 
 	m_pTileWeAreEdittingCollisionOn = pTile; //messy way of remembering this in the

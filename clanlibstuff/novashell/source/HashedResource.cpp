@@ -47,6 +47,7 @@ CollisionData * HashedResource::GetCollisionDataByRect(const CL_Rect &rectSource
 	pColVec->push_back(pColData);
 	return pColData;
 }
+
 bool HashedResource::HasCollisionData()
 {
 	CollisionDataMap::iterator ent = m_collisionMap.begin();

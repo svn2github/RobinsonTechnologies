@@ -115,29 +115,52 @@ bool CollisionData::HasData()
 	return false;
 }
 
+int CollisionData::CountValidLineLists()
+{
+	int lineLists = 0;
+
+	line_list::iterator listItor = m_lineList.begin();
+	while (listItor != m_lineList.end())
+	{
+		if ( listItor->GetPointList()->size() > 0)
+		{
+			lineLists++;
+		}
+		listItor++;
+	}
+
+	return lineLists;
+}
+
 void CollisionData::Serialize(CL_FileHelper &helper)
 {
   //save out our rect and points
 	helper.process(m_rect);
 
-
 	if (helper.IsWriting())
 	{
+
+		cl_uint32 validLines = CountValidLineLists();
+		assert(validLines > 0);
 		//write how many linelists are coming
-		helper.process_const(cl_uint32(m_lineList.size()));
+
+		helper.process_const(validLines);
 
 		line_list::iterator listItor = m_lineList.begin();
 
 		while (listItor != m_lineList.end())
 		{
-			//write data about this PointList
-			helper.process_const(listItor->GetType());
-			
-			//write how many points are in this list
-			helper.process_const(cl_uint32(listItor->GetPointList()->size()));
-			helper.process(listItor->GetOffset());
-			//write 'em
-			helper.process_array(&listItor->GetPointList()->at(0), listItor->GetPointList()->size());
+			if ( listItor->GetPointList()->size() > 0)
+			{
+				//write data about this PointList
+				helper.process_const(listItor->GetType());
+				
+				//write how many points are in this list
+				helper.process_const(cl_uint32(listItor->GetPointList()->size()));
+				helper.process(listItor->GetOffset());
+				//write 'em
+				helper.process_array(&listItor->GetPointList()->at(0), listItor->GetPointList()->size());
+			}
 		
 			listItor++;
 		}
@@ -209,7 +232,6 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 			if (pTile->GetBit(Tile::e_flippedX))
 			{
 				p->x = -p->x;
-			//	p->x += itor->GetOffset().x;
 			}
 
 			if (pTile->GetBit(Tile::e_flippedY))

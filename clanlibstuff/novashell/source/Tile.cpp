@@ -243,6 +243,7 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	rectDest.right = RoundNearest(rectDest.right, 1.0f);
 	rectDest.top = RoundNearest(rectDest.top, 1.0f);
 	rectDest.left = RoundNearest(rectDest.left, 1.0f);
+
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
@@ -251,13 +252,12 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 		//draw shadow
 		static CL_Surface_DrawParams1 params1;
 		pSurf->set_color(CL_Color(0,0,0,50));
-		pSurf->setup_params(pTile->m_rectSrc, rectDest, params1, false);
+		pSurf->setup_params(pTile->m_rectSrc, rectDest, params1, true);
 		AddShadowToParam1(params1, pTile);
 		pSurf->draw(params1, pGC);
 	}
 
 	pSurf->set_color(pTile->GetColor());
-	
 	pSurf->draw(pTile->m_rectSrc, rectDest, pGC);
 }
 
