@@ -67,6 +67,7 @@ protected:
 	void ScaleUpSelected();
 	void ScaleDownSelected();
 	void ScaleSelection(CL_Vector2 vMod, bool bBigMovement);
+	void OnSelectSimilar();
 
 	CL_Slot m_slotClose;
 	

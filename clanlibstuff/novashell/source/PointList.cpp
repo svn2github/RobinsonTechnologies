@@ -215,11 +215,20 @@ void PointList::CalculateOffsets()
 
 	m_bNeedsToRecalculateRect = true; //force recalulation to happen now	
 
-	m_vecOffset = CL_Vector2(GetRect().get_width()/2, GetRect().get_height()/2);
+	CL_Vector2 upperLeftBounds = CL_Vector2(100000,100000);
 
 	for (unsigned int i=0; i < m_points.size(); i++)
 	{
-	m_points[i] -= m_vecOffset;
+		upperLeftBounds.x = min(upperLeftBounds.x, m_points[i].x);
+		upperLeftBounds.y = min(upperLeftBounds.y, m_points[i].y);
+	}
+
+
+	m_vecOffset = upperLeftBounds + CL_Vector2(GetRect().get_width()/2, GetRect().get_height()/2);
+
+	for (unsigned int i=0; i < m_points.size(); i++)
+	{
+		m_points[i] -= m_vecOffset;
 	}
 
 	/*

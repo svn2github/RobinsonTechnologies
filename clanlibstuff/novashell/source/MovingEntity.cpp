@@ -1181,37 +1181,30 @@ void MovingEntity::Render(void *pTarget)
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
-	//draw the shadow
-
-	m_pSprite->set_color(CL_Color(0,0,0,100));
-	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x * 1.3f, GetCamera->GetScale().y
-		* m_pTile->GetScale().y * 0.2f);
-	
-	//m_pSprite->set_rotation_hotspot(origin_bottom_center, 0,0);
-
-	//create a quad so we can skew it for the shadow
-
-	
-	//pGC->draw_quad()
-	
-	m_pSprite->draw_projected_shadow(vecPos.x, vecPos.y, CL_Color(0,0,0,100), CL_Vector2 v(0,0));
-	
-	m_pSprite->draw_subpixel( vecPos.x, vecPos.y+((GetSizeY()/2)  * GetCamera->GetScale().x * m_pTile->GetScale().x), pGC);
-	
-		
-	//m_pSprite->set_rotation_hotspot(origin_center, 0,0);
-	m_pSprite->set_color(CL_Color(r,g,b,a));
 	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
 		* m_pTile->GetScale().y);
-	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 
-
+	//draw the shadow?
+	if (m_pTile->GetBit(Tile::e_castShadow))
+	{
+		m_pSprite->set_color(CL_Color(0,0,0,50));
 		//m_pSprite->set_blend_func(blend_src_alpha, blend_one_minus_src_alpha);
 	
-	
-	
+		static CL_Surface_DrawParams1 params1;
+		m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, false);
+
+		AddShadowToParam1(params1, m_pTile);
+		m_pSprite->draw(params1, pGC);
+	}
+
+	//do the real blit
+	m_pSprite->set_color(CL_Color(r,g,b,a));
+	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
+
+	//return things back to normal
 	m_pSprite->set_angle_yaw(yawHold);
 	m_pSprite->set_angle_pitch(pitchHold);
+
 	/*
 	//***** debug, draw rect
 	CL_Rectf worldRect =GetWorldRect();
@@ -1291,26 +1284,46 @@ void MovingEntity::PostUpdate(float step)
 
 	m_brainManager.PostUpdate(step);
 
-	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
-	{
-	if (m_body.GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
-	{
-		m_body.AddForce(Vector(0, m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity()* m_body.GetMass()));
-	}
-
 	const static float groundDampening = 1.6f;
 	const static float angleDampening = 0.01f;
-	
-	//FIXME if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
-	if (IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
-		&& GetBody()->GetAngVelocity() < 0.01f)
-	{
-		//slow down
-		set_float_with_target(&m_body.GetLinVelocity().x, 0, groundDampening);
-		set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening);
-		set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening);
-	}
 
+	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
+	{
+		float gravity = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity();
+		if (gravity != 0)
+		{
+
+		
+			if (m_body.GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
+			{
+				m_body.AddForce(Vector(0, m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity()* m_body.GetMass()));
+			}
+	
+			//FIXME if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
+			if (IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
+				&& GetBody()->GetAngVelocity() < 0.01f)
+			{
+				//slow down
+				set_float_with_target(&m_body.GetLinVelocity().x, 0, groundDampening);
+				set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening);
+				set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening);
+			}
+
+		} else
+		{
+
+			SetIsOnGround(true);
+		
+			const static float top_groundDampening = 0.06f;
+			const static float top_angleDampening = 0.002f;
+
+			set_float_with_target(&m_body.GetLinVelocity().x, 0, top_groundDampening);
+			set_float_with_target(&m_body.GetLinVelocity().y, 0, top_groundDampening);
+			set_float_with_target(&m_body.GetAngVelocity(), 0, top_angleDampening);
+		}
+
+	
+	
 		GetBody()->Update(step);
 
 		//get ready for next frame
@@ -1351,4 +1364,46 @@ MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName)
 	GetWorld->AddTile(pTile);
 
 	return pEnt;
+}
+
+void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
+{
+	
+	float density = 1 - 0.5;
+
+	if (pTile->GetCollisionData()->GetLineList()->size() > 0)
+	{
+		//guess what kind of shadow would look best by studying how much volume its collision has
+		//the lower, the more like a house it is, the higher, the more like a pole it is
+		density = 0.8 - pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_height() / pTile->GetBoundsSize().y;
+	}
+
+	
+	density = max(0.1, density);
+	density = min(1, density);
+
+	//LogMsg("Density is %.3f", density);
+
+	float fWidthOffset = (params1.destY[3] - params1.destY[0])*density;
+
+	float fHeightChange = (params1.destY[3] - params1.destY[0]) * density;
+
+	//skew top left
+	params1.destX[0] -= fWidthOffset;
+	params1.destX[1] -= fWidthOffset;
+
+	if (density < 0.2f)
+	{
+		//remove skew, just move everything left
+	
+		params1.destX[2] -= (fWidthOffset * 0.7);
+		params1.destX[3] -= (fWidthOffset * 0.7);
+	
+		params1.destY[2] -= fHeightChange * 0.3f;
+		params1.destY[3] -= fHeightChange * 0.3f;
+	}
+	
+	//squish things down a bit
+	params1.destY[0] += fHeightChange;
+	params1.destY[1] += fHeightChange;
 }

@@ -69,6 +69,8 @@ public:
 	void AddTileToSelection(int operation, bool bPerformDupeCheck, Tile *pTile);
 	selectedTile_list::iterator FindTileByLocation(selectedTile_list &tileList, Tile *pTile);
 	void AddTilesByWorldRect(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec);
+	void AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec, Tile *pSrcTile);
+
 	void AddTileByPoint(const CL_Vector2 &vecDragStart, int operation, const vector<unsigned int> &layerIDVec);
 	CL_Vector2 GetSelectionSizeInWorldUnits();
 	bool IsEmpty() {return m_selectedTileList.size() == 0;}
@@ -88,7 +90,8 @@ public:
 		eBitFlipX = D_BIT_0,
 		eBitFlipY = D_BIT_1,
 		eBitColor = D_BIT_2,
-		eBitScale = D_BIT_3
+		eBitScale = D_BIT_3,
+		eBitCastShadow = D_BIT_4
 	};
 
 	selectedTile_list m_selectedTileList;

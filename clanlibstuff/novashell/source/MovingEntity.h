@@ -231,6 +231,7 @@ protected:
 
 MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName); //creates an entity and puts it in the world
 
+void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile);
 
 
 #endif

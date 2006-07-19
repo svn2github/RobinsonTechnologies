@@ -254,6 +254,91 @@ void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, cons
 
 }
 
+
+void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec, Tile *pSrcTile)
+{
+	Tile *pTile = NULL;
+
+	bool bPerformDupeCheck = false;
+	if (!IsEmpty()) bPerformDupeCheck = true;
+
+	CL_Rect recArea(vecDragStart.x, vecDragStart.y, vecDragStop.x, vecDragStop.y);
+
+	//returns a list of tile pointers, we shouldn't free them!
+	tile_list tileList;
+
+	GetWorldCache->AddTilesByRect(recArea, &tileList, layerIDVec);
+
+	tile_list::iterator itor = tileList.begin();
+	bool bSimilar;
+
+	while (itor != tileList.end())
+	{
+		
+		bSimilar = false;
+		//is this tile similar?
+
+		pTile = (*itor);
+
+		if (pTile->GetType() != pSrcTile->GetType())
+		{
+			//can't be a match here
+			itor++;
+			continue;
+		}
+
+		if (pTile->GetType() == C_TILE_TYPE_PIC)
+		{	
+			if (  ((TilePic*)pTile)->m_resourceID == ((TilePic*)pSrcTile)->m_resourceID)
+			{
+				if (  ((TilePic*)pTile)->m_rectSrc == ((TilePic*)pSrcTile)->m_rectSrc)
+				{
+					bSimilar = true;
+				}
+			}
+		}
+
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{	
+		    TileEntity * pEntTile = (TileEntity*)pTile;
+			TileEntity * pSrcEntTile = (TileEntity*)pSrcTile;
+
+			if (pSrcEntTile->GetEntity()->GetMainScriptFileName().empty())
+			{
+				if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
+				{
+					//well, they both have no script set.  Are they using the same image?
+					if (pSrcEntTile->GetEntity()->GetCollisionData() == pEntTile->GetEntity()->GetCollisionData())
+					{
+						bSimilar = true;
+					}
+
+				}
+
+
+			} else
+			{
+				if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
+				{
+					bSimilar = true;
+				}
+			}
+		}
+	
+		if (bSimilar)
+		{
+			pTile = (*itor)->CreateClone();
+			if (pTile)
+			{
+				AddTileToSelection(operation, bPerformDupeCheck, pTile);
+			}
+		}
+
+		itor++;
+	}
+
+}
+
 selectedTile_list::iterator TileEditOperation::FindTileByLocation(selectedTile_list &tileList, Tile *pTile)
 {
 	selectedTile_list::iterator itor = tileList.begin();
@@ -438,6 +523,7 @@ void TileEditOperation::CopyTilePropertiesToSelection(Tile *pSrcTile, unsigned i
 			if (flags & eBitFlipY) pDestTile->SetBit(Tile::e_flippedY, pSrcTile->GetBit(Tile::e_flippedY));
 			if (flags & eBitColor) pDestTile->SetColor(pSrcTile->GetColor());
 			if (flags & eBitScale) pDestTile->SetScale(pSrcTile->GetScale());
+			if (flags & eBitCastShadow) pDestTile->SetBit(Tile::e_castShadow, pSrcTile->GetBit(Tile::e_castShadow));
 			
 	itor++;
 	}

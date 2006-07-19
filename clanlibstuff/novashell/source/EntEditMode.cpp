@@ -74,6 +74,42 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 	m_vecLastMousePos = key.mouse_pos;
 }
 
+void EntEditMode::OnSelectSimilar()
+{
+	if (m_selectedTileList.IsEmpty())
+	{
+		LogMsg("To select similar, you must first select one or more tiles to work from.");
+		return;
+	}
+	
+	if (m_selectedTileList.m_selectedTileList.size() > 25)
+	{
+		if (!ConfirmMessage("Warning: Slow!","Are you sure you meant to find similar?  With this many source tiles it might be very slow." ))
+		{
+			return;
+		}
+	}
+	
+	TileEditOperation tempList = m_selectedTileList;
+	
+	//go through an select similar of each of these
+
+	selectedTile_list::iterator itor = tempList.m_selectedTileList.begin();
+
+	CL_Rectf r = GetCamera->GetViewRectWorld();
+
+	
+	while (itor != tempList.m_selectedTileList.end())
+	{
+		int operation = TileEditOperation::C_OPERATION_ADD;
+		m_selectedTileList.AddTilesByWorldRectIfSimilar(CL_Vector2(r.left,r.top), CL_Vector2(r.right,r.bottom), operation, GetWorld->GetLayerManager().GetEditActiveList(), (*itor)->m_pTile);
+
+			itor++;
+	}
+
+	
+}
+
 void EntEditMode::ScaleSelection(CL_Vector2 vMod, bool bBigMovement)
 {
 	if (m_selectedTileList.IsEmpty())
@@ -168,12 +204,21 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Utilities/Get Default Entity (puts in copy buffer)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::BuildDefaultEntity);
 
-	pItem = m_pMenu->create_item("Utilities/Toggle Editing Selected Tile's Default Collision Data (Ctrl-D)");
+	pItem = m_pMenu->create_item("Utilities/Edit Selected Tile's Default Collision Data (Toggle) (Ctrl-D)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDefaultTileHardness);
 	
-	pItem = m_pMenu->create_item("Utilities/Create Tile From Tile (Ctrl-C while dragging, or Shift-Ctrl-C to use current selection size)");
+	pItem = m_pMenu->create_item("Utilities/Select Similar to current selection (limited by view and active edit layers) (Ctrl-R)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnSelectSimilar);
+
+	pItem = m_pMenu->create_item("Utilities/Create Tile From Tile (Ctrl-C while dragging a selection rectangle (Hold space to adjust drag position)");
 	pItem->enable(false);
 
+	pItem = m_pMenu->create_item("Utilities/Tip: You can create a tile from the active selection size (without dragging) with Shift-Ctrl-C");
+	pItem->enable(false);
+
+	pItem = m_pMenu->create_item("Utilities/Note: Tile from tile only works when everything is on the same bitmap");
+	pItem->enable(false);
+	
 	pItem = m_pMenu->create_item("Modify Selected/Scale Down ([)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::ScaleDownSelected);
 
@@ -624,6 +669,13 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			m_vecDragStart = GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
 			m_vecDragStop = m_vecDragStart;
 			m_dragInProgress = true;
+		}
+		break;
+	case CL_KEY_R:
+
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			OnSelectSimilar();
 		}
 		break;
 
@@ -1226,6 +1278,10 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	offsetY+= 20;
 	flipY.set_checked(pTile->GetBit(Tile::e_flippedY));
 	
+	CL_CheckBox castShadow (CL_Point(buttonOffsetX,offsetY),"Cast Shadow", window.get_client_area());
+	offsetY+= 20;
+	castShadow.set_checked(pTile->GetBit(Tile::e_castShadow));
+
 	CL_Label labelEntity (CL_Point(buttonOffsetX, offsetY), "LUA Script:", window.get_client_area());
 
 	rPos = CL_Rect(0,0,200,16);
@@ -1401,6 +1457,12 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 		{
 			pTile->SetBit(Tile::e_flippedY, flipY.is_checked());
 			flags = flags | TileEditOperation::eBitFlipY;
+		}
+
+		if (castShadow.is_checked() != pTile->GetBit(Tile::e_castShadow))
+		{
+			pTile->SetBit(Tile::e_castShadow, castShadow.is_checked());
+			flags = flags | TileEditOperation::eBitCastShadow;
 		}
 
 		if (inputColor.get_text() != originalColor)
