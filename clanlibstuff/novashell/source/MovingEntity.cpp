@@ -1355,12 +1355,40 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 {
 	
 	float density = 1 - 0.5;
+	float bottomOffset = 0;
+
+	float picSizeY = pTile->GetBoundsSize().y;
 
 	if (pTile->GetCollisionData()->GetLineList()->size() > 0)
 	{
 		//guess what kind of shadow would look best by studying how much volume its collision has
 		//the lower, the more like a house it is, the higher, the more like a pole it is
-		density = 0.8 - pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_height() / pTile->GetBoundsSize().y;
+		density = 0.8 - pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_height() / picSizeY;
+	
+			if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+			{
+				bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_height()/2);
+			} else
+			{
+				bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pTile->GetCollisionData()->GetLineList()->begin()->GetRect().bottom);
+			}
+		
+	} 
+
+	if (bottomOffset != 0)
+	{
+		
+		//scale it
+
+		bottomOffset *= GetCamera->GetScale().y;
+
+		LogMsg("Bottom offset is %.2f", bottomOffset);
+		//move the shadow closer to where the real bottom is
+		params1.destY[0] -= bottomOffset;
+		params1.destY[1] -= bottomOffset;
+		params1.destY[2] -= bottomOffset;
+		params1.destY[3] -= bottomOffset;
+
 	}
 
 	
