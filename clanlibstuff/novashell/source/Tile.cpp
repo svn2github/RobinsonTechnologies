@@ -60,6 +60,15 @@ Tile::~Tile()
 	assert(!m_pEdgeCaseList);
 }
 
+const CL_Rectf & Tile::GetWorldColRect()
+{
+	static CL_Rectf r;
+	r = GetCollisionData()->GetLineList()->begin()->GetRect();
+	r += *(const CL_Pointf*)(&GetPos());
+	r -= *(const CL_Pointf*)(&GetCollisionData()->GetLineList()->begin()->GetOffset());
+	return r;
+}
+
 const CL_Rect & Tile::GetBoundsRect()
 {
 	static CL_Rect r(0,0,64,64);
@@ -258,7 +267,7 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	}
 
 	pSurf->set_color(pTile->GetColor());
-	pSurf->draw(pTile->m_rectSrc, rectDest, pGC);
+	pSurf->draw_subpixel(pTile->m_rectSrc, rectDest, pGC);
 }
 
 

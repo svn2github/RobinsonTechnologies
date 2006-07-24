@@ -43,6 +43,7 @@ BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 	}
 
 	ResetKeys();
+	SetSort(100); //always run last
 	m_SlotKeyUp = CL_Keyboard::sig_key_up().connect( this, &BrainPlayer::OnKeyUp);
 	m_SlotKeyDown = CL_Keyboard::sig_key_down().connect( this, &BrainPlayer::OnKeyDown);
 	m_jumpTimer= 0;
@@ -54,6 +55,7 @@ BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 	m_walkSound.Init(g_pSoundManager, m_pParent->GetData()->Get("walk_sound"));
 	m_climbSound.Init(g_pSoundManager, m_pParent->GetData()->Get("climb_sound"));
 	m_jumpSound = m_pParent->GetData()->Get("jump_sound");
+	GetGameLogic->SetGameMode(GameLogic::C_GAME_MODE_SIDE_VIEW);
 
 	m_attackTimer.SetInterval(200);
 }
@@ -659,4 +661,60 @@ void BrainPlayer::PostUpdate(float step)
 		m_Keys &= ~C_KEY_SELECT; //turn it off
 		OnAction();
 	}
+}
+
+
+bool ConvertKeysToDirection(unsigned int keys, int &visualFacingOut)
+{
+	bool bIdle = true;
+
+	if (keys & C_KEY_LEFT)
+	{
+		bIdle = false;
+		visualFacingOut = (VisualProfile::FACING_LEFT); 
+	}
+
+	if (keys & C_KEY_RIGHT)
+	{
+		visualFacingOut = (VisualProfile::FACING_RIGHT);
+		bIdle = false;
+	}
+
+	if (keys & C_KEY_UP)
+	{
+		visualFacingOut = (VisualProfile::FACING_UP);
+		bIdle = false;
+	}
+
+	if (keys & C_KEY_DOWN)
+	{
+		visualFacingOut = (VisualProfile::FACING_DOWN);
+		bIdle = false;
+	}
+
+	if (keys & C_KEY_DOWN && keys & C_KEY_LEFT)
+	{
+		visualFacingOut = (VisualProfile::FACING_DOWN_LEFT);
+		bIdle = false;
+	}
+
+	if (keys & C_KEY_UP && keys & C_KEY_LEFT)
+	{
+		visualFacingOut = (VisualProfile::FACING_UP_LEFT);
+		bIdle = false;
+	}
+
+	if (keys & C_KEY_DOWN && keys & C_KEY_RIGHT)
+	{
+		visualFacingOut = (VisualProfile::FACING_DOWN_RIGHT);
+		bIdle = false;
+	}
+
+	if (keys & C_KEY_UP && keys & C_KEY_RIGHT)
+	{
+		visualFacingOut = (VisualProfile::FACING_UP_RIGHT);
+		bIdle = false;
+	}
+
+	return !bIdle;
 }

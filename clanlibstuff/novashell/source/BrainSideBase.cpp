@@ -55,10 +55,8 @@ void BrainSideBase::OnAdd()
 		ResetForNextFrame();
 }
 
-
 void BrainSideBase::Update(float step)
 {
-	CL_Vector2 pos = m_pParent->GetPos();
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
 	#define C_SIDE_ACCEL_POWER 0.17f

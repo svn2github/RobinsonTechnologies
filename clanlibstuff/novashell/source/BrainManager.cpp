@@ -186,6 +186,17 @@ void BrainManager::SendToBrainByName(const string &brainName, const string &msg)
 	pBrain->HandleMsg(msg);
 }
 
+void BrainManager::SendToBrainBase(const string &msg)
+{
+	if (!GetBrainBase())
+	{
+		LogError("No base brain assigned yet.");
+		return;
+	}
+
+	GetBrainBase()->HandleMsg(msg);
+}
+
 string BrainManager::AskBrainByName(const string &brainName, const string &msg)
 {
 	Brain *pBrain = GetBrainByName(brainName);

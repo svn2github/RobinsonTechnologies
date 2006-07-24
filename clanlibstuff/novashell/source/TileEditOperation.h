@@ -91,7 +91,9 @@ public:
 		eBitFlipY = D_BIT_1,
 		eBitColor = D_BIT_2,
 		eBitScale = D_BIT_3,
-		eBitCastShadow = D_BIT_4
+		eBitCastShadow = D_BIT_4,
+		eBitScript = D_BIT_5,
+
 	};
 
 	selectedTile_list m_selectedTileList;

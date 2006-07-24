@@ -26,6 +26,11 @@ public:
 	virtual void PostUpdate(float step);;
 	virtual const char * GetName() {return "TopPlayer";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainTopPlayer(pParent);}
+	virtual	void OnAdd();
+
+	//for use by other brains directly
+	virtual void AddWeightedForce(const CL_Vector2 & force);
+	virtual unsigned int GetKeys() {return m_Keys;}
 
 protected:
 
@@ -34,18 +39,25 @@ private:
 	void ResetKeys();
 	void OnKeyUp(const CL_InputEvent &key);
 	void OnKeyDown(const CL_InputEvent &key);
-	void CheckForMovement();
-	void CalculateForce(CL_Vector2 &force, float step);
+	bool CheckForMovement();
+	void CalculateForce(float step);
 	void UpdateMovement(float step);
 	void CheckForWarp();
+	void CheckForAttack();
+	void ResetForNextFrame();
 
 	unsigned int m_Keys; //holds current state of player movement keys
 	CL_Slot m_SlotKeyUp;
 	CL_Slot m_SlotKeyDown;
 	LoopingSound m_walkSound;
-	CL_Vector2 m_moveAngle;
+	
+	//CL_Vector2 m_moveAngle;
 
 	GameTimer m_attackTimer;
+
+	CL_Vector2 m_force;
+	float m_maxForce;
+
 
 };
 

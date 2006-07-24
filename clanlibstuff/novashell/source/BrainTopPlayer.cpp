@@ -7,10 +7,10 @@
 #include "VisualProfileManager.h"
 
 #define C_PLAYER_DESIRED_SPEED 3.3f
-#define C_PLAYER_ACCEL_POWER 0.7f
+#define C_PLAYER_ACCEL_POWER 0.3f
 #define C_PLAYER_GROUND_DAMPENING 0.4f //is removed from speed, not multiplied
 
-BrainTopPlayer registryInstance(NULL); //self register ourselves in the brain registry
+BrainTopPlayer registryInstanceBrainTopPlayer(NULL); //self register ourselves in the brain registry
 
 BrainTopPlayer::BrainTopPlayer(MovingEntity * pParent):Brain(pParent)
 {
@@ -23,16 +23,25 @@ BrainTopPlayer::BrainTopPlayer(MovingEntity * pParent):Brain(pParent)
 
 	ResetKeys();
 
+	SetSort(100); //always run last
 	m_SlotKeyUp = CL_Keyboard::sig_key_up().connect( this, &BrainTopPlayer::OnKeyUp);
 	m_SlotKeyDown = CL_Keyboard::sig_key_down().connect( this, &BrainTopPlayer::OnKeyDown);
 
 	m_walkSound.Init(g_pSoundManager, m_pParent->GetData()->Get("walk_sound"));
 	m_attackTimer.SetInterval(200);
+	GetGameLogic->SetGameMode(GameLogic::C_GAME_MODE_TOP_VIEW);
 }
 
 BrainTopPlayer::~BrainTopPlayer()
 {
 	RemoveActivePlayerIfNeeded(m_pParent);
+}
+
+void BrainTopPlayer::OnAdd()
+{
+	m_pParent->GetBrainManager()->SetBrainBase(this);
+	ResetForNextFrame();
+	m_pParent->GetBrainManager()->SetStateByName("TopPlayerIdle");
 }
 
 void BrainTopPlayer::ResetKeys()
@@ -104,89 +113,36 @@ void BrainTopPlayer::OnKeyUp(const CL_InputEvent &key)
 	}
 }
 
-
-void BrainTopPlayer::CheckForMovement()
+void BrainTopPlayer::CheckForAttack()
 {
-	bool bIdle = true;
-
-	if (m_Keys & C_KEY_LEFT)
+	if (m_Keys & C_KEY_ATTACK)
 	{
-		bIdle = false;
-		m_pParent->SetFacing(VisualProfile::FACING_LEFT); 
-	}
-
-	if (m_Keys & C_KEY_RIGHT)
-	{
-		m_pParent->SetFacing(VisualProfile::FACING_RIGHT);
-		bIdle = false;
-	}
-
-	if (m_Keys & C_KEY_UP)
-	{
-		m_pParent->SetFacing(VisualProfile::FACING_UP);
-		bIdle = false;
-	}
-
-	if (m_Keys & C_KEY_DOWN)
-	{
-		m_pParent->SetFacing(VisualProfile::FACING_DOWN);
-		bIdle = false;
-	}
-
-	if (m_Keys & C_KEY_DOWN && m_Keys & C_KEY_LEFT)
-	{
-		m_pParent->SetFacing(VisualProfile::FACING_DOWN_LEFT);
-		bIdle = false;
-	}
-
-	if (m_Keys & C_KEY_UP && m_Keys & C_KEY_LEFT)
-	{
-		m_pParent->SetFacing(VisualProfile::FACING_UP_LEFT);
-		bIdle = false;
-	}
-
-	if (m_Keys & C_KEY_DOWN && m_Keys & C_KEY_RIGHT)
-	{
-		m_pParent->SetFacing(VisualProfile::FACING_DOWN_RIGHT);
-		bIdle = false;
-	}
-
-	if (m_Keys & C_KEY_UP && m_Keys & C_KEY_RIGHT)
-	{
-		m_pParent->SetFacing(VisualProfile::FACING_UP_RIGHT);
-		bIdle = false;
-	}
-
-	if (!bIdle)
-	{
-		//we're moving or trying to move
-		m_moveAngle = FacingToVector(m_pParent->GetFacing());
-		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_WALK);
-
+		if (m_attackTimer.IntervalReached())
+		{
+			try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), 
+				"OnAttack", m_pParent);
+			} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAttack with playerbrain");
+			m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
+		}
 	}
 }
 
-void BrainTopPlayer::CalculateForce(CL_Vector2 &force, float step)
+
+void BrainTopPlayer::CalculateForce(float step)
 {
-	float desiredSpeed = C_PLAYER_DESIRED_SPEED;
 	float accelPower = C_PLAYER_ACCEL_POWER;
 
-	if (m_moveAngle != CL_Vector2::ZERO)
-	{
-		force = CL_Vector2(m_moveAngle)*desiredSpeed;
-		CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
-		force = force-curForce;
+	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
+	m_force = m_force-curForce;
 
-		Clamp(force.x, -accelPower, accelPower); //limit force to accel power
-	}
-	
+	Clamp(m_force.x, -accelPower, accelPower); //limit force to accel power
 }
 
 void BrainTopPlayer::CheckForWarp()
 {
 	
 	Zone *pZone = m_pParent->GetNearbyZoneByCollisionRectAndType(CMaterial::C_MATERIAL_TYPE_WARP);
-
+	
 		if (pZone)
 		{
 			//don't let them keep warping by holding down the key
@@ -203,31 +159,28 @@ void BrainTopPlayer::CheckForWarp()
 			}
 
 		} 
-	
 }
-
 
 void BrainTopPlayer::UpdateMovement(float step)
 {
-	VisualProfile *pProfile = m_pParent->GetVisualProfile();
-
-	m_moveAngle = CL_Vector2(0,0);
-
-	CheckForMovement();
+	//VisualProfile *pProfile = m_pParent->GetVisualProfile();
 	
-	//if not moving, force idle state
-	if (m_moveAngle == CL_Vector2::ZERO)
+	if (m_pParent->GetBrainManager()->InState("TopPlayerIdle"))
 	{
-		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_IDLE);
+		int visualFacing;
+
+		if (ConvertKeysToDirection(m_pParent->GetBrainManager()->GetBrainBase()->GetKeys(), visualFacing))
+		{
+			//they aren't idle anymore!
+			m_pParent->GetBrainManager()->SetStateByName("TopPlayerWalk");
+		}
 	}
 	
-	CL_Vector2 force = CL_Vector2(0,0);
-
-	CalculateForce(force, step);
+	CalculateForce(step);
 
 	//LogMsg("Cur Linear: %.2f, %.2f  Impulse: %.2f, %.2f", GetBody()->GetLinVelocity().x, GetBody()->GetLinVelocity().y, force.x, force.y);
 
-	m_pParent->AddForce(force);
+	m_pParent->AddForce(m_force);
 
 	if (m_pParent->GetBody()->GetLinVelocity().Length() > 1)
 	{
@@ -238,6 +191,37 @@ void BrainTopPlayer::UpdateMovement(float step)
 	}
 
 	CheckForWarp();
+	CheckForAttack();
+
+	m_pParent->SetSpriteByVisualStateAndFacing();
+
+}
+
+void BrainTopPlayer::ResetForNextFrame()
+{
+	m_maxForce = 4;
+	m_force = CL_Vector2::ZERO;
+}
+
+void BrainTopPlayer::AddWeightedForce(const CL_Vector2 & force)
+{
+	float magnitudeSoFar = m_force.length();
+	float magnitudeRemaining = m_maxForce - magnitudeSoFar;
+
+	if (magnitudeRemaining <= 0) return;
+
+	float magnitudeToAdd = force.length();
+
+	if (magnitudeToAdd < magnitudeRemaining)
+	{
+		m_force += force;
+	} else
+	{
+		//only add part
+		CL_Vector2 unitForce = force;
+		unitForce.unitize();
+		m_force += (unitForce * magnitudeRemaining);
+	}
 }
 
 void BrainTopPlayer::Update(float step)
@@ -255,20 +239,26 @@ void BrainTopPlayer::Update(float step)
 	}
 }
 
+
 void BrainTopPlayer::PostUpdate(float step)
 {
-	m_pParent->GetBody()->GetAngVelocity() = 0;
 
-	if (m_moveAngle == CL_Vector2::ZERO)
+	m_pParent->GetBody()->GetAngVelocity() = 0;
+	
+	/*
+	
+	if (m_force == CL_Vector2::ZERO)
 	{
 		//slow down
 		set_float_with_target(&m_pParent->GetBody()->GetLinVelocity().x, 0, C_PLAYER_GROUND_DAMPENING);
 		set_float_with_target(&m_pParent->GetBody()->GetLinVelocity().y, 0, C_PLAYER_GROUND_DAMPENING);
 	}
+	*/
 
 	if (m_Keys & C_KEY_SELECT)
 	{
 		m_Keys &= ~C_KEY_SELECT; //turn it off
-//		OnAction();
 	}
+
+	ResetForNextFrame();
 }

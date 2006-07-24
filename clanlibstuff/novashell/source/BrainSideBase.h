@@ -24,7 +24,7 @@ public:
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainSideBase(pParent);}
 	virtual void OnAdd();
 
-//for use by other brains directly
+	//for use by other brains directly
 	virtual void AddWeightedForce(const CL_Vector2 & force);
 
 protected:

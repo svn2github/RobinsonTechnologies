@@ -46,6 +46,7 @@ GameLogic::GameLogic()
 	m_strScriptRootDir = "media/script";
 	CL_Directory::create(m_strBaseUserProfilePath);
 	SetShowFPS(false);
+	SetGameMode(C_GAME_MODE_TOP_VIEW); //default.  Also is automatically changed when player brains are initted.
 }
 
 
@@ -97,6 +98,17 @@ void GameLogic::LoadGlobals()
 	m_data.Set("gameTick", "0");
 	GetApp()->SetGameTick(0);
 
+}
+
+void GameLogic::SetGameMode(int gameMode)
+{
+	if (gameMode < 0 || gameMode > C_GAME_MODE_COUNT)
+	{
+		LogError("Illegal game mode");
+		return;
+	}
+
+	m_gameMode = gameMode;
 }
 
 void GameLogic::ClearScreen()

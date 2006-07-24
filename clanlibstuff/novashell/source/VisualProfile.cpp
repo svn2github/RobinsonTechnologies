@@ -56,6 +56,17 @@ VisualProfile::VisualProfile()
 
 	m_animArray[ATTACK1_LEFT].m_name = "attack1_left";
 	m_animArray[ATTACK1_RIGHT].m_name = "attack1_right";
+
+	m_animArray[ATTACK1_UP].m_name = "attack1_up";
+	m_animArray[ATTACK1_DOWN].m_name = "attack1_down";
+
+	m_animArray[ATTACK1_UP_LEFT].m_name = "attack1_up_left";
+	m_animArray[ATTACK1_DOWN_LEFT].m_name = "attack1_down_left";
+
+	m_animArray[ATTACK1_UP_RIGHT].m_name = "attack1_up_right";
+	m_animArray[ATTACK1_DOWN_RIGHT].m_name = "attack1_down_right";
+
+
 }
 
 VisualProfile::~VisualProfile()
@@ -211,7 +222,36 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 		break;
 
 	case VISUAL_STATE_ATTACK1:
-		if (eFacing == FACING_LEFT) animID = ATTACK1_LEFT; else animID = ATTACK1_RIGHT;
+		switch(eFacing)
+		{
+		case FACING_LEFT: animID = ATTACK1_LEFT; break;
+		case FACING_RIGHT: animID = ATTACK1_RIGHT; break;
+		case FACING_UP: animID = ATTACK1_UP; break;
+		case FACING_DOWN: animID = ATTACK1_DOWN; break;
+
+		case FACING_UP_LEFT: animID = ATTACK1_UP_LEFT; break;
+		case FACING_DOWN_LEFT: animID = ATTACK1_DOWN_LEFT; break;
+		case FACING_UP_RIGHT: animID = ATTACK1_UP_RIGHT; break;
+		case FACING_DOWN_RIGHT: animID = ATTACK1_DOWN_RIGHT; break;
+		}
+		if (!IsActive(animID))
+		{
+			//if it's something small, let's fix it ourself
+			switch (animID)
+			{
+			case ATTACK1_UP_RIGHT:
+			case ATTACK1_UP_LEFT:
+				animID = ATTACK1_UP;
+				break;
+
+			case ATTACK1_DOWN_RIGHT:
+			case ATTACK1_DOWN_LEFT:
+				animID = ATTACK1_DOWN;
+				break;
+
+			}
+		}	
+
 		break;
 
 	default:

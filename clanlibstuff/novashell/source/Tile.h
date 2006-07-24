@@ -51,6 +51,8 @@ public:
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(64,64);}
 	CL_Rect GetWorldRectInt();
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, m_vecPos.x+64,m_vecPos.y+64);}
+	const CL_Rectf & GetWorldColRect();
+
 	Tile * CreateReference(Screen *pScreen);
 	void RemoveReference(Tile *pTileRef);
 	Tile * GetTileWereAReferenceFrom(){return m_pFatherTile;}
@@ -75,7 +77,7 @@ enum
  e_notPersistent = D_BIT_4, //if true, won't be saved to disk
  e_castShadow = D_BIT_5
 
-//can add more bits here, up to D_BIT_7
+ //can add more bits here, up to D_BIT_7
 };
 
 protected:

@@ -629,6 +629,30 @@
 						RelativePath=".\StateSideSimpleWalk.h"
 						>
 					</File>
+					<File
+						RelativePath=".\StateTopPlayerAttack.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerAttack.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerIdle.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerIdle.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerWalk.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerWalk.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

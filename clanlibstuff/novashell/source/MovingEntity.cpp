@@ -302,14 +302,22 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 		LogMsg("SetPosAndMapByName: Unable to locate entity by name: %s", name.c_str());
 		return false;
 	} 
-	float offsetY = GetWorldRect().bottom - GetPos().y;
+	float offsetY = 0;
+	
 	//we have to deduct half the height because this is written to move our FEET to the point
 	//to warp to. 
+
+	if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
+	{
+
 	
+	offsetY = GetWorldRect().bottom - GetPos().y;
+
 	if (GetCollisionData() && GetCollisionData()->GetLineList()->size() > 0 )
 	{
 		PointList *m_pActiveLine = &(*GetCollisionData()->GetLineList()->begin());
 		offsetY = m_pActiveLine->GetRect().bottom + m_pActiveLine->GetOffset().y;
+	}
 	}
 
 	SetPosAndMap(pO->m_pos - CL_Vector2(0, offsetY), pO->m_pWorld->GetName());
@@ -351,17 +359,20 @@ Zone * MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
  return NULL; //nothing found
 }
 
+
+
 Zone * MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
 {
+	
+	if ( m_zoneVec.size() == 0) return NULL;
+
 	static CL_Rectf r;
-	r = GetCollisionData()->GetLineList()->begin()->GetRect();
+	r = m_pTile->GetWorldColRect();
 
 	for (unsigned int i=0; i < m_zoneVec.size(); i++)
 	{
 		if (g_materialManager.GetMaterial(m_zoneVec[i].m_materialID)->GetType() == matType)
 		{
-			r += *(CL_Pointf*)&(GetPos());
-
 			if (r.is_overlapped(m_zoneVec[i].m_boundingRect + *(CL_Pointf*)&(m_zoneVec[i].m_vPos)) )
 			{
 
@@ -950,7 +961,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			{
 			
 					//actually add the data
-					Zone z;
+					static Zone z;
 					z.m_materialID = lineListItor->GetType();
 					z.m_boundingRect = lineListItor->GetRect();
 					z.m_vPos = pTile->GetPos();
@@ -958,6 +969,9 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 					{
 						//i send the ID because it's safer than the pointer
 						z.m_entityID = ((TileEntity*)pTile)->GetEntity()->ID();
+						//z.m_vPos += lineListItor->GetOffset();
+						z.m_boundingRect -=  *(CL_Pointf*)& (pCol->GetLineList()->begin()->GetOffset());
+
 					} else
 					{
 						z.m_entityID = 0;
@@ -1382,7 +1396,7 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 
 		bottomOffset *= GetCamera->GetScale().y;
 
-		LogMsg("Bottom offset is %.2f", bottomOffset);
+		//LogMsg("Bottom offset is %.2f", bottomOffset);
 		//move the shadow closer to where the real bottom is
 		params1.destY[0] -= bottomOffset;
 		params1.destY[1] -= bottomOffset;

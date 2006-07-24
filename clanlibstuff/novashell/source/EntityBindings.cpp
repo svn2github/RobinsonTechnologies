@@ -46,6 +46,7 @@ void luabindEntity(lua_State *pState)
 			.def("GetStateByName", &BrainManager::GetStateByName)
 			.def("LastStateWas", &BrainManager::LastStateWas)
 			.def("InState", &BrainManager::InState)
+			.def("SendToBrainBase", &BrainManager::SendToBrainBase)
 			
 
 			,class_<MovingEntity>("Entity")

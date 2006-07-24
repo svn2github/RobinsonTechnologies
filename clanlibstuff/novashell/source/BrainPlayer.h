@@ -81,6 +81,7 @@ protected:
 
 void AssignPlayerToCameraIfNeeded(MovingEntity *pEnt);
 void RemoveActivePlayerIfNeeded(MovingEntity *pEnt);
+bool ConvertKeysToDirection(unsigned int keys, int &visualFacingOut);
 
 
 

@@ -116,6 +116,8 @@ void EntChooseScreenMode::Init()
 	{
 		CL_PixelBuffer pb(GetWorld->GetThumbnailWidth(), GetWorld->GetThumbnailHeight(), GetWorld->GetThumbnailWidth()*3, C_THUMBNAIL_FORMAT);
 		m_pThumb = new CL_Surface(pb);
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+
 	}
 	m_slotClose = m_pWindow->sig_close().connect_virtual(this, &EntChooseScreenMode::OnClose);
 
@@ -255,7 +257,9 @@ void EntChooseScreenMode::DrawBlock(int x, int y)
         {
 			m_pThumb->set_pixeldata(*pWorldChunk->GetThumbnail());
 			m_pThumb->set_color(CL_Color(255,255,255,255));
+			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 			m_pThumb->draw(drawRect);
+
 
         } else
         {

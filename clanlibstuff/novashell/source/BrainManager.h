@@ -71,6 +71,7 @@ public:
 	void Update(float step);
 	void PostUpdate(float step);
 	void SendToBrainByName(const string &brainName, const string &msg);
+	void SendToBrainBase(const string &msg);
 	string AskBrainByName(const string &brainName, const string &msg);
 
 	Brain * GetBrainByName(const string &brainName);

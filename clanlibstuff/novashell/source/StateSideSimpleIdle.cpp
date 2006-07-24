@@ -25,7 +25,6 @@ void StateSideSimpleIdle::OnAdd()
 
 void StateSideSimpleIdle::PostUpdate(float step)
 {
-
 	if (AnimIsLooping())
 	{
 		if (m_thinkTimer.IntervalReached())

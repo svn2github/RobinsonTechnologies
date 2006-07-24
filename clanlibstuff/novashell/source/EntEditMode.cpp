@@ -98,7 +98,6 @@ void EntEditMode::OnSelectSimilar()
 	selectedTile_list::iterator itor = tempList.m_selectedTileList.begin();
 
 	CL_Rectf r = GetCamera->GetViewRectWorld();
-
 	
 	while (itor != tempList.m_selectedTileList.end())
 	{
@@ -107,7 +106,6 @@ void EntEditMode::OnSelectSimilar()
 
 			itor++;
 	}
-
 	
 }
 
@@ -980,7 +978,6 @@ void EntEditMode::Render(void *pTarget)
 	if (m_pEntCollisionEditor) return; //don't draw this extra GUI stuff right now
 	if (m_dragInProgress)
 	{
-	
 		m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap).x - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).x),
 			int(GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap).y - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).y)));
 		//draw a rect on the screen
@@ -1390,15 +1387,17 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 	buttonConvert.enable(false);
 }
 
+const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
+
 	if (pEnt)
 	{
 		m_pPropertiesInputScript = pScript;
 
 		if (tilesSelected > 1)
 		{
-			inputName.set_text("<multiple selected>");
-			inputEntity.enable(false);
-			pScript->set_text("<multiple selected>");
+			inputName.set_text(C_MULTIPLE_SELECT_TEXT);
+			//inputEntity.enable(false);
+			pScript->set_text(C_MULTIPLE_SELECT_TEXT);
 			pEnt = NULL;
 		} else
 		{
@@ -1413,9 +1412,10 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 	if (!pEnt)
 	{
 		pScript = NULL; //not gonna use it
-		inputEntity.enable(false);
-		buttonOpenScript.enable(false);
-		buttonEditScript.enable(false);
+		//inputEntity.enable(false);
+		//buttonOpenScript.enable(false);
+		//buttonEditScript.enable(false);
+		
 		inputName.enable(false);
 
 		listData.enable(false);
@@ -1466,6 +1466,15 @@ if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 	if (m_guiResponse == C_GUI_OK  )
 	{
 		unsigned int flags = 0;
+		
+		if (!pEnt && pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			if (inputEntity.get_text() != C_MULTIPLE_SELECT_TEXT)
+			{
+				((TileEntity*)pTile)->GetEntity()->SetMainScriptFileName(inputEntity.get_text());
+				flags = flags | TileEditOperation::eBitScript;
+			}
+		}
 		
 		if (flipX.is_checked() != pTile->GetBit(Tile::e_flippedX))
 		{

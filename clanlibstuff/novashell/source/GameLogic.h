@@ -79,8 +79,24 @@ public:
 	  void ToggleShowFPS() {m_bShowFPS = !m_bShowFPS;}
 	  void SetRestartEngineFlag(bool bNew) { 			m_bRestartEngineFlag = bNew;}
 	  void Quit() {GetApp()->OnWindowClose();}
+	  
+	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
+	  //But its reliance on this var should be as minimum as possible.
+	  
+	  int GetGameMode() {return m_gameMode;}
+	  void SetGameMode(int gameMode);
+
+	  enum
+	  {
+		  C_GAME_MODE_SIDE_VIEW,
+		  C_GAME_MODE_TOP_VIEW,
+
+		  C_GAME_MODE_COUNT
+	  };
 
 private:
+
+	
 
 	void OnMouseUp(const CL_InputEvent &key);
 	void Zoom(bool zoomCloser);
@@ -108,6 +124,7 @@ private:
 	bool m_bShowingMessageWindow;
 	bool m_bShowFPS;
 	bool m_bRestartEngineFlag;
+	int m_gameMode;
 	
 };
 

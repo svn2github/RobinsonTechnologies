@@ -179,14 +179,7 @@ void TileEditOperation::AddWorldCoordToBoundsByTile(Tile *pTile)
 		TileEntity *pEntTile = (TileEntity*) pTile;
 
 		//special handling to deal with the complicated offsets a sprite can have
-
-		CL_Rectf r(pTile->GetPos().x, pTile->GetPos().y, pTile->GetPos().x + pEntTile->GetEntity()->GetSizeX(), pTile->GetPos().y + pEntTile->GetEntity()->GetSizeY());
-		CL_Origin origin;
-		int x,y;
-		pEntTile->GetEntity()->GetAlignment(origin,x,y);
-		CL_Pointf offset = calc_origin(origin, r.get_size());
-		r -= offset;
-		
+		CL_Rectf r = pTile->GetWorldRect();
 		AddWorldCoordToBounds(CL_Vector2(r.left, r.top)); //this rounds it off to the tile we're on
 		AddWorldCoordToBounds(CL_Vector2(r.right, r.bottom));
 		return;
@@ -223,9 +216,7 @@ void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int opera
 		}
 		SAFE_DELETE(pTile);
 	}
-
 }
-
 
 void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec)
 {
@@ -253,7 +244,6 @@ void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, cons
 	}
 
 }
-
 
 void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec, Tile *pSrcTile)
 {
@@ -315,7 +305,6 @@ void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragSt
 
 				}
 
-
 			} else
 			{
 				if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
@@ -370,8 +359,6 @@ void TileEditOperation::AddWorldCoordToBounds(const CL_Vector2 &vecWorld)
 
 		m_vecDownRight.x = max(m_vecDownRight.x, vecWorld.x);
 		m_vecDownRight.y = max(m_vecDownRight.y, vecWorld.y);
-
-		
 }
 
 //if pUndoOut isn't null, an undo is placed there of whatever is done
@@ -524,6 +511,14 @@ void TileEditOperation::CopyTilePropertiesToSelection(Tile *pSrcTile, unsigned i
 			if (flags & eBitColor) pDestTile->SetColor(pSrcTile->GetColor());
 			if (flags & eBitScale) pDestTile->SetScale(pSrcTile->GetScale());
 			if (flags & eBitCastShadow) pDestTile->SetBit(Tile::e_castShadow, pSrcTile->GetBit(Tile::e_castShadow));
+			if (flags & eBitScript)
+			{
+				if (pSrcTile->GetType() == C_TILE_TYPE_ENTITY && pDestTile->GetType() == C_TILE_TYPE_ENTITY)
+				{
+					((TileEntity*)pDestTile)->GetEntity()->SetMainScriptFileName(
+						((TileEntity*)pSrcTile)->GetEntity()->GetMainScriptFileName() );
+				}
+			}
 			
 	itor++;
 	}
