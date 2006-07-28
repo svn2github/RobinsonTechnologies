@@ -174,23 +174,23 @@ unsigned int HashString(const char *str)
 }
 
 
-
-void ClearPixelBuffer(CL_PixelBuffer* pPixelBuffer, CL_Color *pColor)
+void ClearPixelBuffer(CL_PixelBuffer* pPixelBuffer, CL_Color color)
 {
 	cl_assert(pPixelBuffer && "Invalid buffer!");
 	int bytes_pp = pPixelBuffer->get_format().get_depth()/8;
 	cl_assert(bytes_pp == 4 && "We only support 32 bit 8888 format right now.");
 
+	unsigned int dest_format_color = color.to_pixelformat(pPixelBuffer->get_format());
 	int copy_count = pPixelBuffer->get_pitch()/4;
 
 	unsigned int *p_data = (unsigned int*)pPixelBuffer->get_data();
-    
+
 	pPixelBuffer->lock();
 	for (int y=0; y < pPixelBuffer->get_height(); y++)
 	{
 		for (int x=0; x < copy_count; x++)
 		{
-			*p_data = pColor->color;
+			*p_data = dest_format_color;
 			p_data++;
 		}
 	}

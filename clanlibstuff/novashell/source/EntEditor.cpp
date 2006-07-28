@@ -573,6 +573,9 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
     m_pButtonToggleEditMode->set_size(110,buttonSizeY);
     m_slot.connect(m_pButtonToggleEditMode->sig_clicked(),this, &EntEditor::OnToggleEditMode);
 	*/
+	
+	LogMsg("Menu height is %d", m_pMenu->get_items_height());
+	
 	return true;
 }
 
@@ -694,6 +697,9 @@ void EntEditor::PopUpLayerPropertiesDialog(int layerID)
 	CL_CheckBox *pCheckBoxUseParallaxInThumb = dlg.add_check_box("Use parallax in thumbnail", 
 		layerMan.GetLayerInfo(layerID).GetUseParallaxInThumbnail() != 0, 150);
 
+	CL_CheckBox *pCheckBoxHasCollisionData = dlg.add_check_box("Has Collision Data", 
+		layerMan.GetLayerInfo(layerID).GetHasCollisionData() != 0, 150);
+
 	CL_SlotContainer slots;
 
 	// Connecting signals, to allow only numbers
@@ -735,6 +741,7 @@ void EntEditor::PopUpLayerPropertiesDialog(int layerID)
 		pLayer->SetShowInEditorOnly(pCheckBoxEditorOnly->is_checked());
 		pLayer->SetUseInThumbnail(pCheckBoxUseThumbnail->is_checked());
 		pLayer->SetUseParallaxInThumbnail(pCheckBoxUseParallaxInThumb->is_checked());
+		pLayer->SetHasCollisionData(pCheckBoxHasCollisionData->is_checked());
 
 		pLayer->SetName(pName->get_text());
 		pLayer->SetSort(CL_String::to_int(pSort->get_text()));
@@ -766,7 +773,7 @@ void EntEditor::OnLayerHighlight()
 	{
 		LayerManager &layerMan = GetWorld->GetLayerManager();
 		EntEditMode *pEdit = dynamic_cast<EntEditMode*>(EntityMgr->GetEntityByName("edit mode"));
-		vector<unsigned int> &layerVec = layerMan.GetEditActiveList();
+		const vector<unsigned int> &layerVec = layerMan.GetEditActiveList();
 		pEdit->SelectByLayer(layerVec);
 	} else
 	{

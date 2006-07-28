@@ -233,6 +233,10 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 
 CL_Rectf MovingEntity::GetWorldRect()
 {
+	
+	//OPTIMIZE:  This is called many times during a frame, we can probably get a big speed increase
+	//by caching this info out with a changed flag or something
+	
 	static CL_Rectf r;
 	r.left = 0;
 	r.top = 0;
@@ -252,6 +256,10 @@ CL_Rectf MovingEntity::GetWorldRect()
 
 const CL_Rect & MovingEntity::GetBoundsRect()
 {
+	
+	//OPTIMIZE:  This is called many times during a frame, we can probably get a big speed increase
+	//by caching this info out with a changed flag or something
+
 	static CL_Rect r;
 	r.left = 0;
 	r.top = 0;
@@ -1032,6 +1040,11 @@ void MovingEntity::ApplyGenericMovement(float step)
 		return;
 	}
 
+	if (!m_pSprite || m_pSprite->get_frame_count() == 0)
+	{
+		throw CL_Error("Error, sprite not valid in entity " + CL_String::from_int(ID()) + " (trying to walk in a direction that doesn't exist maybe?");
+		return;
+	}
 	//apply world gravity?
 	
 	int padding = GetSizeX();
@@ -1042,14 +1055,11 @@ void MovingEntity::ApplyGenericMovement(float step)
 	m_scanArea.top = GetPos().y - padding;
 	m_scanArea.right = GetPos().x + padding;
 	m_scanArea.bottom = GetPos().y + padding;
-	
-	vector<unsigned int> layerIDVec;
+
 	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
-	pWorld->GetLayerManager().PopulateIDVectorWithAllLayers(layerIDVec);
-
 	//TODO: Optimize this to only scan the rects that hold collision data, main, details and entity probably
-	pWorld->GetMyWorldCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, layerIDVec);
+	pWorld->GetMyWorldCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
 	
 	m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
 
@@ -1267,6 +1277,7 @@ if (GetGameLogic->GetGamePaused()) return;
 
 	//apply gravity and things
 	
+
 	if (!GetBody()->IsUnmovable() && GetCollisionData())
 	{
 		//the draw ID let's other objects know that we've already processed
@@ -1368,8 +1379,10 @@ MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName)
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 {
 	
+	if (!pTile->GetCollisionData()) return;
 	float density = 1 - 0.5;
 	float bottomOffset = 0;
+	float leftOffset = 0;
 
 	float picSizeY = pTile->GetBoundsSize().y;
 
@@ -1377,21 +1390,23 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 	{
 		//guess what kind of shadow would look best by studying how much volume its collision has
 		//the lower, the more like a house it is, the higher, the more like a pole it is
-		density = 0.8 - pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_height() / picSizeY;
+		PointList *pLine = &(*pTile->GetCollisionData()->GetLineList()->begin());
+
+		density = 0.8 - pLine->GetRect().get_height() / picSizeY;
 	
 			if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 			{
-				bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_height()/2);
+				CL_Rectf worldRect = pTile->GetWorldRect();
+				bottomOffset = (worldRect.bottom - (pTile->GetPos().y + pLine->GetRect().get_height()/2))*0.9;
+				leftOffset = (worldRect.left- (pTile->GetPos().x + pLine->GetRect().left))/2;
 			} else
 			{
-				bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pTile->GetCollisionData()->GetLineList()->begin()->GetRect().bottom);
+				bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pLine->GetRect().bottom);
 			}
-		
 	} 
 
 	if (bottomOffset != 0)
 	{
-		
 		//scale it
 
 		bottomOffset *= GetCamera->GetScale().y;
@@ -1402,6 +1417,14 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 		params1.destY[1] -= bottomOffset;
 		params1.destY[2] -= bottomOffset;
 		params1.destY[3] -= bottomOffset;
+
+		leftOffset *= GetCamera->GetScale().x;
+
+		//same thing with left to right
+		params1.destX[0] -= leftOffset;
+		params1.destX[1] -= leftOffset;
+		params1.destX[2] -= leftOffset;
+		params1.destX[3] -= leftOffset;
 
 	}
 

@@ -435,8 +435,9 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 
 	offset.y += 15;
 	m_pCheckBoxClipToImage = new CL_CheckBox(offset, "Clip to image", m_pWindow->get_client_area());
-	m_pCheckBoxClipToImage ->set_checked(true);
+	
 	m_pCheckBoxClipToImage ->set_focusable(false);
+
 
 	offset.y += 15;
 
@@ -455,6 +456,13 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 
 	SetupLineForEdit(m_curLine);
 
+	SetClippedDefaultBasedOnLine();
+
+}
+
+void EntCollisionEditor::SetClippedDefaultBasedOnLine()
+{
+	m_pCheckBoxClipToImage ->set_checked(true);
 }
 
 void EntCollisionEditor::SetupLineForEdit(int line)

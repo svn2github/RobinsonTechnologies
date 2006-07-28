@@ -50,6 +50,13 @@ VisualProfile::VisualProfile()
 
 	m_animArray[DIE_LEFT].m_name = "die_left";
 	m_animArray[DIE_RIGHT].m_name = "die_right";
+	m_animArray[DIE_UP].m_name = "die_up";
+	m_animArray[DIE_DOWN].m_name = "die_down";
+	m_animArray[DIE_UP_LEFT].m_name = "die_up_left";
+	m_animArray[DIE_DOWN_LEFT].m_name = "die_down_left";
+
+	m_animArray[DIE_UP_RIGHT].m_name = "die_up_right";
+	m_animArray[DIE_DOWN_RIGHT].m_name = "die_down_right";
 
 	m_animArray[TURN_LEFT].m_name = "turn_left";
 	m_animArray[TURN_RIGHT].m_name = "turn_right";
@@ -213,10 +220,6 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 		if (eFacing == FACING_LEFT) animID = PAIN_LEFT; else animID = PAIN_RIGHT;
 		break;
 
-	case VISUAL_STATE_DIE:
-		if (eFacing == FACING_LEFT) animID = DIE_LEFT; else animID = DIE_RIGHT;
-		break;
-
 	case VISUAL_STATE_TURN:
 		if (eFacing == FACING_LEFT) animID = TURN_LEFT; else animID = TURN_RIGHT;
 		break;
@@ -254,6 +257,58 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 
 		break;
 
+
+	case VISUAL_STATE_DIE:
+		switch(eFacing)
+		{
+		case FACING_LEFT: animID = DIE_LEFT; break;
+		case FACING_RIGHT: animID = DIE_RIGHT; break;
+		case FACING_UP: animID = DIE_UP; break;
+		case FACING_DOWN: animID = DIE_DOWN; break;
+
+
+		case FACING_UP_LEFT: animID = DIE_UP_LEFT; break;
+		case FACING_DOWN_LEFT: animID = DIE_DOWN_LEFT; break;
+		case FACING_UP_RIGHT: animID = DIE_UP_RIGHT; break;
+		case FACING_DOWN_RIGHT: animID = DIE_DOWN_RIGHT; break;
+
+		}
+		if (!IsActive(animID))
+		{
+			//if it's something small, let's fix it ourself
+			switch (animID)
+			{
+
+			case DIE_UP_RIGHT:
+			case DIE_UP_LEFT:
+				animID = DIE_UP;
+				break;
+
+			case DIE_DOWN_RIGHT:
+			case DIE_DOWN_LEFT:
+				animID = DIE_DOWN;
+				break;
+
+			}
+		}	
+
+		if (!IsActive(animID))
+		{
+			//It's still broke?   Must be a two way death only
+			switch (animID)
+			{
+
+			case DIE_UP:
+				animID = DIE_LEFT;
+				break;
+
+			case DIE_DOWN:
+				animID = DIE_RIGHT;
+				break;
+			}
+		}	
+		break;
+
 	default:
 		throw CL_Error("Unknown state:" +CL_String::from_int(eState));
 	}
@@ -280,7 +335,7 @@ int VisualProfile::TextToAnimID(const string & stState)
 			return i;
 		}
 	}
-	LogMsg("Unknown anim type: %s.  Keep in mind they are case sensitive.", stState.c_str());
+	LogError("Unknown anim type: %s.  Keep in mind they are case sensitive.", stState.c_str());
 	return -1;
 }
 
@@ -315,7 +370,7 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 	bool mirrory = CL_String::to_bool(node.get_attribute("mirrory"));
 	if (IsActive(animID))
 	{
-		LogMsg("Error, state %s already has a sprite attached to it in profile %s.", stState.c_str(), GetName().c_str());
+		LogError("Error, state %s already has a sprite attached to it in profile %s.", stState.c_str(), GetName().c_str());
 	}
 
 	try
@@ -325,7 +380,7 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 		//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 	} catch(CL_Error error)
 	{
-		LogMsg("Error with putting anim %s as state %s while building profile %s.  Make sure you spelled it right and it's in the xml.\n(%s)",
+		LogError("Error with putting anim %s as state %s while building profile %s.  Make sure you spelled it right and it's in the xml.\n(%s)",
 			stSpriteName.c_str(), stState.c_str(), GetName().c_str(), error.message.c_str());
 		SAFE_DELETE(m_animArray[animID].m_pSprite);
 		return;

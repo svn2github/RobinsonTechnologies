@@ -13,11 +13,8 @@ Layer::Layer()
 	for (int i=0; i < e_floatCount; i++) m_floatArray[i] = 0;
 
 	SetUseInThumbnail(true);
-	SetUseParallaxInThumbnail(false);
 	SetIsDisplayed(true);
 	SetIsEditActive(true);
-	SetScrollMod(CL_Vector2(0.0f, 0.0f));
-    
 }
 void Layer::SetScrollMod(const CL_Vector2 &scrollMod)
 {
@@ -44,8 +41,6 @@ LayerManager::LayerManager()
 LayerManager::~LayerManager()
 {
 }
-
-
 
 void LayerManager::PopulateIDVectorWithAllLayers(vector<unsigned int> &layerIDVecOut)
 {
@@ -84,11 +79,15 @@ void LayerManager::BuildLists()
 
 	m_drawList.clear();
 	m_editActiveList.clear();
+	m_allList.clear();
+	m_collisionList.clear();
 
    for (unsigned int i=0; i < GetLayerCount(); i++)
    {
 	  if (m_layerVec[i].IsDisplayed()) m_drawList.push_back(i);
 	  if (m_layerVec[i].IsEditActive()) m_editActiveList.push_back(i);
+	  m_allList.push_back(i);
+	  if (m_layerVec[i].GetHasCollisionData()) m_collisionList.push_back(i);
    }
   
 
@@ -117,19 +116,24 @@ void LayerManager::BuildDefaultLayers()
 
 	m_layerVec[C_LAYER_MAIN].SetName("Main");
 	m_layerVec[C_LAYER_MAIN].SetSort(C_LAYER_MAIN);
+	m_layerVec[C_LAYER_MAIN].SetHasCollisionData(true);
 
 	m_layerVec[C_LAYER_DETAIL1].SetName("Detail 1");
 	m_layerVec[C_LAYER_DETAIL1].SetSort(C_LAYER_DETAIL1);
+	m_layerVec[C_LAYER_DETAIL1].SetHasCollisionData(true);
 
 	m_layerVec[C_LAYER_DETAIL2].SetName("Detail 2");
 	m_layerVec[C_LAYER_DETAIL2].SetSort(C_LAYER_DETAIL2);
 	m_layerVec[C_LAYER_DETAIL2].SetUseInThumbnail(false);
+	m_layerVec[C_LAYER_DETAIL2].SetHasCollisionData(true);
 
 	m_layerVec[C_LAYER_ENTITY].SetName("Entity");
 	m_layerVec[C_LAYER_ENTITY].SetSort(C_LAYER_ENTITY);
+	m_layerVec[C_LAYER_ENTITY].SetHasCollisionData(true);
 
 	m_layerVec[C_LAYER_OVERLAY1].SetName("Overlay 1");
 	m_layerVec[C_LAYER_OVERLAY1].SetSort(C_LAYER_OVERLAY1);
+	m_layerVec[C_LAYER_OVERLAY1].SetHasCollisionData(true);
 
 	m_layerVec[C_LAYER_OVERLAY2].SetName("Overlay 2");
 	m_layerVec[C_LAYER_OVERLAY2].SetSort(C_LAYER_OVERLAY2);
@@ -139,12 +143,14 @@ void LayerManager::BuildDefaultLayers()
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetSort(C_LAYER_HIDDEN_DATA);
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetShowInEditorOnly(true);
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetUseInThumbnail(false);
+	m_layerVec[C_LAYER_HIDDEN_DATA].SetHasCollisionData(true);
 
 
-	m_layerVec[C_LAYER_HIDDEN_DATA].SetName("Hidden Data 2");
-	m_layerVec[C_LAYER_HIDDEN_DATA].SetSort(C_LAYER_HIDDEN_DATA2);
-	m_layerVec[C_LAYER_HIDDEN_DATA].SetShowInEditorOnly(true);
-	m_layerVec[C_LAYER_HIDDEN_DATA].SetUseInThumbnail(false);
+	m_layerVec[C_LAYER_HIDDEN_DATA2].SetName("Hidden Data 2");
+	m_layerVec[C_LAYER_HIDDEN_DATA2].SetSort(C_LAYER_HIDDEN_DATA2);
+	m_layerVec[C_LAYER_HIDDEN_DATA2].SetShowInEditorOnly(true);
+	m_layerVec[C_LAYER_HIDDEN_DATA2].SetUseInThumbnail(false);
+	m_layerVec[C_LAYER_HIDDEN_DATA2].SetHasCollisionData(true);
 
 	BuildLists();
 }

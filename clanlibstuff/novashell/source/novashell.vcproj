@@ -578,6 +578,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainTopBase.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainTopBase.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainTopPlayer.cpp"
 						>
 					</File>
@@ -627,6 +635,14 @@
 					</File>
 					<File
 						RelativePath=".\StateSideSimpleWalk.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopIdle.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopIdle.h"
 						>
 					</File>
 					<File

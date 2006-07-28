@@ -456,7 +456,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 	}
 }
 
-void EntEditMode::SelectByLayer(vector<unsigned int> &layerVec)
+void EntEditMode::SelectByLayer(const vector<unsigned int> &layerVec)
 {
 	m_selectedTileList.ClearSelection();
 	int operation = TileEditOperation::C_OPERATION_ADD;

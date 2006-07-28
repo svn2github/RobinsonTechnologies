@@ -65,7 +65,7 @@ public:
 	Screen * GetParentScreen();
 	void SetParentScreen(Screen *pScreen) {m_pParentScreen = pScreen;}
 	virtual CBody * GetCustomBody() {return NULL;}
-	void SetColor(CL_Color color) {m_color = color;}
+	void SetColor(const CL_Color color) {m_color = color;}
 	CL_Color GetColor() {return m_color;}
 	
 enum

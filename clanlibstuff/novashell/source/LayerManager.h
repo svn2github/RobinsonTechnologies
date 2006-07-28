@@ -50,6 +50,9 @@ public:
 	cl_uint8 GetUseParallaxInThumbnail() {return m_byteArray[e_byteUseParallaxInThumbnail];};
 	void SetUseParallaxInThumbnail(cl_uint8 useParallaxInThumbnail) {m_byteArray[e_byteUseParallaxInThumbnail] = useParallaxInThumbnail;}
 
+	cl_uint8 GetHasCollisionData() {return m_byteArray[e_byteHasCollisionData];};
+	void SetHasCollisionData(cl_uint8 hasColData) {m_byteArray[e_byteHasCollisionData] = hasColData;}
+
 	const string & GetName(){return m_stName;}
 	void SetName(const string st){m_stName = st;}
 	
@@ -76,6 +79,7 @@ private:
 		e_byteShowInEditorOnly,
 		e_byteUseInThumbnail,
 		e_byteUseParallaxInThumbnail,
+		e_byteHasCollisionData,
 
 		//add new vars above here
 		e_byteCount
@@ -117,8 +121,10 @@ public:
     virtual ~LayerManager();
 	unsigned int GetLayerCount() {return m_layerVec.size();}
 	Layer & GetLayerInfo(unsigned int layerID) {return m_layerVec[layerID];}
-	vector<unsigned int> & GetDrawList() {return m_drawList;}
-	vector<unsigned int> & GetEditActiveList() {return m_editActiveList;}
+	const vector<unsigned int> & GetDrawList() {return m_drawList;}
+	const vector<unsigned int> & GetEditActiveList() {return m_editActiveList;}
+	const vector<unsigned int> & GetAllList() {return m_allList;} //indexes of all layers
+	const vector<unsigned int> & GetCollisionList() {return m_collisionList;} //indexes of all layers
 	void BuildLists();
 	void PopulateIDVectorWithAllLayers(vector<unsigned int> &layerIDVecOut);
 	void Remove(int layerID);
@@ -132,6 +138,7 @@ protected:
 
 	layer_vector m_layerVec;
 	vector<unsigned int> m_drawList, m_editActiveList;
+	vector<unsigned int> m_allList, m_collisionList;
 };
 
 

@@ -300,8 +300,8 @@ void Screen::GetPtrToAllTiles(tile_list *pTileList)
 void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const vector<unsigned int> &layerIntVec, unsigned int scanID)
 {
 	//we use GetTileList at least once so it can create the layer if need be or error on an invalid layer
-	Tile *pTile;
-    tile_list::iterator itor;
+	static Tile *pTile;
+    static tile_list::iterator itor;
 	
 	for (unsigned int i = 0; i < layerIntVec.size(); i++)
 	{
@@ -322,7 +322,7 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 			//first time we've scanned this
 
 			pTile->SetLastScanID(scanID);
-			//TODO optimize this rect check.  Maybe precalc it's box, or circle in the tile itself
+			//TODO optimize this rect check.  Maybe precalc its box, or circle in the tile itself
 			if (scanRect.is_overlapped(pTile->GetWorldRectInt()))
 			{
 				pTileList->push_back(pTile);

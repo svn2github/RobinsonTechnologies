@@ -101,6 +101,8 @@ void luabindEntity(lua_State *pState)
 			.def("SetTrigger", &MovingEntity::SetTrigger)
 			.def("DumpScriptInfo", &MovingEntity::DumpScriptInfo)
 	
+			.def("SetBaseColor", &MovingEntity::SetBaseColor)
+			.def("GetBaseColor", &MovingEntity::GetBaseColor)
 		];
 }
 

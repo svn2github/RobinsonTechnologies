@@ -145,6 +145,8 @@ public:
   void AddColorModBlue(short mod) {m_colorModBlue += mod;}
   void AddColorModAlpha(short mod) {m_colorModAlpha += mod;}
 
+  void SetBaseColor(const CL_Color &col){m_pTile->SetColor(col);}
+  CL_Color GetBaseColor() {return m_pTile->GetColor();}
   void SetTrigger(int triggerType, int typeVar, int triggerBehavior, int behaviorVar);
   void ClearColorMods();
   void DumpScriptInfo();

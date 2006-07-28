@@ -57,6 +57,7 @@ enum
 	void OnNextLine();
 	void OnPrevLine();
 	void SetupLineForEdit(int line);
+	void SetClippedDefaultBasedOnLine();
 	
 	//GUI
 	CL_SlotContainer m_slots;

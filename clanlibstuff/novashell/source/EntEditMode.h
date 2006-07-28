@@ -25,7 +25,7 @@ public:
 
 	virtual void Render(void *pTarget);
 	virtual void Update(float step);
-	void SelectByLayer(vector<unsigned int> &layerVec);
+	void SelectByLayer(const vector<unsigned int> &layerVec);
 	void Init();
 
 	EntEditMode();

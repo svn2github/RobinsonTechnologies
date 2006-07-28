@@ -1,11 +1,10 @@
 #include "AppPrecomp.h"
-#include "BrainSideBase.h"
+#include "BrainTopBase.h"
 #include "MovingEntity.h"
-#include "VisualProfileManager.h"
 
-BrainSideBase registryInstanceSideBase(NULL); //self register ourselves in the brain registry
+BrainTopBase registryInstanceBrainTopBase(NULL); //self register ourselves i nthe brain registry
 
-BrainSideBase::BrainSideBase(MovingEntity * pParent):Brain(pParent)
+BrainTopBase::BrainTopBase(MovingEntity * pParent):Brain(pParent)
 {
 	if (!pParent)
 	{
@@ -17,17 +16,17 @@ BrainSideBase::BrainSideBase(MovingEntity * pParent):Brain(pParent)
 	SetSort(100); //always run last
 }
 
-BrainSideBase::~BrainSideBase()
+BrainTopBase::~BrainTopBase()
 {
 }
 
-void BrainSideBase::ResetForNextFrame()
+void BrainTopBase::ResetForNextFrame()
 {
 	m_maxForce = 4;
 	m_force = CL_Vector2::ZERO;
 }
 
-void BrainSideBase::AddWeightedForce(const CL_Vector2 & force)
+void BrainTopBase::AddWeightedForce(const CL_Vector2 & force)
 {
 	float magnitudeSoFar = m_force.length();
 	float magnitudeRemaining = m_maxForce - magnitudeSoFar;
@@ -49,19 +48,19 @@ void BrainSideBase::AddWeightedForce(const CL_Vector2 & force)
 
 }
 
-void BrainSideBase::OnAdd()
+void BrainTopBase::OnAdd()
 {
-		m_pParent->GetBrainManager()->SetBrainBase(this);
-		ResetForNextFrame();
+	m_pParent->GetBrainManager()->SetBrainBase(this);
+	ResetForNextFrame();
 }
 
-void BrainSideBase::Update(float step)
+void BrainTopBase::Update(float step)
 {
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
-	#define C_SIDE_ACCEL_POWER 0.17f
+#define C_SIDE_ACCEL_POWER 0.17f
 	Clamp(m_force.x, -C_SIDE_ACCEL_POWER, C_SIDE_ACCEL_POWER); //limit force to accel power
-	
+
 	if (m_pParent->IsOnGround())
 	{
 		m_pParent->AddForce(m_force);
@@ -75,7 +74,7 @@ void BrainSideBase::Update(float step)
 
 }
 
-void BrainSideBase::PostUpdate(float step)
+void BrainTopBase::PostUpdate(float step)
 {
 	ResetForNextFrame();
 }
