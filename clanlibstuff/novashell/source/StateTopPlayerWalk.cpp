@@ -36,10 +36,10 @@ void StateTopPlayerWalk::Update(float step)
 	if (ConvertKeysToDirection(m_pParent->GetBrainManager()->GetBrainBase()->GetKeys(), visualFacing))
 	{
 		//they changed direction
-		m_pParent->SetFacing(visualFacing);
+		m_pParent->SetFacingTarget(visualFacing);
 	}
 
-	m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce(FacingToVector(m_pParent->GetFacing()) * weight);
+	m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce(m_pParent->GetVectorFacing() * weight);
 }
 
 void StateTopPlayerWalk::PostUpdate(float step)

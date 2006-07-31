@@ -130,9 +130,50 @@ void MovingEntity::SetDefaults()
 	m_bAnimPaused = false;
 	
 	m_visualState = VisualProfile::VISUAL_STATE_IDLE;
-	m_facing = VisualProfile::FACING_LEFT;
+	SetFacing(VisualProfile::FACING_LEFT);
 	m_trigger.Reset();
 
+}
+
+void MovingEntity::SetFacingTarget(int facing)
+{
+	SetVectorFacingTarget(FacingToVector(facing));
+}
+
+void MovingEntity::SetVisualState(int visualState)
+{
+	if (m_visualState != visualState) 
+	{
+		m_bRestartAnim = true;
+	}
+	m_visualState = visualState;
+
+}
+void MovingEntity::SetFacing(int facing)
+{
+	m_facing = facing;
+	m_vecFacing = m_vecFacingTarget = FacingToVector(m_facing);
+}
+
+void MovingEntity::SetVectorFacing(const CL_Vector2 &v)
+{
+	m_vecFacingTarget = m_vecFacing = v;
+	m_facing = VectorToFacing(v);
+}
+
+void MovingEntity::SetVectorFacingTarget(const CL_Vector2 &v)
+{
+	m_vecFacingTarget = v;
+}
+
+CL_Vector2 MovingEntity::GetVectorFacing()
+{
+	return m_vecFacing;
+}
+
+CL_Vector2 MovingEntity::GetVectorFacingTarget()
+{
+	return m_vecFacingTarget;
 }
 
 void MovingEntity::SetName(const std::string &name)
@@ -234,7 +275,7 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 CL_Rectf MovingEntity::GetWorldRect()
 {
 	
-	//OPTIMIZE:  This is called many times during a frame, we can probably get a big speed increase
+	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
 	
 	static CL_Rectf r;
@@ -257,7 +298,7 @@ CL_Rectf MovingEntity::GetWorldRect()
 const CL_Rect & MovingEntity::GetBoundsRect()
 {
 	
-	//OPTIMIZE:  This is called many times during a frame, we can probably get a big speed increase
+	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
 
 	static CL_Rect r;
@@ -1011,6 +1052,15 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 	   
 	if (m_pSpriteLastUsed != pSprite)
 	{
+		int frameTemp = 0;
+		if (m_bRestartAnim)
+		{
+			m_bRestartAnim = false;
+		} else
+		{
+			if (m_pSprite) frameTemp = m_pSprite->get_current_frame();
+		}
+
 		m_pSprite->set_image_data(*pSprite);
 		m_pSpriteLastUsed = pSprite;
 		CL_Origin origin;
@@ -1022,10 +1072,14 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 		pSprite->get_alignment(origin, x,y);
 		m_pSprite->set_alignment(origin, x, y);
 		m_pSprite->set_show_on_finish(pSprite->get_show_on_finish());
-
+		
 		pSprite->get_rotation_hotspot(origin, x, y);
 		m_pSprite->set_rotation_hotspot(origin, x, y);
+		m_pSprite->set_frame(frameTemp);
+		
 	}
+
+	
 
 }
 
@@ -1269,6 +1323,21 @@ if (GetGameLogic->GetGamePaused()) return;
 	ClearColorMods();
 
 	m_trigger.Update(step);
+
+	/*
+	if (m_vecFacingTarget != m_vecFacing)
+	{
+		float angleDiff = atan2f(m_vecFacing.x, m_vecFacing,y) - atan2f(m_vecFacingTarget.x, m_vecFacingTarget.y);
+
+		LogMsg("Angle is %.3f", angleDiff);
+		
+		angleDiff
+
+		m_vecFacing.unitize();
+		m_facing = VectorToFacing(m_vecFacing);
+	}
+
+	*/
 
 	m_brainManager.Update(step);
 	

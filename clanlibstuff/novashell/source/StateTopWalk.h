@@ -1,5 +1,5 @@
 //  ***************************************************************
-//  StateTopIdle - Creation date: 07/28/2006
+//  StateTopWalk - Creation date: 07/29/2006
 //  -------------------------------------------------------------
 //  Robinson Technologies Copyright (C) 2006 - All Rights Reserved
 //
@@ -11,20 +11,20 @@
 //it will automatically register itself and be available
 //from lua script as a state behavior.
 
-#ifndef StateTopIdle_h__
-#define StateTopIdle_h__
+#ifndef StateTopWalk_h__
+#define StateTopWalk_h__
 
 #include "State.h"
 
-class StateTopIdle: public State
+class StateTopWalk: public State
 {
 public:
-	StateTopIdle(MovingEntity *pParent);
-	virtual ~StateTopIdle();
+	StateTopWalk(MovingEntity *pParent);
+	virtual ~StateTopWalk();
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
-	virtual const char * GetName() {return "TopIdle";};
-	virtual State * CreateInstance(MovingEntity *pParent) {return new StateTopIdle(pParent);}
+	virtual const char * GetName() {return "TopWalk";};
+	virtual State * CreateInstance(MovingEntity *pParent) {return new StateTopWalk(pParent);}
 	virtual void OnAdd();
 	virtual void OnRemove();
 
@@ -34,4 +34,4 @@ protected:
 private:
 };
 
-#endif // StateTopIdle_h__
+#endif // StateTopWalk_h__

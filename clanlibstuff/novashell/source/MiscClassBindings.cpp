@@ -215,6 +215,7 @@ void luabindMisc(lua_State *pState)
 		def("GetEntityByID", &GetEntityByID),
 		def("GetEntityByName", &GetEntityByName),
 		def("ShowMessage", &ShowMessage),
-		def("FacingToVector", &FacingToVector)
+		def("FacingToVector", &FacingToVector),
+		def("VectorToFacing", &VectorToFacing)
 		];
 }

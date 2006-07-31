@@ -59,16 +59,19 @@ public:
 
 	enum eFacing
 	{
+
+	 //do not change this order!  	
+	 
 	 FACING_LEFT,
-	 FACING_RIGHT,
-	 FACING_UP,
-	 FACING_DOWN,
-
 	 FACING_UP_LEFT,
-	 FACING_DOWN_LEFT,
+	 FACING_UP,
 	 FACING_UP_RIGHT,
+	 FACING_RIGHT,
 	 FACING_DOWN_RIGHT,
+	 FACING_DOWN,
+	 FACING_DOWN_LEFT,
 
+	 FACING_COUNT //how many directions we support
 	};
 
 	enum eState

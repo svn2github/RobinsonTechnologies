@@ -133,10 +133,17 @@ public:
   BrainManager * GetBrainManager() {return &m_brainManager;}
   string ProcessPath(const string &st); //replaces ~ with current script path
   void OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity *pProjectile);
-  void SetFacing(int facing) {m_facing = facing;}
+  void SetFacing(int facing);
+  void SetFacingTarget(int facing);
   int GetFacing(){return m_facing;}
+  void SetVectorFacing(const CL_Vector2 &v);
+  void SetVectorFacingTarget(const CL_Vector2 &v);
+  CL_Vector2 GetVectorFacing();
+  CL_Vector2 GetVectorFacingTarget();
+
+
   int GetVisualState() {return m_visualState;}
-  void SetVisualState(int visualState) {m_visualState = visualState;}
+  void SetVisualState(int visualState);
   void SetSpriteByVisualStateAndFacing();
   void LastCollisionWasInvalidated();
 
@@ -228,7 +235,11 @@ protected:
 	short m_colorModBlue;
 	short m_colorModAlpha;
 
+	CL_Vector2 m_vecFacing;
+	CL_Vector2 m_vecFacingTarget;
+
 	Trigger m_trigger;
+	bool m_bRestartAnim;
 
 };
 

@@ -39,5 +39,6 @@ private:
 
 
 CL_Vector2 FacingToVector(int facing);
+int VectorToFacing(const CL_Vector2 &v);
 
 #endif                  // include guard

@@ -68,10 +68,23 @@ VisualResource * VisualProfileManager::GetVisualResource(const string &fileName)
 	return pRes; //error
 }
 
-
-
-
 //utils
+
+int VectorToFacing(const CL_Vector2 &v)
+{
+	double angle = atan2(v.y, v.x);
+	angle += PI;  //make it start 0ish
+	angle += PI/VisualProfile::FACING_COUNT;  //move it 22.5 degrees in the case of 8 dirs
+	angle = fmod(angle, PI*2); //wrap it if needed
+	angle = angle/ (PI*2); //get the ratio of the angle
+	
+	//LogMsg("Facing %.2f, which maps to angle %d", angle, int(angle * VisualProfile::FACING_COUNT)); 
+	
+	//NOTE:  This is a hack that assumes our direction enums are in the correct order (0 to num dirs -1)
+	return int(angle * VisualProfile::FACING_COUNT);
+}
+
+#define C_ANGLE_VEC (sqrt(2.0)/2)
 
 CL_Vector2 FacingToVector(int facing)
 {
@@ -90,18 +103,17 @@ CL_Vector2 FacingToVector(int facing)
 		return CL_Vector2(0,1);
 
 	case VisualProfile::FACING_UP_LEFT:
-		return CL_Vector2(-1,-1);
+			return CL_Vector2(-C_ANGLE_VEC,-C_ANGLE_VEC);
 
 	case VisualProfile::FACING_DOWN_LEFT:
-		return CL_Vector2(-1,1);
+		return CL_Vector2(-C_ANGLE_VEC,C_ANGLE_VEC);
 
 
 	case VisualProfile::FACING_UP_RIGHT:
-		return CL_Vector2(1,-1);
+		return CL_Vector2(C_ANGLE_VEC,-C_ANGLE_VEC);
 
 	case VisualProfile::FACING_DOWN_RIGHT:
-		return CL_Vector2(1,1);
-
+		return CL_Vector2(C_ANGLE_VEC,C_ANGLE_VEC);
 
 	default:
 

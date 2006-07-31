@@ -21,6 +21,11 @@ void State::RegisterClass()
 
 bool State::AnimIsLooping()
 {
+	if (m_pParent->GetSprite()->is_looping())
+	{
+		return true;
+	}
+
 	if (m_pParent->GetSprite()->is_finished())
 	{
 		m_pParent->GetSprite()->restart();

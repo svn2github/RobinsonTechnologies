@@ -22,7 +22,6 @@ StateDie::~StateDie()
 void StateDie::OnAdd()
 {
 	m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_DIE);
-	
 }
 
 void StateDie::OnRemove()

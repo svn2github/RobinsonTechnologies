@@ -135,10 +135,11 @@ void App::OneTimeDeinit()
 	SAFE_DELETE(m_pHashedResourceManager);
 	SAFE_DELETE(m_pGui);
     SAFE_DELETE(m_pStyle);
+
+	SAFE_DELETE(m_pGUIResourceManager);
+	SAFE_DELETE(m_pResourceManager);
   
     SAFE_DELETE(m_pWindow);
-    SAFE_DELETE(m_pGUIResourceManager);
-    SAFE_DELETE(m_pResourceManager);
 }
 
         

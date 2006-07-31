@@ -669,6 +669,14 @@
 						RelativePath=".\StateTopPlayerWalk.h"
 						>
 					</File>
+					<File
+						RelativePath=".\StateTopWalk.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopWalk.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
