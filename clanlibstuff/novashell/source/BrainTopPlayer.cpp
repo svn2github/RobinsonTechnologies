@@ -136,6 +136,7 @@ void BrainTopPlayer::CalculateForce(float step)
 	m_force = m_force-curForce;
 
 	Clamp(m_force.x, -accelPower, accelPower); //limit force to accel power
+	Clamp(m_force.y, -accelPower, accelPower); //limit force to accel power
 }
 
 void BrainTopPlayer::CheckForWarp()

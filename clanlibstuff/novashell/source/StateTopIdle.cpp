@@ -21,6 +21,8 @@ StateTopIdle::~StateTopIdle()
 
 void StateTopIdle::OnAdd()
 {
+	m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_IDLE);
+
 }
 
 void StateTopIdle::OnRemove()
@@ -29,7 +31,6 @@ void StateTopIdle::OnRemove()
 
 void StateTopIdle::Update(float step)
 {
-	m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_IDLE);
 
 }
 

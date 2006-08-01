@@ -40,6 +40,19 @@ MovingEntity::~MovingEntity()
 	Kill();
 }
 
+float MovingEntity::GetDistanceFromEntityByID(int id)
+{
+	MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(id);
+
+	if (!pEnt)
+	{
+		LogMsg("GetDistanceFrom sent invalid ID: %d", id);
+		return -1;
+	}
+
+	return (GetPos()-pEnt->GetPos()).length();
+}
+
 void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
 {
 	if (!m_pCollisionData)
@@ -1033,6 +1046,22 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 	}
 }
 
+void MovingEntity::ClearCollisionInfo()
+{
+	if (m_bUsingCustomCollisionData)
+	{
+		SAFE_DELETE(m_pCollisionData);
+		m_bUsingCustomCollisionData = false;
+	}
+
+	m_pCollisionData = new CollisionData;
+	m_bUsingCustomCollisionData = true;
+	//link to data correctly
+	GetBody()->SetDensity(m_fDensity);
+	m_pCollisionData->SetScale(GetScale());
+
+}
+
 void MovingEntity::ProcessCollisionTileList(tile_list &tList, float step)
 {
 	if (tList.empty()) return;
@@ -1374,8 +1403,7 @@ void MovingEntity::PostUpdate(float step)
 			
 			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
 			{
-
-			
+	
 			//FIXME if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
 			if (IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
 				&& GetBody()->GetAngVelocity() < 0.01f)
@@ -1390,9 +1418,10 @@ void MovingEntity::PostUpdate(float step)
 		} else
 		{
 
-			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_TOP_VIEW && m_brainManager.GetBrainBase())
+		
+			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_TOP_VIEW && !m_brainManager.GetBrainBase())
 			{
-
+				//this is only run if things don't have real brains
 			SetIsOnGround(true);
 
 			const static float top_groundDampening = 0.06f;
@@ -1423,7 +1452,7 @@ void MovingEntity::SetImageFromTilePic(TilePic *pTilePic)
 
 	if (m_pCollisionData->GetLineList()->size() == 0)
 	{
-		//doesn't have any collision data, let's disable phyics.  They can always update the density to
+		//doesn't have any collision data, let's disable physics.  They can always update the density to
 		//something higher later.
 		m_fDensity = 0;
 	} 

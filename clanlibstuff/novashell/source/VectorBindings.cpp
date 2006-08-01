@@ -36,9 +36,9 @@ void luabindVector(lua_State *pState)
 			.def(const_self / float())
 			.def(const_self * float())
 			.def(const_self == CL_Vector2())
-			.def("length", &CL_Vector2::length)
-			.def("dot", &CL_Vector2::dot)
-			.def("cross", &CL_Vector2::cross)
+			.def("Length", &CL_Vector2::length)
+			.def("Dot", &CL_Vector2::dot)
+			.def("Cross", &CL_Vector2::cross)
 		    .def("__tostring", &VectorToString)
 		
 		

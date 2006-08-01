@@ -105,7 +105,7 @@ public:
   CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_body.GetLinVelocity();}
   void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
-
+  float GetDistanceFromEntityByID(int id);
   int GetLayerID() {assert(m_pTile); return m_pTile->GetLayer();}
   void SetLayerID(int id) {assert(m_pTile); m_pTile->SetLayer(id); m_bMovedFlag = true;}
 
@@ -159,6 +159,7 @@ public:
   void DumpScriptInfo();
   CL_Vector2 GetVisualOffset();
   void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
+  void ClearCollisionInfo();
 
   enum ListenCollision
 {

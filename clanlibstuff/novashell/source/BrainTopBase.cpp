@@ -58,20 +58,18 @@ void BrainTopBase::Update(float step)
 {
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
-	#define C_SIDE_ACCEL_POWER 0.17f
-	Clamp(m_force.x, -C_SIDE_ACCEL_POWER, C_SIDE_ACCEL_POWER); //limit force to accel power
 
-	if (m_pParent->IsOnGround())
-	{
+#define C_TOP_ACCEL_POWER 0.17f
+	Clamp(m_force.x, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
+	Clamp(m_force.y, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
+
 		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), 0.1f *step);
 		m_pParent->AddForce(m_force);
-	} else
-	{
-		//LogMsg("in air!");
-
-	}
 
 	m_pParent->SetSpriteByVisualStateAndFacing();
+
+	//completely stop rotation
+	m_pParent->GetBody()->GetAngVelocity() = 0;
 
 }
 
