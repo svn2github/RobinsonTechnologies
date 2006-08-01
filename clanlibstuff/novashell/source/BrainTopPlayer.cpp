@@ -233,27 +233,17 @@ void BrainTopPlayer::Update(float step)
 		LogMsg("Error, top player brain requires collision data to function.");
 	} else
 	{
-		//Calculate the steering force and update the bot's velocity and position
+		
+		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), 0.24f *step);
+		
 		UpdateMovement(step);
 		m_pParent->SetSpriteByVisualStateAndFacing();
 	}
 }
 
-
 void BrainTopPlayer::PostUpdate(float step)
 {
-
 	m_pParent->GetBody()->GetAngVelocity() = 0;
-	
-	/*
-	
-	if (m_force == CL_Vector2::ZERO)
-	{
-		//slow down
-		set_float_with_target(&m_pParent->GetBody()->GetLinVelocity().x, 0, C_PLAYER_GROUND_DAMPENING);
-		set_float_with_target(&m_pParent->GetBody()->GetLinVelocity().y, 0, C_PLAYER_GROUND_DAMPENING);
-	}
-	*/
 
 	if (m_Keys & C_KEY_SELECT)
 	{

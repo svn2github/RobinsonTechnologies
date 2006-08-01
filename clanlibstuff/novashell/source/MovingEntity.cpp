@@ -11,7 +11,6 @@
 #include "physics/Contact.h"
 #include "MaterialManager.h"
 
-
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT_PATH "media/script/"
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
@@ -1058,7 +1057,7 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 			m_bRestartAnim = false;
 		} else
 		{
-			if (m_pSprite) frameTemp = m_pSprite->get_current_frame();
+			if (m_pSprite && m_pSprite->get_frame_count() > 0) frameTemp = m_pSprite->get_current_frame();
 		}
 
 		m_pSprite->set_image_data(*pSprite);
@@ -1315,6 +1314,15 @@ void MovingEntity::DumpScriptInfo()
 	}
 }
 
+void MovingEntity::RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn)
+{
+	if (RotateVectorTowardsAnotherVector(m_vecFacing, vecTargetfloat, maxTurn))
+	{
+		//actual change was made, update
+		m_facing = VectorToFacing(m_vecFacing);
+	}
+
+}
 void MovingEntity::Update(float step)
 {
 
@@ -1324,20 +1332,6 @@ if (GetGameLogic->GetGamePaused()) return;
 
 	m_trigger.Update(step);
 
-	/*
-	if (m_vecFacingTarget != m_vecFacing)
-	{
-		float angleDiff = atan2f(m_vecFacing.x, m_vecFacing,y) - atan2f(m_vecFacingTarget.x, m_vecFacingTarget.y);
-
-		LogMsg("Angle is %.3f", angleDiff);
-		
-		angleDiff
-
-		m_vecFacing.unitize();
-		m_facing = VectorToFacing(m_vecFacing);
-	}
-
-	*/
 
 	m_brainManager.Update(step);
 	
@@ -1372,12 +1366,16 @@ void MovingEntity::PostUpdate(float step)
 		if (gravity != 0)
 		{
 
-		
 			if (m_body.GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
 			{
 				m_body.AddForce(Vector(0, m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity()* m_body.GetMass()));
 			}
-	
+
+			
+			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
+			{
+
+			
 			//FIXME if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
 			if (IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
 				&& GetBody()->GetAngVelocity() < 0.01f)
@@ -1387,22 +1385,25 @@ void MovingEntity::PostUpdate(float step)
 				set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening);
 				set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening);
 			}
+			}
 
 		} else
 		{
 
+			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_TOP_VIEW && m_brainManager.GetBrainBase())
+			{
+
 			SetIsOnGround(true);
-		
+
 			const static float top_groundDampening = 0.06f;
 			const static float top_angleDampening = 0.002f;
 
 			set_float_with_target(&m_body.GetLinVelocity().x, 0, top_groundDampening);
 			set_float_with_target(&m_body.GetLinVelocity().y, 0, top_groundDampening);
 			set_float_with_target(&m_body.GetAngVelocity(), 0, top_angleDampening);
+			}
 		}
 
-	
-	
 		GetBody()->Update(step);
 
 		//get ready for next frame

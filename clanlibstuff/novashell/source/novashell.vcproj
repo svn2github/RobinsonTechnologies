@@ -397,10 +397,6 @@
 					RelativePath=".\Trigger.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\Trigger.h"
-					>
-				</File>
 				<Filter
 					Name="Editor"
 					>
@@ -530,15 +526,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\Brain.h"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainColorFlash.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainColorFlash.h"
 						>
 					</File>
 					<File
@@ -550,15 +538,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainManager.h"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainPlayer.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainPlayer.h"
 						>
 					</File>
 					<File
@@ -566,15 +546,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainShake.h"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainSideBase.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainSideBase.h"
 						>
 					</File>
 					<File
@@ -582,15 +554,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainTopBase.h"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainTopPlayer.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainTopPlayer.h"
 						>
 					</File>
 				</Filter>
@@ -602,15 +566,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\State.h"
-						>
-					</File>
-					<File
 						RelativePath=".\StateDie.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateDie.h"
 						>
 					</File>
 					<File
@@ -618,15 +574,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\StateFrozen.h"
-						>
-					</File>
-					<File
 						RelativePath=".\StateSideSimpleIdle.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateSideSimpleIdle.h"
 						>
 					</File>
 					<File
@@ -634,15 +582,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\StateSideSimpleWalk.h"
-						>
-					</File>
-					<File
 						RelativePath=".\StateTopIdle.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopIdle.h"
 						>
 					</File>
 					<File
@@ -650,15 +590,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\StateTopPlayerAttack.h"
-						>
-					</File>
-					<File
 						RelativePath=".\StateTopPlayerIdle.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopPlayerIdle.h"
 						>
 					</File>
 					<File
@@ -666,15 +598,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\StateTopPlayerWalk.h"
-						>
-					</File>
-					<File
 						RelativePath=".\StateTopWalk.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopWalk.h"
 						>
 					</File>
 				</Filter>
@@ -829,10 +753,6 @@
 				</File>
 				<File
 					RelativePath=".\Console.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Console.h"
 					>
 				</File>
 				<File
@@ -2024,6 +1944,10 @@
 					RelativePath=".\MovingEntity.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Trigger.h"
+					>
+				</File>
 				<Filter
 					Name="MapH"
 					>
@@ -2072,6 +1996,86 @@
 						</File>
 					</Filter>
 				</Filter>
+				<Filter
+					Name="StatesH"
+					>
+					<File
+						RelativePath=".\State.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateDie.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateFrozen.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateSideSimpleIdle.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateSideSimpleWalk.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopIdle.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerAttack.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerIdle.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopPlayerWalk.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopWalk.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="BrainsH"
+					>
+					<File
+						RelativePath=".\Brain.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainColorFlash.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainManager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainPlayer.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainShake.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainSideBase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainTopBase.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainTopPlayer.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="ManagerH"
@@ -2082,6 +2086,10 @@
 				</File>
 				<File
 					RelativePath=".\CameraSetting.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Console.h"
 					>
 				</File>
 				<File

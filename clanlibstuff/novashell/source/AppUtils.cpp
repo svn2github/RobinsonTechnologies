@@ -420,3 +420,56 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 }
 
 
+//------------------------ Sign ------------------------------------------
+//
+//  returns positive if v2 is clockwise of this vector,
+//  minus if anticlockwise (Y axis pointing down, X axis to right)
+//------------------------------------------------------------------------
+enum {clockwise = 1, anticlockwise = -1};
+
+int VectorSign(const CL_Vector2 &v1, const CL_Vector2 &v2)
+{
+	if (v1.y*v2.x > v1.x*v2.y)
+	{ 
+		return anticlockwise;
+	}
+	else 
+	{
+		return clockwise;
+	}
+}
+
+bool RotateVectorTowardsAnotherVector(CL_Vector2 &vecFacing, CL_Vector2 vecFacingTarget, float maxTurn)
+{
+	if (vecFacingTarget == vecFacing) return false; //no change needed
+
+	double dot = vecFacing.dot(vecFacingTarget);
+
+	//clamp to rectify any rounding errors
+	Clamp(dot, -1, 1);
+
+	//determine the angle between the heading vector and the target
+	double angle = acos(dot);
+
+	const double WeaponAimTolerance = 0.01; //2 degs approx
+
+	if (angle < WeaponAimTolerance)
+	{
+		vecFacing = vecFacingTarget;
+		return true;
+	}
+
+	//clamp the amount to turn to the max turn rate
+	if (angle > maxTurn) angle = maxTurn;
+
+	//The next few lines use a rotation matrix to rotate the player's facing
+	//vector accordingly
+	C2DMatrix RotationMatrix;
+
+	//notice how the direction of rotation has to be determined when creating
+	//the rotation matrix
+	RotationMatrix.Rotate(angle * VectorSign(vecFacing,vecFacingTarget));	
+	RotationMatrix.TransformVector(vecFacing);
+
+	return true;
+}

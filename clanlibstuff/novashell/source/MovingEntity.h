@@ -158,6 +158,7 @@ public:
   void ClearColorMods();
   void DumpScriptInfo();
   CL_Vector2 GetVisualOffset();
+  void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
 
   enum ListenCollision
 {
@@ -193,6 +194,7 @@ protected:
 	void ProcessCollisionTileList(tile_list &tList, float step);
 	void ProcessCollisionTile(Tile *pTile, float step);
 	void OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollide); 
+	void RotateTowardsFacingTarget(float step);
 	
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;

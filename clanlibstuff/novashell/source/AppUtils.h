@@ -2,6 +2,7 @@
 #define AppUtils_HEADER_INCLUDED  // include guard
 
 #include "Screen.h"
+#include "misc/C2DMAtrix.h"
 
 void BlitMessage(string msg);
 string ColorToString(const CL_Color &colr);
@@ -25,6 +26,7 @@ string ExtractFinalDirName(string path); //not tested with paths with filenames 
 bool compareLayerBySort(unsigned int pA, unsigned int pB); //for use with stl::sort
 void StringReplace(const std::string& what, const std::string& with, std::string& in);
 bool ConfirmMessage(string title, string msg);
+bool RotateVectorTowardsAnotherVector(CL_Vector2 &vecFacing, CL_Vector2 vecFacingTarget, float maxTurn);
 
 typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
 
@@ -59,7 +61,7 @@ public:
 	unsigned int m_timer;
 	int m_interval;
 };
-
+int VectorSign(const CL_Vector2 &v1, const CL_Vector2 &v2);
 
 //RoundNearest written by Extrarius - http://www.gamedev.net/community/forums/topic.asp?topic_id=377593&whichpage=1&#2492400
 #include <cmath>
