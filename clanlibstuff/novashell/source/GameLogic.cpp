@@ -315,19 +315,28 @@ bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the ad
 
 void GameLogic::SetMyPlayer(MovingEntity *pNew)
 {
-	m_pPlayer = pNew;
 	//also let's tell the script about it
-	if (m_pPlayer)
+	if (pNew)
 	{
-		luabind::globals(GetScriptManager->GetMainState())["GetPlayer"] = m_pPlayer;
+		m_pPlayer = pNew;
 		luabind::globals(GetScriptManager->GetMainState())["g_PlayerID"] = m_pPlayer->ID();
 
 	} else
 	{
-		luabind::globals(GetScriptManager->GetMainState())["GetPlayer"] = NULL;
-		luabind::globals(GetScriptManager->GetMainState())["g_PlayerID"] = 0;
 
+		if (m_pPlayer)
+		{
+			if (GetCamera->GetEntTracking() == m_pPlayer->ID())
+			{
+				//shouldn't track this anymore		
+				GetCamera->SetEntTracking(0);
+			}
+		}
+		luabind::globals(GetScriptManager->GetMainState())["g_PlayerID"] = 0;
+		m_pPlayer = pNew;
 	}
+
+	luabind::globals(GetScriptManager->GetMainState())["GetPlayer"] = m_pPlayer;
 
 }
 

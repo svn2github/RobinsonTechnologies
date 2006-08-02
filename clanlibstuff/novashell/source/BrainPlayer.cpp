@@ -385,10 +385,13 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 
 	if (m_moveAngle != CL_Vector2::ZERO)
 	{
+	//	m_moveAngle.y += 0.1f;
+		//LogMsg("Move angle: %s", PrintVector(m_moveAngle).c_str());
+		
 		force = CL_Vector2(m_moveAngle)*desiredSpeed;
 		CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
 		force = force-curForce;
-
+	
 		Clamp(force.x, -accelPower, accelPower); //limit force to accel power
 
 		if (!m_pParent->IsOnGround() || m_jumpTimer > GetApp()->GetGameTick())
@@ -426,22 +429,21 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 				m_curJumpForce *= C_PLAYER_JUMP_FORCE_WEAKEN_MULT;
 			}
 		}
-		//m_pParent->GetBody()->SetOrientation(m_pParent->GetBody()->GetOrientation()*.6f);
+
 	} else
 	{
+		
+		//push the player down if we are in the air and not doing an official jump
 
-		//we're not jumping right now
 		if (!m_pParent->IsOnGround() || (m_pParent->GetFloorMaterialID() != -1 && g_materialManager.GetMaterial(m_pParent->GetFloorMaterialID())->GetSpecial() == CMaterial::C_MATERIAL_SPECIAL_FLOOR) )
 		{
 			//LogMsg("Player y is %f", m_pParent->GetBody()->GetLinVelocity().y);
 			if (!m_pParent->GetOnLadder())
 				if (m_pParent->GetBody()->GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
 				{
-					//LogMsg("Dragging..");
 					force.y = C_PLAYER_JUMP_DRAG_DOWN;
 				}
 		}
-
 	}
 }
 

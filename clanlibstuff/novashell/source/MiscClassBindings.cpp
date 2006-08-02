@@ -140,6 +140,7 @@ void luabindMisc(lua_State *pState)
 		.def("UserProfileExists", &GameLogic::UserProfileExists)
 		.def("SetRestartEngineFlag", &GameLogic::SetRestartEngineFlag)
 		.def("UserProfileActive", &GameLogic::UserProfileActive)
+		.def("SetPlayer", &GameLogic::SetMyPlayer)
 		.def("Quit", &GameLogic::Quit)
 
 		,class_<App>("App")

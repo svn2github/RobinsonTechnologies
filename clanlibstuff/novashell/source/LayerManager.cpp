@@ -151,6 +151,9 @@ void LayerManager::BuildDefaultLayers()
 	m_layerVec[C_LAYER_HIDDEN_DATA2].SetShowInEditorOnly(true);
 	m_layerVec[C_LAYER_HIDDEN_DATA2].SetUseInThumbnail(false);
 	m_layerVec[C_LAYER_HIDDEN_DATA2].SetHasCollisionData(true);
+	m_layerVec[C_LAYER_HIDDEN_DATA2].SetIsEditActive(false);
+	m_layerVec[C_LAYER_HIDDEN_DATA2].SetIsDisplayed(false);
+
 
 	BuildLists();
 }

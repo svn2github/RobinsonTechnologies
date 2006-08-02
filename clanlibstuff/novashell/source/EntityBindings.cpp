@@ -105,7 +105,7 @@ void luabindEntity(lua_State *pState)
 			.def("GetCollisionScale", &MovingEntity::GetCollisionScale)
 			.def("SetTrigger", &MovingEntity::SetTrigger)
 			.def("DumpScriptInfo", &MovingEntity::DumpScriptInfo)
-			.def("ClearCollisionInfo", &MovingEntity::ClearCollisionInfo)
+			.def("SetCollisionMode", &MovingEntity::SetCollisionMode)
 	
 			.def("GetDistanceFromEntityByID", &MovingEntity::GetDistanceFromEntityByID)
 			

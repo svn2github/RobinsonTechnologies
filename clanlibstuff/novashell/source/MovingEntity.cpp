@@ -140,6 +140,7 @@ void MovingEntity::SetDefaults()
 	m_ticksOnGround = 0;
 	m_bOnLadder = false;
 	m_bAnimPaused = false;
+	SetCollisionMode(COLLISION_MODE_ALL);
 	
 	m_visualState = VisualProfile::VISUAL_STATE_IDLE;
 	SetFacing(VisualProfile::FACING_LEFT);
@@ -363,22 +364,16 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 		LogMsg("SetPosAndMapByName: Unable to locate entity by name: %s", name.c_str());
 		return false;
 	} 
+	
 	float offsetY = 0;
 	
-	//we have to deduct half the height because this is written to move our FEET to the point
-	//to warp to. 
 
 	if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
 	{
+		//we have to deduct half the height because this is written to move our FEET to the point
+		//to warp to. (only applicable to sideview mode)
 
-	
-	offsetY = GetWorldRect().bottom - GetPos().y;
-
-	if (GetCollisionData() && GetCollisionData()->GetLineList()->size() > 0 )
-	{
-		PointList *m_pActiveLine = &(*GetCollisionData()->GetLineList()->begin());
-		offsetY = m_pActiveLine->GetRect().bottom + m_pActiveLine->GetOffset().y;
-	}
+		offsetY = m_pTile->GetWorldColRect().get_height()/2;
 	}
 
 	SetPosAndMap(pO->m_pos - CL_Vector2(0, offsetY), pO->m_pWorld->GetName());
@@ -730,15 +725,19 @@ void MovingEntity::LastCollisionWasInvalidated()
 {
 	m_bTouchedAGroundThisFrame = m_bOldTouchedAGroundThisFrame;
 	m_floorMaterialID = m_oldFloorMaterialID;
-
 }
 
 void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollision)
 {
 
+	if (m_collisionMode == COLLISION_MODE_NONE)
+	{
+		pBoolAllowCollision = false;
+		return;
+
+	}
 	m_bOldTouchedAGroundThisFrame = m_bTouchedAGroundThisFrame;
 	m_oldFloorMaterialID = m_floorMaterialID;
-
 
 	if (N.y < -0.7f) //higher # here means allows a stronger angled surface to count as "ground"
 	{
@@ -746,7 +745,6 @@ void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bo
 		m_floorMaterialID = pOtherBody->GetMaterial()->GetID();
 
 	}
-	
 
 	if (pOtherBody->GetParentEntity() != 0)
 	{
@@ -1046,20 +1044,16 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 	}
 }
 
-void MovingEntity::ClearCollisionInfo()
+void MovingEntity::SetCollisionMode(int mode)
 {
-	if (m_bUsingCustomCollisionData)
+
+	if (mode < 0 || mode > COLLISION_MODE_COUNT)
 	{
-		SAFE_DELETE(m_pCollisionData);
-		m_bUsingCustomCollisionData = false;
+		LogError("SetCollisionMode: Invalid mode sent: %d", mode);
+		return;
 	}
 
-	m_pCollisionData = new CollisionData;
-	m_bUsingCustomCollisionData = true;
-	//link to data correctly
-	GetBody()->SetDensity(m_fDensity);
-	m_pCollisionData->SetScale(GetScale());
-
+	m_collisionMode = mode;
 }
 
 void MovingEntity::ProcessCollisionTileList(tile_list &tList, float step)
@@ -1116,6 +1110,11 @@ void MovingEntity::ApplyGenericMovement(float step)
 	m_nearbyTileList.clear();
 	m_zoneVec.clear();
 
+	//schedule tile update if needed
+	m_bMovedFlag = true;
+
+	if (m_collisionMode == COLLISION_MODE_NONE) return;
+
 	if (!m_pCollisionData->GetLineList()->size())
 	{
 		LogError("No collision data in entity %d. (%s)", ID(), GetName());
@@ -1160,8 +1159,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 		m_ticksOnGround = 0;
 	}
 	
-	//schedule tile update if needed
-	 m_bMovedFlag = true;
+	
 }
 
 
@@ -1368,7 +1366,6 @@ if (GetGameLogic->GetGamePaused()) return;
 	m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
 
 	//apply gravity and things
-	
 
 	if (!GetBody()->IsUnmovable() && GetCollisionData())
 	{
@@ -1385,6 +1382,8 @@ void MovingEntity::PostUpdate(float step)
 	if (GetGameLogic->GetGamePaused()) return;
 
 	m_brainManager.PostUpdate(step);
+
+
 
 	const static float groundDampening = 1.6f;
 	const static float angleDampening = 0.01f;
@@ -1404,8 +1403,7 @@ void MovingEntity::PostUpdate(float step)
 			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
 			{
 	
-			//FIXME if (!m_pBrain && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
-			if (IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
+			if (!m_brainManager.GetBrainBase() && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
 				&& GetBody()->GetAngVelocity() < 0.01f)
 			{
 				//slow down
@@ -1417,7 +1415,6 @@ void MovingEntity::PostUpdate(float step)
 
 		} else
 		{
-
 		
 			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_TOP_VIEW && !m_brainManager.GetBrainBase())
 			{
@@ -1438,6 +1435,7 @@ void MovingEntity::PostUpdate(float step)
 		//get ready for next frame
 		m_bTouchedAGroundThisFrame = false;
 	}
+
 
 }
 

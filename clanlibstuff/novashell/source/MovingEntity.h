@@ -159,7 +159,7 @@ public:
   void DumpScriptInfo();
   CL_Vector2 GetVisualOffset();
   void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
-  void ClearCollisionInfo();
+  void SetCollisionMode(int mode);
 
   enum ListenCollision
 {
@@ -186,6 +186,16 @@ enum ListenStaticCollision
 
 	//add more above this
 	LISTEN_COLLISION_STATIC_COUNT
+};
+
+enum  CollisionMode
+{
+
+	COLLISION_MODE_ALL = 0,
+	COLLISION_MODE_NONE,
+
+	COLLISION_MODE_COUNT
+
 };
 
 protected:
@@ -243,6 +253,7 @@ protected:
 
 	Trigger m_trigger;
 	bool m_bRestartAnim;
+	int m_collisionMode;
 
 };
 

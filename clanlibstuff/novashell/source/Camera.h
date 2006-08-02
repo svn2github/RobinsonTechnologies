@@ -40,6 +40,8 @@ public:
 	void SetScaleLerp(float lerp){m_scaleLerp = lerp;}
 	void InstantUpdate(); //move camera instantly without lerping, useful after a focus change
 
+	int GetEntTracking(){return m_entTrackID;};
+
 protected:
 
 	void UpdateTarget();
