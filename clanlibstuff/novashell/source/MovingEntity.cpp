@@ -670,8 +670,7 @@ void MovingEntity::UpdateTilePosition()
 				if (this == GetPlayer)
 				{
 					 //the camera should follow the player
-					CameraSetting cs;
-					GetCamera->GetCameraSettings(cs);
+					CameraSetting cs = GetCamera->GetCameraSettings();
 					GetWorldManager->SetActiveWorldByPath(pInfo->m_world.GetDirPath(),&cs);
 				}
 			 } else
@@ -1173,8 +1172,42 @@ CL_Vector2 MovingEntity::GetVisualOffset()
 		return CL_Vector2::ZERO;
 }
 
+void MovingEntity::RenderShadow(void *pTarget)
+{
+	
+	if (m_pTile->GetBit(Tile::e_castShadow))
+	{
+
+	static CL_Vector2 vecPos;
+	static World *pWorld;
+	static EntWorldCache *pWorldCache;
+
+	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
+	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
+	
+	pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	pWorldCache = pWorld->GetMyWorldCache();
+
+	vecPos = pWorldCache->WorldToScreen(vVisualPos);
+
+	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
+		* m_pTile->GetScale().y);
+	
+	//draw the shadow?
+		m_pSprite->set_color(CL_Color(0,0,0,50));
+		//m_pSprite->set_blend_func(blend_src_alpha, blend_one_minus_src_alpha);
+
+		static CL_Surface_DrawParams1 params1;
+		m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, true);
+
+		AddShadowToParam1(params1, m_pTile);
+		m_pSprite->draw(params1, pGC);
+	}
+}
+
 void MovingEntity::Render(void *pTarget)
 {
+	
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	static float yawHold, pitchHold;
 
@@ -1227,7 +1260,6 @@ void MovingEntity::Render(void *pTarget)
 	g = cl_min(g, 255); g = cl_max(0, g);
 	b = cl_min(b, 255); b = cl_max(0, b);
 	a = cl_min(a, 255); a = cl_max(0, a);
-
 		
 	static bool bUseParallax;
 	static Layer *pLayer;
@@ -1263,29 +1295,12 @@ void MovingEntity::Render(void *pTarget)
 	{
  		vecPos = pWorldCache->WorldToScreen(vVisualPos);
 	}
-	
-	//vecPos.x = RoundNearest(vecPos.x, 1.0f);
-	//vecPos.y = RoundNearest(vecPos.y, 1.0f);
 
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
 	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
 		* m_pTile->GetScale().y);
-
-	//draw the shadow?
-	if (m_pTile->GetBit(Tile::e_castShadow))
-	{
-		m_pSprite->set_color(CL_Color(0,0,0,50));
-		//m_pSprite->set_blend_func(blend_src_alpha, blend_one_minus_src_alpha);
-	
-		static CL_Surface_DrawParams1 params1;
-		m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, true);
-
-		AddShadowToParam1(params1, m_pTile);
-		m_pSprite->draw(params1, pGC);
-	}
-
 	//do the real blit
 	m_pSprite->set_color(CL_Color(r,g,b,a));
 	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);

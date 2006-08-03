@@ -700,6 +700,9 @@ void EntEditor::PopUpLayerPropertiesDialog(int layerID)
 	CL_CheckBox *pCheckBoxHasCollisionData = dlg.add_check_box("Has Collision Data", 
 		layerMan.GetLayerInfo(layerID).GetHasCollisionData() != 0, 150);
 
+	CL_CheckBox *pCheckBoxDepthSortWithinLayer = dlg.add_check_box("Depth sort by collision", 
+		layerMan.GetLayerInfo(layerID).GetDepthSortWithinLayer() != 0, 150);
+
 	CL_SlotContainer slots;
 
 	// Connecting signals, to allow only numbers
@@ -742,6 +745,7 @@ void EntEditor::PopUpLayerPropertiesDialog(int layerID)
 		pLayer->SetUseInThumbnail(pCheckBoxUseThumbnail->is_checked());
 		pLayer->SetUseParallaxInThumbnail(pCheckBoxUseParallaxInThumb->is_checked());
 		pLayer->SetHasCollisionData(pCheckBoxHasCollisionData->is_checked());
+		pLayer->SetDepthSortWithinLayer(pCheckBoxDepthSortWithinLayer->is_checked());
 
 		pLayer->SetName(pName->get_text());
 		pLayer->SetSort(CL_String::to_int(pSort->get_text()));

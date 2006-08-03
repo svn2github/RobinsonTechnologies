@@ -39,6 +39,7 @@ public:
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainPlayer(pParent);}
 	virtual void HandleMsg(const string &msg);
 	virtual string HandleAskMsg(const string &msg);
+	virtual void OnAdd();
 
 protected:
 	

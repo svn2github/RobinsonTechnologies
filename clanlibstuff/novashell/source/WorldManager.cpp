@@ -203,7 +203,7 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 		if (!pCameraSetting)
 		{
 		//let the old focus remember what its camera settings are
-			GetCamera->GetCameraSettings(*m_pActiveWorld->GetCameraSetting());
+		*m_pActiveWorld->GetCameraSetting() = GetCamera->GetCameraSettings();
 		}
 	}
 

@@ -7,6 +7,8 @@
 
 #define C_DEFAULT_LAYER 1
 
+void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC);
+
 Tile::Tile()
 {
 	m_lastScanID = 0;
@@ -24,6 +26,7 @@ Tile::Tile()
 
 CL_Rect Tile::GetWorldRectInt()
 {
+	
 	static CL_Rectf r;
 	r = GetWorldRect();
 	return CL_Rect(r);
@@ -169,7 +172,7 @@ Tile * Tile::CreateReference(Screen *pScreen)
 
 void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 {
-	
+
 	static CL_OpenGLSurface *pSurf;
 	static CL_Vector2 vecScale;
 	
@@ -256,21 +259,91 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
-	if (pTile->GetBit(Tile::e_castShadow))
+	pSurf->set_color(pTile->GetColor());
+	pSurf->draw_subpixel(pTile->m_rectSrc, rectDest, pGC);
+
+
+}
+
+
+void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
+{
+
+	static CL_OpenGLSurface *pSurf;
+	static CL_Vector2 vecScale;
+
+	vecScale = GetCamera->GetScale();
+
+	pSurf = (CL_OpenGLSurface*) GetHashedResourceManager->GetResourceByHashedID(pTile->m_resourceID);
+	if (!pSurf) return; //error
+
+	static CL_Vector2 vecPos;
+
+	static Layer *pLayer;
+	static World *pWorld;
+	pWorld = pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	static EntWorldCache *pWorldCache;
+	pWorldCache = pWorld->GetMyWorldCache();
+	
+	vecPos = pWorldCache->WorldToScreen(pTile->GetPos());
+	
+	static CL_Rectf rectDest;
+	rectDest.left = vecPos.x;
+	rectDest.top = vecPos.y;
+	rectDest.right = vecPos.x+ ( float(pTile->m_rectSrc.get_width()) * vecScale.x * pTile->GetScale().x);
+	rectDest.bottom = vecPos.y+ float(pTile->m_rectSrc.get_height()) * vecScale.y* pTile->GetScale().y;
+
+	if (pTile->GetBit(Tile::e_flippedX))
 	{
-		//draw shadow
+		pSurf->set_angle_yaw(-180);
+	} else
+	{
+		pSurf->set_angle_yaw(0);
+	}
+
+	if (pTile->GetBit(Tile::e_flippedY))
+	{
+		pSurf->set_angle_pitch(-180);
+	} else
+	{
+		pSurf->set_angle_pitch(0);
+	}
+
+	//fix holes that can appear when zoomed way in.  I suspect this is due to a pixel rounding error when
+	//doing the blit? 
+
+	/*
+	rectDest.bottom = int(rectDest.bottom);
+	rectDest.right = int(rectDest.right);
+	rectDest.top = int(rectDest.top);
+	rectDest.left = int(rectDest.left);
+	*/
+
+	//this fixes glitches with tiling when the scale isn't exactly 1.0
+
+	rectDest.bottom = RoundNearest(rectDest.bottom, 1.0f);
+	rectDest.right = RoundNearest(rectDest.right, 1.0f);
+	rectDest.top = RoundNearest(rectDest.top, 1.0f);
+	rectDest.left = RoundNearest(rectDest.left, 1.0f);
+
+//	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+//	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+
+	//draw shadow
 		static CL_Surface_DrawParams1 params1;
 		pSurf->set_color(CL_Color(0,0,0,50));
 		pSurf->setup_params(pTile->m_rectSrc, rectDest, params1, true);
 		AddShadowToParam1(params1, pTile);
 		pSurf->draw(params1, pGC);
-	}
-
-	pSurf->set_color(pTile->GetColor());
-	pSurf->draw_subpixel(pTile->m_rectSrc, rectDest, pGC);
 }
 
-
+void TilePic::RenderShadow(CL_GraphicContext *pGC)
+{
+	if (GetBit(Tile::e_castShadow))
+	{
+		RenderTilePicShadow(this, pGC);
+	}
+}
 void TilePic::Render(CL_GraphicContext *pGC)
 {
 	RenderTilePic(this, pGC);

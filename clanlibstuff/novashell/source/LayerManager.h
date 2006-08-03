@@ -53,6 +53,9 @@ public:
 	cl_uint8 GetHasCollisionData() {return m_byteArray[e_byteHasCollisionData];};
 	void SetHasCollisionData(cl_uint8 hasColData) {m_byteArray[e_byteHasCollisionData] = hasColData;}
 
+	cl_uint8 GetDepthSortWithinLayer() {return m_byteArray[e_byteDepthSortWithinLayer];};
+	void SetDepthSortWithinLayer(cl_uint8 depthSort) {m_byteArray[e_byteDepthSortWithinLayer] = depthSort;}
+
 	const string & GetName(){return m_stName;}
 	void SetName(const string st){m_stName = st;}
 	
@@ -80,6 +83,7 @@ private:
 		e_byteUseInThumbnail,
 		e_byteUseParallaxInThumbnail,
 		e_byteHasCollisionData,
+		e_byteDepthSortWithinLayer,
 
 		//add new vars above here
 		e_byteCount

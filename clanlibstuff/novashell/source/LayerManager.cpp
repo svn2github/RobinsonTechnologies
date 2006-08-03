@@ -15,6 +15,7 @@ Layer::Layer()
 	SetUseInThumbnail(true);
 	SetIsDisplayed(true);
 	SetIsEditActive(true);
+	
 }
 void Layer::SetScrollMod(const CL_Vector2 &scrollMod)
 {
@@ -90,7 +91,6 @@ void LayerManager::BuildLists()
 	  if (m_layerVec[i].GetHasCollisionData()) m_collisionList.push_back(i);
    }
   
-
 }
 
 void LayerManager::BuildDefaultLayers()

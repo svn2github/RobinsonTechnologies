@@ -122,10 +122,8 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 
 	GetApp()->GetBackgroundCanvas()->get_gc()->clear();
 	
-	CameraSetting oldCamSettings;
-	GetCamera->GetCameraSettings(oldCamSettings);
+	CameraSetting oldCamSettings = GetCamera->GetCameraSettings();
 	
-
 	//setup cam to render stuff in the perfect position
 	GetCamera->SetTargetPos(CL_Vector2(pWorldChunk->GetRect().left, pWorldChunk->GetRect().top));
 	GetCamera->InstantUpdate();
@@ -346,9 +344,9 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 	if (aLayer == bLayer)
 	{
 	
+		if (!g_pLayerManager->GetLayerInfo(pA->GetLayer()).GetDepthSortWithinLayer()) return aLayer < bLayer;
 		//extra checking for depth queuing.  We depth cue by the bottom of the
 		//collision box when possible, it's more accurate than the picture.
-
 		pCol = pA->GetCollisionData();
 
 		if (pCol && pCol->GetLineList()->size() > 0)
@@ -418,6 +416,7 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 	static bool bNoParallax;
 	static bool bDontAddToDrawList;
 
+	
 	for (unsigned int i=0; i < layerMan.GetLayerCount(); i++)
 	{
 		Layer &layer = layerMan.GetLayerInfo(i);
@@ -485,7 +484,9 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 	//	layerIdVecStandard.size());
 	//LogMsg("Viewrect is %s.  Drawing %d tiles", PrintRect(viewRect).c_str(), m_tileLayerDrawList.size());
 	//sort the tiles/entities we're going to draw by layer
+	
 	g_pLayerManager = &GetWorld->GetLayerManager();
+	
 	std::sort(m_tileLayerDrawList.begin(), m_tileLayerDrawList.end(), compareTileBySortLevelOptimized);
 
 	if (m_bDrawWorldChunkGrid)
@@ -564,19 +565,18 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
 	}
 }
 
-void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
+void EntWorldCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 {
 	Tile *pTile;
 
 	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
 	{
+		
+		
+		
 		pTile = m_tileLayerDrawList.at(i);
 		if (!pTile) continue;
 
-		pTile->Render(pGC);
-
-	if (m_bDrawCollisionData)
-	{
 		if (pTile->GetCollisionData())
 		{
 			CollisionData *pCol = pTile->GetCollisionData();
@@ -592,7 +592,7 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 					vOffset = ((TileEntity*)pTile)->GetEntity()->GetVisualOffset();
 				}
 			}
-	 
+
 			if (pTile->UsesTileProperties())
 			{ 
 				CollisionData col;
@@ -605,8 +605,69 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 			}
 		}
 	}
+
+}
+void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
+{
+	Tile *pTile;
+
+	//we render them in sections by layer, in two passes.  The first pass is for shadows
+
+	int renderStart = 0;
+	int curLayer = -99999;
+
+	unsigned int i;
+	for (i=0; i < m_tileLayerDrawList.size(); i++)
+	{
+		pTile = m_tileLayerDrawList.at(i);
+		if (!pTile) continue;
+
+	
+		if (pTile->GetLayer() != curLayer)
+		{
+			if (curLayer == -99999)
+			{
+				//first layer
+				curLayer = pTile->GetLayer();
+			} else
+			{
+				//actually changing layer
+				curLayer = pTile->GetLayer();
+				//now render the tiles
+				for (unsigned int r=renderStart; r < i; r++)
+				{
+					pTile = m_tileLayerDrawList.at(r);
+					if (pTile)
+					{
+						pTile->Render(pGC);
+					}
+				}
+
+				//setup for next shadow pass
+				renderStart = i;
+
+				i--; //do the current one again
+				continue;
+
+			}
+
+		} else
+		{
+			pTile->RenderShadow(pGC);
+		}
 	} 
 
+	//render last batch if applicable
+
+	//now render the tiles
+	for (unsigned int r=renderStart; r < m_tileLayerDrawList.size(); r++)
+	{
+		pTile = m_tileLayerDrawList.at(r);
+		if (pTile)
+		{
+			pTile->Render(pGC);
+		}
+	}
 }
 
 void EntWorldCache::Update(float step)
@@ -624,6 +685,7 @@ void EntWorldCache::Update(float step)
 	}
 
 	ProcessPendingEntityMovementAndDeletions();
+	
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 
 	if (GetGameLogic->GetGamePaused() == false)
@@ -649,6 +711,11 @@ void EntWorldCache::Render(void *pTarget)
 	CL_GraphicContext* pGC = (CL_GraphicContext*)pTarget;
 	
 	RenderViewList(pGC);
+
+	if (m_bDrawCollisionData)
+	{
+		RenderCollisionOutlines(pGC);
+	}
 
 	if (m_bDrawWorldChunkGrid)
 	{

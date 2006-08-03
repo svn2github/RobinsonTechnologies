@@ -31,6 +31,8 @@ public:
 	//for use by other brains directly
 	virtual void AddWeightedForce(const CL_Vector2 & force);
 	virtual unsigned int GetKeys() {return m_Keys;}
+	virtual void HandleMsg(const string &msg);
+
 
 protected:
 

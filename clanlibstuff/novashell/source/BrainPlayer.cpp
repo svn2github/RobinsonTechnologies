@@ -55,9 +55,13 @@ BrainPlayer::BrainPlayer(MovingEntity * pParent):Brain(pParent)
 	m_walkSound.Init(g_pSoundManager, m_pParent->GetData()->Get("walk_sound"));
 	m_climbSound.Init(g_pSoundManager, m_pParent->GetData()->Get("climb_sound"));
 	m_jumpSound = m_pParent->GetData()->Get("jump_sound");
-	GetGameLogic->SetGameMode(GameLogic::C_GAME_MODE_SIDE_VIEW);
-
+	
 	m_attackTimer.SetInterval(200);
+}
+
+void BrainPlayer::OnAdd()
+{
+	m_pParent->GetBrainManager()->SetBrainBase(this);
 }
 
 void AssignPlayerToCameraIfNeeded(MovingEntity *pEnt)
@@ -341,7 +345,20 @@ void BrainPlayer::HandleMsg(const string &msg)
 	{
 		vector<string> words = CL_String::tokenize(messages[i], "=",true);
 
-			if (words[0] == "freeze")
+		if (words[0] == "lost_player_focus")
+		{
+			ResetKeys();
+			m_walkSound.Play(false);
+			m_climbSound.Play(false);
+		
+		} else
+			if (words[0] == "got_player_focus")
+			{
+				ResetKeys();
+				GetGameLogic->SetGameMode(GameLogic::C_GAME_MODE_SIDE_VIEW);
+		
+			} else
+				if (words[0] == "freeze")
 		{
 			SetFreeze(CL_String::to_bool(words[1]));
 		} else
@@ -520,8 +537,11 @@ void BrainPlayer::UpdateMovement(float step)
 	
 	//play walk sound?
 
+	
+
 	if (m_pParent->IsOnGround() && !m_pParent->GetOnLadder() && m_pParent->GetBody()->GetLinVelocity().Length() > 1)
 	{
+		if (m_Keys) //only play a sound if a key is pressed
 		m_walkSound.Play(true);
 	} else
 	{
@@ -532,6 +552,7 @@ void BrainPlayer::UpdateMovement(float step)
 
 	if (m_pParent->GetOnLadder() && m_moveAngle != CL_Vector2::ZERO)
 	{
+		if (m_Keys) //only play a sound if a key is pressed
 		m_climbSound.Play(true);
 	} else
 	{

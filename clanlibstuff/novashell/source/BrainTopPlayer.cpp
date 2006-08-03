@@ -28,8 +28,8 @@ BrainTopPlayer::BrainTopPlayer(MovingEntity * pParent):Brain(pParent)
 	m_SlotKeyDown = CL_Keyboard::sig_key_down().connect( this, &BrainTopPlayer::OnKeyDown);
 
 	m_walkSound.Init(g_pSoundManager, m_pParent->GetData()->Get("walk_sound"));
-	m_attackTimer.SetInterval(200);
-	GetGameLogic->SetGameMode(GameLogic::C_GAME_MODE_TOP_VIEW);
+	m_attackTimer.SetInterval(100);
+	
 }
 
 BrainTopPlayer::~BrainTopPlayer()
@@ -47,6 +47,37 @@ void BrainTopPlayer::OnAdd()
 void BrainTopPlayer::ResetKeys()
 {
 	m_Keys = 0; 
+}
+
+
+void BrainTopPlayer::HandleMsg(const string &msg)
+{
+	vector<string> messages = CL_String::tokenize(msg, ";",true);
+
+	for (unsigned int i=0; i < messages.size(); i++)
+	{
+		vector<string> words = CL_String::tokenize(messages[i], "=",true);
+
+		if (words[0] == "lost_player_focus")
+		{
+			ResetKeys();
+			m_walkSound.Play(false);
+
+		} else
+			if (words[0] == "got_player_focus")
+			{
+				ResetKeys();
+				GetGameLogic->SetGameMode(GameLogic::C_GAME_MODE_TOP_VIEW);
+			} else
+
+			if (words[0] == "freeze")
+			{
+				//SetFreeze(CL_String::to_bool(words[1]));
+			} else
+			{
+				LogMsg("Brain %s doesn't understand keyword %s", GetName(), words[0].c_str());
+			}
+	}
 }
 
 void BrainTopPlayer::OnKeyDown(const CL_InputEvent &key)

@@ -195,11 +195,15 @@ void luabindMisc(lua_State *pState)
 		.def("SetScaleLerp", &Camera::SetScaleLerp)
 		.def("Reset", &Camera::Reset)
 		.def("GetScale", &Camera::GetScale)
+		.def("GetCameraSettings", &Camera::GetCameraSettings)
+		.def("SetCameraSettings", &Camera::SetCameraSettings)
 
 		,class_<TagObject>("TagObject")
 		.def("GetMapName", &TagObject::GetMapName)
 		.def("GetID", &TagObject::GetID)
 		.def("GetPos", &TagObject::GetPos)
+
+		,class_<CameraSetting>("CameraSettings")
 
 		,class_<ScriptKeyManager>("KeyManager")
 		.def("AssignKey", &ScriptKeyManager::AssignKey)

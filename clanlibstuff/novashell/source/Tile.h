@@ -62,6 +62,7 @@ public:
 	bool UsesTileProperties();
 	virtual void Update(float step) {return;}
 	virtual void Render(CL_GraphicContext *pGC) {return;}
+	virtual void RenderShadow(CL_GraphicContext *pGC) {return;}
 	Screen * GetParentScreen();
 	void SetParentScreen(Screen *pScreen) {m_pParentScreen = pScreen;}
 	virtual CBody * GetCustomBody() {return NULL;}
@@ -121,6 +122,7 @@ public:
 		m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x, m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y);}
 	virtual CollisionData * GetCollisionData();
 	virtual void Render(CL_GraphicContext *pGC);
+	virtual void RenderShadow(CL_GraphicContext *pGC);
 	unsigned int m_resourceID;
 	CL_Rect m_rectSrc;
 	float m_rot; //rotation

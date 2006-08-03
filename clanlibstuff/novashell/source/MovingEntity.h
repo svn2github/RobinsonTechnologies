@@ -72,6 +72,7 @@ public:
   bool SetVisualProfile(const string &resourceFileName, const string &profileName);
   virtual void  Update(float step);
   virtual void  Render(void *pTarget);
+  void RenderShadow(void *pTarget);
   BaseGameEntity * CreateClone(TileEntity *pTile);
   void SetIsOnGround(bool bOnGround);
   CBody * GetBody(){return &m_body;}

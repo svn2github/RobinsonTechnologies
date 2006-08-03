@@ -24,6 +24,18 @@ void Camera::SetCameraSettings(CameraSetting &camSetting)
   m_vecScaleTarget = ClampScaleToRange(camSetting.VecTargetScale());
 }
 
+CameraSetting Camera::GetCameraSettings()
+{
+	CameraSetting camSettingOut;
+
+	camSettingOut.VecPos() = m_vecPos;
+	camSettingOut.VecTargetPos() = m_vecTargetPos;
+	camSettingOut.VecScale() = m_vecScale;
+	camSettingOut.VecTargetScale() = m_vecScaleTarget;
+
+	return camSettingOut;
+}
+
 CL_Rectf Camera::GetViewRectWorld()
 {
 	CL_Rectf r;
@@ -37,14 +49,6 @@ CL_Rectf Camera::GetViewRectWorld()
 	return r;
 }
 
-void Camera::GetCameraSettings(CameraSetting &camSettingOut)
-{
-	camSettingOut.VecPos() = m_vecPos;
-	camSettingOut.VecTargetPos() = m_vecTargetPos;
-	camSettingOut.VecScale() = m_vecScale;
-	camSettingOut.VecTargetScale() = m_vecScaleTarget;
-
-}
 void Camera::Reset()
 {
 	m_bInstantUpdateASAP = false;

@@ -31,7 +31,8 @@ TagManager g_TagManager;
 
 GameLogic::GameLogic()
 {
-    m_slots.connect(CL_Keyboard::sig_key_down(), this, &GameLogic::OnKeyDown);
+	m_pPlayer = NULL;   
+	m_slots.connect(CL_Keyboard::sig_key_down(), this, &GameLogic::OnKeyDown);
 	m_slots.connect(CL_Keyboard::sig_key_up(), this, &GameLogic::OnKeyUp);
 	m_slots.connect(CL_Mouse::sig_key_up(), this, &GameLogic::OnMouseUp);
     m_editorID = 0;
@@ -252,6 +253,7 @@ bool GameLogic::Init()
 {
 
 	LogMsg("Initializing GameLogic");
+
 	g_MessageManager.Reset();
 	m_strUserProfileName.clear();
 	m_worldManager.Kill();
@@ -315,11 +317,28 @@ bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the ad
 
 void GameLogic::SetMyPlayer(MovingEntity *pNew)
 {
+	
+	if (m_pPlayer && pNew != m_pPlayer)
+	{
+		//tell the entity that currently holds the players focus he just lost it
+		int newID = 0;
+		if (pNew != 0) newID = pNew->ID();
+		if (m_pPlayer->GetBrainManager()->GetBrainBase())
+		{
+			m_pPlayer->GetBrainManager()->SendToBrainBase("lost_player_focus="+CL_String::from_int(newID));
+		}
+	}
+	
 	//also let's tell the script about it
 	if (pNew)
 	{
 		m_pPlayer = pNew;
 		luabind::globals(GetScriptManager->GetMainState())["g_PlayerID"] = m_pPlayer->ID();
+
+		if (m_pPlayer->GetBrainManager()->GetBrainBase())
+		{
+			m_pPlayer->GetBrainManager()->SendToBrainBase("got_player_focus");
+		}
 
 	} else
 	{
@@ -477,7 +496,7 @@ void GameLogic::Kill()
 	if (GetWorld)
 	{
 		//the main world is active, let's save out the current player position I guess
-		GetCamera->GetCameraSettings(*GetWorld->GetCameraSetting());
+		*GetWorld->GetCameraSetting() = GetCamera->GetCameraSettings();
 	}
 	
 	if (EntityMgr->GetEntityByName("coleditor"))

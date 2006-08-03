@@ -49,6 +49,7 @@ public:
 	void RemoveTileFromList(Tile *pTile);
 	unsigned int GetUniqueDrawID() { return m_uniqueDrawID;}
 	int GetTilesRenderedLastFrameCount() {return m_tileLayerDrawList.size();}
+	void RenderCollisionOutlines(CL_GraphicContext *pGC);
 
 protected:
 

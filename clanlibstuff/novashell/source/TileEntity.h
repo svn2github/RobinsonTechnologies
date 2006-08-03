@@ -33,6 +33,7 @@ public:
 	virtual const CL_Vector2 & GetPos();
 	virtual void SetPos(const CL_Vector2 &vecPos);
 	virtual CBody * GetCustomBody();
+	virtual void RenderShadow(CL_GraphicContext *pGC);
 
 protected:
 

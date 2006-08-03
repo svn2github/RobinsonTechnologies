@@ -26,7 +26,7 @@ public:
 	void SetPosCentered(CL_Vector2 vecPos);
 	void SetTargetPos(CL_Vector2 vecTarget); //where the upper-left of the camera should be
 	void SetTargetPosCentered(CL_Vector2 vecTarget); //Centered in on this spot by calculating the offset needed
-	void GetCameraSettings(CameraSetting &camSettingOut);
+	CameraSetting GetCameraSettings();
 	void SetCameraSettings(CameraSetting &camSetting); //i want to const it but then my CameraSetting stuff will be a hassle...
 	void SetScaleRaw(CL_Vector2 vecScale); //no bounds checking, no auto centering the camera to the new scale
 	void SetScale(CL_Vector2 vecScale);

@@ -40,6 +40,11 @@ void TileEntity::Render(CL_GraphicContext *pGC)
 	m_pEntity->Render(pGC);
 }
 
+void TileEntity::RenderShadow(CL_GraphicContext *pGC)
+{
+	m_pEntity->RenderShadow(pGC);
+}
+
 void TileEntity::SetScale(const CL_Vector2 &v)
 {
 	m_vecScale = v;
