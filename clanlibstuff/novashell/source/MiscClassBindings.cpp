@@ -97,6 +97,10 @@ MovingEntity * GetEntityByWorldPos(CL_Vector2 v)
 	return NULL;
 }
 
+void LogErrorLUA(const char *pMessage)
+{
+	LogError(pMessage);
+}
 
 //more class definitions
 void luabindMisc(lua_State *pState)
@@ -221,6 +225,7 @@ void luabindMisc(lua_State *pState)
 		def("GetEntityByName", &GetEntityByName),
 		def("ShowMessage", &ShowMessage),
 		def("FacingToVector", &FacingToVector),
-		def("VectorToFacing", &VectorToFacing)
+		def("VectorToFacing", &VectorToFacing),
+		def("LogError", &LogErrorLUA)
 		];
 }

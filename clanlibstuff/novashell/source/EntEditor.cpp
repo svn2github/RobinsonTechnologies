@@ -574,8 +574,6 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
     m_slot.connect(m_pButtonToggleEditMode->sig_clicked(),this, &EntEditor::OnToggleEditMode);
 	*/
 	
-	LogMsg("Menu height is %d", m_pMenu->get_items_height());
-	
 	return true;
 }
 

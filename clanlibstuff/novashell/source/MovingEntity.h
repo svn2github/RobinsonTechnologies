@@ -161,6 +161,7 @@ public:
   CL_Vector2 GetVisualOffset();
   void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
   void SetCollisionMode(int mode);
+  void UpdateTriggers(float step);
 
   enum ListenCollision
 {

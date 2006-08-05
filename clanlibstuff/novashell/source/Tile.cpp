@@ -339,10 +339,7 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 
 void TilePic::RenderShadow(CL_GraphicContext *pGC)
 {
-	if (GetBit(Tile::e_castShadow))
-	{
 		RenderTilePicShadow(this, pGC);
-	}
 }
 void TilePic::Render(CL_GraphicContext *pGC)
 {

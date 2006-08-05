@@ -9,6 +9,7 @@ game_debug*.*
 *.sfk
 *.sfl
 *.thm
+AS_DEBUG
 
 
 

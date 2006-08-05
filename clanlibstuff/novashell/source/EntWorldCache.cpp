@@ -12,6 +12,8 @@ EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	 m_cacheCheckTimer = 0;
 	 SetDrawWorldChunkGrid(false);
 	 SetDrawCollision(false);
+
+	
 #ifdef _DEBUG
 	 //SetDrawCollision(true);
 #endif
@@ -20,8 +22,13 @@ EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 
 void EntWorldCache::SetWorld( World * pWorld)
 {
+	assert(!m_pWorld && "Um, I didn't plan on reinitting these..");
+
 	m_pWorld = pWorld;
 	pWorld->SetMyWorldCache(this);
+
+	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntWorldCache::OnMapChange);
+
 }
 EntWorldCache::~EntWorldCache()
 {
@@ -572,8 +579,6 @@ void EntWorldCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
 	{
 		
-		
-		
 		pTile = m_tileLayerDrawList.at(i);
 		if (!pTile) continue;
 
@@ -614,31 +619,30 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 	//we render them in sections by layer, in two passes.  The first pass is for shadows
 
 	int renderStart = 0;
-	int curLayer = -99999;
+	int curSort = -99999;
+	LayerManager *pLayerManager = &GetWorld->GetLayerManager();
+	int sort;
 
 	unsigned int i;
 	for (i=0; i < m_tileLayerDrawList.size(); i++)
 	{
 		pTile = m_tileLayerDrawList.at(i);
 		if (!pTile) continue;
-
 	
-		if (pTile->GetLayer() != curLayer)
+		if ( (sort = pLayerManager->GetLayerInfo(pTile->GetLayer()).GetSort()) != curSort)
 		{
-			if (curLayer == -99999)
-			{
-				//first layer
-				curLayer = pTile->GetLayer();
-			} else
-			{
 				//actually changing layer
-				curLayer = pTile->GetLayer();
+				curSort = sort;
 				//now render the tiles
 				for (unsigned int r=renderStart; r < i; r++)
 				{
 					pTile = m_tileLayerDrawList.at(r);
 					if (pTile)
 					{
+						if (pTile->GetBit(Tile::e_castShadow) && pTile->GetBit(Tile::e_sortShadow))
+						{
+							pTile->RenderShadow(pGC);
+						}
 						pTile->Render(pGC);
 					}
 				}
@@ -648,12 +652,12 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 
 				i--; //do the current one again
 				continue;
-
-			}
-
 		} else
 		{
-			pTile->RenderShadow(pGC);
+			if (pTile->GetBit(Tile::e_castShadow) && !pTile->GetBit(Tile::e_sortShadow))
+			{
+				pTile->RenderShadow(pGC);
+			}
 		}
 	} 
 
@@ -665,13 +669,30 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 		pTile = m_tileLayerDrawList.at(r);
 		if (pTile)
 		{
+			if (pTile->GetBit(Tile::e_castShadow) && pTile->GetBit(Tile::e_sortShadow))
+			{
+				pTile->RenderShadow(pGC);
+			}
 			pTile->Render(pGC);
+
 		}
 	}
 }
 
+void EntWorldCache::ClearTriggers()
+{
+	m_activeTriggers.clear();
+
+}
+
+void EntWorldCache::AddActiveTrigger(int entID)
+{
+	m_activeTriggers.push_back(entID);
+}
+
 void EntWorldCache::Update(float step)
 {
+
 	m_uniqueDrawID = GetApp()->GetUniqueNumber();
 	unsigned int gameTick = GetApp()->GetGameTick();
 	if (gameTick > m_cacheCheckTimer)
@@ -684,9 +705,20 @@ void EntWorldCache::Update(float step)
 		m_cacheCheckTimer = gameTick+cacheCheckSpeed;
 	}
 
+
 	ProcessPendingEntityMovementAndDeletions();
 	
-	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
+		CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
+	
+	ClearTriggers();
+
+
+	if (m_pWorld != GetWorld)
+	{
+		//we no longer have focus, don't bother doing our AI
+		return;
+	}
+
 
 	if (GetGameLogic->GetGamePaused() == false)
 	{
@@ -703,9 +735,28 @@ void EntWorldCache::Update(float step)
 			m_entityList.at(i)->PostUpdate(step);
 		}
 	}
+	
 
 }
 
+void EntWorldCache::OnMapChange()
+{
+	//let any triggers register that the player has left the map
+	
+	MovingEntity *pEnt = NULL;
+
+	for (unsigned int i=0; i < m_activeTriggers.size(); i++)
+	{
+		pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_activeTriggers[i]);
+		if (pEnt)
+		{
+			pEnt->UpdateTriggers(0);
+		}
+	}
+
+	//insure that this isn't run again
+	ClearTriggers();
+}
 void EntWorldCache::Render(void *pTarget)
 {
 	CL_GraphicContext* pGC = (CL_GraphicContext*)pTarget;

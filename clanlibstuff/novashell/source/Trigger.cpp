@@ -68,11 +68,13 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 {
 	if (bInsideRegion)
 	{		
-			//currently inside it
+		m_pParent->GetTile()->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache()->AddActiveTrigger(m_pParent->ID());
+		
+		//currently inside it
 			if (m_state == STATE_OUTSIDE)
 			{
 				m_state = STATE_INSIDE;
-				try {luabind::call_function<luabind::object>(m_pParent->GetScriptObject()->GetState(), "OnTriggerEnter");
+				try {luabind::call_function<luabind::object>(m_pParent->GetScriptObject()->GetState(), "OnTriggerEnter", GetPlayer);
 				} LUABIND_ENT_BRAIN_CATCH( "Error while calling function OnTriggerEnter");
 			}
 
@@ -80,7 +82,7 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 			{
 				if (m_pulseTimer.IntervalReached() || m_behaviorVar == 0)
 				{
-					try {luabind::call_function<luabind::object>(m_pParent->GetScriptObject()->GetState(), "OnTriggerInside");
+					try {luabind::call_function<luabind::object>(m_pParent->GetScriptObject()->GetState(), "OnTriggerInside", GetPlayer);
 					} LUABIND_ENT_BRAIN_CATCH( "Error while calling function OnTriggerInside");
 				}
 			}
@@ -90,7 +92,8 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 		{
 			//must have just exited
 			m_state = STATE_OUTSIDE;
-			m_pParent->RunFunction("OnTriggerExit");
+			try {luabind::call_function<luabind::object>(m_pParent->GetScriptObject()->GetState(), "OnTriggerExit", GetPlayer);
+			} LUABIND_ENT_BRAIN_CATCH( "Error while calling function OnTriggerExit");
 		}
 		//currently outside
 	}
@@ -109,7 +112,7 @@ void Trigger::Update(float step)
 	case TYPE_REGION_IMAGE:
 		
 		if (GetPlayer)
-		SetTriggerState(m_pParent->GetWorldRect().is_overlapped(GetPlayer->GetWorldRect()));
+		SetTriggerState(m_pParent->GetWorldRect().is_overlapped(GetPlayer->GetTile()->GetWorldColRect()));
 		break;
 
 	}

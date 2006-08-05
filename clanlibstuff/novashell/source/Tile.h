@@ -76,7 +76,8 @@ enum
  e_customCollision = D_BIT_2,
  e_needsUpdate = D_BIT_3,
  e_notPersistent = D_BIT_4, //if true, won't be saved to disk
- e_castShadow = D_BIT_5
+ e_castShadow = D_BIT_5,
+ e_sortShadow = D_BIT_6
 
  //can add more bits here, up to D_BIT_7
 };

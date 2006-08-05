@@ -67,6 +67,7 @@ World::World()
 
 }
 
+
 bool World::TestCoordPacker(int x, int y)
 {
 	CL_Point pt(x,y);

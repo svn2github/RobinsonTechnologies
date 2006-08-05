@@ -1175,9 +1175,6 @@ CL_Vector2 MovingEntity::GetVisualOffset()
 void MovingEntity::RenderShadow(void *pTarget)
 {
 	
-	if (m_pTile->GetBit(Tile::e_castShadow))
-	{
-
 	static CL_Vector2 vecPos;
 	static World *pWorld;
 	static EntWorldCache *pWorldCache;
@@ -1202,7 +1199,7 @@ void MovingEntity::RenderShadow(void *pTarget)
 
 		AddShadowToParam1(params1, m_pTile);
 		m_pSprite->draw(params1, pGC);
-	}
+	
 }
 
 void MovingEntity::Render(void *pTarget)
@@ -1365,6 +1362,12 @@ void MovingEntity::RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat
 	}
 
 }
+
+void MovingEntity::UpdateTriggers(float step)
+{
+	m_trigger.Update(step);
+}
+
 void MovingEntity::Update(float step)
 {
 
@@ -1372,7 +1375,7 @@ if (GetGameLogic->GetGamePaused()) return;
 
 	ClearColorMods();
 
-	m_trigger.Update(step);
+	UpdateTriggers(step);
 
 
 	m_brainManager.Update(step);
@@ -1490,31 +1493,41 @@ MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName)
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 {
-	
-	if (!pTile->GetCollisionData()) return;
+	CollisionData *pCol = pTile->GetCollisionData();
+	if (!pCol) return;
 	float density = 1 - 0.5;
 	float bottomOffset = 0;
 	float leftOffset = 0;
 
 	float picSizeY = pTile->GetBoundsSize().y;
 
-	if (pTile->GetCollisionData()->GetLineList()->size() > 0)
-	{
-		//guess what kind of shadow would look best by studying how much volume its collision has
-		//the lower, the more like a house it is, the higher, the more like a pole it is
-		PointList *pLine = &(*pTile->GetCollisionData()->GetLineList()->begin());
+	line_list::iterator lineItor = pCol->GetLineList()->begin();
 
-		density = 0.8 - pLine->GetRect().get_height() / picSizeY;
+	PointList *pLine = NULL;
+
+	for(;lineItor != pCol->GetLineList()->end(); lineItor++)
+	{
+		if (g_materialManager.GetMaterial((*lineItor).GetType())->GetType() != CMaterial::C_MATERIAL_TYPE_DUMMY)
+		{
+			//this looks fine
+			pLine = &(*lineItor);
+			break;
+		}
+	}
 	
-			if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-			{
-				CL_Rectf worldRect = pTile->GetWorldRect();
-				bottomOffset = (worldRect.bottom - (pTile->GetPos().y + pLine->GetRect().get_height()/2))*0.9;
-				leftOffset = (worldRect.left- (pTile->GetPos().x + pLine->GetRect().left))/2;
-			} else
-			{
-				bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pLine->GetRect().bottom);
-			}
+	if (pLine)
+	{
+		density = 0.8 - pLine->GetRect().get_height() / picSizeY;
+
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			CL_Rectf worldRect = pTile->GetWorldRect();
+			bottomOffset = (worldRect.bottom - (pTile->GetPos().y + pLine->GetRect().get_height()/2))*0.9;
+			leftOffset = (worldRect.left- (pTile->GetPos().x + pLine->GetRect().left))/2;
+		} else
+		{
+			bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pLine->GetRect().bottom);
+		}
 	} 
 
 	if (bottomOffset != 0)

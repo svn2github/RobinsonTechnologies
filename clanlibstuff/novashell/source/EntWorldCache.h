@@ -50,6 +50,8 @@ public:
 	unsigned int GetUniqueDrawID() { return m_uniqueDrawID;}
 	int GetTilesRenderedLastFrameCount() {return m_tileLayerDrawList.size();}
 	void RenderCollisionOutlines(CL_GraphicContext *pGC);
+	void AddActiveTrigger(int entID);
+	void ClearTriggers();
 
 protected:
 
@@ -58,6 +60,7 @@ protected:
 	void ProcessPendingEntityMovementAndDeletions();
 	void ResetPendingEntityMovementAndDeletions();
 	void AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec, bool bDontAddToDrawList );
+	void OnMapChange();
 
 	World *m_pWorld; 
 	
@@ -70,6 +73,9 @@ protected:
 	bool m_bDrawWorldChunkGrid;
 	bool m_bDrawCollisionData;
 	unsigned int m_uniqueDrawID; //so an entity can tell if another entity has already "thought"
+	vector<int> m_activeTriggers; //well, the entities that hold them anyway
+	CL_SlotContainer m_slots;
+
 };
 
 bool compareTileByLayer(const Tile *pA, const Tile *pB) ;

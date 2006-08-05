@@ -1296,9 +1296,13 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	flipY.set_checked(pTile->GetBit(Tile::e_flippedY));
 	
 	CL_CheckBox castShadow (CL_Point(buttonOffsetX,offsetY),"Cast Shadow", window.get_client_area());
-	offsetY+= 20;
 	castShadow.set_checked(pTile->GetBit(Tile::e_castShadow));
 
+	CL_CheckBox sortShadow (CL_Point(SecondOffsetX,offsetY),"Sort Shadow", window.get_client_area());
+	sortShadow.set_checked(pTile->GetBit(Tile::e_sortShadow));
+
+	offsetY+= 20;
+	
 	CL_Label labelEntity (CL_Point(buttonOffsetX, offsetY), "LUA Script:", window.get_client_area());
 
 	rPos = CL_Rect(0,0,200,16);
@@ -1398,30 +1402,28 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			inputName.set_text(C_MULTIPLE_SELECT_TEXT);
 			//inputEntity.enable(false);
 			pScript->set_text(C_MULTIPLE_SELECT_TEXT);
-			pEnt = NULL;
 		} else
 		{
 			pScript->set_text(pEnt->GetMainScriptFileName());
 			inputName.set_text(pEnt->GetName());
 		}
+	
 	} else
 	{
 		inputEntity.set_text("<N/A, not an entity>");
-	}
 
-	if (!pEnt)
-	{
 		pScript = NULL; //not gonna use it
 		//inputEntity.enable(false);
-		//buttonOpenScript.enable(false);
-		//buttonEditScript.enable(false);
-		
+		buttonOpenScript.enable(false);
+		buttonEditScript.enable(false);
+
 		inputName.enable(false);
 
 		listData.enable(false);
 		buttonAddData.enable(false);
 		buttonRemoveData.enable(false);
 	}
+
 
 	slots.connect(buttonCancel.sig_clicked(), (CL_Component*)&window, &CL_Component::quit);
 
@@ -1493,6 +1495,11 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			pTile->SetBit(Tile::e_castShadow, castShadow.is_checked());
 			flags = flags | TileEditOperation::eBitCastShadow;
 		}
+		if (sortShadow.is_checked() != pTile->GetBit(Tile::e_sortShadow))
+		{
+			pTile->SetBit(Tile::e_sortShadow, sortShadow.is_checked());
+			flags = flags | TileEditOperation::eBitSortShadow;
+		}
 
 		if (inputColor.get_text() != originalColor)
 		{
@@ -1523,17 +1530,26 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		pTileList->CopyTilePropertiesToSelection(pTile, flags);
 
 		int selectedLayer = layerList.get_current_item();
-		if ( selectedLayer != originalLayer && selectedLayer != -1)
+		if (selectedLayer == -1) selectedLayer = originalLayer;
+	
+		if ( selectedLayer != originalLayer)
 		{
 			pTileList->SetForceLayerOfNextPaste(selectedLayer);
 			//LogMsg("Changing layer to %d", layerList.get_item(selectedLayer)->user_data);
+	
 		}
 		
 		
 		pTileList->SetIgnoreParallaxOnNextPaste();
+		
 		//paste our selection, this helps by creating an undo for us
 		OnPaste(*pTileList, pTileList->GetUpperLeftPos());
 
+		if (selectedLayer != originalLayer)
+		{
+			//couldn't change it before, because the paste needed it to delete the old tiles			
+			pTileList->SetLayerOfSelection(selectedLayer);
+		}
 		if (pScript)
 		{
 			//get a pointer to the entity we just pasted
