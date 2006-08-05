@@ -472,5 +472,6 @@ private:
 class CL_PixelBuffer;
 
 //if you send NULL for the color it uses a special fast version (to clear to black)
-void ClearPixelBuffer(CL_PixelBuffer* pPixelBuffer, CL_Color *pColor);
+void ClearPixelBuffer(CL_PixelBuffer* pPixelBuffer, CL_Color color);
+
 #endif // MiscUtils_h__
