@@ -1116,7 +1116,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 
 	if (!m_pCollisionData->GetLineList()->size())
 	{
-		LogError("No collision data in entity %d. (%s)", ID(), GetName());
+		LogError("No collision data in entity %d. (%s)", ID(), GetName().c_str());
 		return;
 	}
 
@@ -1554,8 +1554,8 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 	}
 
 	
-	density = max(0.1, density);
-	density = min(1, density);
+	density = cl_max(0.1, density);
+	density = cl_min(1, density);
 
 	//LogMsg("Density is %.3f", density);
 
