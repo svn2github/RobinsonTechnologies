@@ -73,7 +73,7 @@ protected:
 	bool m_bDrawWorldChunkGrid;
 	bool m_bDrawCollisionData;
 	unsigned int m_uniqueDrawID; //so an entity can tell if another entity has already "thought"
-	vector<int> m_activeTriggers; //well, the entities that hold them anyway
+	vector<unsigned int> m_activeTriggers; //well, the entities that hold them anyway
 	CL_SlotContainer m_slots;
 
 };

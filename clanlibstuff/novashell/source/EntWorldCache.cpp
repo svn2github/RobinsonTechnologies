@@ -745,9 +745,13 @@ void EntWorldCache::OnMapChange()
 	
 	MovingEntity *pEnt = NULL;
 
-	for (unsigned int i=0; i < m_activeTriggers.size(); i++)
+	//use a temp copy to avoid circular problems
+
+	vector<unsigned int> activeTriggers =  m_activeTriggers;
+
+	for (unsigned int i=0; i < activeTriggers.size(); i++)
 	{
-		pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_activeTriggers[i]);
+		pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(activeTriggers[i]);
 		if (pEnt)
 		{
 			pEnt->UpdateTriggers(0);
