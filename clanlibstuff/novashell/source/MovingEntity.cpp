@@ -205,6 +205,7 @@ void MovingEntity::SetName(const std::string &name)
 			GetTagManager->Remove(this);
 		}
 		m_hashedName = 0;
+		BaseGameEntity::SetName(name);
 		return;
 	}
 

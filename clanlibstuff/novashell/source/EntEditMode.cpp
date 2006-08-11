@@ -109,6 +109,82 @@ void EntEditMode::OnSelectSimilar()
 	
 }
 
+void EntEditMode::OnDeleteBadTiles()
+{
+	tile_list tlist;
+
+	BlitMessage("Checking for tiles with resource errors...");
+	
+	CL_Rectf r = GetCamera->GetViewRectWorld();
+	GetWorldCache->AddTilesByRect(CL_Rect(r.left, r.top, r.right, r.bottom), &tlist, GetWorld->GetLayerManager().GetAllList());
+
+	LogMsg("Found %d tiles to look through.", tlist.size());
+
+	//delete any that have missing art
+
+	TilePic *pTilePic;
+
+	int tilesRemoved = 0;
+	tile_list::iterator itor;
+	for (itor = tlist.begin(); itor != tlist.end(); itor++)
+	{
+		
+		if ((*itor)->GetType() == C_TILE_TYPE_PIC)
+		{
+			//here is a tile pic.  but does it have a problem?
+
+			pTilePic = (TilePic*) (*itor);
+
+			if (!GetHashedResourceManager->GetResourceByHashedID(pTilePic->m_resourceID))
+			{
+				//error here.  Remove this tile
+				pTilePic->GetParentScreen()->RemoveTileByPointer(pTilePic);
+				tilesRemoved++;
+			}
+
+		}
+	}
+
+	CL_MessageBox::info("Bad tile search results", "Removed " + CL_String::from_int(tilesRemoved) + " tiles.", GetApp()->GetGUI());
+}
+
+void EntEditMode::OnReplace()
+{
+	if (m_selectedTileList.IsEmpty())
+	{
+		CL_MessageBox::info("Can't replace: Nothing selected, so nothing to replace.", GetApp()->GetGUI());
+		return;
+	}
+
+	if (g_EntEditModeCopyBuffer.IsEmpty())
+	{
+		CL_MessageBox::info("Can't replace:  Nothing is in the copy buffer. Select the new tile, Ctrl-C, then select what you want to replace.", GetApp()->GetGUI());
+		return;
+	}
+
+	//make a copy of what is selected
+	TileEditOperation tempList = m_selectedTileList;
+
+	//delete selection
+	Tile blankTile; 
+	AddToUndo(&m_selectedTileList);
+	m_selectedTileList.FillSelection(&blankTile);
+
+	//now create a new tile operation that will do a massive paste
+
+	m_selectedTileList.ClearSelection();
+	//look at each tile that we delete individually
+
+	selectedTile_list::iterator itor;
+	
+	for (itor = tempList.m_selectedTileList.begin(); itor != tempList.m_selectedTileList.end(); itor++)
+	{
+		g_EntEditModeCopyBuffer.SetIgnoreParallaxOnNextPaste();
+		OnPaste(g_EntEditModeCopyBuffer, (*itor)->m_pTile->GetPos());
+	}
+
+}
+
 void EntEditMode::ScaleSelection(CL_Vector2 vMod, bool bBigMovement)
 {
 	if (m_selectedTileList.IsEmpty())
@@ -208,6 +284,12 @@ void EntEditMode::Init()
 	
 	pItem = m_pMenu->create_item("Utilities/Select Similar to current selection (limited by view and active edit layers) (Ctrl-R)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnSelectSimilar);
+
+	pItem = m_pMenu->create_item("Utilities/Replace each selected with what is in the copy buffer");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnReplace);
+
+	pItem = m_pMenu->create_item("Utilities/Remove tiles with missing graphics (limited by view)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDeleteBadTiles);
 
 	pItem = m_pMenu->create_item("Utilities/Create Tile From Tile (Ctrl-C while dragging a selection rectangle (Hold space to adjust drag position)");
 	pItem->enable(false);
@@ -1319,6 +1401,8 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	rPos.apply_alignment(origin_top_left, - (labelEntity.get_width()+buttonOffsetX+5), -(offsetY));
 	CL_InputBox inputEntity(rPos, "", window.get_client_area());
 
+	m_pPropertiesInputScript = &inputEntity; //need this for the file open function, messy, I know
+
 	//add a little file open button
 	CL_Button buttonOpenScript (CL_Point(inputEntity.get_client_x()+inputEntity.get_width(), offsetY), "File...", window.get_client_area());
 
@@ -1351,7 +1435,6 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	rPos.apply_alignment(origin_top_left, -ptOffset.x, -ptOffset.y);
 
 	CL_ListBox layerList(rPos, window.get_client_area());
-//m_pListLayerActive->set_multi_selection(true);
 	LayerManager &layerMan = GetWorld->GetLayerManager();
 
 	vector<unsigned int> layerVec;
@@ -1371,9 +1454,6 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 			layerList.set_selected(i, true);
 		}
 	}
-
-	CL_InputBox *pScript = &inputEntity;
-     m_pPropertiesInputScript = NULL;
 
 	 CL_Label labelName3(CL_Point(SecondOffsetX, offsetY), "Base Color:", window.get_client_area());
 	 rPos = CL_Rect(0,0,110,16);
@@ -1405,30 +1485,31 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 	if (pEnt)
 	{
-		m_pPropertiesInputScript = pScript;
-
+	
 		if (tilesSelected > 1)
 		{
 			inputName.set_text(C_MULTIPLE_SELECT_TEXT);
-			//inputEntity.enable(false);
-			pScript->set_text(C_MULTIPLE_SELECT_TEXT);
+			inputName.enable(false);
+			inputEntity.set_text(C_MULTIPLE_SELECT_TEXT);
+		
+			listData.enable(false);
+			buttonAddData.enable(false);
+			buttonRemoveData.enable(false);
+
+		
 		} else
 		{
-			pScript->set_text(pEnt->GetMainScriptFileName());
+			inputEntity.set_text(pEnt->GetMainScriptFileName());
 			inputName.set_text(pEnt->GetName());
 		}
 	
 	} else
 	{
 		inputEntity.set_text("<N/A, not an entity>");
-
-		pScript = NULL; //not gonna use it
-		//inputEntity.enable(false);
+		inputEntity.enable(false);
 		buttonOpenScript.enable(false);
 		buttonEditScript.enable(false);
-
 		inputName.enable(false);
-
 		listData.enable(false);
 		buttonAddData.enable(false);
 		buttonRemoveData.enable(false);
@@ -1479,7 +1560,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 	{
 		unsigned int flags = 0;
 		
-		if (!pEnt && pTile->GetType() == C_TILE_TYPE_ENTITY)
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 		{
 			if (inputEntity.get_text() != C_MULTIPLE_SELECT_TEXT)
 			{
@@ -1539,6 +1620,19 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		//run through and copy these properties to all the valid tiles in the selection
 		pTileList->CopyTilePropertiesToSelection(pTile, flags);
 
+
+		if (pEnt && pTileList->m_selectedTileList.size() == 1)
+		{
+			//it's a single ent, so extra property changes can be made too
+			if (inputName.get_text() != pEnt->GetName())
+			{
+				pEnt->SetName(inputName.get_text());
+			}
+
+
+			PropertiesSetDataManagerFromListBox(pEnt->GetData(), listData);
+		}
+
 		int selectedLayer = layerList.get_current_item();
 		if (selectedLayer == -1) selectedLayer = originalLayer;
 	
@@ -1546,9 +1640,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		{
 			pTileList->SetForceLayerOfNextPaste(selectedLayer);
 			//LogMsg("Changing layer to %d", layerList.get_item(selectedLayer)->user_data);
-	
 		}
-		
 		
 		pTileList->SetIgnoreParallaxOnNextPaste();
 		
@@ -1560,6 +1652,8 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			//couldn't change it before, because the paste needed it to delete the old tiles			
 			pTileList->SetLayerOfSelection(selectedLayer);
 		}
+		
+		/*
 		if (pScript)
 		{
 			//get a pointer to the entity we just pasted
@@ -1575,28 +1669,34 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			//apply any changes made to the custom data
 		    PropertiesSetDataManagerFromListBox(pEnt->GetData(), listData);
 
+			
 			if (pEntTile)
 			{
 				pEnt->SetName(inputName.get_text());
 
-				if (pScript->get_text() != pEnt->GetMainScriptFileName())
+				
+				if (pScript->get_text() != C_MULTIPLE_SELECT_TEXT && pScript->get_text() != pEnt->GetMainScriptFileName())
 				{
 					//they changed the script, apply it now
 					pEnt->SetMainScriptFileName(pScript->get_text());
 					pEnt->Kill();
 					pEnt->Init();
 				}
+				
 			} 
+			
 
-			pTileList->ClearSelection();
-			pTileList->AddTileToSelection(TileEditOperation::C_OPERATION_ADD, false, pEnt->GetTile());
-		 }
+			//pTileList->ClearSelection();
+			//pTileList->AddTileToSelection(TileEditOperation::C_OPERATION_ADD, false, pEnt->GetTile());
 		
-			GetWorld->ReInitEntities();
 		}
+		
+		}
+		*/
+		GetWorld->ReInitEntities();
+
 	} else if (m_guiResponse == C_GUI_CONVERT)
 	{
-		
 		
 		MovingEntity *pEnt = new MovingEntity;
 		TileEntity *pNewTile = new TileEntity;

@@ -157,10 +157,11 @@ void EntChooseScreenMode::OnAutoResize()
 {
 	BlitMessage("Removing blank space and saving map...");
 	
-	GetWorld->Save(false);
+	GetWorld->ForceSaveNow();
 	GetWorld->Load();
 	GetWorldCache->ClearCache();
 	GetWorld->Save(true);
+	GetWorld->RemoveUnusedFileChunks();
 	QuickInit();
 
 }

@@ -104,6 +104,7 @@ public:
 	void SetAutoSave(bool bNew) {m_byteArray[e_byteAutoSave] = !bNew; m_bDataChanged = true;}
 	bool SaveRequested();
 	void ForceSaveNow();
+	void RemoveUnusedFileChunks();
 
 	EntWorldCache * GetMyWorldCache(){return m_pWorldCache;}
 	void ReInitEntities(); //reinits all cached entities in this world, useful after 

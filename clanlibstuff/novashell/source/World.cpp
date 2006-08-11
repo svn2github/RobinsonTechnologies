@@ -436,6 +436,7 @@ bool World::SaveRequested()
 
 void World::ForceSaveNow()
 {
+	m_bDataChanged = true;
 	Save(true);
 
 	WorldMap::const_iterator itor = m_worldMap.begin();
@@ -666,7 +667,25 @@ void World::ReInitEntities()
 	}	
 }
 
-
+void World::RemoveUnusedFileChunks()
+{
+	CL_DirectoryScanner scanner;
+	scanner.scan(m_strDirPath, "*.chunk");
+	while (scanner.next())
+	{
+		std::string file = scanner.get_name();
+		if (!scanner.is_directory())
+		{
+			int worldchunk = CL_String::to_int(scanner.get_name());
+			if (!DoesWorldChunkExist(worldchunk))
+			{
+				LogMsg("Deleting unused worldchunk file %s. (screenID %d)", scanner.get_name().c_str(),
+					worldchunk);
+				RemoveFile(m_strDirPath+scanner.get_name());
+			}
+		}
+	}
+}
 
 void World::ReInitCollisionOnTilePics()
 {
@@ -723,3 +742,4 @@ void RemoveWorldFiles(const string &path)
 	RemoveFile(path+C_WORLD_DAT_FILENAME);
 	RemoveFile(path+C_LAYER_FILENAME);
 }
+
