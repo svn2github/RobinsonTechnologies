@@ -827,20 +827,30 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 	if (bDataChanged)
 	{
 
-	if (m_pTileWeAreEdittingCollisionOn->GetType() == C_TILE_TYPE_ENTITY)
-	{
-		TileEntity *pEnt = (TileEntity*)m_pTileWeAreEdittingCollisionOn;
-		if (pEnt->GetEntity())
+		if (m_pTileWeAreEdittingCollisionOn->GetType() == C_TILE_TYPE_ENTITY)
 		{
-			
-			pEnt->GetEntity()->Kill(); //force it to save out its collision info to disk, so when
-			//we reinit all similar tiles, they will use the changed version
-			GetWorld->ReInitEntities();
-		} else
-		{
-			assert(!"Huh?");
+			TileEntity *pEnt = (TileEntity*)m_pTileWeAreEdittingCollisionOn;
+			if (pEnt->GetEntity())
+			{
+
+				pEnt->GetEntity()->Kill(); //force it to save out its collision info to disk, so when
+				//we reinit all similar tiles, they will use the changed version
+				GetWorld->ReInitEntities();
+			} else
+			{
+				assert(!"Huh?");
+			}
 		}
-	}
+
+		if (m_pTileWeAreEdittingCollisionOn->GetType() == C_TILE_TYPE_PIC)
+		{
+			TilePic *pTilePic = (TilePic*)m_pTileWeAreEdittingCollisionOn;
+
+			pTilePic->SaveToMasterCollision();
+			GetWorld->ReInitCollisionOnTilePics();
+
+
+		}
 	}
 }
 

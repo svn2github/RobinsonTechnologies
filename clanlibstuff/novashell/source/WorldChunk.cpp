@@ -8,7 +8,7 @@ WorldChunk::WorldChunk(World *pParent)
 	m_pParent = pParent;
 	m_bIsEmpty = true;
 	m_pScreen = NULL;
-
+	m_bChunkDataChanged = true;
 	for (int i=0; i < e_byteCount; i++) m_byteArray[i] = 0;
 	for (int i=0; i < e_intCount; i++) m_intArray[i] = 0;
 	for (int i=0; i < e_uintCount; i++) m_uintArray[i] = 0;
@@ -31,6 +31,7 @@ void WorldChunk::KillThumbnail()
 void WorldChunk::SetDataChanged(bool bNeedsSaving)
 {
 	m_byteArray[e_byteDataChanged] = bNeedsSaving;
+	
 	if (m_pScreen)
 	{
 		m_pScreen->SetRequestIsEmptyRefreshCheck(true);
@@ -40,12 +41,15 @@ void WorldChunk::SetDataChanged(bool bNeedsSaving)
 void WorldChunk::SetNeedsThumbnailRefresh(bool bNeedsRefresh)
 {
 	m_byteArray[e_byteNeedsThumbNailRefreshed] = bNeedsRefresh;
+	
 }
 
 void WorldChunk::SetThumbNail(CL_PixelBuffer *pPixBuffer)
 {
 	KillThumbnail();
 	m_pThumb = pPixBuffer;
+	m_bChunkDataChanged = true;
+
 }
 
 void WorldChunk::SetScreen(Screen *pScreen)
@@ -88,20 +92,15 @@ bool WorldChunk::Serialize(CL_OutputSource *pOutput)
 		
 	}
 
-	//finally it's time to save the real data if need be, to a separate file for easy access-on-demand later
-	
-	if (IsScreenLoaded())
-	{
-		m_pScreen->Save();
-	} else
-	{
-		//well, it isn't loaded so it must not have data that needs saving
-	}
+	//screen will get saved later automatically when we kill ourself
+	m_bChunkDataChanged = false;
+
 	return true;
 }
 
 bool WorldChunk::Serialize(CL_InputSource *pInput)
 {
+	
 	assert(!m_pThumbPixelData && !m_pThumb && !m_pScreen && "This should not be initted!");
 	CL_FileHelper helper(pInput); //will autodetect if we're loading or saving
 
@@ -130,6 +129,8 @@ bool WorldChunk::Serialize(CL_InputSource *pInput)
 	//if we just loaded it, we can assume it's not an empty map or it would never have
 	//been saved
 	m_bIsEmpty = false;
+	m_bChunkDataChanged = false;
+
 	return true;
 }
 

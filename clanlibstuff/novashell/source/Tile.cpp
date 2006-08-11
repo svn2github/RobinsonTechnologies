@@ -21,6 +21,7 @@ Tile::Tile()
 	m_bitField.clear();
 	m_pCollisionData = NULL;
 	m_color = CL_Color(255,255,255);
+	m_bUsingCustomCollision = false;
 
 }
 
@@ -61,6 +62,11 @@ Tile::~Tile()
 	}
 
 	assert(!m_pEdgeCaseList);
+
+	if (m_bUsingCustomCollision)
+	{
+		delete m_pCollisionData;
+	}
 }
 
 const CL_Rectf & Tile::GetWorldColRect()
@@ -124,7 +130,14 @@ void Tile::SerializeBase(CL_FileHelper &helper)
 	} else
 	{
 		helper.process(m_vecPos);
-		SetPos(m_vecPos);
+		
+		//total hack to avoid the normal SetPos confusing the "did the map change" flag
+		if (GetType() == C_TILE_TYPE_ENTITY)
+		{
+			((TileEntity*)this)->SetPos(m_vecPos);
+			((TileEntity*)this)->GetEntity()->SetMovedFlag(false);
+		}
+		
 	}
 	helper.process(m_vecScale);
 	helper.process(*(cl_uint32*)&m_color);
@@ -346,12 +359,49 @@ void TilePic::Render(CL_GraphicContext *pGC)
 	RenderTilePic(this, pGC);
 }
 
+void TilePic::SaveToMasterCollision()
+{
+	if (m_bUsingCustomCollision)
+	{
+		CollisionData *pMaster = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(m_resourceID, m_rectSrc);
+
+		*pMaster = *m_pCollisionData;
+		pMaster->SetScale(CL_Vector2(1,1));
+	}
+}
+
+void TilePic::ReinitCollision()
+{
+	if (m_bUsingCustomCollision)
+	{
+		delete m_pCollisionData;
+		m_bUsingCustomCollision = false;
+	}
+
+	m_pCollisionData = NULL;
+}
+
 CollisionData * TilePic::GetCollisionData()
 {
 	if (m_pCollisionData) return m_pCollisionData;
 
-	//no collision data, let's make a default entry for it
 	m_pCollisionData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(m_resourceID, m_rectSrc);
+
+	if (m_vecScale.x != 1 || m_vecScale.y != 1)
+	{
+		//we may have to do something custom here
+		if (m_pCollisionData->GetLineList()->size() > 0)
+		{
+			//well, this has real data most likely, so let's create our own copy and apply scale to it
+			CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
+			m_pCollisionData = pNewCol;
+			m_bUsingCustomCollision = true;
+
+			m_pCollisionData->SetScale(m_vecScale);
+			
+		}
+
+	}
 
 	return m_pCollisionData;
 }

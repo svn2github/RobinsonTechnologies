@@ -162,8 +162,11 @@ public:
   void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
   void SetCollisionMode(int mode);
   void UpdateTriggers(float step);
-
-  enum ListenCollision
+  
+  //normally you'd never use this, but during load I need this to disable the update...
+  void SetMovedFlag(bool bNeedToUpdatePosition) {m_bMovedFlag = bNeedToUpdatePosition;}
+ 
+ enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
 	//them syncronized with the lua defines that have to match. So don't

@@ -11,7 +11,7 @@ const CL_Vector2 g_worldDefaultCenterPos(C_DEFAULT_SCREEN_ID*512, C_DEFAULT_SCRE
 
 World::World()
 {
-	
+	m_bDataChanged = true;
 	m_pWorldCache = NULL;
 	m_defaultTileSize = 0;
 	for (int i=0; i < e_byteCount; i++) m_byteArray[i] = 0;
@@ -114,6 +114,7 @@ void World::SetDirPath(const string &str)
 void World::SetDefaultTileSize(int size)
 {
   m_defaultTileSize = size;
+  m_bDataChanged = true;
 }
 
 const CL_Rect *World::GetWorldRect()
@@ -416,6 +417,7 @@ bool World::Load(string dirPath)
 	LogMsg("Loaded map.  %d non-empty chunks, size is %d by %d.", m_worldMap.size(), GetWorldX(), GetWorldY());
 	SAFE_DELETE(pFile);
 
+	m_bDataChanged = false;
 	return true; //actually loaded something
 }
 
@@ -431,12 +433,26 @@ bool World::SaveRequested()
 	return true;
 }
 
+
+void World::ForceSaveNow()
+{
+	Save(true);
+
+	WorldMap::const_iterator itor = m_worldMap.begin();
+	while (itor != m_worldMap.end())
+	{
+		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
+		{
+			itor->second->GetScreen()->Save(); //just accessing it causes it to precache
+		}
+		itor++;
+	}	
+}
+
 bool World::Save(bool bSaveTagCacheAlso)
 {
 	if (m_defaultTileSize == 0) return false; //don't actually save.. nothing was loaded
 
-	LogMsg("Saving world map (%d world chunks to look at, map size %d by %d)", m_worldMap.size(),
-		GetWorldX(), GetWorldY());
 	assert(m_strDirPath[m_strDirPath.length()-1] == '/' && "Save needs a path with an ending backslash on it");
 
 	g_VFManager.CreateDir(m_strDirPath); //creates the dir if needed in the last mounted file tree
@@ -454,6 +470,37 @@ bool World::Save(bool bSaveTagCacheAlso)
 	}
 
 	m_layerManager.Save(m_strDirPath+C_LAYER_FILENAME);
+	
+	//do we absolutely have to save?
+	bool bRequireSave = m_bDataChanged;
+
+	WorldMap::const_iterator itor;
+
+	if (bRequireSave == false)
+	{
+		//if a worldchunk changed (like the thumbnail, or a worldchunk was added), we need to save everything anyway.  this is kind of bad design..
+
+		itor = m_worldMap.begin();
+
+		while (itor != m_worldMap.end())
+		{
+			if (!itor->second->IsEmpty())
+			{
+				if (itor->second->GetChunkDataChanged())
+				{
+					bRequireSave = true;
+					break;
+				}
+			}
+			itor++;
+		}
+	}
+
+	if (!bRequireSave) return true; //abort the save, not needed
+
+
+	LogMsg("Saving world map header %s - (%d world chunks to look at, map size %d by %d)", GetName().c_str(), m_worldMap.size(),
+		GetWorldX(), GetWorldY());
 
 	//first save our world.dat file
 	CL_OutputSource *pFile = g_VFManager.PutFile(m_strDirPath+C_WORLD_DAT_FILENAME);
@@ -474,7 +521,7 @@ bool World::Save(bool bSaveTagCacheAlso)
 
 	//run through every screen that is currently open and ask it to save itself if it hasn't been
 	
-	WorldMap::const_iterator itor = m_worldMap.begin();
+	itor = m_worldMap.begin();
 	while (itor != m_worldMap.end())
 	{
 		if (!itor->second->IsEmpty())
@@ -609,6 +656,46 @@ void World::ReInitEntities()
 						pEnt->Kill();
 						pEnt->Init();
 					}
+
+					break;
+				}
+
+			}
+		}
+		itor++;
+	}	
+}
+
+
+
+void World::ReInitCollisionOnTilePics()
+{
+	tile_list tileList;
+	tile_list::iterator tileItor;
+	TilePic *pTilePic;
+	int tileType;
+
+	if (!IsInitted()) return;
+
+	WorldMap::const_iterator itor = m_worldMap.begin();
+	while (itor != m_worldMap.end())
+	{
+		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
+		{
+			tileList.clear();
+
+			itor->second->GetScreen()->GetPtrToAllTiles(&tileList);
+
+			//now we need to reinit them or something
+			for (tileItor = tileList.begin(); tileItor != tileList.end(); tileItor++)
+			{
+				tileType = (*tileItor)->GetType();
+				switch (tileType)
+				{
+
+				case C_TILE_TYPE_PIC:
+					pTilePic = ((TilePic*)*tileItor);
+					pTilePic->ReinitCollision();
 
 					break;
 				}

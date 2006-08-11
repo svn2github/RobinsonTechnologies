@@ -99,6 +99,7 @@ protected:
 	CBit8 m_bitField;
 	CollisionData * m_pCollisionData; //null if it hasn't been researched yet
 	CL_Color m_color;
+	bool m_bUsingCustomCollision; //if a tilepic is scaled weird, it needs to create it's own custom collision
 
 };
 
@@ -115,7 +116,9 @@ public:
 	virtual Tile * CreateClone();
 	virtual void Serialize(CL_FileHelper &helper);
 	//TODO optimize these to be precached
+	void SaveToMasterCollision(); 
 
+	void ReinitCollision();
 	virtual const CL_Rect & GetBoundsRect();
 
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);}

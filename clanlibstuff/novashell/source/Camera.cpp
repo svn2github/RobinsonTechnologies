@@ -130,6 +130,7 @@ void Camera::UpdateTarget()
 		if (pEnt)
 		{
 			CL_Vector2 vPos = pEnt->GetPos();
+			vPos.y -= ((pEnt->GetSizeY()*pEnt->GetScale().y) /3);
 			SetTargetPosCentered(vPos);
 		} else
 		{

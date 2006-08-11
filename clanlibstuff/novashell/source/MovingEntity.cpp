@@ -130,7 +130,7 @@ void MovingEntity::SetDefaults()
 	m_fDensity = C_DEFAULT_DENSITY; //default
 	m_bIsAtRest = false;
 	m_groundTimer = 0;
-	m_bMovedFlag = true;
+	m_bMovedFlag = false;
 	m_pScriptObject = NULL;
 	m_timeLastActive = INT_MAX;
 	m_pSprite = NULL;
@@ -1526,7 +1526,8 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 			leftOffset = (worldRect.left- (pTile->GetPos().x + pLine->GetRect().left))/2;
 		} else
 		{
-			bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pLine->GetRect().bottom);
+			
+			bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pLine->GetRect().bottom );
 		}
 	} 
 
@@ -1534,7 +1535,7 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 	{
 		//scale it
 
-		bottomOffset *= GetCamera->GetScale().y;
+		bottomOffset *= GetCamera->GetScale().y ;
 
 		//LogMsg("Bottom offset is %.2f", bottomOffset);
 		//move the shadow closer to where the real bottom is

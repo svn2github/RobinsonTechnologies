@@ -27,7 +27,7 @@ public:
 
 	void SetScreen(Screen *pScreen);
 
-	void SetDataChanged(bool bNeedsSaving);
+	void SetDataChanged(bool bNeedsSaving); //aplies to the screen class we hold
 	cl_uint8 GetDataChanged() {return m_byteArray[e_byteDataChanged];}
 
 	void SetNeedsThumbnailRefresh(bool bNeedsRefresh);
@@ -47,6 +47,7 @@ public:
 	World * GetParentWorld() {return m_pParent;}
 	void KillThumbnail();
 	const CL_Rect & GetRect();
+	bool GetChunkDataChanged() {return m_bChunkDataChanged;} //applies only to this class
 
 protected:
 
@@ -89,6 +90,7 @@ protected:
 	//construct them manually so we have to remember this data for later
 	bool m_bIsEmpty;
 	CL_Rect m_rect; //the bounds of this screen
+	bool m_bChunkDataChanged;
 
 
 };

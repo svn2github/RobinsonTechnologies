@@ -36,6 +36,7 @@ public:
 	void SetDataChanged(bool bNew) {m_dataChanged = bNew;}
 	void SetScale(const CL_Vector2 &vScale);
 	const CL_Vector2 & GetScale() {return m_vecScale;}
+	bool GetDataChanged() {return m_dataChanged;}
 
 protected:
 

@@ -339,7 +339,7 @@ void EntEditor::SetDefaultTipLabel()
 void EntEditor::OnSaveMap()
 {
 	BlitMessage("Saving map...");
-	GetWorld->Save(true);
+	GetWorld->ForceSaveNow();
 }
 
 void EntEditor::OnExit()

@@ -36,6 +36,7 @@ private:
 
 	CollisionDataMap m_collisionMap;
 	CL_Surface *m_pImage;
+	bool m_bNeedsToSave;
 
 	enum
 	{

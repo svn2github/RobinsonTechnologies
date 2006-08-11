@@ -112,6 +112,11 @@ bool Screen::RemoveTileByPosition(const CL_Vector2 &vecPos, unsigned int layer)
 	{
 		if ( (*itor)->GetPos() == vecPos)
 		{
+			if ((*itor)->GetType() != C_TILE_TYPE_REFERENCE)
+			{
+				GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+				GetParentWorldChunk()->SetDataChanged(true);
+			}
 			//found it
 			RemoveTileByItor(itor, layer);
 			return true;
@@ -131,6 +136,8 @@ bool Screen::Save()
 {
 	//first see if saving is even applicable
 	if (!GetParentWorldChunk()->GetDataChanged()) return false; //nothing changed, we don't have to save
+
+	LogMsg("Saving screen %d", GetParentWorldChunk()->GetScreenID());
 
 	if (IsEmpty())
 	{
@@ -348,6 +355,7 @@ bool Screen::RemoveTileBySimilarType(Tile *pSrcTile)
 {
 	if (pSrcTile->GetLayer() >= m_vecLayerList.size()) return false; //we don't have this layer
 	
+
 	tile_list::iterator itor = m_vecLayerList[pSrcTile->GetLayer()].begin();
 	Tile *pTile;
 
@@ -362,7 +370,14 @@ bool Screen::RemoveTileBySimilarType(Tile *pSrcTile)
 			)
 		{
 			//remove it
+			if (pSrcTile->GetType() != C_TILE_TYPE_REFERENCE)
+			{
+				GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+				GetParentWorldChunk()->SetDataChanged(true);
+			}
+			
 			RemoveTileByItor(itor, pSrcTile->GetLayer());
+			
 			return true;
 		}
 		itor++;
@@ -375,8 +390,6 @@ bool Screen::RemoveTileBySimilarType(Tile *pSrcTile)
 bool Screen::RemoveTileByPointer(Tile *pSrcTile)
 {
 	if (pSrcTile->GetLayer() >= m_vecLayerList.size()) return false; //we don't have this layer
-	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
-	GetParentWorldChunk()->SetDataChanged(true);
 
 	tile_list::iterator itor = m_vecLayerList[pSrcTile->GetLayer()].begin();
 	
@@ -384,8 +397,16 @@ bool Screen::RemoveTileByPointer(Tile *pSrcTile)
 	{
 		if ((*itor) == pSrcTile)
 		{
+			
+			if (pSrcTile->GetType() != C_TILE_TYPE_REFERENCE)
+			{
+				GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+				GetParentWorldChunk()->SetDataChanged(true);
+			}
 			//remove it
 			RemoveTileByItor(itor, pSrcTile->GetLayer());
+			
+			
 			return true;
 		}
 		itor++;
@@ -399,10 +420,11 @@ void Screen::AddTile(Tile *pTile)
 {
 	pTile->SetParentScreen(this); //who knows when they'll need this data
 	GetTileList(pTile->GetLayer())->push_back(pTile);
+	
+	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) return; //references don't need the edge cases figured out
+
 	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
 	GetParentWorldChunk()->SetDataChanged(true);
-
-	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) return; //references don't need the edge cases figured out
 
 	//we may also need to index info about this sprite if it has a tag name
 

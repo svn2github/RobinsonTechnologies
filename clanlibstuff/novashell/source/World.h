@@ -79,13 +79,13 @@ public:
 	CameraSetting * GetCameraSetting() {return &m_cameraSetting;}
 	CL_Color GetBGColor() {CL_Color color; color.color = m_uintArray[e_uintBGColor]; return color;}
 	void SetBGColor(CL_Color col){m_uintArray[e_uintBGColor] = col.color;}
-	void SetGravity(float grav){m_floatArray[e_floatGravity] = grav;}
+	void SetGravity(float grav){m_floatArray[e_floatGravity] = grav; m_bDataChanged = true;}
 	float GetGravity() {return m_floatArray[e_floatGravity];}
-	void SetThumbnailWidth(int width) {m_intArray[e_intThumbnailWidth] = width;}
-	void SetThumbnailHeight(int height) {m_intArray[e_intThumbnailHeight] = height;}
+	void SetThumbnailWidth(int width) {m_intArray[e_intThumbnailWidth] = width; m_bDataChanged = true;}
+	void SetThumbnailHeight(int height) {m_intArray[e_intThumbnailHeight] = height; m_bDataChanged = true;}
 	int GetThumbnailWidth() {return m_intArray[e_intThumbnailWidth];}
 	int GetThumbnailHeight() {return m_intArray[e_intThumbnailHeight];}
-	float GetCacheSensitivity() {return m_floatArray[e_floatCacheSensitivity];}
+	float GetCacheSensitivity() {return m_floatArray[e_floatCacheSensitivity]; m_bDataChanged = true;}
 	void SetCacheSensitivity(float sensitivity) {m_floatArray[e_floatCacheSensitivity] = sensitivity;}
 	void InvalidateAllThumbnails();
 	void AddTile(Tile *pTile); //adds a tile automatically based on its pos/layer info
@@ -96,17 +96,20 @@ public:
 	cl_uint8 GetVersion(){return m_version;}
 	const string & GetName(){return m_strMapName;}
 	bool GetSnapEnabled() {return m_byteArray[e_byteSnapOn] != 0;}
-	void SetSnapEnabled(bool bNew) {m_byteArray[e_byteSnapOn] = bNew;}
+	void SetSnapEnabled(bool bNew) {m_byteArray[e_byteSnapOn] = bNew; m_bDataChanged = true;}
 	void SetMyWorldCache(EntWorldCache *pWorldCache) {m_pWorldCache = pWorldCache;}
 	bool GetPersistent() {return m_byteArray[e_byteNotPersistent] == 0;}
-	void SetPersistent(bool bNew) {m_byteArray[e_byteNotPersistent] = !bNew;}
+	void SetPersistent(bool bNew) {m_byteArray[e_byteNotPersistent] = !bNew; m_bDataChanged = true;}
 	bool GetAutoSave() {return m_byteArray[e_byteAutoSave] == 0;}
-	void SetAutoSave(bool bNew) {m_byteArray[e_byteAutoSave] = !bNew;}
+	void SetAutoSave(bool bNew) {m_byteArray[e_byteAutoSave] = !bNew; m_bDataChanged = true;}
 	bool SaveRequested();
+	void ForceSaveNow();
 
 	EntWorldCache * GetMyWorldCache(){return m_pWorldCache;}
 	void ReInitEntities(); //reinits all cached entities in this world, useful after 
 	//changing a script
+	void ReInitCollisionOnTilePics(); 
+
 
 private:
 
@@ -168,6 +171,8 @@ private:
 	CameraSetting m_cameraSetting; //to remember out last camera position
 	LayerManager m_layerManager;
 	EntWorldCache *m_pWorldCache; //cached here for speed
+
+	bool m_bDataChanged; //only applicable to what is in this file
 };
 
 void RemoveWorldFiles(const string &path); //util for deleting stuff

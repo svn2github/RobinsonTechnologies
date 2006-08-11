@@ -140,16 +140,39 @@ void HashedResource::SaveDefaults()
 		return;
 	}
 
-	//we know there is data, so let's save it out
+	bool bNeedsToSave = false;
+
+	//walk through everything we have and ask them to tell us if they need saving
+
+	CollisionDataMap::iterator ent;
+	std::vector<CollisionData*> *pColVec;
+	unsigned int i;
+
+	for (ent = m_collisionMap.begin(); ent != m_collisionMap.end(); ++ent)
+	{
+		pColVec = &ent->second;
+	
+		for (i=0; i < pColVec->size(); i++)
+		{
+			if (pColVec->at(i)->HasData() && pColVec->at(i)->GetDataChanged())
+			{
+				bNeedsToSave = true;
+				break;
+			}
+		}
+
+	}
+ 
+	if (!bNeedsToSave) return;
+		
+	//we know there is data, so let's save it out, if it's been modified
 
 	CL_OutputSource_File file(fName);
 	CL_FileHelper helper(&file); //will autodetect if we're loading or saving
 
-	CollisionDataMap::iterator ent = m_collisionMap.begin();
+	LogMsg("Saving coldata %s", fName.c_str());
 
-	std::vector<CollisionData*> *pColVec;
-	unsigned int i;
-	for (ent; ent != m_collisionMap.end(); ++ent)
+	for (ent = m_collisionMap.begin(); ent != m_collisionMap.end(); ++ent)
 	{
 		pColVec = &ent->second;	
 		for (i=0; i < pColVec->size(); i++)
@@ -167,7 +190,6 @@ void HashedResource::SaveDefaults()
 	}
 	//save end of data header
 	helper.process_const(C_HASHED_RESOURCE_END_OF_CHUNKS);
-
 
 }
 

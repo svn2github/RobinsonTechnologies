@@ -103,11 +103,16 @@ void PointList::RemoveDuplicateVerts()
 
 void PointList::ApplyScale(const CL_Vector2 &vScale)
 {
+
+	RemoveOffsets();
+	
 	for (unsigned int i=0; i < m_points.size(); i++)
 	{
 		m_points[i].x *= vScale.x;
 		m_points[i].y *= vScale.y;
 	}
+
+	CalculateOffsets();
 
 	m_bNeedsToRecalculateRect = true;
 
