@@ -1653,46 +1653,6 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			pTileList->SetLayerOfSelection(selectedLayer);
 		}
 		
-		/*
-		if (pScript)
-		{
-			//get a pointer to the entity we just pasted
-			Screen *pScreen = GetWorld->GetScreen(pEnt->GetPos());
-			TileEntity *pEntTile = (TileEntity*) pScreen->GetTileByPosition(pEnt->GetPos(), selectedLayer);
-			if (!pEntTile)
-			{
-				CL_MessageBox::info("Error applying changes, did the tile move?", GetApp()->GetGUI());
-			} else
-			{
-		
-			pEnt = pEntTile->GetEntity();
-			//apply any changes made to the custom data
-		    PropertiesSetDataManagerFromListBox(pEnt->GetData(), listData);
-
-			
-			if (pEntTile)
-			{
-				pEnt->SetName(inputName.get_text());
-
-				
-				if (pScript->get_text() != C_MULTIPLE_SELECT_TEXT && pScript->get_text() != pEnt->GetMainScriptFileName())
-				{
-					//they changed the script, apply it now
-					pEnt->SetMainScriptFileName(pScript->get_text());
-					pEnt->Kill();
-					pEnt->Init();
-				}
-				
-			} 
-			
-
-			//pTileList->ClearSelection();
-			//pTileList->AddTileToSelection(TileEditOperation::C_OPERATION_ADD, false, pEnt->GetTile());
-		
-		}
-		
-		}
-		*/
 		GetWorld->ReInitEntities();
 
 	} else if (m_guiResponse == C_GUI_CONVERT)
@@ -1702,11 +1662,48 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		TileEntity *pNewTile = new TileEntity;
 		pNewTile->SetEntity(pEnt);
 		pEnt->SetPos(pTile->GetPos());
+		pNewTile->SetBit(Tile::e_flippedX, pTile->GetBit(Tile::e_flippedX));
+		pNewTile->SetBit(Tile::e_flippedY, pTile->GetBit(Tile::e_flippedY));
+		pNewTile->SetBit(Tile::e_castShadow, pTile->GetBit(Tile::e_castShadow));
+		pNewTile->SetBit(Tile::e_sortShadow, pTile->GetBit(Tile::e_sortShadow));
 		pNewTile->SetLayer(pTile->GetLayer());
 		pEnt->SetImageFromTilePic((TilePic*)pTile);
 		pEnt->SetMainScriptFileName("");
 		pEnt->Init();
+
+		//now, we could be done, but we can be nice and try to adjust the collision to be centered
+		//instead of how it was
+
+		if (pEnt->GetCollisionData()->HasData())
+		{
+			PointList *pLine;
+
+			CL_Rectf r = pEnt->GetBoundsRect();
+			CL_Vector2 vOffset = CL_Vector2(-r.get_width()/2, -r.get_height()/2);
+			CL_Vector2 vMoveOffset = CL_Vector2::ZERO;
+
+			line_list::iterator listItor;
+
+			//for each line...
+
+			for (listItor = pEnt->GetCollisionData()->GetLineList()->begin(); 
+				listItor != pEnt->GetCollisionData()->GetLineList()->end(); listItor++)
+			{
+				pLine = &(*listItor);
+				
+				vMoveOffset = pLine->GetOffset();
+				
+				pLine->RemoveOffsets();
+				pLine->SetOffset(vOffset);
+				pLine->CalculateOffsets();
 		
+				break; //actually, only process the first one
+			}
+
+			//move position to match where it was
+			pEnt->SetPos(pEnt->GetPos()+vMoveOffset);
+		}
+
 		OnDelete(); //kill the old one
 		
 		m_selectedTileList.ClearSelection();
@@ -1716,7 +1713,10 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		m_selectedTileList.SetIgnoreParallaxOnNextPaste();
 		//paste our selection, this helps by creating an undo for us
 		OnPaste(m_selectedTileList, m_selectedTileList.GetUpperLeftPos());
-		LogMsg("Converting tile..");
+
+		
+		GetWorld->ReInitCollisionOnTilePics();
+
 	}
 
 	m_bDialogIsOpen = false;

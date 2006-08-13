@@ -47,6 +47,7 @@ private:
 	void CheckForWarp();
 	void CheckForAttack();
 	void ResetForNextFrame();
+	void OnAction();
 
 	unsigned int m_Keys; //holds current state of player movement keys
 	CL_Slot m_SlotKeyUp;

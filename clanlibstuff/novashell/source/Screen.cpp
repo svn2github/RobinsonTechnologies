@@ -137,7 +137,7 @@ bool Screen::Save()
 	//first see if saving is even applicable
 	if (!GetParentWorldChunk()->GetDataChanged()) return false; //nothing changed, we don't have to save
 
-	LogMsg("Saving screen %d", GetParentWorldChunk()->GetScreenID());
+	//LogMsg("Saving screen %d", GetParentWorldChunk()->GetScreenID());
 
 	if (IsEmpty())
 	{

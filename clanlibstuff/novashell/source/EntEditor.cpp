@@ -810,7 +810,7 @@ void EntEditor::BuildLayerControlBox()
 	KillLayerListStuff();
 
 	int boxWidth = 100;
-	int boxHeight = 140;
+	int boxHeight = 160;
 	int spacingBetweenBoxes = 12;
 	int boxTopOffset = 15;
 

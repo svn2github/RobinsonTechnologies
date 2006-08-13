@@ -560,39 +560,12 @@ void BrainPlayer::UpdateMovement(float step)
 	}
 }
 
-bool BrainPlayer::TryToDoActionAtPoint(const CL_Vector2 &vecPos)
-{
-	TileEntity *pTileEnt;
-	int ttype;
-	tile_list::iterator itor = m_pParent->GetNearbyTileList().begin();
-	for(;itor != m_pParent->GetNearbyTileList().end(); itor++)
-	{
-
-		ttype = (*itor)->GetType();
-		if (ttype == C_TILE_TYPE_ENTITY)
-		{
-			pTileEnt = (TileEntity*)(*itor);
-
-			if (pTileEnt->GetWorldRect().is_inside(CL_Pointf(vecPos.x, vecPos.y)))
-				if (pTileEnt->GetEntity()->GetScriptObject() && pTileEnt->GetEntity()->GetScriptObject()->FunctionExists("OnAction"))
-				{
-					try {luabind::call_function<bool>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
-						"OnAction", m_pParent);
-					} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAction(Entity)");
-
-					return true;
-				} 
-		}
-	}
-
-	return false; //didn't find anything
-}
 
 void BrainPlayer::OnAction()
 {
 	CL_Vector2 vStartPos = m_pParent->GetPos();
 	//first, look for any entity directly behind us
-	if (TryToDoActionAtPoint(vStartPos)) return;
+	if (TryToDoActionAtPoint(vStartPos, m_pParent)) return;
 
 	CL_Vector2 vFacing = FacingToVector(m_pParent->GetFacing());
 
@@ -636,15 +609,15 @@ void BrainPlayer::OnAction()
 
 //on last ditch effort
 	//higher
-	if (TryToDoActionAtPoint(vStartPos)) return;
+	if (TryToDoActionAtPoint(vStartPos, m_pParent)) return;
 
 	//lower
 	vStartPos.y -= (m_pParent->GetSizeY()/1.6f);
-	if (TryToDoActionAtPoint(vStartPos)) return;
+	if (TryToDoActionAtPoint(vStartPos, m_pParent)) return;
 
 	//towards where we are facing
 	vStartPos += vFacing*10;
-	if (TryToDoActionAtPoint(vStartPos)) return;
+	if (TryToDoActionAtPoint(vStartPos, m_pParent)) return;
 	g_textManager.Add("Hmm?", m_pParent);
 }
 
@@ -684,6 +657,37 @@ void BrainPlayer::PostUpdate(float step)
 		m_Keys &= ~C_KEY_SELECT; //turn it off
 		OnAction();
 	}
+}
+
+
+bool TryToDoActionAtPoint(const CL_Vector2 &vecPos, MovingEntity *pEnt)
+{
+	TileEntity *pTileEnt;
+	int ttype;
+	tile_list::iterator itor = pEnt->GetNearbyTileList().begin();
+	for(;itor != pEnt->GetNearbyTileList().end(); itor++)
+	{
+
+		ttype = (*itor)->GetType();
+		if (ttype == C_TILE_TYPE_ENTITY)
+		{
+			pTileEnt = (TileEntity*)(*itor);
+
+			if (pTileEnt->GetWorldRect().is_inside(CL_Pointf(vecPos.x, vecPos.y)))
+				if (pTileEnt->GetEntity()->GetScriptObject() && pTileEnt->GetEntity()->GetScriptObject()->FunctionExists("OnAction"))
+				{
+					
+					MovingEntity *m_pParent = pEnt; //hack so the macro works right
+					try {luabind::call_function<bool>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
+						"OnAction", pEnt);
+					} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAction(Entity)");
+
+					return true;
+				} 
+		}
+	}
+
+	return false; //didn't find anything
 }
 
 

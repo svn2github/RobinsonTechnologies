@@ -256,6 +256,49 @@ void BrainTopPlayer::AddWeightedForce(const CL_Vector2 & force)
 	}
 }
 
+void BrainTopPlayer::OnAction()
+{
+	CL_Vector2 vStartPos = m_pParent->GetPos();
+	//first, look for any entity directly on us
+	if (TryToDoActionAtPoint(vStartPos, m_pParent)) return;
+
+	CL_Vector2 vFacing = FacingToVector(m_pParent->GetFacing());
+
+	const int actionRange = 60;
+	TileEntity *pTileEnt;
+	CL_Vector2 vEndPos;
+	vEndPos = vStartPos + (vFacing * actionRange);
+	
+	CL_Vector2 vColPos;
+	Tile *pTile = NULL;
+
+	if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile() ))
+	{
+		//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
+		switch ((pTile)->GetType())
+		{
+
+		case C_TILE_TYPE_PIC:
+			//g_textManager.Add("A wall.", m_pParent);
+			break;
+
+		case C_TILE_TYPE_ENTITY:
+
+			pTileEnt = static_cast<TileEntity*>(pTile);
+			if (pTileEnt->GetEntity()->GetScriptObject() && pTileEnt->GetEntity()->GetScriptObject()->FunctionExists("OnAction"))
+			{
+				try {luabind::call_function<bool>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
+					"OnAction", m_pParent);
+				} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAction(Entity)");
+			} 
+			return;
+			break;
+		}
+	}
+
+	g_textManager.Add("Hmm?", m_pParent);
+}
+
 void BrainTopPlayer::Update(float step)
 {
 	AssignPlayerToCameraIfNeeded(m_pParent);
@@ -280,6 +323,7 @@ void BrainTopPlayer::PostUpdate(float step)
 	if (m_Keys & C_KEY_SELECT)
 	{
 		m_Keys &= ~C_KEY_SELECT; //turn it off
+		OnAction();
 	}
 
 	ResetForNextFrame();
