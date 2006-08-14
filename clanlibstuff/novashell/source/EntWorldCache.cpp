@@ -407,6 +407,11 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 	viewRect.right = int(posTmp.x);
 	viewRect.bottom = int(posTmp.y);
 
+	//hack so we don't get shadow popping
+
+	viewRect.right += 100;
+	//viewRect.bottom += ;
+
 	m_tileLayerDrawList.clear();
 	ResetPendingEntityMovementAndDeletions();
 	unsigned int renderID = GetApp()->GetUniqueNumber();

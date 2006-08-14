@@ -340,6 +340,8 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 	float closestDistance = FLT_MAX;
 	float distance;
 
+	static CollisionData col;
+	pTileOut = NULL;
 	CL_Vector2 vTilePos;
 	if (tList.empty()) return false;
 
@@ -360,9 +362,18 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 		if (!pCol || pCol->GetLineList()->empty()) continue;
 		if ((*listItor) == pTileToIgnore) continue; //don't process ourself, how much sense would that make?
 
+		
 		//LogMsg("Checking tile");
 
 		vTilePos = (*listItor)->GetPos();
+
+		if ((*listItor)->UsesTileProperties() && (*listItor)->GetType() == C_TILE_TYPE_PIC )
+		{
+			//we need a customized version
+			CreateCollisionDataWithTileProperties((*listItor), col);
+			pCol = &col;
+		}
+
 
 		line_list::iterator lineListItor = pCol->GetLineList()->begin();
 
@@ -372,11 +383,16 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 				== CMaterial::C_MATERIAL_TYPE_NORMAL)
 			{
 				//examine each line list for suitability
-				//LogMsg("Checking a list with %d points", lineListItor->GetPointList()->size());
+				LogMsg("Checking a list with %d points", lineListItor->GetPointList()->size());
 
-				//LogMsg("Offset is %.2f, %.2f", lineListItor->GetOffset().x,lineListItor->GetOffset().y );
+				LogMsg("Offset is %.2f, %.2f", lineListItor->GetOffset().x,lineListItor->GetOffset().y );
 				for (unsigned int i=0; i < lineListItor->GetPointList()->size();)
 				{
+					
+					if ((*listItor)->GetType() == C_TILE_TYPE_PIC)
+					{
+	
+
 					lineB[0] = vTilePos.x + lineListItor->GetPointList()->at(i).x + lineListItor->GetOffset().x;
 					lineB[1] = vTilePos.y + lineListItor->GetPointList()->at(i).y+ lineListItor->GetOffset().y;
 
@@ -393,10 +409,34 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 					lineB[2] = vTilePos.x + lineListItor->GetPointList()->at(endLineIndex).x+ lineListItor->GetOffset().x;
 					lineB[3] = vTilePos.y + lineListItor->GetPointList()->at(endLineIndex).y+ lineListItor->GetOffset().y;
 
-					//LogMsg("Line B is %.2f, %.2f - %.2f, %.2f", lineB[0],lineB[1],lineB[2],lineB[3] );
+					} else
+					{
+
+						//assume it's an entity
+						assert((*listItor)->GetType() == C_TILE_TYPE_ENTITY);
+
+						lineB[0] = vTilePos.x + lineListItor->GetPointList()->at(i).x;// + lineListItor->GetOffset().x;
+						lineB[1] = vTilePos.y + lineListItor->GetPointList()->at(i).y;//+ lineListItor->GetOffset().y;
+
+						int endLineIndex;
+
+						if (i == lineListItor->GetPointList()->size()-1)
+						{
+							endLineIndex=0;
+						} else
+						{
+							endLineIndex = i+1;
+						}
+
+						lineB[2] = vTilePos.x + lineListItor->GetPointList()->at(endLineIndex).x;//+ lineListItor->GetOffset().x;
+						lineB[3] = vTilePos.y + lineListItor->GetPointList()->at(endLineIndex).y;//+ lineListItor->GetOffset().y;
+
+					}
+
+					LogMsg("Line B is %.2f, %.2f - %.2f, %.2f", lineB[0],lineB[1],lineB[2],lineB[3] );
 					if (CL_LineMath::intersects(lineA, lineB))
 					{
-						//LogMsg("Got intersection");
+						LogMsg("Got intersection");
 						ptCol = CL_LineMath::get_intersection(lineA, lineB);
 						distance = ptCol.distance(*(CL_Pointf*)&vStart);
 						if (distance < closestDistance)

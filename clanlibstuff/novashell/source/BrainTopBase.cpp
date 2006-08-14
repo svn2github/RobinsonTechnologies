@@ -14,6 +14,8 @@ BrainTopBase::BrainTopBase(MovingEntity * pParent):Brain(pParent)
 	}
 
 	SetSort(100); //always run last
+
+
 }
 
 BrainTopBase::~BrainTopBase()
@@ -22,7 +24,7 @@ BrainTopBase::~BrainTopBase()
 
 void BrainTopBase::ResetForNextFrame()
 {
-	m_maxForce = 4;
+	m_maxForce = 5;
 	m_force = CL_Vector2::ZERO;
 }
 
@@ -51,6 +53,7 @@ void BrainTopBase::AddWeightedForce(const CL_Vector2 & force)
 void BrainTopBase::OnAdd()
 {
 	m_pParent->GetBrainManager()->SetBrainBase(this);
+	m_turnSpeed = 0.1f;
 	ResetForNextFrame();
 }
 
@@ -63,7 +66,7 @@ void BrainTopBase::Update(float step)
 	Clamp(m_force.x, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
 	Clamp(m_force.y, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
 
-		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), 0.1f *step);
+		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_turnSpeed *step);
 		m_pParent->AddForce(m_force);
 
 	m_pParent->SetSpriteByVisualStateAndFacing();

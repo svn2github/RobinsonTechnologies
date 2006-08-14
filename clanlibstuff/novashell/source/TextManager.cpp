@@ -144,7 +144,7 @@ bool TextObject::UpdateDialog()
 	
 	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - (m_rect.bottom));
 
-	m_pos.y -= ( (m_pEntity->GetSizeY()/2) * GetCamera->GetScale().x);
+	m_pos.y -= ( (m_pEntity->GetSizeY()*0.8) * GetCamera->GetScale().y);
 
 	//clip to screen
 	m_pos.x = max(0, m_pos.x);

@@ -1175,32 +1175,31 @@ CL_Vector2 MovingEntity::GetVisualOffset()
 
 void MovingEntity::RenderShadow(void *pTarget)
 {
-	
+
 	static CL_Vector2 vecPos;
 	static World *pWorld;
 	static EntWorldCache *pWorldCache;
 
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
-	
+
 	pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 	pWorldCache = pWorld->GetMyWorldCache();
 
 	vecPos = pWorldCache->WorldToScreen(vVisualPos);
 
-	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
-		* m_pTile->GetScale().y);
-	
-	//draw the shadow?
-		m_pSprite->set_color(CL_Color(0,0,0,50));
-		//m_pSprite->set_blend_func(blend_src_alpha, blend_one_minus_src_alpha);
+	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y * m_pTile->GetScale().y);
 
-		static CL_Surface_DrawParams1 params1;
-		m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, true);
-
-		AddShadowToParam1(params1, m_pTile);
-		m_pSprite->draw(params1, pGC);
+	short a = min(50, 255 + m_colorModAlpha);
 	
+	m_pSprite->set_color(CL_Color(0,0,0,a));
+
+	static CL_Surface_DrawParams1 params1;
+	m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, true);
+
+	AddShadowToParam1(params1, m_pTile);
+	m_pSprite->draw(params1, pGC);
+
 }
 
 void MovingEntity::Render(void *pTarget)

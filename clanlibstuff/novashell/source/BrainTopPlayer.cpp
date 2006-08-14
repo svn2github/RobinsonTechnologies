@@ -259,44 +259,50 @@ void BrainTopPlayer::AddWeightedForce(const CL_Vector2 & force)
 void BrainTopPlayer::OnAction()
 {
 	CL_Vector2 vStartPos = m_pParent->GetPos();
-	//first, look for any entity directly on us
-	if (TryToDoActionAtPoint(vStartPos, m_pParent)) return;
-
-	CL_Vector2 vFacing = FacingToVector(m_pParent->GetFacing());
+	CL_Vector2 vFacing = m_pParent->GetVectorFacing();
 
 	const int actionRange = 60;
 	TileEntity *pTileEnt;
 	CL_Vector2 vEndPos;
 	vEndPos = vStartPos + (vFacing * actionRange);
 	
+	CL_Vector2 vCross = vFacing.cross();
+
 	CL_Vector2 vColPos;
 	Tile *pTile = NULL;
 
-	if (GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile() ))
+	GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * 20;
+		GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * -40;
+		GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+
+	if (pTile)
 	{
 		//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
-		switch ((pTile)->GetType())
-		{
-
-		case C_TILE_TYPE_PIC:
-			//g_textManager.Add("A wall.", m_pParent);
-			break;
-
-		case C_TILE_TYPE_ENTITY:
-
 			pTileEnt = static_cast<TileEntity*>(pTile);
 			if (pTileEnt->GetEntity()->GetScriptObject() && pTileEnt->GetEntity()->GetScriptObject()->FunctionExists("OnAction"))
 			{
 				try {luabind::call_function<bool>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
 					"OnAction", m_pParent);
 				} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAction(Entity)");
+			
+				return;
 			} 
-			return;
-			break;
-		}
+			
 	}
 
-	g_textManager.Add("Hmm?", m_pParent);
+	m_pParent->RunFunction("OnActionDefault");
 }
 
 void BrainTopPlayer::Update(float step)
@@ -309,7 +315,7 @@ void BrainTopPlayer::Update(float step)
 	} else
 	{
 		
-		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), 0.24f *step);
+		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), 0.8f *step);
 		
 		UpdateMovement(step);
 		m_pParent->SetSpriteByVisualStateAndFacing();

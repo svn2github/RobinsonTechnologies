@@ -322,15 +322,7 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 		pSurf->set_angle_pitch(0);
 	}
 
-	//fix holes that can appear when zoomed way in.  I suspect this is due to a pixel rounding error when
-	//doing the blit? 
 
-	/*
-	rectDest.bottom = int(rectDest.bottom);
-	rectDest.right = int(rectDest.right);
-	rectDest.top = int(rectDest.top);
-	rectDest.left = int(rectDest.left);
-	*/
 
 	//this fixes glitches with tiling when the scale isn't exactly 1.0
 
@@ -345,6 +337,7 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 	//draw shadow
 		static CL_Surface_DrawParams1 params1;
 		pSurf->set_color(CL_Color(0,0,0,50));
+		
 		pSurf->setup_params(pTile->m_rectSrc, rectDest, params1, true);
 		AddShadowToParam1(params1, pTile);
 		pSurf->draw(params1, pGC);
