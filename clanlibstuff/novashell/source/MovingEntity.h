@@ -12,6 +12,9 @@
 #include "Trigger.h"
 
 #define C_MAX_FALLING_DOWN_SPEED 20 //gravity won't be applied to objects going faster than this
+#define C_ENT_TILE_PIC_ID_KEY "_TilePicID" //custom data to signal we use a simple single tilepic for our image
+#define C_ENT_TILE_RECT_KEY "_TileRect" //custom data that goes along with the tile ID
+#define C_ENT_DENSITY_KEY "_Density" //custom data to override density
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..

@@ -713,7 +713,7 @@ void EntWorldCache::Update(float step)
 
 	ProcessPendingEntityMovementAndDeletions();
 	
-		CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
+	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 	
 	ClearTriggers();
 

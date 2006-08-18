@@ -35,7 +35,7 @@ void WorldManager::ScanWorlds(const string &stPath)
 				if (scanner.get_name()[0] != '.')
 			{
 					//no underscore at the start, let's show it
-				AddWorld(stPath+scanner.get_name()+"/");
+				AddWorld(stPath+scanner.get_name());
 			}
 
 		}
@@ -62,6 +62,14 @@ void WorldManager::Kill()
 
 bool WorldManager::AddWorld(string stPath)
 {
+
+	//add the trailing backslash if required
+
+	if (stPath[stPath.size()-1] != '/')
+	{
+		stPath += "/";
+	}
+
 	if (GetWorldInfoByPath(stPath)) return false; //already existed
 	
 	WorldInfo *pWorldInfo = new WorldInfo;

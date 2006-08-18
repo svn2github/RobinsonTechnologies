@@ -18,9 +18,6 @@
 //provides a work around
 #define C_TICKS_ON_GROUND_NEEDED_TO_TRIGGER_GROUND 1
 
-#define C_ENT_TILE_PIC_ID_KEY "_TilePicID" //custom data to signal we use a simple single tilepic for our image
-#define C_ENT_TILE_RECT_KEY "_TileRect" //custom data that goes along with the tile ID
-#define C_ENT_DENSITY_KEY "_Density" //custom data to override density
 
 #define C_DEFAULT_DENSITY 0.4f
 

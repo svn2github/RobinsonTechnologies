@@ -309,7 +309,17 @@ void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragSt
 			{
 				if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
 				{
-					bSimilar = true;
+					//they use the same script.  But I guess we should check farther than that...
+					if (pSrcEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_PIC_ID_KEY) == 
+						pEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_PIC_ID_KEY)
+						&&
+						pSrcEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_RECT_KEY) == 
+						pEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_RECT_KEY)
+						)
+					{
+						bSimilar = true;
+					}
+					
 				}
 			}
 		}
@@ -558,6 +568,43 @@ void TileEditOperation::ApplyOffset(CL_Vector2 vOffset)
 
 	m_vecUpLeft += vOffset;
 	m_vecDownRight += vOffset;
+
+}
+
+
+
+void TileEditOperation::UpdateSelectionFromWorld()
+{
+	selectedTile_list::iterator itor = m_selectedTileList.begin();
+	Tile *pTile, *pWorldTile;
+
+	Screen *pScreen;
+
+	while (itor != m_selectedTileList.end())
+	{
+		pTile = (*itor)->m_pTile;
+		
+		pScreen = GetWorld->GetScreen(pTile->GetPos());
+		pWorldTile = pScreen->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
+
+		if (pWorldTile)
+		{
+			//free the one we have
+			delete pTile;
+
+			//make a copy of the real one
+
+			(*itor)->m_pTile = pWorldTile->CreateClone();
+		} else
+		{
+			LogMsg("Couldn't update tile from world.");
+		}
+		
+		itor++;
+	}
+
+	//and finally, adjust our bounding boxes
+	SetNeedsFullBoundsCheck(true);
 
 }
 

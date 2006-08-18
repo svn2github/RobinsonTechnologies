@@ -74,6 +74,7 @@ private:
 	void OnDumpEngineStatistics();
 	void OnRestart();
 	void OnOpenScript();
+	void OnAddNewMap();
 
 	
     enum

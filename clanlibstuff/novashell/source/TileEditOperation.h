@@ -84,6 +84,7 @@ public:
 	void SetForceLayerOfNextPaste(int layer) {m_forceLayerOfNextPaste = layer;}
 	void SetIgnoreParallaxOnNextPaste() {m_bIgnoreParallaxOnNextPaste = true;}
 	void ApplyScaleMod(CL_Vector2 vMod);
+	void UpdateSelectionFromWorld(); //replaces tiles with their latest versions from the active world map
 
 	enum
 	{

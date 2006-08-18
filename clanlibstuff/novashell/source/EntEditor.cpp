@@ -438,6 +438,50 @@ void EntEditor::OnOpenScript()
 	}
 }
 
+void EntEditor::OnAddNewMap()
+{
+	CL_InputDialog dlg("Add New Map Dialog", "Create New Map Dir", "Cancel", "",GetApp()->GetGUI());
+	dlg.set_event_passing(false);
+
+	CL_InputBox *pName = dlg.add_input_box("Map name", "A Cool Map", 600);
+	pName->set_tab_id(0);
+
+	dlg.get_button(0)->set_tab_id(1);
+	dlg.get_button(1)->set_tab_id(2);
+
+	dlg.set_focus();
+	pName->set_focus();
+	dlg.run();
+
+	if (dlg.get_result_button() == 0)
+	{
+	
+		string mapName = GetGameLogic->GetBaseMapPath() + pName->get_text();
+		
+		if (pName->get_text().size() > 0)
+		{
+			if (CL_Directory::create(mapName))
+			{
+				CL_MessageBox::info("Created", "Map directory "+mapName+" created.  Note, this just makes a directory in the maps dir.  You can cut/paste/copy from file explorer too.", GetApp()->GetGUI());
+			
+				GetWorldManager->AddWorld(mapName);
+				BuildWorldListBox();
+
+				//activate the new map now?
+				GetWorldManager->SetActiveWorldByPath(mapName);
+	
+			} else
+			{
+				CL_MessageBox::info("Failed?", "Couldn't create "+mapName+".  Maybe it already existed?", GetApp()->GetGUI());
+			}
+
+		} else
+		{
+			LogMsg("Bad directory name");
+		}
+	}
+}
+
 bool EntEditor::Init()
 {
 assert(!m_pWindow);
@@ -490,6 +534,9 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 
 	pItem = m_pMenu->create_item("Utilities/Clear Map");
 	m_slot.connect(pItem->sig_clicked(), this, &EntEditor::OnClearMap);
+
+	pItem = m_pMenu->create_item("Utilities/Add New Map");
+	m_slot.connect(pItem->sig_clicked(), this, &EntEditor::OnAddNewMap);
 
 	pItem = m_pMenu->create_item("Display/Video Options/Toggle Fullscreen (Alt+Enter)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleFullScreen);

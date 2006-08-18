@@ -10,7 +10,8 @@ CameraSetting::CameraSetting()
 
 	VecPos() = g_worldDefaultCenterPos;
 	VecTargetPos() = g_worldDefaultCenterPos;
-	VecScale() = CL_Vector2(1,1);
+	
+	VecTargetScale() = VecScale() = CL_Vector2(1,1);
 }
 
 CameraSetting::~CameraSetting()

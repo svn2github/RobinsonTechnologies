@@ -177,10 +177,26 @@ void EntEditMode::OnReplace()
 
 	selectedTile_list::iterator itor;
 	
+	MovingEntity *pEnt = NULL;
+	Tile *pTile = NULL;
+	CL_Vector2 destPos;
+
 	for (itor = tempList.m_selectedTileList.begin(); itor != tempList.m_selectedTileList.end(); itor++)
 	{
 		g_EntEditModeCopyBuffer.SetIgnoreParallaxOnNextPaste();
-		OnPaste(g_EntEditModeCopyBuffer, (*itor)->m_pTile->GetPos());
+		pTile = (*itor)->m_pTile;
+
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			pEnt = ((TileEntity*)pTile)->GetEntity();
+		} else
+		{
+			pEnt = NULL;
+		}
+		
+
+		destPos = pTile->GetPos();
+		OnPaste(g_EntEditModeCopyBuffer, destPos);
 	}
 
 }
@@ -1297,8 +1313,6 @@ void EntEditMode::PropertiesSetDataManagerFromListBox(DataManager *pData, CL_Lis
 		//OPTIMIZE:  Later, we should examine and if we find a # value add it as a # instead of a string,
 		pData->Set(name, value); //it will create it if it doesn't exist
 	}
-	
-
 }
 
 
@@ -1628,8 +1642,6 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			{
 				pEnt->SetName(inputName.get_text());
 			}
-
-
 			PropertiesSetDataManagerFromListBox(pEnt->GetData(), listData);
 		}
 
@@ -1652,12 +1664,14 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			//couldn't change it before, because the paste needed it to delete the old tiles			
 			pTileList->SetLayerOfSelection(selectedLayer);
 		}
-		
+
 		GetWorld->ReInitEntities();
+
+		//update our current selection
+		pTileList->UpdateSelectionFromWorld();
 
 	} else if (m_guiResponse == C_GUI_CONVERT)
 	{
-		
 		MovingEntity *pEnt = new MovingEntity;
 		TileEntity *pNewTile = new TileEntity;
 		pNewTile->SetEntity(pEnt);
@@ -1713,8 +1727,6 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		m_selectedTileList.SetIgnoreParallaxOnNextPaste();
 		//paste our selection, this helps by creating an undo for us
 		OnPaste(m_selectedTileList, m_selectedTileList.GetUpperLeftPos());
-
-		
 		GetWorld->ReInitCollisionOnTilePics();
 
 	}
