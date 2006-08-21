@@ -8,7 +8,7 @@
 #include "TileEntity.h"
 #include "MovingEntity.h"
 #include "MessageManager.h"
-
+#include "VisualProfileManager.h"
 
 #define C_SCALE_MOD_AMOUNT 0.01f
 
@@ -181,6 +181,20 @@ void EntEditMode::OnReplace()
 	Tile *pTile = NULL;
 	CL_Vector2 destPos;
 
+	
+	//check out the first tile available for pasting to get some info about it that may help us line it up better later
+	Tile *pPastTile = (*g_EntEditModeCopyBuffer.m_selectedTileList.begin())->m_pTile;
+	
+	CL_Vector2 vPasteOffset = CL_Vector2::ZERO;
+
+	MovingEntity *pPasteEnt = NULL;
+
+	if (pPastTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+		//entities are always centered, not upper left like tilepics.
+		pPasteEnt = ((TileEntity*)pPastTile)->GetEntity();
+		vPasteOffset = CL_Vector2(pPasteEnt->GetWorldRect().left, pPasteEnt->GetWorldRect().top) - pPasteEnt->GetPos();
+	}
 	for (itor = tempList.m_selectedTileList.begin(); itor != tempList.m_selectedTileList.end(); itor++)
 	{
 		g_EntEditModeCopyBuffer.SetIgnoreParallaxOnNextPaste();
@@ -196,7 +210,9 @@ void EntEditMode::OnReplace()
 		
 
 		destPos = pTile->GetPos();
-		OnPaste(g_EntEditModeCopyBuffer, destPos);
+
+
+		OnPaste(g_EntEditModeCopyBuffer, destPos+vPasteOffset);
 	}
 
 }
@@ -282,23 +298,19 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Edit/Delete (DELETE)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDelete);
 
-	pItem = m_pMenu->create_item("Edit/Properties Of Selected (Ctrl+Right Mouse Button)");
-	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnProperties);
 
 	pItem = m_pMenu->create_item("Edit/ ");
 	pItem = m_pMenu->create_item("Edit/(Ctrl-V or right mouse button to paste selection)");
 	pItem->enable(false);
 
-	pItem = m_pMenu->create_item("Utilities/Get Image (puts in copy buffer)");
+	pItem = m_pMenu->create_item("Utilities/Get image (puts in copy buffer)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::BuildBaseTilePageBox);
 
-	pItem = m_pMenu->create_item("Utilities/Get Default Entity (puts in copy buffer)");
+	pItem = m_pMenu->create_item("Utilities/Get default Entity (puts in copy buffer)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::BuildDefaultEntity);
 
-	pItem = m_pMenu->create_item("Utilities/Edit Selected Tile's Default Collision Data (Toggle) (Ctrl-D)");
-	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDefaultTileHardness);
 	
-	pItem = m_pMenu->create_item("Utilities/Select Similar to current selection (limited by view and active edit layers) (Ctrl-R)");
+	pItem = m_pMenu->create_item("Utilities/Select similar to current selection (limited by view and active edit layers) (Ctrl-R)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnSelectSimilar);
 
 	pItem = m_pMenu->create_item("Utilities/Replace each selected with what is in the copy buffer");
@@ -307,7 +319,7 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Utilities/Remove tiles with missing graphics (limited by view)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDeleteBadTiles);
 
-	pItem = m_pMenu->create_item("Utilities/Create Tile From Tile (Ctrl-C while dragging a selection rectangle (Hold space to adjust drag position)");
+	pItem = m_pMenu->create_item("Utilities/Create tile from tile (Ctrl-C while dragging a selection rectangle (Hold space to adjust drag position)");
 	pItem->enable(false);
 
 	pItem = m_pMenu->create_item("Utilities/Tip: You can create a tile from the active selection size (without dragging) with Shift-Ctrl-C");
@@ -315,7 +327,16 @@ void EntEditMode::Init()
 
 	pItem = m_pMenu->create_item("Utilities/Note: Tile from tile only works when everything is on the same bitmap");
 	pItem->enable(false);
-	
+
+	pItem = m_pMenu->create_item("Modify Selected/Edit properties (Ctrl-E or Ctrl+Right Mouse Button)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnProperties);
+
+	pItem = m_pMenu->create_item("Modify Selected/Edit collision data (Toggle) (Ctrl-D)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDefaultTileHardness);
+
+	pItem = m_pMenu->create_item("Modify Selected/Edit visual profile  (Ctrl-Shift-E) (if applicable)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnEditVisualProfile);
+
 	pItem = m_pMenu->create_item("Modify Selected/Scale Down ([)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::ScaleDownSelected);
 
@@ -365,6 +386,44 @@ void EntEditMode::BuildDefaultEntity()
 	g_EntEditModeCopyBuffer.ClearSelection();
 	g_EntEditModeCopyBuffer.AddTileToSelection(TileEditOperation::C_OPERATION_ADD,
 		false, pTile);
+}
+
+void EntEditMode::OnEditVisualProfile()
+{
+	
+	if (m_selectedTileList.IsEmpty())
+	{
+		CL_MessageBox::info("Select an entity first.", GetApp()->GetGUI());
+		return;
+	}
+
+	if (m_selectedTileList.m_selectedTileList.size() > 1)
+	{
+		CL_MessageBox::info("Choose only ONE entity to edit its visual profile.", GetApp()->GetGUI());
+		return;
+	}
+
+
+	Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile;
+
+	if (pTile->GetType() != C_TILE_TYPE_ENTITY)
+	{
+		CL_MessageBox::info("This option can only be used on entities that have a visual profile attached by script.", GetApp()->GetGUI());
+		return;
+	}
+
+	MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
+
+	if (!pEnt->GetVisualProfile())
+	{
+		CL_MessageBox::info("No visual profile has been assigned to this entity yet.  This must be done in its script.", GetApp()->GetGUI());
+		return;
+	}
+
+
+	LogMsg("Editing visual profile %s", pEnt->GetVisualProfile()->GetName().c_str());
+
+	pEnt->GetVisualProfile()->GetParentVisualResource()->Save();
 }
 
 void EntEditMode::SnapSizeChanged()
@@ -817,6 +876,19 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 
     case CL_KEY_DELETE:
 			OnDelete();
+		break;
+
+	case CL_KEY_E:
+		if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL)) return;
+		
+		if (!CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+		{
+			OnProperties();
+		} else
+		{
+			OnEditVisualProfile();
+		}
+
 		break;
 
 	case CL_KEY_Z:

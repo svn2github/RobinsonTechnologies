@@ -112,7 +112,7 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 		}
 		break;
 
-	case CL_KEY_E:
+	case CL_KEY_S:
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 		{
 			OnToggleShowEntityCollision();
@@ -562,7 +562,7 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	m_pMenuParallaxCheckbox->set_selected(GetGameLogic->GetParallaxActive());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleParallax);
 
-	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Data (Ctrl-E)");
+	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Data (Ctrl-S)");
 	m_pMenuShowEntityCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuShowEntityCollisionCheckbox->set_selected(GetGameLogic->GetShowEntityCollisionData());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowEntityCollision);

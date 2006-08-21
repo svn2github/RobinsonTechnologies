@@ -2,8 +2,6 @@
 #include "VisualProfileManager.h"
 #include "GameLogic.h"
 
-
-
 VisualProfileManager::VisualProfileManager()
 {
 }

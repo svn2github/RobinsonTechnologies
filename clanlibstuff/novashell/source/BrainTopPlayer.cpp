@@ -324,6 +324,8 @@ void BrainTopPlayer::Update(float step)
 
 void BrainTopPlayer::PostUpdate(float step)
 {
+	
+	
 	m_pParent->GetBody()->GetAngVelocity() = 0;
 
 	if (m_Keys & C_KEY_SELECT)

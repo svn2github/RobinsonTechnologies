@@ -401,7 +401,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		switch (key.id)
 		{
 
-		case CL_KEY_E:
+		case CL_KEY_S:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
 				SetShowEntityCollisionData(!GetShowEntityCollisionData());

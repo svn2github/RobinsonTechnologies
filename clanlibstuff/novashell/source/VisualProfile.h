@@ -49,6 +49,7 @@ public:
 	
 	CL_Sprite * m_pSprite;
 	string m_name;
+	string m_spriteName;
 };
 
 
@@ -166,11 +167,15 @@ public:
 	const string & GetName() {return m_name;}
 	bool IsActive(int stateID); //check if a certain anim state actually has data in it or not
 	int TextToAnimID(const string & stState); //returns -1 if anim id doesn't exist
+	VisualResource * GetParentVisualResource() {return m_pParent;}
+	void UpdateToDocument(CL_DomDocument &document);
 
 protected:
 
 	void AddAnimInfo(CL_DomElement &node);
 	int TextToAnimIDCreatedIfNeeded(const string & stState);
+	void UpdateDocumentSpriteFromAnim(CL_DomNode &node, ProfileAnim &anim);
+	int SpriteToAnimID(const string & stState);
 
 	string m_name;
 	VisualResource *m_pParent;

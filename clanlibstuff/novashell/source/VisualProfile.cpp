@@ -339,6 +339,22 @@ int VisualProfile::TextToAnimID(const string & stState)
 	return -1;
 }
 
+
+int VisualProfile::SpriteToAnimID(const string & stState)
+{
+	//check to see if it exists
+	for (unsigned int i=0; i < m_animArray.size(); i++)
+	{
+		if (stState == m_animArray[i].m_spriteName)
+		{
+			//bingo
+			return i;
+		}
+	}
+	LogError("Unknown anim type: %s.  Keep in mind they are case sensitive.", stState.c_str());
+	return -1;
+}
+
 int VisualProfile::TextToAnimIDCreatedIfNeeded(const string & stState)
 {
 	//check to see if it exists
@@ -368,6 +384,7 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 	string stSpriteName = node.get_attribute("spritename");
 	bool mirrorx = CL_String::to_bool(node.get_attribute("mirrorx"));
 	bool mirrory = CL_String::to_bool(node.get_attribute("mirrory"));
+	
 	if (IsActive(animID))
 	{
 		LogError("Error, state %s already has a sprite attached to it in profile %s.", stState.c_str(), GetName().c_str());
@@ -386,17 +403,73 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 		return;
 	}
 
+	m_animArray[animID].m_spriteName = stSpriteName;
+	
+	CL_Origin o;
+	int x,y;
+
 	if (mirrory)
 	{
 		m_animArray[animID].m_pSprite->set_angle_pitch(-180);
+
+		m_animArray[animID].m_pSprite->get_alignment(o, x, y);
+		m_animArray[animID].m_pSprite->set_alignment(o, x, -y);
+
 	}
 
 	if (mirrorx)
 	{
 		m_animArray[animID].m_pSprite->set_angle_yaw(-180);
+		m_animArray[animID].m_pSprite->get_alignment(o, x, y);
+		m_animArray[animID].m_pSprite->set_alignment(o, -x, y);
+
 	}
 
 	m_animArray[animID].m_name = stState;
+}
+
+void VisualProfile::UpdateDocumentSpriteFromAnim(CL_DomNode &node, ProfileAnim &anim)
+{
+	//LogMsg("Updating %s", node.get_attributes().get_named_item("name").get_node_value().c_str());
+	CL_DomNode cur_node;
+
+	for (
+		cur_node = node.get_first_child();
+		!cur_node.is_null();
+	cur_node = cur_node.get_next_sibling())
+	{
+		if (!cur_node.is_element()) continue;
+
+		CL_DomElement cur_element = cur_node.to_element();
+
+		if (cur_element.get_tag_name() == "translation")
+		{
+			CL_Origin o;
+			int x,y;
+			anim.m_pSprite->get_alignment(o, x,y);
+			
+			cur_element.set_attribute("x", CL_String::from_int(x));
+			cur_element.set_attribute("y", CL_String::from_int(y));
+		}
+	} 
+}
+
+void VisualProfile::UpdateToDocument(CL_DomDocument &document)
+{
+	CL_DomElement domRoot = document.get_document_element();
+	CL_DomNodeList domList;
+	domList = domRoot.get_elements_by_tag_name("sprite");
+	for (int c=0; c < domList.get_length(); c++)
+	{
+		string name = domList.item(c).get_attributes().get_named_item("name").get_node_value().c_str();
+
+		int animID = SpriteToAnimID(name);
+		if (animID != -1)
+		{
+			//located it.  Let's update it
+			UpdateDocumentSpriteFromAnim(domList.item(c), m_animArray[animID]);
+		}
+	}
 }
 
 bool VisualProfile::Init(VisualResource *pVisualResource, const string &profileName)
@@ -407,6 +480,7 @@ bool VisualProfile::Init(VisualResource *pVisualResource, const string &profileN
 	CL_Resource resource = m_pParent->m_pResourceManager->get_resource(profileName);
 
 	CL_DomNode cur_node;
+
 	for (
 		cur_node = resource.get_element().get_first_child();
 		!cur_node.is_null();

@@ -57,5 +57,31 @@ bool VisualResource::Init(const string &fileName)
 		return false;
 	}
 
+	m_fileName = fileName;
 	return true;
+}
+
+void VisualResource::CopyFromProfilesToDocument(CL_DomDocument &document)
+{
+	for (unsigned int i=0; i < m_profileVec.size(); i++)
+	{
+		m_profileVec[i]->UpdateToDocument(document);
+	}
+}
+
+void VisualResource::Save()
+{
+	LogMsg("Saving %s", m_fileName.c_str());
+
+	CL_DomDocument document = m_pResourceManager->get_resource(m_profileVec[0]->GetName()).get_element().get_owner_document();
+	
+	CL_InputSourceProvider *provider = new CL_InputSourceProvider_File(CL_String::get_path(m_fileName));
+	document.load(provider->open_source(CL_String::get_filename(m_fileName)), true, false);
+	//run through all settings that may have changed directly from our profile system
+
+	CopyFromProfilesToDocument(document);
+
+	CL_OutputSource *output = new CL_OutputSource_File(m_fileName);
+	document.save(output, true, false);
+
 }

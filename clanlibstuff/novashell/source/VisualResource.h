@@ -22,11 +22,15 @@ public:
 
 	bool Init(const string &fileName);
 	VisualProfile * GetProfile(const string &profileName);
+	void Save();
 
 protected:
 
-	friend class VisualProfile;
+	void CopyFromProfilesToDocument(CL_DomDocument &document);
 
+	friend class VisualProfile;
+	string m_fileName;
+	//we create our own resourcemanager to load the XML stuff
 	CL_ResourceManager *m_pResourceManager;
 	vec_visual_profile m_profileVec;
 	

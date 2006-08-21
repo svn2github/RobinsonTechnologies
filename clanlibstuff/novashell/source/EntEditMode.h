@@ -70,6 +70,7 @@ protected:
 	void OnSelectSimilar();
 	void OnReplace();
 	void OnDeleteBadTiles();
+	void OnEditVisualProfile();
 
 	CL_Slot m_slotClose;
 	
