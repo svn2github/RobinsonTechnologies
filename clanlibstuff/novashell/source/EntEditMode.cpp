@@ -9,6 +9,7 @@
 #include "MovingEntity.h"
 #include "MessageManager.h"
 #include "VisualProfileManager.h"
+#include "EntVisualProfileEditor.h"
 
 #define C_SCALE_MOD_AMOUNT 0.01f
 
@@ -388,6 +389,11 @@ void EntEditMode::BuildDefaultEntity()
 		false, pTile);
 }
 
+void EntEditMode::OnExternalDialogClose(int entID)
+{
+	m_bDialogIsOpen = false;
+	LogMsg("Closing external dialog");
+}
 void EntEditMode::OnEditVisualProfile()
 {
 	
@@ -406,6 +412,17 @@ void EntEditMode::OnEditVisualProfile()
 
 	Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile;
 
+	//sure, we have the copy in the selection buffer, but this is only a copy.  Let's go grab a pointer
+	//to the real instance to use directly.
+	
+	pTile = GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
+
+	if (!pTile)
+	{
+		CL_MessageBox::info("Error finding entity.", GetApp()->GetGUI());
+		return;
+	}
+	
 	if (pTile->GetType() != C_TILE_TYPE_ENTITY)
 	{
 		CL_MessageBox::info("This option can only be used on entities that have a visual profile attached by script.", GetApp()->GetGUI());
@@ -422,8 +439,20 @@ void EntEditMode::OnEditVisualProfile()
 
 
 	LogMsg("Editing visual profile %s", pEnt->GetVisualProfile()->GetName().c_str());
+	EntVisualProfileEditor *pEditor = (EntVisualProfileEditor*) GetMyEntityMgr->Add(new EntVisualProfileEditor);
 
-	pEnt->GetVisualProfile()->GetParentVisualResource()->Save();
+	if (!pEditor || !pEditor->Init(pEnt))
+	{
+		LogError("Error initializing visual profile editor");
+		return;
+	}
+
+	m_bDialogIsOpen = true; //this cripples the EntEditMode functionality so we don't
+	//interfere with the new dialog we just opened
+
+	//However, we do want to know when it closes so we can change it back
+
+	m_slots.connect(pEditor->sig_delete, this, &EntEditMode::OnExternalDialogClose);
 }
 
 void EntEditMode::SnapSizeChanged()

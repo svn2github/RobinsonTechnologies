@@ -117,6 +117,7 @@ protected:
 	string PropertyMakeItemString(DataObject &o);
 	void OnPropertiesEditData(const CL_InputEvent &input);
 	void PropertiesSetDataManagerFromListBox(DataManager *pData, CL_ListBox &listBox);
+	void OnExternalDialogClose(int entID);
 
 	enum
 	{

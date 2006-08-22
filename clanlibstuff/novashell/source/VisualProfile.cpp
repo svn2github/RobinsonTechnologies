@@ -73,16 +73,32 @@ VisualProfile::VisualProfile()
 	m_animArray[ATTACK1_UP_RIGHT].m_name = "attack1_up_right";
 	m_animArray[ATTACK1_DOWN_RIGHT].m_name = "attack1_down_right";
 
-
 }
+
 
 VisualProfile::~VisualProfile()
 {
 }
 
+
 bool VisualProfile::IsActive(int stateID)
 {
 	return m_animArray[stateID].m_pSprite != NULL;
+}
+
+vector<string> VisualProfile::GetListOfActiveAnims()
+{
+	vector<string> anims;
+
+	for (unsigned int i=0; i < m_animArray.size(); i++)
+	{
+		if (IsActive(i))
+		{
+			//bingo
+			anims.push_back(m_animArray[i].m_name);			
+		}
+	}
+	return anims;
 }
 
 CL_Sprite * VisualProfile::GetSpriteByAnimID(int animID)
@@ -110,25 +126,25 @@ CL_Sprite * VisualProfile::GetSpriteByAnimID(int animID)
 	return m_animArray[animID].m_pSprite;
 }
 
-CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
+int VisualProfile::GetAnimID(int eState, int eFacing)
 {
 	int animID = 0;
 
 	switch (eState)
 	{
 	case VISUAL_STATE_IDLE:
-		
+
 		switch(eFacing)
 		{
-			case FACING_LEFT: animID = IDLE_LEFT; break;
-			case FACING_RIGHT: animID = IDLE_RIGHT;break;
-			case FACING_UP: animID = IDLE_UP;break;
-			case FACING_DOWN: animID = IDLE_DOWN;break;
+		case FACING_LEFT: animID = IDLE_LEFT; break;
+		case FACING_RIGHT: animID = IDLE_RIGHT;break;
+		case FACING_UP: animID = IDLE_UP;break;
+		case FACING_DOWN: animID = IDLE_DOWN;break;
 
-			case FACING_UP_LEFT: animID = IDLE_UP_LEFT; break;
-			case FACING_DOWN_LEFT: animID = IDLE_DOWN_LEFT; break;
-			case FACING_UP_RIGHT: animID = IDLE_UP_RIGHT; break;
-			case FACING_DOWN_RIGHT: animID = IDLE_DOWN_RIGHT; break;
+		case FACING_UP_LEFT: animID = IDLE_UP_LEFT; break;
+		case FACING_DOWN_LEFT: animID = IDLE_DOWN_LEFT; break;
+		case FACING_UP_RIGHT: animID = IDLE_UP_RIGHT; break;
+		case FACING_DOWN_RIGHT: animID = IDLE_DOWN_RIGHT; break;
 		}
 		if (!IsActive(animID))
 		{
@@ -146,7 +162,7 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 				break;
 			}
 		}
-		
+
 		break;
 
 	case VISUAL_STATE_RUN:
@@ -179,7 +195,7 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 
 			}
 		}	
-		
+
 		break;
 
 	case VISUAL_STATE_WALK:
@@ -195,7 +211,7 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 		case FACING_UP_RIGHT: animID = WALK_UP_RIGHT; break;
 		case FACING_DOWN_RIGHT: animID = WALK_DOWN_RIGHT; break;
 		}	
-		
+
 		if (!IsActive(animID))
 		{
 			//if it's something small, let's fix it ourself
@@ -213,7 +229,7 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 
 			}
 		}
-		
+
 		break;
 
 	case VISUAL_STATE_PAIN:
@@ -315,13 +331,16 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 
 	if (!IsActive(animID))
 	{
-			
+
 		throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)+" (" + m_animArray[animID].m_name+")" );
 	}
 
-	
-	return m_animArray[animID].m_pSprite;
+	return animID;
+}
 
+CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
+{
+	return m_animArray[GetAnimID(eState, eFacing)].m_pSprite;
 }
 
 int VisualProfile::TextToAnimID(const string & stState)
@@ -352,6 +371,22 @@ int VisualProfile::SpriteToAnimID(const string & stState)
 		}
 	}
 	LogError("Unknown anim type: %s.  Keep in mind they are case sensitive.", stState.c_str());
+	return -1;
+}
+
+int VisualProfile::SpriteToAnimID(CL_Sprite *pSprite)
+{
+	//check to see if it exists
+	for (unsigned int i=0; i < m_animArray.size(); i++)
+	{
+		if (pSprite == m_animArray[i].m_pSprite)
+		{
+			//bingo
+			return i;
+		}
+	}
+
+	LogError("Can't find anim by sprite address");
 	return -1;
 }
 

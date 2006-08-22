@@ -140,6 +140,7 @@ void MovingEntity::SetDefaults()
 	SetCollisionMode(COLLISION_MODE_ALL);
 	
 	m_visualState = VisualProfile::VISUAL_STATE_IDLE;
+	m_animID = 0;
 	SetFacing(VisualProfile::FACING_LEFT);
 	m_trigger.Reset();
 
@@ -699,7 +700,8 @@ void MovingEntity::SetAnimByName(const string &name)
 {
 	if (GetVisualProfile())
 	{
-		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(GetVisualProfile()->TextToAnimID(name)));
+		m_animID = GetVisualProfile()->TextToAnimID(name);
+		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
 	}
 }
 
@@ -715,7 +717,12 @@ void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, MovingEntity 
 
 void MovingEntity::SetSpriteByVisualStateAndFacing()
 {
-	if (GetVisualProfile()) SetSpriteData(GetVisualProfile()->GetSprite(GetVisualState(), GetFacing()));
+	
+	if (GetVisualProfile())
+	{
+		m_animID = GetVisualProfile()->GetAnimID(GetVisualState(), GetFacing());
+		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
+	}
 }
 
 void MovingEntity::LastCollisionWasInvalidated()

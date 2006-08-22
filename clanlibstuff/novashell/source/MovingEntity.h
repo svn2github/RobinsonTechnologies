@@ -122,6 +122,7 @@ public:
   bool GetOnLadder() {return m_bOnLadder;}
   void SetOnLadder(bool bOnLadder) {m_bOnLadder = bOnLadder;}
   CL_Sprite * GetSprite(){return m_pSprite;}
+  int GetAnimID() {return m_animID;}
   void SetAnimPause(bool bPause) { m_bAnimPaused = bPause;}
   bool GetAnimPause() {return m_bAnimPaused;}
   virtual void HandleMessageString(const string &msg);
@@ -168,7 +169,8 @@ public:
   
   //normally you'd never use this, but during load I need this to disable the update...
   void SetMovedFlag(bool bNeedToUpdatePosition) {m_bMovedFlag = bNeedToUpdatePosition;}
- 
+  void ForceSpriteUpdate() {m_pSpriteLastUsed = NULL;}
+
  enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -262,6 +264,7 @@ protected:
 	Trigger m_trigger;
 	bool m_bRestartAnim;
 	int m_collisionMode;
+	int m_animID;
 
 };
 

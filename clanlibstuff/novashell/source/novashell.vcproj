@@ -461,6 +461,14 @@
 							/>
 						</FileConfiguration>
 					</File>
+					<File
+						RelativePath=".\EntVisualProfileEditor.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\EntVisualProfileEditor.h"
+						>
+					</File>
 					<Filter
 						Name="Generators"
 						>

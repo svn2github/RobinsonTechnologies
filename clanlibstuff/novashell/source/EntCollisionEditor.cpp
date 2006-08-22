@@ -424,10 +424,6 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 
 	m_pWindow->set_event_passing(false);
 
-
-
-
-
 	m_slots.connect( m_pListType->sig_selection_changed(), this, &EntCollisionEditor::OnChangeLineType);
 	CL_Point offset = CL_Point(2,40);
 	m_pCheckBoxSnap = new CL_CheckBox(offset, "Snap", m_pWindow->get_client_area());
