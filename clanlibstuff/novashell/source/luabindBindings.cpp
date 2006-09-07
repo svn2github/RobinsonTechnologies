@@ -1,7 +1,6 @@
 #include "AppPrecomp.h"
 #include "main.h"
 
-
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
@@ -16,6 +15,7 @@ using namespace luabind;
 #include "MaterialManager.h"
 #include "TextManager.h"
 #include "GameLogic.h"
+#include "AI/WatchManager.h"
 
 void RegisterLuabindBindings(lua_State *pLuaState)
 {
@@ -34,6 +34,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabind::globals(pLuaState)["GetTagManager"] = &g_TagManager;
 	luabind::globals(pLuaState)["GetCamera"] = GetCamera;
 	luabind::globals(pLuaState)["GetKeyManager"] = &g_keyManager;
+	luabind::globals(pLuaState)["GetWatchManager"] = &g_watchManager;
 
 	luabind::globals(pLuaState)["g_playerID"] = 0;	 //will be set later
 #ifdef _DEBUG

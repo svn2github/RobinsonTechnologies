@@ -37,8 +37,10 @@ void StateTopWalk::OnRemove()
 
 void StateTopWalk::Update(float step)
 {
-	float weight = 2.2f;
-	m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce( m_pParent->GetVectorFacing() * weight );
+	if (m_pParent->IsFacingTarget(1))
+	{
+		m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce( m_pParent->GetVectorFacing() * m_pParent->GetDesiredSpeed() );
+	}
 
 }
 

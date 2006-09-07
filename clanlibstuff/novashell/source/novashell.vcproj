@@ -565,6 +565,14 @@
 						RelativePath=".\BrainTopPlayer.cpp"
 						>
 					</File>
+					<File
+						RelativePath=".\BrainTopSeek.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainTopSeek.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="States"
@@ -615,6 +623,74 @@
 					</File>
 					<File
 						RelativePath=".\StateTopWalk.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="AI"
+					>
+					<File
+						RelativePath=".\AI\Goal_Delay.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_Delay.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_FollowPath.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_MoveToPosition.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_NegotiateDoor.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_RunScript.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_RunScript.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_SeekToPosition.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_Think.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_TraverseEdge.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\message_types.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\NavGraphManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\NavGraphManager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\PathPlanner.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\WatchManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\WatchManager.h"
 						>
 					</File>
 				</Filter>

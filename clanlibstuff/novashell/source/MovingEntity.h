@@ -11,6 +11,10 @@
 #include "BrainManager.h"
 #include "Trigger.h"
 
+class Goal_Think;
+class PathPlanner;
+//#include "AI/Goal_Think.h"
+
 #define C_MAX_FALLING_DOWN_SPEED 20 //gravity won't be applied to objects going faster than this
 #define C_ENT_TILE_PIC_ID_KEY "_TilePicID" //custom data to signal we use a simple single tilepic for our image
 #define C_ENT_TILE_RECT_KEY "_TileRect" //custom data that goes along with the tile ID
@@ -102,7 +106,7 @@ public:
 
   void SetListenCollisionStatic(int eListen) {m_listenCollisionStatic = eListen;}
   int GetListenCollisionStatic() {return m_listenCollisionStatic;}
-  void AddForce(CL_Vector2 force) {m_body.AddForce( (*(Vector*)&force)*m_body.GetMass());}
+  void AddForce(CL_Vector2 force) {m_body.AddForce( (*(Vector*)&force)*m_body.GetMass() );}
   void AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque) {m_body.AddForce( (*(Vector*)&force)*m_body.GetMass(),
 	  (*(Vector*)&torque)*m_body.GetMass());}
   CL_Vector2 GetForce() {return *(CL_Vector2*)&m_body.GetNetForce();};
@@ -126,6 +130,8 @@ public:
   void SetAnimPause(bool bPause) { m_bAnimPaused = bPause;}
   bool GetAnimPause() {return m_bAnimPaused;}
   virtual void HandleMessageString(const string &msg);
+  virtual bool HandleMessage(const Message &msg);
+
   void SetDefaultTextColor(CL_Color color) {m_defaultTextColor = color;}
   CL_Color GetDefaultTextColor() {return m_defaultTextColor;}
   DataManager * GetData() {return &m_dataManager;}
@@ -145,6 +151,7 @@ public:
   void SetVectorFacingTarget(const CL_Vector2 &v);
   CL_Vector2 GetVectorFacing();
   CL_Vector2 GetVectorFacingTarget();
+  unsigned int CalculateTimeToReachPosition(const CL_Vector2 &pos);
 
 
   int GetVisualState() {return m_visualState;}
@@ -166,12 +173,28 @@ public:
   void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
   void SetCollisionMode(int mode);
   void UpdateTriggers(float step);
-  
+  Goal_Think * GetGoalManager();
+  bool IsGoalManagerActive() {return m_pGoalManager != NULL;}
   //normally you'd never use this, but during load I need this to disable the update...
   void SetMovedFlag(bool bNeedToUpdatePosition) {m_bMovedFlag = bNeedToUpdatePosition;}
   void ForceSpriteUpdate() {m_pSpriteLastUsed = NULL;}
+  float GetDesiredSpeed() {return m_desiredSpeed;}
+  void SetDesiredSpeed(float s) {m_desiredSpeed = s;}
 
- enum ListenCollision
+  float GetMaxWalkSpeed() {return m_maxWalkSpeed;}
+  void SetMaxWalkSpeed(float s) {m_maxWalkSpeed = s;}
+  bool IsPlaced() {return m_pTile->GetParentScreen() != 0;}
+  bool IsFacingTarget(float tolerance); 
+
+  bool CanWalkTo(CL_Vector2 &pos, bool ignoreLivingCreatures);
+  bool CanWalkBetween(CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures);
+  PathPlanner * GetPathPlanner();
+  void SetRunStringASAP(const string &command);
+  void SetDrawID(unsigned int drawID) {m_drawID = drawID;} //normally not needed, but
+  //I had some problems with stale drawID's in the WatchManager
+  void ProcessPendingMoveAndDeletionOperations();
+
+  enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
 	//them syncronized with the lua defines that have to match. So don't
@@ -265,6 +288,13 @@ protected:
 	bool m_bRestartAnim;
 	int m_collisionMode;
 	int m_animID;
+
+	Goal_Think *m_pGoalManager;
+	float m_desiredSpeed;
+	float m_maxWalkSpeed;
+	PathPlanner * m_pPathPlanner;
+	string m_runScriptASAP; //empty if not being used, only used for the RunScript Goal
+
 
 };
 

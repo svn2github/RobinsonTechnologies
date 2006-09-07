@@ -43,6 +43,7 @@ public:
 	void Save(World *pWorld);
 	void Load(World *pWorld);
 	void PrintStatistics();
+	CL_Vector2 GetPosFromName(const string &name);
 
 protected:
 

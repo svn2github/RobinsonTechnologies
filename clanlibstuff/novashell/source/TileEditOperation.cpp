@@ -522,6 +522,8 @@ void TileEditOperation::CopyTilePropertiesToSelection(Tile *pSrcTile, unsigned i
 			if (flags & eBitScale) pDestTile->SetScale(pSrcTile->GetScale());
 			if (flags & eBitCastShadow) pDestTile->SetBit(Tile::e_castShadow, pSrcTile->GetBit(Tile::e_castShadow));
 			if (flags & eBitSortShadow) pDestTile->SetBit(Tile::e_sortShadow, pSrcTile->GetBit(Tile::e_sortShadow));
+			if (flags & eBitPathNode) pDestTile->SetBit(Tile::e_pathNode, pSrcTile->GetBit(Tile::e_pathNode));
+
 			if (flags & eBitScript)
 			{
 				if (pSrcTile->GetType() == C_TILE_TYPE_ENTITY && pDestTile->GetType() == C_TILE_TYPE_ENTITY)

@@ -2,6 +2,7 @@
 #include "World.h"
 #include "AppUtils.h"
 #include "GameLogic.h"
+#include "AI/NavGraphManager.h"
 
 #define C_DEFAULT_THUMBNAIL_WIDTH 8
 #define C_DEFAULT_THUMBNAIL_HEIGHT 8
@@ -11,6 +12,7 @@ const CL_Vector2 g_worldDefaultCenterPos(C_DEFAULT_SCREEN_ID*512, C_DEFAULT_SCRE
 
 World::World()
 {
+	m_pNavGraphManager = NULL;
 	m_bDataChanged = true;
 	m_pWorldCache = NULL;
 	m_defaultTileSize = 0;
@@ -102,7 +104,16 @@ void World::Kill()
          }
     }
     m_worldMap.clear();
+	SAFE_DELETE(m_pNavGraphManager);
  }
+
+NavGraphManager * World::GetNavGraph()
+{
+	if (m_pNavGraphManager) return m_pNavGraphManager;
+
+	m_pNavGraphManager = new NavGraphManager(this);
+	return m_pNavGraphManager;
+}
 
 void World::SetDirPath(const string &str)
 {

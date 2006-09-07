@@ -4,6 +4,48 @@
 #include "MaterialManager.h"
 
 
+CL_Vector2 Vector2Perp(const CL_Vector2 &v)
+{
+	return CL_Vector2(-v.y, v.x);
+}
+
+void DrawLineWithArrow(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &col, CL_GraphicContext* pGC)
+{
+
+	CL_Vector2 norm = to-from;
+	norm.unitize();
+
+	//calculate where the arrow is attached
+	CL_Vector2 CrossingPoint = to - (norm * size);
+
+	//calculate the two extra points required to make the arrowhead
+	CL_Vector2 ArrowPoint1 = CrossingPoint + (Vector2Perp(norm) * 0.4f * size); 
+	CL_Vector2 ArrowPoint2 = CrossingPoint - (Vector2Perp(norm) * 0.4f * size); 
+
+	//draw the line
+	pGC->draw_line(from.x, from.y, CrossingPoint.x, CrossingPoint.y, col);
+	pGC->fill_triangle(ArrowPoint1.x, ArrowPoint1.y, ArrowPoint2.x, ArrowPoint2.y, to.x, to.y,
+		CL_Gradient(col,col,col,col));
+}
+
+void DrawLineWithArrowWorld(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &col, CL_GraphicContext* pGC)
+{
+	DrawLineWithArrow(GetWorldCache->WorldToScreen(from), GetWorldCache->WorldToScreen(to), size, col, pGC);
+}
+
+
+double GetAngleBetweenVectorFacings(CL_Vector2 v1, CL_Vector2 v2)
+{
+	double dot = v1.dot(v2);
+
+	//clamp to rectify any rounding errors
+	Clamp(dot, -1, 1);
+
+	//determine the angle between the heading vector and the target
+	return acos(dot);
+}
+
+
 bool ConfirmMessage(string title, string msg)
 {
 	CL_MessageBox message(title, msg, "Continue", "Abort", "", GetApp()->GetGUI());
@@ -142,6 +184,20 @@ void BlitMessage(string msg)
 }
 
 
+
+string VectorToStringEx(const CL_Vector2 * pVec)
+{
+	char stTemp[256];
+	sprintf(stTemp, "X:%.2f Y: %.2f", pVec->x, pVec->y);
+	return string(stTemp);
+}
+
+string VectorToString(const CL_Vector2 * pVec)
+{
+	return CL_String::from_float(pVec->x) + " " + CL_String::from_float(pVec->y);
+}
+
+
 string ColorToString(const CL_Color &colr)
 {
 	return CL_String::from_int(colr.get_red()) +" "
@@ -214,6 +270,24 @@ CL_Rect StringToRect(const string &stColor)
 	return r;
 }
 
+
+
+void DrawCenteredBox(const CL_Vector2 &a, int size, CL_Color col, CL_GraphicContext *pGC)
+{
+	CL_Rect rec;
+	rec.left = a.x - size;
+	rec.top = a.y - size;
+
+	rec.right = a.x + size;
+	rec.bottom = a.y + size;
+	pGC->draw_rect(rec, col);
+
+}
+
+void DrawCenteredBoxWorld(const CL_Vector2 &a, int size, CL_Color col, CL_GraphicContext *pGC)
+{
+	DrawCenteredBox( GetWorldCache->WorldToScreen(a), size, col, pGC);
+}
 
 
 void RenderVertexList(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCount, CL_Color &colr, CL_GraphicContext *pGC)
@@ -327,7 +401,7 @@ void ResetFont(CL_Font *pFont)
 
 //given a start and end point it will tell you the closest tile and where the collision point is.
 
-bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore /* = NULL*/, int limitSearchToThisTileType)
+bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore /* = NULL*/, int limitSearchToThisTileType, bool bIgnoreMovingCreatures)
 {
 	float lineA[4], lineB[4];
 	lineA[0] = vStart.x;
@@ -343,16 +417,18 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 	static CollisionData col;
 	pTileOut = NULL;
 	CL_Vector2 vTilePos;
+	int tileType;
 	if (tList.empty()) return false;
 
 	tile_list::iterator listItor = tList.begin();
 
 	for (;listItor != tList.end(); listItor++)
 	{
-
+		tileType = (*listItor)->GetType();
+		
 		if (limitSearchToThisTileType != C_TILE_TYPE_BLANK)
 		{
-			if ( (*listItor)->GetType() != limitSearchToThisTileType)
+			if ( tileType != limitSearchToThisTileType)
 			{
 				//LogMsg("Skipping");
 				continue; //skip this one
@@ -363,6 +439,18 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 		if ((*listItor) == pTileToIgnore) continue; //don't process ourself, how much sense would that make?
 
 		
+		if (bIgnoreMovingCreatures && tileType == C_TILE_TYPE_ENTITY)
+		{
+			//the pathfinding may be building nodes, we don't want it to build an incorrect base path because
+			//the player or monster was sitting in the way.  Somehow we have to figure out a way to ignore
+			//those kinds of things.  For now, assume if it has a visual profile assigned it should be ignored
+
+			if (  ((TileEntity*)(*listItor))->GetEntity()->GetVisualProfile())
+			{
+				continue;
+			}
+		}
+
 		//LogMsg("Checking tile");
 
 		vTilePos = (*listItor)->GetPos();
@@ -383,9 +471,9 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 				== CMaterial::C_MATERIAL_TYPE_NORMAL)
 			{
 				//examine each line list for suitability
-				LogMsg("Checking a list with %d points", lineListItor->GetPointList()->size());
+				//LogMsg("Checking a list with %d points", lineListItor->GetPointList()->size());
 
-				LogMsg("Offset is %.2f, %.2f", lineListItor->GetOffset().x,lineListItor->GetOffset().y );
+				//LogMsg("Offset is %.2f, %.2f", lineListItor->GetOffset().x,lineListItor->GetOffset().y );
 				for (unsigned int i=0; i < lineListItor->GetPointList()->size();)
 				{
 					
@@ -415,6 +503,9 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 						//assume it's an entity
 						assert((*listItor)->GetType() == C_TILE_TYPE_ENTITY);
 
+						
+
+
 						lineB[0] = vTilePos.x + lineListItor->GetPointList()->at(i).x;// + lineListItor->GetOffset().x;
 						lineB[1] = vTilePos.y + lineListItor->GetPointList()->at(i).y;//+ lineListItor->GetOffset().y;
 
@@ -433,10 +524,10 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 
 					}
 
-					LogMsg("Line B is %.2f, %.2f - %.2f, %.2f", lineB[0],lineB[1],lineB[2],lineB[3] );
+					//LogMsg("Line B is %.2f, %.2f - %.2f, %.2f", lineB[0],lineB[1],lineB[2],lineB[3] );
 					if (CL_LineMath::intersects(lineA, lineB))
 					{
-						LogMsg("Got intersection");
+						//LogMsg("Got intersection");
 						ptCol = CL_LineMath::get_intersection(lineA, lineB);
 						distance = ptCol.distance(*(CL_Pointf*)&vStart);
 						if (distance < closestDistance)
@@ -458,6 +549,7 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 
 	return closestDistance != FLT_MAX; 
 }
+
 
 
 //------------------------ Sign ------------------------------------------

@@ -44,7 +44,7 @@ public:
 private:
 
 	CL_Point CalculateTextAvoidenceOffset();
-	bool UpdateDialog();
+	bool UpdateDialog(bool bFancyPositioning = true);
 	bool UpdateCustom();
 
 	unsigned int m_timeCreated;

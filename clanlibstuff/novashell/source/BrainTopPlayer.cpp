@@ -6,7 +6,6 @@
 #include "MaterialManager.h"
 #include "VisualProfileManager.h"
 
-#define C_PLAYER_DESIRED_SPEED 3.3f
 #define C_PLAYER_ACCEL_POWER 0.3f
 #define C_PLAYER_GROUND_DAMPENING 0.4f //is removed from speed, not multiplied
 
@@ -231,7 +230,7 @@ void BrainTopPlayer::UpdateMovement(float step)
 
 void BrainTopPlayer::ResetForNextFrame()
 {
-	m_maxForce = 4;
+	m_maxForce = m_pParent->GetMaxWalkSpeed();
 	m_force = CL_Vector2::ZERO;
 }
 

@@ -2,7 +2,9 @@
 #include "MovingEntity.h"
 #include "DataManager.h"
 #include "BrainManager.h"
+#include "Brain.h"
 #include "State.h"
+#include "AI/Goal_Think.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -48,6 +50,10 @@ void luabindEntity(lua_State *pState)
 			.def("InState", &BrainManager::InState)
 			.def("SendToBrainBase", &BrainManager::SendToBrainBase)
 			
+
+			,class_<Brain>("Brain")
+			.def("GetName", &State::GetName)
+
 
 			,class_<MovingEntity>("Entity")
 			.def(constructor<>())
@@ -111,6 +117,10 @@ void luabindEntity(lua_State *pState)
 			
 			.def("SetBaseColor", &MovingEntity::SetBaseColor)
 			.def("GetBaseColor", &MovingEntity::GetBaseColor)
+			.def("GetGoalManager", &MovingEntity::GetGoalManager)
+			.def("SetDesiredSpeed", &MovingEntity::SetDesiredSpeed)
+			.def("SetMaxWalkSpeed", &MovingEntity::SetMaxWalkSpeed)
+			.def("IsPlaced", &MovingEntity::IsPlaced)
 		];
 }
 

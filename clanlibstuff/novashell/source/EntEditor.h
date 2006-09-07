@@ -60,6 +60,7 @@ private:
 	void onButtonDown(const CL_InputEvent &key);
 	void OnToggleWorldChunkGrid();
 	void OnToggleShowCollision();
+	void OnToggleShowPathfinding();
 	void OnToggleShowEntityCollision();
 	void OnToggleParallax();
 	void OnMapChange();
@@ -75,6 +76,8 @@ private:
 	void OnRestart();
 	void OnOpenScript();
 	void OnAddNewMap();
+	void OnEditStartupLua();
+	void OnEditSetupConstants();
 
 	
     enum
@@ -107,6 +110,7 @@ private:
 	CL_ListBox *m_pListBoxWorld;
 	CL_MenuItem *m_pMenuWorldChunkCheckbox;
 	CL_MenuItem *m_pMenuShowCollisionCheckbox;
+	CL_MenuItem *m_pMenuShowPathfindingCheckbox;
 	CL_MenuItem *m_pMenuShowEntityCollisionCheckbox;
 	CL_MenuItem *m_modeCheckBoxArray[e_modeCount];
 	CL_MenuItem *m_pMenuLockAtRefreshCheckbox;
@@ -120,6 +124,7 @@ private:
 	CL_Point m_vecLastMousePos;
 	bool m_bShowWorldChunkGridLines;
 	bool m_bShowCollision;
+	bool m_bShowPathfinding;
 	
 	CL_MenuItem *m_pMenuGamePausedCheckbox;
 	bool m_bDialogOpen;

@@ -79,7 +79,10 @@ public:
 	  void ToggleShowFPS() {m_bShowFPS = !m_bShowFPS;}
 	  void SetRestartEngineFlag(bool bNew) { 			m_bRestartEngineFlag = bNew;}
 	  void Quit() {GetApp()->OnWindowClose();}
-	  
+	  void OnPlayerDeleted(int id);
+	  bool GetShowPathfinding() {return m_bShowPathfinding;}
+	  void SetShowPathfinding(bool bNew) {m_bShowPathfinding = bNew;}
+  
 	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
 	  //But its reliance on this var should be as minimum as possible.
 	  
@@ -125,6 +128,8 @@ private:
 	bool m_bShowFPS;
 	bool m_bRestartEngineFlag;
 	int m_gameMode;
+	CL_Slot m_playerDestroyedSlot;
+	bool m_bShowPathfinding;
 	
 };
 

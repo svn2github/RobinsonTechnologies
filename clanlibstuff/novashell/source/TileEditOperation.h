@@ -94,7 +94,8 @@ public:
 		eBitScale = D_BIT_3,
 		eBitCastShadow = D_BIT_4,
 		eBitScript = D_BIT_5,
-		eBitSortShadow = D_BIT_6
+		eBitSortShadow = D_BIT_6,
+		eBitPathNode = D_BIT_7
 
 	};
 
@@ -107,10 +108,10 @@ protected:
 	void SetNeedsFullBoundsCheck(bool bNew);
 	void RecomputeBoundsIfNeeded();
 
- CL_Vector2 m_vecUpLeft, m_vecDownRight;
- bool m_bNeedsFullBoundsCheck;
- int m_forceLayerOfNextPaste; //i need an int because I want -1 to signal not active
-bool m_bIgnoreParallaxOnNextPaste;
+	CL_Vector2 m_vecUpLeft, m_vecDownRight;
+	bool m_bNeedsFullBoundsCheck;
+	int m_forceLayerOfNextPaste; //i need an int because I want -1 to signal not active
+	bool m_bIgnoreParallaxOnNextPaste;
 };
 
 typedef std::deque<TileEditOperation> operation_deque;

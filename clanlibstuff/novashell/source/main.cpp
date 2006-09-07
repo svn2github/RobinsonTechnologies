@@ -84,8 +84,9 @@ App::App()
 	m_pHashedResourceManager = NULL;
 	m_gameTick = 0;
 
-	m_baseGameSpeed = 1000.0f /66.6f;
-	m_baseLogicMhz = 1000.0f /66.6f;
+	m_baseGameSpeed = 1000.0f / 75.0f;
+	m_baseLogicMhz = 1000.0f / 75.0f;
+	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
 
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
@@ -397,7 +398,7 @@ void App::Update()
 	m_lastFrameTime = CL_System::get_time();
 
 	m_delta = GetGameLogicSpeed()/GetGameSpeed();
-	m_thinkTicksToUse += deltaTick;
+	m_thinkTicksToUse += (float(deltaTick) * m_simulationSpeedMod);
 	m_thinkTicksToUse = min(m_thinkTicksToUse, GetGameLogicSpeed()*5);
 
 

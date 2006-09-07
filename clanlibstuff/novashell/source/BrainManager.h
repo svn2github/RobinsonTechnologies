@@ -63,7 +63,7 @@ class BrainManager
 public:
 	BrainManager();
 	virtual ~BrainManager();
-	void Add(const string &brainName, const string &initMsg);
+	Brain * Add(const string &brainName, const string &initMsg);
 	void SetParent(MovingEntity *pEnt) {m_pParent = pEnt;}
 
 	void Kill();

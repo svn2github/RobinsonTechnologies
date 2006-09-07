@@ -105,6 +105,8 @@ public:
 	void SetGameTick(unsigned int num);
 	unsigned int GetTick(){return CL_System::get_time();}
 	bool ParmExists(const string &parm);
+	void SetSimulationSpeedMod(float fNew) {m_simulationSpeedMod = fNew;}
+	float GetSimulationSpeedMod() {return m_simulationSpeedMod;}
 
 	enum eVideoRefresh
 	{
@@ -162,6 +164,7 @@ private:
 	float m_baseGameSpeed; //faster and we move faster, computed against baselogicmhz
 	float m_baseLogicMhz; //MS between thinks
 	vector<string> m_startupParms;
+	float m_simulationSpeedMod;
 
 };
 

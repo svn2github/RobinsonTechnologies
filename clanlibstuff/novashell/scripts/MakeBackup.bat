@@ -1,3 +1,6 @@
+REM ** Make sure american code page is used, otherwise the %DATE environmental var might be wrong
+CHCP 437
+
 REM Set full path to destination
 set C_TARGET_DIR=c:\TEMPBACKUP
 

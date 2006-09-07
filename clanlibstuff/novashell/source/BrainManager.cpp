@@ -152,7 +152,7 @@ void BrainManager::Sort()
 	m_brainVec.sort(compareBrainBySort);
 }
 
-void BrainManager::Add(const string &brainName, const string &initMsg)
+Brain * BrainManager::Add(const string &brainName, const string &initMsg)
 {
 
 	Brain *pNewBrain = BrainRegistry::GetInstance()->CreateBrainByName(brainName, m_pParent);
@@ -161,7 +161,7 @@ void BrainManager::Add(const string &brainName, const string &initMsg)
 	{
 		LogMsg("Brain name %s was not found in the brain registry.  It's case sensitive.  Valid brains are:", brainName.c_str());
 		BrainRegistry::GetInstance()->ListAllBrains();
-		return;
+		return NULL;
 	}
 	
      m_brainVec.push_back(pNewBrain);
@@ -172,6 +172,8 @@ void BrainManager::Add(const string &brainName, const string &initMsg)
 	 {
 		 pNewBrain->HandleMsg(initMsg);
 	 }
+
+	 return pNewBrain; //just in case we want to fool with it
 }
 
 void BrainManager::SendToBrainByName(const string &brainName, const string &msg)
@@ -214,7 +216,7 @@ Brain * BrainManager::GetBrainByName(const string &brainName)
 	brain_vector::iterator itor = m_brainVec.begin();
 	while (itor != m_brainVec.end())
 	{
-
+		if ( !(*itor)->GetDeleteFlag())
 		if ( (*itor)->GetName() == brainName)
 		{
 			//found it
@@ -294,8 +296,11 @@ void BrainManager::Update(float step)
 	brain_vector::iterator itor = m_brainVec.begin();
 	while (itor != m_brainVec.end())
 	{
+		if ( !(*itor)->GetDeleteFlag())
+		{
+			(*itor)->Update(step);
+		}
 
-		(*itor)->Update(step);
 		itor++;
 	}
 
@@ -310,16 +315,18 @@ void BrainManager::PostUpdate(float step)
 	brain_vector::iterator itor = m_brainVec.begin();
 	while (itor != m_brainVec.end())
 	{
-
-		(*itor)->PostUpdate(step);
-
+		
 		if ((*itor)->GetDeleteFlag())
 		{
-		//	(*itor)->OnRemove();
+			(*itor)->OnRemove();
 			delete *itor;
 
 			itor = m_brainVec.erase(itor);
 			continue;
+		} else
+		{
+			(*itor)->PostUpdate(step);
+
 		}
 
 		itor++;

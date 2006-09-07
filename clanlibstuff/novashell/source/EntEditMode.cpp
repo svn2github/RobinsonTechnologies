@@ -1479,6 +1479,7 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	//add some buttons
 	int buttonOffsetX = 10;
 	int SecondOffsetX = 100;
+	int ThirdOffsetX = 190;
 	int offsetY = 10;
 	CL_Button buttonCancel (CL_Point(buttonOffsetX+100,ptSize.y-50), "Cancel", window.get_client_area());
 	CL_Button buttonOk (CL_Point(buttonOffsetX+200,ptSize.y-50), "Ok", window.get_client_area());
@@ -1507,6 +1508,9 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 
 	CL_CheckBox sortShadow (CL_Point(SecondOffsetX,offsetY),"Sort Shadow", window.get_client_area());
 	sortShadow.set_checked(pTile->GetBit(Tile::e_sortShadow));
+
+	CL_CheckBox pathNode(CL_Point(ThirdOffsetX,offsetY),"Path Node", window.get_client_area());
+	pathNode.set_checked(pTile->GetBit(Tile::e_pathNode));
 
 	offsetY+= 20;
 	
@@ -1701,10 +1705,17 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			pTile->SetBit(Tile::e_castShadow, castShadow.is_checked());
 			flags = flags | TileEditOperation::eBitCastShadow;
 		}
+
 		if (sortShadow.is_checked() != pTile->GetBit(Tile::e_sortShadow))
 		{
 			pTile->SetBit(Tile::e_sortShadow, sortShadow.is_checked());
 			flags = flags | TileEditOperation::eBitSortShadow;
+		}
+
+		if (pathNode.is_checked() != pTile->GetBit(Tile::e_pathNode))
+		{
+			pTile->SetBit(Tile::e_pathNode, pathNode.is_checked());
+			flags = flags | TileEditOperation::eBitPathNode;
 		}
 
 		if (inputColor.get_text() != originalColor)
@@ -1781,6 +1792,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		pNewTile->SetBit(Tile::e_flippedY, pTile->GetBit(Tile::e_flippedY));
 		pNewTile->SetBit(Tile::e_castShadow, pTile->GetBit(Tile::e_castShadow));
 		pNewTile->SetBit(Tile::e_sortShadow, pTile->GetBit(Tile::e_sortShadow));
+		pNewTile->SetBit(Tile::e_pathNode, pTile->GetBit(Tile::e_pathNode));
 		pNewTile->SetLayer(pTile->GetLayer());
 		pEnt->SetImageFromTilePic((TilePic*)pTile);
 		pEnt->SetMainScriptFileName("");

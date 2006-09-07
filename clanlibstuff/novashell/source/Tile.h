@@ -10,6 +10,7 @@
 #define Tile_HEADER_INCLUDED  // include guard
 
 #include "misc/CBit8.h"
+#include "ai/NodeTypeEnumerations.h"
 
 class Screen;
 class MovingEntity;
@@ -35,8 +36,8 @@ public:
 	cl_uint8 GetType() {return m_type;}
 	const cl_uint8 GetLayer() const {return m_layer;}
 	void SetLayer(cl_uint8 layer) {m_layer = layer;}
-	bool GetBit(cl_uint8 bit) {return m_bitField.get_bit(bit);}
-	void SetBit(cl_uint8 bit, bool bNew) {m_bitField.set_bit(bit, bNew);}
+	bool GetBit(cl_uint32 bit) {return m_bitField.get_bit(bit);}
+	void SetBit(cl_uint32 bit, bool bNew) {m_bitField.set_bit(bit, bNew);}
 	const CL_Vector2 & GetScale() {return m_vecScale;}
 	virtual void SetScale(const CL_Vector2 &v);
 	virtual const CL_Vector2 & GetPos() {return m_vecPos;}
@@ -68,6 +69,8 @@ public:
 	virtual CBody * GetCustomBody() {return NULL;}
 	void SetColor(const CL_Color color) {m_color = color;}
 	CL_Color GetColor() {return m_color;}
+	int GetGraphNodeID() {return m_graphNodeID;}
+	void SetGraphNodeID(int id) {assert(m_graphNodeID == invalid_node_index); m_graphNodeID = id;}
 	
 enum
 {
@@ -77,9 +80,10 @@ enum
  e_needsUpdate = D_BIT_3,
  e_notPersistent = D_BIT_4, //if true, won't be saved to disk
  e_castShadow = D_BIT_5,
- e_sortShadow = D_BIT_6
+ e_sortShadow = D_BIT_6,
+ e_pathNode = D_BIT_7
 
- //can add more bits here, up to D_BIT_7
+ //can add more bits here, up to D_BIT_31
 };
 
 protected:
@@ -90,17 +94,18 @@ protected:
 	//loaded in subclasses
 	CL_Vector2 m_vecPos; //where we're located if applicable
 	CL_Vector2 m_vecScale;
+	
 	unsigned int m_lastScanID; //helps to avoid duplicates when doing certain kinds of scans
 	std::list<Tile*> *m_pEdgeCaseList; //list of references a tile has
 	Tile *m_pFatherTile; //if a reference, this holds its father
 	Screen *m_pParentScreen; //only valid sometimes, like for reference tiles, not kept when
 	//making clones and things
 	cl_uint8 m_layer; //higher means on top
-	CBit8 m_bitField;
+	CBit32 m_bitField;
 	CollisionData * m_pCollisionData; //null if it hasn't been researched yet
 	CL_Color m_color;
 	bool m_bUsingCustomCollision; //if a tilepic is scaled weird, it needs to create it's own custom collision
-
+	int m_graphNodeID; //only used if the path_node flag is set.  Not saved.
 };
 
 class TilePic: public Tile

@@ -6,6 +6,11 @@
 */
 
 
+//Meant to be subclassed by brains. 
+
+//Note, the difference between doing something in the OnRemove and in the destructor is in the OnRemove,
+//it's guaranteed that everything the brain relys on is still active and ready for use.
+
 #ifndef Brain_HEADER_INCLUDED // include guard
 #define Brain_HEADER_INCLUDED  // include guard
 
@@ -24,6 +29,7 @@ public:
 	int GetSort() const {return m_sort;}
 	void SetSort(int sort){m_sort = sort;}
 	virtual void OnAdd(){}; //called once when brain is inserted
+	virtual void OnRemove(){};
 	virtual void HandleMsg(const string &msg) {return;}
 	virtual string HandleAskMsg(const string &msg) {return "";}
 	virtual void AddWeightedForce(const CL_Vector2 & force){assert(!"This brain not setup to be a base brain!");};

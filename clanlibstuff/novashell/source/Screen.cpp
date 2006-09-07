@@ -5,6 +5,7 @@
 #include "GameLogic.h"
 #include "TileEntity.h"
 #include "MovingEntity.h"
+#include "AI/NavGraphManager.h"
 
 Screen::Screen(WorldChunk *pParent)
 {
@@ -304,7 +305,7 @@ void Screen::GetPtrToAllTiles(tile_list *pTileList)
 
 }
 
-void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const vector<unsigned int> &layerIntVec, unsigned int scanID)
+void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const vector<unsigned int> &layerIntVec, unsigned int scanID, bool bWithCollisionOnly)
 {
 	//we use GetTileList at least once so it can create the layer if need be or error on an invalid layer
 	static Tile *pTile;
@@ -332,8 +333,21 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 			//TODO optimize this rect check.  Maybe precalc its box, or circle in the tile itself
 			if (scanRect.is_overlapped(pTile->GetWorldRectInt()))
 			{
+				if (bWithCollisionOnly)
+				{
+					if (!pTile->GetCollisionData() || !pTile->GetCollisionData()->HasData())
+					{
+						itor++;
+						continue;
+					}
+				}
+				
 				pTileList->push_back(pTile);
 			}
+		} else
+		{
+			//already got this
+			
 		}
 		itor++;
 	}
@@ -432,6 +446,12 @@ void Screen::AddTile(Tile *pTile)
 	{
 		GetTagManager->Update(GetParentWorldChunk()->GetParentWorld(), ((TileEntity*)pTile)->GetEntity());
 	}
+	
+	if (pTile->GetBit(Tile::e_pathNode))
+	{
+		GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->AddTileNode(pTile);
+	}
+
 	//early rejection to see if this tile's bounds are totally within this, otherwise it's an edge case and takes
 	//special preparation h
 
@@ -465,12 +485,23 @@ void Screen::AddTile(Tile *pTile)
 void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 {
 	
-	if ((*itor)->GetType() == C_TILE_TYPE_ENTITY)
+	if ( (*itor)->GetType() != C_TILE_TYPE_REFERENCE )
 	{
-		GetTagManager->Remove(((TileEntity*)(*itor))->GetEntity());
+
+		if ((*itor)->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			GetTagManager->Remove(((TileEntity*)(*itor))->GetEntity());
+		} 
+
+		if ((*itor)->GetBit(Tile::e_pathNode))
+		{
+			GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->RemoveTileNode((*itor));
+		}
+
+		GetWorldCache->RemoveTileFromList( (*itor) );
+
 	}
 
-	GetWorldCache->RemoveTileFromList( (*itor) );
 	
 	delete (*itor);
 	itor = m_vecLayerList[layer].erase(itor);

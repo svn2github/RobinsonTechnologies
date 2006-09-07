@@ -36,7 +36,13 @@ CameraSetting Camera::GetCameraSettings()
 	return camSettingOut;
 }
 
+CL_Rect Camera::GetScreenRect()
+{
+	return CL_Rect(0,0, GetScreenX, GetScreenY);
+}
+
 CL_Rectf Camera::GetViewRectWorld()
+
 {
 	CL_Rectf r;
 	CL_Vector2 v;

@@ -4,9 +4,32 @@
 
 Message::Message()
 {
+	SetDefaults();
+}
+
+Message::Message(int msgType)
+{
+	SetDefaults();
+	SetMsgType(msgType);
+}
+
+Message::Message(int msgType, int parm1, int parm2)
+{
+	SetDefaults();
+	SetMsgType(msgType);
+	SetParm1(parm1)	;
+	SetParm2(parm2);
+	
+}
+
+void Message::SetDefaults()
+{
 	m_pEnt = NULL;
 	m_timingType = GAME_TIME;
+	m_msgType = 0; 
+	m_parm1 = m_parm2 = 0;
 }
+
 
 Message::~Message()
 {

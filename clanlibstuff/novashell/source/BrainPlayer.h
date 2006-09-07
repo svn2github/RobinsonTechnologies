@@ -80,7 +80,7 @@ protected:
 };
 
 void AssignPlayerToCameraIfNeeded(MovingEntity *pEnt);
-void RemoveActivePlayerIfNeeded(MovingEntity *pEnt);
+void RemoveActivePlayerIfNeeded(BaseGameEntity *pEnt);
 bool ConvertKeysToDirection(unsigned int keys, int &visualFacingOut);
 bool TryToDoActionAtPoint(const CL_Vector2 &vecPos, MovingEntity *pEnt);
 

@@ -10,6 +10,8 @@
 #include "TagManager.h"
 #include "ScriptKeyManager.h"
 #include "VisualProfileManager.h"
+#include "AI/Goal_Think.h"
+#include "AI/WatchManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -153,6 +155,8 @@ void luabindMisc(lua_State *pState)
 		.def("GetGameTick", &App::GetGameTick)
 		.def("GetTick", &App::GetTick)
 		.def("ParmExists", &App::ParmExists)
+		.def("SetSimulationSpeedMod", &App::SetSimulationSpeedMod)
+		.def("GetSimulationSpeedMod", &App::GetSimulationSpeedMod)
 
 		,class_<ISoundManager>("SoundManager")
 		.def("PlayMusic", &ISoundManager::PlayMusic)
@@ -183,6 +187,7 @@ void luabindMisc(lua_State *pState)
 		,class_<TagManager>("TagManager")
 		.def("GetFromString", &TagManager::GetFromString)
 		.def("GetFromHash", &TagManager::GetFromHash)
+		.def("GetPosFromName", &TagManager::GetPosFromName)
 
 		,class_<Camera>("Camera")
 		.def("SetPos", &Camera::SetPos)
@@ -212,6 +217,17 @@ void luabindMisc(lua_State *pState)
 		,class_<ScriptKeyManager>("KeyManager")
 		.def("AssignKey", &ScriptKeyManager::AssignKey)
 
+		,class_<Goal_Think>("GoalManager")
+		.def("PushMoveToPosition", &Goal_Think::PushMoveToPosition)
+		.def("QueueMoveToPosition", &Goal_Think::QueueMoveToPosition)
+		.def("RemoveAllSubgoals", &Goal_Think::RemoveAllSubgoals)
+		.def("PushDelay", &Goal_Think::PushDelay)
+		.def("PushRunScriptString", &Goal_Think::PushRunScriptString)
+		.def("PushNewGoal", &Goal_Think::PushNewGoal)
+
+		,class_<WatchManager>("WatchManager")
+		.def("Add", &WatchManager::Add)
+		
 		,
 		//stand alone functions
 

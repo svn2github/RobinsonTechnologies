@@ -90,8 +90,24 @@ void TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
 	m_fontID = fontID;
 
 	CL_Font *pFont = GetApp()->GetFont(fontID);
+
 	//get the real size of what we have to draw
 	m_boundingRect = pFont->bounding_rect(m_boundingRect, m_text);
+
+	//now we'll do a very slow way to determine if it's actually on the screen or not.  If not, assume they couldn't hear it. 
+
+	UpdateDialog(false);
+
+	if (!GetCamera->GetScreenRect().is_overlapped(m_rect))
+	{
+		
+		//out of view
+		m_timeToShowMS = 0;
+		m_bVisible = false;
+		return;
+	}
+
+	
 
 	m_slots.connect(pEnt->sig_delete, this, &TextObject::EntDeleted);
 }
@@ -131,7 +147,7 @@ CL_Point TextObject::CalculateTextAvoidenceOffset()
 }
 
 //return false to delete this object
-bool TextObject::UpdateDialog()
+bool TextObject::UpdateDialog(bool bFancyPositioning)
 {
 	if (!m_pEntity) return false;
 
@@ -142,17 +158,20 @@ bool TextObject::UpdateDialog()
 
 	CL_Vector2 entPos = GetWorldCache->WorldToScreen(m_pEntity->GetPos());
 	
-	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - (m_rect.bottom));
+	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - m_rect.bottom );
 
-	m_pos.y -= ( (m_pEntity->GetSizeY()*0.8) * GetCamera->GetScale().y);
+	m_pos.y -= ( (m_pEntity->GetSizeY()*0.8) * GetCamera->GetScale().y * m_pEntity->GetScale().y);
 
-	//clip to screen
-	m_pos.x = max(0, m_pos.x);
-	m_pos.y = max(0, m_pos.y);
-	m_pos.x = min(GetScreenX-m_rect.get_width(), m_pos.x);
-	m_pos.y = min(GetScreenY-m_rect.get_height(), m_pos.y);
-
-	m_pos += CalculateTextAvoidenceOffset();
+	
+	if ( bFancyPositioning)
+	{
+		//clip to screen
+		m_pos.x = max(0, m_pos.x);
+		m_pos.y = max(0, m_pos.y);
+		m_pos.x = min(GetScreenX-m_rect.get_width(), m_pos.x);
+		m_pos.y = min(GetScreenY-m_rect.get_height(), m_pos.y);
+		m_pos += CalculateTextAvoidenceOffset();
+	}
 
 	//apply to rect
 

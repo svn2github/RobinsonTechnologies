@@ -76,7 +76,7 @@ void AssignPlayerToCameraIfNeeded(MovingEntity *pEnt)
 	}
 }
 
-void RemoveActivePlayerIfNeeded(MovingEntity *pEnt)
+void RemoveActivePlayerIfNeeded(BaseGameEntity *pEnt)
 {
 	if (GetGameLogic && GetGameLogic->GetMyPlayer() == pEnt)
 	{

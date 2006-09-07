@@ -30,7 +30,6 @@ void StateTopPlayerWalk::OnRemove()
 
 void StateTopPlayerWalk::Update(float step)
 {
-	float weight = 2.4f;
 	int visualFacing;
 
 	if (ConvertKeysToDirection(m_pParent->GetBrainManager()->GetBrainBase()->GetKeys(), visualFacing))
@@ -39,7 +38,7 @@ void StateTopPlayerWalk::Update(float step)
 		m_pParent->SetFacingTarget(visualFacing);
 	}
 
-	m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce(m_pParent->GetVectorFacing() * weight);
+	m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce( m_pParent->GetVectorFacing() * m_pParent->GetDesiredSpeed() );
 }
 
 void StateTopPlayerWalk::PostUpdate(float step)

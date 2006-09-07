@@ -534,18 +534,6 @@ void EntCollisionEditor::OnNextLine()
 	SetupLineForEdit(++m_curLine);
 }
 
-void DrawCenteredBox(const CL_Vector2 &a, int size, CL_Color col, CL_GraphicContext *pGC)
-{
-	CL_Rect rec;
-	rec.left = a.x - C_COL_VERT_SIZE;
-	rec.top = a.y - C_COL_VERT_SIZE;
-
-	rec.right = a.x + C_COL_VERT_SIZE;
-	rec.bottom = a.y + C_COL_VERT_SIZE;
-	pGC->draw_rect(rec, col);
-
-}
-
 
 
 void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, CBody *pCustomBody)

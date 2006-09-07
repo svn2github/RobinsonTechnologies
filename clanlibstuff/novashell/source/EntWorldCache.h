@@ -43,7 +43,7 @@ public:
 	void SetDrawCollision(bool bNew) {m_bDrawCollisionData = bNew;}
 	bool GetDrawCollision() {return m_bDrawCollisionData;}
 	void SetWorld(World *pWorld);
-	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect);
+	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect, bool bWithCollisionOnly = false);
 	void CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail);
 	void RenderViewList(CL_GraphicContext *pGC);
 	void RemoveTileFromList(Tile *pTile);
@@ -52,6 +52,7 @@ public:
 	void RenderCollisionOutlines(CL_GraphicContext *pGC);
 	void AddActiveTrigger(int entID);
 	void ClearTriggers();
+	bool IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, Tile *pTileToIgnore= NULL, bool bIgnoreMovingCreatures = false);
 
 protected:
 

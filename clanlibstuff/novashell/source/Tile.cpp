@@ -22,6 +22,7 @@ Tile::Tile()
 	m_pCollisionData = NULL;
 	m_color = CL_Color(255,255,255);
 	m_bUsingCustomCollision = false;
+	m_graphNodeID = invalid_node_index;
 
 }
 
@@ -88,6 +89,7 @@ Screen * Tile::GetParentScreen()
 {
 	return m_pParentScreen;
 }
+
 bool Tile::UsesTileProperties()
 {
 	CollisionData *pColData = GetCollisionData();
@@ -123,7 +125,9 @@ void Tile::RemoveReference(Tile *pTileRef)
 void Tile::SerializeBase(CL_FileHelper &helper)
 {
 	helper.process(m_layer);
-	helper.process( *(cl_uint8*)&m_bitField);
+
+	helper.process( *(cl_uint32*)&m_bitField);
+
 	if (helper.IsWriting())
 	{
 		helper.process_const(GetPos());

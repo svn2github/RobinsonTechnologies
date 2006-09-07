@@ -24,7 +24,7 @@ BrainTopBase::~BrainTopBase()
 
 void BrainTopBase::ResetForNextFrame()
 {
-	m_maxForce = 5;
+	m_maxForce = m_pParent->GetMaxWalkSpeed();
 	m_force = CL_Vector2::ZERO;
 }
 
@@ -62,14 +62,14 @@ void BrainTopBase::Update(float step)
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
 
-#define C_TOP_ACCEL_POWER 0.17f
+#define C_TOP_ACCEL_POWER 0.37f
 	Clamp(m_force.x, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
 	Clamp(m_force.y, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
 
 		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_turnSpeed *step);
 		m_pParent->AddForce(m_force);
 
-	m_pParent->SetSpriteByVisualStateAndFacing();
+	m_pParent->SetSpriteByVisualStateAndFacing();		
 
 	//completely stop rotation
 	m_pParent->GetBody()->GetAngVelocity() = 0;

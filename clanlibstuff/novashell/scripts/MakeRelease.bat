@@ -1,3 +1,6 @@
+REM ** Make sure american code page is used, otherwise the %DATE environmental var might be wrong
+CHCP 437
+
 cd ..
 set d_fname=novashell_test.zip
 

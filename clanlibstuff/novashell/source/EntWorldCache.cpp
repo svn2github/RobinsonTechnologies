@@ -4,6 +4,9 @@
 #include "EntCollisionEditor.h"
 #include "TileEntity.h"
 #include "MovingEntity.h"
+#include "AI/NavGraphManager.h"
+#include "AI/Goal_Think.h"
+#include "AI/WatchManager.h"
 
 EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
@@ -201,6 +204,10 @@ void EntWorldCache::RemoveTileFromList(Tile *pTile)
 			break;
 		}
 	}
+
+	//also remove from the watch list to avoid a crash there
+	g_watchManager.OnEntityDeleted( ((TileEntity*)pTile)->GetEntity());
+
 	}
 
    //next remove  tile from our draw list
@@ -221,16 +228,11 @@ void EntWorldCache::ProcessPendingEntityMovementAndDeletions()
 	for (unsigned int i=0; i < m_entityList.size(); i++)
 	{
 		if (!m_entityList[i]) continue;
-		if (m_entityList[i]->GetDeleteFlag())
-		{
-			//remove tile completely
-			assert(m_entityList[i]->GetTile());
-			m_entityList[i]->GetTile()->GetParentScreen()->RemoveTileByPointer(m_entityList[i]->GetTile());
-		} else
-		{
-			m_entityList[i]->UpdateTilePosition();
-		}
+		m_entityList[i]->ProcessPendingMoveAndDeletionOperations();
 	}
+
+	//also process our global watch list
+	g_watchManager.ProcessPendingEntityMovementAndDeletions();
 
 }
 
@@ -293,6 +295,7 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 
 			while (tileListItor != pTileList->end())
 			{
+
 				//add our tiles?
 				pTile = *tileListItor;
 				if (pTile->GetType() == C_TILE_TYPE_REFERENCE)
@@ -300,6 +303,7 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 					pTile = pTile->GetTileWereAReferenceFrom();
 				}
 
+				
 				if (pTile->GetLastScanID() != renderID)
 				{
 					pTile->SetLastScanID(renderID); //helps us not draw something twice, due to ghost references
@@ -314,8 +318,7 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 						(!GetGameLogic->GetEditorActive() && pLayer->GetShowInEditorOnly())
 						|| !pLayer->IsDisplayed() )
 					{
-						//don't render this
-						
+						//don't render this						
 					} else
 					{
 						m_tileLayerDrawList.push_back(pTile);
@@ -325,6 +328,10 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 					{
 						m_entityList.push_back( ((TileEntity*)pTile)->GetEntity());
 					}
+				} else
+				{
+					//already rendered it, don't do so again
+
 				}
 
 				tileListItor++;
@@ -515,7 +522,7 @@ void EntWorldCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 }
 
 //break this rect down into chunks to feed into the screens to get tile info
-void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect)
+void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/)
 {
 	CL_Rect rec(recArea);
 	rec.normalize();
@@ -558,7 +565,7 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
 			bScanMoreOnTheBottom = false;
 		}
 	
-		pWorldChunk->GetScreen()->GetTilesByRect(scanRec, pTileList, layerIDVect, scanID);
+		pWorldChunk->GetScreen()->GetTilesByRect(scanRec, pTileList, layerIDVect, scanID, bWithCollisionOnly);
 
 		//do we have more to scan on our right after this?
 
@@ -598,8 +605,22 @@ void EntWorldCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 			{
 				if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 				{
-					pBody = ((TileEntity*)pTile)->GetEntity()->GetBody();
-					vOffset = ((TileEntity*)pTile)->GetEntity()->GetVisualOffset();
+					
+					MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
+
+					//uh, hey, while we're at it, render goal info
+					if (pEnt->IsGoalManagerActive())
+					{
+						//render goal names in  the stack
+						CL_Vector2 pos = WorldToScreen(pEnt->GetPos());
+						pEnt->GetGoalManager()->RenderAtPos(pos);
+						//render any custom debug data a goal wants to
+						pEnt->GetGoalManager()->Render();
+					}
+					
+			
+					pBody = pEnt->GetBody();
+					vOffset = pEnt->GetVisualOffset();
 				}
 			}
 
@@ -735,13 +756,65 @@ void EntWorldCache::Update(float step)
 			m_entityList.at(i)->Update(step);
 		}
 
+		//world-wide updates too
+		g_watchManager.Update(step, m_uniqueDrawID);
+
 		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
 			m_entityList.at(i)->PostUpdate(step);
 		}
-	}
-	
 
+		g_watchManager.PostUpdate(step);
+	}
+
+}
+
+bool EntWorldCache::IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, Tile *pTileToIgnore, bool bIgnoreMovingCreatures)
+{
+
+	//LogMsg("Checking path with %.2f bounds", radius);
+	//first grab all entities that could possibly by between these two locations
+	tile_list tilelist;
+	CL_Rect r(a.x,a.y, b.x, b.y);
+	r.normalize();
+
+	AddTilesByRect(r, &tilelist, m_pWorld->GetLayerManager().GetCollisionList(), true);
+
+	//LogMsg("Found %d tiles", tilelist.size());
+	static Tile *pTile;
+	static CL_Vector2 vHitPoint;
+
+	//do three checks
+	bool obstructed;
+
+	if (obstructed = GetTileLineIntersection(a, b, tilelist, &vHitPoint, pTile, pTileToIgnore, C_TILE_TYPE_BLANK, bIgnoreMovingCreatures)) return true;
+
+
+	if (radius > 1)
+	{
+		//extra checks
+		CL_Vector2 vHeading = a-b;
+		vHeading.unitize();
+		
+		CL_Vector2 vOffset = Vector2Perp(vHeading) * radius/2;
+		
+		//move the line a little and shoot another ray
+
+		a += vOffset;
+		b += vOffset;
+
+		if (obstructed = GetTileLineIntersection(a, b, tilelist, &vHitPoint, pTile, pTileToIgnore, C_TILE_TYPE_BLANK, bIgnoreMovingCreatures)) return true;
+
+		//now go the other way
+		vOffset = - (vOffset*2);
+
+		a += vOffset;
+		b += vOffset;
+
+		if (obstructed = GetTileLineIntersection(a, b, tilelist, &vHitPoint, pTile, pTileToIgnore, C_TILE_TYPE_BLANK, bIgnoreMovingCreatures)) return true;
+
+	}
+	return false;
 }
 
 void EntWorldCache::OnMapChange()
@@ -772,6 +845,14 @@ void EntWorldCache::Render(void *pTarget)
 	
 	RenderViewList(pGC);
 
+
+	if (GetGameLogic->GetShowPathfinding())
+	{
+		if (m_pWorld->NavGraphDataExists())
+			m_pWorld->GetNavGraph()->Render(true, pGC);
+
+	}
+
 	if (m_bDrawCollisionData)
 	{
 		RenderCollisionOutlines(pGC);
@@ -786,6 +867,8 @@ void EntWorldCache::Render(void *pTarget)
 			DrawRectFromWorldCoordinates(CL_Vector2(recScreen.left, recScreen.top),
 				CL_Vector2(recScreen.right, recScreen.bottom), CL_Color(0,255,255,255), pGC);
 		}
+	
+		
 	}
 }
 

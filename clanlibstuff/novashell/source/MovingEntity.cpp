@@ -10,6 +10,8 @@
 #include "VisualProfileManager.h"
 #include "physics/Contact.h"
 #include "MaterialManager.h"
+#include "AI/Goal_Think.h"
+#include "AI/PathPlanner.h"
 
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT_PATH "media/script/"
@@ -23,6 +25,8 @@
 
 MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
+	m_pPathPlanner = NULL;
+	m_pGoalManager = NULL;
 	m_mainScript = C_DEFAULT_SCRIPT;
 	m_iType = C_ENTITY_TYPE_MOVING;
 	m_defaultTextColor = CL_Color(255,100,200,255);
@@ -35,6 +39,29 @@ MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 MovingEntity::~MovingEntity()
 {
 	Kill();
+}
+
+unsigned int MovingEntity::CalculateTimeToReachPosition(const CL_Vector2 &pos)
+{
+	return (Vec2DDistance(GetPos(), pos) *10) / m_desiredSpeed;
+}
+
+
+PathPlanner * MovingEntity::GetPathPlanner()
+{
+	if (!m_pPathPlanner)
+	{
+		m_pPathPlanner = new PathPlanner(this);
+	}
+	
+	return m_pPathPlanner;
+}
+
+
+bool MovingEntity::IsFacingTarget(float tolerance)
+{
+	float angle = GetAngleBetweenVectorFacings(GetVectorFacing(), GetVectorFacingTarget());
+	return fabs(angle) <= tolerance;
 }
 
 float MovingEntity::GetDistanceFromEntityByID(int id)
@@ -89,6 +116,13 @@ void MovingEntity::ClearColorMods()
 void MovingEntity::Kill()
 {
 
+	if (m_pScriptObject && m_pScriptObject->FunctionExists("OnKill"))
+	{
+		m_pScriptObject->RunFunction("OnKill");
+	}
+
+	SAFE_DELETE(m_pPathPlanner);
+	SAFE_DELETE(m_pGoalManager);
 	m_brainManager.Kill(); //reset it
 
 	m_pVisualProfile = NULL;
@@ -101,7 +135,19 @@ void MovingEntity::Kill()
 	
 	SAFE_DELETE(m_pSprite);
 	SAFE_DELETE(m_pScriptObject);
+
+	
 	SetDefaults();
+}
+
+bool MovingEntity::HandleMessage(const Message &msg)
+{
+
+	if (m_pGoalManager)
+	{
+		return m_pGoalManager->HandleMessage(msg);
+	}
+	return false; //didn't handle
 }
 
 void MovingEntity::HandleMessageString(const string &msg)
@@ -119,6 +165,8 @@ void MovingEntity::HandleMessageString(const string &msg)
 void MovingEntity::SetDefaults()
 {
 	ClearColorMods();
+	SetMaxWalkSpeed(2.4f);
+	SetDesiredSpeed(GetMaxWalkSpeed());
 	m_nearbyTileList.clear();
 	m_floorMaterialID = -1;
 	m_bUsingSimpleSprite = false;
@@ -146,6 +194,15 @@ void MovingEntity::SetDefaults()
 
 }
 
+Goal_Think * MovingEntity::GetGoalManager()
+{
+
+	//create it if it doesn't exist
+
+	if (m_pGoalManager) return m_pGoalManager;
+	
+	return (m_pGoalManager = new Goal_Think(this, "Base"));
+}
 void MovingEntity::SetFacingTarget(int facing)
 {
 	SetVectorFacingTarget(FacingToVector(facing));
@@ -577,7 +634,7 @@ bool MovingEntity::LoadScript(const char *pFileName)
 
 	//set this script objects "this" variable to point to an instance of this class
 	luabind::globals(m_pScriptObject->GetState())["this"] = this;
-	m_pScriptObject->RunFunction("Init");
+	m_pScriptObject->RunFunction("OnInit");
 	return true;
 }
 
@@ -1372,6 +1429,31 @@ void MovingEntity::UpdateTriggers(float step)
 	m_trigger.Update(step);
 }
 
+void MovingEntity::SetRunStringASAP(const string &command)
+{
+	if (m_runScriptASAP.empty())
+	{
+		m_runScriptASAP = command;
+	} else
+	{
+		LogError("Can't queue up %s, %s is already set to run.", command.c_str(), m_runScriptASAP.c_str());
+	}
+}
+
+void MovingEntity::ProcessPendingMoveAndDeletionOperations()
+{
+	if (GetDeleteFlag())
+	{
+		//remove tile completely
+		assert(GetTile());
+		GetTile()->GetParentScreen()->RemoveTileByPointer(GetTile());
+		return;
+	} else
+	{
+		UpdateTilePosition();
+	}
+}
+
 void MovingEntity::Update(float step)
 {
 
@@ -1381,9 +1463,18 @@ if (GetGameLogic->GetGamePaused()) return;
 
 	UpdateTriggers(step);
 
+	if (m_pGoalManager)
+	{
+		m_pGoalManager->Process();
+		if (!m_runScriptASAP.empty())
+		{
+			m_pScriptObject->RunString(m_runScriptASAP.c_str());
+			m_runScriptASAP.clear();
+		}
+	}
 
 	m_brainManager.Update(step);
-	
+
 	if (!m_bAnimPaused)
 	m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
 
@@ -1405,20 +1496,20 @@ void MovingEntity::PostUpdate(float step)
 
 	m_brainManager.PostUpdate(step);
 
-
-
 	const static float groundDampening = 1.6f;
 	const static float angleDampening = 0.01f;
 
+	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
 	{
-		float gravity = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity();
+		float gravity = pWorld->GetGravity();
 		if (gravity != 0)
 		{
 
-			if (m_body.GetLinVelocity().y < C_MAX_FALLING_DOWN_SPEED)
+			if ( (m_body.GetLinVelocity().y /step) < C_MAX_FALLING_DOWN_SPEED)
 			{
-				m_body.AddForce(Vector(0, m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetGravity()* m_body.GetMass()));
+				m_body.AddForce(Vector(0, pWorld->GetGravity() * m_body.GetMass()) * step);
 			}
 
 			
@@ -1429,9 +1520,9 @@ void MovingEntity::PostUpdate(float step)
 				&& GetBody()->GetAngVelocity() < 0.01f)
 			{
 				//slow down
-				set_float_with_target(&m_body.GetLinVelocity().x, 0, groundDampening);
-				set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening);
-				set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening);
+				set_float_with_target(&m_body.GetLinVelocity().x, 0, groundDampening * step);
+				set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening* step);
+				set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening* step);
 			}
 			}
 
@@ -1446,9 +1537,9 @@ void MovingEntity::PostUpdate(float step)
 			const static float top_groundDampening = 0.06f;
 			const static float top_angleDampening = 0.002f;
 
-			set_float_with_target(&m_body.GetLinVelocity().x, 0, top_groundDampening);
-			set_float_with_target(&m_body.GetLinVelocity().y, 0, top_groundDampening);
-			set_float_with_target(&m_body.GetAngVelocity(), 0, top_angleDampening);
+			set_float_with_target(&m_body.GetLinVelocity().x, 0, top_groundDampening * step);
+			set_float_with_target(&m_body.GetLinVelocity().y, 0, top_groundDampening * step);
+			set_float_with_target(&m_body.GetAngVelocity(), 0, top_angleDampening * step);
 			}
 		}
 
@@ -1493,6 +1584,23 @@ MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName)
 	GetWorld->AddTile(pTile);
 
 	return pEnt;
+}
+
+
+//returns true if this bot can move directly to the given position
+//without bumping into any walls
+bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
+{
+	EntWorldCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache();	
+	return !pWC->IsPathObstructed(GetPos(), to, m_pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_width(), m_pTile, ignoreLivingCreatures);
+}
+
+//similar to above. Returns true if the bot can move between the two
+//given positions without bumping into any walls
+bool MovingEntity::CanWalkBetween(CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures)
+{
+	EntWorldCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache();	
+	return !pWC->IsPathObstructed(from, to, m_pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_width(), m_pTile, ignoreLivingCreatures);
 }
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)

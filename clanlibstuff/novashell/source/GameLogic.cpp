@@ -13,6 +13,7 @@
 #include "Console.h"
 #include "MaterialManager.h"
 #include "VisualProfileManager.h"
+#include "AI/WatchManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -47,6 +48,7 @@ GameLogic::GameLogic()
 	m_strScriptRootDir = "media/script";
 	CL_Directory::create(m_strBaseUserProfilePath);
 	SetShowFPS(false);
+	SetShowPathfinding(false);
 	SetGameMode(C_GAME_MODE_TOP_VIEW); //default.  Also is automatically changed when player brains are initted.
 }
 
@@ -258,6 +260,7 @@ bool GameLogic::Init()
 	m_strUserProfileName.clear();
 	m_worldManager.Kill();
 	g_materialManager.Init();
+	g_watchManager.Clear();
 	GetVisualProfileManager->Kill();
 
 	g_VFManager.Reset();
@@ -315,9 +318,27 @@ bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the ad
 	return false;
 }
 
+void GameLogic::OnPlayerDeleted(int id)
+{
+	if (m_pPlayer)
+	{
+		if (m_pPlayer->ID() == id)
+		{
+			LogMsg("Player was removed?  Be careful.  Use GetGameLogic:SetPlayer(NIL);");
+			m_pPlayer = 0;
+		}
+	}
+	
+}
+
 void GameLogic::SetMyPlayer(MovingEntity *pNew)
 {
 	
+	if (pNew && !pNew->GetTile()->GetParentScreen())
+	{
+		LogError("Error, this that doesn't exist on map is trying to say it's a player?");
+		return;
+	}
 	if (m_pPlayer && pNew != m_pPlayer)
 	{
 		//tell the entity that currently holds the players focus he just lost it
@@ -340,6 +361,9 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 			m_pPlayer->GetBrainManager()->SendToBrainBase("got_player_focus");
 		}
 
+		//also setup ourselves to be notified when it is destroyed
+		m_playerDestroyedSlot = pNew->sig_delete.connect(this, &GameLogic::OnPlayerDeleted);
+		
 	} else
 	{
 
@@ -411,10 +435,18 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		case CL_KEY_H:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
-				if (GetWorld)
+				if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 				{
-					GetWorldCache->SetDrawCollision(!GetWorldCache->GetDrawCollision());
+					SetShowPathfinding(!GetShowPathfinding());
+				} else
+				{
+					if (GetWorld)
+					{
+						GetWorldCache->SetDrawCollision(!GetWorldCache->GetDrawCollision());
+					}
+
 				}
+				
 			}
 			break;
 	
@@ -425,6 +457,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 			}
 			break;
 
+		
 		}
 
 	}

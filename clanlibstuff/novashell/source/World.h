@@ -24,6 +24,7 @@ extern const CL_Vector2 g_worldDefaultCenterPos;
 #include "LayerManager.h"
 
 class EntWorldCache;
+class NavGraphManager;
 
 typedef std::map<ScreenID, WorldChunk*> WorldMap;
 
@@ -110,7 +111,8 @@ public:
 	void ReInitEntities(); //reinits all cached entities in this world, useful after 
 	//changing a script
 	void ReInitCollisionOnTilePics(); 
-
+	NavGraphManager * GetNavGraph();
+	bool NavGraphDataExists() {return m_pNavGraphManager != 0;}
 
 private:
 
@@ -174,6 +176,7 @@ private:
 	EntWorldCache *m_pWorldCache; //cached here for speed
 
 	bool m_bDataChanged; //only applicable to what is in this file
+	NavGraphManager *m_pNavGraphManager;
 };
 
 void RemoveWorldFiles(const string &path); //util for deleting stuff

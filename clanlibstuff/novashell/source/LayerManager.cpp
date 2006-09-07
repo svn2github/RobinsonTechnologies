@@ -130,6 +130,8 @@ void LayerManager::BuildDefaultLayers()
 	m_layerVec[C_LAYER_ENTITY].SetName("Entity");
 	m_layerVec[C_LAYER_ENTITY].SetSort(C_LAYER_ENTITY);
 	m_layerVec[C_LAYER_ENTITY].SetHasCollisionData(true);
+	m_layerVec[C_LAYER_ENTITY].SetDepthSortWithinLayer(true);
+
 
 	m_layerVec[C_LAYER_OVERLAY1].SetName("Overlay 1");
 	m_layerVec[C_LAYER_OVERLAY1].SetSort(C_LAYER_OVERLAY1);

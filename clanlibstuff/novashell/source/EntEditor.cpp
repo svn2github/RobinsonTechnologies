@@ -25,6 +25,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_vecLastMousePos = CL_Point(0,0);
    m_bShowWorldChunkGridLines = GetWorldCache->GetDrawWorldChunkGrid();
    m_bShowCollision = GetWorldCache->GetDrawCollision();
+   m_bShowPathfinding = GetGameLogic->GetShowPathfinding();
 
    m_slot.connect(CL_Mouse::sig_move(),this, &EntEditor::OnMouseMove);
    m_slot.connect(CL_Keyboard::sig_key_down(), this, &EntEditor::onButtonDown);
@@ -122,10 +123,17 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 	case CL_KEY_H:
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 		{
-			OnToggleShowCollision();
+			if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+			{
+				OnToggleShowPathfinding();
+			} else
+			{
+				OnToggleShowCollision();
+			}
 		}
 		break;
 
+	
 	case CL_KEY_1:
 	case CL_KEY_2:
 	case CL_KEY_3:
@@ -188,6 +196,12 @@ void EntEditor::OnToggleShowCollision()
 {
 	m_bShowCollision= !m_bShowCollision;
 	GetWorldCache->SetDrawCollision(m_bShowCollision);
+}
+
+void EntEditor::OnToggleShowPathfinding()
+{
+	m_bShowPathfinding= !m_bShowPathfinding;
+	GetGameLogic->SetShowPathfinding(m_bShowPathfinding);
 }
 
 void EntEditor::OnToggleParallax()
@@ -482,6 +496,23 @@ void EntEditor::OnAddNewMap()
 	}
 }
 
+void EntEditor::OnEditStartupLua()
+{
+	string file = CL_Directory::get_current() + "/" + GetGameLogic->GetScriptRootDir();
+	file += "/system/startup.lua";
+
+	OpenScriptForEditing(file);
+}
+
+void EntEditor::OnEditSetupConstants()
+{
+	string file = CL_Directory::get_current() + "/" + GetGameLogic->GetScriptRootDir();
+	file += "/system/setup_constants.lua";
+
+	OpenScriptForEditing(file);
+
+}
+
 bool EntEditor::Init()
 {
 assert(!m_pWindow);
@@ -509,9 +540,17 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	pItem = m_pMenu->create_item("File/Toggle Edit Mode (F1)");
     m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnClose);
 
-	pItem = m_pMenu->create_item("File/Open Script");
+	pItem = m_pMenu->create_item("File/Open Script/Choose");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnOpenScript);
 
+	
+	pItem = m_pMenu->create_item("File/Open Script/startup.lua");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnEditStartupLua);
+
+	pItem = m_pMenu->create_item("File/Open Script/setup_constants.lua");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnEditSetupConstants);
+
+	
 	pItem = m_pMenu->create_item("File/Save Active Map Now");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnSaveMap);
 
@@ -556,6 +595,10 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	m_pMenuShowCollisionCheckbox->set_selected(m_bShowCollision);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowCollision);
 
+	pItem = m_pMenu->create_toggle_item("Display/Show Map Pathfinding Data (Ctrl+Shift+H)");
+	m_pMenuShowPathfindingCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
+	m_pMenuShowPathfindingCheckbox->set_selected(m_bShowPathfinding);
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowPathfinding);
 
 	pItem = m_pMenu->create_toggle_item("Display/Parallax Scrolling");
 	m_pMenuParallaxCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
@@ -591,6 +634,7 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 
 	pItem = m_pMenu->create_item("Utilities/Reset Camera Position to 0,0");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnResetCamera);
+
 
 	pItem = m_pMenu->create_item("Tool Window/Map Switcher");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::BuildWorldListBox);

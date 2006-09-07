@@ -1,6 +1,8 @@
 
 #include "AppPrecomp.h"
 
+#include "AppUtils.h"
+
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
@@ -9,12 +11,6 @@
 
 using namespace luabind;
 
-string VectorToString(const CL_Vector2 * pVec)
-{
-	char stTemp[256];
-	sprintf(stTemp, "X:%.2f Y: %.2f", pVec->x, pVec->y);
-	return string(stTemp);
-}
 
 void NormalizeVector2(CL_Vector2 &v)
 {
@@ -39,7 +35,7 @@ void luabindVector(lua_State *pState)
 			.def("Length", &CL_Vector2::length)
 			.def("Dot", &CL_Vector2::dot)
 			.def("Cross", &CL_Vector2::cross)
-		    .def("__tostring", &VectorToString)
+		    .def("__tostring", &VectorToStringEx)
 		
 		
 			,

@@ -17,6 +17,7 @@
 #include <ClanLib/signals.h>
 
 class TileEntity;
+class Message;
 
 class BaseGameEntity
 {
@@ -53,6 +54,7 @@ public:
 	void SetTile(TileEntity *pTileEnt) {m_pTile = pTileEnt;}
 	TileEntity * GetTile() {return m_pTile;}
 	virtual void HandleMessageString(const std::string &msg){};
+	virtual bool HandleMessage(const Message &msg){return false;};
 
 	CL_Signal_v1<int> sig_delete; //anyone can attach to this to know when it dies.  Sends its ID #.
 

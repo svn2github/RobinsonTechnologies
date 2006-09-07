@@ -109,6 +109,17 @@ TagObject * TagManager::GetFromString(const string &name)
 	return GetFromHash(HashString(name.c_str()) );
 }
 
+CL_Vector2 TagManager::GetPosFromName(const string &name)
+{
+    TagObject *pTag = GetFromString(name);
+	if (!pTag)
+	{
+		LogError("TagManager::GetPosFromName: Can't locate TAG %s, sending back 0.0", name.c_str());
+		return CL_Vector2::ZERO;
+	}
+	return pTag->m_pos;
+}
+
 void TagManager::Remove(MovingEntity *pEnt)
 {
 	if (!pEnt || pEnt->GetNameHash() == 0) return;
@@ -124,7 +135,7 @@ void TagManager::Remove(MovingEntity *pEnt)
 	if (itor == m_tagMap.end()) 
 	{
 		//it's not in here
-		LogMsg("Failed to remove hash %d (ID %d)", hashID, pEnt->ID());
+		LogError("Failed to remove hash %d (ID %d)", hashID, pEnt->ID());
 		return;
 	} else
 	{
