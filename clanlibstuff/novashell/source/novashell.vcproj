@@ -642,6 +642,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\AI\Goal_MoveToMapAndPos.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_MoveToMapAndPos.h"
+						>
+					</File>
+					<File
 						RelativePath=".\AI\Goal_MoveToPosition.cpp"
 						>
 					</File>
@@ -670,6 +678,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\AI\graphalgorithms.h"
+						>
+					</File>
+					<File
 						RelativePath=".\AI\message_types.h"
 						>
 					</File>
@@ -691,6 +703,14 @@
 					</File>
 					<File
 						RelativePath=".\AI\WatchManager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\WorldNavManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\WorldNavManager.h"
 						>
 					</File>
 				</Filter>

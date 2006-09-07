@@ -6,6 +6,8 @@
 #ifndef TagManager_HEADER_INCLUDED // include guard
 #define TagManager_HEADER_INCLUDED  // include guard
 
+#include "AI/NodeTypeEnumerations.h"
+
 class World;
 class MovingEntity;
 
@@ -16,6 +18,10 @@ class TagObject
 {
 public:
 
+	TagObject()
+	{
+		m_graphNodeID = invalid_node_index;
+	}
 	CL_Vector2 & GetPos() {return m_pos;}
 	const string &GetMapName();
 	int GetID() {return m_entID;} //will be 0 unless already loaded, this is normal
@@ -23,6 +29,11 @@ public:
 	CL_Vector2 m_pos;
 	World *m_pWorld;
 	int m_entID; //so we can keep track of the owner of a tag, even with multiple tags of the same name
+	
+	string m_warpTarget; //if not empty, this is the tagname of where this can warp to.  It's used in the
+	//inter-town navigation only.
+	int m_graphNodeID; //used for inter-town navigation only, -1 if not used
+	unsigned int m_hashID; //sometimes I need it, trust me
 	string m_tagName; //purely for debug info, not really needed
 };
 
@@ -45,6 +56,8 @@ public:
 	void PrintStatistics();
 	CL_Vector2 GetPosFromName(const string &name);
 
+	void RegisterAsWarp(MovingEntity *pEnt, const string &targetName);
+
 protected:
 
 private:
@@ -55,7 +68,7 @@ private:
 		E_TAG_DONE
 	};
 
-	void AddCachedNameTag(unsigned int hashID, TagObject &o);
+	void AddCachedNameTag(unsigned int hashID, const TagObject &o);
 
 	TagResourceMap m_tagMap;
 };

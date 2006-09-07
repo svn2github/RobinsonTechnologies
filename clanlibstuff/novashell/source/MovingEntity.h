@@ -193,6 +193,7 @@ public:
   void SetDrawID(unsigned int drawID) {m_drawID = drawID;} //normally not needed, but
   //I had some problems with stale drawID's in the WatchManager
   void ProcessPendingMoveAndDeletionOperations();
+  World * GetMap();
 
   enum ListenCollision
 {

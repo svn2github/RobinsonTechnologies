@@ -1,5 +1,5 @@
 //  ***************************************************************
-//  NavGraphManager - Creation date: 08/30/2006
+//  WorldNavManager - Creation date: 09/07/2006
 //  -------------------------------------------------------------
 //  Robinson Technologies Copyright (C) 2006 - All Rights Reserved
 //
@@ -7,49 +7,59 @@
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)
 //  ***************************************************************
 
-#ifndef NavGraphManager_h__
-#define NavGraphManager_h__
+#ifndef WorldNavManager_h__
+#define WorldNavManager_h__
+
 
 #include "AI/SparseGraph.h"
 #include "AI/GraphEdgeTypes.h"
 #include "AI/GraphNodeTypes.h"
 
 class World;
-class Tile;
+class TagObject;
 class MovingEntity;
 
-class NavGraphManager
+class MacroPathInfo
 {
 public:
-
-	typedef NavGraphNodeExtra         GraphNode;
-	typedef SparseGraph<GraphNode, NavGraphEdge>      NavGraph;
-
-	NavGraphManager(World *pParent);
-	virtual ~NavGraphManager();
-	void Kill();
-	void Render(bool bDrawNodeIDs, CL_GraphicContext *pGC);
-
-	NavGraph&                          GetGraph()const{return *m_pNavGraph;}
-
-	void AddTileNode(Tile *pTile);
-	void RemoveTileNode(Tile *pTile);
-	float GetNodeMaxLinkDistance() {return 200;}
-	World * GetParent() {return m_pWorld;}
-	int GetClosestSpecialNode(MovingEntity *pEnt, const CL_Vector2 pos, int nodeType);
-
-protected:
-	
+	bool IsValid() {return false;}
 
 private:
 
-	void AddNeighborLinks(Tile *pTile);
-	void ExamineNodesForLinking(Tile *pA, Tile *pB); //see if two specific tiles should be linked, if so, it links them
+};
+
+class WorldNavManager
+{
+public:
+
+	typedef SimpleNode         GraphNode;
+	typedef SparseGraph<GraphNode, NavGraphEdge>      NavGraph;
+
+	WorldNavManager();
+	virtual ~WorldNavManager();
+
+	void Init();
+	NavGraph&                          GetGraph()const{return *m_pNavGraph;}
+	void AddNode(TagObject *pTag);
+	void RemoveNode(TagObject *pTag);
+	void LinkNode(TagObject *pTag);
+	void LinkEverything();
+	MacroPathInfo FindPathToMapAndPos(MovingEntity *pEnt, World *pMap, CL_Vector2 vDest);
+	void LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc);
+	bool DoNodesConnect(World *pMap, int a, int b);
+
+
+
+protected:
+	
+	void Kill();
+	void LinkMap(World *pMap);
 
 	//this map's accompanying navigation graph
 	NavGraph*                          m_pNavGraph;  
-	World *m_pWorld;
-	
+
+private:
 };
 
-#endif // NavGraphManager_h__
+extern WorldNavManager g_worldNavManager;
+#endif // WorldNavManager_h__

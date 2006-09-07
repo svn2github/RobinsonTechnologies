@@ -64,6 +64,7 @@ double PathPlanner::GetCostToNode(unsigned int NodeIdx)const
   */
 }
 
+
 //------------------------ GetCostToClosestItem ---------------------------
 //
 //  returns the cost to the closest instance of the giver type. This method
@@ -138,7 +139,6 @@ PathPlanner::Path PathPlanner::GetPath()
   path.push_front(PathEdge(m_pOwner->GetPos(),
                             GetNodePosition(closest),
                             NavGraphEdge::normal));
-
   
   //if the bot requested a path to a location then an edge leading to the
   //destination must be added
@@ -277,7 +277,8 @@ int PathPlanner::CycleOnce()const
   //let the bot know a path has been found
   else if (result == target_found)
   {
-    //if the search was for an item type then the final node in the path will
+/*  
+	  //if the search was for an item type then the final node in the path will
     //represent a giver trigger. Consequently, it's worth passing the pointer
     //to the trigger in the extra info field of the message. (The pointer
     //will just be NULL if no trigger)
@@ -293,6 +294,7 @@ int PathPlanner::CycleOnce()const
                             Msg_PathReady,
                             pTrigger);
 							*/
+	  
   }
 
   return result;

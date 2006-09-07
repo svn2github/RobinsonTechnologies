@@ -94,6 +94,11 @@ void MovingEntity::SetListenCollision(int eListen)
 	m_listenCollision = eListen;
 }
 
+World * MovingEntity::GetMap()
+{
+	return m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+}
+
 CL_Vector2 MovingEntity::GetCollisionScale()
 {
 	if (!m_pCollisionData)

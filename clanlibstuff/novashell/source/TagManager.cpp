@@ -2,6 +2,7 @@
 #include "TagManager.h"
 #include "WorldManager.h"
 #include "MovingEntity.h"
+#include "AI/WorldNavManager.h"
 
 const string &TagObject::GetMapName()
 {
@@ -20,6 +21,34 @@ void TagManager::Kill()
 {
 	m_tagMap.clear();
 }
+
+void TagManager::RegisterAsWarp(MovingEntity *pEnt, const string &targetName)
+{
+
+	TagObject * pTag = GetFromHash(pEnt->GetNameHash());
+	if (!pTag)
+	{
+		LogError("Unable to locate entity %s to register as warp object to %s.  Note:  It must be a NAMED entity.",
+			pEnt->GetName().c_str(), targetName.c_str());
+		return;
+	}
+
+
+	if (targetName.empty())
+	{
+		LogMsg("Warp %s has a blank target. Ignoring.  Just so you know.", targetName.c_str());
+		return;
+	}
+
+	if (pTag->m_graphNodeID != invalid_node_index) return;
+
+	pTag->m_warpTarget = targetName;
+	g_worldNavManager.AddNode(pTag);
+
+	//in this case, we'd also want to connect it now
+	g_worldNavManager.LinkNode(pTag);
+}
+
 void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 {
 	if (pEnt->GetNameHash() == 0) return; //don't hash this
@@ -83,7 +112,6 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 		
 	}
 
-	//there may be more than one, for now return the "top one"
 
 	pObject->m_pos = pEnt->GetPos();
 	pObject->m_pWorld = pWorld;
@@ -148,6 +176,10 @@ void TagManager::Remove(MovingEntity *pEnt)
 		{
 			if (itorO->m_entID == pEnt->ID())
 			{
+			
+				if (itorO->m_graphNodeID != invalid_node_index)
+				g_worldNavManager.RemoveNode(&(*itorO));
+
 				//this is it, remove it
 				if (pTagList->size() == 1)
 				{
@@ -167,7 +199,7 @@ void TagManager::Remove(MovingEntity *pEnt)
 		}
 	}
 
-		LogMsg("Failed to remove hash %d (ID %d) in list search", hashID, pEnt->ID());
+		LogError("Failed to remove hash %d (ID %d) in list search", hashID, pEnt->ID());
 
 }
 
@@ -238,6 +270,8 @@ void TagManager::Save(World *pWorld)
 					helper.process_const( itor->first);
 					helper.process(itorO->m_pos);
 					helper.process(itorO->m_tagName);
+					helper.process(itorO->m_warpTarget);
+
 				}
 				itorO++;
 		}
@@ -251,21 +285,32 @@ void TagManager::Save(World *pWorld)
 	SAFE_DELETE(pFile);
 }
 
-void TagManager::AddCachedNameTag(unsigned int hashID, TagObject &o)
+void TagManager::AddCachedNameTag(unsigned int hashID, const TagObject &o)
 {
+	
 	TagResourceMap::iterator itor = m_tagMap.find(hashID);
 
-	if (itor == m_tagMap.end()) 
+
+	list<TagObject> *pList = &m_tagMap[hashID];
+
+	if (pList->empty()) 
 	{
 		//couldn't find it, add it
-		list<TagObject> *pList = &m_tagMap[hashID];
 		pList->push_back(o);
 	} else
 	{
 		//add it to the end of whatever is here
-		list<TagObject> *pTagList = &m_tagMap[hashID];
-		pTagList->push_front(o);
+		pList->push_front(o);
 	}
+
+	TagObject *pTag =  &(*pList->begin());
+	
+	pTag->m_hashID = hashID;
+	
+   if (!pTag->m_warpTarget.empty())
+   {
+	   g_worldNavManager.AddNode(&(*pList->begin()));
+   }
 
 }
 
@@ -311,6 +356,7 @@ void TagManager::Load(World *pWorld)
 			
 			helper.process(o.m_pos);
 			helper.process(o.m_tagName);
+			helper.process(o.m_warpTarget);
 
 			AddCachedNameTag(hashID, o);
 			break;

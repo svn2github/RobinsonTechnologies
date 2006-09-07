@@ -190,7 +190,7 @@ void EntWorldCache::RemoveTileFromList(Tile *pTile)
 	{
 		if (m_entityList[i] == pEnt)
 		{
-		/*	
+			/*	
 			if (m_entityList[i])
 			{
 				LogMsg("Removing ent %d from list", m_entityList[i]->ID());
@@ -198,7 +198,7 @@ void EntWorldCache::RemoveTileFromList(Tile *pTile)
 			{
 				LogMsg("Removing NULL tile from list");
 			}
-		  */
+			*/
 
 			m_entityList[i] = NULL;
 			break;

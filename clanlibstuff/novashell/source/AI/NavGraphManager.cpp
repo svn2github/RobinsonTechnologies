@@ -4,14 +4,19 @@
 #include "GameLogic.h"
 #include "AI/GraphAlgorithms.h"
 #include "AI/AStarHeuristicPolicies.h"
+#include "PathPlanner.h"
 
 NavGraphManager::NavGraphManager(World *pParent)
 {
 	m_pWorld = pParent;
-	m_pNavGraph = NULL;
 	m_pNavGraph = new NavGraph(false);
 }
 
+
+NavGraphManager::~NavGraphManager()
+{
+	Kill();
+}
 void NavGraphManager::Kill()
 {
 	SAFE_DELETE(m_pNavGraph);
@@ -26,9 +31,19 @@ void NavGraphManager::ExamineNodesForLinking(Tile *pA, Tile *pB)
 	//if these two things don't have a wall between them, they should be linked.
 
 	//let's just assume they don't
+	static CL_Vector2 a, b; 
 
-	CL_Vector2 a = pA->GetPos()+ (pA->GetBoundsSize()/2);
-	CL_Vector2 b = pB->GetPos()+ (pB->GetBoundsSize()/2);
+	if (pA->GetType() == C_TILE_TYPE_ENTITY)
+	{
+		a = pA->GetPos();
+		b = pB->GetPos();
+	
+	} else
+	{
+		//center it so it appears like it's coming from the center of the tilepic
+		 a = pA->GetPos()+ (pA->GetBoundsSize()/2);
+		 b = pB->GetPos()+ (pB->GetBoundsSize()/2);
+	}
 
 	float dist = Vec2DDistanceSq(a, b);
 
@@ -45,8 +60,19 @@ void NavGraphManager::AddNeighborLinks(Tile *pTile)
 {
 
 	//first get all surounding nodes that we might want to connect to
+	CL_Vector2 pos; 
 
-	CL_Vector2 pos = pTile->GetPos() + (pTile->GetBoundsSize()/2);
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+		pos = pTile->GetPos();
+	
+	} else
+	{
+		//center it
+		pos = pTile->GetPos() + (pTile->GetBoundsSize()/2);
+
+	}
+
 
 	float range = GetNodeMaxLinkDistance();
 
@@ -83,25 +109,28 @@ void NavGraphManager::AddNeighborLinks(Tile *pTile)
 
 void NavGraphManager::AddTileNode(Tile *pTile)
 {
-	
 	pTile->SetGraphNodeID(m_pNavGraph->GetNextFreeNodeIndex());
-	m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos() + (pTile->GetBoundsSize()/2) ));
+
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+		//aready centered
+		m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos(), C_NODE_TYPE_WARP));
+
+	} else
+	{
+		//center it
+		m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos() + (pTile->GetBoundsSize()/2), C_NODE_TYPE_NORMAL ));
+	}
 
 	AddNeighborLinks(pTile);
-
 }
 
 void NavGraphManager::RemoveTileNode(Tile *pTile)
 {
 	assert(pTile->GetGraphNodeID() != invalid_node_index);
-
 	m_pNavGraph->RemoveNode(pTile->GetGraphNodeID());
 }
 
-NavGraphManager::~NavGraphManager()
-{
-	Kill();
-}
 
 void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 {
@@ -143,3 +172,37 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 
 }
 
+
+
+int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, const CL_Vector2 pos, int nodeType)
+{
+	int a = pEnt->GetPathPlanner()->GetClosestNodeToPosition(pos, true);
+
+	if (a == invalid_node_index)
+	{
+		LogError("Not close enough to find a node");
+		return invalid_node_index;
+	}
+
+	typedef Graph_SearchDijkstras_TS<NavGraphManager::NavGraph, FindSpecialNode> DijSearch;
+	Graph_SearchTimeSliced<NavGraph::EdgeType>*  pCurrentSearch =  new DijSearch(*m_pNavGraph,
+		a,nodeType);
+
+
+	int result;
+	do {result = pCurrentSearch->CycleOnce();} while(result == search_incomplete);
+
+	if (result == target_not_found)
+	{
+		delete pCurrentSearch;
+		LogMsg("Unable to locate any connected nodes of type %d", nodeType);
+		return invalid_node_index; //they can query this object to see it failed
+	}
+
+
+	int chosenNode = pCurrentSearch->GetFinalNode();
+	delete pCurrentSearch;
+
+	return chosenNode;
+
+}

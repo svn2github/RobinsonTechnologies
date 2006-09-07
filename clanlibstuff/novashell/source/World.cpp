@@ -16,6 +16,7 @@ World::World()
 	m_bDataChanged = true;
 	m_pWorldCache = NULL;
 	m_defaultTileSize = 0;
+	m_masterNavMapID = invalid_node_index;
 	for (int i=0; i < e_byteCount; i++) m_byteArray[i] = 0;
 	for (int i=0; i < e_intCount; i++) m_intArray[i] = 0;
 	for (int i=0; i < e_uintCount; i++) m_uintArray[i] = 0;
@@ -734,6 +735,21 @@ void World::ReInitCollisionOnTilePics()
 		}
 		itor++;
 	}	
+}
+
+void World::AddWarpTagHashID(unsigned int hashID)
+{
+	m_warpTagHashIDList.push_back(hashID);
+}
+
+void World::RemoveWarpTagHashID(unsigned int hashID)
+{
+	list<unsigned int>::iterator itor = find(m_warpTagHashIDList.begin(), m_warpTagHashIDList.end(), hashID);
+
+	if (itor != m_warpTagHashIDList.end())
+	{
+		m_warpTagHashIDList.erase(itor);
+	}
 }
 
 void RemoveWorldFiles(const string &path)

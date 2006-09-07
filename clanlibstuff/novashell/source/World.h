@@ -28,6 +28,7 @@ class NavGraphManager;
 
 typedef std::map<ScreenID, WorldChunk*> WorldMap;
 
+typedef std::list<unsigned int> tag_hash_list;
 #define C_WORLD_FILE_VERSION 0
 
 enum
@@ -113,6 +114,12 @@ public:
 	void ReInitCollisionOnTilePics(); 
 	NavGraphManager * GetNavGraph();
 	bool NavGraphDataExists() {return m_pNavGraphManager != 0;}
+	int GetMasterNavMapID() {return m_masterNavMapID;}
+	void SetMasterNavMapID(int newID) {m_masterNavMapID = newID;}
+
+	void AddWarpTagHashID(unsigned int hashID);
+	void RemoveWarpTagHashID(unsigned int hashID);
+	tag_hash_list & GetWarpTagHashList() {return m_warpTagHashIDList;}
 
 private:
 
@@ -177,6 +184,9 @@ private:
 
 	bool m_bDataChanged; //only applicable to what is in this file
 	NavGraphManager *m_pNavGraphManager;
+	int m_masterNavMapID; //a central node that connects to all warps on this map
+	tag_hash_list m_warpTagHashIDList; //keep track of the hash's of named tagobjects WARPS that exist and belong to this map (note, only warps!)
+
 };
 
 void RemoveWorldFiles(const string &path); //util for deleting stuff

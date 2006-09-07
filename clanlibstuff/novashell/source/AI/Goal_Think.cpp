@@ -7,6 +7,7 @@
 //#include "AttackTargetGoal_Evaluator.h"
 #include "Goal_Delay.h"
 #include "Goal_RunScript.h"
+#include "Goal_MoveToMapAndPos.h"
 
 Goal_Think::Goal_Think(MovingEntity* pBot, const string &goalName):Goal_Composite<MovingEntity>(pBot, goal_think)
 {
@@ -94,22 +95,29 @@ void Goal_Think::PushMoveToPosition(CL_Vector2 pos)
 	AddSubgoal( new Goal_MoveToPosition(m_pOwner, pos));
 }
 
+void Goal_Think::PushMoveToTag(TagObject *pTag)
+{
+	if (!pTag)
+	{
+		LogError("PushMoveToTag: Invalid Tag");
+		return;
+	}
+
+	AddSubgoal( new Goal_MoveToMapAndPos(m_pOwner, pTag->GetPos(), pTag->m_pWorld));
+}
 
 void Goal_Think::PushAttackTarget()
 {
   if (notPresent(goal_attack_target))
   {
     RemoveAllSubgoals();
-   // AddSubgoal( new Goal_AttackTarget(m_pOwner));
+    //AddSubgoal( new Goal_AttackTarget(m_pOwner));
   }
 }
 
 void Goal_Think::Terminate()
 {
-
-
 }
-
 
 void Goal_Think::PushRunScriptString(const string &scriptString)
 {
@@ -119,7 +127,6 @@ void Goal_Think::PushRunScriptString(const string &scriptString)
 void Goal_Think::PushDelay(int timeMS)
 {
 	AddSubgoal( new Goal_Delay(m_pOwner,  timeMS));
-
 }
 
 Goal_Think * Goal_Think::PushNewGoal(const string &goalName)
@@ -134,7 +141,6 @@ void Goal_Think::QueueMoveToPosition(CL_Vector2 pos)
 {
   m_SubGoals.push_back(new Goal_MoveToPosition(m_pOwner, pos));
 }
-
 
 
 //----------------------- RenderEvaluations -----------------------------------

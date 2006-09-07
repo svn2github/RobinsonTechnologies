@@ -28,7 +28,6 @@ Tile::Tile()
 
 CL_Rect Tile::GetWorldRectInt()
 {
-	
 	static CL_Rectf r;
 	r = GetWorldRect();
 	return CL_Rect(r);
@@ -125,7 +124,6 @@ void Tile::RemoveReference(Tile *pTileRef)
 void Tile::SerializeBase(CL_FileHelper &helper)
 {
 	helper.process(m_layer);
-
 	helper.process( *(cl_uint32*)&m_bitField);
 
 	if (helper.IsWriting())
@@ -147,6 +145,7 @@ void Tile::SerializeBase(CL_FileHelper &helper)
 	helper.process(*(cl_uint32*)&m_color);
 
 }
+
 //sometimes with blank/placeholders we need copy a blank tile
 Tile * Tile::CreateClone()
 {
@@ -278,8 +277,6 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 
 	pSurf->set_color(pTile->GetColor());
 	pSurf->draw_subpixel(pTile->m_rectSrc, rectDest, pGC);
-
-
 }
 
 
@@ -393,9 +390,7 @@ CollisionData * TilePic::GetCollisionData()
 			CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
 			m_pCollisionData = pNewCol;
 			m_bUsingCustomCollision = true;
-
 			m_pCollisionData->SetScale(m_vecScale);
-			
 		}
 
 	}
@@ -408,7 +403,6 @@ const CL_Rect & TilePic::GetBoundsRect()
 	static CL_Rect r(0,0,0,0);
 	r.right = m_rectSrc.get_width()*m_vecScale.x;
 	r.bottom = m_rectSrc.get_height()*m_vecScale.y;
-
 	return r;
 }
 
@@ -435,7 +429,6 @@ void TilePic::Serialize(CL_FileHelper &helper)
 	helper.process(m_rectSrc);
 	helper.process(m_resourceID);
 	helper.process(m_rot);
-	
 }
 
 

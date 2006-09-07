@@ -684,6 +684,7 @@ int EntEditor::GetWorldInfoListHeight()
 	if (height > 500) height = 500;
 	return height;
 }
+
 void EntEditor::BuildWorldListBox()
 {
 	SAFE_DELETE(m_pListBoxWorld);

@@ -3,6 +3,7 @@
 #include "EntWorldCache.h"
 #include "WorldManager.h"
 #include "GameLogic.h"
+#include "AI/WorldNavManager.h"
 
 WorldManager::WorldManager()
 {
@@ -21,6 +22,7 @@ void WorldManager::ScanWorlds(const string &stPath)
 {
 	
 	Kill();
+	g_worldNavManager.Init();
 
 	//scan map directory for available maps
 	CL_DirectoryScanner scanner;
@@ -40,6 +42,9 @@ void WorldManager::ScanWorlds(const string &stPath)
 
 		}
 	}
+
+	//link up navigation maps
+	g_worldNavManager.LinkEverything();
 }
 
 void WorldManager::Kill()

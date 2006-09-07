@@ -64,9 +64,7 @@ void WatchManager::Update(float step, unsigned int drawID)
 			continue;
 		}
 
-
 		//it's there, let's do our logic on it if it needs it
-
 
 		if (pEnt->GetDrawID() != drawID)
 		{
