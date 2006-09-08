@@ -121,6 +121,8 @@ void luabindEntity(lua_State *pState)
 			.def("SetDesiredSpeed", &MovingEntity::SetDesiredSpeed)
 			.def("SetMaxWalkSpeed", &MovingEntity::SetMaxWalkSpeed)
 			.def("IsPlaced", &MovingEntity::IsPlaced)
+			.def("SetNavNodeType", &MovingEntity::SetNavNodeType)
+			.def("SetHasPathNode", &MovingEntity::SetHasPathNode)
 		];
 }
 

@@ -108,13 +108,13 @@ public:
 	void ForceSaveNow();
 	void RemoveUnusedFileChunks();
 
-	EntWorldCache * GetMyWorldCache(){return m_pWorldCache;}
+	EntWorldCache * GetMyWorldCache();
 	void ReInitEntities(); //reinits all cached entities in this world, useful after 
 	//changing a script
 	void ReInitCollisionOnTilePics(); 
 	NavGraphManager * GetNavGraph();
 	bool NavGraphDataExists() {return m_pNavGraphManager != 0;}
-	int GetMasterNavMapID() {return m_masterNavMapID;}
+	int GetMasterNavMapID();
 	void SetMasterNavMapID(int newID) {m_masterNavMapID = newID;}
 
 	void AddWarpTagHashID(unsigned int hashID);

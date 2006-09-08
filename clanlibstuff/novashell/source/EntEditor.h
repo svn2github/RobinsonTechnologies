@@ -78,6 +78,7 @@ private:
 	void OnAddNewMap();
 	void OnEditStartupLua();
 	void OnEditSetupConstants();
+	void OnDumpWorldNavStatistics();
 
 	
     enum

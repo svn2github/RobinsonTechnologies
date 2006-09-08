@@ -129,12 +129,12 @@ PathPlanner::Path PathPlanner::GetPath()
 
   Path path =  m_pCurrentSearch->GetPathAsPathEdges();
 
-  int closest = GetClosestNodeToPosition(m_pOwner->GetPos(), false, 2);
+  int closest = GetClosestNodeToPosition( m_pWorld, m_pOwner->GetPos(), false, 2);
 
   if (closest ==  no_closest_node_found)
   {
 	  //try again, this time allowing us to walk through creatures, better than nothing
-	  closest = GetClosestNodeToPosition(m_pOwner->GetPos(), true, 1);
+	  closest = GetClosestNodeToPosition( m_pWorld, m_pOwner->GetPos(),  true, 1);
  }
   path.push_front(PathEdge(m_pOwner->GetPos(),
                             GetNodePosition(closest),
@@ -183,7 +183,7 @@ void PathPlanner::SmoothPathEdgesQuick(Path& path)
   {
     //check for obstruction, adjust and remove the edges accordingly
     if ( (e2->Behavior() == EdgeType::normal) &&
-          m_pOwner->CanWalkBetween(e1->Source(), e2->Destination(), false))
+          m_pOwner->CanWalkBetween(m_pOwner->GetMap(), e1->Source(), e2->Destination(), false))
     {
       e1->SetDestination(e2->Destination());
       e2 = path.erase(e2);
@@ -225,7 +225,7 @@ void PathPlanner::SmoothPathEdgesPrecise(Path& path)
     {
       //check for obstruction, adjust and remove the edges accordingly
       if ( (e2->Behavior() == EdgeType::normal) &&
-            m_pOwner->CanWalkBetween(e1->Source(), e2->Destination(), false) )
+            m_pOwner->CanWalkBetween(m_pOwner->GetMap(),e1->Source(), e2->Destination(), false) )
       {
         e1->SetDestination(e2->Destination());
         e2 = path.erase(++e1, ++e2);
@@ -304,19 +304,19 @@ int PathPlanner::CycleOnce()const
 //
 //  returns the index of the closest visible graph node to the given position
 //-----------------------------------------------------------------------------
-int PathPlanner::GetClosestNodeToPosition(CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride)const
+int PathPlanner::GetClosestNodeToPosition(World * pMap, CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride)const
 {
   double ClosestSoFar = MaxDouble;
   int   ClosestNode  = no_closest_node_found;
 
-  float halfRange = (m_pWorld->GetNavGraph()->GetNodeMaxLinkDistance()*distanceModOverride) /2;
+  float halfRange = (pMap->GetNavGraph()->GetNodeMaxLinkDistance()*distanceModOverride) /2;
 
   CL_Rect recArea(CL_Point(pos.x-halfRange, pos.y-halfRange), CL_Size(halfRange*2, halfRange*2));
 
   //returns a list of tile pointers, we shouldn't free them!
   tile_list tileList;
 
-  m_pWorld->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList());
+  pMap->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList());
 
   NodeType* pN;
   int nodeID;
@@ -330,12 +330,12 @@ int PathPlanner::GetClosestNodeToPosition(CL_Vector2 pos, bool bIgnoreLivingCrea
 	  if (nodeID != invalid_node_index)
 	  {
 	
-		  pN = &m_NavGraph.GetNode(nodeID);
+		  pN = &pMap->GetNavGraph()->GetGraph().GetNode(nodeID);
 
 		  //if the path between this node and pos is unobstructed calculate the
 		  //distance
 	
-		  if (m_pOwner->CanWalkBetween(pos, pN->Pos(), bIgnoreLivingCreatures))
+		  if (m_pOwner->CanWalkBetween(pMap, pos, pN->Pos(), bIgnoreLivingCreatures))
 		  {
 			  double dist = Vec2DDistanceSq(pos, pN->Pos());
 
@@ -394,12 +394,12 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
  
   
   //find the closest visible node to the bots position
-  int ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetPos(), false, 2);
+  int ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetMap(),m_pOwner->GetPos(), false, 2);
 
   if (ClosestNodeToBot == no_closest_node_found)
   {
 	  //try again, this time allowing us to walk "through" creatures
-	  ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetPos(), true, 1);
+	  ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetMap(),m_pOwner->GetPos(), true, 1);
   }
 
   //remove the destination node from the list and return false if no visible
@@ -420,12 +420,12 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
 #endif
 
   //find the closest visible node to the target position
-  int ClosestNodeToTarget = GetClosestNodeToPosition(TargetPos, false, 2);
+  int ClosestNodeToTarget = GetClosestNodeToPosition(m_pOwner->GetMap(),TargetPos, false, 2);
   
   if (ClosestNodeToTarget == no_closest_node_found)
   { 
 	  //try again, this time allowing us to walk through creatures
-	  ClosestNodeToTarget = GetClosestNodeToPosition(TargetPos, true, 1);
+	  ClosestNodeToTarget = GetClosestNodeToPosition(m_pOwner->GetMap(),TargetPos, true, 1);
   }
   
   //return false if there is a problem locating a visible node from the target.

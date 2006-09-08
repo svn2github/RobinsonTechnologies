@@ -19,10 +19,23 @@ class World;
 class TagObject;
 class MovingEntity;
 
+class MicroPathChunk
+{
+public:
+	MicroPathChunk(int nodeID):
+	m_worldNodeID(nodeID)
+	{
+
+	}
+	int m_worldNodeID;
+	
+};
 class MacroPathInfo
 {
 public:
-	bool IsValid() {return false;}
+	bool IsValid() {return !m_path.empty();}
+
+	list<int> m_path;
 
 private:
 
@@ -44,16 +57,17 @@ public:
 	void RemoveNode(TagObject *pTag);
 	void LinkNode(TagObject *pTag);
 	void LinkEverything();
-	MacroPathInfo FindPathToMapAndPos(MovingEntity *pEnt, World *pMap, CL_Vector2 vDest);
+	MacroPathInfo FindPathToMapAndPos(MovingEntity *pEnt, World *pDestMap, CL_Vector2 vDest);
 	void LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc);
 	bool DoNodesConnect(World *pMap, int a, int b);
-
-
+	MovingEntity * ConvertWorldNodeToOwnerEntity(int nodeID);
+	void DumpStatistics();
 
 protected:
 	
 	void Kill();
 	void LinkMap(World *pMap);
+	int ConvertMapNodeToWorldNode(World *pMap, int mapNode);
 
 	//this map's accompanying navigation graph
 	NavGraph*                          m_pNavGraph;  

@@ -38,7 +38,11 @@ void Goal_MoveToPosition::Activate()
 		  {
 
 		  case target_not_found:
-			  LogMsg("Couldn't locate target.  Doing blind seek instead.");
+			 
+			  LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
+			  m_iStatus = failed;
+			  return;
+			  
 			  bUsePath = false;
 			  break;
 
@@ -78,7 +82,11 @@ void Goal_MoveToPosition::Activate()
   {
 	  //if status is inactive, call Activate()
 	  ActivateIfInactive();
-
+	  if (m_iStatus == failed)
+	  {
+		  //special case for instant failure so it will kick back nw
+		  return m_iStatus;
+	  }
 	  //process the subgoals
 	  m_iStatus = ProcessSubgoals();
 

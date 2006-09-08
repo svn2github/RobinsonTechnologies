@@ -14,6 +14,7 @@
 #include "MaterialManager.h"
 #include "VisualProfileManager.h"
 #include "AI/WatchManager.h"
+#include "AI/WorldNavManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -292,6 +293,9 @@ bool GameLogic::Init()
 
 	//run a global script to init anything that needs doing
 	GetScriptManager->LoadMainScript( (GetGameLogic->GetScriptRootDir()+"/system/startup.lua").c_str());
+
+	//link up navigation maps
+	g_worldNavManager.LinkEverything();
 	return true;
 }
 

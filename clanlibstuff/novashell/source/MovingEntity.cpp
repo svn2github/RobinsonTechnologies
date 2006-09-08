@@ -30,15 +30,17 @@ MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_mainScript = C_DEFAULT_SCRIPT;
 	m_iType = C_ENTITY_TYPE_MOVING;
 	m_defaultTextColor = CL_Color(255,100,200,255);
-	m_hashedName = 0;
 	m_bUsingCustomCollisionData = false;
 	m_brainManager.SetParent(this);
+	m_hashedName = 0;
+
 	SetDefaults();
 }
 
 MovingEntity::~MovingEntity()
 {
 	Kill();
+	
 }
 
 unsigned int MovingEntity::CalculateTimeToReachPosition(const CL_Vector2 &pos)
@@ -126,6 +128,17 @@ void MovingEntity::Kill()
 		m_pScriptObject->RunFunction("OnKill");
 	}
 
+	/*
+	if (IsPlaced())
+	{
+		if (!GetName().empty())	
+		{
+			GetTagManager->Remove(this);
+
+		}
+	}
+	*/
+
 	SAFE_DELETE(m_pPathPlanner);
 	SAFE_DELETE(m_pGoalManager);
 	m_brainManager.Kill(); //reset it
@@ -141,7 +154,9 @@ void MovingEntity::Kill()
 	SAFE_DELETE(m_pSprite);
 	SAFE_DELETE(m_pScriptObject);
 
+
 	
+
 	SetDefaults();
 }
 
@@ -189,6 +204,7 @@ void MovingEntity::SetDefaults()
 	m_pCollisionData = NULL;
 	m_ticksOnGround = 0;
 	m_bOnLadder = false;
+	m_navNodeType = C_NODE_TYPE_NORMAL;
 	m_bAnimPaused = false;
 	SetCollisionMode(COLLISION_MODE_ALL);
 	
@@ -196,8 +212,35 @@ void MovingEntity::SetDefaults()
 	m_animID = 0;
 	SetFacing(VisualProfile::FACING_LEFT);
 	m_trigger.Reset();
+	m_bHasRunOnInit = false;
+	m_bHasRunPostInit = false;
+
+
 
 }
+
+void MovingEntity::SetNavNodeType(int n)
+{
+	if (IsInitted())
+	{
+		LogError("Cannot use SetNavNodeType except in the OnInit() function");
+		return;
+	}
+
+	m_navNodeType = n;
+}
+
+void MovingEntity::SetHasPathNode(bool bHasNode)
+{
+	if (IsInitted())
+	{
+		LogError("Cannot use SetHasPathNode except in the OnInit() function");
+		return;
+	}
+
+	m_pTile->SetBit(Tile::e_pathNode, bHasNode);
+}
+
 
 Goal_Think * MovingEntity::GetGoalManager()
 {
@@ -251,51 +294,37 @@ CL_Vector2 MovingEntity::GetVectorFacingTarget()
 
 void MovingEntity::SetName(const std::string &name)
 {
+	SetNameEx(name, true);
+
+}
+void MovingEntity::SetNameEx(const std::string &name, bool bRemoveOldTag)
+{
 	//setting a name has a special meaning when done in a moving entity.  It
 	//means this entity can be tracked by its name from anywhere in the game, it's
 	//stored in a special database that is loaded even when the entities world
 	//isn't.  So don't set this unless an entity specifically needs a trackable
 	//identity
-
-	if (m_pTile && name.empty())
-	{
-		if  (m_hashedName != 0)
-		{
-			//need to remove ourself
-			GetTagManager->Remove(this);
-		}
-		m_hashedName = 0;
-		BaseGameEntity::SetName(name);
-		return;
-	}
-
-	World *pWorld = NULL;
-	if (m_pTile)
-	{
-		if (name != GetName())
-		{
-			if (m_pTile->GetParentScreen())
-			{
-				//by setting the world, we signal that we want to make a change to the tag DB now
-				pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
-			}
-		}
-	}
 	
-	if (pWorld)
-	GetTagManager->Remove(this);
-
-	BaseGameEntity::SetName(name);
-	if (name.empty())
+	if (IsPlaced())
 	{
-		m_hashedName = 0;
+		if (bRemoveOldTag)
+		GetTagManager->Remove(this);
+		BaseGameEntity::SetName(name);
+
+		if (name.empty())
+		{
+			m_hashedName = 0;
+		} else
+		{
+			m_hashedName = HashString(name.c_str());
+			GetTagManager->Update(GetMap(), this);
+		}
 	} else
 	{
+		BaseGameEntity::SetName(name);
 		m_hashedName = HashString(name.c_str());
 	}
 	
-	if (pWorld)
-	GetTagManager->Update(pWorld, this);
 }
 
 void MovingEntity::Serialize(CL_FileHelper &helper)
@@ -622,9 +651,34 @@ bool MovingEntity::Init()
 		}
 	}
 
+	m_bHasRunOnInit = true;
 	return true;
 }
 
+
+
+void MovingEntity::RunPostInitIfNeeded()
+{
+	if (!m_bHasRunPostInit)
+	{
+
+		/*
+		if (!GetName().empty())
+		{
+			GetTagManager->Update(GetMap(), this);
+			assert(m_hashedName != 0 && "Where's the hash?!");
+		}
+		*/
+
+		if (m_pScriptObject)
+		{
+			if (m_pScriptObject->FunctionExists("OnPostInit"))
+				m_pScriptObject->RunFunction("OnPostInit");
+		}
+
+		m_bHasRunPostInit = true;
+	}
+}
 bool MovingEntity::LoadScript(const char *pFileName)
 {
 	SAFE_DELETE(m_pScriptObject);
@@ -727,6 +781,9 @@ void MovingEntity::UpdateTilePosition()
 				pWorldToMoveTo = &pInfo->m_world;
 				m_body.GetPosition().x = m_moveToAtEndOfFrame.x;
 				m_body.GetPosition().y = m_moveToAtEndOfFrame.y;
+
+				SAFE_DELETE(m_pPathPlanner); //this would be invalid now
+
 
 				if (this == GetPlayer)
 				{
@@ -1602,10 +1659,9 @@ bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 
 //similar to above. Returns true if the bot can move between the two
 //given positions without bumping into any walls
-bool MovingEntity::CanWalkBetween(CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures)
+bool MovingEntity::CanWalkBetween(World *pMap, CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures)
 {
-	EntWorldCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache();	
-	return !pWC->IsPathObstructed(from, to, m_pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_width(), m_pTile, ignoreLivingCreatures);
+	return !pMap->GetMyWorldCache()->IsPathObstructed(from, to, m_pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_width(), m_pTile, ignoreLivingCreatures);
 }
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)

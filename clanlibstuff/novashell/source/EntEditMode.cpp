@@ -1165,6 +1165,8 @@ void EntEditMode::Render(void *pTarget)
 		{
 			unsigned int tileLayer = m_selectedTileList.m_selectedTileList.back()->m_pTile->GetLayer();
 			LayerManager &layerMan = GetWorld->GetLayerManager();
+
+			Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile;
 			
 			if (tileLayer >= layerMan.GetLayerCount())
 			{
@@ -1173,6 +1175,23 @@ void EntEditMode::Render(void *pTarget)
 			{
 				s += ( "\nLayer: "+ layerMan.GetLayerInfo(tileLayer).GetName());
 			}
+
+			if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+			{
+				//it's pointless to show the entity ID unless we are working from the real source tile instead of the copy
+				Tile *pSrcTile  =  GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
+
+				if (pSrcTile)
+				{
+					MovingEntity *pEnt = ((TileEntity*)pSrcTile)->GetEntity();
+					s += "\nID: " + CL_String::from_int(pEnt->ID());
+					if (!pEnt->GetName().empty())
+					{
+						s += " Tag: "+pEnt->GetName();
+					}
+				}
+			}
+			
 		}
 		m_pLabelSelection->set_text(s);
 

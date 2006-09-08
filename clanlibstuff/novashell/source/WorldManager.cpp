@@ -43,8 +43,7 @@ void WorldManager::ScanWorlds(const string &stPath)
 		}
 	}
 
-	//link up navigation maps
-	g_worldNavManager.LinkEverything();
+	
 }
 
 void WorldManager::Kill()
@@ -87,7 +86,7 @@ bool WorldManager::AddWorld(string stPath)
 	return true;
 }
 
-bool WorldManager::LoadWorld(string stPath)
+bool WorldManager::LoadWorld(string stPath, bool bSetActiveIfNoneIs)
 {
 	WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 
@@ -100,7 +99,7 @@ bool WorldManager::LoadWorld(string stPath)
 	pWorldInfo->m_world.Load(stPath);
 	pWorldInfo->m_worldCache.SetWorld(&pWorldInfo->m_world);
 
-	if (!m_pActiveWorld)
+	if (!m_pActiveWorld && bSetActiveIfNoneIs)
 	{
 		SetActiveWorldByPath(stPath);
 	}

@@ -113,13 +113,15 @@ void NavGraphManager::AddTileNode(Tile *pTile)
 
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
+		MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
 		//aready centered
-		m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos(), C_NODE_TYPE_WARP));
+		LogMsg("Adding ent %s (entID %d)", pEnt->GetName().c_str(),pEnt->ID() );
+		m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos(), pEnt->GetNavNodeType(), pEnt->ID()) );
 
 	} else
 	{
 		//center it
-		m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos() + (pTile->GetBoundsSize()/2), C_NODE_TYPE_NORMAL ));
+		m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos() + (pTile->GetBoundsSize()/2), C_NODE_TYPE_NORMAL, -1));
 	}
 
 	AddNeighborLinks(pTile);
@@ -132,6 +134,18 @@ void NavGraphManager::RemoveTileNode(Tile *pTile)
 }
 
 
+void DrawWithShadow(int x, int y, const string &msg)
+{
+	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
+	GetApp()->GetFont(C_FONT_GRAY)->draw(x+1, y+1, msg);
+
+	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
+	GetApp()->GetFont(C_FONT_GRAY)->draw(x-1, y-1, msg);
+
+	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(255,255,30));
+	GetApp()->GetFont(C_FONT_GRAY)->draw(x, y, msg);
+
+}
 void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 {
 	if (!m_pNavGraph) return;
@@ -150,10 +164,12 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 		if (bDrawNodeIDs)
 		{
 			
-			GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
-			GetApp()->GetFont(C_FONT_GRAY)->draw(a.x-2, a.y-16, CL_String::from_int(pN->Index()));
-			GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(255,255,30));
-			GetApp()->GetFont(C_FONT_GRAY)->draw(a.x-3, a.y-17, CL_String::from_int(pN->Index()));
+			DrawWithShadow(a.x-3, a.y-17,  CL_String::from_int(pN->Index()));
+			if (pN->GetEntID() != -1)
+			{
+				DrawWithShadow(a.x-40, a.y-29,  "Type: " + CL_String::from_int(pN->GetType())+ " Parent: "+ CL_String::from_int(pN->GetEntID()));
+
+			}
 
 			//gdi->TextColor(200,200,200);
 			//gdi->TextAtPos((int)pN->Pos().x+5, (int)pN->Pos().y-5, ttos(pN->Index()));
@@ -174,9 +190,9 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 
 
 
-int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, const CL_Vector2 pos, int nodeType)
+int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, const CL_Vector2 pos, int nodeType)
 {
-	int a = pEnt->GetPathPlanner()->GetClosestNodeToPosition(pos, true);
+	int a = pEnt->GetPathPlanner()->GetClosestNodeToPosition(pMap, pos, true);
 
 	if (a == invalid_node_index)
 	{
@@ -185,7 +201,7 @@ int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, const CL_Vector2 
 	}
 
 	typedef Graph_SearchDijkstras_TS<NavGraphManager::NavGraph, FindSpecialNode> DijSearch;
-	Graph_SearchTimeSliced<NavGraph::EdgeType>*  pCurrentSearch =  new DijSearch(*m_pNavGraph,
+	Graph_SearchTimeSliced<NavGraph::EdgeType>*  pCurrentSearch =  new DijSearch(pMap->GetNavGraph()->GetGraph(),
 		a,nodeType);
 
 
@@ -201,7 +217,7 @@ int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, const CL_Vector2 
 
 
 	int chosenNode = pCurrentSearch->GetFinalNode();
-	delete pCurrentSearch;
+	SAFE_DELETE(pCurrentSearch);
 
 	return chosenNode;
 

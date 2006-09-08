@@ -450,8 +450,14 @@ void Screen::AddTile(Tile *pTile)
 	if (pTile->GetBit(Tile::e_pathNode))
 	{
 		GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->AddTileNode(pTile);
+		//LogMsg("Added graphid %d", pTile->GetGraphNodeID());
 	}
 
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+		
+		((TileEntity*)pTile)->GetEntity()->RunPostInitIfNeeded();
+	}
 	//early rejection to see if this tile's bounds are totally within this, otherwise it's an edge case and takes
 	//special preparation h
 
@@ -488,10 +494,12 @@ void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 	if ( (*itor)->GetType() != C_TILE_TYPE_REFERENCE )
 	{
 
+		
 		if ((*itor)->GetType() == C_TILE_TYPE_ENTITY)
 		{
 			GetTagManager->Remove(((TileEntity*)(*itor))->GetEntity());
 		} 
+		
 
 		if ((*itor)->GetBit(Tile::e_pathNode))
 		{

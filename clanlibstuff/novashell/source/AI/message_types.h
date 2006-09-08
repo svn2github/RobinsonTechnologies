@@ -16,4 +16,5 @@ enum
 	C_MSG_SEEK_ARRIVED = 1
 };
 
+
 #endif // message_types_h__

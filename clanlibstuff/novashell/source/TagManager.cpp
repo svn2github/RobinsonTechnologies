@@ -25,6 +25,8 @@ void TagManager::Kill()
 void TagManager::RegisterAsWarp(MovingEntity *pEnt, const string &targetName)
 {
 
+	
+	
 	TagObject * pTag = GetFromHash(pEnt->GetNameHash());
 	if (!pTag)
 	{
@@ -51,7 +53,7 @@ void TagManager::RegisterAsWarp(MovingEntity *pEnt, const string &targetName)
 
 void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 {
-	if (pEnt->GetNameHash() == 0) return; //don't hash this
+	if (pEnt->GetName().empty()) return; //don't hash this
 
 	unsigned int hashID = pEnt->GetNameHash();
 	TagObject *pObject = NULL;
@@ -73,12 +75,16 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 	} else
 	{
 		//an entry exists.  but is it the right one?
+		
+		
+		
 		list<TagObject> *pTagList = &m_tagMap[hashID];
 		list<TagObject>::iterator itorO = pTagList->begin();
 
 		//go through each item and see if it's supposed to be us or not
 		while (itorO != pTagList->end())
 		{
+			
 			if (itorO->m_entID == pEnt->ID() 
 				||
 				(
@@ -97,6 +103,26 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 				//LogMsg("updating existing (id %d)", pEnt->ID());
 				break;
 			}
+			
+			//we weren't the first item.   Bad.
+
+			/*
+			if (m_pEnt->GetNavNodeType() != C_NODE_TYPE_NORMAL)
+			{
+				//don't allow dupes of this type
+
+			}
+			*/
+
+			//let's just not allow dupes at all
+			
+			LogMsg("Conflict, tagname %s already in use.  Making unique.", pEnt->GetName().c_str());
+			pEnt->GetTile()->GetParentScreen()->GetParentWorldChunk()->SetDataChanged(true);
+			
+			pEnt->SetNameEx(pEnt->GetName() + 'A', false);
+			
+			return;
+
 			itorO++;
 		}
 
@@ -116,6 +142,8 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 	pObject->m_pos = pEnt->GetPos();
 	pObject->m_pWorld = pWorld;
 	pObject->m_entID = pEnt->ID();
+	pObject->m_hashID = hashID;
+	
 }
 
 TagObject * TagManager::GetFromHash(unsigned int hashID)
@@ -150,12 +178,10 @@ CL_Vector2 TagManager::GetPosFromName(const string &name)
 
 void TagManager::Remove(MovingEntity *pEnt)
 {
-	if (!pEnt || pEnt->GetNameHash() == 0) return;
+	if (!pEnt || pEnt->GetName().empty()) return;
 	
 	int hashID = pEnt->GetNameHash();
 	
-	if (pEnt->GetNameHash() == 0) return;
-
 	//remove it, but make sure it's the right one
 
 	TagResourceMap::iterator itor = m_tagMap.find(hashID);
@@ -167,9 +193,23 @@ void TagManager::Remove(MovingEntity *pEnt)
 		return;
 	} else
 	{
+		list<TagObject> *pTagList = &m_tagMap[hashID];
+		list<TagObject>::iterator itorO = pTagList->begin();
+
+		if (itorO->m_graphNodeID != invalid_node_index)
+			g_worldNavManager.RemoveNode(&(*itorO));
+
+		m_tagMap.erase(itor);
+
+
+		return;
+		
+		/*
 		//an entry exists.  but is it the right one?
 		list<TagObject> *pTagList = &m_tagMap[hashID];
 		list<TagObject>::iterator itorO = pTagList->begin();
+
+			//we used to allow dupes, not anymore.  The stuff below isn't used
 
 		//go through each item and see if it's supposed to be us or not
 		while (itorO != pTagList->end())
@@ -197,6 +237,7 @@ void TagManager::Remove(MovingEntity *pEnt)
 			}
 			itorO++;
 		}
+		*/
 	}
 
 		LogError("Failed to remove hash %d (ID %d) in list search", hashID, pEnt->ID());
@@ -218,11 +259,17 @@ void TagManager::PrintStatistics()
 		list<TagObject>::iterator itorO = pTagList->begin();
 		while (itorO != pTagList->end())
 		{
+			MovingEntity *pEnt = NULL;
+			string extra;
+
 			if (itorO->m_entID != 0)
 			{
-				MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(itorO->m_entID);
+				pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(itorO->m_entID);
 				if (pEnt)
 				{
+					extra = "GraphID: "+ CL_String::from_int(itorO->m_graphNodeID) + " WarpTarget: " + itorO->m_warpTarget;
+				
+					
 					name = pEnt->GetName();
 				} else
 				{
@@ -232,7 +279,15 @@ void TagManager::PrintStatistics()
 			{
 				name = itorO->m_tagName;
 			}
-			LogMsg("    Entity %s (%d) located at %s (in %s)", name.c_str(), itorO->m_entID, PrintVector(itorO->m_pos).c_str(), itorO->m_pWorld->GetName().c_str());
+
+
+if (pEnt)
+{
+	assert(pEnt->GetName() == itorO->m_tagName && "Name mismatch! Out of date?");
+}
+			LogMsg("    Entity %s (%d) located at %s (in %s) Hash:%u %s", itorO->m_tagName.c_str(), itorO->m_entID, PrintVector(itorO->m_pos).c_str(), itorO->m_pWorld->GetName().c_str(), 
+				itorO->m_hashID, extra.c_str());
+
 			itorO++;
 		}
 

@@ -10,6 +10,8 @@
 //-----------------------------------------------------------------------------
 void Goal_MoveToMapAndPos::Activate()
 {
+	m_bRequestNextChunk = false;
+	
 	m_iStatus = active;
 	//make sure the subgoal list is clear.
 	RemoveAllSubgoals();
@@ -19,19 +21,16 @@ void Goal_MoveToMapAndPos::Activate()
 	if (!m_bTriedSimpleWay && m_pDestMap == m_pOwner->GetMap())
 	{
 		m_bTriedSimpleWay = true;
-
-		LogMsg("Trying simple");
-		//we don't reall need this fancy system?
+	
+		//we don't really need this fancy system?
 		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
 		return;
 		//however, if this fails, we'll need it.
 	}
 
 
-	//the destination is on a different map.  We need to sketch out a path to get to that map.
-	LogMsg("Planning the super!");
-
-
+	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
+	
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
 	
 	if (!m_macroPath.IsValid())
@@ -40,52 +39,14 @@ void Goal_MoveToMapAndPos::Activate()
 		LogMsg("Failed to find valid path between maps");
 		return;
 	}
+	
+	
+	//we have data on which way to go
+
+	ProcessNextMapChunk();
+	
+
 	/*
-	bool bUsePath = m_pOwner->GetPathPlanner()->IsPathNeededToGetToTarget(m_vDestination);
-
-	if (bUsePath)
-	{
-
-		//compute path
-		if (m_pOwner->GetPathPlanner()->RequestPathToPosition(m_vDestination))
-		{
-			//we can do it?
-
-			int result;
-
-			//this is setup to do searches over time, but for now, let's just do the whole search now
-			//and not mess with getting messages later about it
-			do 
-			{
-				result = m_pOwner->GetPathPlanner()->CycleOnce();
-			} while( result == search_incomplete );
-
-			//examine results
-
-			switch (result)
-			{
-
-			case target_not_found:
-				LogMsg("Couldn't locate target.  Doing blind seek instead.");
-				bUsePath = false;
-				break;
-
-			case target_found:
-				//			  LogMsg("Found it");
-				break;
-
-			default:
-				assert(!"Unknown search result");
-			}
-
-		} else
-		{
-			LogMsg("Error computing path?");
-			bUsePath = false;
-		}
-	}
-
-
 	//actually do something
 
 	if (bUsePath)
@@ -100,6 +61,36 @@ void Goal_MoveToMapAndPos::Activate()
 	*/
 }
 
+
+void Goal_MoveToMapAndPos::ProcessNextMapChunk()
+{
+	m_bRequestNextChunk = false;
+
+	if (!m_macroPath.IsValid())
+	{
+		//no more macro path, just move to the right spot now and we're done
+		assert(m_pDestMap == m_pOwner->GetMap() && "How this happen?!");
+		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
+		return;
+	}
+	
+	int nextNodeID = m_macroPath.m_path.front();
+	
+	LogMsg("Going to node %d", nextNodeID);
+
+	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID);
+	
+	if (!pNodeEnt)
+	{
+		LogError("Node no longer exists?");
+		m_iStatus = inactive; //make it restart
+	} else
+	{
+		AddSubgoal(new Goal_MoveToPosition(m_pOwner, pNodeEnt->GetPos()));
+	}
+
+}
+
 //------------------------------ Process --------------------------------------
 //-----------------------------------------------------------------------------
 int Goal_MoveToMapAndPos::Process()
@@ -107,11 +98,50 @@ int Goal_MoveToMapAndPos::Process()
 	//if status is inactive, call Activate()
 	ActivateIfInactive();
 
+	if (m_bRequestNextChunk)
+	{
+		ProcessNextMapChunk();
+	}
+	
 	//process the subgoals
 	m_iStatus = ProcessSubgoals();
 
+	if (m_iStatus == completed)
+	{
+		if (m_macroPath.IsValid())
+		{
+			//go to the next leg of the journey perhaps
+			m_macroPath.m_path.pop_front();
+
+			if (!m_macroPath.IsValid())
+			{
+				LogError("Path cut off early?");
+				m_iStatus = inactive;
+			} else
+			{
+
+
+				int nextNodeID = m_macroPath.m_path.front();
+				MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID);
+
+				if (!pNodeEnt)
+				{
+					LogMsg("Warp node was deleted?");
+					m_iStatus = inactive; //force a restart
+
+				} else
+				{
+					m_pOwner->SetPosAndMap(pNodeEnt->GetPos(), pNodeEnt->GetMap()->GetName());
+					m_macroPath.m_path.pop_front();
+					m_iStatus = active;
+					m_bRequestNextChunk = true;
+				
+				}
+			}
+		}
+	}
 	//if any of the subgoals have failed then this goal re-plans
-	
+
 	ReactivateIfFailed();
 
 	return m_iStatus;

@@ -33,7 +33,7 @@ public:
 
 	void Kill();
 	bool AddWorld(string stPath); //add it to our list without actually loading anything
-	bool LoadWorld(string stPath); //load main data file, with thumbnails
+	bool LoadWorld(string stPath, bool bSetActiveIfNoneIs = true); //load main data file, with thumbnails
 	void UnloadWorldByName(const string &stName);
 
 	World * GetActiveWorld();

@@ -3,6 +3,7 @@
 #include "AppUtils.h"
 #include "GameLogic.h"
 #include "AI/NavGraphManager.h"
+#include "AI/WorldNavManager.h"
 
 #define C_DEFAULT_THUMBNAIL_WIDTH 8
 #define C_DEFAULT_THUMBNAIL_HEIGHT 8
@@ -70,6 +71,21 @@ World::World()
 
 }
 
+int World::GetMasterNavMapID()
+{
+	
+	assert(!"We don't use this anymore");
+	//we'll have each node link to one central "map" node.
+	
+	/*
+	if (m_masterNavMapID == invalid_node_index)
+	{
+		g_worldNavManager.GetGraph()->AddNode(GraphNode(
+			m_masterNavMapID = g_worldNavManager.GetGraph().GetNextFreeNodeIndex()));
+	}
+*/
+	return m_masterNavMapID;
+}
 
 bool World::TestCoordPacker(int x, int y)
 {
@@ -107,6 +123,17 @@ void World::Kill()
     m_worldMap.clear();
 	SAFE_DELETE(m_pNavGraphManager);
  }
+
+EntWorldCache * World::GetMyWorldCache()
+{
+	if (!m_pWorldCache)
+	{
+		GetWorldManager->LoadWorld(GetDirPath(), false);
+		PreloadMap();
+	}
+
+	return m_pWorldCache;
+}
 
 NavGraphManager * World::GetNavGraph()
 {
@@ -341,7 +368,6 @@ void World::AddTile(Tile *pTile)
 	pScreen->AddTile(pTile);
 }
 
-//later redo this using mountable resources once I understand how that crap works
 
 bool World::Load(string dirPath) 
 {

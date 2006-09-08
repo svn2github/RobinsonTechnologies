@@ -8,6 +8,7 @@
 #include "EntEditMode.h"
 #include "GeneratorDink.h"
 #include "Console.h"
+#include "AI/WorldNavManager.h"
 
 EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
@@ -512,6 +513,13 @@ void EntEditor::OnEditSetupConstants()
 	OpenScriptForEditing(file);
 
 }
+void EntEditor::OnDumpWorldNavStatistics()
+{
+	g_worldNavManager.DumpStatistics();
+	g_Console.SetOnScreen(true);
+
+}
+
 
 bool EntEditor::Init()
 {
@@ -617,6 +625,9 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 
 	pItem = m_pMenu->create_item("Display/Dump Engine Statistics");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnDumpEngineStatistics);
+
+	pItem = m_pMenu->create_item("Display/Dump World Nav Statistics");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnDumpWorldNavStatistics);
 
 	pItem = m_pMenu->create_item("Display/ ");
 	pItem = m_pMenu->create_item("Display/(Grave aka backtick aka Unshifted-Tilde to toggle the debug console");

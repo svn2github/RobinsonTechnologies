@@ -52,6 +52,7 @@ public:
   void Kill();
   bool Init();
   virtual void SetName(const std::string &name);
+  void SetNameEx(const std::string &name, bool bRemoveOldTag);
 
   const CL_Vector2 & GetPos() {return *(CL_Vector2*)&m_body.GetPosition();}
   void  SetPos(const CL_Vector2 &new_pos);
@@ -87,7 +88,10 @@ public:
   bool LoadScript(const char *pFileName);
   void SetMainScriptFileName(const string &fileName);
   const string & GetMainScriptFileName() {return m_mainScript;}
-  
+  int GetNavNodeType(){return m_navNodeType;}
+  void SetNavNodeType(int n);
+  void SetHasPathNode(bool bHasNode);
+
   VisualProfile * GetVisualProfile() {return m_pVisualProfile;}
   void Serialize(CL_FileHelper &helper);
   void LoadCollisionInfo(const string &fileName);
@@ -116,7 +120,7 @@ public:
   float GetDistanceFromEntityByID(int id);
   int GetLayerID() {assert(m_pTile); return m_pTile->GetLayer();}
   void SetLayerID(int id) {assert(m_pTile); m_pTile->SetLayer(id); m_bMovedFlag = true;}
-
+  
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
   Zone * GetZoneWeAreOnByMaterialType(int matType);
   Zone * GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType);
@@ -184,16 +188,18 @@ public:
   float GetMaxWalkSpeed() {return m_maxWalkSpeed;}
   void SetMaxWalkSpeed(float s) {m_maxWalkSpeed = s;}
   bool IsPlaced() {return m_pTile->GetParentScreen() != 0;}
+  bool IsInitted() {return m_bHasRunOnInit;}
   bool IsFacingTarget(float tolerance); 
 
   bool CanWalkTo(CL_Vector2 &pos, bool ignoreLivingCreatures);
-  bool CanWalkBetween(CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures);
+  bool CanWalkBetween(World *pMap, CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures);
   PathPlanner * GetPathPlanner();
   void SetRunStringASAP(const string &command);
   void SetDrawID(unsigned int drawID) {m_drawID = drawID;} //normally not needed, but
   //I had some problems with stale drawID's in the WatchManager
   void ProcessPendingMoveAndDeletionOperations();
   World * GetMap();
+  void RunPostInitIfNeeded();
 
   enum ListenCollision
 {
@@ -295,7 +301,9 @@ protected:
 	float m_maxWalkSpeed;
 	PathPlanner * m_pPathPlanner;
 	string m_runScriptASAP; //empty if not being used, only used for the RunScript Goal
-
+	int m_navNodeType; //only used if this entity has a pathnode, allows special markings for the graph, like doors or warps
+	bool m_bHasRunOnInit;
+	bool m_bHasRunPostInit;
 
 };
 

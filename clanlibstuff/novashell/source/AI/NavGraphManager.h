@@ -36,7 +36,7 @@ public:
 	void RemoveTileNode(Tile *pTile);
 	float GetNodeMaxLinkDistance() {return 200;}
 	World * GetParent() {return m_pWorld;}
-	int GetClosestSpecialNode(MovingEntity *pEnt, const CL_Vector2 pos, int nodeType);
+	int GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, const CL_Vector2 pos, int nodeType);
 
 protected:
 	

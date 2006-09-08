@@ -524,6 +524,8 @@ void EntWorldCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 //break this rect down into chunks to feed into the screens to get tile info
 void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/)
 {
+	
+	
 	CL_Rect rec(recArea);
 	rec.normalize();
     static int startingX;
@@ -838,6 +840,10 @@ void EntWorldCache::OnMapChange()
 
 	//insure that this isn't run again
 	ClearTriggers();
+
+	//don't want to cache old data either
+	m_tileLayerDrawList.clear();
+
 }
 void EntWorldCache::Render(void *pTarget)
 {
