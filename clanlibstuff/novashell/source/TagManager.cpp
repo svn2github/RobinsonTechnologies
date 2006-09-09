@@ -119,7 +119,7 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 			LogMsg("Conflict, tagname %s already in use.  Making unique.", pEnt->GetName().c_str());
 			pEnt->GetTile()->GetParentScreen()->GetParentWorldChunk()->SetDataChanged(true);
 			
-			pEnt->SetNameEx(pEnt->GetName() + 'A', false);
+			pEnt->SetNameEx(pEnt->GetName() + char('A' + random_range(0,25)), false);
 			
 			return;
 
@@ -318,11 +318,32 @@ void TagManager::Save(World *pWorld)
 		list<TagObject>::iterator itorO = pTagList->begin();
 		while (itorO != pTagList->end())
 		{
-			   //save out our entries if this is really from our world
+			   
+			
+			
+			//save out our entries if this is really from our world
 				if (itorO->m_pWorld == pWorld)
 				{
+					
+					if (itorO->m_entID != 0)
+					{
+						//let's get data directly from the entity first to fix any sync problems if it wasn't updated
+						//on the last frame
+						MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(itorO->m_entID);
+						if (!pEnt)
+						{
+							LogError("Tagcache data for %s is wrong", itorO->m_tagName.c_str());
+						} else
+						{
+							
+							itorO->m_pos = pEnt->GetPos();
+						}
+
+					}
+					
 					helper.process(tag);
 					helper.process_const( itor->first);
+					
 					helper.process(itorO->m_pos);
 					helper.process(itorO->m_tagName);
 					helper.process(itorO->m_warpTarget);

@@ -156,7 +156,7 @@ bool TextObject::UpdateDialog(bool bFancyPositioning)
 	
 	//now we need to position it
 
-	CL_Vector2 entPos = GetWorldCache->WorldToScreen(m_pEntity->GetPos());
+	CL_Vector2 entPos = m_pEntity->GetMap()->GetMyWorldCache()->WorldToScreen(m_pEntity->GetPos());
 	
 	m_pos = CL_Point(entPos.x- (m_rect.right/2)  , entPos.y - m_rect.bottom );
 

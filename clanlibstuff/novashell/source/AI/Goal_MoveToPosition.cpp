@@ -3,6 +3,7 @@
 #include "Goal_SeekToPosition.h"
 #include "PathPlanner.h"
 #include "Goal_FollowPath.h"
+#include "message_types.h"
 
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
@@ -40,8 +41,12 @@ void Goal_MoveToPosition::Activate()
 		  case target_not_found:
 			 
 			  LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
-			  m_iStatus = failed;
-			  return;
+			  if (m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK)))
+			  {
+				  //parent signaled that they want to handle it
+				  m_iStatus = failed;
+				  return;
+			  }
 			  
 			  bUsePath = false;
 			  break;
@@ -56,7 +61,14 @@ void Goal_MoveToPosition::Activate()
 
 	  } else
 	  {
-		  LogMsg("Error computing path?");
+		  
+		  if (m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK)))
+		  {
+			  //parent signaled that they want to handle it
+			  m_iStatus = failed;
+			  return;
+		  }
+		  LogMsg("%s had an error computing path.", m_pOwner->GetName().c_str());
 		  bUsePath = false;
 	  }
 
@@ -90,6 +102,16 @@ void Goal_MoveToPosition::Activate()
 	  //process the subgoals
 	  m_iStatus = ProcessSubgoals();
 
+		 
+	  /*
+	  if (m_iStatus == failed)
+	  {
+		  if (m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK)))
+		  {
+			  return m_iStatus;
+		  }
+	  }
+	  */
 	  //if any of the subgoals have failed then this goal re-plans
 	  ReactivateIfFailed();
 

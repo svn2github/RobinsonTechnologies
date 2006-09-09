@@ -52,12 +52,7 @@ void WorldNavManager::RemoveNode(TagObject *pTag)
 bool WorldNavManager::DoNodesConnect(World *pMap, int a, int b)
 {
 	//well, there must be some awesome shortcut to figure this out where you don't care about the path, but for now:
-		assert(a != b && "They are the same node!");
-
-		typedef Graph_SearchAStar<NavGraphManager::NavGraph, Heuristic_Euclid> AStar;
-
-		AStar search(pMap->GetNavGraph()->GetGraph(), a, b);
-		return search.IsPathValid();
+	return pMap->GetNavGraph()->DoNodesConnect(ConvertWorldNodeToMapNode(a), ConvertWorldNodeToMapNode(b));
 }
 
 void WorldNavManager::LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc)
@@ -193,6 +188,19 @@ int WorldNavManager::ConvertMapNodeToWorldNode(World *pMap, int mapNode)
 
 };
 
+int WorldNavManager::ConvertWorldNodeToMapNode(int nodeID)
+{
+	MovingEntity *pEnt = ConvertWorldNodeToOwnerEntity(nodeID);
+	if (pEnt)
+	{
+		return pEnt->GetTile()->GetGraphNodeID();
+	} else
+	{
+		LogError("ConvertWorldNodeAToMapNode failed.  NodeID %d doesn't have a mapID equivelent.", nodeID);
+	}
+
+	return invalid_node_index;
+}
 MovingEntity * WorldNavManager::ConvertWorldNodeToOwnerEntity(int nodeID)
 {
 	GraphNode &n =m_pNavGraph->GetNode(nodeID);
@@ -200,7 +208,6 @@ MovingEntity * WorldNavManager::ConvertWorldNodeToOwnerEntity(int nodeID)
 	TagObject *pTag = g_TagManager.GetFromHash(n.GetTagHashID());
 	if (!pTag)
 	{
-		
 		return NULL;
 	} 
 
@@ -268,6 +275,84 @@ void WorldNavManager::DumpStatistics()
 
 }
 
+void WorldNavManager::StripUnrequiredNodesFromPath(MacroPathInfo &m)
+{
+	
+	//first the starting ones..
+	
+	if (m.m_path.size() == 1) 
+	{
+		//it looks like the path is so simple we didn't need the world manager at all...
+		return;
+	}
+	MovingEntity *pNodeEntA, *pNodeEntB;
+	
+	while (1)
+	{
+		assert(m.m_path.size() > 1 && "Huh?!");
+		//get first node
+		pNodeEntA = ConvertWorldNodeToOwnerEntity(m.m_path.front());
+		pNodeEntB = ConvertWorldNodeToOwnerEntity( *(++m.m_path.begin()) );
+
+		if (pNodeEntA->GetMap() == pNodeEntB->GetMap())
+		{
+			//they are on the same map, this MIGHT be ok, but only if the nodes are not connected.
+			//(NPC's won't use warps/doors if the path is directly walkable)
+			
+			//do these actually connect?  If so, screw 'em
+			if (pNodeEntA->GetMap()->GetNavGraph()->DoNodesConnect(pNodeEntA->GetTile()->GetGraphNodeID(),
+				pNodeEntB->GetTile()->GetGraphNodeID()))
+			{
+				//they are actually linked making this one unneeded
+				m.m_path.pop_front();
+			} else
+			{
+				//they don't connect, it's a warp.  carry on
+				break;
+			}
+		} else
+		{
+			//two nodes on different maps? yeah, we're done scanning here
+			break;
+		}
+	}
+	
+	//same thing for the other side of the list, the destination
+
+	while (1)
+	{
+		assert(m.m_path.size() > 1 && "Huh?!");
+		//get first node
+		pNodeEntA = ConvertWorldNodeToOwnerEntity(m.m_path.back());
+		pNodeEntB = ConvertWorldNodeToOwnerEntity( *( (-- (--m.m_path.end()) )));
+
+		if (pNodeEntA->GetMap() == pNodeEntB->GetMap())
+		{
+			//they are on the same map, this MIGHT be ok, but only if the nodes are not connected.
+			//(NPC's won't use warps/doors if the path is directly walkable)
+
+			//do these actually connect?  If so, screw 'em
+			if (pNodeEntA->GetMap()->GetNavGraph()->DoNodesConnect(pNodeEntA->GetTile()->GetGraphNodeID(),
+				pNodeEntB->GetTile()->GetGraphNodeID()))
+			{
+				//they are actually linked making this one unneeded
+				m.m_path.pop_back();
+			} else
+			{
+				//they don't connect, it's a warp.  carry on
+				break;
+			}
+		} else
+		{
+			//two nodes on different maps? yeah, we're done scanning here
+			break;
+		}
+	}
+
+
+
+}
+
 MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, World *pDestMap, CL_Vector2 vDest)
 {
 	//first we need to locate a door, any door, it doesn't have to  be the closest, it just has to be reachable
@@ -325,12 +410,17 @@ MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, World *pD
 	{
 		return m; //they can query this object to see it failed
 	}
-
+	
 	//we've located a way through that we know will work.
 
 	m.m_path = pCurrentSearch->GetPathToTarget();
 
-	//m.  pCurrentSearch->GetPathToTarget()
+	//before we send it back, we need to clean up the entry and exit part of the path, it may have
+	//extra nodes due to the trick we use to find a valid door to start/dest spot on both ends.
+	//(the paths between doors are precomputed and linked in the graph, but extra work is done to
+	//find a valid door that connects to the start and another one that can reach the dest pos.
+	
+	StripUnrequiredNodesFromPath(m);
 
 	return m;
 }

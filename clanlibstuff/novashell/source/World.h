@@ -99,7 +99,7 @@ public:
 	const string & GetName(){return m_strMapName;}
 	bool GetSnapEnabled() {return m_byteArray[e_byteSnapOn] != 0;}
 	void SetSnapEnabled(bool bNew) {m_byteArray[e_byteSnapOn] = bNew; m_bDataChanged = true;}
-	void SetMyWorldCache(EntWorldCache *pWorldCache) {m_pWorldCache = pWorldCache;}
+	void SetMyWorldCache(EntWorldCache *pWorldCache);
 	bool GetPersistent() {return m_byteArray[e_byteNotPersistent] == 0;}
 	void SetPersistent(bool bNew) {m_byteArray[e_byteNotPersistent] = !bNew; m_bDataChanged = true;}
 	bool GetAutoSave() {return m_byteArray[e_byteAutoSave] == 0;}
@@ -120,6 +120,8 @@ public:
 	void AddWarpTagHashID(unsigned int hashID);
 	void RemoveWarpTagHashID(unsigned int hashID);
 	tag_hash_list & GetWarpTagHashList() {return m_warpTagHashIDList;}
+	void SaveAndKill();
+	bool IsWorldCacheInitted() {return m_pWorldCache != NULL;}
 
 private:
 
@@ -187,6 +189,7 @@ private:
 	int m_masterNavMapID; //a central node that connects to all warps on this map
 	tag_hash_list m_warpTagHashIDList; //keep track of the hash's of named tagobjects WARPS that exist and belong to this map (note, only warps!)
 
+	bool m_bKillingMap; //true if we're killing everything
 };
 
 void RemoveWorldFiles(const string &path); //util for deleting stuff

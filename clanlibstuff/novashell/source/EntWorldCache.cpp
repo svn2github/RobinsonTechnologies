@@ -36,12 +36,16 @@ void EntWorldCache::SetWorld( World * pWorld)
 EntWorldCache::~EntWorldCache()
 {
     ClearCache();
-	//let the main engine know the world cache is gone
 }
 
 void EntWorldCache::ClearCache()
 {
 
+	//insure that this isn't run again
+	ClearTriggers();
+
+	//don't want to cache old data either
+	m_tileLayerDrawList.clear();
 }
 
 //TODO: these should be rewritten for speed later
@@ -838,11 +842,7 @@ void EntWorldCache::OnMapChange()
 		}
 	}
 
-	//insure that this isn't run again
-	ClearTriggers();
-
-	//don't want to cache old data either
-	m_tileLayerDrawList.clear();
+	ClearCache();
 
 }
 void EntWorldCache::Render(void *pTarget)

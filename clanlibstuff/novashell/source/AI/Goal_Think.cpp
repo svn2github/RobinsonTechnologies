@@ -99,7 +99,7 @@ void Goal_Think::PushMoveToTag(TagObject *pTag)
 {
 	if (!pTag)
 	{
-		LogError("PushMoveToTag: Invalid Tag");
+		LogError("PushMoveToTag: Invalid Tag: %s", pTag->m_tagName.c_str());
 		return;
 	}
 

@@ -18,6 +18,12 @@
 class WorldInfo
 {
 public:
+	
+	~WorldInfo()
+	{
+		m_worldCache.ClearCache();
+		m_world.SaveAndKill();
+	}
 	World m_world;
 	EntWorldCache m_worldCache;
 };

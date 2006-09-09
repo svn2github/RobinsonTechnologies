@@ -4,6 +4,7 @@
 #include "WorldManager.h"
 #include "GameLogic.h"
 #include "AI/WorldNavManager.h"
+#include "AI/WatchManager.h"
 
 WorldManager::WorldManager()
 {
@@ -57,6 +58,7 @@ void WorldManager::Kill()
 	}
 
 	m_worldInfoList.clear();
+	g_watchManager.Clear();
 	m_pActiveWorld = NULL;
 	m_pActiveWorldCache = NULL;
 

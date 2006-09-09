@@ -16,6 +16,7 @@ WatchManager::~WatchManager()
 void WatchManager::Clear()
 {
 	m_watchList.clear();
+	m_postUpdateList.clear();
 }
 
 void WatchManager::Add(MovingEntity *pEnt, int timeToWatchMS)

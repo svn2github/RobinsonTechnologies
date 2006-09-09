@@ -338,6 +338,33 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 
 	if (helper.IsWriting())
 	{
+		if (!GetName().empty())
+		{
+
+			//g_TagManager.Update(GetMap(), this);
+#ifdef _DEBUG
+			//named entity.  Let's make sure the tagcache data is right
+			TagObject * pTag = g_TagManager.GetFromHash(m_hashedName);
+			if (!pTag)
+			{
+				LogError("%s's Tagcache data missing", GetName().c_str());
+			} else
+			{
+
+				if (pTag->GetPos() != GetPos())
+				{
+					LogError("%s's doesn't match his tagcache's position", GetName().c_str());
+				}
+				if (pTag->m_pWorld != GetMap())
+				{
+					LogError("%s's doesn't match his tagcache's world", GetName().c_str());
+				}
+			}
+#endif
+	
+		
+		}
+		
 		temp = GetName();
 		helper.process(temp);
 	} else

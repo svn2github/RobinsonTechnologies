@@ -13,7 +13,8 @@
 enum
 {
 	C_MSG_TEXT_ONLY = 0,
-	C_MSG_SEEK_ARRIVED = 1
+	C_MSG_SEEK_ARRIVED = 1,
+	C_MSG_GOT_STUCK = 3
 };
 
 

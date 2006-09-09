@@ -37,6 +37,7 @@ public:
 	float GetNodeMaxLinkDistance() {return 200;}
 	World * GetParent() {return m_pWorld;}
 	int GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, const CL_Vector2 pos, int nodeType);
+	bool DoNodesConnect(int a, int b);
 
 protected:
 	

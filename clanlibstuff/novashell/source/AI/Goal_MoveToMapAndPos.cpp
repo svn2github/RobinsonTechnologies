@@ -5,18 +5,17 @@
 #include "Goal_FollowPath.h"
 #include "World.h"
 #include "Goal_MoveToPosition.h"
+#include "message_types.h"
 
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
 void Goal_MoveToMapAndPos::Activate()
 {
 	m_bRequestNextChunk = false;
-	
+	m_macroPath.m_path.clear();
 	m_iStatus = active;
 	//make sure the subgoal list is clear.
 	RemoveAllSubgoals();
-
-
 
 	if (!m_bTriedSimpleWay && m_pDestMap == m_pOwner->GetMap())
 	{
@@ -30,7 +29,6 @@ void Goal_MoveToMapAndPos::Activate()
 
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
-	
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
 	
 	if (!m_macroPath.IsValid())
@@ -40,6 +38,17 @@ void Goal_MoveToMapAndPos::Activate()
 		return;
 	}
 	
+	if (m_macroPath.m_path.size() == 1)
+	{
+		//if this happens, it means we CAN actually go directly there without warping.  Possible the 
+		//m_bTriedSimpleWay thing failed.
+		assert(m_pDestMap == m_pOwner->GetMap());
+		m_macroPath.m_path.clear();
+		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
+		m_bTriedSimpleWay = false;
+		return;
+
+	}
 	
 	//we have data on which way to go
 
@@ -71,12 +80,13 @@ void Goal_MoveToMapAndPos::ProcessNextMapChunk()
 		//no more macro path, just move to the right spot now and we're done
 		assert(m_pDestMap == m_pOwner->GetMap() && "How this happen?!");
 		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
+		m_bTriedSimpleWay = false; //if we have to recompute, we can try this way again
 		return;
 	}
 	
 	int nextNodeID = m_macroPath.m_path.front();
 	
-	LogMsg("Going to node %d", nextNodeID);
+	LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
 
 	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID);
 	
@@ -86,6 +96,8 @@ void Goal_MoveToMapAndPos::ProcessNextMapChunk()
 		m_iStatus = inactive; //make it restart
 	} else
 	{
+		assert(pNodeEnt->GetMap() == m_pOwner->GetMap() && "How this happen?!");
+
 		AddSubgoal(new Goal_MoveToPosition(m_pOwner, pNodeEnt->GetPos()));
 	}
 
@@ -101,8 +113,9 @@ int Goal_MoveToMapAndPos::Process()
 	if (m_bRequestNextChunk)
 	{
 		ProcessNextMapChunk();
+		return m_iStatus;
 	}
-	
+
 	//process the subgoals
 	m_iStatus = ProcessSubgoals();
 
@@ -119,8 +132,6 @@ int Goal_MoveToMapAndPos::Process()
 				m_iStatus = inactive;
 			} else
 			{
-
-
 				int nextNodeID = m_macroPath.m_path.front();
 				MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID);
 
@@ -131,6 +142,11 @@ int Goal_MoveToMapAndPos::Process()
 
 				} else
 				{
+					//assert(m_pOwner->GetMap() == pNodeEnt->GetMap() && "This goal breaks if this happens, it assumes each graphid is a different map");
+					
+					LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
+						m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
+
 					m_pOwner->SetPosAndMap(pNodeEnt->GetPos(), pNodeEnt->GetMap()->GetName());
 					m_macroPath.m_path.pop_front();
 					m_iStatus = active;
@@ -162,6 +178,14 @@ bool Goal_MoveToMapAndPos::HandleMessage(const Message& msg)
 		switch(msg.GetMsgType())
 		{
 
+		case C_MSG_GOT_STUCK:
+
+		//	LogMsg("Reactivating from got stuck message");
+		//	RemoveAllSubgoals();
+		//	m_iStatus = inactive; //so it will activate next pass
+			return true; //signal that we handled it
+			break;
+
 			/*
 			case Msg_PathReady:
 
@@ -186,7 +210,7 @@ bool Goal_MoveToMapAndPos::HandleMessage(const Message& msg)
 	}
 
 	//handled by subgoals
-	return true;
+	return false;
 }
 
 //-------------------------------- Render -------------------------------------

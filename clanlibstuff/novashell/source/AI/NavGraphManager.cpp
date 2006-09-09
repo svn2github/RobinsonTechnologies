@@ -188,7 +188,15 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 
 }
 
+bool NavGraphManager::DoNodesConnect(int a, int b)
+{
+	assert(a != b && "They are the same node!");
 
+	//OPTIMIZE  can't this be optimized somehow?  We don't actually care about the path taken
+	typedef Graph_SearchAStar<NavGraph, Heuristic_Euclid> AStar;
+	AStar search(*m_pNavGraph,a,b);
+	return search.IsPathValid();
+}
 
 int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, const CL_Vector2 pos, int nodeType)
 {
@@ -196,14 +204,14 @@ int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, cons
 
 	if (a == invalid_node_index)
 	{
-		LogError("Not close enough to find a node");
+		LogError("Ent %d: %s in %s at %s: Not close enough to find a node", pEnt->ID(), pEnt->GetName().c_str(), pMap->GetName().c_str(),
+			PrintVector(pos).c_str());
 		return invalid_node_index;
 	}
 
 	typedef Graph_SearchDijkstras_TS<NavGraphManager::NavGraph, FindSpecialNode> DijSearch;
 	Graph_SearchTimeSliced<NavGraph::EdgeType>*  pCurrentSearch =  new DijSearch(pMap->GetNavGraph()->GetGraph(),
 		a,nodeType);
-
 
 	int result;
 	do {result = pCurrentSearch->CycleOnce();} while(result == search_incomplete);
@@ -215,10 +223,8 @@ int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, cons
 		return invalid_node_index; //they can query this object to see it failed
 	}
 
-
 	int chosenNode = pCurrentSearch->GetFinalNode();
 	SAFE_DELETE(pCurrentSearch);
 
 	return chosenNode;
-
 }

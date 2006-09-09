@@ -102,18 +102,27 @@ bool World::TestCoordPacker(int x, int y)
 	return true;
 }
 
-World::~World()
+void World::SaveAndKill()
 {
 	if (SaveRequested())
 	{
 		Save(true);
 	}
+	m_pWorldCache = NULL;
+	Kill();
+}
+
+World::~World()
+{
+	//assert(!m_worldMap.empty() && "You need to call SaveAndKill manually!");
 	Kill();
 }
 
 void World::Kill()
 {
-   WorldMap::iterator ent = m_worldMap.begin();
+  
+	m_pWorldCache = NULL; 
+	WorldMap::iterator ent = m_worldMap.begin();
     for (; ent != m_worldMap.end(); ++ent)
     {
         {
@@ -126,11 +135,14 @@ void World::Kill()
 
 EntWorldCache * World::GetMyWorldCache()
 {
+	
 	if (!m_pWorldCache)
 	{
+		LogMsg("Choosing to load world because someone wanted access to its world cache");
 		GetWorldManager->LoadWorld(GetDirPath(), false);
 		PreloadMap();
 	}
+	
 
 	return m_pWorldCache;
 }
@@ -796,3 +808,7 @@ void RemoveWorldFiles(const string &path)
 	RemoveFile(path+C_LAYER_FILENAME);
 }
 
+void World::SetMyWorldCache(EntWorldCache *pWorldCache)
+{
+	 m_pWorldCache = pWorldCache;
+}

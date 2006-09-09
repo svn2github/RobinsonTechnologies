@@ -15,6 +15,7 @@
 #include "VisualProfileManager.h"
 #include "AI/WatchManager.h"
 #include "AI/WorldNavManager.h"
+#include "AI/WatchManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -180,6 +181,7 @@ void GameLogic::ResetUserProfile(string name)
 	//also delete all
 
 	LogMsg("Resetting!");
+	g_textManager.Reset();
 
 	if (scanner.scan(stPath, "*"))
 	{
@@ -232,6 +234,8 @@ bool GameLogic::SetUserProfileName(const string &name)
 
 	//load globals
 	LoadGlobals();	
+
+	g_worldNavManager.LinkEverything();
 
 	return true;
 }
@@ -622,7 +626,10 @@ void MovePlayerToCamera()
 void GameLogic::ClearAllMapsFromMemory()
 {
    LogMsg("Clearing all maps");
+   g_textManager.Reset();
+
    m_worldManager.Kill();
+   
 }
 
 void MoveCameraToPlayer()

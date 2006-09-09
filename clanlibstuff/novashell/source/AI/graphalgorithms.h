@@ -550,6 +550,7 @@ private:
 
 	int                            m_iSource;
 	int                            m_iTarget;
+	bool m_bFoundTarget;
 
 	//the A* search algorithm
 	void Search();
@@ -564,7 +565,8 @@ public:
 		m_GCosts(graph.NumNodes(), 0.0),
 		m_FCosts(graph.NumNodes(), 0.0),
 		m_iSource(source),
-		m_iTarget(target)
+		m_iTarget(target),
+		m_bFoundTarget(false)
 	{
 		Search();   
 	}
@@ -605,7 +607,11 @@ void Graph_SearchAStar<graph_type, heuristic>::Search()
 		m_ShortestPathTree[NextClosestNode] = m_SearchFrontier[NextClosestNode];
 
 		//if the target has been found exit
-		if (NextClosestNode == m_iTarget) return;
+		if (NextClosestNode == m_iTarget)
+		{
+			m_bFoundTarget = true;		
+			return;
+		}
 
 		//now to test all the edges attached to this node
 		graph_type::ConstEdgeIterator ConstEdgeItr(m_Graph, NextClosestNode);
@@ -675,7 +681,7 @@ template <class graph_type, class heuristic>
 bool Graph_SearchAStar<graph_type, heuristic>::IsPathValid()const
 {
 	//just return an empty path if no target or no path found
-	return (m_iTarget > -1);
+	return (m_bFoundTarget);
 } 
 
 //---------------------- Graph_MinSpanningTree --------------------------------

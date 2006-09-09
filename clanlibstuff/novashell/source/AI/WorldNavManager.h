@@ -67,8 +67,12 @@ protected:
 	
 	void Kill();
 	void LinkMap(World *pMap);
-	int ConvertMapNodeToWorldNode(World *pMap, int mapNode);
+	void StripUnrequiredNodesFromPath(MacroPathInfo &m);
 
+	//these are not that fast, use with caution.
+	int ConvertMapNodeToWorldNode(World *pMap, int mapNode);
+	int ConvertWorldNodeToMapNode(int nodeID);
+	
 	//this map's accompanying navigation graph
 	NavGraph*                          m_pNavGraph;  
 
