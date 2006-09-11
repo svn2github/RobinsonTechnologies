@@ -1,6 +1,6 @@
 #include "AppPrecomp.h"
 #include "Goal_Delay.h"
-#include "..\MovingEntity.h"
+#include "MovingEntity.h"
 #include "Goal_Types.h"
 #include "message_types.h"
 
