@@ -3,7 +3,7 @@
 #include "AppUtils.h"
 #include "GameLogic.h"
 #include "AI/GraphAlgorithms.h"
-#include "AI/AStarHeuristicPolicies.h"
+#include "AStarHeuristicPolicies.h"
 #include "PathPlanner.h"
 
 NavGraphManager::NavGraphManager(World *pParent)
