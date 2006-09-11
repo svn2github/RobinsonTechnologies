@@ -6,6 +6,7 @@
 #include "ScriptManager.h"
 #include "VisualProfileManager.h"
 #include "Console.h"
+#include "AI/WatchManager.h"
 
 #ifdef WIN32
   //#define C_USE_FMOD
@@ -67,7 +68,8 @@ void LogError(const char *lpFormat, ...)
 
 App::App()
 {
-    m_uniqueNum = 0;
+    m_bJustRenderedFrame = false;
+	m_uniqueNum = 0;
 	m_bRequestToggleFullscreen = false;   
 	m_pResourceManager = NULL;
 	m_pCamera = NULL;
@@ -410,6 +412,7 @@ void App::Update()
 		}
 
 		m_pGameLogic->Update(m_delta);
+		m_bJustRenderedFrame = false;
 		m_thinkTicksToUse -= GetGameLogicSpeed();
 	}
 }
@@ -508,17 +511,19 @@ CL_Directory::change_to(CL_System::get_exe_path());
         // Run until someone presses escape
         while (!m_bQuit)
         {
- 			
 			if (m_HaveFocus)
             {
 			   if (m_bRequestToggleFullscreen) ToggleWindowedMode();
 
-                      if (m_bWindowResizeRequest) m_bWindowResizeRequest = false;
+                    m_bWindowResizeRequest = false;
                     
                     Update();
 
-                    GetGUI()->show(); //this will trigger our OnRender() which happens right before
+					GetGUI()->show(); //this will trigger our OnRender() which happens right before
 					//the gui is drawn too
+					m_bJustRenderedFrame = true; //sometimes we want to know if we just rendered something in the update logic, entities
+					//use to check if now is a valid time to see if they are onscreen or not without having to recompute visibility
+
 				    if (m_pGameLogic->GetShowFPS()) 
 					{
 						ResetFont(GetFont(C_FONT_NORMAL));
@@ -528,8 +533,8 @@ CL_Directory::change_to(CL_System::get_exe_path());
 						{
 							tiles = GetWorldCache->GetTilesRenderedLastFrameCount();
 						}
-						GetFont(C_FONT_NORMAL)->draw(GetScreenX-200,0, "FPS: " + CL_String::from_int(framerate.get_fps())
-							+" T: "+CL_String::from_int(tiles));
+						GetFont(C_FONT_NORMAL)->draw(GetScreenX-220,0, "FPS:" + CL_String::from_int(framerate.get_fps())
+							+" T:"+CL_String::from_int(tiles) + " W:"+CL_String::from_int(g_watchManager.GetWatchCount()));
 					}
 
 					 // Flip the display, showing on the screen what we have drawed

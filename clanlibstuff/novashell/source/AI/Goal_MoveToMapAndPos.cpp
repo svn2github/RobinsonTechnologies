@@ -27,6 +27,7 @@ void Goal_MoveToMapAndPos::Activate()
 		//however, if this fails, we'll need it.
 	}
 
+	//LogMsg("Ent %d (%s) is calculating a MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
@@ -34,7 +35,7 @@ void Goal_MoveToMapAndPos::Activate()
 	if (!m_macroPath.IsValid())
 	{
 		m_iStatus = failed;
-		LogMsg("Failed to find valid path between maps");
+		LogMsg("Ent %d (%s) failed to find valid path", m_pOwner->ID(), m_pOwner->GetName().c_str());
 		return;
 	}
 	
@@ -54,20 +55,6 @@ void Goal_MoveToMapAndPos::Activate()
 
 	ProcessNextMapChunk();
 	
-
-	/*
-	//actually do something
-
-	if (bUsePath)
-	{
-		AddSubgoal(new Goal_FollowPath(m_pOwner,
-			m_pOwner->GetPathPlanner()->GetPath()));
-	} else
-	{
-		//dumb seek method
-		AddSubgoal(new Goal_SeekToPosition(m_pOwner, m_vDestination));
-	}
-	*/
 }
 
 
@@ -86,7 +73,7 @@ void Goal_MoveToMapAndPos::ProcessNextMapChunk()
 	
 	int nextNodeID = m_macroPath.m_path.front();
 	
-	LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
+	//LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
 
 	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID);
 	
@@ -144,8 +131,8 @@ int Goal_MoveToMapAndPos::Process()
 				{
 					//assert(m_pOwner->GetMap() == pNodeEnt->GetMap() && "This goal breaks if this happens, it assumes each graphid is a different map");
 					
-					LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
-						m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
+					//LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
+					//	m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
 
 					m_pOwner->SetPosAndMap(pNodeEnt->GetPos(), pNodeEnt->GetMap()->GetName());
 					m_macroPath.m_path.pop_front();

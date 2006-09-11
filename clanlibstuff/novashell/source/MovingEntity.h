@@ -195,11 +195,13 @@ public:
   bool CanWalkBetween(World *pMap, CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures);
   PathPlanner * GetPathPlanner();
   void SetRunStringASAP(const string &command);
-  void SetDrawID(unsigned int drawID) {m_drawID = drawID;} //normally not needed, but
-  //I had some problems with stale drawID's in the WatchManager
   void ProcessPendingMoveAndDeletionOperations();
   World * GetMap();
   void RunPostInitIfNeeded();
+  void CheckVisibilityNotifications(unsigned int notificationID);
+  bool GetVisibilityNotifications() {return m_bRequestsVisibilityNotifications;}
+  void SetVisibilityNotifications(bool bNew) {m_bRequestsVisibilityNotifications = bNew;}
+  void OnWatchListTimeout(bool bIsOnScreen);
 
   enum ListenCollision
 {
@@ -246,6 +248,7 @@ protected:
 	void ProcessCollisionTile(Tile *pTile, float step);
 	void OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollide); 
 	void RotateTowardsFacingTarget(float step);
+	void SetIsOnScreen(bool bNew);
 	
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
@@ -304,6 +307,9 @@ protected:
 	int m_navNodeType; //only used if this entity has a pathnode, allows special markings for the graph, like doors or warps
 	bool m_bHasRunOnInit;
 	bool m_bHasRunPostInit;
+	unsigned int m_lastVisibilityNotificationID;
+	bool m_bRequestsVisibilityNotifications;
+	bool m_bOnScreen;
 
 };
 

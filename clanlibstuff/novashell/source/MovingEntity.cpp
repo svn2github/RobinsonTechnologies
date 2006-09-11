@@ -12,6 +12,8 @@
 #include "MaterialManager.h"
 #include "AI/Goal_Think.h"
 #include "AI/PathPlanner.h"
+#include "AI/WatchManager.h"
+
 
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT_PATH "media/script/"
@@ -33,6 +35,8 @@ MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_bUsingCustomCollisionData = false;
 	m_brainManager.SetParent(this);
 	m_hashedName = 0;
+    m_drawID = 0;
+
 
 	SetDefaults();
 }
@@ -214,8 +218,9 @@ void MovingEntity::SetDefaults()
 	m_trigger.Reset();
 	m_bHasRunOnInit = false;
 	m_bHasRunPostInit = false;
-
-
+	m_bRequestsVisibilityNotifications = false;
+	m_lastVisibilityNotificationID = 0;
+	m_bOnScreen = false;
 
 }
 
@@ -244,13 +249,11 @@ void MovingEntity::SetHasPathNode(bool bHasNode)
 
 Goal_Think * MovingEntity::GetGoalManager()
 {
-
 	//create it if it doesn't exist
-
 	if (m_pGoalManager) return m_pGoalManager;
-	
 	return (m_pGoalManager = new Goal_Think(this, "Base"));
 }
+
 void MovingEntity::SetFacingTarget(int facing)
 {
 	SetVectorFacingTarget(FacingToVector(facing));
@@ -263,8 +266,8 @@ void MovingEntity::SetVisualState(int visualState)
 		m_bRestartAnim = true;
 	}
 	m_visualState = visualState;
-
 }
+
 void MovingEntity::SetFacing(int facing)
 {
 	m_facing = facing;
@@ -338,11 +341,10 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 
 	if (helper.IsWriting())
 	{
+
+#ifdef _DEBUG
 		if (!GetName().empty())
 		{
-
-			//g_TagManager.Update(GetMap(), this);
-#ifdef _DEBUG
 			//named entity.  Let's make sure the tagcache data is right
 			TagObject * pTag = g_TagManager.GetFromHash(m_hashedName);
 			if (!pTag)
@@ -360,10 +362,8 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 					LogError("%s's doesn't match his tagcache's world", GetName().c_str());
 				}
 			}
-#endif
-	
-		
 		}
+#endif
 		
 		temp = GetName();
 		helper.process(temp);
@@ -532,11 +532,9 @@ Zone * MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
  return NULL; //nothing found
 }
 
-
-
 Zone * MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
 {
-	
+
 	if ( m_zoneVec.size() == 0) return NULL;
 
 	static CL_Rectf r;
@@ -548,7 +546,6 @@ Zone * MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
 		{
 			if (r.is_overlapped(m_zoneVec[i].m_boundingRect + *(CL_Pointf*)&(m_zoneVec[i].m_vPos)) )
 			{
-
 				return &m_zoneVec[i]; //valid for the rest of this frame
 			}
 			
@@ -622,7 +619,6 @@ bool MovingEntity::Init()
 			SetCollisionInfoFromPic(picID, picSrcRect);
 			m_bUsingSimpleSprite = true;
 		}
-
 	}
 
 	if (!m_pSprite)
@@ -682,20 +678,10 @@ bool MovingEntity::Init()
 	return true;
 }
 
-
-
 void MovingEntity::RunPostInitIfNeeded()
 {
 	if (!m_bHasRunPostInit)
 	{
-
-		/*
-		if (!GetName().empty())
-		{
-			GetTagManager->Update(GetMap(), this);
-			assert(m_hashedName != 0 && "Where's the hash?!");
-		}
-		*/
 
 		if (m_pScriptObject)
 		{
@@ -706,6 +692,7 @@ void MovingEntity::RunPostInitIfNeeded()
 		m_bHasRunPostInit = true;
 	}
 }
+
 bool MovingEntity::LoadScript(const char *pFileName)
 {
 	SAFE_DELETE(m_pScriptObject);
@@ -1250,9 +1237,6 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 		m_pSprite->set_frame(frameTemp);
 		
 	}
-
-	
-
 }
 
 void MovingEntity::ApplyGenericMovement(float step)
@@ -1308,7 +1292,6 @@ void MovingEntity::ApplyGenericMovement(float step)
 	{
 		m_ticksOnGround = 0;
 	}
-	
 	
 }
 
@@ -1543,10 +1526,24 @@ void MovingEntity::ProcessPendingMoveAndDeletionOperations()
 	}
 }
 
+void MovingEntity::CheckVisibilityNotifications(unsigned int notificationID)
+{
+	
+	if (GetGameLogic->GetGamePaused()) return;
+
+	if (notificationID != m_lastVisibilityNotificationID)
+	{
+		SetIsOnScreen(false);
+	} 
+}
+
 void MovingEntity::Update(float step)
 {
 
 if (GetGameLogic->GetGamePaused()) return;
+
+	
+	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 
 	ClearColorMods();
 
@@ -1578,11 +1575,60 @@ if (GetGameLogic->GetGamePaused()) return;
 
 }
 
+void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
+{
+	if (!bIsOnScreen)
+	{
+		
+		if (GetVisibilityNotifications())
+		{
+			//hack so the onlosescreen won't run again
+			g_watchManager.RemoveFromVisibilityList(this);
+		}
+
+		try {luabind::call_function<luabind::object>(GetScriptObject()->GetState(), "OnWatchTimeout", bIsOnScreen);
+		} LUABIND_ENT_CATCH( "Error while calling function OnWatchTimeout(bool bIsOnScreen)");
+
+	}
+}
+
+
+void MovingEntity::SetIsOnScreen(bool bNew)
+{
+	if (bNew != m_bOnScreen)
+	{
+		m_bOnScreen = bNew;
+
+		if (m_bOnScreen)
+		{
+			//LogMsg("Ent %d (%s) has just entered the screen", ID(), GetName().c_str());
+			RunFunction("OnGetVisible");
+		} else
+		{
+			RunFunction("OnLoseVisible");
+			//LogMsg("Ent %d (%s) has left the screen", ID(), GetName().c_str());
+		}
+	}
+
+}
+
 void MovingEntity::PostUpdate(float step)
 {
 
 	if (GetGameLogic->GetGamePaused()) return;
 
+	if (m_bRequestsVisibilityNotifications)
+	{
+
+		if (m_lastVisibilityNotificationID != g_watchManager.GetVisibilityID())
+		{
+			SetIsOnScreen(true);
+		}
+
+		g_watchManager.AddEntityToVisibilityList(this);
+	}
+
+	
 	m_brainManager.PostUpdate(step);
 
 	const static float groundDampening = 1.6f;

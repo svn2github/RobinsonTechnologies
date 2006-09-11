@@ -229,6 +229,8 @@ void luabindMisc(lua_State *pState)
 
 		,class_<WatchManager>("WatchManager")
 		.def("Add", &WatchManager::Add)
+		.def("Remove", &WatchManager::Remove)
+		.def("GetWatchCount", &WatchManager::GetWatchCount)
 		
 		,
 		//stand alone functions

@@ -35,13 +35,20 @@ public:
 	void PostUpdate(float step);
 	void ProcessPendingEntityMovementAndDeletions();
 	void OnEntityDeleted(MovingEntity *pEnt);
-
+	void AddEntityToVisibilityList(MovingEntity *pEnt);
 	void Clear();
+	int GetWatchCount() {return m_watchList.size();}
+	void RemoveFromVisibilityList(MovingEntity *pEnt);
+	void Remove(MovingEntity *pEnt);
+
+	unsigned int GetVisibilityID() {return m_visibilityID;}
 
 protected:
 
 	watch_list m_watchList;
 	vector<MovingEntity*> m_postUpdateList;
+	vector<MovingEntity*> m_visibilityNotificationList; //entities we need to check to see if they weren't rendered the next frame
+	unsigned int m_visibilityID; //changes every update cycle
 
 private:
 };

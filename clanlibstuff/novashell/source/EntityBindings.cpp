@@ -123,6 +123,7 @@ void luabindEntity(lua_State *pState)
 			.def("IsPlaced", &MovingEntity::IsPlaced)
 			.def("SetNavNodeType", &MovingEntity::SetNavNodeType)
 			.def("SetHasPathNode", &MovingEntity::SetHasPathNode)
+			.def("SetVisibilityNotifications", &MovingEntity::SetVisibilityNotifications)
 		];
 }
 

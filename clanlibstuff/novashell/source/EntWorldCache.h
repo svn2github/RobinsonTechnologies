@@ -69,7 +69,6 @@ protected:
 	EntWorldChunkVector m_worldChunkVector; //what screens are currently viewable
 	tile_vector m_tileLayerDrawList; //what tiles are currently viewable
 	moving_entity_vector m_entityList; //for checking for movement/deletions, special things
-
 	unsigned int m_cacheCheckTimer;
 	bool m_bDrawWorldChunkGrid;
 	bool m_bDrawCollisionData;

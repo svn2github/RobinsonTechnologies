@@ -25,7 +25,7 @@ void TagManager::Kill()
 void TagManager::RegisterAsWarp(MovingEntity *pEnt, const string &targetName)
 {
 
-	
+	if (targetName.empty()) return; //can't register a blank
 	
 	TagObject * pTag = GetFromHash(pEnt->GetNameHash());
 	if (!pTag)
@@ -76,8 +76,6 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 	{
 		//an entry exists.  but is it the right one?
 		
-		
-		
 		list<TagObject> *pTagList = &m_tagMap[hashID];
 		list<TagObject>::iterator itorO = pTagList->begin();
 
@@ -116,11 +114,12 @@ void TagManager::Update(World *pWorld, MovingEntity *pEnt)
 
 			//let's just not allow dupes at all
 			
-			LogMsg("Conflict, tagname %s already in use.  Making unique.", pEnt->GetName().c_str());
+			string newName = pEnt->GetName() + char('A' + random_range(0,25));
+
+			LogMsg("Conflict, tagname %s already in use.  Making unique name %s.", pEnt->GetName().c_str(),
+				newName.c_str());
 			pEnt->GetTile()->GetParentScreen()->GetParentWorldChunk()->SetDataChanged(true);
-			
-			pEnt->SetNameEx(pEnt->GetName() + char('A' + random_range(0,25)), false);
-			
+			pEnt->SetNameEx(newName, false);
 			return;
 
 			itorO++;
@@ -200,44 +199,7 @@ void TagManager::Remove(MovingEntity *pEnt)
 			g_worldNavManager.RemoveNode(&(*itorO));
 
 		m_tagMap.erase(itor);
-
-
 		return;
-		
-		/*
-		//an entry exists.  but is it the right one?
-		list<TagObject> *pTagList = &m_tagMap[hashID];
-		list<TagObject>::iterator itorO = pTagList->begin();
-
-			//we used to allow dupes, not anymore.  The stuff below isn't used
-
-		//go through each item and see if it's supposed to be us or not
-		while (itorO != pTagList->end())
-		{
-			if (itorO->m_entID == pEnt->ID())
-			{
-			
-				if (itorO->m_graphNodeID != invalid_node_index)
-				g_worldNavManager.RemoveNode(&(*itorO));
-
-				//this is it, remove it
-				if (pTagList->size() == 1)
-				{
-					//remove the whole entry
-					m_tagMap.erase(itor);
-					//LogMsg("Removed %d", pEnt->ID());
-					return;
-				} else
-				{
-					//only remove this one from the list
-					pTagList->erase(itorO);
-					//LogMsg("Removed %d", pEnt->ID());
-					return;
-				}
-			}
-			itorO++;
-		}
-		*/
 	}
 
 		LogError("Failed to remove hash %d (ID %d) in list search", hashID, pEnt->ID());
@@ -268,16 +230,17 @@ void TagManager::PrintStatistics()
 				if (pEnt)
 				{
 					extra = "GraphID: "+ CL_String::from_int(itorO->m_graphNodeID) + " WarpTarget: " + itorO->m_warpTarget;
-				
-					
 					name = pEnt->GetName();
 				} else
 				{
-					name = "Unable to locate! ";
+					name = "Unable to locate entity! ";
 				}
 			} else
 			{
 				name = itorO->m_tagName;
+
+				//it's not an entity, it's a tile.  But hey, can we make sure a tile actually exists at this position?
+				//nah, too much work
 			}
 
 
@@ -318,9 +281,6 @@ void TagManager::Save(World *pWorld)
 		list<TagObject>::iterator itorO = pTagList->begin();
 		while (itorO != pTagList->end())
 		{
-			   
-			
-			
 			//save out our entries if this is really from our world
 				if (itorO->m_pWorld == pWorld)
 				{

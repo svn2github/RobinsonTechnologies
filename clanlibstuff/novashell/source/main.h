@@ -107,7 +107,8 @@ public:
 	bool ParmExists(const string &parm);
 	void SetSimulationSpeedMod(float fNew) {m_simulationSpeedMod = fNew;}
 	float GetSimulationSpeedMod() {return m_simulationSpeedMod;}
-
+	bool GetJustRenderedFrame() {return m_bJustRenderedFrame;} //true if a frame was JUST rendered.  Reset after the next Update() cycle
+	
 	enum eVideoRefresh
 	{
 		FPS_AT_REFRESH = 1,
@@ -165,6 +166,7 @@ private:
 	float m_baseLogicMhz; //MS between thinks
 	vector<string> m_startupParms;
 	float m_simulationSpeedMod;
+	bool m_bJustRenderedFrame;
 
 };
 

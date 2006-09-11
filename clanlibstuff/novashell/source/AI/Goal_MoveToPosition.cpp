@@ -19,6 +19,8 @@ void Goal_MoveToPosition::Activate()
   if (bUsePath)
   {
 
+	  //LogMsg("Ent %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+
 	  //compute path
 	  if (m_pOwner->GetPathPlanner()->RequestPathToPosition(m_vDestination))
 	  {

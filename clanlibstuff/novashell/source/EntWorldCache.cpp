@@ -46,6 +46,8 @@ void EntWorldCache::ClearCache()
 
 	//don't want to cache old data either
 	m_tileLayerDrawList.clear();
+	m_entityList.clear();
+
 }
 
 //TODO: these should be rewritten for speed later
@@ -148,20 +150,20 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 	vecScale.x = float(rectSrc.right)/float(pWorld->GetWorldChunkPixelSize());
 	vecScale.y = float(rectSrc.bottom)/float(pWorld->GetWorldChunkPixelSize());
 	GetCamera->SetScaleRaw(vecScale);
-	
+
 
 	//render out our stuff to it
 	CalculateVisibleList(CL_Rect(0,0,width, height), true);
 
 	//ugly, but I need a way for each sprite to know when to use special behavior like ignoring
 	//parallax repositioning when making the thumbnail during its draw phase
-	
+
 	GetGameLogic->SetMakingThumbnail(true);
 	RenderViewList(GetApp()->GetBackgroundCanvas()->get_gc());
 	GetGameLogic->SetMakingThumbnail(false);
 
 	GetApp()->GetBackgroundCanvas()->get_pixeldata(rectSrc).convert(*pbuf);
-	
+
 	pWorldChunk->SetThumbNail(pbuf);
 
 	if (bWasOriginallyInMem)
@@ -169,10 +171,10 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 		//RemoveScreenFromCache(screenID);
 		//pWorldChunk->UnloadScreen();
 	}
-	
+
 	//set camera back to how it was
 	GetCamera->SetCameraSettings(oldCamSettings);
-	
+
 	return true;
 }
 
@@ -181,40 +183,42 @@ bool compareTileByLayer(const Tile *pA, const Tile *pB)
 	LayerManager *pLayerManager = &GetWorld->GetLayerManager();
 
 	return pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort() <
-			pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
+		pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
 }
 
 void EntWorldCache::RemoveTileFromList(Tile *pTile)
 {
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
-	MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
-	if (pEnt)
-	for (unsigned int i=0; i < m_entityList.size(); i++)
-	{
-		if (m_entityList[i] == pEnt)
+		MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
+		if (pEnt)
 		{
-			/*	
-			if (m_entityList[i])
+			for (unsigned int i=0; i < m_entityList.size(); i++)
 			{
-				LogMsg("Removing ent %d from list", m_entityList[i]->ID());
-			} else
-			{
-				LogMsg("Removing NULL tile from list");
-			}
-			*/
+				if (m_entityList[i] == pEnt)
+				{
+					/*	
+					if (m_entityList[i])
+					{
+					LogMsg("Removing ent %d from list", m_entityList[i]->ID());
+					} else
+					{
+					LogMsg("Removing NULL tile from list");
+					}
+					*/
 
-			m_entityList[i] = NULL;
-			break;
+					m_entityList[i] = NULL;
+					break;
+				}
+			}
+
+			//also remove from the watch list to avoid a crash there
+			g_watchManager.OnEntityDeleted( pEnt);
+
 		}
 	}
 
-	//also remove from the watch list to avoid a crash there
-	g_watchManager.OnEntityDeleted( ((TileEntity*)pTile)->GetEntity());
-
-	}
-
-   //next remove  tile from our draw list
+	//next remove  tile from our draw list
 	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
 	{
 		if (m_tileLayerDrawList[i] == pTile)
@@ -757,14 +761,18 @@ void EntWorldCache::Update(float step)
 
 		//note, if tiles ever actually need to DO something in their think phase, this should use
 		//m_tileLayerDrawList instead of entityList
+		
+		
 		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
 			m_entityList.at(i)->Update(step);
 		}
 
+
 		//world-wide updates too
 		g_watchManager.Update(step, m_uniqueDrawID);
 
+		
 		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
 			m_entityList.at(i)->PostUpdate(step);

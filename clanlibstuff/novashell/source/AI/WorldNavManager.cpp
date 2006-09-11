@@ -396,7 +396,7 @@ MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, World *pD
 		return m;
 	}
 
-	LogMsg("Start worldNavID: %d  End: %d",worldNavNodeStart, worldNavNodeEnd);
+	//LogMsg("Start worldNavID: %d  End: %d",worldNavNodeStart, worldNavNodeEnd);
 	//first we need to locate a doable pathway
 
 	typedef Graph_SearchDijkstras_TS<NavGraph, FindNodeIndex> DijSearch;
