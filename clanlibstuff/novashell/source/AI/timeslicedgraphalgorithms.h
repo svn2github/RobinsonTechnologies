@@ -74,6 +74,7 @@ public:
   virtual std::list<PathEdge>           GetPathAsPathEdges()const=0;
 
   SearchType                            GetType()const{return m_SearchType;}
+  virtual int GetFinalNode()const{assert(!"Add support for this in the subclass!"); return 0;}
 };
 
 
@@ -354,6 +355,7 @@ public:
 
   //returns the total cost to the target
   double            GetCostToTarget()const{return m_CostToThisNode[m_iTarget];}
+  int GetFinalNode() const;
 };
 
 //-----------------------------------------------------------------------------
@@ -425,6 +427,13 @@ int Graph_SearchDijkstras_TS<graph_type, termination_condition>::CycleOnce()
   
   //there are still nodes to explore
   return search_incomplete;
+}
+
+template <class graph_type, class termination_condition>
+int 
+Graph_SearchDijkstras_TS<graph_type, termination_condition>::GetFinalNode()const
+{
+	return m_iTarget;
 }
 
 //-----------------------------------------------------------------------------

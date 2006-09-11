@@ -12,7 +12,6 @@
 #include "NavGraphManager.h"
 #include "TimeSlicedGraphAlgorithms.h"
 
-//#include "GraphAlgorithms.h"
 /*
 #include "SparseGraph.h"
 #include "PathEdge.h"
@@ -82,7 +81,7 @@ public:
   //returns the index of the closest visible and unobstructed graph node to
   //the given position
   //if it fails, it returns  no_closest_node_found
-  int PathPlanner::GetClosestNodeToPosition(CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride=1.0f) const;
+  int GetClosestNodeToPosition(World *pMap, CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride=1.0f) const;
 
   bool IsPathNeededToGetToTarget(CL_Vector2 &TargetPos);
 

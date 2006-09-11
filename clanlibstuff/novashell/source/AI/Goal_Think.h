@@ -51,6 +51,7 @@ public:
 
   //this adds the MoveToPosition goal to the *back* of the subgoal list.
   void QueueMoveToPosition(CL_Vector2 pos);
+  void PushMoveToTag(TagObject *pTag);
 
   //this renders the evaluations (goal scores) at the specified location
   void  RenderEvaluations(int left, int top)const;

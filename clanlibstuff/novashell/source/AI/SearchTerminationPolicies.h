@@ -27,6 +27,25 @@ public:
   }
 };
 
+
+//the search will terminate when the currently examined graph node
+//is the same as the target node.
+class FindSpecialNode
+{
+public:
+
+	template <class graph_type>
+	static bool isSatisfied(const graph_type& G, int target, int CurrentNodeIdx)
+	{
+		//get a reference to the node at the given node index
+		const graph_type::NodeType& node = G.GetNode(CurrentNodeIdx);
+
+		return node.GetType() == target;
+	}
+};
+
+
+
 //--------------------------- FindActiveTrigger ------------------------------
 
 //the search will terminate when the currently examined graph node

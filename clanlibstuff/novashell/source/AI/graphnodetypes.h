@@ -80,8 +80,8 @@ public:
   //stream constructor
   NavGraphNode(std::ifstream& stream):m_ExtraInfo(extra_info())
   {
-    char buffer[50];
-    stream >> buffer >> m_iIndex >> buffer >> m_vPosition.x >> buffer >> m_vPosition.y;
+   // char buffer[50];
+    stream >> buffer >> m_iIndex >> m_vPosition.x >> buffer >> m_vPosition.y;
   }
  
 
@@ -101,6 +101,67 @@ public:
     return os;
   }
   
+};
+
+
+enum
+{
+  C_NODE_TYPE_NORMAL,
+  C_NODE_TYPE_WARP
+
+
+};
+
+class NavGraphNodeExtra : public GraphNode
+{
+
+public:
+
+	//ctors
+	NavGraphNodeExtra(){};
+
+	NavGraphNodeExtra(int idx, CL_Vector2 pos, int type, int entID):GraphNode(idx),
+		m_vPosition(pos), m_type(type), m_entID(entID)
+	{}
+
+	
+	virtual ~NavGraphNodeExtra(){}
+
+	CL_Vector2   Pos()const{return m_vPosition;}
+	void       SetPos(CL_Vector2 NewPosition){m_vPosition = NewPosition;}
+	int       GetType()const{return m_type;}
+	int GetEntID() const {return m_entID;}
+
+protected:
+
+	//the node's position
+	CL_Vector2     m_vPosition;
+
+	int m_type;
+	int m_entID;
+	
+
+};
+
+class SimpleNode : public GraphNode
+{
+public:
+
+	//ctors
+	SimpleNode(){}
+	virtual ~SimpleNode(){}
+
+	const CL_Vector2 &Pos() const {return CL_Vector2::ZERO;}
+	SimpleNode(int idx, unsigned int tagHashID):GraphNode(idx),
+		m_tagHashID(tagHashID)
+	{
+	}
+
+	unsigned int GetTagHashID() const {return m_tagHashID;}
+protected:
+
+	unsigned int m_tagHashID;
+
 };
 
 
