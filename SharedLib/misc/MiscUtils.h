@@ -140,7 +140,7 @@ public:
 			}
 			char *pBuffer = new char[count+1];
 			process_array((unsigned char*)pBuffer, count);
-			pBuffer[count] = NULL; //add the null at the end
+			pBuffer[count] = 0; //add the null at the end
 			//finally, add it to the string.  I guess we could just load it
 			//directly into the string to start with, but does .reserve() work
 			//like that safely?

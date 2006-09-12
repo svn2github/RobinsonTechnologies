@@ -93,7 +93,7 @@ exist. */
 
 void add_text(const char *tex ,const char *filename)
 {
-	if ( (tex == NULL) || ( filename == NULL) || ( filename[0] == NULL))
+	if ( (tex == NULL) || ( filename == NULL) || ( filename[0] == 0))
 	{
 		//assert(0);
 		return;
@@ -124,7 +124,7 @@ void add_text(const char *tex ,const char *filename)
 //find the clanlib one later or add one?
 bool exist(const char * name)
 {
-	if (name[0] == NULL) return false;
+	if (name[0] == 0) return false;
 
 	FILE *fp;
 	fp = fopen(name, "rb");
