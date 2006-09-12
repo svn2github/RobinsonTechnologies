@@ -54,3 +54,4 @@ protected:
 extern Console g_Console;
 
 #endif // Console_h__
+

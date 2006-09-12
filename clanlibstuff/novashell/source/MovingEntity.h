@@ -192,7 +192,7 @@ public:
   bool IsFacingTarget(float tolerance); 
 
   bool CanWalkTo(CL_Vector2 &pos, bool ignoreLivingCreatures);
-  bool CanWalkBetween(World *pMap, CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures);
+  bool CanWalkBetween(World *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures);
   PathPlanner * GetPathPlanner();
   void SetRunStringASAP(const string &command);
   void ProcessPendingMoveAndDeletionOperations();

@@ -1732,7 +1732,7 @@ bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 
 //similar to above. Returns true if the bot can move between the two
 //given positions without bumping into any walls
-bool MovingEntity::CanWalkBetween(World *pMap, CL_Vector2 &from, CL_Vector2 &to, bool ignoreLivingCreatures)
+bool MovingEntity::CanWalkBetween(World *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures)
 {
 	return !pMap->GetMyWorldCache()->IsPathObstructed(from, to, m_pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_width(), m_pTile, ignoreLivingCreatures);
 }

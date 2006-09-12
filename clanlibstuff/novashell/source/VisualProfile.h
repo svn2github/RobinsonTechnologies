@@ -169,7 +169,7 @@ public:
 	int TextToAnimID(const string & stState); //returns -1 if anim id doesn't exist
 	VisualResource * GetParentVisualResource() {return m_pParent;}
 	void UpdateToDocument(CL_DomDocument &document);
-    vector<string> GetListOfActiveAnims();
+    	vector<string> GetListOfActiveAnims();
 	int SpriteToAnimID(const string & stState);
 	int SpriteToAnimID(CL_Sprite *pSprite); //compares by memory address
 	string AnimIDToText(int animID){return m_animArray[animID].m_name;}
@@ -180,7 +180,7 @@ protected:
 
 	void AddAnimInfo(CL_DomElement &node);
 	int TextToAnimIDCreatedIfNeeded(const string & stState);
-	void UpdateDocumentSpriteFromAnim(CL_DomNode &node, ProfileAnim &anim);
+	void UpdateDocumentSpriteFromAnim(CL_DomNode *node, ProfileAnim *anim);
 
 	string m_name;
 	VisualResource *m_pParent;

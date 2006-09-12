@@ -26,7 +26,7 @@
       <terminal>false</terminal>
       <directoryradio>custom</directoryradio>
       <runarguments>
-        <novashell/>
+        <novashell></novashell>
       </runarguments>
       <customdirectory>/home/mrfun/dev/novashell/bin/</customdirectory>
       <programargs/>

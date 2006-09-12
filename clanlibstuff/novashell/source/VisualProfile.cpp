@@ -463,13 +463,13 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 	m_animArray[animID].m_name = stState;
 }
 
-void VisualProfile::UpdateDocumentSpriteFromAnim(CL_DomNode &node, ProfileAnim &anim)
+void VisualProfile::UpdateDocumentSpriteFromAnim(CL_DomNode *node, ProfileAnim *anim)
 {
 	//LogMsg("Updating %s", node.get_attributes().get_named_item("name").get_node_value().c_str());
 	CL_DomNode cur_node;
 
 	for (
-		cur_node = node.get_first_child();
+		cur_node = node->get_first_child();
 		!cur_node.is_null();
 	cur_node = cur_node.get_next_sibling())
 	{
@@ -481,7 +481,7 @@ void VisualProfile::UpdateDocumentSpriteFromAnim(CL_DomNode &node, ProfileAnim &
 		{
 			CL_Origin o;
 			int x,y;
-			anim.m_pSprite->get_alignment(o, x,y);
+			anim->m_pSprite->get_alignment(o, x,y);
 			
 			cur_element.set_attribute("x", CL_String::from_int(x));
 			cur_element.set_attribute("y", CL_String::from_int(y));
@@ -502,7 +502,7 @@ void VisualProfile::UpdateToDocument(CL_DomDocument &document)
 		if (animID != -1)
 		{
 			//located it.  Let's update it
-			UpdateDocumentSpriteFromAnim(domList.item(c), m_animArray[animID]);
+			UpdateDocumentSpriteFromAnim(&domList.item(c), &m_animArray[animID]);
 		}
 	}
 }

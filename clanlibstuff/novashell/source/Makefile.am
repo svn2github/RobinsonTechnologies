@@ -30,19 +30,20 @@ novashell_SOURCES = AppPrecomp.cpp AppUtils.cpp AppUtils.h BaseGameEntity.cpp \
 # set the include path found by configure
 INCLUDES = -I$(top_srcdir)/SharedLib -I$(top_srcdir)/SharedLib/lua \
 	-I$(top_srcdir)/SharedLib/lua/src -I$(top_srcdir)/SharedLib/luabind -I$(top_srcdir)/SharedLib/misc \
-	-I$(top_srcdir)/source -I$(top_srcdir)/source/physics -I$(top_srcdir)/source/AI \
+	-I$(top_srcdir)/source -I$(top_srcdir)/source/AI -I$(top_srcdir)/source/physics \
 	-I/usr/local/include/ClanLib-0.8 $(all_includes)
 
 # the library search path.
 novashell_LDFLAGS = $(all_libraries)
 novashell_LDADD = $(top_builddir)/source/physics/libphysics.a \
-	$(top_builddir)/SharedLib/misc/libmisc.a $(top_builddir)/SharedLib/luabind/src/libluabind.a \
-	$(top_builddir)/SharedLib/lua/src/liblualib.a /usr/local/lib/libclanVorbis.a /usr/local/lib/libclanSound.a \
-	/usr/local/lib/libclanGUIStyleSilver.a /usr/local/lib/libclanGUI.a /usr/local/lib/libclanGL.a \
-	/usr/local/lib/libclanDisplay.a /usr/local/lib/libclanApp.a /usr/local/lib/libclanCore.a \
-	/usr/local/lib/libclanSignals.a -lGLU /usr/lib/libvorbis.a /usr/lib/libpng12.a -lGL -lXi \
-	/usr/lib/libogg.a -lpthread -lxml2 -lm -lbz2 -ldl -lz /usr/lib/libtiff.a \
-	/usr/lib/libjpeg.a -lXext -lXt -lX11 -lSM -lICE -lXxf86vm -ldl
+	$(top_builddir)/source/AI/libAI.a $(top_builddir)/SharedLib/misc/libmisc.a \
+	$(top_builddir)/SharedLib/luabind/src/libluabind.a $(top_builddir)/SharedLib/lua/src/liblualib.a \
+	/usr/local/lib/libclanVorbis.a /usr/local/lib/libclanSound.a /usr/local/lib/libclanGUIStyleSilver.a \
+	/usr/local/lib/libclanGUI.a /usr/local/lib/libclanGL.a /usr/local/lib/libclanDisplay.a \
+	/usr/local/lib/libclanApp.a /usr/local/lib/libclanCore.a /usr/local/lib/libclanSignals.a -lGLU \
+	/usr/lib/libvorbis.a /usr/lib/libpng12.a -lGL -lXi /usr/lib/libogg.a -lpthread -lxml2 -lm \
+	-lbz2 -ldl -lz /usr/lib/libtiff.a /usr/lib/libjpeg.a -lXext -lXt -lX11 -lSM \
+	-lICE -lXxf86vm -ldl
 
 
 
