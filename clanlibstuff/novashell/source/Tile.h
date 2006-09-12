@@ -10,7 +10,7 @@
 #define Tile_HEADER_INCLUDED  // include guard
 
 #include "misc/CBit8.h"
-#include "ai/NodeTypeEnumerations.h"
+#include "AI/NodeTypeEnumerations.h"
 
 class Screen;
 class MovingEntity;

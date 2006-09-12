@@ -119,7 +119,6 @@ const NumberType RoundNearest(
 
 
 
-
 #endif                  // include guard
 
 
