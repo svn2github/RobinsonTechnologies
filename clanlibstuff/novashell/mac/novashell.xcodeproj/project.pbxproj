@@ -17,6 +17,22 @@
 		5D1A38570A382D48005FF1C0 /* BrainManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1A384F0A382D48005FF1C0 /* BrainManager.h */; };
 		5D1A38580A382D48005FF1C0 /* BrainShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A38500A382D48005FF1C0 /* BrainShake.cpp */; };
 		5D1A38590A382D48005FF1C0 /* BrainShake.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1A38510A382D48005FF1C0 /* BrainShake.h */; };
+		5D2F67170A86F4D800419CA6 /* StateTopAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */; };
+		5D2F67180A86F4D800419CA6 /* StateTopIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */; };
+		5D2F67190A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */; };
+		5D2F671A0A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */; };
+		5D2F671B0A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */; };
+		5D2F671C0A86F4D800419CA6 /* StateTopWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */; };
+		5D2F671D0A86F4D800419CA6 /* StateTopAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */; };
+		5D2F671E0A86F4D800419CA6 /* StateTopIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */; };
+		5D2F671F0A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */; };
+		5D2F67200A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */; };
+		5D2F67210A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */; };
+		5D2F67220A86F4D800419CA6 /* StateTopWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */; };
+		5D2F67250A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */; };
+		5D2F67260A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */; };
+		5D2F67270A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */; };
+		5D2F67280A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */; };
 		5D58A7BF0A15832C005974C1 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A79F0A15832C005974C1 /* lapi.c */; };
 		5D58A7C00A15832C005974C1 /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A00A15832C005974C1 /* lauxlib.c */; };
 		5D58A7C10A15832C005974C1 /* lbaselib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A10A15832C005974C1 /* lbaselib.c */; };
@@ -47,6 +63,28 @@
 		5D58A7DC0A15832C005974C1 /* lvm.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BC0A15832C005974C1 /* lvm.c */; };
 		5D58A7DD0A15832C005974C1 /* lzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BD0A15832C005974C1 /* lzio.c */; };
 		5D58A7DE0A15832C005974C1 /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BE0A15832C005974C1 /* print.c */; };
+		5D5BCA990AB550A0004C08CE /* Goal_Delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA8F0AB550A0004C08CE /* Goal_Delay.cpp */; };
+		5D5BCA9A0AB550A0004C08CE /* Goal_FollowPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA900AB550A0004C08CE /* Goal_FollowPath.cpp */; };
+		5D5BCA9B0AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA910AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp */; };
+		5D5BCA9C0AB550A0004C08CE /* Goal_MoveToPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA920AB550A0004C08CE /* Goal_MoveToPosition.cpp */; };
+		5D5BCA9D0AB550A0004C08CE /* Goal_NegotiateDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA930AB550A0004C08CE /* Goal_NegotiateDoor.cpp */; };
+		5D5BCA9E0AB550A0004C08CE /* Goal_RunScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA940AB550A0004C08CE /* Goal_RunScript.cpp */; };
+		5D5BCA9F0AB550A0004C08CE /* Goal_SeekToPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA950AB550A0004C08CE /* Goal_SeekToPosition.cpp */; };
+		5D5BCAA00AB550A0004C08CE /* Goal_Think.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA960AB550A0004C08CE /* Goal_Think.cpp */; };
+		5D5BCAA10AB550A0004C08CE /* Goal_TraverseEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA970AB550A0004C08CE /* Goal_TraverseEdge.cpp */; };
+		5D5BCAA30AB550A0004C08CE /* Goal_Delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA8F0AB550A0004C08CE /* Goal_Delay.cpp */; };
+		5D5BCAA40AB550A0004C08CE /* Goal_FollowPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA900AB550A0004C08CE /* Goal_FollowPath.cpp */; };
+		5D5BCAA50AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA910AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp */; };
+		5D5BCAA60AB550A0004C08CE /* Goal_MoveToPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA920AB550A0004C08CE /* Goal_MoveToPosition.cpp */; };
+		5D5BCAA70AB550A0004C08CE /* Goal_NegotiateDoor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA930AB550A0004C08CE /* Goal_NegotiateDoor.cpp */; };
+		5D5BCAA80AB550A0004C08CE /* Goal_RunScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA940AB550A0004C08CE /* Goal_RunScript.cpp */; };
+		5D5BCAA90AB550A0004C08CE /* Goal_SeekToPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA950AB550A0004C08CE /* Goal_SeekToPosition.cpp */; };
+		5D5BCAAA0AB550A0004C08CE /* Goal_Think.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA960AB550A0004C08CE /* Goal_Think.cpp */; };
+		5D5BCAAB0AB550A0004C08CE /* Goal_TraverseEdge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCA970AB550A0004C08CE /* Goal_TraverseEdge.cpp */; };
+		5D5BCAAF0AB550CD004C08CE /* BrainTopSeek.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */; };
+		5D5BCAB00AB550CD004C08CE /* EntVisualProfileEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */; };
+		5D5BCAB10AB550CD004C08CE /* BrainTopSeek.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */; };
+		5D5BCAB20AB550CD004C08CE /* EntVisualProfileEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */; };
 		5D87774A0A15555400363BAA /* AppUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776D80A15555400363BAA /* AppUtils.cpp */; };
 		5D87774C0A15555400363BAA /* BaseGameEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */; };
 		5D87774E0A15555400363BAA /* Brain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DC0A15555400363BAA /* Brain.cpp */; };
@@ -137,6 +175,14 @@
 		5D9682950A5DF79A0015B20A /* StateSideSimpleIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682830A5DF79A0015B20A /* StateSideSimpleIdle.cpp */; };
 		5D9682960A5DF79A0015B20A /* StateSideSimpleWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682840A5DF79A0015B20A /* StateSideSimpleWalk.cpp */; };
 		5D9682970A5DF79A0015B20A /* Trigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682850A5DF79A0015B20A /* Trigger.cpp */; };
+		5D9F8B070AB6CDBF000546C2 /* NavGraphManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B030AB6CDBE000546C2 /* NavGraphManager.cpp */; };
+		5D9F8B080AB6CDBF000546C2 /* PathPlanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */; };
+		5D9F8B090AB6CDBF000546C2 /* WatchManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B050AB6CDBE000546C2 /* WatchManager.cpp */; };
+		5D9F8B0A0AB6CDBF000546C2 /* WorldNavManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B060AB6CDBE000546C2 /* WorldNavManager.cpp */; };
+		5D9F8B0B0AB6CDBF000546C2 /* NavGraphManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B030AB6CDBE000546C2 /* NavGraphManager.cpp */; };
+		5D9F8B0C0AB6CDBF000546C2 /* PathPlanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */; };
+		5D9F8B0D0AB6CDBF000546C2 /* WatchManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B050AB6CDBE000546C2 /* WatchManager.cpp */; };
+		5D9F8B0E0AB6CDBF000546C2 /* WorldNavManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B060AB6CDBE000546C2 /* WorldNavManager.cpp */; };
 		5DB974520A30630B00CBAA15 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F20A30630A00CBAA15 /* ClanApp.framework */; };
 		5DB974530A30630B00CBAA15 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F30A30630A00CBAA15 /* ClanCore.framework */; };
 		5DB974540A30630B00CBAA15 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB972F40A30630A00CBAA15 /* ClanDisplay.framework */; };
@@ -444,6 +490,14 @@
 		5D1A384F0A382D48005FF1C0 /* BrainManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainManager.h; sourceTree = "<group>"; };
 		5D1A38500A382D48005FF1C0 /* BrainShake.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainShake.cpp; sourceTree = "<group>"; };
 		5D1A38510A382D48005FF1C0 /* BrainShake.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainShake.h; sourceTree = "<group>"; };
+		5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopAttack.cpp; sourceTree = "<group>"; };
+		5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopIdle.cpp; sourceTree = "<group>"; };
+		5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopPlayerAttack.cpp; sourceTree = "<group>"; };
+		5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopPlayerIdle.cpp; sourceTree = "<group>"; };
+		5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopPlayerWalk.cpp; sourceTree = "<group>"; };
+		5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopWalk.cpp; sourceTree = "<group>"; };
+		5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainTopBase.cpp; sourceTree = "<group>"; };
+		5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainTopPlayer.cpp; sourceTree = "<group>"; };
 		5D58A79F0A15832C005974C1 /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
 		5D58A7A00A15832C005974C1 /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lauxlib.c; sourceTree = "<group>"; };
 		5D58A7A10A15832C005974C1 /* lbaselib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lbaselib.c; sourceTree = "<group>"; };
@@ -493,6 +547,17 @@
 		5D58AC250A15A1C3005974C1 /* lualib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lualib.h; path = ../../../SharedLib/lua/src/lualib.h; sourceTree = SOURCE_ROOT; };
 		5D58AC260A15A1C3005974C1 /* lvm.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lvm.h; path = ../../../SharedLib/lua/src/lvm.h; sourceTree = SOURCE_ROOT; };
 		5D58AC270A15A1C3005974C1 /* lzio.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = lzio.h; path = ../../../SharedLib/lua/src/lzio.h; sourceTree = SOURCE_ROOT; };
+		5D5BCA8F0AB550A0004C08CE /* Goal_Delay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_Delay.cpp; path = AI/Goal_Delay.cpp; sourceTree = "<group>"; };
+		5D5BCA900AB550A0004C08CE /* Goal_FollowPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_FollowPath.cpp; path = AI/Goal_FollowPath.cpp; sourceTree = "<group>"; };
+		5D5BCA910AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_MoveToMapAndPos.cpp; path = AI/Goal_MoveToMapAndPos.cpp; sourceTree = "<group>"; };
+		5D5BCA920AB550A0004C08CE /* Goal_MoveToPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_MoveToPosition.cpp; path = AI/Goal_MoveToPosition.cpp; sourceTree = "<group>"; };
+		5D5BCA930AB550A0004C08CE /* Goal_NegotiateDoor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_NegotiateDoor.cpp; path = AI/Goal_NegotiateDoor.cpp; sourceTree = "<group>"; };
+		5D5BCA940AB550A0004C08CE /* Goal_RunScript.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_RunScript.cpp; path = AI/Goal_RunScript.cpp; sourceTree = "<group>"; };
+		5D5BCA950AB550A0004C08CE /* Goal_SeekToPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_SeekToPosition.cpp; path = AI/Goal_SeekToPosition.cpp; sourceTree = "<group>"; };
+		5D5BCA960AB550A0004C08CE /* Goal_Think.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_Think.cpp; path = AI/Goal_Think.cpp; sourceTree = "<group>"; };
+		5D5BCA970AB550A0004C08CE /* Goal_TraverseEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_TraverseEdge.cpp; path = AI/Goal_TraverseEdge.cpp; sourceTree = "<group>"; };
+		5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainTopSeek.cpp; sourceTree = "<group>"; };
+		5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntVisualProfileEditor.cpp; sourceTree = "<group>"; };
 		5D8776D80A15555400363BAA /* AppUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AppUtils.cpp; sourceTree = "<group>"; };
 		5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BaseGameEntity.cpp; sourceTree = "<group>"; };
 		5D8776DB0A15555400363BAA /* BaseGameEntity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BaseGameEntity.h; sourceTree = "<group>"; };
@@ -672,6 +737,10 @@
 		5D9682830A5DF79A0015B20A /* StateSideSimpleIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateSideSimpleIdle.cpp; sourceTree = "<group>"; };
 		5D9682840A5DF79A0015B20A /* StateSideSimpleWalk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateSideSimpleWalk.cpp; sourceTree = "<group>"; };
 		5D9682850A5DF79A0015B20A /* Trigger.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Trigger.cpp; sourceTree = "<group>"; };
+		5D9F8B030AB6CDBE000546C2 /* NavGraphManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NavGraphManager.cpp; path = AI/NavGraphManager.cpp; sourceTree = "<group>"; };
+		5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PathPlanner.cpp; path = AI/PathPlanner.cpp; sourceTree = "<group>"; };
+		5D9F8B050AB6CDBE000546C2 /* WatchManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WatchManager.cpp; path = AI/WatchManager.cpp; sourceTree = "<group>"; };
+		5D9F8B060AB6CDBE000546C2 /* WorldNavManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WorldNavManager.cpp; path = AI/WorldNavManager.cpp; sourceTree = "<group>"; };
 		5DB972F20A30630A00CBAA15 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
 		5DB972F30A30630A00CBAA15 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
 		5DB972F40A30630A00CBAA15 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
@@ -808,6 +877,10 @@
 		5D1A384D0A382D17005FF1C0 /* Brains */ = {
 			isa = PBXGroup;
 			children = (
+				5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */,
+				5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */,
+				5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */,
+				5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */,
 				5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */,
 				5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */,
 				5D96827F0A5DF79A0015B20A /* BrainSideBase.cpp */,
@@ -821,6 +894,26 @@
 				5D8776DF0A15555400363BAA /* BrainPlayer.h */,
 			);
 			name = Brains;
+			sourceTree = "<group>";
+		};
+		5D5BCA8E0AB5503B004C08CE /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				5D9F8B030AB6CDBE000546C2 /* NavGraphManager.cpp */,
+				5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */,
+				5D9F8B050AB6CDBE000546C2 /* WatchManager.cpp */,
+				5D9F8B060AB6CDBE000546C2 /* WorldNavManager.cpp */,
+				5D5BCA8F0AB550A0004C08CE /* Goal_Delay.cpp */,
+				5D5BCA900AB550A0004C08CE /* Goal_FollowPath.cpp */,
+				5D5BCA910AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp */,
+				5D5BCA920AB550A0004C08CE /* Goal_MoveToPosition.cpp */,
+				5D5BCA930AB550A0004C08CE /* Goal_NegotiateDoor.cpp */,
+				5D5BCA940AB550A0004C08CE /* Goal_RunScript.cpp */,
+				5D5BCA950AB550A0004C08CE /* Goal_SeekToPosition.cpp */,
+				5D5BCA960AB550A0004C08CE /* Goal_Think.cpp */,
+				5D5BCA970AB550A0004C08CE /* Goal_TraverseEdge.cpp */,
+			);
+			name = AI;
 			sourceTree = "<group>";
 		};
 		5D8775300A15531A00363BAA /* Debug */ = {
@@ -1065,6 +1158,12 @@
 		5D9682980A5DF7A80015B20A /* States */ = {
 			isa = PBXGroup;
 			children = (
+				5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */,
+				5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */,
+				5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */,
+				5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */,
+				5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */,
+				5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */,
 				5D9682800A5DF79A0015B20A /* State.cpp */,
 				5D9682810A5DF79A0015B20A /* StateDie.cpp */,
 				5D9682820A5DF79A0015B20A /* StateFrozen.cpp */,
@@ -1133,6 +1232,7 @@
 		5DCDB01D0A19ADF70043DCFA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				5D5BCA8E0AB5503B004C08CE /* AI */,
 				5D9682980A5DF7A80015B20A /* States */,
 				5D9682850A5DF79A0015B20A /* Trigger.cpp */,
 				5D8777360A15555400363BAA /* TileEditOperation.cpp */,
@@ -1517,6 +1617,29 @@
 				5D96828C0A5DF79A0015B20A /* StateSideSimpleIdle.cpp in Sources */,
 				5D96828D0A5DF79A0015B20A /* StateSideSimpleWalk.cpp in Sources */,
 				5D96828E0A5DF79A0015B20A /* Trigger.cpp in Sources */,
+				5D2F67170A86F4D800419CA6 /* StateTopAttack.cpp in Sources */,
+				5D2F67180A86F4D800419CA6 /* StateTopIdle.cpp in Sources */,
+				5D2F67190A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */,
+				5D2F671A0A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */,
+				5D2F671B0A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */,
+				5D2F671C0A86F4D800419CA6 /* StateTopWalk.cpp in Sources */,
+				5D2F67250A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */,
+				5D2F67260A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */,
+				5D5BCA990AB550A0004C08CE /* Goal_Delay.cpp in Sources */,
+				5D5BCA9A0AB550A0004C08CE /* Goal_FollowPath.cpp in Sources */,
+				5D5BCA9B0AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp in Sources */,
+				5D5BCA9C0AB550A0004C08CE /* Goal_MoveToPosition.cpp in Sources */,
+				5D5BCA9D0AB550A0004C08CE /* Goal_NegotiateDoor.cpp in Sources */,
+				5D5BCA9E0AB550A0004C08CE /* Goal_RunScript.cpp in Sources */,
+				5D5BCA9F0AB550A0004C08CE /* Goal_SeekToPosition.cpp in Sources */,
+				5D5BCAA00AB550A0004C08CE /* Goal_Think.cpp in Sources */,
+				5D5BCAA10AB550A0004C08CE /* Goal_TraverseEdge.cpp in Sources */,
+				5D5BCAAF0AB550CD004C08CE /* BrainTopSeek.cpp in Sources */,
+				5D5BCAB00AB550CD004C08CE /* EntVisualProfileEditor.cpp in Sources */,
+				5D9F8B070AB6CDBF000546C2 /* NavGraphManager.cpp in Sources */,
+				5D9F8B080AB6CDBF000546C2 /* PathPlanner.cpp in Sources */,
+				5D9F8B090AB6CDBF000546C2 /* WatchManager.cpp in Sources */,
+				5D9F8B0A0AB6CDBF000546C2 /* WorldNavManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1638,6 +1761,29 @@
 				5D9682950A5DF79A0015B20A /* StateSideSimpleIdle.cpp in Sources */,
 				5D9682960A5DF79A0015B20A /* StateSideSimpleWalk.cpp in Sources */,
 				5D9682970A5DF79A0015B20A /* Trigger.cpp in Sources */,
+				5D2F671D0A86F4D800419CA6 /* StateTopAttack.cpp in Sources */,
+				5D2F671E0A86F4D800419CA6 /* StateTopIdle.cpp in Sources */,
+				5D2F671F0A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */,
+				5D2F67200A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */,
+				5D2F67210A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */,
+				5D2F67220A86F4D800419CA6 /* StateTopWalk.cpp in Sources */,
+				5D2F67270A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */,
+				5D2F67280A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */,
+				5D5BCAA30AB550A0004C08CE /* Goal_Delay.cpp in Sources */,
+				5D5BCAA40AB550A0004C08CE /* Goal_FollowPath.cpp in Sources */,
+				5D5BCAA50AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp in Sources */,
+				5D5BCAA60AB550A0004C08CE /* Goal_MoveToPosition.cpp in Sources */,
+				5D5BCAA70AB550A0004C08CE /* Goal_NegotiateDoor.cpp in Sources */,
+				5D5BCAA80AB550A0004C08CE /* Goal_RunScript.cpp in Sources */,
+				5D5BCAA90AB550A0004C08CE /* Goal_SeekToPosition.cpp in Sources */,
+				5D5BCAAA0AB550A0004C08CE /* Goal_Think.cpp in Sources */,
+				5D5BCAAB0AB550A0004C08CE /* Goal_TraverseEdge.cpp in Sources */,
+				5D5BCAB10AB550CD004C08CE /* BrainTopSeek.cpp in Sources */,
+				5D5BCAB20AB550CD004C08CE /* EntVisualProfileEditor.cpp in Sources */,
+				5D9F8B0B0AB6CDBF000546C2 /* NavGraphManager.cpp in Sources */,
+				5D9F8B0C0AB6CDBF000546C2 /* PathPlanner.cpp in Sources */,
+				5D9F8B0D0AB6CDBF000546C2 /* WatchManager.cpp in Sources */,
+				5D9F8B0E0AB6CDBF000546C2 /* WorldNavManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1738,6 +1884,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/AI",
 					"$(SRCROOT)/../../../SharedLib/lua",
 					"$(SRCROOT)/../../../SharedLib/lua/src",
 					"$(SRCROOT)/../../../SharedLib/luabind",

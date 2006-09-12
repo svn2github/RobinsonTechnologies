@@ -2,7 +2,7 @@
 #include "NavGraphManager.h"
 #include "AppUtils.h"
 #include "GameLogic.h"
-#include "AI/GraphAlgorithms.h"
+#include "GraphAlgorithms.h"
 #include "AStarHeuristicPolicies.h"
 #include "PathPlanner.h"
 

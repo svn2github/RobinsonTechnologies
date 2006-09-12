@@ -11,9 +11,9 @@
 #define WorldNavManager_h__
 
 
-#include "AI/SparseGraph.h"
-#include "AI/GraphEdgeTypes.h"
-#include "AI/GraphNodeTypes.h"
+#include "SparseGraph.h"
+#include "GraphEdgeTypes.h"
+#include "GraphNodeTypes.h"
 
 class World;
 class TagObject;
