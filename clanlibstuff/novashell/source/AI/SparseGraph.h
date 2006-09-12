@@ -16,9 +16,14 @@
 #include <string>
 #include <iostream>
 
-#include "misc/MiscUtils.h" 
-#include "NodeTypeEnumerations.h"
+//#include "misc/MiscUtils.h" 
+//#include "NodeTypeEnumerations.h"
 
+  enum 
+  {
+    invalid_node_index    = -1
+  };
+  
 
 template <class node_type, class edge_type>   
 class SparseGraph                                 
@@ -36,7 +41,7 @@ public:
   typedef std::vector<EdgeList>    EdgeListVector;
 
  
-private:
+protected:
   
   //the nodes that comprise this graph
   NodeVector      m_Nodes;
@@ -110,7 +115,8 @@ public:
   {
     int count = 0;
 
-    for (unsigned int n=0; n<m_Nodes.size(); ++n) if (m_Nodes[n].Index() != invalid_node_index) ++count;
+    for (unsigned int n=0; n<m_Nodes.size(); ++n) 
+    	if (m_Nodes[n].Index() != invalid_node_index) ++count;
 
     return count;
   }
@@ -143,15 +149,7 @@ public:
   //is present in the graph
   bool isEdgePresent(int from, int to)const;
 
-  //methods for loading and saving graphs from an open file stream or from
-  //a file name 
-  bool  Save(const char* FileName)const;
-  bool  Save(std::ofstream& stream)const;
-
-  bool  Load(const char* FileName);
-  bool  Load(std::ifstream& stream);
-
-  //clears the graph ready for new node insertions
+   //clears the graph ready for new node insertions
   void Clear(){m_iNextNodeIndex = 0; m_Nodes.clear(); m_Edges.clear();}
 
   void RemoveEdges()
@@ -723,116 +721,5 @@ bool SparseGraph<node_type, edge_type>::UniqueEdge(int from, int to)const
   return true;
 }
 
-//-------------------------------- Save ---------------------------------------
-
-template <class node_type, class edge_type>
-bool SparseGraph<node_type, edge_type>::Save(const char* FileName)const
-{
-  //open the file and make sure it's valid
-  std::ofstream out(FileName);
-
-  if (!out)
-  {
-    throw std::runtime_error("Cannot open file: " + std::string(FileName));
-    return false;
-  }
-
-  return Save(out);
-}
-
-//-------------------------------- Save ---------------------------------------
-template <class node_type, class edge_type>
-bool SparseGraph<node_type, edge_type>::Save(std::ofstream& stream)const
-{
-  //save the number of nodes
-  stream << m_Nodes.size() << std::endl;
-
-  //iterate through the graph nodes and save them
-  NodeVector::const_iterator curNode = m_Nodes.begin();
-  for (curNode; curNode!=m_Nodes.end(); ++curNode)
-  {
-    stream << *curNode;
-  }
-
-  //save the number of edges
-  stream << NumEdges() << std::endl;
-
-
-  //iterate through the edges and save them
-  for (unsigned int nodeIdx = 0; nodeIdx < m_Nodes.size(); ++nodeIdx)
-  {
-    for (EdgeList::const_iterator curEdge = m_Edges[nodeIdx].begin();
-         curEdge!=m_Edges[nodeIdx].end(); ++curEdge)
-    {
-      stream << *curEdge;
-    }  
-  }
-
-  return true;
-}
-
-//------------------------------- Load ----------------------------------------
-//-----------------------------------------------------------------------------
-template <class node_type, class edge_type>
-bool SparseGraph<node_type, edge_type>::Load(const char* FileName)
-{
-  //open file and make sure it's valid
-  std::ifstream in(FileName);
-
-  if (!in)
-  {
-    throw std::runtime_error("Cannot open file: " + std::string(FileName));
-    return false;
-  }
-
-  return Load(in);
-}
-
-//------------------------------- Load ----------------------------------------
-//-----------------------------------------------------------------------------
-template <class node_type, class edge_type>
-bool SparseGraph<node_type, edge_type>::Load(std::ifstream& stream)
-{
-  Clear();
-
-  //get the number of nodes and read them in
-  int NumNodes, NumEdges;
-
-  stream >> NumNodes;
-
-  for (int n=0; n<NumNodes; ++n)
-  {
-    NodeType NewNode(stream);
-  
-    //when editing graphs it's possible to end up with a situation where some
-    //of the nodes have been invalidated (their id's set to invalid_node_index). Therefore
-    //when a node of index invalid_node_index is encountered, it must still be added.
-    if (NewNode.Index() != invalid_node_index)
-    {
-      AddNode(NewNode);
-    }
-    else
-    {
-      m_Nodes.push_back(NewNode);
-
-      //make sure an edgelist is added for each node
-      m_Edges.push_back(EdgeList());
-      
-      ++m_iNextNodeIndex;
-    }
-  }
-
-  //now add the edges
-  stream >> NumEdges;
-  for (int e=0; e<NumEdges; ++e)
-  {
-    EdgeType NextEdge(stream);
-
-    m_Edges[NextEdge.From()].push_back(NextEdge);
-  }
-
-  return true;
-}
-   
 
 #endif
