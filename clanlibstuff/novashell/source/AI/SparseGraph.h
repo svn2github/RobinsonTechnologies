@@ -16,14 +16,8 @@
 #include <string>
 #include <iostream>
 
-//#include "misc/MiscUtils.h" 
-//#include "NodeTypeEnumerations.h"
-
-  enum 
-  {
-    invalid_node_index    = -1
-  };
-  
+#include "misc/MiscUtils.h" 
+#include "NodeTypeEnumerations.h"
 
 template <class node_type, class edge_type>   
 class SparseGraph                                 
@@ -126,7 +120,7 @@ public:
   {
     int tot = 0;
 
-    for (EdgeListVector::const_iterator curEdge = m_Edges.begin();
+    for (typename EdgeListVector::const_iterator curEdge = m_Edges.begin();
          curEdge != m_Edges.end();
          ++curEdge)
     {
@@ -154,7 +148,7 @@ public:
 
   void RemoveEdges()
   {
-    for (EdgeListVector::iterator it = m_Edges.begin(); it != m_Edges.end(); ++it)
+    for (typename EdgeListVector::iterator it = m_Edges.begin(); it != m_Edges.end(); ++it)
     {
       it->clear();
     }
@@ -416,7 +410,7 @@ bool SparseGraph<node_type, edge_type>::isEdgePresent(int from, int to)const
 {
     if (isNodePresent(from) && isNodePresent(from))
     {
-       for (EdgeList::const_iterator curEdge = m_Edges[from].begin();
+       for (typename EdgeList::const_iterator curEdge = m_Edges[from].begin();
             curEdge != m_Edges[from].end();
             ++curEdge)
         {
@@ -469,7 +463,7 @@ const edge_type& SparseGraph<node_type, edge_type>::GetEdge(int from, int to)con
           m_Nodes[to].Index() != invalid_node_index &&
           "<SparseGraph::GetEdge>: invalid 'to' index");
 
-  for (EdgeList::const_iterator curEdge = m_Edges[from].begin();
+  for (typename EdgeList::const_iterator curEdge = m_Edges[from].begin();
        curEdge != m_Edges[from].end();
        ++curEdge)
   {
@@ -493,7 +487,7 @@ edge_type& SparseGraph<node_type, edge_type>::GetEdge(int from, int to)
           m_Nodes[to].Index() != invalid_node_index &&
           "<SparseGraph::GetEdge>: invalid 'to' index");
 
-  for (EdgeList::iterator curEdge = m_Edges[from].begin();
+  for (typename EdgeList::iterator curEdge = m_Edges[from].begin();
        curEdge != m_Edges[from].end();
        ++curEdge)
   {
@@ -553,7 +547,7 @@ void SparseGraph<node_type, edge_type>::RemoveEdge(int from, int to)
   assert ( (from < (int)m_Nodes.size()) && (to < (int)m_Nodes.size()) &&
            "<SparseGraph::RemoveEdge>:invalid node index");
 
-  EdgeList::iterator curEdge;
+typename  EdgeList::iterator curEdge;
   
   if (!m_bDigraph)
   {
@@ -616,9 +610,9 @@ int SparseGraph<node_type, edge_type>::AddNode(node_type node)
 template <class node_type, class edge_type>
 void SparseGraph<node_type, edge_type>::CullInvalidEdges()
 {
-  for (EdgeListVector::iterator curEdgeList = m_Edges.begin(); curEdgeList != m_Edges.end(); ++curEdgeList)
+  for (typename EdgeListVector::iterator curEdgeList = m_Edges.begin(); curEdgeList != m_Edges.end(); ++curEdgeList)
   {
-    for (EdgeList::iterator curEdge = (*curEdgeList).begin(); curEdge != (*curEdgeList).end(); ++curEdge)
+    for (typename EdgeList::iterator curEdge = (*curEdgeList).begin(); curEdge != (*curEdgeList).end(); ++curEdge)
     {
       if (m_Nodes[curEdge->To()].Index() == invalid_node_index || 
           m_Nodes[curEdge->From()].Index() == invalid_node_index)
@@ -648,11 +642,11 @@ void SparseGraph<node_type, edge_type>::RemoveNode(int node)
   if (!m_bDigraph)
   {    
     //visit each neighbour and erase any edges leading to this node
-    for (EdgeList::iterator curEdge = m_Edges[node].begin(); 
+    for (typename EdgeList::iterator curEdge = m_Edges[node].begin(); 
          curEdge != m_Edges[node].end();
          ++curEdge)
     {
-      for (EdgeList::iterator curE = m_Edges[curEdge->To()].begin();
+      for (typename EdgeList::iterator curE = m_Edges[curEdge->To()].begin();
            curE != m_Edges[curEdge->To()].end();
            ++curE)
       {
@@ -688,7 +682,7 @@ void SparseGraph<node_type, edge_type>::SetEdgeCost(int from, int to, double New
         "<SparseGraph::SetEdgeCost>: invalid index");
 
   //visit each neighbour and erase any edges leading to this node
-  for (EdgeList::iterator curEdge = m_Edges[from].begin(); 
+  for (typename EdgeList::iterator curEdge = m_Edges[from].begin(); 
        curEdge != m_Edges[from].end();
        ++curEdge)
   {
@@ -708,7 +702,7 @@ void SparseGraph<node_type, edge_type>::SetEdgeCost(int from, int to, double New
 template <class node_type, class edge_type>
 bool SparseGraph<node_type, edge_type>::UniqueEdge(int from, int to)const
 {
-  for (EdgeList::const_iterator curEdge = m_Edges[from].begin();
+  for (typename EdgeList::const_iterator curEdge = m_Edges[from].begin();
        curEdge != m_Edges[from].end();
        ++curEdge)
   {

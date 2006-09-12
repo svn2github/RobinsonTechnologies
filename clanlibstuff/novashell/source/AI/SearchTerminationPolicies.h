@@ -38,7 +38,7 @@ public:
 	static bool isSatisfied(const graph_type& G, int target, int CurrentNodeIdx)
 	{
 		//get a reference to the node at the given node index
-		const graph_type::NodeType& node = G.GetNode(CurrentNodeIdx);
+		const typename graph_type::NodeType& node = G.GetNode(CurrentNodeIdx);
 
 		return node.GetType() == target;
 	}

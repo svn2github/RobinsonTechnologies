@@ -81,7 +81,7 @@ public:
   NavGraphNode(std::ifstream& stream):m_ExtraInfo(extra_info())
   {
    // char buffer[50];
-    stream >> buffer >> m_iIndex >> m_vPosition.x >> buffer >> m_vPosition.y;
+    //stream >> buffer >> m_iIndex >> m_vPosition.x >> buffer >> m_vPosition.y;
   }
  
 

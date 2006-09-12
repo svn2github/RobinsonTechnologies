@@ -4,9 +4,6 @@
 
 #include "Goal.h"
 
-
-
-
 class Goal_Delay : public Goal<MovingEntity>
 {
 public:
