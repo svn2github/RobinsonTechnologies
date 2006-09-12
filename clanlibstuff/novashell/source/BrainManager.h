@@ -100,4 +100,4 @@ private:
 	Brain * m_pBrainBase; //quick link to the brain designated as "base" for easy lookup
 };
 
-#endif // BrainManager_h__
+#endif

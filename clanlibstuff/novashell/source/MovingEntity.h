@@ -57,8 +57,8 @@ public:
   const CL_Vector2 & GetPos() {return *(CL_Vector2*)&m_body.GetPosition();}
   void  SetPos(const CL_Vector2 &new_pos);
   void SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName);
-  int GetSizeX(){ return m_pSprite->get_width() * m_pTile->GetScale().x; };
-  int GetSizeY(){ return m_pSprite->get_height() * m_pTile->GetScale().y; };
+  int GetSizeX(){ return int(m_pSprite->get_width() * m_pTile->GetScale().x); };
+  int GetSizeY(){ return int(m_pSprite->get_height() * m_pTile->GetScale().y); };
   CL_Vector2 GetScale() {return m_pTile->GetScale();}
   void SetScale(const CL_Vector2 &vScale);
   CL_Vector2 GetCollisionScale();

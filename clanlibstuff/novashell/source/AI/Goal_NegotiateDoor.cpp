@@ -1,6 +1,6 @@
 #include "AppPrecomp.h"
 #include "Goal_NegotiateDoor.h"
-#include "..\MovingEntity.h"
+#include "MovingEntity.h"
 #include "PathPlanner.h"
 
 #include "Goal_MoveToPosition.h"

@@ -61,7 +61,7 @@ public:
     bool bSatisfied = false;
 
     //get a reference to the node at the given node index
-    const graph_type::NodeType& node = G.GetNode(CurrentNodeIdx);
+    const typename graph_type::NodeType& node = G.GetNode(CurrentNodeIdx);
 
     //if the extrainfo field is pointing to a giver-trigger, test to make sure 
     //it is active and that it is of the correct type.

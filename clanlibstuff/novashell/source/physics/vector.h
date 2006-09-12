@@ -242,4 +242,4 @@ extern bool RaySphereIntersection(const Vector& C, float r, const Vector& O, con
 
 
 
-#endif OLI_VECTOR_H
+#endif

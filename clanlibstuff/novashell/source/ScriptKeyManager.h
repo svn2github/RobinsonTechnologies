@@ -51,4 +51,4 @@ protected:
 private:
 };
 
-#endif // ScriptKeyManager_h__
+#endif

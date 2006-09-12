@@ -1,6 +1,6 @@
 #include "AppPrecomp.h"
 #include "Goal_TraverseEdge.h"
-#include "..\MovingEntity.h"
+#include "MovingEntity.h"
 #include "Goal_Types.h"
 #include "PathPlanner.h"
 #include "Brain.h"

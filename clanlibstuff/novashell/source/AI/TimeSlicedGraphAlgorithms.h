@@ -120,7 +120,7 @@ public:
 
   Graph_SearchAStar_TS(const graph_type& G,
                       int                source,
-                      int                target):Graph_SearchTimeSliced<Edge>(AStar),
+                      int                target):Graph_SearchTimeSliced<Edge>(Graph_SearchTimeSliced<Edge>::AStar),
   
                                               m_Graph(G),
                                               m_ShortestPathTree(G.NumNodes()),                              
@@ -182,7 +182,7 @@ int Graph_SearchAStar_TS<graph_type, heuristic>::CycleOnce()
   }
 
   //now to test all the edges attached to this node
-  graph_type::ConstEdgeIterator ConstEdgeItr(m_Graph, NextClosestNode);
+  typename graph_type::ConstEdgeIterator ConstEdgeItr(m_Graph, NextClosestNode);
   for (const Edge* pE=ConstEdgeItr.begin();
       !ConstEdgeItr.end();
        pE=ConstEdgeItr.next())
@@ -313,7 +313,7 @@ public:
 
   Graph_SearchDijkstras_TS(const graph_type&  G,
                           int                   source,
-                          int                   target):Graph_SearchTimeSliced<Edge>(Dijkstra),
+                          int                   target):Graph_SearchTimeSliced<Edge>(Graph_SearchTimeSliced<Edge>::Dijkstra),
   
                                               m_Graph(G),
                                               m_ShortestPathTree(G.NumNodes()),                              
@@ -386,7 +386,7 @@ int Graph_SearchDijkstras_TS<graph_type, termination_condition>::CycleOnce()
   }
 
   //now to test all the edges attached to this node
-  graph_type::ConstEdgeIterator ConstEdgeItr(m_Graph, NextClosestNode);
+  typename graph_type::ConstEdgeIterator ConstEdgeItr(m_Graph, NextClosestNode);
   for (const Edge* pE=ConstEdgeItr.begin();
       !ConstEdgeItr.end();
        pE=ConstEdgeItr.next())

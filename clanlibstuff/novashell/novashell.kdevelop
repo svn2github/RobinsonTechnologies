@@ -19,12 +19,12 @@
   <kdevautoproject>
     <general>
       <activetarget>src/novashell</activetarget>
-      <useconfiguration>optimized</useconfiguration>
+      <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram/>
+      <mainprogram>/home/mrfun/dev/novashell/bin/novashell</mainprogram>
       <terminal>false</terminal>
-      <directoryradio>executable</directoryradio>
+      <directoryradio>custom</directoryradio>
       <runarguments>
         <novashell/>
       </runarguments>

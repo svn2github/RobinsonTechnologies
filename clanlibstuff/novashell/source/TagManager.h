@@ -74,4 +74,4 @@ private:
 };
 
 
-#endif                  // include guard
+#endif

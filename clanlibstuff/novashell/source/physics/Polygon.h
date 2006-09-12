@@ -58,4 +58,4 @@ public:
 
 
 
-#endif OLI_POLYGON_H
+#endif

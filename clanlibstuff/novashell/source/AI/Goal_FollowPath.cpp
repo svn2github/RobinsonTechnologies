@@ -142,8 +142,10 @@ void Goal_FollowPath::Render()
   std::list<PathEdge>::iterator it;
   for (it = m_Path.begin(); it != m_Path.end(); ++it)
   {  
-	  DrawLineWithArrowWorld(it->Source(),  it->Destination(), 15, CL_Color(255,0,0), CL_Display::get_current_window()->get_gc());
-	  DrawCenteredBoxWorld(it->Destination(), 3, CL_Color(255,0,0), CL_Display::get_current_window()->get_gc());
+	  CL_Color col(255,0,0);
+	  
+	  DrawLineWithArrowWorld(it->Source(),  it->Destination(), 15, col, CL_Display::get_current_window()->get_gc());
+	  DrawCenteredBoxWorld(it->Destination(), 3, col, CL_Display::get_current_window()->get_gc());
   }
 
   //forward the request to the subgoals
