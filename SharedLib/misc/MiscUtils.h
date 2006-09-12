@@ -27,6 +27,26 @@ using namespace std;
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #endif
 
+
+inline int   RandInt(int x,int y) {return rand()%(y-x+1)+x;}
+
+//returns a random double between zero and 1
+inline double RandFloat()      {return ((rand())/(RAND_MAX+1.0));}
+
+inline double RandInRange(double x, double y)
+{
+	return x + RandFloat()*(y-x);
+}
+
+//returns a random bool
+inline bool   RandBool()
+{
+	if (RandInt(0,1)) return true;
+
+	else return false;
+}
+
+
 #include <string>
 
 unsigned int HashString(const char *str);

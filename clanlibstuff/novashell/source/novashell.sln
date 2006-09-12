@@ -1,29 +1,13 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "novashell", "novashell.vcproj", "{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1} = {06A2653D-37A4-47D1-848A-6EB6B80AEEA1}
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A} = {5E890764-E20B-4F4D-AC41-06FA2EF4716A}
-		{EB654175-C661-4E65-B37E-EE7880950F07} = {EB654175-C661-4E65-B37E-EE7880950F07}
-		{59C3824B-7498-43ED-8AF6-43213561F752} = {59C3824B-7498-43ED-8AF6-43213561F752}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9CAE0BFE-30B5-465A-8943-B3322E853E7D}"
 	ProjectSection(SolutionItems) = preProject
 		ProfilerGame\ProfilerGame.aqt = ProfilerGame\ProfilerGame.aqt
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanCore", "J:\pro\Clanlib\Sources\clanCore.vcproj", "{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanDisplay", "J:\pro\Clanlib\Sources\clanDisplay.vcproj", "{5E890764-E20B-4F4D-AC41-06FA2EF4716A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanGUI", "J:\pro\Clanlib\Sources\clanGUI.vcproj", "{59C3824B-7498-43ED-8AF6-43213561F752}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExampleBasic2D", "J:\pro\Clanlib\Examples\Basic2D\Basic2D.vcproj", "{CCC6887C-1C47-438E-9117-A6D61D3E35F8}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Raven", "..\..\..\tempCode\AI\Buckland_Chapter7 to 10_Raven\Raven.vcproj", "{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanSound", "J:\pro\Clanlib\Sources\clanSound.vcproj", "{EB654175-C661-4E65-B37E-EE7880950F07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,78 +40,6 @@ Global
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Debug|Win32.Build.0 = Debug|Win32
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Release|Win32.ActiveCfg = Release|Win32
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Release|Win32.Build.0 = Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.boundschecker|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.boundschecker|Win32.Build.0 = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.DebugDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.DebugDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.ReleaseDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.ReleaseDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MT Debug|Win32.ActiveCfg = Static MT Debug|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MT Debug|Win32.Build.0 = Static MT Debug|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MT Release|Win32.ActiveCfg = Static MT Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MT Release|Win32.Build.0 = Static MT Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MTDLL Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MTDLL Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MTDLL Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{06A2653D-37A4-47D1-848A-6EB6B80AEEA1}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.boundschecker|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.boundschecker|Win32.Build.0 = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.DebugDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.DebugDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.ReleaseDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.ReleaseDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MT Debug|Win32.ActiveCfg = Static MT Debug|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MT Debug|Win32.Build.0 = Static MT Debug|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MT Release|Win32.ActiveCfg = Static MT Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MT Release|Win32.Build.0 = Static MT Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MTDLL Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MTDLL Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MTDLL Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{5E890764-E20B-4F4D-AC41-06FA2EF4716A}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.boundschecker|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.boundschecker|Win32.Build.0 = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.DebugDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.DebugDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.ReleaseDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.ReleaseDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MT Debug|Win32.ActiveCfg = Static MT Debug|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MT Debug|Win32.Build.0 = Static MT Debug|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MT Release|Win32.ActiveCfg = Static MT Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MT Release|Win32.Build.0 = Static MT Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MTDLL Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MTDLL Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MTDLL Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{59C3824B-7498-43ED-8AF6-43213561F752}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.boundschecker|Win32.ActiveCfg = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.boundschecker|Win32.Build.0 = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Debug|Win32.Build.0 = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.DebugDouble|Win32.ActiveCfg = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.DebugDouble|Win32.Build.0 = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Release|Win32.ActiveCfg = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Release|Win32.Build.0 = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.ReleaseDouble|Win32.ActiveCfg = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.ReleaseDouble|Win32.Build.0 = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MT Debug|Win32.ActiveCfg = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MT Debug|Win32.Build.0 = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MT Release|Win32.ActiveCfg = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MT Release|Win32.Build.0 = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MTDLL Debug|Win32.ActiveCfg = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MTDLL Debug|Win32.Build.0 = Debug|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MTDLL Release|Win32.ActiveCfg = Release|Win32
-		{CCC6887C-1C47-438E-9117-A6D61D3E35F8}.Static MTDLL Release|Win32.Build.0 = Release|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.boundschecker|Win32.ActiveCfg = boundschecker|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.boundschecker|Win32.Build.0 = boundschecker|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -139,31 +51,12 @@ Global
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.ReleaseDouble|Win32.ActiveCfg = Release|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.ReleaseDouble|Win32.Build.0 = Release|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MT Debug|Win32.ActiveCfg = Debug|Win32
-		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MT Debug|Win32.Build.0 = Debug|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MT Release|Win32.ActiveCfg = Release|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MT Release|Win32.Build.0 = Release|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MTDLL Debug|Win32.ActiveCfg = Debug|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MTDLL Debug|Win32.Build.0 = Debug|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MTDLL Release|Win32.ActiveCfg = Release|Win32
 		{8A0B9F6F-424A-4D4E-883E-B9D0C0C5390B}.Static MTDLL Release|Win32.Build.0 = Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.boundschecker|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.boundschecker|Win32.Build.0 = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.DebugDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.DebugDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.ReleaseDouble|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.ReleaseDouble|Win32.Build.0 = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MT Debug|Win32.ActiveCfg = Static MT Debug|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MT Debug|Win32.Build.0 = Static MT Debug|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MT Release|Win32.ActiveCfg = Static MT Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MT Release|Win32.Build.0 = Static MT Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MTDLL Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MTDLL Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MTDLL Release|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{EB654175-C661-4E65-B37E-EE7880950F07}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

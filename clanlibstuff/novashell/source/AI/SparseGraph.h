@@ -16,7 +16,7 @@
 #include <string>
 #include <iostream>
 
-#include "misc/MiscUtils.h" 
+#include "../AppUtils.h" 
 #include "NodeTypeEnumerations.h"
 
 template <class node_type, class edge_type>   
