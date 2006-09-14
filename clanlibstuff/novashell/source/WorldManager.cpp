@@ -10,7 +10,6 @@ WorldManager::WorldManager()
 {
 	m_pActiveWorld = NULL;
 	m_pActiveWorldCache = NULL;
-	
 }
 
 WorldManager::~WorldManager()
@@ -18,13 +17,8 @@ WorldManager::~WorldManager()
 	Kill();
 }
 
-
-void WorldManager::ScanWorlds(const string &stPath)
+void WorldManager::ScanDirToAddWorlds(const string &stPath, const string &stLocalPath)
 {
-	
-	Kill();
-	g_worldNavManager.Init();
-
 	//scan map directory for available maps
 	CL_DirectoryScanner scanner;
 
@@ -36,15 +30,43 @@ void WorldManager::ScanWorlds(const string &stPath)
 		{
 			if (scanner.get_name()[0] != '_')
 				if (scanner.get_name()[0] != '.')
-			{
+				{
 					//no underscore at the start, let's show it
-				AddWorld(stPath+scanner.get_name());
-			}
+
+					if (!IsWorldScanned(scanner.get_name()))
+					{
+						AddWorld(stLocalPath+scanner.get_name());
+					} else
+					{
+						LogMsg("Ignoring additional %s", scanner.get_name().c_str());
+					}
+				}
 
 		}
 	}
 
+}
+
+bool WorldManager::IsWorldScanned(const string &stName)
+{
+	return (GetWorldInfoByName(stName) != NULL);
+}
+
+void WorldManager::ScanWorlds(const string &stPath)
+{
 	
+	Kill();
+	g_worldNavManager.Init();
+
+	vector<string> vecPaths;
+	g_VFManager.GetMountedDirectories(&vecPaths);
+
+	vector<string>::reverse_iterator itor = vecPaths.rbegin();
+
+	for (;itor != vecPaths.rend(); itor++)
+	{
+		ScanDirToAddWorlds( (*itor) +"/"+stPath, stPath);
+	}
 }
 
 void WorldManager::Kill()
@@ -98,8 +120,19 @@ bool WorldManager::LoadWorld(string stPath, bool bSetActiveIfNoneIs)
 		return false;
 	}
 
+	if (m_pActiveWorld == &pWorldInfo->m_world)
+	{
+		//Um, we are reloading the world that is currently on the screen.  We better
+		//let people know so the cached data will be reset etc
+		m_pActiveWorld = NULL;
+		m_pActiveWorldCache = NULL;
+		sig_map_changed(); //broadcast this to anybody who is interested
+	}
+
 	pWorldInfo->m_world.Load(stPath);
 	pWorldInfo->m_worldCache.SetWorld(&pWorldInfo->m_world);
+
+
 
 	if (!m_pActiveWorld && bSetActiveIfNoneIs)
 	{
@@ -175,9 +208,9 @@ void WorldManager::UnloadWorldByName(const string &stName)
 
 	if (bMapChanged)
 	{
-		sig_map_changed(); //broadcast this to anybody who is interested
 		m_pActiveWorld = NULL;
 		m_pActiveWorldCache = NULL;
+		sig_map_changed(); //broadcast this to anybody who is interested
 	}
 	
 	return;
@@ -261,7 +294,7 @@ void WorldManager::Render()
 
 EntWorldCache * WorldManager::GetActiveWorldCache()
 {
-	assert(m_pActiveWorldCache && "Uh oh");
+//	assert(m_pActiveWorldCache && "Uh oh");
 	return m_pActiveWorldCache;
 }
 World* WorldManager::GetActiveWorld()

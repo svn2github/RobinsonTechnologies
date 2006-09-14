@@ -24,6 +24,8 @@
 #endif
 
 #define C_PROFILE_DAT_FILENAME "profile.dat"
+#define C_INFO_TEXT_FILENAME "info.txt"
+
 const unsigned int C_PROFILE_DAT_VERSION = 0;
 
 CL_VirtualFileManager g_VFManager;
@@ -52,6 +54,33 @@ GameLogic::GameLogic()
 	SetShowFPS(false);
 	SetShowPathfinding(false);
 	SetGameMode(C_GAME_MODE_TOP_VIEW); //default.  Also is automatically changed when player brains are initted.
+	m_activeWorldName = "base";
+	
+	for (unsigned int i=0; i < GetApp()->GetStartupParms().size(); i++)
+	{
+		string p1 = GetApp()->GetStartupParms().at(i);
+		string p2;
+		if (i+1 < GetApp()->GetStartupParms().size())
+		{
+			//this second part might be needed		
+			p2 = GetApp()->GetStartupParms().at(i+1);
+		}
+
+
+		if (CL_String::compare_nocase(p1, "-mod") || CL_String::compare_nocase(p1, "-world") )
+		{
+			if (p2.empty())
+			{
+				LogError("Ignored mod add path in parms, no second part was specified");
+			} else
+			{
+				AddModPath(p2);
+			}
+		}
+
+
+	}
+
 }
 
 
@@ -99,7 +128,8 @@ void GameLogic::LoadGlobals()
 	}
 
 	//if we got here, let's init the defaults
-		//init defaults if we couldn't load them
+	//init defaults if we couldn't load them
+	
 	m_data.Set("gameTick", "0");
 	GetApp()->SetGameTick(0);
 
@@ -153,7 +183,7 @@ string StripDangerousFromString(const string &name)
 bool GameLogic::UserProfileExists(const string &name)
 {
 
-	string stPath = m_strBaseUserProfilePath + "/" + StripDangerousFromString(name);
+	string stPath = m_strBaseUserProfilePath + "/" + StripDangerousFromString(name) + "/"+ m_activeWorldName;
 	
 	//TODO:  Replace with real DoesFileExist function, this one is slow and dumb
 
@@ -175,7 +205,7 @@ void GameLogic::ResetUserProfile(string name)
 	//we have to go to the directory and delete everything.  Uh.  this could be potentially very dangerous, so let's
 	//walk with care here.
 
-    string stPath = m_strBaseUserProfilePath + "/" + name + string("/") + string(C_BASE_MAP_PATH);
+    string stPath = m_strBaseUserProfilePath + "/" + name +"/" +m_activeWorldName+ string("/") + string(C_BASE_MAP_PATH);
 
 	CL_DirectoryScanner scanner;
 	//also delete all
@@ -198,8 +228,9 @@ void GameLogic::ResetUserProfile(string name)
 	}
 	}
 
-	stPath = m_strBaseUserProfilePath + "/" + name + string("/");
+	stPath = m_strBaseUserProfilePath + "/" + m_activeWorldName + "/" + name + string("/");
 	RemoveFile(stPath+"/"+string(C_PROFILE_DAT_FILENAME));
+	RemoveFile(m_strBaseUserProfilePath + "/" + m_activeWorldName + "/");
 	m_data.Clear();
 }
 
@@ -219,10 +250,14 @@ bool GameLogic::SetUserProfileName(const string &name)
 
 	m_strUserProfileName = name;
 	CL_Directory::create( m_strBaseUserProfilePath); //just in case it wasn't created yet
-	m_strUserProfilePathWithName = m_strBaseUserProfilePath + "/" + m_strUserProfileName;
+
+	CL_Directory::create(m_strBaseUserProfilePath + "/" + m_strUserProfileName);
+
+	m_strUserProfilePathWithName = m_strBaseUserProfilePath + "/" + m_strUserProfileName+"/" + m_activeWorldName;
 
 	//make all dirs that will be needed
 	CL_Directory::create(m_strUserProfilePathWithName);
+	
 	CL_Directory::create(m_strUserProfilePathWithName + "/media");
 	CL_Directory::create(m_strUserProfilePathWithName + "/media/maps");
 
@@ -256,6 +291,11 @@ bool IsOnReadOnlyDisk()
 	return false;
 }
 
+void GameLogic::AddModPath(const string &s)
+{
+	m_modPaths.push_back("worlds/"+ StripDangerousFromString(s));
+}
+
 bool GameLogic::Init()
 {
 
@@ -269,7 +309,31 @@ bool GameLogic::Init()
 	GetVisualProfileManager->Kill();
 
 	g_VFManager.Reset();
-	g_VFManager.MountDirectoryPath(CL_Directory::get_current());
+	g_VFManager.MountDirectoryPath(CL_Directory::get_current()+"/base");
+	
+	m_activeWorldName = "base";
+
+	string modInfoFile;
+	//now mount any mod paths
+	for (unsigned int i=0; i < m_modPaths.size(); i++)
+	{
+		modInfoFile = m_modPaths[i] + "/" + string(C_INFO_TEXT_FILENAME);
+
+		if (!exist( modInfoFile.c_str()) )
+		{
+			LogError("Unable to locate %s.  Mod is missing perhaps?",  modInfoFile.c_str());
+		} else
+		{
+			LogMsg("Mounting mod path %s.", m_modPaths[i].c_str());
+			g_VFManager.MountDirectoryPath(m_modPaths[i]);
+			m_activeWorldName = CL_String::get_filename(m_modPaths[i]);
+
+		}
+
+	}
+	
+
+	
 	m_worldManager.ScanWorlds(m_strBaseMapPath);
 	m_pPlayer = NULL;
 	//calculate our user profile base path, later, this could be in the windows user dir or whatever is correct
@@ -294,12 +358,23 @@ bool GameLogic::Init()
 	GetScriptManager->Init();
 	//bind app specific functions at the global level
 	RegisterLuabindBindings(GetScriptManager->GetMainState());
+	
 
-	//run a global script to init anything that needs doing
-	GetScriptManager->LoadMainScript( (GetGameLogic->GetScriptRootDir()+"/system/startup.lua").c_str());
-
+	if (! RunGlobalScriptFromTopMountedDir("system/startup.lua"))
+	{
+		LogError("Unable to locate script file system/startup.lua");
+		return false;
+	}
+	
 	//link up navigation maps
 	g_worldNavManager.LinkEverything();
+
+	if (! RunGlobalScriptFromTopMountedDir("game_start.lua"))
+	{
+		LogError("Unable to locate script file game_start.lua");
+		return false;
+	}
+
 	return true;
 }
 
@@ -664,4 +739,20 @@ void Schedule(unsigned int deliveryMS, unsigned int targetID, const char * pMsg)
 void ScheduleSystem(unsigned int deliveryMS, unsigned int targetID,const char * pMsg)
 {
 	g_MessageManager.ScheduleSystem(deliveryMS, targetID, pMsg);
+}
+
+bool RunGlobalScriptFromTopMountedDir(const char *pName)
+{
+	string fileName = GetGameLogic->GetScriptRootDir()+"/";
+	fileName += pName;
+
+	if (!g_VFManager.LocateFile(fileName))
+	{
+		//couldn't find it
+		return false;
+	}
+
+	//run a global script to init anything that needs doing
+	GetScriptManager->LoadMainScript( fileName.c_str());
+	return true;
 }

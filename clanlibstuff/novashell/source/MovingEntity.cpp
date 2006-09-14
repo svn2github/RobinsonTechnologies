@@ -647,7 +647,10 @@ bool MovingEntity::Init()
 			{
 				LogError("No visual profile was set in script %s's init!  Maybe it had a syntax error, go check the log. (trying to load default)", m_mainScript.c_str());
 			}
-			SetVisualProfile(GetGameLogic->GetScriptRootDir()+"/system/system.xml", "ent_default");
+			
+			string sFile = GetGameLogic->GetScriptRootDir()+"/system/system.xml";
+			g_VFManager.LocateFile(sFile);
+			SetVisualProfile(sFile,"ent_default");
 		}
 
 		if (!m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT))
@@ -700,6 +703,8 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	string s = C_DEFAULT_SCRIPT_PATH;
 	s += pFileName;
 	
+	g_VFManager.LocateFile(s);
+
 	if (!m_pScriptObject->Load(s.c_str()))
 	{
 		return false;

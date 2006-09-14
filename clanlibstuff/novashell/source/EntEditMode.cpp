@@ -1871,9 +1871,13 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 void EntEditMode::GetSettingsFromWorld()
 {
+		
+	if (GetWorld)	
+	{
 		m_pCheckBoxSnap->set_checked(GetWorld->GetSnapEnabled());
 		m_snapSize = GetWorld->GetDefaultTileSize();
 		m_pInputBoxSnapSize->set_text(CL_String::from_int(m_snapSize));
+	}
 }
 
 void EntEditMode::OnMapChange()

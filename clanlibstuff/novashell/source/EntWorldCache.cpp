@@ -25,12 +25,20 @@ EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 
 void EntWorldCache::SetWorld( World * pWorld)
 {
-	assert(!m_pWorld && "Um, I didn't plan on reinitting these..");
+	if (!m_pWorld)
+	{
+	
+	//assert(!m_pWorld && "Um, I didn't plan on reinitting these..");
 
 	m_pWorld = pWorld;
 	pWorld->SetMyWorldCache(this);
 
 	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntWorldCache::OnMapChange);
+	} else
+	{
+		assert(pWorld == m_pWorld);
+		ClearCache();
+	}
 
 }
 EntWorldCache::~EntWorldCache()
@@ -41,6 +49,7 @@ EntWorldCache::~EntWorldCache()
 void EntWorldCache::ClearCache()
 {
 
+	m_worldChunkVector.clear();
 	//insure that this isn't run again
 	ClearTriggers();
 
@@ -855,6 +864,7 @@ void EntWorldCache::OnMapChange()
 }
 void EntWorldCache::Render(void *pTarget)
 {
+	
 	CL_GraphicContext* pGC = (CL_GraphicContext*)pTarget;
 	
 	RenderViewList(pGC);

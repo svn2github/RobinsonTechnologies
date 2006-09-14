@@ -104,6 +104,21 @@ void LogErrorLUA(const char *pMessage)
 	LogError(pMessage);
 }
 
+bool RunScript(const string &scriptName)
+{
+	
+	string fileName = scriptName;
+
+	if (!g_VFManager.LocateFile(fileName))
+	{
+		LogError("Unable to locate script file %s.", fileName.c_str());
+		return false;
+	}
+
+	GetScriptManager->LoadMainScript(fileName.c_str());
+	return true;
+}
+
 //more class definitions
 void luabindMisc(lua_State *pState)
 {
@@ -148,6 +163,8 @@ void luabindMisc(lua_State *pState)
 		.def("UserProfileActive", &GameLogic::UserProfileActive)
 		.def("SetPlayer", &GameLogic::SetMyPlayer)
 		.def("Quit", &GameLogic::Quit)
+		.def("ClearModPaths", &GameLogic::ClearModPaths)
+		.def("AddModPath", &GameLogic::AddModPath)
 
 		,class_<App>("App")
 		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)
@@ -246,6 +263,7 @@ void luabindMisc(lua_State *pState)
 		def("ShowMessage", &ShowMessage),
 		def("FacingToVector", &FacingToVector),
 		def("VectorToFacing", &VectorToFacing),
-		def("LogError", &LogErrorLUA)
+		def("LogError", &LogErrorLUA),
+		def("RunScript", &RunScript)
 		];
 }

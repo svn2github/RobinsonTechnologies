@@ -42,6 +42,7 @@ public:
 protected:
 
 	void ShowResourceNotFoundError(unsigned int resourceID);
+	bool ScanPathForResources(const string &stPath);
 
 private:
 	HashedResourceMap m_hashedResourceMap;

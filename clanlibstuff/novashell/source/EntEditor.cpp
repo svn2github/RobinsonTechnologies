@@ -1204,8 +1204,12 @@ void EntEditor::Update(float step)
 
 void EntEditor::OnMapChange()
 {
-	GetWorldCache->SetDrawWorldChunkGrid(m_bShowWorldChunkGridLines);
-	GetWorldCache->SetDrawCollision(m_bShowCollision);
-	PopulateLayerListMenu();
+	if (GetWorldCache)
+	{
+		GetWorldCache->SetDrawWorldChunkGrid(m_bShowWorldChunkGridLines);
+		GetWorldCache->SetDrawCollision(m_bShowCollision);
+		//PopulateLayerListMenu();
+	}
+
 }
 

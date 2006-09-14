@@ -57,6 +57,8 @@ public:
 
 protected:
 
+	bool IsWorldScanned(const string &stName);
+	void ScanDirToAddWorlds(const string &stPath, const string &stLocalPath);
 
 	world_info_list m_worldInfoList;
 	World *m_pActiveWorld;

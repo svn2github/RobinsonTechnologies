@@ -206,6 +206,29 @@ bool CL_VirtualFileManager::RemoveFile(const string &fname)
 	return false; //couldn't find it
 }
 
+void CL_VirtualFileManager::GetMountedDirectories(vector<string> *pPathsOut)
+{
+	CL_VirtualFileSource *pSource = NULL;
+
+	filesource_vector::iterator itor;
+
+	for (itor = m_vecSource.begin(); itor != m_vecSource.end(); itor++)
+	{
+		pSource = &(*itor);
+
+		switch(pSource->m_type)
+		{
+		case CL_VirtualFileSource::eFilePath:
+			pPathsOut->push_back(pSource->m_strPath);
+		break;
+
+		default: ;
+		}	
+	}
+
+return;
+}
+
 bool CL_VirtualFileManager::LocateFile(string &fnameOut)
 {
 	CL_VirtualFileSource *pSource = NULL;

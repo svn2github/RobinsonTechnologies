@@ -112,12 +112,17 @@ void EntChooseScreenMode::Init()
 	pEditor->SetTipLabel("Map Info Mode - Click the map to move the camera there.\n"\
 		"\nMove the mouse over a square to see info about it.");
 	
-	if (GetWorld->GetThumbnailWidth() != 0)
+	if (GetWorld)
 	{
-		CL_PixelBuffer pb(GetWorld->GetThumbnailWidth(), GetWorld->GetThumbnailHeight(), GetWorld->GetThumbnailWidth()*3, C_THUMBNAIL_FORMAT);
-		m_pThumb = new CL_Surface(pb);
-		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 
+	
+		if (GetWorld->GetThumbnailWidth() != 0)
+		{
+			CL_PixelBuffer pb(GetWorld->GetThumbnailWidth(), GetWorld->GetThumbnailHeight(), GetWorld->GetThumbnailWidth()*3, C_THUMBNAIL_FORMAT);
+			m_pThumb = new CL_Surface(pb);
+			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+
+		}
 	}
 	m_slotClose = m_pWindow->sig_close().connect_virtual(this, &EntChooseScreenMode::OnClose);
 
@@ -159,8 +164,6 @@ void EntChooseScreenMode::OnAutoResize()
 	
 	GetWorld->ForceSaveNow();
 	GetWorld->Load();
-	GetWorldCache->ClearCache();
-	GetWorld->Save(true);
 	GetWorld->RemoveUnusedFileChunks();
 	QuickInit();
 
@@ -175,7 +178,11 @@ void EntChooseScreenMode::GenerateThumbnailsIfNeeded()
 
 	m_thumbList.clear();
 
-
+    if (!GetWorld)
+	{
+		//no active world
+		return;
+	}
 	WorldMap *pWorldMap = GetWorld->GetWorldMap();
 	WorldMap::const_iterator itor = pWorldMap->begin();
 
@@ -193,18 +200,27 @@ void EntChooseScreenMode::CalculateMapSizes()
 {
 	m_blockSize = CL_Rect(0,0,128, 128);
 
-	//adjust the size if needed to fit more blocks on the screen
-
-	if ( m_blockSize.right*GetWorld->GetWorldX() > GetScreenX)
+	if (GetWorld)
 	{
-		m_blockSize.right = GetScreenX/GetWorld->GetWorldX();
+
+	
+		//adjust the size if needed to fit more blocks on the screen
+
+		if ( m_blockSize.right*GetWorld->GetWorldX() > GetScreenX)
+		{
+			m_blockSize.right = GetScreenX/GetWorld->GetWorldX();
+		}
+
+		if (m_blockSize.bottom*GetWorld->GetWorldY() > (GetScreenY - C_OFFSET_FROM_TOP_OF_SCREEN))
+		{
+			m_blockSize.bottom = (GetScreenY-C_OFFSET_FROM_TOP_OF_SCREEN) /GetWorld->GetWorldY();
+		}
 	}
 
-	if (m_blockSize.bottom*GetWorld->GetWorldY() > (GetScreenY - C_OFFSET_FROM_TOP_OF_SCREEN))
+	if (GetWorld)
 	{
-		m_blockSize.bottom = (GetScreenY-C_OFFSET_FROM_TOP_OF_SCREEN) /GetWorld->GetWorldY();
-	}
 
+	
 	//make it square
 	m_blockSize.bottom = min(m_blockSize.bottom, m_blockSize.right);
 	m_blockSize.right = m_blockSize.bottom;
@@ -214,6 +230,11 @@ void EntChooseScreenMode::CalculateMapSizes()
 	m_drawOffset.x = (GetScreenX-m_drawOffset.x)/2;
 
 	m_drawOffset.y = GetScreenY - (m_blockSize.bottom* GetWorld->GetWorldY());
+	} else
+	{
+
+		m_drawOffset = CL_Point(0,0);
+	}
 }
 
 
@@ -314,7 +335,10 @@ void EntChooseScreenMode::SetupInfoPanel(ScreenID screenID)
 		}
 	} else
 	{
-		st = CL_String::from_int(GetWorld->GetWorldMap()->size()) + " screens exist.";
+		if (GetWorld)
+		{
+			st = CL_String::from_int(GetWorld->GetWorldMap()->size()) + " screens exist.";
+		}
 	}
 	
 	m_pLabel->set_text(st);

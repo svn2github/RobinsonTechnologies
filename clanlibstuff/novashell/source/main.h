@@ -108,7 +108,8 @@ public:
 	void SetSimulationSpeedMod(float fNew) {m_simulationSpeedMod = fNew;}
 	float GetSimulationSpeedMod() {return m_simulationSpeedMod;}
 	bool GetJustRenderedFrame() {return m_bJustRenderedFrame;} //true if a frame was JUST rendered.  Reset after the next Update() cycle
-	
+	vector<string> & GetStartupParms() {return m_startupParms;}
+
 	enum eVideoRefresh
 	{
 		FPS_AT_REFRESH = 1,

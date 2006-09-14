@@ -43,9 +43,11 @@ VisualResource * VisualProfileManager::GetVisualResource(const string &fileName)
 	if (pRes) return pRes;
 
 	//if we got here, it means this resource hasn't been loaded yet and we need to load and init it
-	
+	string fullFileName = fileName;
+	g_VFManager.LocateFile(fullFileName);
+
 	pRes = new VisualResource;
-	if (!pRes || !pRes->Init(fileName))
+	if (!pRes || !pRes->Init(fullFileName))
 	{
 		SAFE_DELETE(pRes);
 		LogMsg("Unable to load visual profile %s", fileName.c_str());

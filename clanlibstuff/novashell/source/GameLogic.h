@@ -82,6 +82,9 @@ public:
 	  void OnPlayerDeleted(int id);
 	  bool GetShowPathfinding() {return m_bShowPathfinding;}
 	  void SetShowPathfinding(bool bNew) {m_bShowPathfinding = bNew;}
+	  void ClearModPaths() {m_modPaths.clear();}
+	  void AddModPath(const string &s);
+	  const string & GetActiveWorldName();
   
 	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
 	  //But its reliance on this var should be as minimum as possible.
@@ -98,8 +101,6 @@ public:
 	  };
 
 private:
-
-	
 
 	void OnMouseUp(const CL_InputEvent &key);
 	void Zoom(bool zoomCloser);
@@ -130,7 +131,8 @@ private:
 	int m_gameMode;
 	CL_Slot m_playerDestroyedSlot;
 	bool m_bShowPathfinding;
-	
+	vector<string> m_modPaths; //mount order is important
+	string m_activeWorldName;
 };
 
 void MovePlayerToCamera();
@@ -151,3 +153,4 @@ extern MessageManager g_MessageManager; //I should make the class a singleton. u
 
 void Schedule(unsigned int deliveryMS, unsigned int targetID, const char * pMsg);
 void ScheduleSystem(unsigned int deliveryMS, unsigned int targetID, const char * pMsg);
+bool RunGlobalScriptFromTopMountedDir(const char *pName);

@@ -206,7 +206,8 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	static EntWorldCache *pWorldCache;
 	
 	pWorldCache = pWorld->GetMyWorldCache();
-
+	
+	assert(pWorldCache && "Why render nothing?");
 
 	if (GetGameLogic->GetParallaxActive())
 	{

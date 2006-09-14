@@ -121,7 +121,13 @@ World::~World()
 void World::Kill()
 {
   
-	m_pWorldCache = NULL; 
+//	m_pWorldCache = NULL; 
+
+	if (m_pWorldCache)
+	{
+		m_pWorldCache->ClearCache();
+	}
+
 	WorldMap::iterator ent = m_worldMap.begin();
     for (; ent != m_worldMap.end(); ++ent)
     {
@@ -405,7 +411,7 @@ bool World::Load(string dirPath)
 
 	try
 	{
-		LogMsg("Loading world map...");
+		//LogMsg("Loading world map...");
 	
 		CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
 
@@ -416,7 +422,7 @@ bool World::Load(string dirPath)
 		//we could copy that rect to m_rectWorld but it might be better to let it 'auto figure' out
 		//where the bounds are in case we'd deleted a lot
 
-		LogMsg("Loaded rect is %d, %d, %d, %d", m_worldRect.top, m_worldRect.left, m_worldRect.right, m_worldRect.bottom);
+		//LogMsg("Loaded rect is %d, %d, %d, %d", m_worldRect.top, m_worldRect.left, m_worldRect.right, m_worldRect.bottom);
 		//now cycle through and load all the WorldChunks so we know where stuff is and what the thumbnail
 		//looks like, but without actually loading the screens
 
@@ -434,7 +440,7 @@ bool World::Load(string dirPath)
 		ScreenID screenID;
 
 		helper.process(chunkType);
-		LogMsg("Loading worldchunks...");
+		//LogMsg("Loading worldchunks...");
 		while (chunkType != C_DATA_WORLD_END_OF_CHUNKS)
 		{
 			switch (chunkType)

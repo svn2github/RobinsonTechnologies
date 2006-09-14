@@ -17,44 +17,66 @@ HashedResourceManager::~HashedResourceManager()
 	Kill();
 }
 
-bool HashedResourceManager::Init()
+bool HashedResourceManager::ScanPathForResources(const string &stPath)
 {
-
-	Kill();
 
 	//scan map directory for tile maps we can possibly load
 	CL_DirectoryScanner scanner;
-	
-	scanner.scan(GetGameLogic->GetBaseMapPath(), "*");
+
+	scanner.scan(stPath, "*");
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
-			if (scanner.is_directory() && scanner.get_name() != "." && scanner.get_name() != "..")
+		if (scanner.is_directory() && scanner.get_name() != "." && scanner.get_name() != "..")
 
 		{
-			//this is purportedly a tilemap for us to load for global use
+			//Found a world dir.  Any images in here?
+
 			CL_DirectoryScanner scanPic;
-			scanPic.scan(GetGameLogic->GetBaseMapPath()+file);
+			scanPic.scan(stPath+file);
 			while (scanPic.next())
 			{
 				string fileExtension = CL_String::get_extension(scanPic.get_name());
 
 				if (!scanPic.is_directory())
 				{
-				if (fileExtension == "dat") continue; //not an image, skip it
-				if (fileExtension == "chunk") continue; //not an image, skip it
-				if (fileExtension == "txt") continue; //not an image, skip it
-				//note, I build this whole path because .get_filename includes a backslash in the middle instead of
-				//a forward slash which screws up the addgraphic function
-				if (!AddGraphic(GetGameLogic->GetBaseMapPath()+file+string("/")+scanPic.get_name()))
+					if (fileExtension == "dat") continue; //not an image, skip it
+					if (fileExtension == "chunk") continue; //not an image, skip it
+					if (fileExtension == "txt") continue; //not an image, skip it
+					//note, I build this whole path because .get_filename includes a backslash in the middle instead of
+					//a forward slash which screws up the addgraphic function
+					if (!AddGraphic(stPath+file+string("/")+scanPic.get_name()))
 					{
 						return false;
 					}
 				}
 			}
-			
+
 		}
 	}
+
+	return true;
+}
+bool HashedResourceManager::Init()
+{
+
+	Kill();
+
+	vector<string> vecPaths;
+	g_VFManager.GetMountedDirectories(&vecPaths);
+
+	vector<string>::reverse_iterator itor = vecPaths.rbegin();
+
+	for (;itor != vecPaths.rend(); itor++)
+	{
+		if (!ScanPathForResources( (*itor) +"/"+GetGameLogic->GetBaseMapPath()))
+		{
+			return false;
+		}
+	}
+
+
+
 	return true; //success
 }
 
