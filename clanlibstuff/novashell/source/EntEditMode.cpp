@@ -1236,7 +1236,9 @@ void EntEditMode::OnPropertiesOK()
 
 void EntEditMode::OnPropertiesEditScript()
 {
-	OpenScriptForEditing(CL_Directory::get_current()+"/"+GetGameLogic->GetScriptRootDir()+"/"+m_pPropertiesInputScript->get_text());
+	string file = GetGameLogic->GetScriptRootDir()+"/"+m_pPropertiesInputScript->get_text();
+	g_VFManager.LocateFile(file);
+	OpenScriptForEditing(CL_Directory::get_current() + "/" +file);
 }
 
 void EntEditMode::OnPropertiesOpenScript()

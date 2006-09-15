@@ -84,6 +84,7 @@ public:
 	  void SetShowPathfinding(bool bNew) {m_bShowPathfinding = bNew;}
 	  void ClearModPaths() {m_modPaths.clear();}
 	  void AddModPath(const string &s);
+	  const string & GetWorldsDirPath() {return m_strWorldsDirPath;}
 	  const string & GetActiveWorldName();
   
 	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
@@ -133,6 +134,7 @@ private:
 	bool m_bShowPathfinding;
 	vector<string> m_modPaths; //mount order is important
 	string m_activeWorldName;
+	string m_strWorldsDirPath;
 };
 
 void MovePlayerToCamera();

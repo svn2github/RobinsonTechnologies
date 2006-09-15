@@ -370,6 +370,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\EntCreationUtils.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\EntityManager.cpp"
 					>
 					<FileConfiguration
@@ -388,6 +392,10 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\EntWorldDialog.cpp"
+					>
 				</File>
 				<File
 					RelativePath=".\MovingEntity.cpp"
@@ -463,10 +471,6 @@
 					</File>
 					<File
 						RelativePath=".\EntVisualProfileEditor.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\EntVisualProfileEditor.h"
 						>
 					</File>
 					<Filter
@@ -984,10 +988,6 @@
 				>
 				<File
 					RelativePath=".\ScriptKeyManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\ScriptKeyManager.h"
 					>
 				</File>
 				<File
@@ -1990,10 +1990,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\EntityBindings.h"
-						>
-					</File>
-					<File
 						RelativePath=".\luabindBindings.cpp"
 						>
 						<FileConfiguration
@@ -2006,23 +2002,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\luabindBindings.h"
-						>
-					</File>
-					<File
 						RelativePath=".\MiscClassBindings.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\MiscClassBindings.h"
-						>
-					</File>
-					<File
 						RelativePath=".\VectorBindings.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\VectorBindings.h"
 						>
 					</File>
 				</Filter>
@@ -2052,6 +2036,14 @@
 			<Filter
 				Name="EntitiesH"
 				>
+				<File
+					RelativePath=".\EntCreationUtils.h"
+					>
+				</File>
+				<File
+					RelativePath=".\EntWorldDialog.h"
+					>
+				</File>
 				<File
 					RelativePath=".\MovingEntity.h"
 					>
@@ -2093,6 +2085,10 @@
 					</File>
 					<File
 						RelativePath="EntEditor.h"
+						>
+					</File>
+					<File
+						RelativePath=".\EntVisualProfileEditor.h"
 						>
 					</File>
 					<Filter
@@ -2296,6 +2292,10 @@
 			<Filter
 				Name="ScriptH"
 				>
+				<File
+					RelativePath=".\ScriptKeyManager.h"
+					>
+				</File>
 				<File
 					RelativePath=".\ScriptManager.h"
 					>
@@ -2517,6 +2517,26 @@
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\luabind\yield_policy.hpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="LuaBindings"
+					>
+					<File
+						RelativePath=".\EntityBindings.h"
+						>
+					</File>
+					<File
+						RelativePath=".\luabindBindings.h"
+						>
+					</File>
+					<File
+						RelativePath=".\MiscClassBindings.h"
+						>
+					</File>
+					<File
+						RelativePath=".\VectorBindings.h"
 						>
 					</File>
 				</Filter>

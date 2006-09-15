@@ -1,5 +1,6 @@
 #include "AppPrecomp.h"
 #include "CollisionData.h"
+#include "GameLogic.h"
 
 CollisionData::CollisionData()
 {
@@ -35,14 +36,10 @@ void CollisionData::Load(const string &fileName)
 	m_fileName = fileName;
 	m_vecScale = CL_Vector2(1,1);
 
-	CL_InputSource_File *pFile = NULL;
+	CL_InputSource *pFile = g_VFManager.GetFile(fileName);
 
-	try
+	if (!pFile)
 	{
-		pFile = new CL_InputSource_File(fileName);
-	} catch(CL_Error error)
-	{
-		SAFE_DELETE(pFile);
 		return;
 	}
 

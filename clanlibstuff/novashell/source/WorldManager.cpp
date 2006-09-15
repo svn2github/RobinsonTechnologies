@@ -222,7 +222,7 @@ bool WorldManager::SetActiveWorldByName(const string &stName)
 	WorldInfo *pWorldInfo = GetWorldInfoByName(stName);
 	if (!pWorldInfo) 
 	{
-		LogMsg("World %s not found", stName.c_str());
+		LogMsg("Map %s not found", stName.c_str());
 		return false;
 	}
 

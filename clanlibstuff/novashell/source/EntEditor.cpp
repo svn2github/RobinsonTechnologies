@@ -499,18 +499,18 @@ void EntEditor::OnAddNewMap()
 
 void EntEditor::OnEditStartupLua()
 {
-	string file = CL_Directory::get_current() + "/" + GetGameLogic->GetScriptRootDir();
+	string file = GetGameLogic->GetScriptRootDir();
 	file += "/system/startup.lua";
-
-	OpenScriptForEditing(file);
+	g_VFManager.LocateFile(file);
+	OpenScriptForEditing(CL_Directory::get_current() + "/" +file);
 }
 
 void EntEditor::OnEditSetupConstants()
 {
-	string file = CL_Directory::get_current() + "/" + GetGameLogic->GetScriptRootDir();
+	string file = GetGameLogic->GetScriptRootDir();
 	file += "/system/setup_constants.lua";
-
-	OpenScriptForEditing(file);
+	g_VFManager.LocateFile(file);
+	OpenScriptForEditing(CL_Directory::get_current() + "/" +file);
 
 }
 void EntEditor::OnDumpWorldNavStatistics()
@@ -927,7 +927,6 @@ void EntEditor::BuildLayerControlBox()
 	m_pLayerListWindow = new CL_Window(rectSize, "Layer Control (Dbl click to edit)" , CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
 	m_pLayerListWindow->set_event_passing(false);
 
-
 	CL_Rect r =m_pLayerListWindow->get_children_rect();
 	r.top += boxTopOffset;
 
@@ -944,7 +943,6 @@ void EntEditor::BuildLayerControlBox()
 	m_pListLayerActive->set_multi_selection(true);
 
 	m_pLayerLabel = new CL_Label (CL_Point(37,0), "Display            Active For Edit", m_pLayerListWindow->get_client_area());
-	
 
 	CL_Point pt(3, m_pListLayerDisplay->get_client_y()+m_pListLayerDisplay->get_height());
 	pt.y += 5; //spacing

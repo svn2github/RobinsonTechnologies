@@ -50,6 +50,9 @@ GameLogic::GameLogic()
 	SetShowMessageActive(false);
 	m_strBaseMapPath = C_BASE_MAP_PATH+ string("/");
 	m_strScriptRootDir = "media/script";
+
+	m_strWorldsDirPath = "worlds";
+
 	CL_Directory::create(m_strBaseUserProfilePath);
 	SetShowFPS(false);
 	SetShowPathfinding(false);
@@ -293,7 +296,7 @@ bool IsOnReadOnlyDisk()
 
 void GameLogic::AddModPath(const string &s)
 {
-	m_modPaths.push_back("worlds/"+ StripDangerousFromString(s));
+	m_modPaths.push_back(m_strWorldsDirPath+ "/"+ StripDangerousFromString(s));
 }
 
 bool GameLogic::Init()
@@ -386,7 +389,7 @@ bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the ad
 	{
 		if (!GetWorld)
 		{
-			ShowMessage("Oops", "Can't open world editor, no world is loaded.");
+			ShowMessage("Oops", "Can't open world editor, no map is loaded.");
 			return NULL;
 		} 
 
@@ -632,6 +635,7 @@ void GameLogic::Update(float step)
 	{
 		m_bRestartEngineFlag = false;
 		LogMsg("Restarting engine...");
+		g_Console.SetOnScreen(false);
 		Kill();
 		Init();
 	}

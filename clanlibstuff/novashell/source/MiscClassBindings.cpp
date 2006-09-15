@@ -12,6 +12,7 @@
 #include "VisualProfileManager.h"
 #include "AI/Goal_Think.h"
 #include "AI/WatchManager.h"
+#include "EntCreationUtils.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -264,6 +265,7 @@ void luabindMisc(lua_State *pState)
 		def("FacingToVector", &FacingToVector),
 		def("VectorToFacing", &VectorToFacing),
 		def("LogError", &LogErrorLUA),
-		def("RunScript", &RunScript)
+		def("RunScript", &RunScript),
+		def("CreateEntitySpecial", &CreateEntitySpecial)
 		];
 }
