@@ -1245,33 +1245,24 @@ void EntEditMode::OnPropertiesEditScript()
 
 void EntEditMode::OnPropertiesOpenScript()
 {
-	//this is awfully messy, because I'm calculating paths in a strange way to get them based off of the media/scripts
-	//dir.  
-
+	//this is awfully messy, because I'm calculating paths in a strange way to get relative versions
+	
 	assert(m_pPropertiesInputScript);
 
+	
 	string fname = m_pPropertiesInputScript->get_text();
 	string original_dir = CL_Directory::get_current();
-	string dir = original_dir + "/" + GetGameLogic->GetScriptRootDir();
-	string path = dir;
+	string fileNameWithoutPath = CL_String::get_filename(fname);
+
+	string dir = GetGameLogic->GetScriptRootDir()+"/"+fname;
+	if (g_VFManager.LocateFile(dir))
+	{
+		//was able to locate it in one of our resource paths
+	}
 	
-	string fileNameWithoutPath = fname;
-	int offset;
+	dir = CL_String::get_path(dir);
 
-	if ( (offset=fname.find_last_of("/\\")) != -1)
-	{
-		fileNameWithoutPath = fname.substr(offset+1, (fname.size()-offset)-1);
-	} else
-	{
-		fileNameWithoutPath = fname;
-	}
-
-	if ( (offset=fname.find_last_of("/\\")) != -1)
-	{
-		path += ("/"+fname.substr(0, offset));
-	}
-
-	CL_Directory::change_to(path);
+	CL_Directory::change_to(dir);
 	CL_FileDialog dlg("Open LUA Script", fileNameWithoutPath, "*.lua", GetApp()->GetGUI());
 	
 	//dlg.set_behavior(CL_FileDialog::quit_file_selected);
@@ -1285,26 +1276,23 @@ void EntEditMode::OnPropertiesOpenScript()
 		return;
 	}
 
-	//extract what they chose with the relevent path
+	//extract what they chose with the relevant path
 	
 	fname = dlg.get_path() +"/" + dlg.get_file();
-
-	if (fname.size() < dir.size())
-	{
-		//imprecise way to figure out if they went to a wrong directory and avoids an STL crash.  really, I
-		//need to convert the slashes to forward slashes in both strings and check if dir is in fname.
-		
-		LogMsg("Can't open this file, outside of our media dir.");
-		return;
-	}
-
-	//remove the part we don't want
-	fname = fname.substr(dir.size(), (fname.size()-dir.size()));
-	
-
 	//let's just convert all the slashes
 	StringReplace("\\", "/", fname);
 
+	//make the path relative
+
+	int index = fname.find(GetGameLogic->GetScriptRootDir()+"/");
+	if (index != -1)
+	{
+		//don't include the root dir part
+		index += GetGameLogic->GetScriptRootDir().size();
+		fname = fname.substr(index, fname.size()-index);
+	}
+
+	
 	//remove slash at the front if applicable
 	if (fname[0] == '/')
 	{
@@ -1313,6 +1301,7 @@ void EntEditMode::OnPropertiesOpenScript()
 
 	m_pPropertiesInputScript->set_text(fname);
 }
+
 void EntEditMode::OnPropertiesRemoveData()
 {
 	//kill all selected items

@@ -455,6 +455,7 @@ void EntEditor::OnOpenScript()
 
 void EntEditor::OnAddNewMap()
 {
+	
 	CL_InputDialog dlg("Add New Map Dialog", "Create New Map Dir", "Cancel", "",GetApp()->GetGUI());
 	dlg.set_event_passing(false);
 
@@ -471,11 +472,14 @@ void EntEditor::OnAddNewMap()
 	if (dlg.get_result_button() == 0)
 	{
 	
-		string mapName = GetGameLogic->GetBaseMapPath() + pName->get_text();
+		vector<string> paths;
+		g_VFManager.GetMountedDirectories(&paths);
+
+		string mapName = GetGameLogic->GetBaseMapPath() +  pName->get_text();
 		
 		if (pName->get_text().size() > 0)
 		{
-			if (CL_Directory::create(mapName))
+			if (CL_Directory::create(paths.back() + "/" + mapName))
 			{
 				CL_MessageBox::info("Created", "Map directory "+mapName+" created.  Note, this just makes a directory in the maps dir.  You can cut/paste/copy from file explorer too.", GetApp()->GetGUI());
 			
@@ -634,14 +638,15 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 	pItem->enable(false);
 
 
-	pItem = m_pMenu->create_item("MapGen/Generate Small Map");
-	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateSmall);
+	pItem = m_pMenu->create_item("MapGen/Generate Small Map (disabled right now)");
+	//m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateSmall);
 
-	pItem = m_pMenu->create_item("MapGen/Generate Large Map");
-	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateLarge);
+	pItem = m_pMenu->create_item("MapGen/Generate Large Map (disabled right now)");
+	//m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateLarge);
 	
-	pItem = m_pMenu->create_item("Utilities/Import from Dink Map");
-	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateDink);
+	//too touchy to include right now
+	//pItem = m_pMenu->create_item("Utilities/Import from Dink Map");
+	//m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateDink);
 
 	pItem = m_pMenu->create_item("Utilities/Reset Camera Position to 0,0");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnResetCamera);

@@ -416,10 +416,13 @@ bool Screen::RemoveTileByPointer(Tile *pSrcTile)
 
 void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 {
-	
+
+	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+
 	if ( (*itor)->GetType() != C_TILE_TYPE_REFERENCE )
 	{
 
+		GetParentWorldChunk()->SetDataChanged(true);
 		
 		if ((*itor)->GetType() == C_TILE_TYPE_ENTITY)
 		{
@@ -435,10 +438,12 @@ void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 		if (GetParentWorldChunk()->GetParentWorld()->IsWorldCacheInitted())
 		GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache()->RemoveTileFromList( (*itor) );
 		
+	} else
+	{
+		//it was only a reference
+		SetRequestIsEmptyRefreshCheck(true);
 	}
 
-	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
-	GetParentWorldChunk()->SetDataChanged(true);
 
 	delete (*itor);
 	itor = m_vecLayerList[layer].erase(itor);
@@ -451,9 +456,14 @@ void Screen::AddTile(Tile *pTile)
 	GetTileList(pTile->GetLayer())->push_back(pTile);
 
 	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
-	GetParentWorldChunk()->SetDataChanged(true);
+	m_bIsEmpty = false; //can't be empty anymore
 
-	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) return; //references don't need the edge cases figured out
+	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) 
+	{
+		return; //references don't need the edge cases figured out
+	}
+
+	GetParentWorldChunk()->SetDataChanged(true);
 
 	//we may also need to index info about this sprite if it has a tag name
 
