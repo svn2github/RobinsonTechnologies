@@ -16,7 +16,7 @@
 
 
 #define C_GROUND_RELAX_TIME_MS 150
-#define C_DEFAULT_SCRIPT_PATH "media/script/"
+#define C_DEFAULT_SCRIPT_PATH "script/"
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
 //there are issues with sliding along walls thinking it's a ground when they are built out of small blocks, this
 //provides a work around

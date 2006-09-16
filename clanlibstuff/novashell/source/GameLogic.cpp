@@ -49,7 +49,7 @@ GameLogic::GameLogic()
 	m_bMakingThumbnail = false;
 	SetShowMessageActive(false);
 	m_strBaseMapPath = C_BASE_MAP_PATH+ string("/");
-	m_strScriptRootDir = "media/script";
+	m_strScriptRootDir = "script";
 
 	m_strWorldsDirPath = "worlds";
 
@@ -261,8 +261,7 @@ bool GameLogic::SetUserProfileName(const string &name)
 	//make all dirs that will be needed
 	CL_Directory::create(m_strUserProfilePathWithName);
 	
-	CL_Directory::create(m_strUserProfilePathWithName + "/media");
-	CL_Directory::create(m_strUserProfilePathWithName + "/media/maps");
+	CL_Directory::create(m_strUserProfilePathWithName + "maps");
 
 	LogMsg("User profile path now %s", m_strUserProfilePathWithName.c_str());
 	
@@ -304,7 +303,11 @@ bool GameLogic::Init()
 
 	LogMsg("Initializing GameLogic");
 
+	g_pSoundManager->Kill();
+	g_pSoundManager->Init();
 	g_MessageManager.Reset();
+	m_leftMouseButtonCallback.clear();
+
 	m_strUserProfileName.clear();
 	m_worldManager.Kill();
 	g_materialManager.Init();

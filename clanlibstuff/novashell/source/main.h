@@ -8,7 +8,7 @@
 #ifndef main_HEADER_INCLUDED // include guard
 #define main_HEADER_INCLUDED  // include guard
 
-#define C_BASE_MAP_PATH "media/maps"
+#define C_BASE_MAP_PATH "maps"
 
 enum
 {

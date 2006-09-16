@@ -221,7 +221,7 @@ CL_Surface * HashedResource::GetImage()
 {
 	if (!m_pImage) 
 	{
-		BlitMessage("(loading art)");
+		BlitMessage("... loading ...");
 		Init();
 	}
 	return m_pImage;

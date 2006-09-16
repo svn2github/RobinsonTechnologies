@@ -27,6 +27,7 @@ public:
 
 		}
 		m_name = rhs.m_name;
+		m_spriteName = rhs.m_spriteName;
 	   return *this;
    }
 	

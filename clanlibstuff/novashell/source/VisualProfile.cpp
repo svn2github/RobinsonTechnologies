@@ -370,7 +370,7 @@ int VisualProfile::SpriteToAnimID(const string & stState)
 			return i;
 		}
 	}
-	LogError("Unknown anim type: %s.  Keep in mind they are case sensitive.", stState.c_str());
+	LogError("Unknown sprite name: %s.  Keep in mind they are case sensitive.", stState.c_str());
 	return -1;
 }
 

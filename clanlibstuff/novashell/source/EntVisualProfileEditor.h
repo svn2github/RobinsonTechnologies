@@ -35,6 +35,7 @@ protected:
 	void ModifyActiveAnim(CL_Point pt);
 
 	void OnChangeAnim();
+	void MoveAnimSelection(int offset);
 	
 	//GUI
 	CL_SlotContainer m_slots;

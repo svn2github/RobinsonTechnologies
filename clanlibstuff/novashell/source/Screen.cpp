@@ -102,31 +102,6 @@ Tile * Screen::GetTileByPosition(const CL_Vector2 &vecPos, unsigned int layer)
 	return NULL;
 }
 
-bool Screen::RemoveTileByPosition(const CL_Vector2 &vecPos, unsigned int layer)
-{
-	if (layer >= m_vecLayerList.size()) return false; //we don't have this layer
-
-	//do any of our tiles match this point?
-	tile_list::iterator itor = GetTileList(layer)->begin();
-
-	while (itor != m_vecLayerList[layer].end())
-	{
-		if ( (*itor)->GetPos() == vecPos)
-		{
-			if ((*itor)->GetType() != C_TILE_TYPE_REFERENCE)
-			{
-				GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
-				GetParentWorldChunk()->SetDataChanged(true);
-			}
-			//found it
-			RemoveTileByItor(itor, layer);
-			return true;
-		}
-		itor++;
-	}
-
-	return false;
-}
 
 string Screen::GetFileName()
 {
@@ -365,6 +340,28 @@ tile_list * Screen::GetTileList(unsigned int layer)
 	return &m_vecLayerList[layer];
 }
 
+
+bool Screen::RemoveTileByPosition(const CL_Vector2 &vecPos, unsigned int layer)
+{
+	if (layer >= m_vecLayerList.size()) return false; //we don't have this layer
+
+	//do any of our tiles match this point?
+	tile_list::iterator itor = GetTileList(layer)->begin();
+
+	while (itor != m_vecLayerList[layer].end())
+	{
+		if ( (*itor)->GetPos() == vecPos)
+		{
+			//found it
+			RemoveTileByItor(itor, layer);
+			return true;
+		}
+		itor++;
+	}
+
+	return false;
+}
+
 bool Screen::RemoveTileBySimilarType(Tile *pSrcTile)
 {
 	if (pSrcTile->GetLayer() >= m_vecLayerList.size()) return false; //we don't have this layer
@@ -383,13 +380,7 @@ bool Screen::RemoveTileBySimilarType(Tile *pSrcTile)
 			&& pTile->GetType() == pSrcTile->GetType()
 			)
 		{
-			//remove it
-			if (pSrcTile->GetType() != C_TILE_TYPE_REFERENCE)
-			{
-				GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
-				GetParentWorldChunk()->SetDataChanged(true);
-			}
-			
+				
 			RemoveTileByItor(itor, pSrcTile->GetLayer());
 			
 			return true;
@@ -412,15 +403,8 @@ bool Screen::RemoveTileByPointer(Tile *pSrcTile)
 		if ((*itor) == pSrcTile)
 		{
 			
-			if (pSrcTile->GetType() != C_TILE_TYPE_REFERENCE)
-			{
-				GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
-				GetParentWorldChunk()->SetDataChanged(true);
-			}
 			//remove it
 			RemoveTileByItor(itor, pSrcTile->GetLayer());
-			
-			
 			return true;
 		}
 		itor++;
@@ -428,64 +412,6 @@ bool Screen::RemoveTileByPointer(Tile *pSrcTile)
 
 	LogError("Failed to remove tile by pointer on screen %d", GetParentWorldChunk()->GetScreenID());
 	return false;
-}
-
-void Screen::AddTile(Tile *pTile)
-{
-	pTile->SetParentScreen(this); //who knows when they'll need this data
-	GetTileList(pTile->GetLayer())->push_back(pTile);
-	
-	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) return; //references don't need the edge cases figured out
-
-	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
-	GetParentWorldChunk()->SetDataChanged(true);
-
-	//we may also need to index info about this sprite if it has a tag name
-
-	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-	{
-		GetTagManager->Update(GetParentWorldChunk()->GetParentWorld(), ((TileEntity*)pTile)->GetEntity());
-	}
-	
-	if (pTile->GetBit(Tile::e_pathNode))
-	{
-		GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->AddTileNode(pTile);
-		//LogMsg("Added graphid %d", pTile->GetGraphNodeID());
-	}
-
-	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-	{
-		
-		((TileEntity*)pTile)->GetEntity()->RunPostInitIfNeeded();
-	}
-	//early rejection to see if this tile's bounds are totally within this, otherwise it's an edge case and takes
-	//special preparation h
-
-	//TODO do this a faster way
-	static CL_Rect tileRect; 
-	static CL_Rect unionRect;
-	//LogMsg("Adding tile to screen %d", GetParentWorldChunk()->GetScreenID());
-
-	tileRect = pTile->GetWorldRectInt();
-	unionRect = tileRect.calc_union(m_pParentWorldChunk->GetRect());
-	if (unionRect == tileRect)
-	{
-		return;
-	}
-
-	//we expand beyond the bounds of this screen.  We'll notify the other screens about this with a reference that
-	//points to this one, the only real instance. When references are deleted, this tile will be updated and vice-versa.
-
-	std::vector <WorldChunk*> wcVector;
-	m_pParentWorldChunk->GetParentWorld()->GetAllWorldChunksWithinThisRect(wcVector, pTile->GetWorldRectInt(), true);
-	
-	
-	//LogMsg("Got %d screens.", wcVector.size());
-	for(unsigned int i=0; i <wcVector.size(); i++)
-	{
-		if (wcVector[i]->GetScreen() != this)
-		wcVector[i]->GetScreen()->AddTile(pTile->CreateReference(wcVector[i]->GetScreen()));
-	}
 }
 
 void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
@@ -511,10 +437,72 @@ void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 		
 	}
 
-	
+	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+	GetParentWorldChunk()->SetDataChanged(true);
+
 	delete (*itor);
 	itor = m_vecLayerList[layer].erase(itor);
 }
+
+
+void Screen::AddTile(Tile *pTile)
+{
+	pTile->SetParentScreen(this); //who knows when they'll need this data
+	GetTileList(pTile->GetLayer())->push_back(pTile);
+
+	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+	GetParentWorldChunk()->SetDataChanged(true);
+
+	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) return; //references don't need the edge cases figured out
+
+	//we may also need to index info about this sprite if it has a tag name
+
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+		GetTagManager->Update(GetParentWorldChunk()->GetParentWorld(), ((TileEntity*)pTile)->GetEntity());
+	}
+
+	if (pTile->GetBit(Tile::e_pathNode))
+	{
+		GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->AddTileNode(pTile);
+		//LogMsg("Added graphid %d", pTile->GetGraphNodeID());
+	}
+
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+
+		((TileEntity*)pTile)->GetEntity()->RunPostInitIfNeeded();
+	}
+	//early rejection to see if this tile's bounds are totally within this, otherwise it's an edge case and takes
+	//special preparation h
+
+	//TODO do this a faster way
+	static CL_Rect tileRect; 
+	static CL_Rect unionRect;
+	//LogMsg("Adding tile to screen %d", GetParentWorldChunk()->GetScreenID());
+
+	tileRect = pTile->GetWorldRectInt();
+	unionRect = tileRect.calc_union(m_pParentWorldChunk->GetRect());
+	if (unionRect == tileRect)
+	{
+		return;
+	}
+
+	//we expand beyond the bounds of this screen.  We'll notify the other screens about this with a reference that
+	//points to this one, the only real instance. When references are deleted, this tile will be updated and vice-versa.
+
+	std::vector <WorldChunk*> wcVector;
+	m_pParentWorldChunk->GetParentWorld()->GetAllWorldChunksWithinThisRect(wcVector, pTile->GetWorldRectInt(), true);
+
+
+	//LogMsg("Got %d screens.", wcVector.size());
+	for(unsigned int i=0; i <wcVector.size(); i++)
+	{
+		if (wcVector[i]->GetScreen() != this)
+			wcVector[i]->GetScreen()->AddTile(pTile->CreateReference(wcVector[i]->GetScreen()));
+	}
+}
+
 
 //misc utilities
 bool CloneTileList(const tile_list &srcList, tile_list &destList)

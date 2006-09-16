@@ -176,12 +176,12 @@ void App::OneTimeInit()
 	g_Console.Init();
 
 
-    m_pResourceManager = new CL_ResourceManager("base/media/resources.xml", false);
+    m_pResourceManager = new CL_ResourceManager("base/resources.xml", false);
     
-	CL_ResourceManager temp("base/media/editor/editor_resources.xml", false);
+	CL_ResourceManager temp("base/editor/editor_resources.xml", false);
     m_pResourceManager->add_resources(temp);
 
-    m_pGUIResourceManager = new CL_ResourceManager("base/media/gui/gui.xml", false);
+    m_pGUIResourceManager = new CL_ResourceManager("base/gui/gui.xml", false);
   
     m_pFonts[C_FONT_GRAY] = new CL_Font("font_gray", GetResourceManager());
 	m_pFonts[C_FONT_NORMAL] = new CL_Font("font_yellow", GetResourceManager());

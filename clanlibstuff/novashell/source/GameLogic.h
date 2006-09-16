@@ -114,7 +114,7 @@ private:
     int m_editorID; //0 if none
 	MovingEntity *m_pPlayer;
 	string m_strBaseUserProfilePath; //the path without the profile at the end
-	string m_strBaseMapPath; //contains something like "media/maps/" (includes trailing backslash)
+	string m_strBaseMapPath; //contains something like "maps/" (includes trailing backslash)
 	string m_strUserProfileName; //blank if none (empty if none)
 	string m_strUserProfilePathWithName; //the path plus the name (empty if none)
 	WorldManager m_worldManager; //holds all our world data 

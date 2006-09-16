@@ -1004,6 +1004,8 @@ void EntEditMode::OnProperties()
 
 void EntEditMode::OnCollisionDataEditEnd(int id)
 {
+	
+	if (!m_pEntCollisionEditor) return;
 	bool bDataChanged = m_pEntCollisionEditor->GetDataChanged();
 	
 	//last minute thing to update the tiles that might be modified

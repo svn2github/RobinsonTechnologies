@@ -7,13 +7,11 @@ extern CL_VirtualFileManager g_VFManager;
 
 CL_SoundManager::CL_SoundManager()
 {
-
 	m_baseID = 0;
 }
 
 void CL_SoundManager::MuteAll(bool b_new)
 {
-
 }
 
 bool CL_SoundManager::Init()

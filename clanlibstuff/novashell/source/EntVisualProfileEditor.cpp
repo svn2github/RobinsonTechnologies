@@ -85,6 +85,8 @@ bool EntVisualProfileEditor::Init(MovingEntity *pEnt)
 
 	new CL_Label(CL_Point(buttonOffsetX, curY), "Use the arrow keys to adjust the offset of the selected animation.  Hold", m_pWindow->get_client_area()); curY += 16;
 	new CL_Label(CL_Point(buttonOffsetX, curY), "shift to move in larger increments.", m_pWindow->get_client_area()); curY += 16;
+	new CL_Label(CL_Point(buttonOffsetX, curY), "", m_pWindow->get_client_area()); curY += 16;
+	new CL_Label(CL_Point(buttonOffsetX, curY), "Use Control+Up/Down to quickly change animations.", m_pWindow->get_client_area()); curY += 16;
 
 	m_slots.connect(pButton->sig_clicked(), this, &EntVisualProfileEditor::OnClose);
 
@@ -181,6 +183,13 @@ void EntVisualProfileEditor::ModifyActiveAnim(CL_Point pt)
 
 }
 
+void EntVisualProfileEditor::MoveAnimSelection(int offset)
+{
+	int selected = m_pListAnims->get_current_item();
+	selected = altmod(selected + offset, m_pListAnims->get_count());
+	m_pListAnims->set_current_item(selected);
+}
+
 void EntVisualProfileEditor::OnButtonDown(const CL_InputEvent &key)
 {
 	switch(key.id)
@@ -194,10 +203,22 @@ void EntVisualProfileEditor::OnButtonDown(const CL_InputEvent &key)
 		break;
 
 	case CL_KEY_UP:
+		
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			MoveAnimSelection(-1);
+			return;
+		}
+		
 		ModifyActiveAnim(CL_Point(0,-1));
 		break;
 
 	case CL_KEY_DOWN:
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			MoveAnimSelection(1);
+			return;
+		}
 		ModifyActiveAnim(CL_Point(0,1));
 		break;
 

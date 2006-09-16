@@ -56,12 +56,13 @@ void CollisionData::SaveIfNeeded()
 
 	SetScale(CL_Vector2(1,1)); //remove any scaling operations we had done
 
-	CL_OutputSource_File file(m_fileName);
-	CL_FileHelper helper(&file); 
+    CL_OutputSource *pFile =g_VFManager.PutFile(m_fileName);
+	CL_FileHelper helper(pFile); 
 
 	Serialize(helper);
 
 	m_dataChanged = false;
+	SAFE_DELETE(pFile);
 }
 
 

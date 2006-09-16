@@ -502,7 +502,7 @@ void EntEditor::OnEditStartupLua()
 	string file = GetGameLogic->GetScriptRootDir();
 	file += "/system/startup.lua";
 	g_VFManager.LocateFile(file);
-	OpenScriptForEditing(CL_Directory::get_current() + "/" +file);
+	OpenScriptForEditing(file);
 }
 
 void EntEditor::OnEditSetupConstants()
@@ -510,7 +510,7 @@ void EntEditor::OnEditSetupConstants()
 	string file = GetGameLogic->GetScriptRootDir();
 	file += "/system/setup_constants.lua";
 	g_VFManager.LocateFile(file);
-	OpenScriptForEditing(CL_Directory::get_current() + "/" +file);
+	OpenScriptForEditing(file);
 
 }
 void EntEditor::OnDumpWorldNavStatistics()
@@ -995,7 +995,7 @@ void EntEditor::OnToggleFullScreen()
 void EntEditor::OnGenerateSmall()
 {
 	if (!ConfirmMessage("Confirmation that you aren't crazy", "This will destroy your current map.  Are you sure?")) return;
-
+	
 	int startX = C_DEFAULT_SCREEN_ID;
 	int startY = C_DEFAULT_SCREEN_ID;
 
@@ -1206,7 +1206,7 @@ void EntEditor::OnMapChange()
 	{
 		GetWorldCache->SetDrawWorldChunkGrid(m_bShowWorldChunkGridLines);
 		GetWorldCache->SetDrawCollision(m_bShowCollision);
-		//PopulateLayerListMenu();
+		PopulateLayerListMenu();
 	}
 
 }
