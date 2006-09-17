@@ -58,7 +58,7 @@ bool WorldNavManager::DoNodesConnect(World *pMap, int a, int b)
 void WorldNavManager::LinkTwoNodes(TagObject *pTagSrc, TagObject *pTag)
 {
 	//OPTIMIZE:  Use sq version?
-	LogMsg("Nodes connect!");
+	//LogMsg("Nodes connect!");
 	int cost = Vec2DDistance(pTag->GetPos(), pTagSrc->GetPos());
 	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTagSrc->m_graphNodeID, pTag->m_graphNodeID, cost));
 	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_graphNodeID,pTagSrc->m_graphNodeID, cost));

@@ -950,6 +950,7 @@ void MovingEntity::SetDensity(float fDensity)
 	m_fDensity = fDensity;
 	GetBody()->SetDensity(m_fDensity);
 }
+
 void MovingEntity::EnableRotation(bool bRotate)
 {
 	if (bRotate)
@@ -1067,10 +1068,12 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 	if (x == 0 && y == 0)
 	{
 		//let's guess here
-		x = m_pTile->GetBoundsSize().x;
-		y = m_pTile->GetBoundsSize().y;
+		x = GetSizeX();
+		y = GetSizeY();
 	}
 	
+	x *= 0.5f;
+	y *= 0.5f;
 	m_pCollisionData = new CollisionData;
 	
 	PointList pl;
@@ -1088,6 +1091,8 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 	//get notified of collisions
  	m_collisionSlot = m_body.sig_collision.connect(this, &MovingEntity::OnCollision);
 	m_bUsingCustomCollisionData = true;
+	//link to data correctly
+	pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
 
 	GetBody()->SetDensity(1);
 }
