@@ -274,6 +274,7 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 			GetCamera->SetCameraSettings(*m_pActiveWorld->GetCameraSetting());
 		} else
 		{
+			GetCamera->SetCameraSettings(*pCameraSetting);
 			GetCamera->SetInstantUpdateOnNextFrame(true);
 			GetCamera->Update(0);
 		}

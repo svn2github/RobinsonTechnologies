@@ -390,6 +390,21 @@ bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the ad
 	
 	if (!pEnt)
 	{
+		
+		if (m_modPaths.empty())
+		{
+			//assume they want to edit something in the base
+			if (!GetWorld)
+			{
+				BaseGameEntity *pEnt = EntityMgr->GetEntityByName("ChooseWorldDialog");
+				if (pEnt) pEnt->SetDeleteFlag(true);
+				
+				GetMyWorldManager()->SetActiveWorldByName("Generic Palette");
+
+			}
+
+		}
+		
 		if (!GetWorld)
 		{
 			ShowMessage("Oops", "Can't open world editor, no map is loaded.");

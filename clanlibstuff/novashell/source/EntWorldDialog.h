@@ -32,9 +32,11 @@ public:
 
 private:
 
+	void OnButtonDown(const CL_InputEvent &key);
 	void BuildWorldListBox();
 	void ScanDirectoryForModInfo();
 	void OnClickLoad();
+	void ChangeSelection(int offset);
 
 	CL_Window *m_pWindow;
 	CL_ListBox *m_pListWorld; //control which worlds are drawn

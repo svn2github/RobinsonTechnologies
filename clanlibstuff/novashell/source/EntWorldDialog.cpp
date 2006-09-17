@@ -2,6 +2,8 @@
 #include "EntWorldDialog.h"
 #include "GameLogic.h"
 
+int g_defaultWorldDialogSelection = 0;
+
 string GetNextLineFromFile(FILE *fp)
 {
 	string line;
@@ -57,6 +59,9 @@ EntWorldDialog::EntWorldDialog(): BaseGameEntity(BaseGameEntity::GetNextValidID(
 	m_pListWorld = NULL;
 	m_pWindow = NULL;
 
+	m_slots.connect (CL_Keyboard::sig_key_down(), this, &EntWorldDialog::OnButtonDown);
+
+	SetName("ChooseWorldDialog");
 	ScanDirectoryForModInfo();
 	BuildWorldListBox();
 
@@ -66,6 +71,31 @@ EntWorldDialog::~EntWorldDialog()
 {
 	SAFE_DELETE(m_pListWorld);
 	SAFE_DELETE(m_pWindow);
+}
+
+void EntWorldDialog::ChangeSelection(int offset)
+{
+	int selected = m_pListWorld->get_current_item();
+	selected = altmod(selected + offset, m_pListWorld->get_count());
+	m_pListWorld->set_current_item(selected);
+
+}
+
+void EntWorldDialog::OnButtonDown(const CL_InputEvent &key)
+{
+	switch(key.id)
+	{
+	case CL_KEY_UP:
+		ChangeSelection(-1);
+		break;
+
+	case CL_KEY_DOWN:
+		ChangeSelection(1);
+		break;
+
+	case CL_KEY_ENTER:
+		OnClickLoad();
+	}
 }
 
 void EntWorldDialog::ScanDirectoryForModInfo()
@@ -146,8 +176,11 @@ void EntWorldDialog::BuildWorldListBox()
 		m_pListWorld->insert_item(pItem,-1,true);
 	}
 
-	//set the default world
-	m_pListWorld->set_current_item(0);
+	
+	//make sure the default is in a valid range
+	g_defaultWorldDialogSelection = min(g_defaultWorldDialogSelection, m_pListWorld->get_count());
+
+	m_pListWorld->set_current_item(g_defaultWorldDialogSelection);
 
 	rectListBox.top = rectListBox.bottom + borderOffset;
 	rectListBox.bottom = rectListBox.top + 22;
@@ -173,6 +206,7 @@ void EntWorldDialog::OnClickLoad()
 			return;
 		}
 
+		g_defaultWorldDialogSelection = modID;
 		GetGameLogic->ClearModPaths();
 		GetGameLogic->AddModPath(m_modInfo[modID].m_stDirName);
 		GetGameLogic->SetRestartEngineFlag(true);

@@ -500,6 +500,8 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName)
 {
 
+
+
 	if (worldName != m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetName())
 	{
 //		LogMsg("Changing world to %s", worldName.c_str());
@@ -512,7 +514,10 @@ void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldNa
 		m_body.GetPosition().x = new_pos.x;
 		m_body.GetPosition().y = new_pos.y;
 
-		GetCamera->SetInstantUpdateOnNextFrame(true);
+		if (GetCamera->GetEntTracking() == ID())
+		{
+			GetCamera->SetInstantUpdateOnNextFrame(true);
+		}
 	}
 	
 	m_bMovedFlag = true;
@@ -803,10 +808,9 @@ void MovingEntity::UpdateTilePosition()
 
 				SAFE_DELETE(m_pPathPlanner); //this would be invalid now
 
-
-				if (this == GetPlayer)
+				if (GetCamera->GetEntTracking() == ID())
 				{
-					 //the camera should follow the player
+					 //the camera should follow the entity
 					CameraSetting cs = GetCamera->GetCameraSettings();
 					GetWorldManager->SetActiveWorldByPath(pInfo->m_world.GetDirPath(),&cs);
 				}
