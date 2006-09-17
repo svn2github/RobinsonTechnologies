@@ -114,8 +114,6 @@ public:
 	void ReInitCollisionOnTilePics(); 
 	NavGraphManager * GetNavGraph();
 	bool NavGraphDataExists() {return m_pNavGraphManager != 0;}
-	int GetMasterNavMapID();
-	void SetMasterNavMapID(int newID) {m_masterNavMapID = newID;}
 
 	void AddWarpTagHashID(unsigned int hashID);
 	void RemoveWarpTagHashID(unsigned int hashID);

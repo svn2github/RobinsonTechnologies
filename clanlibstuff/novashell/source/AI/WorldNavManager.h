@@ -53,21 +53,36 @@ public:
 
 	void Init();
 	NavGraph&                          GetGraph()const{return *m_pNavGraph;}
+	
 	void AddNode(TagObject *pTag);
 	void RemoveNode(TagObject *pTag);
 	void LinkNode(TagObject *pTag);
 	void LinkEverything();
 	MacroPathInfo FindPathToMapAndPos(MovingEntity *pEnt, World *pDestMap, CL_Vector2 vDest);
-	void LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc);
-	bool DoNodesConnect(World *pMap, int a, int b);
-	MovingEntity * ConvertWorldNodeToOwnerEntity(int nodeID);
 	void DumpStatistics();
+	MovingEntity * ConvertWorldNodeToOwnerEntity(int nodeID, bool bLoadWorldIfRequired);
+
+	void Save();
+	void Load();
 
 protected:
 	
+	void LinkTwoNodes(TagObject *pTagSrc, TagObject *pTag);
+	void LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc);
+	bool DoNodesConnect(World *pMap, int a, int b);
+
+	enum
+	{
+		//some enums used when loading/saving chunk	
+		CHUNK_NODE,
+		CHUNK_LINK,
+		CHUNK_DONE
+	};
+
 	void Kill();
 	void LinkMap(World *pMap);
 	void StripUnrequiredNodesFromPath(MacroPathInfo &m);
+	void Serialize(CL_FileHelper &helper);
 
 	//these are not that fast, use with caution.
 	int ConvertMapNodeToWorldNode(World *pMap, int mapNode);

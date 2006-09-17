@@ -17,7 +17,6 @@ World::World()
 	m_bDataChanged = true;
 	m_pWorldCache = NULL;
 	m_defaultTileSize = 0;
-	m_masterNavMapID = invalid_node_index;
 	for (int i=0; i < e_byteCount; i++) m_byteArray[i] = 0;
 	for (int i=0; i < e_intCount; i++) m_intArray[i] = 0;
 	for (int i=0; i < e_uintCount; i++) m_uintArray[i] = 0;
@@ -69,22 +68,6 @@ World::World()
 
 #endif
 
-}
-
-int World::GetMasterNavMapID()
-{
-	
-	assert(!"We don't use this anymore");
-	//we'll have each node link to one central "map" node.
-	
-	/*
-	if (m_masterNavMapID == invalid_node_index)
-	{
-		g_worldNavManager.GetGraph()->AddNode(GraphNode(
-			m_masterNavMapID = g_worldNavManager.GetGraph().GetNextFreeNodeIndex()));
-	}
-*/
-	return m_masterNavMapID;
 }
 
 bool World::TestCoordPacker(int x, int y)

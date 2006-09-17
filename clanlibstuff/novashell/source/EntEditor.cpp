@@ -524,6 +524,11 @@ void EntEditor::OnDumpWorldNavStatistics()
 
 }
 
+void EntEditor::OnRebuildNavigationMaps()
+{
+	g_worldNavManager.LinkEverything();
+}
+
 
 bool EntEditor::Init()
 {
@@ -536,10 +541,10 @@ if (GetGameLogic->GetUserProfileName().empty())
 	windowLabel +=" Editing ** MASTER MAP FILES **, be careful!";
 } else
 {
-
 	windowLabel += "Editing map data in profile '"+GetGameLogic->GetUserProfileName() + "'.";
 }
-m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGHT), windowLabel, CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
+
+	m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGHT), windowLabel, CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
    // m_slotClose = m_pWindow->sig_close().connect(this, &EntEditor::OnClose);
     m_pWindow->set_event_passing(false);
 	m_pWindow->set_topmost_flag(true);
@@ -588,6 +593,9 @@ m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGH
 
 	pItem = m_pMenu->create_item("Utilities/Add New Map");
 	m_slot.connect(pItem->sig_clicked(), this, &EntEditor::OnAddNewMap);
+
+	pItem = m_pMenu->create_item("Utilities/Rebuild World Navigation Cache");
+	m_slot.connect(pItem->sig_clicked(), this, &EntEditor::OnRebuildNavigationMaps);
 
 	pItem = m_pMenu->create_item("Display/Video Options/Toggle Fullscreen (Alt+Enter)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleFullScreen);

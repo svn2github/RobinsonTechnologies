@@ -75,7 +75,7 @@ void Goal_MoveToMapAndPos::ProcessNextMapChunk()
 	
 	//LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
 
-	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID);
+	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID, true);
 	
 	if (!pNodeEnt)
 	{
@@ -120,11 +120,12 @@ int Goal_MoveToMapAndPos::Process()
 			} else
 			{
 				int nextNodeID = m_macroPath.m_path.front();
-				MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID);
+				MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID, true);
 
 				if (!pNodeEnt)
 				{
 					LogMsg("Warp node was deleted?");
+					//uh oh, we absolutely need to load this now
 					m_iStatus = inactive; //force a restart
 
 				} else

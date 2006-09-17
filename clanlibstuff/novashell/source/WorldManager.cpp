@@ -67,6 +67,9 @@ void WorldManager::ScanWorlds(const string &stPath)
 	{
 		ScanDirToAddWorlds( (*itor) +"/"+stPath, stPath);
 	}
+
+	g_worldNavManager.Load();
+
 }
 
 void WorldManager::Kill()

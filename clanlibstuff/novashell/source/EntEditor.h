@@ -79,7 +79,7 @@ private:
 	void OnEditStartupLua();
 	void OnEditSetupConstants();
 	void OnDumpWorldNavStatistics();
-
+	void OnRebuildNavigationMaps();
 	
     enum
 	{

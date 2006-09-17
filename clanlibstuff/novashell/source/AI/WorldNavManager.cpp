@@ -8,6 +8,8 @@
 #include "NavGraphManager.h"
 #include "PathPlanner.h"
 
+#define C_WORLD_NAV_FILENAME "maps/world_nav_cache.dat"
+
 WorldNavManager g_worldNavManager;
 WorldNavManager::WorldNavManager()
 {
@@ -37,8 +39,6 @@ void WorldNavManager::AddNode(TagObject *pTag)
 	pTag->m_graphNodeID = m_pNavGraph->GetNextFreeNodeIndex();
 	m_pNavGraph->AddNode(GraphNode(pTag->m_graphNodeID, pTag->m_hashID));
 	pTag->m_pWorld->AddWarpTagHashID(pTag->m_hashID);
-	
-//AddNeighborLinks(pTile);
 }
 
 void WorldNavManager::RemoveNode(TagObject *pTag)
@@ -53,6 +53,16 @@ bool WorldNavManager::DoNodesConnect(World *pMap, int a, int b)
 {
 	//well, there must be some awesome shortcut to figure this out where you don't care about the path, but for now:
 	return pMap->GetNavGraph()->DoNodesConnect(ConvertWorldNodeToMapNode(a), ConvertWorldNodeToMapNode(b));
+}
+
+void WorldNavManager::LinkTwoNodes(TagObject *pTagSrc, TagObject *pTag)
+{
+	//OPTIMIZE:  Use sq version?
+	LogMsg("Nodes connect!");
+	int cost = Vec2DDistance(pTag->GetPos(), pTagSrc->GetPos());
+	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTagSrc->m_graphNodeID, pTag->m_graphNodeID, cost));
+	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_graphNodeID,pTagSrc->m_graphNodeID, cost));
+
 }
 
 void WorldNavManager::LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc)
@@ -75,11 +85,7 @@ void WorldNavManager::LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc)
 			//do we actually touch this?
 			if (DoNodesConnect(pTagSrc->m_pWorld, pTagSrc->m_graphNodeID, pTag->m_graphNodeID))
 			{
-				//OPTIMIZE:  Use sq version?
-				LogMsg("Nodes connect!");
-				int cost = Vec2DDistance(pTag->GetPos(), pTagSrc->GetPos());
-				m_pNavGraph->AddEdge(NavGraph::EdgeType(pTagSrc->m_graphNodeID, pTag->m_graphNodeID, cost));
-				m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_graphNodeID,pTagSrc->m_graphNodeID, cost));
+				LinkTwoNodes(pTagSrc, pTag);
 			} else
 			{
 				LogMsg("Nodes don't connect");
@@ -190,18 +196,19 @@ int WorldNavManager::ConvertMapNodeToWorldNode(World *pMap, int mapNode)
 
 int WorldNavManager::ConvertWorldNodeToMapNode(int nodeID)
 {
-	MovingEntity *pEnt = ConvertWorldNodeToOwnerEntity(nodeID);
+	MovingEntity *pEnt = ConvertWorldNodeToOwnerEntity(nodeID, false);
 	if (pEnt)
 	{
 		return pEnt->GetTile()->GetGraphNodeID();
 	} else
 	{
-		LogError("ConvertWorldNodeAToMapNode failed.  NodeID %d doesn't have a mapID equivelent.", nodeID);
+		LogError("ConvertWorldNodeToMapNode failed.  NodeID %d doesn't have a mapID equivalent.", nodeID);
 	}
 
 	return invalid_node_index;
 }
-MovingEntity * WorldNavManager::ConvertWorldNodeToOwnerEntity(int nodeID)
+
+MovingEntity * WorldNavManager::ConvertWorldNodeToOwnerEntity(int nodeID, bool bLoadWorldIfRequired)
 {
 	GraphNode &n =m_pNavGraph->GetNode(nodeID);
 
@@ -210,6 +217,16 @@ MovingEntity * WorldNavManager::ConvertWorldNodeToOwnerEntity(int nodeID)
 	{
 		return NULL;
 	} 
+
+	if (bLoadWorldIfRequired)
+	{
+		if (!pTag->m_pWorld->IsInitted())
+		{
+			//uh oh, we're probably going to need this
+			GetWorldManager->LoadWorld(pTag->m_pWorld->GetDirPath(), false);
+			pTag->m_pWorld->PreloadMap();
+		}
+	}
 
 	return (MovingEntity*)EntityMgr->GetEntityFromID(pTag->m_entID);
 }
@@ -255,7 +272,15 @@ void WorldNavManager::DumpStatistics()
 					}
 				} else
 				{
-					extra = "Ent ID " + CL_String::from_int(pTag->m_entID)+ " doesn't exist?";
+					if ( pTag->m_entID > 0)
+					{
+						extra = "Ent ID " + CL_String::from_int(pTag->m_entID)+ " doesn't exist?";
+
+					} else
+					{
+						extra = "Ent ID " + CL_String::from_int(pTag->m_entID)+ " not active yet.";
+
+					}
 				}
 			}
 		}
@@ -291,9 +316,14 @@ void WorldNavManager::StripUnrequiredNodesFromPath(MacroPathInfo &m)
 	{
 		assert(m.m_path.size() > 1 && "Huh?!");
 		//get first node
-		pNodeEntA = ConvertWorldNodeToOwnerEntity(m.m_path.front());
-		pNodeEntB = ConvertWorldNodeToOwnerEntity( *(++m.m_path.begin()) );
+		pNodeEntA = ConvertWorldNodeToOwnerEntity(m.m_path.front(), false);
+		pNodeEntB = ConvertWorldNodeToOwnerEntity( *(++m.m_path.begin()), false );
 
+		if (!pNodeEntA || !pNodeEntB)
+		{
+			//well, the map isn't even loaded so let's assume we can't optimize the path right now, afterall, it's more for looks
+			break;
+		}
 		if (pNodeEntA->GetMap() == pNodeEntB->GetMap())
 		{
 			//they are on the same map, this MIGHT be ok, but only if the nodes are not connected.
@@ -323,8 +353,14 @@ void WorldNavManager::StripUnrequiredNodesFromPath(MacroPathInfo &m)
 	{
 		assert(m.m_path.size() > 1 && "Huh?!");
 		//get first node
-		pNodeEntA = ConvertWorldNodeToOwnerEntity(m.m_path.back());
-		pNodeEntB = ConvertWorldNodeToOwnerEntity( *( (-- (--m.m_path.end()) )));
+		pNodeEntA = ConvertWorldNodeToOwnerEntity(m.m_path.back(), false);
+		pNodeEntB = ConvertWorldNodeToOwnerEntity( *( (-- (--m.m_path.end()) )), false);
+
+		if (!pNodeEntA || !pNodeEntB)
+		{
+			//well, the map isn't even loaded so let's assume we can't optimize the path right now, afterall, it's more for looks
+			break;
+		}
 
 		if (pNodeEntA->GetMap() == pNodeEntB->GetMap())
 		{
@@ -423,4 +459,127 @@ MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, World *pD
 	StripUnrequiredNodesFromPath(m);
 
 	return m;
+}
+
+
+//load and save navigational connection data.  The tagmanager will have already loaded the named
+//tags and set them up as nodes, the time consuming thing we want to avoid by saving and loading
+//this data is figuring out which warps can connect to which.
+
+void WorldNavManager::Serialize(CL_FileHelper &helper)
+{
+	
+	//write/read the total amount we're going to save/load
+
+	unsigned int chunkType;
+
+	if (helper.IsWriting())
+	{
+
+		//write out data for each node
+		NavGraph::ConstNodeIterator NodeItr(*m_pNavGraph);
+		for (const NavGraph::NodeType* pN=NodeItr.begin();
+			!NodeItr.end();
+			pN=NodeItr.next())
+		{
+
+			helper.process(chunkType = CHUNK_NODE);
+			//write out the hashID it's connected with (this is built from the warps tag name)
+			helper.process_const(pN->GetTagHashID());
+		
+			NavGraph::ConstEdgeIterator EdgeItr(*m_pNavGraph, pN->Index());
+			for (const NavGraph::EdgeType* pE=EdgeItr.begin();
+				pE && !EdgeItr.end();
+				pE=EdgeItr.next())
+			{
+				//write out all the links this node is connected to, by hashID only
+				helper.process(chunkType = CHUNK_LINK);
+				helper.process_const( m_pNavGraph->GetNode(pE->To()).GetTagHashID()) ;
+			}
+		}
+
+		//signal EOF
+		helper.process(chunkType = CHUNK_DONE);
+	
+	} else
+	{
+
+		unsigned int curNodeHash;
+		unsigned int nodeToLink;
+
+		TagObject *pTagSrc, *pTagLink;
+
+		while (1)
+		{
+			helper.process(chunkType);
+
+			switch(chunkType)
+			{
+
+				case CHUNK_NODE:
+					helper.process(curNodeHash);
+					pTagSrc = g_TagManager.GetFromHash(curNodeHash);
+					if (!pTagSrc)
+					{
+						LogError("WorldNavCache Loader: Unable to find tag %d.  Rebuild maybe?", curNodeHash);
+					}
+					break;
+
+				case CHUNK_LINK:
+					helper.process(nodeToLink);
+
+					pTagLink = g_TagManager.GetFromHash(nodeToLink);
+					if (!pTagLink)
+					{
+						LogError("WorldNavCache Loader: Unable to find tag %d to link to.  Rebuild maybe?", nodeToLink);
+					} else
+					{
+						if (pTagSrc)
+						{
+							LinkTwoNodes(pTagSrc, pTagLink);
+						}
+					}
+					break;
+
+				case CHUNK_DONE:
+					return;
+
+				default:
+
+					LogError("%s appears to be corrected, %d chunk unknown.", C_WORLD_NAV_FILENAME, chunkType);
+					return;
+			}
+
+		}
+
+
+		
+
+	}
+}
+
+
+void WorldNavManager::Save()
+{
+
+	CL_OutputSource *pFile =g_VFManager.PutFile(C_WORLD_NAV_FILENAME);
+	CL_FileHelper helper(pFile); 
+	Serialize(helper);
+	SAFE_DELETE(pFile);
+}
+
+
+void WorldNavManager::Load()
+{
+	CL_InputSource *pFile = g_VFManager.GetFile(C_WORLD_NAV_FILENAME);
+
+	if (!pFile)
+	{
+		return;
+	}
+
+	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
+
+	Serialize(helper);
+	SAFE_DELETE(pFile);
 }

@@ -272,7 +272,7 @@ bool GameLogic::SetUserProfileName(const string &name)
 	//load globals
 	LoadGlobals();	
 
-	g_worldNavManager.LinkEverything();
+	//g_worldNavManager.LinkEverything();
 
 	return true;
 }
@@ -373,7 +373,7 @@ bool GameLogic::Init()
 	}
 	
 	//link up navigation maps
-	g_worldNavManager.LinkEverything();
+	//g_worldNavManager.LinkEverything();
 
 	if (! RunGlobalScriptFromTopMountedDir("game_start.lua"))
 	{
@@ -628,6 +628,10 @@ void GameLogic::Kill()
 	}
 
 	g_EntEditModeCopyBuffer.ClearSelection();
+	
+	//save out warp cache
+	g_worldNavManager.Save();
+	
 	m_worldManager.Kill();
 	m_myEntityManager.Kill();
 }
