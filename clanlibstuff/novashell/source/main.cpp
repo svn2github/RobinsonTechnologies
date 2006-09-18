@@ -165,16 +165,16 @@ void App::OneTimeInit()
     m_WindowDescription.set_bpp(32);
     m_WindowDescription.set_title("Novashell Engine Test");
     m_WindowDescription.set_allow_resize(false);
-    m_WindowDescription.set_size(CL_Size(1024, 768));
-//	m_WindowDescription.set_size(CL_Size(800,600));
+    //m_WindowDescription.set_size(CL_Size(1024, 768));
+m_WindowDescription.set_size(CL_Size(800,600));
     m_WindowDescription.set_flipping_buffers(2);
     m_WindowDescription.set_refresh_rate(75);
 	SetRefreshType(FPS_AT_REFRESH);
     
     m_pWindow = new CL_DisplayWindow(m_WindowDescription);
     
+	
 	g_Console.Init();
-
 
     m_pResourceManager = new CL_ResourceManager("base/resources.xml", false);
     
@@ -204,7 +204,20 @@ void App::OneTimeInit()
 	g_pSoundManager = new CFMSoundManager;
 #else
 	if (!ParmExists("-nosound"))
-	g_pSoundManager = new CL_SoundManager;
+	{
+		try
+		{
+			g_pSoundManager = new CL_SoundManager;
+		}
+		catch(CL_Error error)
+		{
+			std::cout << "Sound Eror: " << error.message.c_str() << std::endl;	
+			//oh well, who really needs sound, anyway?
+			SAFE_DELETE(g_pSoundManager);
+		}
+	}
+	
+		
 
 #endif
 	
