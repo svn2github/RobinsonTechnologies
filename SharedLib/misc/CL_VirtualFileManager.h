@@ -54,6 +54,8 @@ public:
 	bool LocateFile(string &fnameOut); //returns the correct path to find this file
 	void Reset(); //unmount everything
 
+	void GetMountedDirectories(vector<string> *pPathsOut);
+
 protected:
 
 private:
