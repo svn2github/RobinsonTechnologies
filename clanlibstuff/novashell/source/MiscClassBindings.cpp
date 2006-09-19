@@ -175,6 +175,7 @@ void luabindMisc(lua_State *pState)
 		.def("ParmExists", &App::ParmExists)
 		.def("SetSimulationSpeedMod", &App::SetSimulationSpeedMod)
 		.def("GetSimulationSpeedMod", &App::GetSimulationSpeedMod)
+		.def("SetScreenSize", &App::SetScreenSize)
 
 		,class_<ISoundManager>("SoundManager")
 		.def("PlayMusic", &ISoundManager::PlayMusic)

@@ -1343,7 +1343,6 @@ void MovingEntity::RenderShadow(void *pTarget)
 
 	static CL_Surface_DrawParams1 params1;
 	m_pSprite->setup_draw_params(vecPos.x, vecPos.y, params1, true);
-
 	AddShadowToParam1(params1, m_pTile);
 	m_pSprite->draw(params1, pGC);
 

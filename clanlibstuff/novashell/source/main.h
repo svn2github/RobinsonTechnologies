@@ -117,6 +117,8 @@ public:
 	};
 	void SetRefreshType(eVideoRefresh eRefresh) {m_videoflipStyle = eRefresh;}
 	eVideoRefresh GetRefreshType() {return m_videoflipStyle;}
+	bool ActivateVideoRefresh(bool bFullscreen);
+	bool SetScreenSize(int x, int y);
 
 
 private:
@@ -168,6 +170,7 @@ private:
 	vector<string> m_startupParms;
 	float m_simulationSpeedMod;
 	bool m_bJustRenderedFrame;
+	bool m_bRequestVideoInit;
 
 };
 

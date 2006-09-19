@@ -139,7 +139,7 @@ void EntWorldDialog::BuildWorldListBox()
 
 	LogMsg("Building world listbox");
 
-	CL_Rect rectSize = CL_Rect(0,0,200,200);
+	CL_Rect rectSize = CL_Rect(0,0,300,300);
 	CL_Point ptPos = CL_Point((GetScreenX/2) - rectSize.get_width()/2 , (GetScreenY/2) - rectSize.get_height()/2);
 
 	m_pWindow = new CL_Window(rectSize+ptPos, "Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());

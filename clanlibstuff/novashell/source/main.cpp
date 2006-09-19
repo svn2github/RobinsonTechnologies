@@ -85,7 +85,7 @@ App::App()
     m_pGui = NULL;
 	m_pHashedResourceManager = NULL;
 	m_gameTick = 0;
-
+	m_bRequestVideoInit = false;
 	m_baseGameSpeed = 1000.0f / 75.0f;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
@@ -213,14 +213,12 @@ void App::OneTimeInit()
 		}
 		catch(CL_Error error)
 		{
-			std::cout << "Sound Eror: " << error.message.c_str() << std::endl;	
+			std::cout << "Sound Error: " << error.message.c_str() << std::endl;	
 			//oh well, who really needs sound, anyway?
 			SAFE_DELETE(g_pSoundManager);
 		}
 	}
 	
-		
-
 #endif
 	
 	if (g_pSoundManager)
@@ -232,6 +230,46 @@ void App::OneTimeInit()
 	if (!m_pGameLogic || (!m_pGameLogic->Init())) throw CL_Error("Error initting game logic");
 }
        
+bool App::SetScreenSize(int x, int y)
+{
+	if (m_WindowDescription.get_size() != CL_Size(x, y))
+	{
+		m_WindowDescription.set_size(CL_Size(x,y));
+		m_bRequestVideoInit = true;
+	}
+
+	return true;
+}
+
+bool App::ActivateVideoRefresh(bool bFullscreen)
+{
+
+	m_bRequestVideoInit = false;
+	
+	if (!bFullscreen)
+	{
+		m_pWindow->set_windowed();
+		m_pWindow->set_size(m_WindowDescription.get_size().width,m_WindowDescription.get_size().height );
+		
+		//might as well center it too?
+		
+#ifdef WIN32
+		
+		m_pWindow->set_position( (GetSystemMetrics(SM_CXSCREEN)-GetScreenX)/2, (GetSystemMetrics(SM_CYSCREEN)-GetScreenY)/2);
+
+#endif
+
+	}   else
+	{
+		m_pWindow->set_fullscreen(m_WindowDescription.get_size().width, m_WindowDescription.get_size().height, m_WindowDescription.get_bpp(), m_WindowDescription.get_refresh_rate());
+		//surfaces are now invalid.  Rebuild them ?
+		SetupBackground(GetApp()->GetMainWindow()->get_width(), GetApp()->GetMainWindow()->get_height());
+
+	}
+
+return true;
+}
+
 
 //load a pic and tile it to our background surface
 void App::SetupBackground(int x, int y)
@@ -321,18 +359,10 @@ void App::RequestToggleFullscreen()
 void App::ToggleWindowedMode()
 {
    m_bRequestToggleFullscreen = false; 
-    if (m_pWindow->is_fullscreen())
-    {
-        m_pWindow->set_windowed();
-        m_pWindow->set_size(m_WindowDescription.get_size().width,m_WindowDescription.get_size().height );
-
-    }   else
-    {
-        m_pWindow->set_fullscreen(m_WindowDescription.get_size().width, m_WindowDescription.get_size().height, m_WindowDescription.get_bpp(), m_WindowDescription.get_refresh_rate());
-        //surfaces are now invalid.  Rebuild them ?
-        SetupBackground(GetApp()->GetMainWindow()->get_width(), GetApp()->GetMainWindow()->get_height());
-
-    }
+    
+   LogMsg("Toggling windowed mode");
+   ActivateVideoRefresh(!m_pWindow->is_fullscreen());
+   
 
  //   LogMsg("Screen changed to X:%d, Y:%d", GetApp()->GetMainWindow()->get_width(), GetApp()->GetMainWindow()->get_height());
   ClearTimingAfterLongPause();  
@@ -533,7 +563,9 @@ CL_Directory::change_to(CL_System::get_exe_path());
         {
 			if (m_HaveFocus)
             {
-			   if (m_bRequestToggleFullscreen) ToggleWindowedMode();
+				if (m_bRequestVideoInit) ActivateVideoRefresh(m_pWindow->is_fullscreen());
+
+				if (m_bRequestToggleFullscreen) ToggleWindowedMode();
 
                     m_bWindowResizeRequest = false;
                     
