@@ -156,6 +156,8 @@ void App::OneTimeInit()
 	bFullscreen = false;
 #endif
     
+
+
 	if (ParmExists("-window") || ParmExists("-windowed"))
 	{
 		bFullscreen = false;
@@ -166,7 +168,7 @@ void App::OneTimeInit()
     m_WindowDescription.set_title("Novashell Engine Test");
     m_WindowDescription.set_allow_resize(false);
     //m_WindowDescription.set_size(CL_Size(1024, 768));
-m_WindowDescription.set_size(CL_Size(800,600));
+    m_WindowDescription.set_size(CL_Size(800,600));
     m_WindowDescription.set_flipping_buffers(2);
     m_WindowDescription.set_refresh_rate(75);
 	SetRefreshType(FPS_AT_REFRESH);
@@ -475,7 +477,12 @@ CL_Directory::change_to(CL_System::get_exe_path());
 		
 		CL_SetupCore setup_core;
         CL_SetupDisplay setup_display;
-        CL_SetupGL setup_gl;
+        
+		//for compatibility
+		CL_OpenGL::ignore_extension("GL_EXT_abgr");
+
+		
+		CL_SetupGL setup_gl;
 
 #ifndef C_USE_FMOD
 

@@ -359,9 +359,12 @@ public:
 
       const node_type* begin()
       {      
-        curNode = G.m_Nodes.begin();
+        
+   	    curNode = G.m_Nodes.begin();
 
         GetNextValidNode(curNode);
+
+		if (curNode == G.m_Nodes.end()) return NULL;
 
         return &(*curNode);
       }
