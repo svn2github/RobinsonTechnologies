@@ -109,6 +109,7 @@ public:
 	float GetSimulationSpeedMod() {return m_simulationSpeedMod;}
 	bool GetJustRenderedFrame() {return m_bJustRenderedFrame;} //true if a frame was JUST rendered.  Reset after the next Update() cycle
 	vector<string> & GetStartupParms() {return m_startupParms;}
+	float GetEngineVersion() {return m_engineVersion;}
 
 	enum eVideoRefresh
 	{
@@ -171,6 +172,7 @@ private:
 	float m_simulationSpeedMod;
 	bool m_bJustRenderedFrame;
 	bool m_bRequestVideoInit;
+	float m_engineVersion;
 
 };
 

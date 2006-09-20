@@ -89,7 +89,7 @@ App::App()
 	m_baseGameSpeed = 1000.0f / 75.0f;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-
+	m_engineVersion = 0.15f;
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
     for (int i=0; i < C_FONT_COUNT; i++)
@@ -156,23 +156,57 @@ void App::OneTimeInit()
 	bFullscreen = false;
 #endif
     
+    m_WindowDescription.set_size(CL_Size(1024, 768));
 
-
-	if (ParmExists("-window") || ParmExists("-windowed"))
+	for (unsigned int i=0; i < GetApp()->GetStartupParms().size(); i++)
 	{
-		bFullscreen = false;
+		string p1 = GetApp()->GetStartupParms().at(i);
+		string p2;
+		string p3;
+
+		if (i+1 < GetApp()->GetStartupParms().size())
+		{
+			//this second part might be needed		
+			p2 = GetApp()->GetStartupParms().at(i+1);
+		}
+
+		if (i+2 < GetApp()->GetStartupParms().size())
+		{
+			//this second part might be needed		
+			p3 = GetApp()->GetStartupParms().at(i+2);
+		}
+
+		if (CL_String::compare_nocase(p1,"-window") || CL_String::compare_nocase(p1,"-windowed") )
+		{
+			bFullscreen = false;
+		}
+
+		if (CL_String::compare_nocase(p1, "-resolution") || CL_String::compare_nocase(p1, "-res") )
+		{
+			if (p2.empty() || p3.empty())
+			{
+				LogError("Ignored -resolution parm, format incorrect (should be -resolution 640 480)");
+			} else
+			{
+				m_WindowDescription.set_size(CL_Size(CL_String::to_int(p2), CL_String::to_int(p3)));
+			}
+		}
+
+
 	}
-	
+
 	m_WindowDescription.set_fullscreen(bFullscreen);
     m_WindowDescription.set_bpp(32);
     m_WindowDescription.set_title("Novashell Engine Test");
     m_WindowDescription.set_allow_resize(false);
-    //m_WindowDescription.set_size(CL_Size(1024, 768));
-    m_WindowDescription.set_size(CL_Size(800,600));
+  
+
     m_WindowDescription.set_flipping_buffers(2);
     m_WindowDescription.set_refresh_rate(75);
 	SetRefreshType(FPS_AT_REFRESH);
-    
+   
+	
+
     m_pWindow = new CL_DisplayWindow(m_WindowDescription);
     
 	
@@ -248,16 +282,17 @@ bool App::ActivateVideoRefresh(bool bFullscreen)
 	
 	if (!bFullscreen)
 	{
-		m_pWindow->set_windowed();
 		m_pWindow->set_size(m_WindowDescription.get_size().width,m_WindowDescription.get_size().height );
 		
 		//might as well center it too?
-		
+		m_pWindow->set_windowed();
+
 #ifdef WIN32
 		
 		m_pWindow->set_position( (GetSystemMetrics(SM_CXSCREEN)-GetScreenX)/2, (GetSystemMetrics(SM_CYSCREEN)-GetScreenY)/2);
 
 #endif
+	
 
 	}   else
 	{
@@ -488,19 +523,49 @@ int App::main(int argc, char **argv)
 	//first move to our current dir
 CL_Directory::change_to(CL_System::get_exe_path());
 
-#ifndef _DEBUG
-#define C_APP_REDIRECT_STREAM
-	stream_redirector redirect("log.txt", "log.txt");
-	
-#endif
+
 
 	for (int i=1; i < argc; i++)
 	{
 		m_startupParms.push_back(argv[i]);
-		LogMsg("Found parm %s", argv[i]);
 	}
 
-    try
+	if ( ParmExists("-h") ||  ParmExists("-help") ||ParmExists("/?") ||ParmExists("/help") || ParmExists("--h") || ParmExists("--help") )
+	{
+		
+		//let's just show help stuff
+		char stTemp[256];
+		sprintf(stTemp, "\nNovashell Engine V%.2f\n\n", GetEngineVersion());
+		string message = stTemp;
+
+		message += 
+		
+		"Useful parms:\n\n" \
+		"	-world <world_directory_name>\n" \
+		"	-resolution <desired screen width> <desired screen height>\n" \
+		"	-window\n" \
+		"	-nosound\n" \
+		"";
+
+
+#ifdef WIN32
+
+		MessageBox(NULL, message.c_str(), "Command line help", MB_ICONINFORMATION);
+
+#else
+
+		cout << message; //hopefully this will just go right to their console
+#endif
+		return 0;
+
+	}
+
+#ifndef _DEBUG
+#define C_APP_REDIRECT_STREAM
+	stream_redirector redirect("log.txt", "log.txt");
+#endif
+
+	try
     {
 		//this is so we can trap clanlib log messages too
 		CL_Slot slot_log = CL_Log::sig_log().connect(&log_to_cout);
