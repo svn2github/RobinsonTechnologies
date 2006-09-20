@@ -24,7 +24,7 @@ fi
 
 #First check to see if our network drive is available
 
-if [ -d /Volumes/PROJECTS/clanlibstuff/novashell/bin/media ] 
+if [ -d /Volumes/PROJECTS/clanlibstuff/novashell/bin/base ] 
 then
 
  echo Located network drive.
