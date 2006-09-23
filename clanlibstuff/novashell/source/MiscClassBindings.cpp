@@ -58,8 +58,15 @@ MovingEntity * GetEntityByName(const string &name)
 	if (!t) return false; //can't find it?
 	if (t->m_entID == 0)
 	{
-		LogMsg("Found entity %s, but he hasn't been loaded yet. Hrm.  Returning NIL", name.c_str());
-		return false; //not loaded yet
+		//let's load it right now
+		GetWorldManager->LoadWorld(t->m_pWorld->GetDirPath(), false);
+		t->m_pWorld->PreloadMap();
+
+		if (t->m_entID == 0)
+		{
+			LogMsg("GetEntityByName: Entity %s couldn't be located.  Outdated tag?", name.c_str());
+			return false; //not loaded yet
+		}
 	}
 	
 	return (MovingEntity*)EntityMgr->GetEntityFromID(t->m_entID);
@@ -181,9 +188,13 @@ void luabindMisc(lua_State *pState)
 		.def("PlayMusic", &ISoundManager::PlayMusic)
 		.def("Play", &ISoundManager::Play)
 		.def("PlayMixed", &ISoundManager::PlayMixed)
+		.def("PlayLooping", &ISoundManager::PlayLooping)
 		.def("MuteAll", &ISoundManager::MuteAll)
 		.def("KillMusic", &ISoundManager::KillMusic)
 		.def("KillChannel", &ISoundManager::KillChannel)
+		.def("AddEffect", &ISoundManager::AddEffect)
+		.def("SetVolume", &ISoundManager::SetVolume)
+		.def("RemoveAllEffects", &ISoundManager::RemoveAllEffects)
 
 		,class_<TextManager>("TextManager")
 		.def("Add", &TextManager::Add)

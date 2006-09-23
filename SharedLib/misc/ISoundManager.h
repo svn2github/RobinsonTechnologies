@@ -12,6 +12,8 @@
 
 #include "MiscUtils.h"
 
+#include <cassert>
+
 class ISoundManager
 {
 public:
@@ -32,6 +34,20 @@ public:
 	virtual void KillChannel(int i_channel)=0;
 	virtual bool IsInitted()=0;
 	virtual bool IsMusicPlaying()=0;
+
+	virtual void SetSpeedFactor(int soundID, float mod) { assert(!"Not implemented with this driver yet");}; //a mod of 2 would play twice as fast
+	virtual void SetVolume(int soundID, float volume) { assert(!"Not implemented with this driver yet");};
+	virtual void AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC) { assert(!"Not implemented with this driver yet");};
+	virtual	void RemoveAllEffects(int soundID) { assert(!"Not implemented with this driver yet");};
+
+
+	enum
+	{
+		C_EFFECT_FADE = 0,
+
+		//add more above here
+		C_EFFECT_COUNT
+	};
 
 protected:
 	

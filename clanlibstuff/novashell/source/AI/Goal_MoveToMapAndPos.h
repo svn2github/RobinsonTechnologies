@@ -25,7 +25,8 @@ public:
 	//the usual suspects
 	void Activate();
 	int  Process();
-	void Terminate(){}
+	virtual void Terminate();
+	virtual void LostFocus();
 
 	//this goal is able to accept messages
 	bool HandleMessage(const Message& msg);

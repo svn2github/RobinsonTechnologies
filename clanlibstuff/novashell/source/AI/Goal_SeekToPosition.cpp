@@ -85,6 +85,7 @@ void Goal_SeekToPosition::Terminate()
 {
  // m_pOwner->GetSteering()->SeekOff();
 //  m_pOwner->GetSteering()->ArriveOff();
+LogMsg("Terminating SeekToPos");
 
 	Brain *pBrain = m_pOwner->GetBrainManager()->GetBrainByName("TopSeek");
 

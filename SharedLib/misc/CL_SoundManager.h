@@ -13,6 +13,8 @@
 #include "ISoundManager.h"
 #include <ClanLib/sound.h>
 
+
+
 //these are saved and cached out
 class SoundResource
 {
@@ -59,10 +61,16 @@ public:
 	virtual bool IsInitted() {return false;}
 	virtual bool IsMusicPlaying();
 
+	virtual void SetSpeedFactor(int soundID, float mod); //a mod of 2 would play twice as fast
+	void AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC);
+	void SetVolume(int soundID, float volume);
+	void RemoveAllEffects(int soundID);
+
 protected:
 
 	SoundResource * LocateSound(const char *pFname);
 	int GetUniqueID() {return ++m_baseID;}
+	SoundSession * GetSessionFromID(int id);
 
 	soundResourceMap m_soundResources;
 	soundSessionMap m_soundSessions;

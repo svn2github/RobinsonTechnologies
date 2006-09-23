@@ -42,7 +42,7 @@ void Goal_MoveToPosition::Activate()
 
 		  case target_not_found:
 			 
-			  LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
+			  //LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
 			  if (m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK)))
 			  {
 				  //parent signaled that they want to handle it

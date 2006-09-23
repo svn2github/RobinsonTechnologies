@@ -90,6 +90,10 @@ App::App()
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
 	m_engineVersion = 0.15f;
+	char stTemp[256];
+	sprintf(stTemp, "V%.2fA", m_engineVersion);
+	m_engineVersionString = stTemp;
+
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
     for (int i=0; i < C_FONT_COUNT; i++)
@@ -534,9 +538,8 @@ CL_Directory::change_to(CL_System::get_exe_path());
 	{
 		
 		//let's just show help stuff
-		char stTemp[256];
-		sprintf(stTemp, "\nNovashell Engine V%.2f\n\n", GetEngineVersion());
-		string message = stTemp;
+
+		string message = "\nNovashell Engine "+GetEngineVersionAsString()+"\n\n";
 
 		message += 
 		

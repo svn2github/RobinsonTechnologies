@@ -413,7 +413,6 @@ MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, World *pD
 		return m;
 	}
 
-
 	//the unique thing about nodes that are warps is we can get their worldnav node id from their mapnav id.  The worldnav is
 	//a sparse graph that connects all the doors in the world
 	
@@ -552,9 +551,6 @@ void WorldNavManager::Serialize(CL_FileHelper &helper)
 
 		}
 
-
-		
-
 	}
 }
 
@@ -563,9 +559,13 @@ void WorldNavManager::Save()
 {
 
 	CL_OutputSource *pFile =g_VFManager.PutFile(C_WORLD_NAV_FILENAME);
-	CL_FileHelper helper(pFile); 
-	Serialize(helper);
-	SAFE_DELETE(pFile);
+	
+	if (pFile)
+	{
+		CL_FileHelper helper(pFile); 
+		Serialize(helper);
+		SAFE_DELETE(pFile);
+	}
 }
 
 

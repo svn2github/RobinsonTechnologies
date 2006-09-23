@@ -136,13 +136,11 @@ void EntWorldDialog::BuildWorldListBox()
 
 	SAFE_DELETE(m_pListWorld); //just in case it was already initted
 	SAFE_DELETE(m_pWindow);
-
-	LogMsg("Building world listbox");
-
+	
 	CL_Rect rectSize = CL_Rect(0,0,300,300);
 	CL_Point ptPos = CL_Point((GetScreenX/2) - rectSize.get_width()/2 , (GetScreenY/2) - rectSize.get_height()/2);
 
-	m_pWindow = new CL_Window(rectSize+ptPos, "Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
+	m_pWindow = new CL_Window(rectSize+ptPos, "Novashell " + GetApp()->GetEngineVersionAsString() + " - Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
 
 	CL_Rect rectListBox = rectSize;
 	int borderOffset = 5;

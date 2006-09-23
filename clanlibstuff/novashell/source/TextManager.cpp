@@ -98,9 +98,10 @@ void TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
 
 	UpdateDialog(false);
 
+	//let's extend the range vertically a bit
+	m_rect.bottom += 300;
 	if (!GetCamera->GetScreenRect().is_overlapped(m_rect))
 	{
-		
 		//out of view
 		m_timeToShowMS = 0;
 		m_bVisible = false;
