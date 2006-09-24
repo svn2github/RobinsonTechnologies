@@ -347,6 +347,22 @@
 		5DCDB2750A19FEAA0043DCFA /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BE0A15832C005974C1 /* print.c */; };
 		5DCDB2810A19FEAA0043DCFA /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */; };
 		5DCDB2820A19FEAA0043DCFA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F80A19FA810043DCFA /* OpenGL.framework */; };
+		5DCFC4A10AC7368D00B9147B /* Goal_Delay.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC4990AC7368D00B9147B /* Goal_Delay.h */; };
+		5DCFC4A20AC7368D00B9147B /* Goal_MoveToPosition.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49A0AC7368D00B9147B /* Goal_MoveToPosition.h */; };
+		5DCFC4A30AC7368D00B9147B /* Goal_RunScript.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49B0AC7368D00B9147B /* Goal_RunScript.h */; };
+		5DCFC4A40AC7368D00B9147B /* Goal_SeekToPosition.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49C0AC7368D00B9147B /* Goal_SeekToPosition.h */; };
+		5DCFC4A50AC7368D00B9147B /* Goal_Think.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49D0AC7368D00B9147B /* Goal_Think.h */; };
+		5DCFC4A60AC7368D00B9147B /* Goal_Types.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49E0AC7368D00B9147B /* Goal_Types.h */; };
+		5DCFC4A70AC7368D00B9147B /* Goal.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49F0AC7368D00B9147B /* Goal.h */; };
+		5DCFC4A80AC7368D00B9147B /* GraphAlgorithms.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC4A00AC7368D00B9147B /* GraphAlgorithms.h */; };
+		5DCFC4A90AC7368D00B9147B /* Goal_Delay.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC4990AC7368D00B9147B /* Goal_Delay.h */; };
+		5DCFC4AA0AC7368D00B9147B /* Goal_MoveToPosition.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49A0AC7368D00B9147B /* Goal_MoveToPosition.h */; };
+		5DCFC4AB0AC7368D00B9147B /* Goal_RunScript.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49B0AC7368D00B9147B /* Goal_RunScript.h */; };
+		5DCFC4AC0AC7368D00B9147B /* Goal_SeekToPosition.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49C0AC7368D00B9147B /* Goal_SeekToPosition.h */; };
+		5DCFC4AD0AC7368D00B9147B /* Goal_Think.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49D0AC7368D00B9147B /* Goal_Think.h */; };
+		5DCFC4AE0AC7368D00B9147B /* Goal_Types.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49E0AC7368D00B9147B /* Goal_Types.h */; };
+		5DCFC4AF0AC7368D00B9147B /* Goal.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC49F0AC7368D00B9147B /* Goal.h */; };
+		5DCFC4B00AC7368D00B9147B /* GraphAlgorithms.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCFC4A00AC7368D00B9147B /* GraphAlgorithms.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -458,6 +474,14 @@
 				5DCC346F0A1C847500886F30 /* ClanVorbis.framework in CopyFiles */,
 				5D1A38570A382D48005FF1C0 /* BrainManager.h in CopyFiles */,
 				5D1A38590A382D48005FF1C0 /* BrainShake.h in CopyFiles */,
+				5DCFC4A90AC7368D00B9147B /* Goal_Delay.h in CopyFiles */,
+				5DCFC4AA0AC7368D00B9147B /* Goal_MoveToPosition.h in CopyFiles */,
+				5DCFC4AB0AC7368D00B9147B /* Goal_RunScript.h in CopyFiles */,
+				5DCFC4AC0AC7368D00B9147B /* Goal_SeekToPosition.h in CopyFiles */,
+				5DCFC4AD0AC7368D00B9147B /* Goal_Think.h in CopyFiles */,
+				5DCFC4AE0AC7368D00B9147B /* Goal_Types.h in CopyFiles */,
+				5DCFC4AF0AC7368D00B9147B /* Goal.h in CopyFiles */,
+				5DCFC4B00AC7368D00B9147B /* GraphAlgorithms.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +506,14 @@
 				5DCC34D10A1C86D200886F30 /* Vorbis.framework in CopyFiles */,
 				5D1A38530A382D48005FF1C0 /* BrainManager.h in CopyFiles */,
 				5D1A38550A382D48005FF1C0 /* BrainShake.h in CopyFiles */,
+				5DCFC4A10AC7368D00B9147B /* Goal_Delay.h in CopyFiles */,
+				5DCFC4A20AC7368D00B9147B /* Goal_MoveToPosition.h in CopyFiles */,
+				5DCFC4A30AC7368D00B9147B /* Goal_RunScript.h in CopyFiles */,
+				5DCFC4A40AC7368D00B9147B /* Goal_SeekToPosition.h in CopyFiles */,
+				5DCFC4A50AC7368D00B9147B /* Goal_Think.h in CopyFiles */,
+				5DCFC4A60AC7368D00B9147B /* Goal_Types.h in CopyFiles */,
+				5DCFC4A70AC7368D00B9147B /* Goal.h in CopyFiles */,
+				5DCFC4A80AC7368D00B9147B /* GraphAlgorithms.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,6 +807,14 @@
 		5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
 		5DCDB1F80A19FA810043DCFA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		5DCDB2860A19FEAA0043DCFA /* novashell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DCFC4990AC7368D00B9147B /* Goal_Delay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_Delay.h; path = AI/Goal_Delay.h; sourceTree = "<group>"; };
+		5DCFC49A0AC7368D00B9147B /* Goal_MoveToPosition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_MoveToPosition.h; path = AI/Goal_MoveToPosition.h; sourceTree = "<group>"; };
+		5DCFC49B0AC7368D00B9147B /* Goal_RunScript.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_RunScript.h; path = AI/Goal_RunScript.h; sourceTree = "<group>"; };
+		5DCFC49C0AC7368D00B9147B /* Goal_SeekToPosition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_SeekToPosition.h; path = AI/Goal_SeekToPosition.h; sourceTree = "<group>"; };
+		5DCFC49D0AC7368D00B9147B /* Goal_Think.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_Think.h; path = AI/Goal_Think.h; sourceTree = "<group>"; };
+		5DCFC49E0AC7368D00B9147B /* Goal_Types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_Types.h; path = AI/Goal_Types.h; sourceTree = "<group>"; };
+		5DCFC49F0AC7368D00B9147B /* Goal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal.h; path = AI/Goal.h; sourceTree = "<group>"; };
+		5DCFC4A00AC7368D00B9147B /* GraphAlgorithms.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = GraphAlgorithms.h; path = AI/GraphAlgorithms.h; sourceTree = "<group>"; };
 		8D0C4E970486CD37000505A6 /* novashell_debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell_debug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -905,6 +945,14 @@
 		5D5BCA8E0AB5503B004C08CE /* AI */ = {
 			isa = PBXGroup;
 			children = (
+				5DCFC4990AC7368D00B9147B /* Goal_Delay.h */,
+				5DCFC49A0AC7368D00B9147B /* Goal_MoveToPosition.h */,
+				5DCFC49B0AC7368D00B9147B /* Goal_RunScript.h */,
+				5DCFC49C0AC7368D00B9147B /* Goal_SeekToPosition.h */,
+				5DCFC49D0AC7368D00B9147B /* Goal_Think.h */,
+				5DCFC49E0AC7368D00B9147B /* Goal_Types.h */,
+				5DCFC49F0AC7368D00B9147B /* Goal.h */,
+				5DCFC4A00AC7368D00B9147B /* GraphAlgorithms.h */,
 				5D9F8B030AB6CDBE000546C2 /* NavGraphManager.cpp */,
 				5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */,
 				5D9F8B050AB6CDBE000546C2 /* WatchManager.cpp */,

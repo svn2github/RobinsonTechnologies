@@ -34,18 +34,7 @@ public:
   //logic to run prior to the goal's destruction
   virtual void Terminate() = 0;
 
-  virtual void LostFocus()
-  {
-
-	  SubgoalList::iterator itor = m_SubGoals.begin();
-	  for (; itor != m_SubGoals.end(); itor++)
-	  {
-		  (*itor)->LostFocus();
-	  }
-
-	  Goal::LostFocus();
-
-  }
+  virtual void LostFocus();
 
   //if a child class of Goal_Composite does not define a message handler
   //the default behavior is to forward the message to the front-most
@@ -172,7 +161,7 @@ void Goal_Composite<entity_type>::AddSubgoal(Goal<entity_type>* g)
   
 	
 	//but let's tell the current active goal that it isn't active (if there is one)
-	SubgoalList::iterator itor = m_SubGoals.begin();
+	typename SubgoalList::iterator itor = m_SubGoals.begin();
 	for (; itor != m_SubGoals.end(); itor++)
 	{
 		(*itor)->LostFocus();
@@ -229,6 +218,19 @@ void  Goal_Composite<entity_type>::Render()
   }
 }
 
+template <class entity_type>
+void  Goal_Composite<entity_type>::LostFocus()
+{
+	
+	typename SubgoalList::iterator itor = m_SubGoals.begin();
+	for (; itor != m_SubGoals.end(); itor++)
+	{
+		(*itor)->LostFocus();
+	}
+	
+	Goal<entity_type>*::LostFocus();
+	
+}
 
 
 #endif

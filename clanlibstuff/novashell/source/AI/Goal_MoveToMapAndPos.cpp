@@ -208,7 +208,7 @@ void Goal_MoveToMapAndPos::Terminate()
 
 void Goal_MoveToMapAndPos::LostFocus()
 {
-	Goal_Composite::LostFocus();
+	Goal_Composite<MovingEntity>::LostFocus();
 	//LogMsg("Aboarting goal_Movetomapandpos..");
 	m_bTriedSimpleWay = false;
     RemoveAllSubgoals();
