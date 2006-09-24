@@ -61,6 +61,7 @@ public:
   //logic to run when the goal is activated.
   virtual void Activate() = 0;
 
+  virtual void LostFocus() { m_iStatus = inactive;}
   //logic to run each update-step
   virtual int  Process() = 0;
 
