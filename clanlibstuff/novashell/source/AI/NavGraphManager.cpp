@@ -133,19 +133,6 @@ void NavGraphManager::RemoveTileNode(Tile *pTile)
 	m_pNavGraph->RemoveNode(pTile->GetGraphNodeID());
 }
 
-
-void DrawWithShadow(int x, int y, const string &msg)
-{
-	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
-	GetApp()->GetFont(C_FONT_GRAY)->draw(x+1, y+1, msg);
-
-	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
-	GetApp()->GetFont(C_FONT_GRAY)->draw(x-1, y-1, msg);
-
-	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(255,255,30));
-	GetApp()->GetFont(C_FONT_GRAY)->draw(x, y, msg);
-
-}
 void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 {
 	if (!m_pNavGraph) return;

@@ -27,6 +27,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_bShowWorldChunkGridLines = GetWorldCache->GetDrawWorldChunkGrid();
    m_bShowCollision = GetWorldCache->GetDrawCollision();
    m_bShowPathfinding = GetGameLogic->GetShowPathfinding();
+   m_bShowAI = GetGameLogic->GetShowAI();
 
    m_slot.connect(CL_Mouse::sig_move(),this, &EntEditor::OnMouseMove);
    m_slot.connect(CL_Keyboard::sig_key_down(), this, &EntEditor::onButtonDown);
@@ -134,7 +135,13 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 		}
 		break;
 
-	
+	case CL_KEY_J:
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			OnToggleShowAI();
+		}
+		break;
+
 	case CL_KEY_1:
 	case CL_KEY_2:
 	case CL_KEY_3:
@@ -177,7 +184,7 @@ void EntEditor::validator_numbers(char &character, bool &accept)
 {
 	// my VC6 don't like std::isdigit with locale :(
 	
-	if (character != '.' && character != '-' && character < '0' || character > '9')
+	if (character != '.' && character != '-' && character < '0' || character > '9' || character > ' ')
 		accept = false;
 }
 void EntEditor::OnToggleWorldChunkGrid()
@@ -203,6 +210,12 @@ void EntEditor::OnToggleShowPathfinding()
 {
 	m_bShowPathfinding= !m_bShowPathfinding;
 	GetGameLogic->SetShowPathfinding(m_bShowPathfinding);
+}
+
+void EntEditor::OnToggleShowAI()
+{
+	m_bShowAI= !m_bShowAI;
+	GetGameLogic->SetShowAI(m_bShowAI);
 }
 
 void EntEditor::OnToggleParallax()
@@ -509,6 +522,14 @@ void EntEditor::OnEditStartupLua()
 	OpenScriptForEditing(file);
 }
 
+void EntEditor::OnEditGameStartLua()
+{
+	string file = GetGameLogic->GetScriptRootDir();
+	file += "/game_start.lua";
+	g_VFManager.LocateFile(file);
+	OpenScriptForEditing(file);
+}
+
 void EntEditor::OnEditSetupConstants()
 {
 	string file = GetGameLogic->GetScriptRootDir();
@@ -563,6 +584,9 @@ if (GetGameLogic->GetUserProfileName().empty())
 	
 	pItem = m_pMenu->create_item("File/Open Script/startup.lua");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnEditStartupLua);
+
+	pItem = m_pMenu->create_item("File/Open Script/game_start.lua");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnEditGameStartLua);
 
 	pItem = m_pMenu->create_item("File/Open Script/setup_constants.lua");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnEditSetupConstants);
@@ -620,12 +644,17 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_pMenuShowPathfindingCheckbox->set_selected(m_bShowPathfinding);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowPathfinding);
 
+	pItem = m_pMenu->create_toggle_item("Display/Show Entity Goal and AI Data (Ctrl+J)");
+	m_pMenuShowAICheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
+	m_pMenuShowAICheckbox->set_selected(m_bShowAI);
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowAI);
+
 	pItem = m_pMenu->create_toggle_item("Display/Parallax Scrolling");
 	m_pMenuParallaxCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuParallaxCheckbox->set_selected(GetGameLogic->GetParallaxActive());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleParallax);
 
-	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Data (Ctrl-S)");
+	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Processing (Ctrl-S)");
 	m_pMenuShowEntityCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuShowEntityCollisionCheckbox->set_selected(GetGameLogic->GetShowEntityCollisionData());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowEntityCollision);

@@ -10,6 +10,7 @@ Goal_Delay::Goal_Delay(MovingEntity* pBot,	int time):
 
 Goal<MovingEntity>(pBot, goal_delay), m_timeToWait(time)
 {
+	m_delayTimer = 0;
 
 }
 
@@ -19,6 +20,9 @@ Goal<MovingEntity>(pBot, goal_delay), m_timeToWait(time)
 void Goal_Delay::Activate()
 {
 	m_iStatus = active;
+	if (m_delayTimer != 0) return; //if canceled and reactivated, don't actually
+	//reset the timer
+
 	m_delayTimer = GetApp()->GetGameTick()+m_timeToWait;
 }
 

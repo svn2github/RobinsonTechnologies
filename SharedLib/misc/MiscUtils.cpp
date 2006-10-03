@@ -1,6 +1,28 @@
 #include "MiscUtils.h"
 
 
+string GetNextLineFromFile(FILE *fp)
+{
+	string line;
+	char c;
+
+	while (!feof(fp))
+	{
+		fread(&c,1,1,fp);
+
+		if (c == '\r') continue; //don't care about these stupid things
+
+		line += c;
+
+		if (c == '\n')
+		{
+			return line; //go ahead and quit now, we found a cr
+		}
+	}
+	return line;
+}
+
+
 int random(int range)
 {
 	return static_cast<int>(double(rand()) / RAND_MAX * range);

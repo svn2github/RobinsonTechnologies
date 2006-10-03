@@ -18,6 +18,7 @@
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT_PATH "script/"
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
+#define C_DISTANCE_NOT_ON_SAME_MAP 2000000000
 //there are issues with sliding along walls thinking it's a ground when they are built out of small blocks, this
 //provides a work around
 #define C_TICKS_ON_GROUND_NEEDED_TO_TRIGGER_GROUND 1
@@ -80,7 +81,49 @@ float MovingEntity::GetDistanceFromEntityByID(int id)
 		return -1;
 	}
 
+	if (GetMap() != pEnt->GetMap()) return C_DISTANCE_NOT_ON_SAME_MAP;
+
 	return (GetPos()-pEnt->GetPos()).length();
+}
+
+CL_Vector2 MovingEntity::GetVectorToEntityByID(int entID)
+{
+	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(entID);
+	if (pEnt) return GetVectorToEntity(pEnt);
+	
+	LogMsg("Ent %d (%s) can't get angle to entity %d, doesn't exist", ID(), GetName().c_str(),
+		entID);
+	return CL_Vector2(0,0);
+}
+
+CL_Vector2 MovingEntity::GetVectorToEntity(MovingEntity *pEnt)
+{
+	CL_Vector2 v = pEnt->GetPos()-GetPos();
+	v.unitize();
+
+	return v;
+}
+
+bool MovingEntity::IsOnSameMapAsEntityByID(int entID)
+{
+	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(entID);
+	if (!pEnt) return false;
+
+	return (GetMap() == pEnt->GetMap());
+}
+
+bool MovingEntity::IsCloseToEntity(MovingEntity *pEnt, int dist)
+{
+	if (GetMap() != pEnt->GetMap()) return false;
+	return ( dist >   (GetPos()-pEnt->GetPos()).length()  );
+}
+
+bool MovingEntity::IsCloseToEntityByID(int entID, int dist)
+{
+	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(entID);
+	if (!pEnt) return false;
+
+	return IsCloseToEntity(pEnt, dist);
 }
 
 void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
@@ -1274,20 +1317,22 @@ void MovingEntity::ApplyGenericMovement(float step)
 		throw CL_Error("Error, sprite not valid in entity " + CL_String::from_int(ID()) + " (trying to walk in a direction that doesn't exist maybe?");
 		return;
 	}
-	//apply world gravity?
 	
-	int padding = GetSizeX();
-	padding = (max(padding, GetSizeY()));
-	padding = (float(padding)*0.6f)+8;
 
-	m_scanArea.left = GetPos().x - padding;
-	m_scanArea.top = GetPos().y - padding;
-	m_scanArea.right = GetPos().x + padding;
-	m_scanArea.bottom = GetPos().y + padding;
+	//scan around us for entities
+
+	m_scanArea = m_pTile->GetWorldColRect();
+	float padding;
+	padding = (max(m_scanArea.get_width(), m_scanArea.get_height()));
+	padding = (float(padding)*0.2f)+8;
+
+	m_scanArea.left -= padding;
+	m_scanArea.top -= padding;
+	m_scanArea.right += padding;
+	m_scanArea.bottom += padding;
 
 	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
-	//TODO: Optimize this to only scan the rects that hold collision data, main, details and entity probably
 	pWorld->GetMyWorldCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
 	
 	m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
@@ -1461,25 +1506,18 @@ void MovingEntity::Render(void *pTarget)
 	//*********
 	*/
 
-	if (GetGameLogic->GetShowEntityCollisionData())
+}
+
+void MovingEntity::RenderCollisionLists(CL_GraphicContext *pGC)
+{
+	if (GetLastScanArea().get_width() != 0)
 	{
-		//show extra debug stuff
-
-		/*
-		RenderVertexListRotated(GetPos(), (CL_Vector2*)GetBody()->GetVertArray(), GetBody()->GetVertCount(), CL_Color(255,255,255,200), pGC,
-			RadiansToDegrees(GetBody()->GetOrientation()));
-*/
-
-		if (GetLastScanArea().get_width() != 0)
-		{
-			DrawRectFromWorldCoordinates(CL_Vector2(GetLastScanArea().left,  GetLastScanArea().top), 
-				CL_Vector2(GetLastScanArea().right, GetLastScanArea().bottom),	CL_Color(0,255,0,255),  pGC);
-		}
-
-		CL_Color col(255,255,0);
-		RenderTileListCollisionData(GetNearbyTileList(), pGC, false, &col);
+		DrawRectFromWorldCoordinates(CL_Vector2(GetLastScanArea().left,  GetLastScanArea().top), 
+			CL_Vector2(GetLastScanArea().right, GetLastScanArea().bottom),	CL_Color(0,255,0,255),  pGC);
 	}
 
+	CL_Color col(255,255,0);
+	RenderTileListCollisionData(GetNearbyTileList(), pGC, false, &col);
 }
 
 void MovingEntity::SetTrigger(int triggerType, int typeVar, int triggerBehavior, int behaviorVar)
@@ -1654,12 +1692,10 @@ void MovingEntity::PostUpdate(float step)
 		float gravity = pWorld->GetGravity();
 		if (gravity != 0)
 		{
-
 			if ( (m_body.GetLinVelocity().y /step) < C_MAX_FALLING_DOWN_SPEED)
 			{
 				m_body.AddForce(Vector(0, pWorld->GetGravity() * m_body.GetMass()) * step);
 			}
-
 			
 			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
 			{

@@ -84,11 +84,11 @@ bool Goal_FollowPath::HandleMessage(const Message& msg)
 	if (bHandled == false)
 	{
 
-
+/*
 		switch(msg.GetMsgType())
 		{
 
-		/*
+		
 		case C_MSG_SEEK_ARRIVED:
 
 			if (!m_Path.empty())
@@ -100,12 +100,15 @@ bool Goal_FollowPath::HandleMessage(const Message& msg)
 			}
 			return true;
 			break;
-*/
+
 
 		default:
 			return false;
 		}
+	
+	*/
 	}
+	
 
 	//not handled
 	return true;

@@ -36,6 +36,7 @@ private:
 	void BuildWorldListBox();
 	void ScanDirectoryForModInfo();
 	void OnClickLoad();
+	void OnSelected(int selItem);
 	void ChangeSelection(int offset);
 
 	CL_Window *m_pWindow;

@@ -175,20 +175,14 @@ CL_Vector2 TagManager::GetPosFromName(const string &name)
 	return pTag->m_pos;
 }
 
-void TagManager::Remove(MovingEntity *pEnt)
+void TagManager::RemoveByHashID(unsigned int hashID, int entID)
 {
-	if (!pEnt || pEnt->GetName().empty()) return;
-	
-	int hashID = pEnt->GetNameHash();
-	
-	//remove it, but make sure it's the right one
-
 	TagResourceMap::iterator itor = m_tagMap.find(hashID);
 
 	if (itor == m_tagMap.end()) 
 	{
 		//it's not in here
-		LogError("Failed to remove hash %d (ID %d)", hashID, pEnt->ID());
+		LogError("Failed to remove hash %d (ID %d)", hashID, entID);
 		return;
 	} else
 	{
@@ -202,7 +196,17 @@ void TagManager::Remove(MovingEntity *pEnt)
 		return;
 	}
 
-		LogError("Failed to remove hash %d (ID %d) in list search", hashID, pEnt->ID());
+	LogError("Failed to remove hash %d (ID %d) in list search", hashID, entID);
+}
+void TagManager::Remove(MovingEntity *pEnt)
+{
+	if (!pEnt || pEnt->GetName().empty()) return;
+	
+	int hashID = pEnt->GetNameHash();
+	
+	//remove it, but make sure it's the right one
+
+	RemoveByHashID(hashID, pEnt->ID());
 
 }
 

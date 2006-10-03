@@ -70,6 +70,7 @@ App::App()
 {
     m_bJustRenderedFrame = false;
 	m_uniqueNum = 0;
+	m_pFrameRate = NULL;
 	m_bRequestToggleFullscreen = false;   
 	m_pResourceManager = NULL;
 	m_pCamera = NULL;
@@ -124,6 +125,11 @@ unsigned int App::GetUniqueNumber()
 void App::OneTimeDeinit()
 {
    
+	for (int i=0; i < C_FONT_COUNT; i++)
+	{
+		SAFE_DELETE(m_pFonts[i]);
+	}
+
 	SAFE_DELETE(m_pGameLogic);
 	SAFE_DELETE(m_pScriptManager);
 
@@ -133,11 +139,7 @@ void App::OneTimeDeinit()
 	SAFE_DELETE(m_pBackgroundCanvas);
     SAFE_DELETE(m_pBackground);
 
-    for (int i=0; i < C_FONT_COUNT; i++)
-    {
-        SAFE_DELETE(m_pFonts[i]);
-    }
- 
+   
 	SAFE_DELETE(m_pVisualProfileManager);
 	SAFE_DELETE(m_pHashedResourceManager);
 	SAFE_DELETE(m_pGui);
@@ -147,6 +149,7 @@ void App::OneTimeDeinit()
 	SAFE_DELETE(m_pResourceManager);
   
     SAFE_DELETE(m_pWindow);
+	SAFE_DELETE(m_pFrameRate);
 }
 
         
@@ -201,7 +204,7 @@ void App::OneTimeInit()
 
 	m_WindowDescription.set_fullscreen(bFullscreen);
     m_WindowDescription.set_bpp(32);
-    m_WindowDescription.set_title("Novashell Engine Test");
+    m_WindowDescription.set_title("Nova Shell Game Creation System");
     m_WindowDescription.set_allow_resize(false);
   
 
@@ -222,10 +225,7 @@ void App::OneTimeInit()
     m_pResourceManager->add_resources(temp);
 
     m_pGUIResourceManager = new CL_ResourceManager("base/gui/gui.xml", false);
-  
-    m_pFonts[C_FONT_GRAY] = new CL_Font("font_gray", GetResourceManager());
-	m_pFonts[C_FONT_NORMAL] = new CL_Font("font_yellow", GetResourceManager());
-  
+    
     m_pStyle = new CL_StyleManager_Silver(GetApp()->GetGUIResourceManager());
     m_pGui = new CL_GUIManager(m_pStyle);
   
@@ -525,9 +525,7 @@ int App::main(int argc, char **argv)
 {
  
 	//first move to our current dir
-CL_Directory::change_to(CL_System::get_exe_path());
-
-
+	CL_Directory::change_to(CL_System::get_exe_path());
 
 	for (int i=1; i < argc; i++)
 	{
@@ -539,7 +537,7 @@ CL_Directory::change_to(CL_System::get_exe_path());
 		
 		//let's just show help stuff
 
-		string message = "\nNovashell Engine "+GetEngineVersionAsString()+"\n\n";
+		string message = "\nNova Shell Game Creation System "+GetEngineVersionAsString()+"\n\n";
 
 		message += 
 		
@@ -618,13 +616,14 @@ CL_Directory::change_to(CL_System::get_exe_path());
         CL_Slot slot_on_get_focus = m_pWindow->sig_got_focus().connect(this, &App::OnGotFocus);
         CL_Slot m_slot_button_up = CL_Keyboard::sig_key_up().connect(this, &App::OnKeyUp);
   
-		// Clear screen on each frame
+		// Everytime the GUI draws, let's draw the game under it
 		CL_Slot m_slotOnPaint = GetGUI()->sig_paint().connect(this, &App::OnRender);
 
-        // Class to give us the framerate
-        CL_FramerateCounter framerate;
- 
+  
 		ClearTimingAfterLongPause();
+
+		// Class to give us the framerate
+		m_pFrameRate = new CL_FramerateCounter();
 
         // Run until someone presses escape
         while (!m_bQuit)
@@ -639,23 +638,23 @@ CL_Directory::change_to(CL_System::get_exe_path());
                     
                     Update();
 
-					GetGUI()->show(); //this will trigger our OnRender() which happens right before
+					m_bRenderedGameGUI = false;
+
+					if (m_pGameLogic->GetGameGUI())
+					{
+						m_pGameLogic->GetGameGUI()->show();
+						
+					} else
+					{
+						m_pGui->show();
+					}
+					
+					
 					//the gui is drawn too
 					m_bJustRenderedFrame = true; //sometimes we want to know if we just rendered something in the update logic, entities
 					//use to check if now is a valid time to see if they are onscreen or not without having to recompute visibility
 
-				    if (m_pGameLogic->GetShowFPS()) 
-					{
-						ResetFont(GetFont(C_FONT_NORMAL));
-						
-						int tiles = 0;
-						if (GetWorldCache)
-						{
-							tiles = GetWorldCache->GetTilesRenderedLastFrameCount();
-						}
-						GetFont(C_FONT_NORMAL)->draw(GetScreenX-220,0, "FPS:" + CL_String::from_int(framerate.get_fps())
-							+" T:"+CL_String::from_int(tiles) + " W:"+CL_String::from_int(g_watchManager.GetWatchCount()));
-					}
+				  
 
 					 // Flip the display, showing on the screen what we have drawed
                     // since last call to flip_display()

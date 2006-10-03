@@ -166,32 +166,18 @@ bool Goal_MoveToMapAndPos::HandleMessage(const Message& msg)
 		switch(msg.GetMsgType())
 		{
 
-		case C_MSG_GOT_STUCK:
-
-		//	LogMsg("Reactivating from got stuck message");
-		//	RemoveAllSubgoals();
-		//	m_iStatus = inactive; //so it will activate next pass
+		case C_MSG_TARGET_NOT_FOUND:
+			LogMsg("Target wasn't found, restarting");
 			return true; //signal that we handled it
 			break;
 
-			/*
-			case Msg_PathReady:
+		case C_MSG_GOT_STUCK:
+			m_bTriedSimpleWay = false;
+			LogMsg("Got stuck..");
+			return true; //signal that we handled it
+			break;
 
-			//clear any existing goals
-			RemoveAllSubgoals();
-
-			LogMsg("Adding subgoal: Followpath");
-			/*    
-			AddSubgoal(new Goal_FollowPath(m_pOwner,
-			m_pOwner->GetPathPlanner()->GetPath()));
-
-			return true; //msg handled
-
-			case Msg_NoPathAvailable:
-			m_iStatus = failed;
-			return true; //msg handled
-			}
-			*/
+			
 		default: return false;
 		}
 

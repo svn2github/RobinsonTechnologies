@@ -80,6 +80,7 @@ public:
   bool SetVisualProfile(const string &resourceFileName, const string &profileName);
   virtual void  Update(float step);
   virtual void  Render(void *pTarget);
+  void RenderCollisionLists(CL_GraphicContext *pGC);
   void RenderShadow(void *pTarget);
   BaseGameEntity * CreateClone(TileEntity *pTile);
   void SetIsOnGround(bool bOnGround);
@@ -191,8 +192,16 @@ public:
   bool IsInitted() {return m_bHasRunOnInit;}
   bool IsFacingTarget(float tolerance); 
 
+  bool IsCloseToEntityByID(int entID, int dist);
+  bool IsCloseToEntity(MovingEntity *pEnt, int dist);
+
   bool CanWalkTo(CL_Vector2 &pos, bool ignoreLivingCreatures);
   bool CanWalkBetween(World *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures);
+
+  CL_Vector2 GetVectorToEntityByID(int entID);
+  CL_Vector2 GetVectorToEntity(MovingEntity *pEnt);
+  bool IsOnSameMapAsEntityByID(int entID);
+
   PathPlanner * GetPathPlanner();
   void SetRunStringASAP(const string &command);
   void ProcessPendingMoveAndDeletionOperations();
@@ -249,7 +258,7 @@ protected:
 	void OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollide); 
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
-	
+
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
     CL_Slot m_collisionSlot;

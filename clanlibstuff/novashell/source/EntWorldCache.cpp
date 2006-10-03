@@ -624,20 +624,7 @@ void EntWorldCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 			{
 				if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 				{
-					
 					MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
-
-					//uh, hey, while we're at it, render goal info
-					if (pEnt->IsGoalManagerActive())
-					{
-						//render goal names in  the stack
-						CL_Vector2 pos = WorldToScreen(pEnt->GetPos());
-						pEnt->GetGoalManager()->RenderAtPos(pos);
-						//render any custom debug data a goal wants to
-						pEnt->GetGoalManager()->Render();
-					}
-					
-			
 					pBody = pEnt->GetBody();
 					vOffset = pEnt->GetVisualOffset();
 				}
@@ -655,8 +642,52 @@ void EntWorldCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 			}
 		}
 	}
-
 }
+
+void EntWorldCache::RenderGoalAI(CL_GraphicContext *pGC)
+{
+	Tile *pTile;
+
+	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
+	{
+
+		pTile = m_tileLayerDrawList.at(i);
+		if (!pTile) continue;
+
+			if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+				{
+					MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
+
+					if (pEnt->IsGoalManagerActive())
+					{
+						//render goal names in  the stack
+						CL_Vector2 pos = WorldToScreen(pEnt->GetPos());
+						pEnt->GetGoalManager()->RenderAtPos(pos);
+						//render any custom debug data a goal wants to
+						pEnt->GetGoalManager()->Render();
+					}
+				}
+	}
+}
+
+void EntWorldCache::RenderCollisionLists(CL_GraphicContext *pGC)
+{
+	Tile *pTile;
+
+	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
+	{
+
+		pTile = m_tileLayerDrawList.at(i);
+		if (!pTile) continue;
+
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
+			pEnt->RenderCollisionLists(pGC);
+		}
+	}
+}
+
 void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 {
 	Tile *pTile;
@@ -752,11 +783,8 @@ void EntWorldCache::Update(float step)
 
 
 	ProcessPendingEntityMovementAndDeletions();
-	
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
-	
 	ClearTriggers();
-
 
 	if (m_pWorld != GetWorld)
 	{
@@ -809,9 +837,7 @@ bool EntWorldCache::IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, T
 
 	//do three checks
 	bool obstructed;
-
 	if (obstructed = GetTileLineIntersection(a, b, tilelist, &vHitPoint, pTile, pTileToIgnore, C_TILE_TYPE_BLANK, bIgnoreMovingCreatures)) return true;
-
 
 	if (radius > 1)
 	{
@@ -835,17 +861,15 @@ bool EntWorldCache::IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, T
 		b += vOffset;
 
 		if (obstructed = GetTileLineIntersection(a, b, tilelist, &vHitPoint, pTile, pTileToIgnore, C_TILE_TYPE_BLANK, bIgnoreMovingCreatures)) return true;
-
 	}
+
 	return false;
 }
 
 void EntWorldCache::OnMapChange()
 {
 	//let any triggers register that the player has left the map
-	
 	MovingEntity *pEnt = NULL;
-
 	//use a temp copy to avoid circular problems
 
 	vector<unsigned int> activeTriggers =  m_activeTriggers;
@@ -860,8 +884,8 @@ void EntWorldCache::OnMapChange()
 	}
 
 	ClearCache();
-
 }
+
 void EntWorldCache::Render(void *pTarget)
 {
 	
@@ -869,17 +893,26 @@ void EntWorldCache::Render(void *pTarget)
 	
 	RenderViewList(pGC);
 
-
 	if (GetGameLogic->GetShowPathfinding())
 	{
 		if (m_pWorld->NavGraphDataExists())
 			m_pWorld->GetNavGraph()->Render(true, pGC);
-
 	}
 
 	if (m_bDrawCollisionData)
 	{
 		RenderCollisionOutlines(pGC);
+	}
+
+	if (GetGameLogic->GetShowEntityCollisionData())
+	{
+		//show extra debug stuff
+		RenderCollisionLists(pGC);
+	}
+
+	if (GetGameLogic->GetShowAI())
+	{
+		RenderGoalAI(pGC);
 	}
 
 	if (m_bDrawWorldChunkGrid)
@@ -891,8 +924,6 @@ void EntWorldCache::Render(void *pTarget)
 			DrawRectFromWorldCoordinates(CL_Vector2(recScreen.left, recScreen.top),
 				CL_Vector2(recScreen.right, recScreen.bottom), CL_Color(0,255,255,255), pGC);
 		}
-	
-		
 	}
 }
 

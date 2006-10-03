@@ -16,7 +16,7 @@
 
 using namespace luabind;
 
-string MovingEntityToString(MovingEntity * pEnt)
+string EntityToString(BaseGameEntity * pEnt)
 {
 	return "Entity " + CL_String::from_int(pEnt->ID()) + " (" + pEnt->GetName()+")";
 }
@@ -54,18 +54,22 @@ void luabindEntity(lua_State *pState)
 			,class_<Brain>("Brain")
 			.def("GetName", &State::GetName)
 
+			,class_<BaseGameEntity>("BaseEntity")
+			.def("ID", &BaseGameEntity::ID)
+			.def("GetName", &BaseGameEntity::GetName)
+			.def("SetName", &BaseGameEntity::SetName)
+			.def("__tostring", &EntityToString)
+			.def("SetDeleteFlag", &BaseGameEntity::SetDeleteFlag)
+			.def("Send", &BaseGameEntity::HandleMessageString)
 
-			,class_<MovingEntity>("Entity")
+			,class_<MovingEntity, BaseGameEntity>("Entity")
 			.def(constructor<>())
-			.def("ID", &MovingEntity::ID)
 			.def("GetPos", &MovingEntity::GetPos)
 			.def("SetPos", &MovingEntity::SetPos)
-			.def("GetName", &MovingEntity::GetName)
-			.def("SetName", &MovingEntity::SetName)
 			.def("SetPosAndMap", &MovingEntity::SetPosAndMap)
 			.def("SetVisualProfile", &MovingEntity::SetVisualProfile)
 			.def("GetBrainManager", &MovingEntity::GetBrainManager)
-			.def("__tostring", &MovingEntityToString)
+			.def("__tostring", &EntityToString)
 			.def("InitCollisionDataBySize", &MovingEntity::InitCollisionDataBySize)
 			.def("LoadCollisionInfo", &MovingEntity::LoadCollisionInfo)
 			.def("EnableRotation", &MovingEntity::EnableRotation)
@@ -74,7 +78,6 @@ void luabindEntity(lua_State *pState)
 			.def("GetListenCollision", &MovingEntity::GetListenCollision)
 			.def("SetListenCollisionStatic", &MovingEntity::SetListenCollisionStatic)
 			.def("GetListenCollisionStatic", &MovingEntity::GetListenCollisionStatic)
-			.def("SetDeleteFlag", &MovingEntity::SetDeleteFlag)
 			.def("SetMass", &MovingEntity::SetMass)
 			.def("GetMass", &MovingEntity::GetMass)
 			.def("AddForce", &MovingEntity::AddForce)
@@ -124,7 +127,13 @@ void luabindEntity(lua_State *pState)
 			.def("SetNavNodeType", &MovingEntity::SetNavNodeType)
 			.def("SetHasPathNode", &MovingEntity::SetHasPathNode)
 			.def("SetVisibilityNotifications", &MovingEntity::SetVisibilityNotifications)
-		];
+
+			.def("HasLineOfSightToPosition", &MovingEntity::CanWalkTo)
+			.def("GetVectorToEntityByID", &MovingEntity::GetVectorToEntityByID)
+			.def("IsOnSameMapAsEntityByID", &MovingEntity::IsOnSameMapAsEntityByID)
+			.def("IsCloseToEntity", &MovingEntity::IsCloseToEntity)
+			.def("IsCloseToEntityByID", &MovingEntity::IsCloseToEntityByID)
+	];
 }
 
 

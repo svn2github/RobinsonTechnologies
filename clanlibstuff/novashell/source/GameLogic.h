@@ -17,6 +17,7 @@
 #include "TagManager.h"
 #include "MessageManager.h"
 #include "DataManager.h"
+#include "GUIStyleBitmap/stylemanager_Bitmap.h"
 
 class EntWorldCache;
 class EntEditor;
@@ -52,8 +53,8 @@ public:
 	  void ClearScreen();
 	  void SetShowEntityCollisionData(bool bNew) {m_bShowEntityCollisionData = bNew;}
 	  bool GetShowEntityCollisionData() {return m_bShowEntityCollisionData;}
-	  bool GetGamePaused() {return m_bGamePaused;}
-	  void SetGamePaused(bool bNew) {m_bGamePaused = bNew;}
+	  bool GetGamePaused() {return m_GamePaused != 0;}
+	  int SetGamePaused(bool bNew);
 	  void SetEditorActive(bool bNew) {m_bEditorActive = bNew;}
 	  bool GetEditorActive() {return m_bEditorActive;}
 	  void SetParallaxActive(bool bNew) {m_bParallaxActive = bNew;}
@@ -82,11 +83,17 @@ public:
 	  void OnPlayerDeleted(int id);
 	  bool GetShowPathfinding() {return m_bShowPathfinding;}
 	  void SetShowPathfinding(bool bNew) {m_bShowPathfinding = bNew;}
+	  bool GetShowAI() {return m_bShowAI;}
+	  void SetShowAI(bool bNew) {m_bShowAI = bNew;}
 	  void ClearModPaths() {m_modPaths.clear();}
 	  void AddModPath(const string &s);
 	  const string & GetWorldsDirPath() {return m_strWorldsDirPath;}
 	  const string & GetActiveWorldName();
-  
+	  void InitGameGUI(string xmlFile); //don't make this const, we modify it in place
+
+	  CL_StyleManager_Bitmap * GetGUIStyle() {return m_pGUIStyle;}
+	  CL_GUIManager * GetGameGUI() {return m_pGUIManager;}
+	  
 	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
 	  //But its reliance on this var should be as minimum as possible.
 	  
@@ -105,10 +112,12 @@ private:
 
 	void OnMouseUp(const CL_InputEvent &key);
 	void Zoom(bool zoomCloser);
-
+	void OnRender();
     void OnKeyDown(const CL_InputEvent &key);
 	void OnKeyUp(const CL_InputEvent &key);
-    MyEntityManager m_myEntityManager;
+	void RenderGameGUI(bool bDrawMainGUIToo);   
+
+	MyEntityManager m_myEntityManager;
     CL_SlotContainer m_slots;
 
     int m_editorID; //0 if none
@@ -119,7 +128,7 @@ private:
 	string m_strUserProfilePathWithName; //the path plus the name (empty if none)
 	WorldManager m_worldManager; //holds all our world data 
 	bool m_bShowEntityCollisionData;
-	bool m_bGamePaused;
+	int m_GamePaused; //0 if not paused, 3 if paused three layers deep
 	bool m_bEditorActive;
 	bool m_bParallaxActive;
 	bool m_bMakingThumbnail; //if true we're in the middle of making a thumbnail
@@ -132,9 +141,14 @@ private:
 	int m_gameMode;
 	CL_Slot m_playerDestroyedSlot;
 	bool m_bShowPathfinding;
+	bool m_bShowAI;
 	vector<string> m_modPaths; //mount order is important
 	string m_activeWorldName;
 	string m_strWorldsDirPath;
+
+	CL_ResourceManager * m_pGUIResources;
+	CL_StyleManager_Bitmap * m_pGUIStyle;
+	CL_GUIManager *m_pGUIManager;
 };
 
 void MovePlayerToCamera();

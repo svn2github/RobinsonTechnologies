@@ -61,6 +61,7 @@ private:
 	void OnToggleWorldChunkGrid();
 	void OnToggleShowCollision();
 	void OnToggleShowPathfinding();
+	void OnToggleShowAI();
 	void OnToggleShowEntityCollision();
 	void OnToggleParallax();
 	void OnMapChange();
@@ -78,6 +79,7 @@ private:
 	void OnAddNewMap();
 	void OnEditStartupLua();
 	void OnEditSetupConstants();
+	void OnEditGameStartLua();
 	void OnDumpWorldNavStatistics();
 	void OnRebuildNavigationMaps();
 	
@@ -112,6 +114,7 @@ private:
 	CL_MenuItem *m_pMenuWorldChunkCheckbox;
 	CL_MenuItem *m_pMenuShowCollisionCheckbox;
 	CL_MenuItem *m_pMenuShowPathfindingCheckbox;
+	CL_MenuItem *m_pMenuShowAICheckbox;
 	CL_MenuItem *m_pMenuShowEntityCollisionCheckbox;
 	CL_MenuItem *m_modeCheckBoxArray[e_modeCount];
 	CL_MenuItem *m_pMenuLockAtRefreshCheckbox;
@@ -126,6 +129,7 @@ private:
 	bool m_bShowWorldChunkGridLines;
 	bool m_bShowCollision;
 	bool m_bShowPathfinding;
+	bool m_bShowAI;
 	
 	CL_MenuItem *m_pMenuGamePausedCheckbox;
 	bool m_bDialogOpen;

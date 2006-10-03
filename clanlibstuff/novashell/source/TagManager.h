@@ -49,6 +49,7 @@ public:
 	void Kill();
 	void Update(World *pWorld, MovingEntity *pEnt);
 	void Remove(MovingEntity *pEntity);
+	void RemoveByHashID(unsigned int hashID, int entID); //should never be used except to erase a bad tag, just use 0 for the entity
 	TagObject * GetFromString(const string &name);
 	TagObject * GetFromHash(unsigned int hashID);
 	void Save(World *pWorld);

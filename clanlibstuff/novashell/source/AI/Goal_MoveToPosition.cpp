@@ -43,7 +43,7 @@ void Goal_MoveToPosition::Activate()
 		  case target_not_found:
 			 
 			  //LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
-			  if (m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK)))
+			  if (m_pOwner->HandleMessage(Message(C_MSG_TARGET_NOT_FOUND)))
 			  {
 				  //parent signaled that they want to handle it
 				  m_iStatus = failed;
@@ -131,18 +131,18 @@ bool Goal_MoveToPosition::HandleMessage(const Message& msg)
   //if the msg was not handled, test to see if this goal can handle it
   if (bHandled == false)
   {
-
+	/*
 	  switch(msg.GetMsgType())
     {
     
-	/*
+
 	case Msg_PathReady:
 
       //clear any existing goals
       RemoveAllSubgoals();
 
 	  LogMsg("Adding subgoal: Followpath");
-	/*    
+  
 	  AddSubgoal(new Goal_FollowPath(m_pOwner,
                                      m_pOwner->GetPathPlanner()->GetPath()));
 
@@ -152,10 +152,12 @@ bool Goal_MoveToPosition::HandleMessage(const Message& msg)
       m_iStatus = failed;
       return true; //msg handled
     }
-	 */
+	
 	  default: return false;
 	 }
-
+ */
+  
+	  return false;
   }
 
   //handled by subgoals

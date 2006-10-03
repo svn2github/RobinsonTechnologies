@@ -87,7 +87,7 @@ int Goal_TraverseEdge::Process()
   //if the bot has become stuck return failure
   if (isStuck())
   {
-	  LogMsg("Retry");
+	  //LogMsg("Retry");
 	  m_iStatus = failed;
   }
  

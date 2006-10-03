@@ -16,6 +16,7 @@
 #include "AI/WatchManager.h"
 #include "AI/WorldNavManager.h"
 #include "AI/WatchManager.h"
+#include "GUIStyleBitmap/NS_MessageBox.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -36,14 +37,18 @@ TagManager g_TagManager;
 
 GameLogic::GameLogic()
 {
+	m_pGUIResources = NULL;
+	m_pGUIStyle = NULL;
 	m_pPlayer = NULL;   
+	m_pGUIManager= NULL;
+
 	m_slots.connect(CL_Keyboard::sig_key_down(), this, &GameLogic::OnKeyDown);
 	m_slots.connect(CL_Keyboard::sig_key_up(), this, &GameLogic::OnKeyUp);
 	m_slots.connect(CL_Mouse::sig_key_up(), this, &GameLogic::OnMouseUp);
     m_editorID = 0;
 	m_bRestartEngineFlag = false;
 	m_bShowEntityCollisionData = false;
-	m_bGamePaused = false;
+	m_GamePaused = 0;
 	m_bEditorActive = false;
 	m_bParallaxActive = true;
 	m_bMakingThumbnail = false;
@@ -56,6 +61,7 @@ GameLogic::GameLogic()
 	CL_Directory::create(m_strBaseUserProfilePath);
 	SetShowFPS(false);
 	SetShowPathfinding(false);
+	SetShowAI(false);
 	SetGameMode(C_GAME_MODE_TOP_VIEW); //default.  Also is automatically changed when player brains are initted.
 	m_activeWorldName = "base";
 	
@@ -90,6 +96,21 @@ GameLogic::GameLogic()
 GameLogic::~GameLogic()
 {
 	Kill();
+}
+
+int GameLogic::SetGamePaused(bool bNew)
+{
+	if (bNew)
+	{
+		m_GamePaused++;
+	} else
+	{
+		m_GamePaused--;
+	}
+
+	m_GamePaused = max(0, m_GamePaused);
+	
+	return m_GamePaused;
 }
 
 void GameLogic::SaveGlobals()
@@ -560,8 +581,14 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 				ToggleShowFPS();
 			}
 			break;
+		case CL_KEY_J:
+			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+			{
+				SetShowAI(!GetShowAI());
+			}
+			break;
 
-		
+
 		}
 
 	}
@@ -649,6 +676,40 @@ void GameLogic::Kill()
 	
 	m_worldManager.Kill();
 	m_myEntityManager.Kill();
+
+	SAFE_DELETE(m_pGUIStyle);
+	SAFE_DELETE(m_pGUIResources);
+	SAFE_DELETE(m_pGUIManager);
+}
+
+void GameLogic::InitGameGUI(string xmlFile)
+{
+	if (m_pGUIResources)
+	{
+		LogError("Can't init game GUI twice");
+		return;
+	}
+
+	if (g_VFManager.LocateFile(xmlFile))
+	{
+		m_pGUIResources = new CL_ResourceManager(xmlFile);
+		m_pGUIStyle = new CL_StyleManager_Bitmap(m_pGUIResources);
+		m_pGUIManager = new CL_GUIManager(m_pGUIStyle);
+
+		// Everytime the GUI draws, let's draw the game under it
+		m_slots.connect(m_pGUIManager->sig_paint(), this, &GameLogic::OnRender);
+
+		GetApp()->SetFont(C_FONT_GRAY,  new CL_Font("font_gray", m_pGUIResources));
+		GetApp()->SetFont(C_FONT_NORMAL, new CL_Font("font_dialog", m_pGUIResources));
+
+
+
+	} else
+	{
+		LogError("Unable to find GUI xml %s in base or mounted paths.", xmlFile.c_str());
+	}
+
+
 }
 
 void GameLogic::Update(float step)
@@ -671,13 +732,58 @@ void GameLogic::Update(float step)
 	g_textManager.Update(step);
 }
 
+
+void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
+{
+	if (GetApp()->GetRenderedGameGUI() == false)
+	{
+		GetApp()->SetRenderedGameGUI(true);
+		ClearScreen();
+
+		m_worldManager.Render();
+		m_myEntityManager.Render(); 
+		g_textManager.Render();
+
+		g_Console.Render();
+
+		if (bDrawMainGUIToo)
+		{
+
+			GetApp()->GetGUI()->show(); //this will trigger our OnRender() which happens right before
+		}
+		if (GetShowFPS()) 
+		{
+			ResetFont(GetApp()->GetFont(C_FONT_NORMAL));
+
+			int tiles = 0;
+			if (GetWorldCache)
+			{
+				tiles = GetWorldCache->GetTilesRenderedLastFrameCount();
+			}
+			GetApp()->GetFont(C_FONT_NORMAL)->draw(GetScreenX-220,0, "FPS:" + CL_String::from_int(GetApp()->GetFPS())
+				+" T:"+CL_String::from_int(tiles) + " W:"+CL_String::from_int(g_watchManager.GetWatchCount()));
+		}
+	}
+
+}
+
+void GameLogic::OnRender()
+{
+	//when the game GUI is in a modal dialog, this is the only thing causes everything else to get
+	//rendered
+	RenderGameGUI(true);
+}
+
+
+//when the main GUI is in a modal dialog box, this is the only thing causes the game gui and game screens
+//to get rendered underneath
+
 void GameLogic::Render()
 {
-	ClearScreen();
-	m_worldManager.Render();
-	m_myEntityManager.Render(); 
-	g_textManager.Render();
-	g_Console.Render();
+
+	RenderGameGUI(false);
+	GetApp()->SetRenderedGameGUI(false);
+	
 }
 
 //generally, this means a script sent us a text message through the message scheduler. 
@@ -748,10 +854,24 @@ void MoveCameraToPlayer()
 
 void ShowMessage(string title, string msg)
 {
-	CL_MessageBox message(title, msg, "Ok", "", "", GetApp()->GetGUI());
 	
+	CL_GUIManager *pStyle = GetApp()->GetGUI();
+
 	GetGameLogic->SetShowMessageActive(true); //so it knows not to send mouse clicks to the engine while
+
+	if (GetGameLogic->GetGameGUI())
+	{
+			NS_MessageBox m(GetGameLogic->GetGameGUI(), title, msg, "Ok", "", "");
+			m.run();
+			GetGameLogic->SetShowMessageActive(false);
+			return;
+	}
+	
+	
+	CL_MessageBox message(title, msg, "Ok", "", "", pStyle);
+	
 	//we're showing this
+	GetGameLogic->SetShowMessageActive(true); //so it knows not to send mouse clicks to the engine while
 	message.run();
 	GetGameLogic->SetShowMessageActive(false);
 }

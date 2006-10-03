@@ -62,6 +62,8 @@ protected:
 	void ResetPendingEntityMovementAndDeletions();
 	void AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec, bool bDontAddToDrawList );
 	void OnMapChange();
+	void RenderGoalAI(CL_GraphicContext *pGC);
+	void RenderCollisionLists(CL_GraphicContext *pGC);
 
 	World *m_pWorld; 
 	

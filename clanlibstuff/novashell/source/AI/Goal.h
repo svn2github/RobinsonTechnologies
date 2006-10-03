@@ -14,7 +14,7 @@
 
 #include "TypeToString.h"
 #include "../MessageManager.h"
-
+#include "AppUtils.h"
 
 template <class entity_type>
 class Goal
@@ -72,12 +72,15 @@ public:
   //goals can handle messages. Many don't though, so this defines a default
   //behavior
   virtual bool HandleMessage(const Message &msg){return false;}
-
+  virtual int GetGoalCountByName(const string &goalName) {return 0;}
 
   //a Goal is atomic and cannot aggregate subgoals yet we must implement
   //this method to provide the uniform interface required for the goal
   //hierarchy.
   virtual void AddSubgoal(Goal<entity_type>* g)
+  {throw std::runtime_error("Cannot add goals to atomic goals");}
+
+  virtual void AddBackSubgoal(Goal<entity_type>* g)
   {throw std::runtime_error("Cannot add goals to atomic goals");}
 
 
@@ -131,13 +134,14 @@ void  Goal<entity_type>::RenderAtPos(CL_Vector2& pos)const
 
 	pos.y += 15;
 
-	if (isComplete()) 	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,255,0));
+	CL_Color col = CL_Color(200,200,200);
 
-	if (isInactive()) GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
-  if (hasFailed()) GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(255,0,0));
-  if (isActive()) GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,255));
+	if (isComplete()) col = CL_Color(0,255,0);
+	if (isInactive()) col = CL_Color(255,200,200);
+	if (hasFailed()) col = CL_Color(255,0,0);
+    if (isActive()) col = CL_Color(255,255,30);
 
-  	  GetApp()->GetFont(C_FONT_GRAY)->draw(pos.x, pos.y, GetName());
+  DrawWithShadow(pos.x, pos.y, GetName(), col);
 }
 
 #endif

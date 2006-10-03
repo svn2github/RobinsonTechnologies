@@ -14,7 +14,7 @@ class MovingEntity;
 class Tile;
 
 MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName);
-int CreateEntitySpecial(const string &EntName, const string &parms);
+BaseGameEntity *  CreateEntitySpecial(const string &EntName, const string &parms);
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile);
 
 

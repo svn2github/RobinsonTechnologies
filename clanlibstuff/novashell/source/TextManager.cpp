@@ -4,6 +4,7 @@
 #include "MovingEntity.h"
 
 #define C_TEXT_FADE_IN_SPEED_MS 200
+#define C_TEXT_FADE_OUT_SPEED_MS 400
 
 TextManager g_textManager;
 
@@ -43,7 +44,7 @@ void TextObject::InitCustom(const string &text, MovingEntity * pEnt, const CL_Ve
 	}
 }
 
-void TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
+int TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
 {
 	assert(pEnt);
 	m_text = text;
@@ -105,12 +106,12 @@ void TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
 		//out of view
 		m_timeToShowMS = 0;
 		m_bVisible = false;
-		return;
+		return 0;
 	}
 
-	
-
 	m_slots.connect(pEnt->sig_delete, this, &TextObject::EntDeleted);
+
+	return m_timeToShowMS - C_TEXT_FADE_OUT_SPEED_MS; //don't include the fading in the time we return
 }
 
 void TextObject::EntDeleted(int ID)
@@ -229,10 +230,9 @@ bool TextObject::Update()
 		return false;
 	}
 	
-	int fadeOutTimeMS = 1000;
-	if (timeLeft < fadeOutTimeMS)
+	if (timeLeft < C_TEXT_FADE_OUT_SPEED_MS)
 	{
-		m_alpha = ( float(timeLeft) / float(fadeOutTimeMS));
+		m_alpha = ( float(timeLeft) / float(C_TEXT_FADE_OUT_SPEED_MS));
 	} else
 	{
 		
@@ -315,23 +315,23 @@ void TextManager::AddCustomScreen(const string &text, const CL_Vector2 &vecPos,
 
 }
 
-void TextManager::Add(const string &text, MovingEntity *pEnt)
+int TextManager::Add(const string &text, MovingEntity *pEnt)
 {
 	if (!pEnt)
 	{
 		LogError("NULL entity passed into TextManager::Add, ignoring it.");
-		return;
+		return 0;
 	}
 
 	if (!pEnt->GetTile()->GetParentScreen())
 	{
 		LogMsg("Warning: TextManager type things shouldn't go into the visual Init(), use GameInit()");
-		return;
+		return 0;
 	}
 	
 	TextObject t(this);
 	m_textList.push_back(t);
-	m_textList.rbegin()->Init(text, const_cast<MovingEntity*>(pEnt), C_FONT_NORMAL);
+	return m_textList.rbegin()->Init(text, const_cast<MovingEntity*>(pEnt), C_FONT_NORMAL);
 }
 
 int TextManager::GetCountOfTextActiveForEntity(const MovingEntity *pEnt)

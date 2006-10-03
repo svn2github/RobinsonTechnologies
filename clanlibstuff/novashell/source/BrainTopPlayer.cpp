@@ -57,6 +57,18 @@ void BrainTopPlayer::HandleMsg(const string &msg)
 	{
 		vector<string> words = CL_String::tokenize(messages[i], "=",true);
 
+
+		if (words[0] == "stop")
+		{
+			ResetKeys();
+			m_pParent->GetBody()->GetNetForce() = Vector(0,0);
+			m_pParent->GetBody()->GetLinVelocity() = Vector(0,0);
+			m_pParent->GetBody()->GetAngVelocity() = 0;
+
+			m_walkSound.Play(false);
+
+		} else
+
 		if (words[0] == "lost_player_focus")
 		{
 			ResetKeys();

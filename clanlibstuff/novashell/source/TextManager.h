@@ -19,7 +19,7 @@ public:
 	TextObject(TextManager *pTextManager);
 
 	void EntDeleted(int ID);
-	void Init(const string &text, MovingEntity *pEnt, int fontID);
+	int Init(const string &text, MovingEntity *pEnt, int fontID);
 	void Render();
 	bool Update(); //return false to delete
 	unsigned int GetTimeCreated() const {return m_timeCreated;}
@@ -76,7 +76,7 @@ public:
 	TextManager();
 	virtual ~TextManager();
 
-	void Add(const string &text, MovingEntity *pEnt);
+	int Add(const string &text, MovingEntity *pEnt); //returns MS it will be shown on screen
 	void Update(float step);
 	void Render();
 	textObject_list & GetTextList(){return m_textList;};

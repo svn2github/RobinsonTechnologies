@@ -36,7 +36,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabind::globals(pLuaState)["GetKeyManager"] = &g_keyManager;
 	luabind::globals(pLuaState)["GetWatchManager"] = &g_watchManager;
 
-	luabind::globals(pLuaState)["g_playerID"] = 0;	 //will be set later
+	luabind::globals(pLuaState)["g_PlayerID"] = 0;	 //will be set later
 #ifdef _DEBUG
 	luabind::globals(pLuaState)["g_isDebug"] = true;	 //will be set later
 #else

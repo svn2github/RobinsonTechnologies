@@ -4,27 +4,6 @@
 
 int g_defaultWorldDialogSelection = 0;
 
-string GetNextLineFromFile(FILE *fp)
-{
-	string line;
-	char c;
-
-	while (!feof(fp))
-	{
-		fread(&c,1,1,fp);
-
-		if (c == '\r') continue; //don't care about these stupid things
-		
-		line += c;
-
-		if (c == '\n')
-		{
-			return line; //go ahead and quit now, we found a cr
-		}
-	}
-	return line;
-}
-
 bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string stWorldPath)
 {
 	string fileName = stWorldPath+"/"+"info.txt";
@@ -93,8 +72,6 @@ void EntWorldDialog::OnButtonDown(const CL_InputEvent &key)
 		ChangeSelection(1);
 		break;
 
-	case CL_KEY_ENTER:
-		OnClickLoad();
 	}
 }
 
@@ -137,10 +114,10 @@ void EntWorldDialog::BuildWorldListBox()
 	SAFE_DELETE(m_pListWorld); //just in case it was already initted
 	SAFE_DELETE(m_pWindow);
 	
-	CL_Rect rectSize = CL_Rect(0,0,300,300);
+	CL_Rect rectSize = CL_Rect(0,0,400,300);
 	CL_Point ptPos = CL_Point((GetScreenX/2) - rectSize.get_width()/2 , (GetScreenY/2) - rectSize.get_height()/2);
 
-	m_pWindow = new CL_Window(rectSize+ptPos, "Novashell " + GetApp()->GetEngineVersionAsString() + " - Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
+	m_pWindow = new CL_Window(rectSize+ptPos, "Nova Shell Game Creation System " + GetApp()->GetEngineVersionAsString() + " - Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
 
 	CL_Rect rectListBox = rectSize;
 	int borderOffset = 5;
@@ -156,6 +133,8 @@ void EntWorldDialog::BuildWorldListBox()
 
 	m_pListWorld = new CL_ListBox(rectListBox, m_pWindow->get_client_area());
 	
+	
+
 	CL_ListItem *pItem;
 	
 	for (unsigned int i=0; i < m_modInfo.size(); i++)
@@ -179,18 +158,25 @@ void EntWorldDialog::BuildWorldListBox()
 	g_defaultWorldDialogSelection = min(g_defaultWorldDialogSelection, m_pListWorld->get_count());
 
 	m_pListWorld->set_current_item(g_defaultWorldDialogSelection);
-
 	rectListBox.top = rectListBox.bottom + borderOffset;
 	rectListBox.bottom = rectListBox.top + 22;
 	
 	CL_Button *pBut = new CL_Button(rectListBox, "Play World", m_pWindow->get_client_area());
 
 	//link to things so we know when they are clicked
+	m_slots.connect( m_pListWorld->sig_activated(), this, &EntWorldDialog::OnSelected);
 	m_slots.connect( pBut->sig_clicked(), this, &EntWorldDialog::OnClickLoad);
 
+	m_pListWorld->get_children().front()->set_focus(); //set focus to the real client area
+	
 }
 
 void EntWorldDialog::OnClickLoad()
+{
+	OnSelected(-1);
+}
+
+void EntWorldDialog::OnSelected(int selItem)
 {
 	//let's load the world
 	

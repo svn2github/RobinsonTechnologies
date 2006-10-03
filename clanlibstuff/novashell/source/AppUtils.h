@@ -35,7 +35,8 @@ double GetAngleBetweenVectorFacings(CL_Vector2 v1, CL_Vector2 v2);
 void DrawLineWithArrowWorld(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &col, CL_GraphicContext* pGC);
 void DrawLineWithArrow(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &col, CL_GraphicContext* pGC);
 CL_Vector2 Vector2Perp(const CL_Vector2 &v);
-
+void CenterComponentOnScreen(CL_Component *pComp);
+void DrawWithShadow(int x, int y, const string &msg, CL_Color col = CL_Color(255,255,30));
 
 typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
 
@@ -54,10 +55,12 @@ public:
 	GameTimer()
 	{
 		m_timer = 0;
+		m_bUseSystemTimer = false;
 	}
 	void Reset();
 	void SetIntervalReached();
 	bool IntervalReached();
+	void SetUseSystemTime(bool bNew) {m_bUseSystemTimer = bNew; Reset();}
 
 	bool IsActive() {return m_timer != 0;}
 	
@@ -69,6 +72,7 @@ public:
 
 	unsigned int m_timer;
 	int m_interval;
+	bool m_bUseSystemTimer; //if true, doesn't pause with the game
 };
 int VectorSign(const CL_Vector2 &v1, const CL_Vector2 &v2);
 

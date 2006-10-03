@@ -370,6 +370,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\EntChoiceDialog.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\EntCreationUtils.cpp"
 					>
 				</File>
@@ -638,19 +642,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\AI\Goal_Delay.h"
-						>
-					</File>
-					<File
 						RelativePath=".\AI\Goal_FollowPath.cpp"
 						>
 					</File>
 					<File
 						RelativePath=".\AI\Goal_MoveToMapAndPos.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AI\Goal_MoveToMapAndPos.h"
 						>
 					</File>
 					<File
@@ -666,7 +662,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\AI\Goal_RunScript.h"
+						RelativePath=".\AI\Goal_Say.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_Say.h"
 						>
 					</File>
 					<File
@@ -694,10 +694,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\AI\NavGraphManager.h"
-						>
-					</File>
-					<File
 						RelativePath=".\AI\PathPlanner.cpp"
 						>
 					</File>
@@ -706,15 +702,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\AI\WatchManager.h"
-						>
-					</File>
-					<File
 						RelativePath=".\AI\WorldNavManager.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\AI\WorldNavManager.h"
 						>
 					</File>
 				</Filter>
@@ -2016,6 +2004,198 @@
 				Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 				>
 			</Filter>
+			<Filter
+				Name="GuiBitmap"
+				>
+				<File
+					RelativePath=".\GUIStyleBitmap\NS_MessageBox.cpp"
+					>
+				</File>
+				<Filter
+					Name="Base"
+					>
+					<File
+						RelativePath=".\GUIStyleBitmap\button_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\checkbox_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\frame_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\inputbox_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\label_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\listbox_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\scrollbar_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\stylemanager_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\GUIStyleBitmap\window_Bitmap.cpp"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -2036,6 +2216,10 @@
 			<Filter
 				Name="EntitiesH"
 				>
+				<File
+					RelativePath=".\EntChoiceDialog.h"
+					>
+				</File>
 				<File
 					RelativePath=".\EntCreationUtils.h"
 					>
@@ -2183,6 +2367,90 @@
 						RelativePath=".\BrainTopPlayer.h"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="AI"
+					>
+					<File
+						RelativePath=".\AI\Goal.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_Composite.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_Delay.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_MoveToMapAndPos.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_RunScript.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\NavGraphManager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\WatchManager.h"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\WorldNavManager.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="GuiBitmap"
+					>
+					<Filter
+						Name="Base"
+						>
+						<File
+							RelativePath=".\GUIStyleBitmap\button_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\checkbox_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\frame_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\inputbox_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\label_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\listbox_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\listboxitem_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\scrollbar_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\stylemanager_Bitmap.h"
+							>
+						</File>
+						<File
+							RelativePath=".\GUIStyleBitmap\window_Bitmap.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter

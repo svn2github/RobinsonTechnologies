@@ -55,7 +55,7 @@ MovingEntity * GetEntityByID(int ID)
 MovingEntity * GetEntityByName(const string &name)
 {
 	TagObject *t = GetTagManager->GetFromString(name);
-	if (!t) return false; //can't find it?
+	if (!t) return NULL; //can't find it?
 	if (t->m_entID == 0)
 	{
 		//let's load it right now
@@ -64,8 +64,9 @@ MovingEntity * GetEntityByName(const string &name)
 
 		if (t->m_entID == 0)
 		{
-			LogMsg("GetEntityByName: Entity %s couldn't be located.  Outdated tag?", name.c_str());
-			return false; //not loaded yet
+			LogMsg("GetEntityByName: Entity %s couldn't be located.  Outdated tag? Removing it.", name.c_str());
+			GetTagManager->RemoveByHashID(t->m_hashID, 0);
+			return NULL; //not loaded yet
 		}
 	}
 	
@@ -173,6 +174,7 @@ void luabindMisc(lua_State *pState)
 		.def("Quit", &GameLogic::Quit)
 		.def("ClearModPaths", &GameLogic::ClearModPaths)
 		.def("AddModPath", &GameLogic::AddModPath)
+		.def("InitGameGUI", &GameLogic::InitGameGUI)
 
 		,class_<App>("App")
 		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)
@@ -250,12 +252,26 @@ void luabindMisc(lua_State *pState)
 
 		,class_<Goal_Think>("GoalManager")
 		.def("PushMoveToPosition", &Goal_Think::PushMoveToPosition)
-		.def("QueueMoveToPosition", &Goal_Think::QueueMoveToPosition)
+		.def("AddMoveToPosition", &Goal_Think::AddMoveToPosition)
 		.def("RemoveAllSubgoals", &Goal_Think::RemoveAllSubgoals)
 		.def("PushDelay", &Goal_Think::PushDelay)
+		.def("AddDelay", &Goal_Think::AddDelay)
+
+		.def("AddSay", &Goal_Think::AddSay)
+		.def("AddSayByID", &Goal_Think::AddSayByID)
+		.def("PushSay", &Goal_Think::PushSay)
+		.def("PushSayByID", &Goal_Think::PushSayByID)
+
 		.def("PushRunScriptString", &Goal_Think::PushRunScriptString)
+		.def("AddRunScriptString", &Goal_Think::AddRunScriptString)
+
 		.def("PushMoveToTag", &Goal_Think::PushMoveToTag)
+		.def("AddMoveToTag", &Goal_Think::AddMoveToTag)
+
 		.def("PushNewGoal", &Goal_Think::PushNewGoal)
+		.def("AddNewGoal", &Goal_Think::AddNewGoal)
+
+		.def("GetGoalCountByName", &Goal_Think::GetGoalCountByName)
 
 		,class_<WatchManager>("WatchManager")
 		.def("Add", &WatchManager::Add)

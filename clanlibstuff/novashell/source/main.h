@@ -121,7 +121,12 @@ public:
 	eVideoRefresh GetRefreshType() {return m_videoflipStyle;}
 	bool ActivateVideoRefresh(bool bFullscreen);
 	bool SetScreenSize(int x, int y);
+	int GetFPS() {if (m_pFrameRate) return m_pFrameRate->get_fps(); else return 0;};
 
+	bool GetRenderedGameGUI() {return m_bRenderedGameGUI;}
+	void SetRenderedGameGUI(bool bNew) {m_bRenderedGameGUI = bNew;}
+
+	void SetFont(int fontID, CL_Font *pFont) {m_pFonts[fontID] = pFont;} //we'll delete it ourselves later
 
 private:
     
@@ -175,7 +180,9 @@ private:
 	bool m_bRequestVideoInit;
 	float m_engineVersion;
 	string m_engineVersionString;
-
+	bool m_bRenderedGameGUI; //used for some complicated GUI trickery to work with model dialog boxes
+	CL_FramerateCounter *m_pFrameRate;
+	
 };
 
 extern App MyApp;

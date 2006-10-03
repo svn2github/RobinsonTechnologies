@@ -8,6 +8,7 @@
 #include "Goal_Delay.h"
 #include "Goal_RunScript.h"
 #include "Goal_MoveToMapAndPos.h"
+#include "Goal_Say.h"
 
 Goal_Think::Goal_Think(MovingEntity* pBot, const string &goalName):Goal_Composite<MovingEntity>(pBot, goal_think)
 {
@@ -27,6 +28,7 @@ Goal_Think::~Goal_Think()
     delete *curDes;
   }
 }
+
 
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
@@ -99,12 +101,24 @@ void Goal_Think::PushMoveToTag(TagObject *pTag)
 {
 	if (!pTag)
 	{
-		LogError("PushMoveToTag: Invalid Tag: %s", pTag->m_tagName.c_str());
+		LogError("PushMoveToTag: Invalid Tag");
 		return;
 	}
 
 	AddSubgoal( new Goal_MoveToMapAndPos(m_pOwner, pTag->GetPos(), pTag->m_pWorld));
 }
+
+void Goal_Think::AddMoveToTag(TagObject *pTag)
+{
+	if (!pTag)
+	{
+		LogError("AddMoveToTag: Invalid Tag");
+		return;
+	}
+
+	AddBackSubgoal( new Goal_MoveToMapAndPos(m_pOwner, pTag->GetPos(), pTag->m_pWorld));
+}
+
 
 void Goal_Think::PushAttackTarget()
 {
@@ -124,9 +138,39 @@ void Goal_Think::PushRunScriptString(const string &scriptString)
 	AddSubgoal( new Goal_RunScript(m_pOwner, scriptString));
 }
 
+void Goal_Think::AddRunScriptString(const string &scriptString)
+{
+	AddBackSubgoal( new Goal_RunScript(m_pOwner, scriptString));
+}
+
 void Goal_Think::PushDelay(int timeMS)
 {
 	AddSubgoal( new Goal_Delay(m_pOwner,  timeMS));
+}
+
+void Goal_Think::AddDelay(int timeMS)
+{
+	AddBackSubgoal( new Goal_Delay(m_pOwner,  timeMS));
+}
+
+void Goal_Think::AddSay(const string &msg, int entToFaceID)
+{
+	AddSayByID(msg, m_pOwner->ID(), entToFaceID);
+}
+
+void Goal_Think::AddSayByID(const string &msg, int entID, int entToFaceID)
+{
+	AddBackSubgoal( new Goal_Say(m_pOwner,  msg, entID, entToFaceID));
+}
+
+void Goal_Think::PushSay(const string &msg, int entToFaceID)
+{
+	PushSayByID(msg, m_pOwner->ID(), entToFaceID);
+}
+
+void Goal_Think::PushSayByID(const string &msg, int entID, int entToFaceID)
+{
+	AddSubgoal( new Goal_Say(m_pOwner,  msg, entID, entToFaceID));
 }
 
 Goal_Think * Goal_Think::PushNewGoal(const string &goalName)
@@ -135,11 +179,19 @@ Goal_Think * Goal_Think::PushNewGoal(const string &goalName)
 	AddSubgoal( pGoal);
 	return pGoal;
 }
+
+Goal_Think * Goal_Think::AddNewGoal(const string &goalName)
+{
+	Goal_Think *pGoal = new Goal_Think(m_pOwner, goalName);
+	AddBackSubgoal( pGoal);
+	return pGoal;
+}
+
 //-------------------------- Queue Goals --------------------------------------
 //-----------------------------------------------------------------------------
-void Goal_Think::QueueMoveToPosition(CL_Vector2 pos)
+void Goal_Think::AddMoveToPosition(CL_Vector2 pos)
 {
-  m_SubGoals.push_back(new Goal_MoveToPosition(m_pOwner, pos));
+	AddBackSubgoal(new Goal_MoveToPosition(m_pOwner, pos));
 }
 
 

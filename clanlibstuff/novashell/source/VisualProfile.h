@@ -63,8 +63,9 @@ public:
 	{
 
 	 //do not change this order!  	
-	 
-	 FACING_LEFT,
+	 FACING_NONE = -1,
+
+	 FACING_LEFT = 0,
 	 FACING_UP_LEFT,
 	 FACING_UP,
 	 FACING_UP_RIGHT,

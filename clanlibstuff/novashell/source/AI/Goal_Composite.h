@@ -35,6 +35,7 @@ public:
   virtual void Terminate() = 0;
 
   virtual void LostFocus();
+  virtual int GetGoalCountByName(const string &goalName);
 
   //if a child class of Goal_Composite does not define a message handler
   //the default behavior is to forward the message to the front-most
@@ -44,6 +45,7 @@ public:
 
   //adds a subgoal to the front of the subgoal list
   void         AddSubgoal(Goal<entity_type>* g);
+  void         AddBackSubgoal(Goal<entity_type>* g);
 
   //this method iterates through the subgoals and calls each one's Terminate
   //method before deleting the subgoal and removing it from the subgoal list
@@ -98,7 +100,27 @@ void Goal_Composite<entity_type>::RemoveAllSubgoals()
   m_SubGoals.clear();
 }
  
+//---------------------- RemoveAllSubgoals ------------------------------------
+//-----------------------------------------------------------------------------
+template <class entity_type>
+int Goal_Composite<entity_type>::GetGoalCountByName(const string &goalName)
+{
+	int count = 0;
 
+	if (m_goalName == goalName) count++; //count ourself
+
+	
+	//count any of our sub goals
+
+	for (typename SubgoalList::iterator it = m_SubGoals.begin();
+		it != m_SubGoals.end();
+		++it)
+	{  
+		count += (*it)->GetGoalCountByName(goalName);
+	}
+
+	return count;
+}
 //-------------------------- ProcessSubGoals ----------------------------------
 //
 //  this method first removes any completed goals from the front of the
@@ -157,8 +179,7 @@ int Goal_Composite<entity_type>::ProcessSubgoals()
 template <class entity_type>
 void Goal_Composite<entity_type>::AddSubgoal(Goal<entity_type>* g)
 {   
-  //add the new goal to the front of the list
-  
+    //add the new goal to the front of the list
 	
 	//but let's tell the current active goal that it isn't active (if there is one)
 	typename SubgoalList::iterator itor = m_SubGoals.begin();
@@ -171,7 +192,13 @@ void Goal_Composite<entity_type>::AddSubgoal(Goal<entity_type>* g)
 	m_SubGoals.push_front(g);
 }
 
+template <class entity_type>
+void Goal_Composite<entity_type>::AddBackSubgoal(Goal<entity_type>* g)
+{   
+	//add the new goal to the back of the list
 
+	m_SubGoals.push_back(g);
+}
 
 //---------------- ForwardMessageToFrontMostSubgoal ---------------------------
 //
@@ -228,7 +255,7 @@ void  Goal_Composite<entity_type>::LostFocus()
 		(*itor)->LostFocus();
 	}
 	
-	Goal<entity_type>*::LostFocus();
+	Goal<entity_type>::LostFocus();
 	
 }
 

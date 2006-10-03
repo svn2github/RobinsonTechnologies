@@ -125,6 +125,13 @@ bool WorldManager::LoadWorld(string stPath, bool bSetActiveIfNoneIs)
 
 	if (m_pActiveWorld == &pWorldInfo->m_world)
 	{
+		if (m_pActiveWorld->IsInitted())
+		{
+			LogMsg("Why load %s, it's already initted!", m_pActiveWorld->GetName().c_str());
+			return false;
+		}
+		
+		
 		//Um, we are reloading the world that is currently on the screen.  We better
 		//let people know so the cached data will be reset etc
 		m_pActiveWorld = NULL;

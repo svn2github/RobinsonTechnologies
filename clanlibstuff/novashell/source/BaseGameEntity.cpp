@@ -3,7 +3,7 @@
 #include "EntityManager.h"
 #include "TileEntity.h"
 
-int BaseGameEntity::m_iNextValidID = 1;
+int BaseGameEntity::m_iNextValidID = 101; //we reserve ID's less than this for special things
 
 //------------------------------ ctor -----------------------------------------
 //-----------------------------------------------------------------------------

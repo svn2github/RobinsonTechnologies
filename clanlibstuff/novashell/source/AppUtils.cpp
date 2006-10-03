@@ -9,6 +9,30 @@ CL_Vector2 Vector2Perp(const CL_Vector2 &v)
 	return CL_Vector2(-v.y, v.x);
 }
 
+void DrawWithShadow(int x, int y, const string &msg, CL_Color col)
+{
+	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
+	GetApp()->GetFont(C_FONT_GRAY)->draw(x+1, y+1, msg);
+
+	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));
+	GetApp()->GetFont(C_FONT_GRAY)->draw(x-1, y-1, msg);
+
+	GetApp()->GetFont(C_FONT_GRAY)->set_color(col);
+	GetApp()->GetFont(C_FONT_GRAY)->draw(x, y, msg);
+
+}
+
+void CenterComponentOnScreen(CL_Component *pComp)
+{
+
+	const int offsety = -45; //looks better
+
+	const CL_Rect r = pComp->get_position_with_children();
+
+	pComp->set_position(GetScreenX/2 - (r.get_width()/2), GetScreenY/2 - (  (r.get_height()/2) - offsety  ));
+}
+
+
 void DrawLineWithArrow(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &col, CL_GraphicContext* pGC)
 {
 
@@ -56,7 +80,14 @@ bool ConfirmMessage(string title, string msg)
 
 void GameTimer::Reset()
 {
-	m_timer = GetApp()->GetGameTick() + m_interval;
+	if (m_bUseSystemTimer)
+	{
+		m_timer = GetApp()->GetTick() + m_interval;
+	} else
+	{
+		m_timer = GetApp()->GetGameTick() + m_interval;
+	}
+
 }
 
 void GameTimer::SetIntervalReached()
@@ -67,10 +98,24 @@ void GameTimer::SetIntervalReached()
 
 bool GameTimer::IntervalReached()
 {
-	if (m_timer < GetApp()->GetGameTick())
+	
+	if (m_bUseSystemTimer)
 	{
-		Reset();
-		return true;
+		if (m_timer < GetApp()->GetTick())
+		{
+			Reset();
+			return true;
+		}
+
+
+	} else
+	{
+	
+		if (m_timer < GetApp()->GetGameTick())
+		{
+			Reset();
+			return true;
+		}
 	}
 
 	return false;
@@ -170,17 +215,22 @@ CL_Vector2 MakeNormal(CL_Vector2 &a, CL_Vector2 &b)
 void BlitMessage(string msg)
 {
 
+	
 	CL_Font *pFont = GetApp()->GetFont(C_FONT_NORMAL);
 
-	ResetFont(pFont);
-	CL_GlyphBuffer gb;
-	CL_TextStyler ts;
-	ts.add_font("default", *pFont);
-	ts.draw_to_gb(msg, gb);
-	gb.set_alignment(origin_center);
-	gb.set_scale(1.5,1.5);
-	gb.draw(GetScreenX/2,GetScreenY/2);
-	CL_Display::flip(2); //show it now
+	if (pFont)
+	{
+		
+		ResetFont(pFont);
+		CL_GlyphBuffer gb;
+		CL_TextStyler ts;
+		ts.add_font("default", *pFont);
+		ts.draw_to_gb(msg, gb);
+		gb.set_alignment(origin_center);
+		gb.set_scale(1.5,1.5);
+		gb.draw(GetScreenX/2,GetScreenY/2);
+		CL_Display::flip(2); //show it now
+	}
 }
 
 

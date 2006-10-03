@@ -4,8 +4,9 @@
 #include "Tile.h"
 #include "EntWorldDialog.h"
 #include "MaterialManager.h"
+#include "EntChoiceDialog.h"
 
-int CreateEntitySpecial(const string &EntName, const string &parms)
+BaseGameEntity * CreateEntitySpecial(const string &EntName, const string &parms)
 {
 
 	if (CL_String::compare_nocase(EntName, "WorldChooseDialog"))
@@ -13,8 +14,15 @@ int CreateEntitySpecial(const string &EntName, const string &parms)
 		EntWorldDialog *pEnt = new EntWorldDialog();
 		GetGameLogic->GetMyEntityManager()->Add(pEnt);
 
-		return pEnt->ID();
-	}
+		return pEnt;
+	} else
+		if (CL_String::compare_nocase(EntName, "ChoiceDialog"))
+		{
+			EntChoiceDialog *pEnt = new EntChoiceDialog(parms);
+			GetGameLogic->GetMyEntityManager()->Add(pEnt);
+			return pEnt;
+		}
+
 
 	LogError("CreateSpecialEntity: Don't know what a %s is.", EntName.c_str());
 	return 0;

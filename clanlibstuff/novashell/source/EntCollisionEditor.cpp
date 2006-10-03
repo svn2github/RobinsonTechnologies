@@ -627,6 +627,13 @@ void RenderTileListCollisionData(tile_list &tileList, CL_GraphicContext *pGC, bo
 		if ( (*itor)->GetType() == C_TILE_TYPE_ENTITY)
 		{
 			CollisionData *pCol = ((TileEntity*) (*itor))->GetEntity()->GetCollisionData();
+			if (!pCol)
+			{
+				//no valid collision data, this can happen
+				itor++;
+				continue;
+			}
+			
 			if (pCol->GetLineList()->size() > 0)
 			{
 				vPos -= pCol->GetLineList()->begin()->GetOffset();
