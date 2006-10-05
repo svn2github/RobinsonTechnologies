@@ -235,26 +235,7 @@ void PointList::CalculateOffsets()
 	{
 		m_points[i] -= m_vecOffset;
 	}
-
-	/*
 	
-	m_vecOffset = CL_Vector2(200000,20000);
-	//run through the array and find the center point
-	CL_Vector2 vTotal = CL_Vector2(0,0);
-	for (unsigned int i=0; i < m_points.size(); i++)
-	{
-		vTotal += m_points[i];
-	}
-
-	m_vecOffset = vTotal / m_points.size(); //find middle point
-
-	for (unsigned int i=0; i < m_points.size(); i++)
-	{
-		m_points[i] -= m_vecOffset;
-	}
-
-	m_bNeedsToRecalculateRect = true;
-	*/
 }
 
 void PointList::PrintPoints()

@@ -117,6 +117,7 @@ void luabindEntity(lua_State *pState)
 			.def("SetCollisionMode", &MovingEntity::SetCollisionMode)
 	
 			.def("GetDistanceFromEntityByID", &MovingEntity::GetDistanceFromEntityByID)
+			.def("GetDistanceFromPosition", &MovingEntity::GetDistanceFromPosition)
 			
 			.def("SetBaseColor", &MovingEntity::SetBaseColor)
 			.def("GetBaseColor", &MovingEntity::GetBaseColor)
@@ -130,6 +131,7 @@ void luabindEntity(lua_State *pState)
 
 			.def("HasLineOfSightToPosition", &MovingEntity::CanWalkTo)
 			.def("GetVectorToEntityByID", &MovingEntity::GetVectorToEntityByID)
+			.def("GetVectorToPosition", &MovingEntity::GetVectorToPosition)
 			.def("IsOnSameMapAsEntityByID", &MovingEntity::IsOnSameMapAsEntityByID)
 			.def("IsCloseToEntity", &MovingEntity::IsCloseToEntity)
 			.def("IsCloseToEntityByID", &MovingEntity::IsCloseToEntityByID)

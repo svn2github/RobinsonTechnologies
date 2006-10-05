@@ -25,8 +25,8 @@ public:
 	CollisionData(const CL_Rect &rec) {m_rect = rec;};
     ~CollisionData();
 	void Clear();
-	CL_Rect & GetRect() {return m_rect;}
-	void SetRect(const CL_Rect &rec) {m_rect = rec;}
+	const CL_Rect & GetRect() {return m_rect;} //resources use this, don't touch it
+	const CL_Rectf & GetCombinedCollisionRect();
 	line_list * GetLineList() {return &m_lineList;}
 	void Serialize(CL_FileHelper &helper);
 	bool HasData();
@@ -37,20 +37,27 @@ public:
 	void SetScale(const CL_Vector2 &vScale);
 	const CL_Vector2 & GetScale() {return m_vecScale;}
 	bool GetDataChanged() {return m_dataChanged;}
+	const CL_Vector2 &GetCombinedOffsets();
 
 protected:
 
 	void SaveIfNeeded();
 	void ApplyScaleToAll(const CL_Vector2 &vScale);
 	int CountValidLineLists();
+	void SetRequestRectRecalculation() {m_bNeedsRecalc = true;}
+   void RecalculateCombinedOffsets();
 
 private:
 	CL_Rect m_rect;
+	CL_Rectf m_collisionRect;
 	line_list m_lineList;
 	string m_fileName; //if not empty, it means we were loaded from disk and should also
 	//save if changed
 	bool m_dataChanged;
 	CL_Vector2 m_vecScale;
+	bool m_bNeedsRecalc;
+	CL_Vector2 m_vecCombinedOffset;
+
 
 };
 

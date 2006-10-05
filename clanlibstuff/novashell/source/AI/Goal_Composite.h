@@ -185,6 +185,7 @@ void Goal_Composite<entity_type>::AddSubgoal(Goal<entity_type>* g)
 	typename SubgoalList::iterator itor = m_SubGoals.begin();
 	for (; itor != m_SubGoals.end(); itor++)
 	{
+		if ((*itor)->isActive())
 		(*itor)->LostFocus();
 	}
 
@@ -252,6 +253,7 @@ void  Goal_Composite<entity_type>::LostFocus()
 	typename SubgoalList::iterator itor = m_SubGoals.begin();
 	for (; itor != m_SubGoals.end(); itor++)
 	{
+		if ((*itor)->isActive())
 		(*itor)->LostFocus();
 	}
 	

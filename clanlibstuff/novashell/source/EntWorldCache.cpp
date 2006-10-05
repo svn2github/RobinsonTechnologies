@@ -781,7 +781,6 @@ void EntWorldCache::Update(float step)
 		m_cacheCheckTimer = gameTick+cacheCheckSpeed;
 	}
 
-
 	ProcessPendingEntityMovementAndDeletions();
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 	ClearTriggers();
@@ -792,23 +791,18 @@ void EntWorldCache::Update(float step)
 		return;
 	}
 
-
 	if (GetGameLogic->GetGamePaused() == false)
 	{
-
 		//note, if tiles ever actually need to DO something in their think phase, this should use
 		//m_tileLayerDrawList instead of entityList
-		
 		
 		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
 			m_entityList.at(i)->Update(step);
 		}
 
-
 		//world-wide updates too
 		g_watchManager.Update(step, m_uniqueDrawID);
-
 		
 		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
@@ -818,6 +812,49 @@ void EntWorldCache::Update(float step)
 		g_watchManager.PostUpdate(step);
 	}
 
+}
+
+bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity)
+{
+	tile_list tilelist;
+	CL_Rect r(pos.x - radius/2, pos.y - radius/2, pos.x + radius/2, pos.y + radius/2);
+
+	AddTilesByRect(r, &tilelist, m_pWorld->GetLayerManager().GetCollisionList(), true);
+
+	if (tilelist.empty()) return false;
+
+	tile_list::iterator listItor = tilelist.begin();
+
+	Tile *pTile;
+
+	for (; listItor != tilelist.end(); listItor++)
+	{
+		pTile = *listItor;
+
+		if (pTile->GetCollisionData() && pTile->GetCollisionData()->HasData())
+		{
+			if (pTile == pIgnoreEntity->GetTile()) continue; //skip this
+
+
+			if (bIgnoreMovingCreatures && pTile->GetType() == C_TILE_TYPE_ENTITY)
+			{
+				//the pathfinding may be building nodes, we don't want it to build an incorrect base path because
+				//the player or monster was sitting in the way.  Somehow we have to figure out a way to ignore
+				//those kinds of things.  For now, assume if it has a visual profile assigned it should be ignored
+
+				if (  ((TileEntity*)(*listItor))->GetEntity()->GetVisualProfile())
+				{
+					continue; //skip this
+				}
+			}
+
+			//do we overlap his collision info?
+			if (pTile->GetWorldColRect().is_overlapped(r)) return true;
+		}
+		
+	}
+
+	return false;
 }
 
 bool EntWorldCache::IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, Tile *pTileToIgnore, bool bIgnoreMovingCreatures)

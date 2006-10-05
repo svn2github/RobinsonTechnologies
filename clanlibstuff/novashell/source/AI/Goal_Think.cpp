@@ -9,6 +9,7 @@
 #include "Goal_RunScript.h"
 #include "Goal_MoveToMapAndPos.h"
 #include "Goal_Say.h"
+#include "Goal_Approach.h"
 
 Goal_Think::Goal_Think(MovingEntity* pBot, const string &goalName):Goal_Composite<MovingEntity>(pBot, goal_think)
 {
@@ -156,6 +157,28 @@ void Goal_Think::AddDelay(int timeMS)
 void Goal_Think::AddSay(const string &msg, int entToFaceID)
 {
 	AddSayByID(msg, m_pOwner->ID(), entToFaceID);
+}
+
+void Goal_Think::AddApproach(int entToFaceID, int distanceRequired)
+{
+	AddBackSubgoal( new Goal_Approach(m_pOwner,  entToFaceID, distanceRequired));
+}
+
+void Goal_Think::AddApproachAndSay(const string &msg, int entToFaceID, int distanceRequired)
+{
+	AddBackSubgoal( new Goal_Approach(m_pOwner,  entToFaceID, distanceRequired));
+	AddBackSubgoal( new Goal_Say(m_pOwner, msg, m_pOwner->ID(), entToFaceID));
+}
+
+void Goal_Think::PushApproachAndSay(const string &msg, int entToFaceID, int distanceRequired)
+{
+	AddSubgoal( new Goal_Say(m_pOwner, msg,m_pOwner->ID(), entToFaceID));
+	AddSubgoal( new Goal_Approach(m_pOwner,  entToFaceID, distanceRequired));
+}
+
+void Goal_Think::PushApproach(int entToFaceID, int distanceRequired)
+{
+	AddSubgoal( new Goal_Approach(m_pOwner,  entToFaceID, distanceRequired));
 }
 
 void Goal_Think::AddSayByID(const string &msg, int entID, int entToFaceID)

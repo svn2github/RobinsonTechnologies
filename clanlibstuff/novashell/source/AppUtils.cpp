@@ -530,7 +530,6 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 					if ((*listItor)->GetType() == C_TILE_TYPE_PIC)
 					{
 	
-
 					lineB[0] = vTilePos.x + lineListItor->GetPointList()->at(i).x + lineListItor->GetOffset().x;
 					lineB[1] = vTilePos.y + lineListItor->GetPointList()->at(i).y+ lineListItor->GetOffset().y;
 
@@ -552,9 +551,6 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 
 						//assume it's an entity
 						assert((*listItor)->GetType() == C_TILE_TYPE_ENTITY);
-
-						
-
 
 						lineB[0] = vTilePos.x + lineListItor->GetPointList()->at(i).x;// + lineListItor->GetOffset().x;
 						lineB[1] = vTilePos.y + lineListItor->GetPointList()->at(i).y;//+ lineListItor->GetOffset().y;

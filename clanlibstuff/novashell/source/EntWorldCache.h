@@ -52,7 +52,9 @@ public:
 	void RenderCollisionOutlines(CL_GraphicContext *pGC);
 	void AddActiveTrigger(int entID);
 	void ClearTriggers();
+	//note, GCC didn't like me sending these as references
 	bool IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, Tile *pTileToIgnore= NULL, bool bIgnoreMovingCreatures = false);
+	bool IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity); //good for figuring out if an entity can fit here or not
 
 protected:
 

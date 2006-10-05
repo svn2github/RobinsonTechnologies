@@ -3,6 +3,7 @@
 #include "MovingEntity.h"
 #include "Goal_Types.h"
 #include "message_types.h"
+#include "Goal_Composite.h"
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
@@ -20,9 +21,6 @@ Goal<MovingEntity>(pBot, goal_delay), m_timeToWait(time)
 void Goal_Delay::Activate()
 {
 	m_iStatus = active;
-	if (m_delayTimer != 0) return; //if canceled and reactivated, don't actually
-	//reset the timer
-
 	m_delayTimer = GetApp()->GetGameTick()+m_timeToWait;
 }
 
@@ -46,8 +44,15 @@ int Goal_Delay::Process()
 //-----------------------------------------------------------------------------
 void Goal_Delay::Terminate()
 {
+	
 }
 
+void Goal_Delay::LostFocus()
+{
+	m_iStatus = inactive;	
+	//adjust time to wait by how long we've already waited
+	m_timeToWait -= ( int(GetApp()->GetGameTick()+m_timeToWait)) - int(m_delayTimer);
+}
 //----------------------------- Render ----------------------------------------
 //-----------------------------------------------------------------------------
 void Goal_Delay::Render()

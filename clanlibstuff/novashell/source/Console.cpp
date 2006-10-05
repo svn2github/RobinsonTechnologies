@@ -67,6 +67,11 @@ void Console::Render()
 	CL_Display::fill_rect(r, CL_Color(10,10,10,100));
 
 	CL_Font *pFont = GetApp()->GetFont(C_FONT_GRAY);
+	if (!pFont)
+	{
+		//serious error, was unable to init a base font
+		throw CL_Error("Serious error, check the log text file");
+	}
 	ResetFont(pFont);
 
 //cycle through them

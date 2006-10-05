@@ -37,6 +37,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_pListLayerActive = NULL;
    m_pListLayerDisplay = NULL;
    m_pLayerListWindow = NULL;
+   
    GetGameLogic->SetGamePaused(true);
 
    for (int i=0; i < e_modeCount; i++)
@@ -184,7 +185,7 @@ void EntEditor::validator_numbers(char &character, bool &accept)
 {
 	// my VC6 don't like std::isdigit with locale :(
 	
-	if (character != '.' && character != '-' && character < '0' || character > '9' || character > ' ')
+	if (character != '.' && character != '-' && (character < '0' || character > '9') && character != ' ')
 		accept = false;
 }
 void EntEditor::OnToggleWorldChunkGrid()
@@ -425,12 +426,21 @@ void OpenScriptForEditing(string scriptName)
 	if (!exist(file.c_str()))
 	{
 		if (!ConfirmMessage("Script doesn't exist", file + " not found.\n\nWould you like to create this script?")) return;
-		add_text("function Init()\r\n\r\n", file.c_str());
-		add_text("end\r\n", file.c_str());
+		
+		CL_OutputSource *pFile = g_VFManager.PutFile(file);
+		string text;
+		
+		text = "\nfunction OnInit() //run upon initialization\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());
+		text = "function OnPostInit() //run after being placed on a map\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());
+		text = "function OnKill() //run when removed\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());
+		SAFE_DELETE(pFile);
+		
+		g_VFManager.LocateFile(file);
+		
 	}
 	open_file(GetApp()->GetHWND(), file.c_str());
 #else
-	LogError("Only implemented in windows.");
+	LogError("Only implemented in windows.  Please complain to Seth!");
 #endif
 
 

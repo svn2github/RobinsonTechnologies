@@ -52,9 +52,7 @@ void Goal_MoveToMapAndPos::Activate()
 	}
 	
 	//we have data on which way to go
-
 	ProcessNextMapChunk();
-	
 }
 
 
@@ -130,8 +128,6 @@ int Goal_MoveToMapAndPos::Process()
 
 				} else
 				{
-					//assert(m_pOwner->GetMap() == pNodeEnt->GetMap() && "This goal breaks if this happens, it assumes each graphid is a different map");
-					
 					//LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
 					//	m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
 
@@ -167,20 +163,19 @@ bool Goal_MoveToMapAndPos::HandleMessage(const Message& msg)
 		{
 
 		case C_MSG_TARGET_NOT_FOUND:
-			LogMsg("Target wasn't found, restarting");
+			//LogMsg("Target wasn't found, restarting");
 			return true; //signal that we handled it
 			break;
 
 		case C_MSG_GOT_STUCK:
 			m_bTriedSimpleWay = false;
-			LogMsg("Got stuck..");
+			//LogMsg("Got stuck..");
 			return true; //signal that we handled it
 			break;
 
 			
 		default: return false;
 		}
-
 	}
 
 	//handled by subgoals
@@ -194,8 +189,8 @@ void Goal_MoveToMapAndPos::Terminate()
 
 void Goal_MoveToMapAndPos::LostFocus()
 {
-	Goal_Composite<MovingEntity>::LostFocus();
-	//LogMsg("Aboarting goal_Movetomapandpos..");
+	m_iStatus = inactive;
+	 //LogMsg("Aboarting goal_Movetomapandpos..");
 	m_bTriedSimpleWay = false;
     RemoveAllSubgoals();
 }
@@ -204,21 +199,7 @@ void Goal_MoveToMapAndPos::LostFocus()
 //-----------------------------------------------------------------------------
 void Goal_MoveToMapAndPos::Render()
 {
-
 	//forward the request to the subgoals
 	Goal_Composite<MovingEntity>::Render();
-
-	/*
-	//draw a bullseye
-	gdi->BlackPen();
-	gdi->BlueBrush();
-	gdi->Circle(m_vDestination, 6);
-	gdi->RedBrush();
-	gdi->RedPen();
-	gdi->Circle(m_vDestination, 4);
-	gdi->YellowBrush();
-	gdi->YellowPen();
-	gdi->Circle(m_vDestination, 2);
-	*/
 }
 

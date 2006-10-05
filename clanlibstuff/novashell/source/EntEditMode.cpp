@@ -801,6 +801,11 @@ void EntEditMode::HandleMessageString(const string &msg)
 			CL_String::to_bool(words[3]) );
 
 	} else
+		if (words[0] == "open_properties_on_selected")
+		{
+			BuildTilePropertiesMenu(&m_selectedTileList);
+
+		} else
 	{
 		LogMsg("Don't know how to handle message %s", msg.c_str());
 	}
@@ -944,7 +949,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
 				//control right click opens a special menu instead of pasting
-			    BuildTilePropertiesMenu(&vecMouseClickPos, &vecWorld, &m_selectedTileList);
+			    BuildTilePropertiesMenu(&m_selectedTileList);
 				return;
 			}
 
@@ -999,7 +1004,7 @@ void EntEditMode::DrawActiveBrush(CL_GraphicContext *pGC)
 
 void EntEditMode::OnProperties()
 {
-	BuildTilePropertiesMenu(NULL, NULL, &m_selectedTileList);
+	BuildTilePropertiesMenu(&m_selectedTileList);
 }
 
 void EntEditMode::OnCollisionDataEditEnd(int id)
@@ -1183,8 +1188,9 @@ void EntEditMode::Render(void *pTarget)
 				//it's pointless to show the entity ID unless we are working from the real source tile instead of the copy
 				Tile *pSrcTile  =  GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
 
-				if (pSrcTile)
+				if (pSrcTile && pSrcTile->GetType() == C_TILE_TYPE_ENTITY)
 				{
+					//located the real version underneath on the map
 					MovingEntity *pEnt = ((TileEntity*)pSrcTile)->GetEntity();
 					s += "\nID: " + CL_String::from_int(pEnt->ID());
 					if (!pEnt->GetName().empty())
@@ -1433,10 +1439,10 @@ void EntEditMode::OnPropertiesConvert()
 {
 	m_guiResponse = C_GUI_CONVERT;
 }
-void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vector2 *pVecWorld, TileEditOperation *pTileList)
+void EntEditMode::BuildTilePropertiesMenu(TileEditOperation *pTileList)
 {
-	//change options on one or many tiles
 
+	//change options on one or many tiles
 	if (pTileList->IsEmpty())
 	{
 		CL_MessageBox::info("No tiles selected.  Left click on a tile first.", GetApp()->GetGUI());
@@ -1469,7 +1475,7 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
 		//note, we're getting the pointer to the REAL tile, not the copy we had made.  We do our
-		//final operations to the real entity and tile because we don't have a nice way to propogate
+		//final operations to the real entity and tile because we don't have a nice way to propagate
 		//changes to the whole list.  we're only allowing these changes to be made to single-selections
 		//as a result
 
@@ -1507,9 +1513,7 @@ void EntEditMode::BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vect
 	rPos.apply_alignment(origin_top_left, - (labelName2.get_width()+labelName2.get_client_x()+5), -(offsetY));
 	CL_InputBox inputName(rPos, "", window.get_client_area());
 
-
 	CL_Button buttonConvert (CL_Point(inputName.get_client_x()+inputName.get_width()+5,offsetY), "Convert to entity", window.get_client_area());
-
 
 	CL_CheckBox flipY (CL_Point(buttonOffsetX,offsetY),"Flip Y", window.get_client_area());
 	offsetY+= 20;
@@ -1796,6 +1800,9 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 	} else if (m_guiResponse == C_GUI_CONVERT)
 	{
+		ScheduleSystem(150, ID(), "open_properties_on_selected"); //tell it to open this properties dialog again as soon
+
+		
 		MovingEntity *pEnt = new MovingEntity;
 		TileEntity *pNewTile = new TileEntity;
 		pNewTile->SetEntity(pEnt);
@@ -1841,6 +1848,13 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 			//move position to match where it was
 			pEnt->SetPos(pEnt->GetPos()+vMoveOffset);
+		} else
+		{
+			//still, because entities are centered, we should move it for them
+			CL_Rectf r = pEnt->GetBoundsRect();
+			CL_Vector2 vOffset = CL_Vector2(-r.get_width()/2, -r.get_height()/2);
+			pEnt->SetPos(pEnt->GetPos()-vOffset);
+
 		}
 
 		OnDelete(); //kill the old one

@@ -137,7 +137,7 @@ void  Goal<entity_type>::RenderAtPos(CL_Vector2& pos)const
 	CL_Color col = CL_Color(200,200,200);
 
 	if (isComplete()) col = CL_Color(0,255,0);
-	if (isInactive()) col = CL_Color(255,200,200);
+	if (isInactive()) col = CL_Color(200,200,200);
 	if (hasFailed()) col = CL_Color(255,0,0);
     if (isActive()) col = CL_Color(255,255,30);
 

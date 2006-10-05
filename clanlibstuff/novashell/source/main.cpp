@@ -204,7 +204,7 @@ void App::OneTimeInit()
 
 	m_WindowDescription.set_fullscreen(bFullscreen);
     m_WindowDescription.set_bpp(32);
-    m_WindowDescription.set_title("Nova Shell Game Creation System");
+    m_WindowDescription.set_title("Novashell Game Creation System");
     m_WindowDescription.set_allow_resize(false);
   
 
@@ -537,7 +537,7 @@ int App::main(int argc, char **argv)
 		
 		//let's just show help stuff
 
-		string message = "\nNova Shell Game Creation System "+GetEngineVersionAsString()+"\n\n";
+		string message = "\nNovashell Game Creation System "+GetEngineVersionAsString()+"\n\n";
 
 		message += 
 		

@@ -19,7 +19,6 @@ public:
 	{
 		SetName("MapAndPosMove");
 		m_bTriedSimpleWay = false;
-
 	}
 
 	//the usual suspects
@@ -36,7 +35,6 @@ public:
 private:
 
 	void ProcessNextMapChunk();
-
 	//the position the bot wants to reach
 	CL_Vector2 m_vDestination;
 	World * m_pDestMap;
@@ -44,9 +42,5 @@ private:
 	MacroPathInfo m_macroPath;
 	bool m_bRequestNextChunk;
 };
-
-
-
-
 
 #endif

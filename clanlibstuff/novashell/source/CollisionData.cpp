@@ -1,17 +1,29 @@
 #include "AppPrecomp.h"
 #include "CollisionData.h"
 #include "GameLogic.h"
+#include "MaterialManager.h"
 
 CollisionData::CollisionData()
 {
 	m_dataChanged = false;
 	m_vecScale = CL_Vector2(1,1);
+	m_bNeedsRecalc = true;
+	m_vecCombinedOffset = CL_Vector2(0,0);
 }
 CollisionData::~CollisionData()
 {
 	SaveIfNeeded();
 }
 
+const CL_Rectf & CollisionData::GetCombinedCollisionRect()
+{
+	if (m_bNeedsRecalc)
+	{
+		RecalculateCombinedOffsets();
+	}
+
+	return m_collisionRect;
+}
 void CollisionData::SetScale(const CL_Vector2 &vScale)
 {
 	
@@ -27,12 +39,14 @@ void CollisionData::SetScale(const CL_Vector2 &vScale)
 		ApplyScaleToAll(m_vecScale);
 
 	}
+	SetRequestRectRecalculation();
 }
 
 void CollisionData::Load(const string &fileName)
 {
 
 	m_dataChanged = false;
+	SetRequestRectRecalculation();
 	m_fileName = fileName;
 	m_vecScale = CL_Vector2(1,1);
 
@@ -75,17 +89,77 @@ void CollisionData::ApplyScaleToAll(const CL_Vector2 &vScale)
 		listItor->ApplyScale(vScale);
 		listItor++;
 	}
+
+	SetRequestRectRecalculation();
 }
 
+const CL_Vector2 & CollisionData::GetCombinedOffsets()
+{
+	if (m_bNeedsRecalc)
+	{
+		RecalculateCombinedOffsets();
+	}
+	
+	return m_vecCombinedOffset;
+}
+
+void CollisionData::RecalculateCombinedOffsets()
+{
+	m_vecCombinedOffset = CL_Vector2(100000,100000);
+	m_collisionRect = CL_Rectf(FLT_MAX,FLT_MAX,-FLT_MAX,-FLT_MAX);
+
+	line_list::iterator listItor = m_lineList.begin();
+
+	while (listItor != m_lineList.end())
+	{
+		
+		if (listItor->HasData())
+		{
+			m_vecCombinedOffset.x = min(m_vecCombinedOffset.x, listItor->GetOffset().x);
+			m_vecCombinedOffset.y = min(m_vecCombinedOffset.y, listItor->GetOffset().y);
+
+			
+			if (g_materialManager.GetMaterial(listItor->GetType())->GetType() == CMaterial::C_MATERIAL_TYPE_NORMAL)
+			{
+				//it's a hardness shape, include it in our overall rect
+				m_collisionRect.left = min(m_collisionRect.left, listItor->GetRect().left);
+				m_collisionRect.right = max(m_collisionRect.right, listItor->GetRect().right);
+
+				m_collisionRect.top = min(m_collisionRect.top, listItor->GetRect().top);
+				m_collisionRect.bottom = max(m_collisionRect.bottom, listItor->GetRect().bottom);
+
+			}
+		}
+		
+		
+		listItor++;
+	}
+
+	m_bNeedsRecalc = false;
+
+	if (m_collisionRect.left == FLT_MAX)
+	{
+		//uh oh, has no collision data.  At least let's make it 0's
+		m_collisionRect = CL_Rectf(0,0,0,0);
+	}
+
+	if (m_vecCombinedOffset.x == 100000)
+	{
+		//must be invalid data
+		m_vecCombinedOffset = CL_Vector2(0,0);
+	}
+	
+}
 void CollisionData::RecalculateOffsets()
 {
 	line_list::iterator listItor = m_lineList.begin();
-
+   
 	while (listItor != m_lineList.end())
 	{
 		listItor->CalculateOffsets();
 		listItor++;
 	}
+	SetRequestRectRecalculation();
 }
 
 
@@ -98,6 +172,9 @@ void CollisionData::RemoveOffsets()
 		listItor->RemoveOffsets();
 		listItor++;
 	}
+
+	m_vecCombinedOffset = CL_Vector2(0,0);
+	SetRequestRectRecalculation();
 }
 
 bool CollisionData::HasData()
@@ -199,6 +276,7 @@ void CollisionData::Serialize(CL_FileHelper &helper)
 void CollisionData::Clear()
 {
 	m_lineList.clear();
+	SetRequestRectRecalculation();
 }
 
 

@@ -49,6 +49,8 @@ protected:
 	void FinalSelectionProcessing();
 	void RemoveItems();
 	void RenderOverlay();
+	void CalculateCenteredWindowPosition();
+	void OnHighlighted(int index);
 
 	CL_Window *m_pWindow;
 	CL_ListBox *m_pListWorld; //control which worlds are drawn

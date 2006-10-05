@@ -62,6 +62,10 @@ public:
   CL_Vector2 GetScale() {return m_pTile->GetScale();}
   void SetScale(const CL_Vector2 &vScale);
   CL_Vector2 GetCollisionScale();
+  CL_Rectf GetCollisionRect();
+  float GetBoundingCollisionRadius();
+  bool IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures);
+
   void SetCollisionScale(const CL_Vector2 &vScale);
   void ApplyGenericMovement(float step);
   tile_list & GetNearbyTileList(); //note, this may not be valid if you're deleting tiles!  For debug only
@@ -119,6 +123,8 @@ public:
   void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
   float GetDistanceFromEntityByID(int id);
+  float GetDistanceFromPosition(const CL_Vector2 &pos);
+
   int GetLayerID() {assert(m_pTile); return m_pTile->GetLayer();}
   void SetLayerID(int id) {assert(m_pTile); m_pTile->SetLayer(id); m_bMovedFlag = true;}
   
@@ -156,6 +162,7 @@ public:
   void SetVectorFacingTarget(const CL_Vector2 &v);
   CL_Vector2 GetVectorFacing();
   CL_Vector2 GetVectorFacingTarget();
+ 
   unsigned int CalculateTimeToReachPosition(const CL_Vector2 &pos);
 
 
@@ -200,6 +207,8 @@ public:
 
   CL_Vector2 GetVectorToEntityByID(int entID);
   CL_Vector2 GetVectorToEntity(MovingEntity *pEnt);
+  CL_Vector2 GetVectorToPosition(const CL_Vector2 &pos);
+
   bool IsOnSameMapAsEntityByID(int entID);
 
   PathPlanner * GetPathPlanner();

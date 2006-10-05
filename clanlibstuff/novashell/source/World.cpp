@@ -695,6 +695,7 @@ void World::ReInitEntities()
 					{
 						pEnt->Kill();
 						pEnt->Init();
+						pEnt->RunPostInitIfNeeded();
 					}
 
 					break;

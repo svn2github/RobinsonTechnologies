@@ -3,6 +3,8 @@
 #include "GameLogic.h"
 #include "GUIStyleBitmap/listbox_Bitmap.h"
 
+#define C_MAX_DIALOG_TEXT_WIDTH 1024 //will be truncated to the screen size if required as well
+
 void PreparePlayerForPause()
 {
 	MovingEntity *pPlayer = GetGameLogic->GetMyPlayer();
@@ -113,12 +115,35 @@ void EntChoiceDialog::HandleMessageString(const std::string &msg)
 			
 			if (m_startingSelection.empty()) m_startingSelection = m_choices[0].m_result; //default to first option
 			AddItems(); //add the first one
-			CenterComponentOnScreen(m_pWindow);
-
+			CalculateCenteredWindowPosition();
+			GetApp()->GetMyScriptManager()->RunFunction("OnDialogOpen");
 		} else
 	{
 		LogMsg("EntChoiceDialog: Don't know how to handle message %s", msg.c_str());
 	}
+}
+
+void EntChoiceDialog::CalculateCenteredWindowPosition()
+{
+  //calculate a rect that will holds the whole dialog
+
+	CL_Rect r = CL_Rect(0,0,0,0);
+
+	int choiceMaxLength = 0;
+
+	for (unsigned int i=0; i < m_choices.size(); i++)
+	{
+		int width = m_pFont->get_width(m_choices[i].m_text);
+		choiceMaxLength = max(choiceMaxLength, width);
+	}
+
+	r.right = max(m_textRect.get_width(), choiceMaxLength);
+
+	r.bottom = m_textRect.get_height() + (m_choices.size() * m_pFont->get_height());
+
+	//center this rect on screen
+	m_pWindow->set_position( (GetScreenX/2) - r.right/2, GetScreenY/2 - r.bottom/2);
+
 }
 
 
@@ -144,6 +169,8 @@ void EntChoiceDialog::AddItems()
 		{
 			m_pListWorld->set_current_item(index);
 			m_startingSelection = "";
+			m_slots.connect( m_pListWorld->sig_highlighted(), this, &EntChoiceDialog::OnHighlighted);
+
 		}
 
 		m_curElementToPlace++;
@@ -202,7 +229,7 @@ void EntChoiceDialog::CalculateSize()
 	if (m_pWindow)
 	{
 		//figure out much room this text is going to take
-		if (m_pFont)
+		if (!m_msg.empty())
 		{
 			m_formattedMsg.clear();
 			for (unsigned int i=0; i < m_msgToShow.size(); i++) 
@@ -214,7 +241,7 @@ void EntChoiceDialog::CalculateSize()
 				}
 			}
 
-			m_textRect = m_pFont->bounding_rect(  CL_Rect(0,0,  min(600, GetScreenX-50), GetScreenY), m_formattedMsg);
+			m_textRect = m_pFont->bounding_rect(  CL_Rect(0,0,  min(C_MAX_DIALOG_TEXT_WIDTH, GetScreenX-50), GetScreenY), m_formattedMsg);
 		}
 		
 		m_titleOffsetY = m_pTitleFont->get_height(m_title) + 8;
@@ -293,6 +320,8 @@ void EntChoiceDialog::BuildDialog()
 
 	m_pWindow = new CL_Window(m_title, CL_Window::no_buttons, GetGameLogic->GetGameGUI()->get_client_area());
 	m_pTitleFont = new CL_Font("Window/font", GetGameLogic->GetGUIStyle()->get_resources());
+	//we're also going to need to show some text in addition to the options
+	m_pFont = new CL_Font("ListBox/font", GetGameLogic->GetGUIStyle()->get_resources());
 	
 	if (m_pWindow)
 	{
@@ -303,9 +332,6 @@ void EntChoiceDialog::BuildDialog()
 
 		if (!m_msg.empty())
 		{
-
-			//we're also going to need to show some text in addition to the options
-			m_pFont = new CL_Font("ListBox/font", GetGameLogic->GetGUIStyle()->get_resources());
 
 			MovingEntity *pEnt = ((MovingEntity*)EntityMgr->GetEntityFromID(m_entityID));
 
@@ -340,13 +366,17 @@ void EntChoiceDialog::OnSelection(int selItem)
 	}
 	
 	m_chosenID =  m_pListWorld->get_item(m_pListWorld->get_current_item())->user_data;
-
+	GetApp()->GetMyScriptManager()->RunFunction("OnDialogSelection");
 	m_mode = removing;	
 	m_timer.SetIntervalReached();
 	m_curElementToPlace = m_pListWorld->get_count()-1;
 	RemoveItems();
 }
 
+void EntChoiceDialog::OnHighlighted(int index)
+{
+	GetApp()->GetMyScriptManager()->RunFunction("OnDialogChangeSelection");
+}
 
 void EntChoiceDialog::FinalSelectionProcessing()
 {

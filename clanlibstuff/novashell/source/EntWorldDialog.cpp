@@ -117,7 +117,7 @@ void EntWorldDialog::BuildWorldListBox()
 	CL_Rect rectSize = CL_Rect(0,0,400,300);
 	CL_Point ptPos = CL_Point((GetScreenX/2) - rectSize.get_width()/2 , (GetScreenY/2) - rectSize.get_height()/2);
 
-	m_pWindow = new CL_Window(rectSize+ptPos, "Nova Shell Game Creation System " + GetApp()->GetEngineVersionAsString() + " - Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
+	m_pWindow = new CL_Window(rectSize+ptPos, "Novashell Game Creation System " + GetApp()->GetEngineVersionAsString() + " - Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
 
 	CL_Rect rectListBox = rectSize;
 	int borderOffset = 5;

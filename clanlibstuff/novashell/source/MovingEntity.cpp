@@ -86,6 +86,11 @@ float MovingEntity::GetDistanceFromEntityByID(int id)
 	return (GetPos()-pEnt->GetPos()).length();
 }
 
+float MovingEntity::GetDistanceFromPosition(const CL_Vector2 &pos)
+{
+	return (GetPos()-pos).length();
+}
+
 CL_Vector2 MovingEntity::GetVectorToEntityByID(int entID)
 {
 	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(entID);
@@ -100,7 +105,13 @@ CL_Vector2 MovingEntity::GetVectorToEntity(MovingEntity *pEnt)
 {
 	CL_Vector2 v = pEnt->GetPos()-GetPos();
 	v.unitize();
+	return v;
+}
 
+CL_Vector2 MovingEntity::GetVectorToPosition(const CL_Vector2 &pos)
+{
+	CL_Vector2 v = pos-GetPos();
+	v.unitize();
 	return v;
 }
 
@@ -108,7 +119,6 @@ bool MovingEntity::IsOnSameMapAsEntityByID(int entID)
 {
 	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(entID);
 	if (!pEnt) return false;
-
 	return (GetMap() == pEnt->GetMap());
 }
 
@@ -1357,12 +1367,8 @@ void MovingEntity::ApplyGenericMovement(float step)
 
 CL_Vector2 MovingEntity::GetVisualOffset()
 {
-		if (GetCollisionData() && GetCollisionData()->GetLineList()->size() > 0)
-		{
-			return -GetCollisionData()->GetLineList()->begin()->GetOffset();
-		}
-
-		return CL_Vector2::ZERO;
+	if (GetCollisionData()) return -GetCollisionData()->GetCombinedOffsets();
+	return CL_Vector2(0,0);
 }
 
 void MovingEntity::RenderShadow(void *pTarget)
@@ -1733,12 +1739,10 @@ void MovingEntity::PostUpdate(float step)
 		m_bTouchedAGroundThisFrame = false;
 	}
 
-
 }
 
 void MovingEntity::SetImageFromTilePic(TilePic *pTilePic)
 {
-
 	m_dataManager.Set(C_ENT_TILE_PIC_ID_KEY, CL_String::from_int(pTilePic->m_resourceID));
 	m_dataManager.Set(C_ENT_TILE_RECT_KEY, RectToString(pTilePic->m_rectSrc));
 
@@ -1755,18 +1759,41 @@ void MovingEntity::SetImageFromTilePic(TilePic *pTilePic)
 	m_dataManager.Set(C_ENT_DENSITY_KEY, CL_String::from_float(m_fDensity));
 }
 
+CL_Rectf MovingEntity::GetCollisionRect()
+{
+	//OPTIMIZE for gods sake, cache this
+	if (!m_pTile->GetCollisionData()) return CL_Rectf(0,0,0,0);
+	return m_pTile->GetCollisionData()->GetCombinedCollisionRect();
+}
+
+float MovingEntity::GetBoundingCollisionRadius()
+{
+	
+	//OPTIMIZE for gods sake, cache this
+	CL_Rectf c = GetCollisionRect();
+	return max(c.get_width(), c.get_height());
+}
 //returns true if this bot can move directly to the given position
 //without bumping into any walls
+//warning, only tests against edges
 bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 {
 	EntWorldCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache();	
-	return !pWC->IsPathObstructed(GetPos(), to, m_pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_width(), m_pTile, ignoreLivingCreatures);
+	return !pWC->IsPathObstructed(GetPos(), to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
 }
+
+
 
 //similar to above. Returns true if the bot can move between the two
 //given positions without bumping into any walls
+//warning, only tests against edges
 bool MovingEntity::CanWalkBetween(World *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures)
 {
-	return !pMap->GetMyWorldCache()->IsPathObstructed(from, to, m_pTile->GetCollisionData()->GetLineList()->begin()->GetRect().get_width(), m_pTile, ignoreLivingCreatures);
+	return !pMap->GetMyWorldCache()->IsPathObstructed(from, to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
+}
+
+bool MovingEntity::IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures)
+{
+	return !pMap->GetMyWorldCache()->IsAreaObstructed(pos, GetBoundingCollisionRadius(), bIgnoreLivingCreatures, this);
 }
 

@@ -52,6 +52,7 @@ MovingEntity * GetEntityByID(int ID)
 	return (MovingEntity*)EntityMgr->GetEntityFromID(ID);
 }
 
+
 MovingEntity * GetEntityByName(const string &name)
 {
 	TagObject *t = GetTagManager->GetFromString(name);
@@ -71,6 +72,15 @@ MovingEntity * GetEntityByName(const string &name)
 	}
 	
 	return (MovingEntity*)EntityMgr->GetEntityFromID(t->m_entID);
+}
+
+
+int GetEntityIDByName(const string &name)
+{
+	MovingEntity *pEnt = GetEntityByName(name);
+
+	if (pEnt) return pEnt->ID();
+	return 0;
 }
 
 MovingEntity * GetEntityByWorldPos(CL_Vector2 v)
@@ -256,6 +266,10 @@ void luabindMisc(lua_State *pState)
 		.def("RemoveAllSubgoals", &Goal_Think::RemoveAllSubgoals)
 		.def("PushDelay", &Goal_Think::PushDelay)
 		.def("AddDelay", &Goal_Think::AddDelay)
+		.def("AddApproach", &Goal_Think::AddApproach)
+		.def("AddApproachAndSay", &Goal_Think::AddApproachAndSay)
+		.def("PushApproach", &Goal_Think::PushApproach)
+		.def("PushApproachAndSay", &Goal_Think::PushApproachAndSay)
 
 		.def("AddSay", &Goal_Think::AddSay)
 		.def("AddSayByID", &Goal_Think::AddSayByID)
@@ -289,6 +303,7 @@ void luabindMisc(lua_State *pState)
 		def("GetEntityByWorldPos", &GetEntityByWorldPos),
 		def("GetEntityByID", &GetEntityByID),
 		def("GetEntityByName", &GetEntityByName),
+		def("GetEntityIDByName", &GetEntityIDByName),
 		def("ShowMessage", &ShowMessage),
 		def("FacingToVector", &FacingToVector),
 		def("VectorToFacing", &VectorToFacing),

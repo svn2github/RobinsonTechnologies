@@ -91,7 +91,7 @@ int Goal_Say::Process()
 void Goal_Say::Terminate()
 {
 
-	LogMsg("Say got terminated (status: %d)", m_iStatus );
+	//LogMsg("Say got terminated (status: %d)", m_iStatus );
 }
 
 //----------------------------- Render ----------------------------------------
@@ -102,6 +102,7 @@ void Goal_Say::Render()
 
 void Goal_Say::LostFocus()
 {
+	m_iStatus = inactive;
 	//instead of having this Say command repeated, let's just say it will be
 	//skipped
 

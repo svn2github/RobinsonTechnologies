@@ -49,7 +49,7 @@ protected:
 	void OnClose(CL_SlotParent_v0 &parent_handler);
 	void OnSelectBaseTilePage();
 	void BuildBaseTilePageBox();
-	void BuildTilePropertiesMenu(CL_Vector2 *pVecMouseClickPos, CL_Vector2 *pVecWorld, TileEditOperation *pTileList);
+	void BuildTilePropertiesMenu(TileEditOperation *pTileList);
 	void OnProperties();
 	void SnapCheckBoxedClicked();
 	void SnapSizeChanged();

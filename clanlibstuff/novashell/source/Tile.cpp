@@ -72,9 +72,15 @@ Tile::~Tile()
 const CL_Rectf & Tile::GetWorldColRect()
 {
 	static CL_Rectf r;
-	r = GetCollisionData()->GetLineList()->begin()->GetRect();
+	r = GetCollisionData()->GetCombinedCollisionRect();
 	r += *(const CL_Pointf*)(&GetPos());
-	r -= *(const CL_Pointf*)(&GetCollisionData()->GetLineList()->begin()->GetOffset());
+	
+	if (GetType() == C_TILE_TYPE_ENTITY)
+	{
+		//I'm a little confused here, TILE_PICS are screwing up with this, but shouldn't their
+		//offsets be set at 0 anyway?  
+		r -= *(const CL_Pointf*)(&GetCollisionData()->GetCombinedOffsets());
+	}
 	return r;
 }
 

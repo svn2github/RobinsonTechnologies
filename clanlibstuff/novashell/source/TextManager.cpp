@@ -53,7 +53,7 @@ int TextObject::Init(const string &text, MovingEntity * pEnt, int fontID)
 	SetMode(DIALOG);
 
    //TODO: Figure out where the max macro is?
-  if (m_timeToShowMS < 3300) m_timeToShowMS = 3300;
+  if (m_timeToShowMS < 2900) m_timeToShowMS = 2900;
 
 	m_pEntity = pEnt;
 

@@ -14,6 +14,7 @@ public:
 	void Activate();
 	int  Process();
 	void Terminate();
+	virtual void LostFocus();
 	void Render();
 	virtual bool HandleMessage(const Message& msg);
 	virtual const char * GetName() const {return "Delay";}

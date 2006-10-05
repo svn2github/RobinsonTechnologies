@@ -542,6 +542,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainColorFade.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainColorFade.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainColorFlash.cpp"
 						>
 					</File>
@@ -637,6 +645,14 @@
 				<Filter
 					Name="AI"
 					>
+					<File
+						RelativePath=".\AI\Goal_Approach.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\AI\Goal_Approach.h"
+						>
+					</File>
 					<File
 						RelativePath=".\AI\Goal_Delay.cpp"
 						>
