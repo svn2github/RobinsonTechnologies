@@ -7,6 +7,7 @@
 #include "AI/NavGraphManager.h"
 #include "AI/Goal_Think.h"
 #include "AI/WatchManager.h"
+#include "MaterialManager.h"
 
 EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
@@ -822,6 +823,8 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 	tile_list tilelist;
 	CL_Rect r(pos.x - radius/2, pos.y - radius/2, pos.x + radius/2, pos.y + radius/2);
 
+	CollisionData *pCol;
+
 	AddTilesByRect(r, &tilelist, m_pWorld->GetLayerManager().GetCollisionList(), true);
 
 	if (tilelist.empty()) return false;
@@ -829,14 +832,16 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 	tile_list::iterator listItor = tilelist.begin();
 
 	Tile *pTile;
+	CL_Rect tempRect;
 
 	for (; listItor != tilelist.end(); listItor++)
 	{
 		pTile = *listItor;
 
-		if (pTile->GetCollisionData() && pTile->GetCollisionData()->HasData())
+		pCol = pTile->GetCollisionData();
+		if (pCol && pCol->HasData())
 		{
-			if (pTile == pIgnoreEntity->GetTile()) continue; //skip this
+				if (pTile == pIgnoreEntity->GetTile()) continue; //skip this
 
 
 			if (bIgnoreMovingCreatures && pTile->GetType() == C_TILE_TYPE_ENTITY)
@@ -852,7 +857,24 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 			}
 
 			//do we overlap his collision info?
-			if (pTile->GetWorldColRect().is_overlapped(r)) return true;
+			//we can't just check GetWorldColRect because it's not accurate enough, let's check each line and do the rect
+			//from that
+			line_list::iterator lineListItor = pCol->GetLineList()->begin();
+
+			while (lineListItor != pCol->GetLineList()->end())
+			{
+				if (lineListItor->GetPointList()->size() > 0 && g_materialManager.GetMaterial(lineListItor->GetType())->GetType()
+					== CMaterial::C_MATERIAL_TYPE_NORMAL)
+				{
+					CL_Vector2 offset = pTile->GetPos();
+					tempRect = CL_Rect(lineListItor->GetRect());
+					tempRect += CL_Point(offset.x, offset.y);
+					if ( tempRect.is_overlapped(r)) return true;
+				}
+
+				lineListItor++;
+			}
+
 		}
 		
 	}

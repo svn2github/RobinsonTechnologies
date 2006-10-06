@@ -65,8 +65,7 @@ EntEditor::~EntEditor()
 	GetScriptManager->RunFunction("OnCloseEditor");
  	SetCameraToTrackPlayer();
 	DisableAllModes();
-	GetApp()->GetGUI()->close();
-
+	
 	SAFE_DELETE(m_pListBoxWorld);
 	SAFE_DELETE(m_pWorldListWindow);
 
@@ -80,6 +79,8 @@ EntEditor::~EntEditor()
     SAFE_DELETE(m_pWindow);
 	GetGameLogic->SetGamePaused(false); //unpause the game if it was
 	GetGameLogic->SetEditorActive(false);
+	//GetApp()->GetGUI()->close();
+
 }
 
 void EntEditor::KillLayerListStuff()

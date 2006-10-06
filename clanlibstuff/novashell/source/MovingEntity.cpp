@@ -1275,7 +1275,6 @@ void MovingEntity::ProcessCollisionTileList(tile_list &tList, float step)
 
 void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 {
-	   
 	if (m_pSpriteLastUsed != pSprite)
 	{
 		int frameTemp = 0;
@@ -1328,7 +1327,6 @@ void MovingEntity::ApplyGenericMovement(float step)
 		return;
 	}
 	
-
 	//scan around us for entities
 
 	m_scanArea = m_pTile->GetWorldColRect();
@@ -1585,7 +1583,7 @@ void MovingEntity::ProcessPendingMoveAndDeletionOperations()
 
 void MovingEntity::CheckVisibilityNotifications(unsigned int notificationID)
 {
-	
+
 	if (GetGameLogic->GetGamePaused()) return;
 
 	if (notificationID != m_lastVisibilityNotificationID)
@@ -1599,7 +1597,6 @@ void MovingEntity::Update(float step)
 
 if (GetGameLogic->GetGamePaused()) return;
 
-	
 	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 
 	ClearColorMods();
@@ -1666,12 +1663,10 @@ void MovingEntity::SetIsOnScreen(bool bNew)
 			//LogMsg("Ent %d (%s) has left the screen", ID(), GetName().c_str());
 		}
 	}
-
 }
 
 void MovingEntity::PostUpdate(float step)
 {
-
 	if (GetGameLogic->GetGamePaused()) return;
 
 	if (m_bRequestsVisibilityNotifications)
@@ -1684,7 +1679,6 @@ void MovingEntity::PostUpdate(float step)
 
 		g_watchManager.AddEntityToVisibilityList(this);
 	}
-
 	
 	m_brainManager.PostUpdate(step);
 
@@ -1781,8 +1775,6 @@ bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 	EntWorldCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache();	
 	return !pWC->IsPathObstructed(GetPos(), to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
 }
-
-
 
 //similar to above. Returns true if the bot can move between the two
 //given positions without bumping into any walls

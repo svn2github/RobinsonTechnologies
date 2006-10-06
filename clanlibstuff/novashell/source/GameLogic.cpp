@@ -25,7 +25,7 @@
 #endif
 
 #define C_PROFILE_DAT_FILENAME "profile.dat"
-#define C_INFO_TEXT_FILENAME "info.txt"
+
 
 const unsigned int C_PROFILE_DAT_VERSION = 0;
 
@@ -65,8 +65,14 @@ GameLogic::GameLogic()
 	SetGameMode(C_GAME_MODE_TOP_VIEW); //default.  Also is automatically changed when player brains are initted.
 	m_activeWorldName = "base";
 	
+	if (GetApp()->GetStartupParms().size() > 0)
+	{
+		LogMsg("Command line parms received:");
+	}
 	for (unsigned int i=0; i < GetApp()->GetStartupParms().size(); i++)
 	{
+		
+		LogMsg("	%s", GetApp()->GetStartupParms().at(i).c_str());
 		string p1 = GetApp()->GetStartupParms().at(i);
 		string p2;
 		if (i+1 < GetApp()->GetStartupParms().size())
@@ -75,18 +81,22 @@ GameLogic::GameLogic()
 			p2 = GetApp()->GetStartupParms().at(i+1);
 		}
 
-
-		if (CL_String::compare_nocase(p1, "-mod") || CL_String::compare_nocase(p1, "-world") )
+		if (CL_String::compare_nocase(p1, "-worldpath")  )
 		{
 			if (p2.empty())
 			{
-				LogError("Ignored mod add path in parms, no second part was specified");
+				LogError("Ignored -worldpath in parms, no second part was specified");
 			} else
 			{
-				AddModPath(p2);
+				m_strWorldsDirPath = p2;
+				
 			}
 		}
-
+	
+		if (CL_String::get_extension(p1) == C_WORLD_INFO_EXTENSION)
+		{
+			AddModPath(p1);
+		}
 
 	}
 
@@ -314,9 +324,17 @@ bool IsOnReadOnlyDisk()
 	return false;
 }
 
-void GameLogic::AddModPath(const string &s)
+void GameLogic::AddModPath(string s)
 {
-	m_modPaths.push_back(m_strWorldsDirPath+ "/"+ StripDangerousFromString(s));
+//	m_modPaths.push_back(m_strWorldsDirPath+ "/"+ StripDangerousFromString(s));
+	
+	if (CL_String::get_extension(s) == C_WORLD_INFO_EXTENSION)
+	{
+		//convert this into the directory path
+		s = s.substr(0, s.size()- (strlen(C_WORLD_INFO_EXTENSION)+1));
+	}
+
+	m_modPaths.push_back(s);
 }
 
 bool GameLogic::Init()
@@ -344,22 +362,42 @@ bool GameLogic::Init()
 	//now mount any mod paths
 	for (unsigned int i=0; i < m_modPaths.size(); i++)
 	{
-		modInfoFile = m_modPaths[i] + "/" + string(C_INFO_TEXT_FILENAME);
+		modInfoFile = m_modPaths[i] + "." + string(C_WORLD_INFO_EXTENSION);
 
 		if (!exist( modInfoFile.c_str()) )
 		{
-			LogError("Unable to locate %s.  Mod is missing perhaps?",  modInfoFile.c_str());
+			//try another way
+			string s = m_strWorldsDirPath + "/" + m_modPaths[i] + "." + string(C_WORLD_INFO_EXTENSION);
+			if (exist(s.c_str()))
+			{
+				//yep, use this
+				modInfoFile = s;
+			} else
+			{
+				//try another way
+				s = "worlds/" + m_modPaths[i] + "." + string(C_WORLD_INFO_EXTENSION);
+				if (exist(s.c_str()))
+				{
+					modInfoFile = s;
+				}
+
+			}
+		}
+
+		if (!exist( modInfoFile.c_str()) )
+		{
+			LogError("Unable to locate %s.  World is missing perhaps?",  modInfoFile.c_str());
 		} else
 		{
-			LogMsg("Mounting mod path %s.", m_modPaths[i].c_str());
+			
+			m_strWorldsDirPath = CL_String::get_path(modInfoFile);
+			m_modPaths[i] = modInfoFile.substr(0, modInfoFile.size()- (strlen(C_WORLD_INFO_EXTENSION)+1));
+			LogMsg("Mounting world path %s.", m_modPaths[i].c_str());
 			g_VFManager.MountDirectoryPath(m_modPaths[i]);
 			m_activeWorldName = CL_String::get_filename(m_modPaths[i]);
 
 		}
-
 	}
-	
-
 	
 	m_worldManager.ScanWorlds(m_strBaseMapPath);
 	m_pPlayer = NULL;

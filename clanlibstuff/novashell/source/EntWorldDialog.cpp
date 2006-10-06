@@ -6,7 +6,7 @@ int g_defaultWorldDialogSelection = 0;
 
 bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string stWorldPath)
 {
-	string fileName = stWorldPath+"/"+"info.txt";
+	string fileName = stWorldPath+"."+string(C_WORLD_INFO_EXTENSION);
 
 	FILE *fp = fopen(fileName.c_str(), "rb");
 	if (!fp) 
@@ -41,7 +41,7 @@ EntWorldDialog::EntWorldDialog(): BaseGameEntity(BaseGameEntity::GetNextValidID(
 	m_slots.connect (CL_Keyboard::sig_key_down(), this, &EntWorldDialog::OnButtonDown);
 
 	SetName("ChooseWorldDialog");
-	ScanDirectoryForModInfo();
+	ScanDirectoriesForModInfo();
 	BuildWorldListBox();
 
 }
@@ -75,15 +75,13 @@ void EntWorldDialog::OnButtonDown(const CL_InputEvent &key)
 	}
 }
 
-void EntWorldDialog::ScanDirectoryForModInfo()
+void EntWorldDialog::ScanDirectoryForModInfo(const string &path)
 {
-
-	m_modInfo.clear();
 
 	//scan map directory for available maps
 	CL_DirectoryScanner scanner;
 
-	scanner.scan(GetGameLogic->GetWorldsDirPath(), "*");
+	scanner.scan(path, "*");
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
@@ -96,16 +94,28 @@ void EntWorldDialog::ScanDirectoryForModInfo()
 					ModInfoItem m;
 
 					m.m_stDirName = scanner.get_name();
-					if (ReadWorldInfoFile(&m, GetGameLogic->GetWorldsDirPath() +"/"+scanner.get_name()))
+					if (ReadWorldInfoFile(&m, path +"/"+scanner.get_name()))
 					{
-//						LogMsg("Found %s", scanner.get_name().c_str());
+						//						LogMsg("Found %s", scanner.get_name().c_str());
 						m_modInfo.push_back(m);
 					}
 				}
 
 		}
 	}
+}
 
+void EntWorldDialog::ScanDirectoriesForModInfo()
+{
+	m_modInfo.clear();
+	
+	ScanDirectoryForModInfo(GetGameLogic->GetWorldsDirPath());
+
+	if (GetGameLogic->GetWorldsDirPath() != "worlds")
+	{
+		//might as well add our local worlds too
+		ScanDirectoryForModInfo("worlds");
+	}
 }
 
 void EntWorldDialog::BuildWorldListBox()

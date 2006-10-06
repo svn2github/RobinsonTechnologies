@@ -57,9 +57,9 @@ bool HashedResourceManager::ScanPathForResources(const string &stPath)
 
 	return true;
 }
+
 bool HashedResourceManager::Init()
 {
-
 	Kill();
 
 	vector<string> vecPaths;
@@ -74,9 +74,6 @@ bool HashedResourceManager::Init()
 			return false;
 		}
 	}
-
-
-
 	return true; //success
 }
 

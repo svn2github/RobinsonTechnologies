@@ -108,7 +108,7 @@ CL_Vector2 GetPointOutsideOfRectFromInside(const CL_Rectf &r, const CL_Vector2 v
 
 	while (r.is_inside( *(CL_Pointf*)&pos))
 	{
-      pos += v*1;
+      pos += v*2;
 	}
 
 	return pos + v * padding;
@@ -117,7 +117,6 @@ CL_Vector2 GetPointOutsideOfRectFromInside(const CL_Rectf &r, const CL_Vector2 v
 
 bool Goal_Approach::UpdatePositionFromEntityID()
 {
-	
 	
 	MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_targetID);
 
@@ -151,12 +150,15 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 	float padding = max(ourRect.get_height(), ourRect.get_width()) + 1;
 
 	//is this a valid point?
-	int tries = 16;
+	int tries = 9;
 	while(tries--)
 	{
 
 		m_vDestination = GetPointOutsideOfRectFromInside(c, vecAngleFromTarget, padding) + pEnt->GetPos();
-		//LogMsg("Trying angle %s", PrintVector(vecAngleFromTarget).c_str());
+	
+		//LogMsg("Trying angle %s at pos %s", PrintVector(vecAngleFromTarget).c_str(), 
+	//		PrintVector(m_vDestination).c_str());
+	
 		if (m_pOwner->IsValidPosition(m_pDestMap, m_vDestination, true))
 		{
 			//cool
@@ -173,9 +175,15 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 		}
 
 		//well, we failed.  Perhaps there is a wall or something here blocking us.  Let's try from another angle.
+		/*
 		C2DMatrix RotationMatrix;
 		RotationMatrix.Rotate(float(PI/5));	
 		RotationMatrix.TransformVector(vecAngleFromTarget);
+		vecAngleFromTarget.unitize();
+		*/
+		CL_Vector2 vPerp = Vector2Perp(vecAngleFromTarget);
+
+		vecAngleFromTarget += vPerp;
 		vecAngleFromTarget.unitize();
 
 		

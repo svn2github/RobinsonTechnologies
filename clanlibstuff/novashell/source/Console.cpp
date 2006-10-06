@@ -67,11 +67,13 @@ void Console::Render()
 	CL_Display::fill_rect(r, CL_Color(10,10,10,100));
 
 	CL_Font *pFont = GetApp()->GetFont(C_FONT_GRAY);
+	
 	if (!pFont)
 	{
 		//serious error, was unable to init a base font
-		throw CL_Error("Serious error, check the log text file");
+		throw CL_Error("Serious error: Font not initialized, check the log text file.  Did your script run GetGameLogic:InitGameGUI?");
 	}
+	
 	ResetFont(pFont);
 
 //cycle through them
@@ -86,7 +88,9 @@ void Console::Render()
 		vector<string> lines = CL_String::tokenize(itor->m_text, "\n", false);
 		for (unsigned int i=0; i < lines.size(); i++)
 		{
+			//DrawWithShadow(posx, posy, lines[i], itor->m_color);
 			pFont->draw(posx, posy, lines[i]);
+			
 			posy -= pFont->get_height();
 		}
 	}
