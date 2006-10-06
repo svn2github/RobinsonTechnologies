@@ -23,7 +23,8 @@ enum
   goal_hunt_target,
   goal_strafe,
   goal_delay,
-  goal_run_script
+  goal_run_script,
+  goal_say
   
 };
 

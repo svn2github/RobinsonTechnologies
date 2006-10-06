@@ -40,10 +40,6 @@ public:
     static void  ResetNextValidID(){m_iNextValidID = 1;}
     int          ID()const{return m_ID;}
     
-    bool         IsTagged()const{return m_bTag;}
-    void         Tag(){m_bTag = true;}
-    void         UnTag(){m_bTag = false;}
-    
     int          GetType()const{return m_iType;}
     void         SetType(int new_type){m_iType = new_type;}
     virtual void SetName(const std::string &name) {m_EntName = name;}

@@ -46,12 +46,29 @@ public:
   void PushMoveToPosition(CL_Vector2 pos);
   void PushAttackTarget();
   void PushRunScriptString(const string &scriptString);
+  void AddRunScriptString(const string &scriptString);
+
+  void AddApproachAndSay(const string &msg, int entToFaceID, int distanceRequired);
+  void PushApproachAndSay(const string &msg, int entToFaceID, int distanceRequired);
+
   void PushDelay(int timeMS);
+  void AddDelay(int timeMS);
+  void PushApproach(int entToFaceID, int distanceRequired);
+  void AddApproach(int entToFaceID, int distanceRequired);
   Goal_Think * PushNewGoal(const string &goalName);
+  Goal_Think * AddNewGoal(const string &goalName);
 
   //this adds the MoveToPosition goal to the *back* of the subgoal list.
-  void QueueMoveToPosition(CL_Vector2 pos);
+  void AddMoveToPosition(CL_Vector2 pos);
   void PushMoveToTag(TagObject *pTag);
+  void AddMoveToTag(TagObject *pTag);
+
+  void AddSay(const string &msg, int entToFaceID);
+  void AddSayByID(const string &msg, int entID, int entToFaceID);
+
+  //the entToFaceID can be an entity ID or a direction (FACING_LEFT, etc) or FACING_NONE to not look anywhere
+  void PushSay(const string &msg, int entToFaceID);
+  void PushSayByID(const string &msg, int entID, int entToFaceID);
 
   //this renders the evaluations (goal scores) at the specified location
   void  RenderEvaluations(int left, int top)const;

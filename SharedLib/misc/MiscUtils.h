@@ -69,6 +69,7 @@ double altfmod(double a, double b);
 
 bool RemoveFile(const std::string &fileName);
 void set_float_with_target(float *p_float, float f_target, float f_friction);
+string GetNextLineFromFile(FILE *fp);
 
 //these must exist somewhere in your project, it's how I like to write my errors
 void LogMsg(const char *lpFormat, ...);
@@ -448,6 +449,22 @@ public:
 		}
 	}
 
+	void process(CL_Rectf &val)
+	{
+		if (m_pInput)
+		{
+			val.left = m_pInput->read_float32();
+			val.top = m_pInput->read_float32();
+			val.right = m_pInput->read_float32();
+			val.bottom = m_pInput->read_float32();
+		} else
+		{
+			m_pOutput->write_float32(val.left);
+			m_pOutput->write_float32(val.top);
+			m_pOutput->write_float32(val.right);
+			m_pOutput->write_float32(val.bottom);
+		}
+	}
 	void process(CL_PixelBuffer *pPix, const CL_PixelFormat &format)
 	{
 		cl_assert(m_pOutput && "This is only for saving, for loading, you need to send another parm");
