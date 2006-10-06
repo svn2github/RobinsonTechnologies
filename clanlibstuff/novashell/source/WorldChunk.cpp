@@ -134,10 +134,14 @@ bool WorldChunk::Serialize(CL_InputSource *pInput)
 	return true;
 }
 
-Screen * WorldChunk::GetScreen()
+Screen * WorldChunk::GetScreen(bool bLoadOnDemand)
 {
 	if (m_pScreen) return m_pScreen;
+	
+	if (!bLoadOnDemand) return NULL; //not loaded yet or doesn't exist
+
 	//no screen exists so we'd better load/init it now
+	
 	m_pScreen = new Screen(this);
 	if (!m_bIsEmpty)
 	{

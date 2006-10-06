@@ -306,7 +306,7 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 
 			pTile->SetLastScanID(scanID);
 			//TODO optimize this rect check.  Maybe precalc its box, or circle in the tile itself
-			if (scanRect.is_overlapped(pTile->GetWorldRectInt()))
+			if (scanRect.is_overlapped(pTile->GetWorldCombinedRectInt()))
 			{
 				if (bWithCollisionOnly)
 				{
@@ -491,7 +491,7 @@ void Screen::AddTile(Tile *pTile)
 	static CL_Rect unionRect;
 	//LogMsg("Adding tile to screen %d", GetParentWorldChunk()->GetScreenID());
 
-	tileRect = pTile->GetWorldRectInt();
+	tileRect = pTile->GetWorldCombinedRectInt();
 	unionRect = tileRect.calc_union(m_pParentWorldChunk->GetRect());
 	if (unionRect == tileRect)
 	{
@@ -502,7 +502,7 @@ void Screen::AddTile(Tile *pTile)
 	//points to this one, the only real instance. When references are deleted, this tile will be updated and vice-versa.
 
 	std::vector <WorldChunk*> wcVector;
-	m_pParentWorldChunk->GetParentWorld()->GetAllWorldChunksWithinThisRect(wcVector, pTile->GetWorldRectInt(), true);
+	m_pParentWorldChunk->GetParentWorld()->GetAllWorldChunksWithinThisRect(wcVector, pTile->GetWorldCombinedRectInt(), true);
 
 
 	//LogMsg("Got %d screens.", wcVector.size());

@@ -35,7 +35,6 @@ void TagManager::RegisterAsWarp(MovingEntity *pEnt, const string &targetName)
 		return;
 	}
 
-
 	if (targetName.empty())
 	{
 		LogMsg("Warp %s has a blank target. Ignoring.  Just so you know.", targetName.c_str());

@@ -84,6 +84,34 @@ const CL_Rectf & Tile::GetWorldColRect()
 	return r;
 }
 
+CL_Rectf CombineRects(const CL_Rectf &a, const CL_Rectf &b)
+{
+	CL_Rectf r;
+	r.left = min(a.left, b.left);
+	r.top = min(a.top, b.top);
+	r.right = max(a.right, b.right);
+	r.bottom = max(a.bottom, b.bottom);
+	return r;
+}
+
+CL_Rectf Tile::GetWorldCombinedRect()
+{
+	if (m_pCollisionData && m_pCollisionData->HasData())
+	return CombineRects(GetWorldColRect(), GetWorldRect());
+
+	return GetWorldRect();
+}
+
+
+
+CL_Rect Tile::GetWorldCombinedRectInt()
+{
+	if (m_pCollisionData && m_pCollisionData->HasData())
+	return CL_Rect(CombineRects(GetWorldColRect(), GetWorldRect()));
+
+	return GetWorldRectInt();
+}
+
 const CL_Rect & Tile::GetBoundsRect()
 {
 	static CL_Rect r(0,0,64,64);

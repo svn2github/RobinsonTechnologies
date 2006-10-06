@@ -325,7 +325,7 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 				{
 					pTile->SetLastScanID(renderID); //helps us not draw something twice, due to ghost references
 
-					if (!pTile->GetWorldRectInt().is_overlapped(viewRect))
+					if (!pTile->GetWorldCombinedRectInt().is_overlapped(viewRect))
 					{
 						tileListItor++;
 						continue;
@@ -539,7 +539,7 @@ void EntWorldCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 }
 
 //break this rect down into chunks to feed into the screens to get tile info
-void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/)
+void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/, bool bAllowLoadOnDemand /* = false*/)
 {
 	
 	
@@ -551,6 +551,7 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
 	static WorldChunk *pWorldChunk;
 	static CL_Rect screenRec;
 	static bool bScanMoreOnTheRight, bScanMoreOnTheBottom;
+	Screen *pScreen;
 
 	startingX = rec.left;
 
@@ -584,7 +585,9 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
 			bScanMoreOnTheBottom = false;
 		}
 	
-		pWorldChunk->GetScreen()->GetTilesByRect(scanRec, pTileList, layerIDVect, scanID, bWithCollisionOnly);
+		pScreen = pWorldChunk->GetScreen(bAllowLoadOnDemand);
+
+		if (pScreen) pScreen->GetTilesByRect(scanRec, pTileList, layerIDVect, scanID, bWithCollisionOnly);
 
 		//do we have more to scan on our right after this?
 

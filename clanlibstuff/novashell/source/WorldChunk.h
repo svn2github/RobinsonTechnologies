@@ -40,7 +40,7 @@ public:
 	CL_PixelBuffer * GetThumbnail() {return m_pThumb;}
 	ScreenID GetScreenID() {return m_intArray[e_intScreenID];}
 	void SetScreenID(ScreenID screenID);
-	Screen * GetScreen();
+	Screen * GetScreen( bool bLoadOnDemand = true);
 	bool IsScreenLoaded() {return m_pScreen != NULL;}
 	bool IsEmpty(); //if true, this map is totally empty, no need to load/save it
 	void UnloadScreen();

@@ -74,14 +74,14 @@ void NavGraphManager::AddNeighborLinks(Tile *pTile)
 	}
 
 
-	float range = GetNodeMaxLinkDistance();
+	float halfRange = GetNodeMaxLinkDistance()/2;
 
-	CL_Rect recArea(CL_Point(pos.x-range, pos.y-range), CL_Size(range*2, range*2));
+	CL_Rect recArea(CL_Point(pos.x-halfRange, pos.y-halfRange), CL_Size(halfRange*2, halfRange*2));
 
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	m_pWorld->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList());
+	m_pWorld->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList(), false, false);
 
 	GraphNode* pN;
 	int nodeID;
@@ -100,6 +100,7 @@ void NavGraphManager::AddNeighborLinks(Tile *pTile)
 
 		if (nodeID != invalid_node_index)
 		{
+			//LogMsg("Node %d found node %d to test against", pTile->GetGraphNodeID(), nodeID );
 			pN = &m_pNavGraph->GetNode(nodeID);
 			ExamineNodesForLinking(pTile, (*itor));
 		}
@@ -114,8 +115,8 @@ void NavGraphManager::AddTileNode(Tile *pTile)
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
 		MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
-		//aready centered
-		LogMsg("Adding ent %s (entID %d)", pEnt->GetName().c_str(),pEnt->ID() );
+		//already centered
+		//LogMsg("Adding ent %s (entID %d)", pEnt->GetName().c_str(),pEnt->ID() );
 		m_pNavGraph->AddNode(GraphNode(pTile->GetGraphNodeID(), pTile->GetPos(), pEnt->GetNavNodeType(), pEnt->ID()) );
 
 	} else
@@ -155,7 +156,6 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 			if (pN->GetEntID() != -1)
 			{
 				DrawWithShadow(a.x-40, a.y-29,  "Type: " + CL_String::from_int(pN->GetType())+ " Parent: "+ CL_String::from_int(pN->GetEntID()));
-
 			}
 
 			//gdi->TextColor(200,200,200);

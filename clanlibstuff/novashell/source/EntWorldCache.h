@@ -43,7 +43,7 @@ public:
 	void SetDrawCollision(bool bNew) {m_bDrawCollisionData = bNew;}
 	bool GetDrawCollision() {return m_bDrawCollisionData;}
 	void SetWorld(World *pWorld);
-	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect, bool bWithCollisionOnly = false);
+	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect, bool bWithCollisionOnly = false, bool bAllowLoadOnDemand = true);
 	void CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail);
 	void RenderViewList(CL_GraphicContext *pGC);
 	void RemoveTileFromList(Tile *pTile);

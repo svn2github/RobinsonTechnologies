@@ -558,6 +558,7 @@ void EntEditor::OnDumpWorldNavStatistics()
 void EntEditor::OnRebuildNavigationMaps()
 {
 	g_worldNavManager.LinkEverything();
+	
 }
 
 

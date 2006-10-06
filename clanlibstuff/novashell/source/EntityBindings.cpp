@@ -130,6 +130,7 @@ void luabindEntity(lua_State *pState)
 			.def("SetVisibilityNotifications", &MovingEntity::SetVisibilityNotifications)
 
 			.def("HasLineOfSightToPosition", &MovingEntity::CanWalkTo)
+			.def("GetVectorToEntity", &MovingEntity::GetVectorToEntity)
 			.def("GetVectorToEntityByID", &MovingEntity::GetVectorToEntityByID)
 			.def("GetVectorToPosition", &MovingEntity::GetVectorToPosition)
 			.def("IsOnSameMapAsEntityByID", &MovingEntity::IsOnSameMapAsEntityByID)

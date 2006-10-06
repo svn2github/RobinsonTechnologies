@@ -53,6 +53,8 @@ public:
 	CL_Rect GetWorldRectInt();
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, m_vecPos.x+64,m_vecPos.y+64);}
 	const CL_Rectf & GetWorldColRect();
+	CL_Rectf GetWorldCombinedRect(); //returns the collision and image rect combined
+	CL_Rect GetWorldCombinedRectInt(); //returns the collision and image rect combined
 
 	Tile * CreateReference(Screen *pScreen);
 	void RemoveReference(Tile *pTileRef);

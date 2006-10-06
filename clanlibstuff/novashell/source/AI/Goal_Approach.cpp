@@ -151,29 +151,34 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 	float padding = max(ourRect.get_height(), ourRect.get_width()) + 1;
 
 	//is this a valid point?
-
-	int tries = 8;
+	int tries = 16;
 	while(tries--)
 	{
 
 		m_vDestination = GetPointOutsideOfRectFromInside(c, vecAngleFromTarget, padding) + pEnt->GetPos();
+		//LogMsg("Trying angle %s", PrintVector(vecAngleFromTarget).c_str());
 		if (m_pOwner->IsValidPosition(m_pDestMap, m_vDestination, true))
 		{
 			//cool
 			break;
 		}
 
-		//well, we failed.  Perhaps there is a wall or something here blocking us.  Let's try from another angle.
-		C2DMatrix RotationMatrix;
-		RotationMatrix.Rotate(float(PI/4));	
-		RotationMatrix.TransformVector(vecAngleFromTarget);
-
 		if (!tries)
 		{
 			//give up
-			LogMsg("Approach: Failed to find acceptable position to go to, everything blocked?");
+			LogMsg("Approach: Ent %d (%s) Failed to find acceptable position close to entity %d (%s), everything blocked?  Let's just skip this.",
+				m_pOwner->ID(), m_pOwner->GetName().c_str(), pEnt->ID(), pEnt->GetName().c_str());
+			m_iStatus = failed;
 			return false;
 		}
+
+		//well, we failed.  Perhaps there is a wall or something here blocking us.  Let's try from another angle.
+		C2DMatrix RotationMatrix;
+		RotationMatrix.Rotate(float(PI/5));	
+		RotationMatrix.TransformVector(vecAngleFromTarget);
+		vecAngleFromTarget.unitize();
+
+		
 	}
 
 	m_locationUpdateTimer = GetApp()->GetGameTick()+C_MAX_UPDATE_SPEED_MS;
@@ -186,7 +191,7 @@ bool Goal_Approach::CloseEnoughAndFacingTheRightWay()
 	float padding = 10;
 	if (m_pDestMap != m_pOwner->GetMap()) return false;
 
-	if (m_pOwner->GetDistanceFromPosition(m_vDestination) > m_distanceRequired+padding)
+	if (!m_bWaitingForTurn && m_pOwner->GetDistanceFromPosition(m_vDestination) > m_distanceRequired+padding)
 	{
 		//not close enough yet
 		return false;
@@ -218,20 +223,25 @@ int Goal_Approach::Process()
 {
 	
 	//we should probably check if we're close enough and facing the right way
-	if (CloseEnoughAndFacingTheRightWay())
+	if (m_iStatus == active)
 	{
-		//we're done
-		m_iStatus = completed;
-		return m_iStatus;
-	} else
-	{
-		if (m_iStatus == failed)
+		if (CloseEnoughAndFacingTheRightWay())
+		{
+			//we're done
+			m_iStatus = completed;
 			return m_iStatus;
+		}
+			
 	}
 
+	if (m_iStatus == failed)
+		return m_iStatus;
 
 	//if status is inactive, call Activate()
 	ActivateIfInactive();
+
+	if (m_iStatus == failed)
+		return m_iStatus;
 
 	if (m_bWaitingForTurn) 
 	{
