@@ -34,7 +34,8 @@ private:
 
 	void OnButtonDown(const CL_InputEvent &key);
 	void BuildWorldListBox();
-	void ScanDirectoryForModInfo();
+	void ScanDirectoryForModInfo(const string &path);
+	void ScanDirectoriesForModInfo();
 	void OnClickLoad();
 	void OnSelected(int selItem);
 	void ChangeSelection(int offset);

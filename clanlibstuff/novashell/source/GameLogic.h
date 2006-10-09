@@ -24,6 +24,8 @@ class EntEditor;
 class MessageManager;
 class CL_VirtualFileManager;
 
+#define C_WORLD_INFO_EXTENSION "novashell"
+
 class GameLogic
 {
 
@@ -86,7 +88,7 @@ public:
 	  bool GetShowAI() {return m_bShowAI;}
 	  void SetShowAI(bool bNew) {m_bShowAI = bNew;}
 	  void ClearModPaths() {m_modPaths.clear();}
-	  void AddModPath(const string &s);
+	  void AddModPath(string s);
 	  const string & GetWorldsDirPath() {return m_strWorldsDirPath;}
 	  const string & GetActiveWorldName();
 	  void InitGameGUI(string xmlFile); //don't make this const, we modify it in place

@@ -1597,9 +1597,12 @@ void MovingEntity::Update(float step)
 
 if (GetGameLogic->GetGamePaused()) return;
 
+
 	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 
 	ClearColorMods();
+
+	RunPostInitIfNeeded();
 
 	UpdateTriggers(step);
 
