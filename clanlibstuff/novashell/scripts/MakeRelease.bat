@@ -1,6 +1,8 @@
 REM ** Make sure american code page is used, otherwise the %DATE environmental var might be wrong
 CHCP 437
 
+call DeleteGarbageFiles.bat
+
 cd ..
 set d_fname=novashell_test.zip
 
@@ -18,6 +20,7 @@ REM upx.exe %C_TARGET_EXE%
 
 REM Make sure the file compiled ok
 if not exist %C_TARGET_EXE% beeper.exe /p
+
 
 REM ************* CHECKING FOR THE EXISTANCE OF WZZIP.EXE ON THE PATH, GIVE ERROR IF NOT FOUND *********
 rem set error level to 0
@@ -48,6 +51,7 @@ goto done
 REM **************************
 
 if exist %d_fname% del %d_fname%
+
 wzzip %d_fname% bin -rp -x*.sup -x*.ilk -x*.zip -x*_debug.exe -x*.exp *.lib -xlog.txt -x@Scripts\RetailBuildExcludeList.txt -x*.sfk -x*.sfap0 -xdink.dat -xmap.dat
 
 set C_FILENAME=%d_fname%

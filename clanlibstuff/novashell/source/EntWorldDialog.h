@@ -39,6 +39,7 @@ private:
 	void OnClickLoad();
 	void OnSelected(int selItem);
 	void ChangeSelection(int offset);
+	bool WorldAlreadyInList(const ModInfoItem &m);
 
 	CL_Window *m_pWindow;
 	CL_ListBox *m_pListWorld; //control which worlds are drawn

@@ -216,6 +216,7 @@ public:
   void ProcessPendingMoveAndDeletionOperations();
   World * GetMap();
   void RunPostInitIfNeeded();
+  void RunOnMapInsertIfNeeded();
   void CheckVisibilityNotifications(unsigned int notificationID);
   bool GetVisibilityNotifications() {return m_bRequestsVisibilityNotifications;}
   void SetVisibilityNotifications(bool bNew) {m_bRequestsVisibilityNotifications = bNew;}
@@ -323,8 +324,11 @@ protected:
 	PathPlanner * m_pPathPlanner;
 	string m_runScriptASAP; //empty if not being used, only used for the RunScript Goal
 	int m_navNodeType; //only used if this entity has a pathnode, allows special markings for the graph, like doors or warps
-	bool m_bHasRunOnInit;
-	bool m_bHasRunPostInit;
+
+	bool m_bHasRunOnInit; //run before inserted in map
+	bool m_bHasRunPostInit; //run during map insertion, for handling warps mostly
+	bool m_bHasRunOnMapInsert; //run in the entities think phase, never during a large map load
+
 	unsigned int m_lastVisibilityNotificationID;
 	bool m_bRequestsVisibilityNotifications;
 	bool m_bOnScreen;

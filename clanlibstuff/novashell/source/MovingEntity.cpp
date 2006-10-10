@@ -271,6 +271,7 @@ void MovingEntity::SetDefaults()
 	m_trigger.Reset();
 	m_bHasRunOnInit = false;
 	m_bHasRunPostInit = false;
+	m_bHasRunOnMapInsert = false;
 	m_bRequestsVisibilityNotifications = false;
 	m_lastVisibilityNotificationID = 0;
 	m_bOnScreen = false;
@@ -751,6 +752,21 @@ void MovingEntity::RunPostInitIfNeeded()
 		}
 
 		m_bHasRunPostInit = true;
+	}
+}
+
+void MovingEntity::RunOnMapInsertIfNeeded()
+{
+	if (!m_bHasRunOnMapInsert)
+	{
+
+		if (m_pScriptObject)
+		{
+			if (m_pScriptObject->FunctionExists("OnMapInsert"))
+				m_pScriptObject->RunFunction("OnMapInsert");
+		}
+
+		m_bHasRunOnMapInsert = true;
 	}
 }
 

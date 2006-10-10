@@ -75,6 +75,19 @@ void EntWorldDialog::OnButtonDown(const CL_InputEvent &key)
 	}
 }
 
+bool EntWorldDialog::WorldAlreadyInList(const ModInfoItem &m)
+{
+	for (unsigned int i=0; i < m_modInfo.size(); i++)
+	{
+		if (m_modInfo[i].m_stDisplayName == m.m_stDisplayName)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void EntWorldDialog::ScanDirectoryForModInfo(const string &path)
 {
 
@@ -90,15 +103,20 @@ void EntWorldDialog::ScanDirectoryForModInfo(const string &path)
 			if (scanner.get_name()[0] != '_')
 				if (scanner.get_name()[0] != '.')
 				{
-					//no underscore at the start, is this a world?
-					ModInfoItem m;
+				
+						//no underscore at the start, is this a world?
+						ModInfoItem m;
 
-					m.m_stDirName = scanner.get_name();
-					if (ReadWorldInfoFile(&m, path +"/"+scanner.get_name()))
-					{
-						//						LogMsg("Found %s", scanner.get_name().c_str());
-						m_modInfo.push_back(m);
-					}
+						m.m_stDirName = scanner.get_name();
+						if (ReadWorldInfoFile(&m, path +"/"+scanner.get_name()))
+						{
+							//						LogMsg("Found %s", scanner.get_name().c_str());
+				
+							if (!WorldAlreadyInList(m))
+							{
+								m_modInfo.push_back(m);
+							}
+						}
 				}
 
 		}
