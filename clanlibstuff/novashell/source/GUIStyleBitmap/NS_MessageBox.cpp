@@ -31,8 +31,8 @@ NS_MessageBox::NS_MessageBox(CL_Component * parent,
 {
     font = new CL_Font("font_dialog", get_style_manager()->get_resources());
 
-    int width = 400;
-    int height = 50 + 40 + font->get_height(text, CL_Size(width - 15, 0));
+    int width = min(500, this->get_root_parent()->get_width()-50);
+    int height = 50 + 40 + font->get_height(text, CL_Size(width - 30, 0));
 
     // Calc dialog position
     set_position(CL_Rect(
@@ -182,6 +182,5 @@ void NS_MessageBox::on_end_paint()
     rect.left   += 30;
     rect.right  -= 30;
     rect.top    += 50;
-    rect.bottom -= 40;
     font->draw(rect, text);
 }

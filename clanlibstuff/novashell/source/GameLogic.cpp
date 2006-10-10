@@ -909,7 +909,6 @@ void ShowMessage(string title, string msg)
 	CL_MessageBox message(title, msg, "Ok", "", "", pStyle);
 	
 	//we're showing this
-	GetGameLogic->SetShowMessageActive(true); //so it knows not to send mouse clicks to the engine while
 	message.run();
 	GetGameLogic->SetShowMessageActive(false);
 }

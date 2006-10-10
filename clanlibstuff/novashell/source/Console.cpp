@@ -53,7 +53,7 @@ void Console::AddError(const string line)
 {
 	ConsoleItem item;
 	item.m_text = line;
-	item.m_color = CL_Color(255,50,50,255);
+	item.m_color = CL_Color(255,150,150,255);
 	AddGeneric(item);
   
 	SetOnScreen(true);
@@ -64,7 +64,7 @@ void Console::Render()
 	if (!m_bOnScreen) return;
 	//figure out overall size
 	CL_Rect r(0,GetScreenY/6, GetScreenX, GetScreenY);
-	CL_Display::fill_rect(r, CL_Color(10,10,10,100));
+	CL_Display::fill_rect(r, CL_Color(0,0,0,140));
 
 	CL_Font *pFont = GetApp()->GetFont(C_FONT_GRAY);
 	
