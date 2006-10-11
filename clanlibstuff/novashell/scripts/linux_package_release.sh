@@ -5,13 +5,15 @@ packedfilename=novashell_test.tar.gz
 echo "Packing final release... $packedfilename"
 
 cd ..
-mkdir dist
 cd bin
 rm log.txt
-
 cd ..
-rm -f 
-tar cvfz $packedfilename bin
+
+unlink $packedfilenames
+
+cd bin
+tar cvfz ../$packedfilename novashell worlds base
+cd ..
 
 if [ -f $packedfilename ] 
 then
