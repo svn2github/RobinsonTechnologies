@@ -304,7 +304,7 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Edit/(Ctrl-V or right mouse button to paste selection)");
 	pItem->enable(false);
 
-	pItem = m_pMenu->create_item("Utilities/Get image (puts in copy buffer)");
+	pItem = m_pMenu->create_item("Utilities/Import new image");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::BuildBaseTilePageBox);
 
 	pItem = m_pMenu->create_item("Utilities/Get default Entity (puts in copy buffer)");
@@ -370,6 +370,7 @@ void EntEditMode::Init()
 	offset.y += m_pCheckBoxSnap->get_height();
 	GetSettingsFromWorld();
 	UpdateMenuStatus();
+	SnapSizeChanged(); //handle graying it out if needed
 }
 
 void EntEditMode::OnSnapSizeChanged(const string &st)

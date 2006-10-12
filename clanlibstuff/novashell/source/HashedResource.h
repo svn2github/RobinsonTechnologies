@@ -29,6 +29,8 @@ public:
 	string GetCollisionDataFileName();
 	CollisionData * GetCollisionDataByRect(const CL_Rect &rectSource);
 	CL_Surface * GetImage();
+	bool HasColorKey() {return m_bColorKeyActive;}
+	void SetHasColorKey(bool bActive, CL_Color col);
 
 	string m_strFilename; //good to remember the original filename
 
@@ -36,12 +38,14 @@ private:
 
 	CollisionDataMap m_collisionMap;
 	CL_Surface *m_pImage;
-	bool m_bNeedsToSave;
+	bool m_bColorKeyActive;
+	unsigned int m_colorKey;
 
 	enum
 	{
 		//chunk descriptions
 		C_HASHED_RESOURCE_COLLISION_CHUNK = 0,
+		C_HASHED_RESOURCE_COLORKEY_CHUNK = 1,
 		C_HASHED_RESOURCE_END_OF_CHUNKS
 	};
 };

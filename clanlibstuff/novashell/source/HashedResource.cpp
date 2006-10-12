@@ -7,6 +7,8 @@
 HashedResource::HashedResource()
 {
 	m_pImage = NULL;
+	m_bColorKeyActive = false;
+	m_colorKey = CL_Color::white.color;
 }
 
 CollisionData * HashedResource::GetCollisionDataByRect(const CL_Rect &rectSource)
@@ -106,6 +108,14 @@ bool HashedResource::LoadDefaults()
 					*GetCollisionDataByRect(col.GetRect()) = col;
 				}
 				break;
+
+			case C_HASHED_RESOURCE_COLORKEY_CHUNK:
+				//load it from the file
+				{
+					helper.process(m_colorKey);
+					m_bColorKeyActive = true;
+				}
+				break;
 				
 			default:
 				assert(!"Unknown chunk type");
@@ -163,6 +173,8 @@ void HashedResource::SaveDefaults()
 
 	}
  
+	if (m_bColorKeyActive) bNeedsToSave = true;
+
 	if (!bNeedsToSave) return;
 		
 	//we know there is data, so let's save it out, if it's been modified
@@ -188,6 +200,15 @@ void HashedResource::SaveDefaults()
 			}
 		}
 	}
+	
+
+	if (m_bColorKeyActive)
+	{
+		helper.process_const(C_HASHED_RESOURCE_COLORKEY_CHUNK);
+		helper.process(m_colorKey);
+	}
+
+	
 	//save end of data header
 	helper.process_const(C_HASHED_RESOURCE_END_OF_CHUNKS);
 
@@ -226,13 +247,32 @@ CL_Surface * HashedResource::GetImage()
 	}
 	return m_pImage;
 }
+
+void HashedResource::SetHasColorKey(bool bActive, CL_Color col)
+{
+	m_bColorKeyActive = bActive;
+	m_colorKey = col.color;
+	SaveDefaults();
+	Init(); //reinit things
+
+}
+
 bool HashedResource::Init()
 {
 	Kill();
 	assert(m_strFilename.size() > 0 && "Set the filename first");
 
 	SAFE_DELETE(m_pImage);
-	m_pImage = new CL_Surface(m_strFilename);
+	
+	CL_PixelBuffer p = CL_ProviderFactory::load(m_strFilename);
+	//use this method gives us a chance to twiddle with the bits a bit
+	if (m_bColorKeyActive)
+	{
+		p.set_colorkey(true, m_colorKey);
+	}
+
+	
+	m_pImage = new CL_Surface(p);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
