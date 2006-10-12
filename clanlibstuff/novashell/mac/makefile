@@ -17,7 +17,7 @@
 # Customizable variables
 ################################################################################
 
-NAME=novashell_test
+NAME=novashell
 VERSION=0.1
 
 SOURCE_DIR=dist
