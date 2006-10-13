@@ -26,5 +26,5 @@ rm ./novashell.dmg
 echo Creating dmg
 make
 echo Done
-sh ../scripts/linux_upload.sh novashell_test.dmg
+sh ../scripts/linux_upload.sh novashell.dmg
 cd ../scripts

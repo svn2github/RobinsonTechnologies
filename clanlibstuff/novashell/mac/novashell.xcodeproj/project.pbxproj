@@ -353,6 +353,15 @@
 		5DCDB2750A19FEAA0043DCFA /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BE0A15832C005974C1 /* print.c */; };
 		5DCDB2810A19FEAA0043DCFA /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */; };
 		5DCDB2820A19FEAA0043DCFA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F80A19FA810043DCFA /* OpenGL.framework */; };
+		5DDCBAE90ADEF4490035F5DE /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1688970ADE1DDB00E516B8 /* ClanApp.framework */; };
+		5DDCBAEA0ADEF4490035F5DE /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1688980ADE1DDB00E516B8 /* ClanCore.framework */; };
+		5DDCBAEB0ADEF4490035F5DE /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D1688990ADE1DDB00E516B8 /* ClanDisplay.framework */; };
+		5DDCBAEC0ADEF4490035F5DE /* ClanGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D16889A0ADE1DDB00E516B8 /* ClanGL.framework */; };
+		5DDCBAED0ADEF4490035F5DE /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D16889B0ADE1DDB00E516B8 /* ClanGUI.framework */; };
+		5DDCBAEE0ADEF4490035F5DE /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D16889C0ADE1DDB00E516B8 /* ClanGUIStyleSilver.framework */; };
+		5DDCBAEF0ADEF4490035F5DE /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D16889D0ADE1DDB00E516B8 /* ClanLib.framework */; };
+		5DDCBAF00ADEF4490035F5DE /* ClanSound.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D16889E0ADE1DDB00E516B8 /* ClanSound.framework */; };
+		5DDCBAF10ADEF4490035F5DE /* ClanVorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D16889F0ADE1DDB00E516B8 /* ClanVorbis.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -375,6 +384,15 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				5DDCBAE90ADEF4490035F5DE /* ClanApp.framework in CopyFiles */,
+				5DDCBAEA0ADEF4490035F5DE /* ClanCore.framework in CopyFiles */,
+				5DDCBAEB0ADEF4490035F5DE /* ClanDisplay.framework in CopyFiles */,
+				5DDCBAEC0ADEF4490035F5DE /* ClanGL.framework in CopyFiles */,
+				5DDCBAED0ADEF4490035F5DE /* ClanGUI.framework in CopyFiles */,
+				5DDCBAEE0ADEF4490035F5DE /* ClanGUIStyleSilver.framework in CopyFiles */,
+				5DDCBAEF0ADEF4490035F5DE /* ClanLib.framework in CopyFiles */,
+				5DDCBAF00ADEF4490035F5DE /* ClanSound.framework in CopyFiles */,
+				5DDCBAF10ADEF4490035F5DE /* ClanVorbis.framework in CopyFiles */,
 				5DCC34CE0A1C86D200886F30 /* libjpeg.framework in CopyFiles */,
 				5DCC34CF0A1C86D200886F30 /* libpng.framework in CopyFiles */,
 				5DCC34D00A1C86D200886F30 /* Ogg.framework in CopyFiles */,
