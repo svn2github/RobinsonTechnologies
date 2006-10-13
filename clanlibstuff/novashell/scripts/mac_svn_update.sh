@@ -10,7 +10,7 @@ Pause()
 }
 
 echo Updating Clanlib from SVN
-#cd ~/dev/ClanLib-0.8
+cd ~/dev/ClanLib-0.8
 #svn update
 
 echo Building clanlib...
