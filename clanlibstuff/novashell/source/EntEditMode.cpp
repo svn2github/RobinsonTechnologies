@@ -304,10 +304,10 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Edit/(Ctrl-V or right mouse button to paste selection)");
 	pItem->enable(false);
 
-	pItem = m_pMenu->create_item("Utilities/Import new image");
+	pItem = m_pMenu->create_item("Utilities/Import Image(s)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::BuildBaseTilePageBox);
 
-	pItem = m_pMenu->create_item("Utilities/Get default Entity (puts in copy buffer)");
+	pItem = m_pMenu->create_item("Utilities/Import Blank Entity (puts in copy buffer)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::BuildDefaultEntity);
 
 	
@@ -515,19 +515,28 @@ void EntEditMode::BuildBaseTilePageBox()
 {
 	SAFE_DELETE(m_pListBaseTile);
 	SAFE_DELETE(m_pWindowBaseTile);
+	int textAreaHeight = 50;
+
 
 	int width = 230;
-	int height =  (GetHashedResourceManager->GetHashedResourceMap()->size()*12) +40;
-	if (height > 500) height = 500;
+	int height =  (GetHashedResourceManager->GetHashedResourceMap()->size()*12) +40 + textAreaHeight;
+	height = min(height, GetScreenY-100);
 
-	CL_Rect rectSize = CL_Rect(GetScreenX-width, C_EDITOR_MAIN_MENU_BAR_HEIGHT, 0, 0);
+	CL_Rect rectSize = CL_Rect(GetScreenX/2, C_EDITOR_MAIN_MENU_BAR_HEIGHT, 0, 0);
 	rectSize.set_size(CL_Size(width,height));
 
-	m_pWindowBaseTile = new CL_Window(rectSize, "Will use snap settings to split into buff" , CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
+	m_pWindowBaseTile = new CL_Window(rectSize, "Import Image" , CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
 	m_pWindowBaseTile->set_event_passing(false);
+
+	CL_Label *pLabel = new CL_Label(CL_Point(5,5), 
+"Left click on a filename to put it in the\n" \
+"copy buffer.  Then right click on the map\n"\
+"to paste it.",
+		m_pWindowBaseTile->get_client_area());
 
 	CL_Rect r = m_pWindowBaseTile->get_children_rect();
 	r.set_size(r.get_size() - CL_Size(5,28));
+	r.top = textAreaHeight;
 	m_pListBaseTile = new CL_ListBox(r, m_pWindowBaseTile->get_client_area());
 
 	//add all maps

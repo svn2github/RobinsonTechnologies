@@ -434,7 +434,32 @@ void App::OnKeyUp(const CL_InputEvent &key)
         
     }
 
+#ifdef __APPLE__
+
+		if(CL_Keyboard::get_keycode(CL_KEY_COMMAND))
+		{
+			//system message?  We should really process these somewhere else
+			switch (key.id)
+			{
+
+			case  CL_KEY_F:
+				ToggleWindowedMode();
+				break;
+
+			case CL_KEY_Q:
+				OnWindowClose();
+
+				break;
+
+			}
+			return;
+
+		}
+
+
+   #endif
 }
+
 
 void App::ClearTimingAfterLongPause()
 {
