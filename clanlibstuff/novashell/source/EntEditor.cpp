@@ -10,6 +10,10 @@
 #include "Console.h"
 #include "AI/WorldNavManager.h"
 
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
    m_bDialogOpen = false;
@@ -421,7 +425,6 @@ void EntEditor::OnRestart()
 
 void OpenScriptForEditing(string scriptName)
 {
-#ifdef WIN32
 	string file = scriptName;
 
 	if (!exist(file.c_str()))
@@ -439,9 +442,13 @@ void OpenScriptForEditing(string scriptName)
 		g_VFManager.LocateFile(file);
 		
 	}
+
+#ifdef WIN32
 	open_file(GetApp()->GetHWND(), file.c_str());
+#elif __APPLE__
+	LSOpenCFURLRef(CFURLCreateWithString(NULL, CFSTR(file.c_str()), NULL), NULL);
 #else
-	LogError("Only implemented in windows.  Please complain to Seth!");
+	LogError("Not implemented in linux yet.  Please complain to Seth!");
 #endif
 
 
@@ -633,7 +640,7 @@ if (GetGameLogic->GetUserProfileName().empty())
 	pItem = m_pMenu->create_item("Utilities/Rebuild World Navigation Cache");
 	m_slot.connect(pItem->sig_clicked(), this, &EntEditor::OnRebuildNavigationMaps);
 
-	pItem = m_pMenu->create_item("Display/Video Options/Toggle Fullscreen (Alt+Enter)");
+	pItem = m_pMenu->create_item("Display/Video Options/Toggle Fullscreen (Alt+Enter, Command+F)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleFullScreen);
 
 	pItem = m_pMenu->create_toggle_item("Display/Video Options/Toggle Lock At Refresh Rate");
@@ -641,7 +648,7 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_pMenuLockAtRefreshCheckbox->set_selected(GetApp()->GetRefreshType() == App::FPS_AT_REFRESH);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleLockAtRefresh);
 
-	pItem = m_pMenu->create_toggle_item("Display/Video Options/Toggle FPS Display (Ctrl-F)");
+	pItem = m_pMenu->create_toggle_item("Display/Video Options/Toggle FPS Display (Ctrl+F)");
 	m_pMenuShowFPSCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuShowFPSCheckbox->set_selected(GetGameLogic->GetShowFPS());
 	m_slot.connect(pItem->sig_clicked(),GetGameLogic, &GameLogic::ToggleShowFPS);
@@ -666,7 +673,7 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_pMenuParallaxCheckbox->set_selected(GetGameLogic->GetParallaxActive());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleParallax);
 
-	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Processing (Ctrl-S)");
+	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Processing (Ctrl+S)");
 	m_pMenuShowEntityCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuShowEntityCollisionCheckbox->set_selected(GetGameLogic->GetShowEntityCollisionData());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowEntityCollision);
