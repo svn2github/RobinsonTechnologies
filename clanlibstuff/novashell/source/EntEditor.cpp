@@ -443,10 +443,44 @@ void OpenScriptForEditing(string scriptName)
 		
 	}
 
+	LogMsg("Launching %s...", file.c_str());
+
 #ifdef WIN32
 	open_file(GetApp()->GetHWND(), file.c_str());
 #elif __APPLE__
-	LSOpenCFURLRef(CFURLCreateWithString(NULL, CFSTR(file.c_str()), NULL), NULL);
+	FSRef theRef;
+	int err = FSPathMakeRef((StringPtr)file.c_str(), &theRef, NULL);
+	if (err)
+	{
+		LogError("FSPathMakRef reported error an error converting the path.");
+		return;
+	}
+	
+	int ret = LSOpenFSRef(&theRef, NULL);
+	if (ret == 0)
+			{
+				LogError("Unable to open %s.  Invalid path maybe??", file.c_str());
+			}
+	
+	FSRef application;
+	LSGetApplicationForItem( &theRef, kLSRolesAll, &application, NULL);
+
+	if (ret != noErr)
+	{
+		ret = 	LSGetApplicationForInfo( 'TEXT', kLSUnknownCreator, CFSTR("txt"), kLSRolesAll, &application, NULL);
+	}
+	
+	if (ret == noErr)
+	{
+		LSLaunchFSRefSpec launchSpec = { &application, 1, &theRef, NULL, kLSLaunchAndDisplayErrors | kLSLaunchDontAddToRecents | kLSLaunchAsync, NULL};
+		ret = LSOpenFromRefSpec( &launchSpec, NULL);
+	}
+
+	if (ret != noErr)
+	{
+		LogError("Unable to open editor associated with .lua or .txt files");
+	}
+
 #else
 	LogError("Not implemented in linux yet.  Please complain to Seth!");
 #endif
