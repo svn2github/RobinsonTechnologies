@@ -193,6 +193,8 @@ void TileEditOperation::AddWorldCoordToBoundsByTile(Tile *pTile)
 
 void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int operation, const vector<unsigned int> &layerIDVec)
 {
+	if (!GetWorldCache) return;
+
 	Tile *pTile = NULL;
 	bool bPerformDupeCheck = false;
 	if (!IsEmpty()) bPerformDupeCheck = true;
@@ -220,6 +222,8 @@ void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int opera
 
 void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec)
 {
+	
+	if (!GetWorldCache) return;
 	Tile *pTile = NULL;
 
 	bool bPerformDupeCheck = false;

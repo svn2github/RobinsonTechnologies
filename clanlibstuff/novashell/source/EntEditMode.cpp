@@ -477,6 +477,11 @@ void EntEditMode::SnapSizeChanged()
 	}
 
 	m_snapSize = GetWorld->GetDefaultTileSize();
+
+	if (m_pListBaseTile)
+	{
+		OnSelectBaseTilePage();
+	}
 }
 
 void EntEditMode::SnapCheckBoxedClicked()
@@ -501,6 +506,62 @@ void EntEditMode::Kill()
 	SAFE_DELETE(m_pWindow);
 }
 
+void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned int resourceID)
+{
+	HashedResource*pRes = GetHashedResourceManager->GetResourceClassByHashedID(resourceID);
+	CL_Color col = pRes->GetColorKey();
+	m_bDialogIsOpen = true;
+	// Creating InputDialog
+	string stTitle(CL_String::format("%1 Properties", fileName));
+
+	CL_Rect dialogRect = CL_Rect(0,0,300,120);
+	CL_Point dialogPos = CL_Point((GetScreenX/2)-dialogRect.get_width()/2, 310);
+	CL_Window *pWindow = new CL_Window(dialogRect+dialogPos, stTitle, GetApp()->GetGUI());
+	pWindow->set_event_passing(false);
+
+	CL_Point pos = CL_Point(5, 5);
+	CL_CheckBox &cbColorKey = *new CL_CheckBox(pos, "Uses colorkey (transparent color) ", pWindow->get_client_area());
+	cbColorKey.set_checked(pRes->HasColorKey());
+	CL_SlotContainer slots;
+
+	pos.y +=20;
+	CL_Label &colorLabel = *new CL_Label(pos+ CL_Point(30,0), "RGB value of colorkey: ",pWindow->get_client_area());
+
+	CL_Rect inputRect(colorLabel.get_position().right+6, colorLabel.get_position().top,0,0);
+	//now figure the height and depth
+	inputRect.right = inputRect.left + 130;
+	inputRect.bottom = inputRect.top + 16;
+
+	CL_InputBox *pColorInput = new CL_InputBox(inputRect, ColorToString(pRes->GetColorKey()), pWindow->get_client_area());
+
+	pos.y += 40;
+	pos.x += 120;
+	CL_Button *pButtonOk = new CL_Button (CL_Rect(pos.x, pos.y, pos.x + 50, pos.y + 16), "Ok", pWindow->get_client_area());
+	
+	slots.connect(pButtonOk->sig_clicked(), (CL_Component*)pWindow, &CL_Component::quit);
+
+	// Connecting signals, to allow only numbers
+	//slots.connect(pScrollX->sig_validate_character(), this, &EntEditor::validator_numbers);
+	
+	// Run dialog
+	pWindow->run();
+	m_bDialogIsOpen = false;
+	pRes->SetHasColorKey(cbColorKey.is_checked(), StringToColor(pColorInput->get_text()));
+
+	delete pButtonOk;
+	delete pColorInput;
+	delete pWindow;
+
+}
+
+void EntEditMode::OnSelectBaseTileDoubleClick(const CL_InputEvent &input)
+{
+	int index = m_pListBaseTile->get_item(input.mouse_pos);
+	if (index == -1) return;
+
+	PopUpImagePropertiesDialog(m_pListBaseTile->get_current_text(), FileNameToID(m_pListBaseTile->get_current_text().c_str()));
+}
+
 void EntEditMode::OnSelectBaseTilePage()
 {
 	int resourceID = FileNameToID(m_pListBaseTile->get_current_text().c_str());
@@ -515,14 +576,14 @@ void EntEditMode::BuildBaseTilePageBox()
 {
 	SAFE_DELETE(m_pListBaseTile);
 	SAFE_DELETE(m_pWindowBaseTile);
-	int textAreaHeight = 50;
+	int textAreaHeight = 130;
 
 
 	int width = 230;
 	int height =  (GetHashedResourceManager->GetHashedResourceMap()->size()*12) +40 + textAreaHeight;
 	height = min(height, GetScreenY-100);
 
-	CL_Rect rectSize = CL_Rect(GetScreenX/2, C_EDITOR_MAIN_MENU_BAR_HEIGHT, 0, 0);
+	CL_Rect rectSize = CL_Rect((GetScreenX/2) -20, C_EDITOR_MAIN_MENU_BAR_HEIGHT, 0, 0);
 	rectSize.set_size(CL_Size(width,height));
 
 	m_pWindowBaseTile = new CL_Window(rectSize, "Import Image" , CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
@@ -531,7 +592,11 @@ void EntEditMode::BuildBaseTilePageBox()
 	CL_Label *pLabel = new CL_Label(CL_Point(5,5), 
 "Left click on a filename to put it in the\n" \
 "copy buffer.  Then right click on the map\n"\
-"to paste it.",
+"to paste it."\
+"\n\nIf GRID-SNAP is on, the image will be\n"\
+"be split up when pasted.\n\n"\
+"Double-click an image to change its global\n"\
+"properties.",
 		m_pWindowBaseTile->get_client_area());
 
 	CL_Rect r = m_pWindowBaseTile->get_children_rect();
@@ -551,6 +616,8 @@ void EntEditMode::BuildBaseTilePageBox()
 	}
 
 	m_slotSelectedBaseTilePage = m_pListBaseTile->sig_selection_changed().connect(this, &EntEditMode::OnSelectBaseTilePage);
+	m_slots.connect( m_pListBaseTile->sig_mouse_dblclk(), this, &EntEditMode::OnSelectBaseTileDoubleClick);
+
 }
 
 //helps us know when it's a bad time to process hotkeys
@@ -674,6 +741,12 @@ void EntEditMode::OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld)
 	if (editOperation.IsEmpty()) return;
 	TileEditOperation undo;
 	editOperation.PasteToWorld(vecWorld, TileEditOperation::PASTE_UPPER_LEFT, &undo);
+	
+	//change selection to what we just pasted
+	
+	m_selectedTileList = editOperation;
+	m_selectedTileList.ApplyOffset(vecWorld-m_selectedTileList.GetUpperLeftPos());
+	
 	AddToUndo(&undo);
 }
 
@@ -1244,7 +1317,21 @@ void DrawSelectedTileBorder(Tile *pTile, CL_GraphicContext *pGC)
 	CL_Vector2 vecStart(worldRect.left, worldRect.top);
 	CL_Vector2 vecStop(worldRect.right, worldRect.bottom);
 	
+	vecStop.x++;
+	vecStop.y++;
+	vecStart.x++;
+	vecStart.y++;
+
+	DrawRectFromWorldCoordinates(vecStart, vecStop, CL_Color(50,50,50,180), pGC);
+
+	vecStop.x--;
+	vecStop.y--;
+	vecStart.x--;
+	vecStart.y--;
 	DrawRectFromWorldCoordinates(vecStart, vecStop, CL_Color(255,255,255,180), pGC);
+
+	
+
 }
 
 void EntEditMode::OnPropertiesOK()
@@ -1333,31 +1420,6 @@ void EntEditMode::OnPropertiesRemoveData()
 		}
 	}
 }
-
-/*
-bool SetDialogTabIdByButtonName(CL_InputDialog &dlg, string buttonName, int tabID)
-{
-	//run through the children components
-	
-	std::list<CL_Component*>::const_iterator itor = dlg.get_children().begin();
-
-	while (itor != dlg.get_children().end())
-	{
-		 CL_Component * pComp = (*itor);
-
-		 if (pComp->get_tab_id() == -1)
-		 {
-			 //uh, do extra validation to make sure it's the ok button later...
-			 pComp->set_tab_id(tabID);
-			 return true;
-		 }
-		 
-		itor++;
-	}
-	
-	return false; //couldn't find it
-}
-*/
 
 void CreateEditDataDialog(DataObject &o)
 {

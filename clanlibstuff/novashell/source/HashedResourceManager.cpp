@@ -129,6 +129,19 @@ CL_Surface * HashedResourceManager::GetResourceByHashedID(unsigned int resourceI
 	return (*itor).second->GetImage();
 }
 
+HashedResource * HashedResourceManager::GetResourceClassByHashedID(unsigned int resourceID)
+{
+	HashedResourceMap::iterator itor = m_hashedResourceMap.find(resourceID);
+
+	if (itor == m_hashedResourceMap.end()) 
+	{
+		ShowResourceNotFoundError(resourceID);
+		return NULL;
+	}
+
+	return (*itor).second;
+}
+
 
 void HashedResourceManager::PutSubGraphicIntoTileBuffer(TilePic *pTile, TileEditOperation &op, CL_Rect srcRect)
 {
@@ -198,9 +211,12 @@ void HashedResourceManager::PutGraphicIntoTileBuffer(int resourceID, TileEditOpe
 		{
 			pTilePic = new TilePic();
 			pTilePic->m_rectSrc = CL_Rect(x,y,x+sizeGrid.width,y+sizeGrid.height);
+			pTilePic->m_rectSrc.right = min(pTilePic->m_rectSrc.right, pPic->get_width());
+			pTilePic->m_rectSrc.bottom = min(pTilePic->m_rectSrc.bottom, pPic->get_height());
+			
 			pTilePic->m_resourceID = resourceID;
 			pTilePic->SetLayer(C_LAYER_ENTITY);
-			pTilePic->SetPos(CL_Vector2(pTilePic->m_rectSrc.left,pTilePic->m_rectSrc.bottom));
+			pTilePic->SetPos(CL_Vector2(pTilePic->m_rectSrc.left,pTilePic->m_rectSrc.top));
 			op.AddTileToSelection(TileEditOperation::C_OPERATION_ADD, false, pTilePic);
 			
 		}

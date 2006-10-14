@@ -23,7 +23,6 @@ public:
 
 	bool Init(); //load the image and whatnot
 	void Kill();
-	bool HasCollisionData(); //slow check
 	void SaveDefaults();
 	bool LoadDefaults();
 	string GetCollisionDataFileName();
@@ -31,15 +30,20 @@ public:
 	CL_Surface * GetImage();
 	bool HasColorKey() {return m_bColorKeyActive;}
 	void SetHasColorKey(bool bActive, CL_Color col);
+	CL_Color GetColorKey() {assert(sizeof(CL_Color) == 4); return *(CL_Color*)&m_colorKey;}
 
 	string m_strFilename; //good to remember the original filename
 
 private:
 
+	bool LoadImage();
+	bool HasDataToSave(); //slow check
+
 	CollisionDataMap m_collisionMap;
 	CL_Surface *m_pImage;
 	bool m_bColorKeyActive;
 	unsigned int m_colorKey;
+	bool m_bSaveRequested;
 
 	enum
 	{

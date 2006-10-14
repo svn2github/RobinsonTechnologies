@@ -72,6 +72,9 @@ protected:
 	void OnDeleteBadTiles();
 	void OnEditVisualProfile();
 
+	void PopUpImagePropertiesDialog(const string &fileName, unsigned int resourceID);
+	void OnSelectBaseTileDoubleClick(const CL_InputEvent &input);
+	
 	CL_Slot m_slotClose;
 	
 	CL_SlotContainer m_slots;

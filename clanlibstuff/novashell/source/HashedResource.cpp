@@ -9,6 +9,7 @@ HashedResource::HashedResource()
 	m_pImage = NULL;
 	m_bColorKeyActive = false;
 	m_colorKey = CL_Color::white.color;
+	m_bSaveRequested = false;
 }
 
 CollisionData * HashedResource::GetCollisionDataByRect(const CL_Rect &rectSource)
@@ -50,7 +51,7 @@ CollisionData * HashedResource::GetCollisionDataByRect(const CL_Rect &rectSource
 	return pColData;
 }
 
-bool HashedResource::HasCollisionData()
+bool HashedResource::HasDataToSave()
 {
 	CollisionDataMap::iterator ent = m_collisionMap.begin();
 	std::vector<CollisionData*> *pColVec;
@@ -67,6 +68,8 @@ bool HashedResource::HasCollisionData()
 			}
 		}
 	}
+
+	if (m_bColorKeyActive) return true;
 
 	return false;		
 }
@@ -143,14 +146,14 @@ void HashedResource::SaveDefaults()
 	if (!m_pImage) return;
 	string fName = GetCollisionDataFileName();
 
-	if (!HasCollisionData())
+	if (!HasDataToSave())
 	{
 		//instead of saving, we should destroy ourselves..
 		RemoveFile(fName);
 		return;
 	}
 
-	bool bNeedsToSave = false;
+	bool bNeedsToSave = m_bSaveRequested;
 
 	//walk through everything we have and ask them to tell us if they need saving
 
@@ -158,24 +161,28 @@ void HashedResource::SaveDefaults()
 	std::vector<CollisionData*> *pColVec;
 	unsigned int i;
 
-	for (ent = m_collisionMap.begin(); ent != m_collisionMap.end(); ++ent)
-	{
-		pColVec = &ent->second;
 	
-		for (i=0; i < pColVec->size(); i++)
+	if (!bNeedsToSave)
+	{
+
+		for (ent = m_collisionMap.begin(); ent != m_collisionMap.end(); ++ent)
 		{
-			if (pColVec->at(i)->HasData() && pColVec->at(i)->GetDataChanged())
+			pColVec = &ent->second;
+		
+			for (i=0; i < pColVec->size(); i++)
 			{
-				bNeedsToSave = true;
-				break;
+				if (pColVec->at(i)->HasData() && pColVec->at(i)->GetDataChanged())
+				{
+					bNeedsToSave = true;
+					break;
+				}
 			}
+
 		}
-
-	}
- 
-	if (m_bColorKeyActive) bNeedsToSave = true;
-
+	
 	if (!bNeedsToSave) return;
+	}
+
 		
 	//we know there is data, so let's save it out, if it's been modified
 
@@ -222,6 +229,7 @@ HashedResource::~HashedResource()
 
 void HashedResource::Kill()
 {
+	m_bSaveRequested = false;
 	CollisionDataMap::iterator ent = m_collisionMap.begin();
 	unsigned int i;
 	for (ent; ent != m_collisionMap.end(); ++ent)
@@ -250,20 +258,21 @@ CL_Surface * HashedResource::GetImage()
 
 void HashedResource::SetHasColorKey(bool bActive, CL_Color col)
 {
-	m_bColorKeyActive = bActive;
-	m_colorKey = col.color;
-	SaveDefaults();
-	Init(); //reinit things
+	if (bActive != m_bColorKeyActive || col.color != m_colorKey)
+	{
+		m_bSaveRequested = true;
+		m_bColorKeyActive = bActive;
+		m_colorKey = col.color;
+		SaveDefaults();
+		LoadImage(); //reinit things
+	}
 
 }
 
-bool HashedResource::Init()
+bool HashedResource::LoadImage()
 {
-	Kill();
-	assert(m_strFilename.size() > 0 && "Set the filename first");
-
 	SAFE_DELETE(m_pImage);
-	
+
 	CL_PixelBuffer p = CL_ProviderFactory::load(m_strFilename);
 	//use this method gives us a chance to twiddle with the bits a bit
 	if (m_bColorKeyActive)
@@ -271,12 +280,27 @@ bool HashedResource::Init()
 		p.set_colorkey(true, m_colorKey);
 	}
 
-	
 	m_pImage = new CL_Surface(p);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+	return m_pImage != NULL;
+}
 
-	if (!m_pImage) return false;
+bool HashedResource::Init()
+{
+	Kill();
+	assert(m_strFilename.size() > 0 && "Set the filename first");
+
+	if (!LoadImage()) return false;	
 	LoadDefaults(); //if applicable
+	
+	if (m_bColorKeyActive)
+	{	
+		//OPTIMIZEL: load image again, this time it will know to substute the colorkey.  This is a waste of time, but
+		//we need to know the image dimensions (which can change) before loading the col data with the current
+		//setup.
+
+		LoadImage();
+	}
 	return true;
 }

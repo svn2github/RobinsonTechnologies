@@ -266,6 +266,7 @@ void EntChoiceDialog::CalculateSize()
 
 void EntChoiceDialog::ChangeSelection(int offset)
 {
+	if (m_pListWorld->get_count() == 0) return; //not ready for this yet
 	int selected = m_pListWorld->get_current_item();
 	selected = altmod(selected + offset, m_pListWorld->get_count());
 	m_pListWorld->set_current_item(selected);

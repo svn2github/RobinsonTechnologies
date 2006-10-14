@@ -34,6 +34,7 @@ public:
 	void Kill(); //clear the cache entirely
 
 	HashedResourceMap * GetHashedResourceMap() {return &m_hashedResourceMap;}
+	HashedResource * GetResourceClassByHashedID(unsigned int resourceID);
 	void PutGraphicIntoTileBuffer(int resourceID, TileEditOperation &op, int gridSizeInPixels);
 	void PutSubGraphicIntoTileBuffer(TilePic *pTile, TileEditOperation &op, CL_Rect srcRect);
 	void PrintStatistics();
