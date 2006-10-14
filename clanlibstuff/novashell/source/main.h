@@ -127,6 +127,7 @@ public:
 	void SetRenderedGameGUI(bool bNew) {m_bRenderedGameGUI = bNew;}
 
 	void SetFont(int fontID, CL_Font *pFont) {m_pFonts[fontID] = pFont;} //we'll delete it ourselves later
+	bool GetRequestedQuit() {return m_bQuit;}
 
 private:
     

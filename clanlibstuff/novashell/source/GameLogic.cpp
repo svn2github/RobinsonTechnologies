@@ -786,9 +786,9 @@ void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
 
 		if (bDrawMainGUIToo)
 		{
-
-			GetApp()->GetGUI()->show(); //this will trigger our OnRender() which happens right before
+			GetApp()->GetGUI()->show(); //this will trigger its OnRender() which happens right before
 		}
+
 		if (GetShowFPS()) 
 		{
 			ResetFont(GetApp()->GetFont(C_FONT_NORMAL));
@@ -821,7 +821,17 @@ void GameLogic::Render()
 
 	RenderGameGUI(false);
 	GetApp()->SetRenderedGameGUI(false);
-	
+
+	if (GetApp()->GetGUI()->get_modal_component())
+	{
+		//need to jump start so it renders every frame
+		GetApp()->GetGUI()->update();
+
+		if (GetApp()->GetRequestedQuit())
+		{
+			GetApp()->GetGUI()->get_modal_component()->close();
+		}
+	}
 }
 
 //generally, this means a script sent us a text message through the message scheduler. 
