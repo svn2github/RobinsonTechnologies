@@ -28,6 +28,7 @@ class EntWorldDialog: public BaseGameEntity
 public:
 	EntWorldDialog();
 	virtual ~EntWorldDialog();
+	virtual void HandleMessageString(const std::string &msg);
 
 
 private:

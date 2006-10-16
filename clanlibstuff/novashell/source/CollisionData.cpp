@@ -288,19 +288,20 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 
 	line_list *pLineList = colOut.GetLineList();
 	line_list::iterator itor = pLineList->begin();
-//	int needsFlip;
 	CL_Vector2 vecTemp;
 	
     //modify it in place
 
 	while (itor != pLineList->end())
 	{
-		//modify each vert on each line
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+	
+		itor->RemoveOffsets();
 
 		for (unsigned int i=0; i < itor->GetPointList()->size(); i++)
 		{
-			
-		//	itor->RemoveOffsets();
+
 			CL_Vector2 *p = &itor->GetPointList()->at(i);
 
 
@@ -315,36 +316,38 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 				p->y = -p->y;
 			}
 
-			//itor->CalculateOffsets();
-			/*
-			needsFlip = 0;
-				//do each vert
+
+		}
+		itor->CalculateOffsets();
+	} else
+	{
+	
+		itor->RemoveOffsets();
+
+		//modify each vert on each line
+		CL_Rectf bounds = itor->GetRect();
+
+		for (unsigned int i=0; i < itor->GetPointList()->size(); i++)
+		{
+			
+			CL_Vector2 *p = &itor->GetPointList()->at(i);
+
+
+			//do each vert
 			if (pTile->GetBit(Tile::e_flippedX))
 			{
-				pWall->m_vA.x = pTile->GetBoundsSize().x - pWall->m_vA.x;
-				pWall->m_vB.x = pTile->GetBoundsSize().x - pWall->m_vB.x;
-				needsFlip++;
+				p->x = bounds.right -p->x;
 			}
 
 			if (pTile->GetBit(Tile::e_flippedY))
 			{
-				pWall->m_vA.y = pTile->GetBoundsSize().y - pWall->m_vA.y;
-				pWall->m_vB.y = pTile->GetBoundsSize().y - pWall->m_vB.y;
-				needsFlip++;
+				p->y = bounds.bottom-p->y;
 			}
 
-			if (needsFlip == 1)
-			{
-				//flip the normals
-				vecTemp = pWall->m_vA;
-				pWall->m_vA = pWall->m_vB;
-				pWall->m_vB = vecTemp;
-
-			} 
-
-			pWall->CalculateNormal();
-			*/
+			
 		}
+		itor->CalculateOffsets();
+	}
 
 		itor++;
 	}

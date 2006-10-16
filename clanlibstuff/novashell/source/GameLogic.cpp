@@ -56,6 +56,7 @@ GameLogic::GameLogic()
 	m_strBaseMapPath = C_BASE_MAP_PATH+ string("/");
 	m_strScriptRootDir = "script";
 
+	m_bRebuildCacheData = false;
 	m_strWorldsDirPath = "worlds";
 
 	CL_Directory::create(m_strBaseUserProfilePath);
@@ -102,6 +103,11 @@ GameLogic::GameLogic()
 
 }
 
+void GameLogic::RequestRebuildCacheData()
+{
+	SetRestartEngineFlag(true);
+	m_bRebuildCacheData = true;
+}
 
 GameLogic::~GameLogic()
 {
@@ -424,16 +430,26 @@ bool GameLogic::Init()
 	//bind app specific functions at the global level
 	RegisterLuabindBindings(GetScriptManager->GetMainState());
 	
-
 	if (! RunGlobalScriptFromTopMountedDir("system/startup.lua"))
 	{
 		LogError("Unable to locate script file system/startup.lua");
 		return false;
 	}
 	
-	//link up navigation maps
-	//g_worldNavManager.LinkEverything();
 
+	if (m_bRebuildCacheData)
+	{
+		m_bRebuildCacheData = false;
+
+		//load all maps
+
+		m_worldManager.PreloadAllMaps();
+
+		//then rebuild node data
+		g_worldNavManager.LinkEverything();
+	}
+
+	
 	if (! RunGlobalScriptFromTopMountedDir("game_start.lua"))
 	{
 		LogError("Unable to locate script file game_start.lua");
@@ -750,6 +766,52 @@ void GameLogic::InitGameGUI(string xmlFile)
 
 }
 
+void ClearCacheDataFromWorldPath(string worldPath)
+{
+	//first kill it's main navgraph file
+	RemoveFile(worldPath+"/"+string(C_WORLD_NAV_FILENAME));
+	
+	//next scan each map path and remove cached data
+
+	//scan map directory for available maps
+	CL_DirectoryScanner scanner;
+
+	scanner.scan(worldPath+"/"+string(C_BASE_MAP_PATH), "*");
+	while (scanner.next())
+	{
+		std::string file = scanner.get_name();
+		if (scanner.is_directory())
+		{
+			if (scanner.get_name()[0] != '_')
+				if (scanner.get_name()[0] != '.')
+				{
+					//no underscore at the start, let's show it
+					RemoveFile(worldPath+"/"+string(C_BASE_MAP_PATH)+"/"+scanner.get_name()+"/"+string(C_TAGCACHE_FILENAME));
+				}
+
+		}
+	}
+
+	
+}
+
+void GameLogic::DeleteAllCacheFiles()
+{
+
+		LogMsg("Deleting all tagcache files..");
+		vector<string> vecPaths;
+		g_VFManager.GetMountedDirectories(&vecPaths);
+
+		vector<string>::reverse_iterator itor = vecPaths.rbegin();
+
+		for (;itor != vecPaths.rend(); itor++)
+		{
+			ClearCacheDataFromWorldPath(*itor);
+		}
+
+	
+}
+
 void GameLogic::Update(float step)
 {
 	if (m_bRestartEngineFlag)
@@ -758,6 +820,14 @@ void GameLogic::Update(float step)
 		LogMsg("Restarting engine...");
 		g_Console.SetOnScreen(false);
 		Kill();
+		
+		if (m_bRebuildCacheData)
+		{
+			DeleteAllCacheFiles();
+
+		}
+		
+		
 		Init();
 	}
 	
@@ -829,7 +899,7 @@ void GameLogic::Render()
 
 		if (GetApp()->GetRequestedQuit())
 		{
-			GetApp()->GetGUI()->get_modal_component()->close();
+			GetApp()->GetGUI()->get_modal_component()->quit();
 		}
 	}
 }

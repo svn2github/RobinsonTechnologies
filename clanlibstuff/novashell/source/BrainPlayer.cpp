@@ -482,10 +482,15 @@ void BrainPlayer::CheckForAttack()
 	{
 		if (m_attackTimer.IntervalReached())
 		{
+			if (m_pParent->GetScriptObject()->FunctionExists("OnAttack"))
+			{
+
+			
 			try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), 
 				"OnAttack", m_pParent);
-			} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAttack with playerbrain");
+			} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAttack with BrainPlayer");
 			m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
+			}
 		}
 
 	}

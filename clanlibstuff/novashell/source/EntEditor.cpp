@@ -241,6 +241,7 @@ void EntEditor::MapOptionsDialog()
 	CL_InputBox *pThumb = dlg.add_input_box("Auto Thumbnail Size: (0 for none):", CL_String::from_int(GetWorld->GetThumbnailWidth()));
 	CL_InputBox *pBGColor = dlg.add_input_box("BG Color: (in the format of r g b a)", ColorToString(GetWorld->GetBGColor()));
 	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", CL_String::from_float(GetWorld->GetGravity()));
+	CL_InputBox *pZoom = dlg.add_input_box("Current Camera Zoom (1 1 for normal):", VectorToString(&GetCamera->GetScale()));
 	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (changes saved for each player profile)", GetWorld->GetPersistent(), 270);
 	CL_CheckBox *pAutoSave = dlg.add_check_box("Auto Save (if false, must use File->Save)", GetWorld->GetAutoSave(), 200);
 
@@ -253,6 +254,7 @@ void EntEditor::MapOptionsDialog()
 	slots.connect(pBGColor->sig_validate_character(), this, &EntEditor::validator_numbers);
 	slots.connect(pGravity->sig_validate_character(), this, &EntEditor::validator_numbers);
 
+	slots.connect(pZoom->sig_validate_character(), this, &EntEditor::validator_numbers);
 	// Run dialog
 	dlg.run();
 	m_bDialogOpen = false;
@@ -317,6 +319,7 @@ void EntEditor::MapOptionsDialog()
 		GetWorld->SetGravity(CL_String::to_float(pGravity->get_text()));
 		GetWorld->SetPersistent(pPersistent->is_checked());
 		GetWorld->SetAutoSave(pAutoSave->is_checked());
+		GetCamera->SetScale(StringToVector(pZoom->get_text()));
 
 		if (requireClear)
 		{
@@ -599,7 +602,10 @@ void EntEditor::OnDumpWorldNavStatistics()
 
 void EntEditor::OnRebuildNavigationMaps()
 {
-	g_worldNavManager.LinkEverything();
+	
+	if (!ConfirmMessage("Rebuild tag/world navigation cache data", "This may clear up any weird data problems from the result of a crash or merging maps.\n\nMake sure the world is loaded that you would like this applied to.\n\nThis may take a long time, are you sure?")) return;
+
+	GetGameLogic->RequestRebuildCacheData();
 	
 }
 

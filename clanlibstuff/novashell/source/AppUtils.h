@@ -37,6 +37,7 @@ void DrawLineWithArrow(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &co
 CL_Vector2 Vector2Perp(const CL_Vector2 &v);
 void CenterComponentOnScreen(CL_Component *pComp);
 void DrawWithShadow(int x, int y, const string &msg, CL_Color col = CL_Color(255,255,30));
+void DrawBullsEyeWorld(CL_Vector2 vecPos, CL_Color col, int size, CL_GraphicContext *pGC);
 
 typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
 

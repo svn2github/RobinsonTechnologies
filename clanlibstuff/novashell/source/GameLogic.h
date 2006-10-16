@@ -95,6 +95,7 @@ public:
 
 	  CL_StyleManager_Bitmap * GetGUIStyle() {return m_pGUIStyle;}
 	  CL_GUIManager * GetGameGUI() {return m_pGUIManager;}
+	  void RequestRebuildCacheData();
 	  
 	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
 	  //But its reliance on this var should be as minimum as possible.
@@ -118,6 +119,7 @@ private:
     void OnKeyDown(const CL_InputEvent &key);
 	void OnKeyUp(const CL_InputEvent &key);
 	void RenderGameGUI(bool bDrawMainGUIToo);   
+	void DeleteAllCacheFiles();
 
 	MyEntityManager m_myEntityManager;
     CL_SlotContainer m_slots;
@@ -147,6 +149,7 @@ private:
 	vector<string> m_modPaths; //mount order is important
 	string m_activeWorldName;
 	string m_strWorldsDirPath;
+	bool m_bRebuildCacheData;
 
 	CL_ResourceManager * m_pGUIResources;
 	CL_StyleManager_Bitmap * m_pGUIStyle;

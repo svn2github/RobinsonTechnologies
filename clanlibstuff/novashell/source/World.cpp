@@ -240,7 +240,8 @@ void World::Init(CL_Rect worldRect)
 		SetThumbnailWidth(C_DEFAULT_THUMBNAIL_WIDTH);
 		SetThumbnailHeight(C_DEFAULT_THUMBNAIL_HEIGHT);
 		SetBGColor(CL_Color(0,0,100));
-		SetGravity(0.08f);
+//		SetGravity(0.08f);
+		SetGravity(0);
 	}
 
 	m_worldRect = worldRect;

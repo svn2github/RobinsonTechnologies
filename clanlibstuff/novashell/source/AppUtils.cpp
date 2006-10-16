@@ -9,6 +9,18 @@ CL_Vector2 Vector2Perp(const CL_Vector2 &v)
 	return CL_Vector2(-v.y, v.x);
 }
 
+
+void DrawBullsEyeWorld(CL_Vector2 vecPos, CL_Color col, int size, CL_GraphicContext *pGC)
+{
+
+	CL_Vector2 pos = GetWorldCache->WorldToScreen(vecPos);
+
+	int halfSize = size/2;
+
+	pGC->draw_line(pos.x-halfSize, pos.y, pos.x+halfSize, pos.y, col);
+	pGC->draw_line(pos.x, pos.y-halfSize, pos.x, pos.y+halfSize, col);
+}
+
 void DrawWithShadow(int x, int y, const string &msg, CL_Color col)
 {
 	GetApp()->GetFont(C_FONT_GRAY)->set_color(CL_Color(0,0,0));

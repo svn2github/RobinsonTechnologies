@@ -23,6 +23,7 @@ public:
 
 	bool Init(MovingEntity *pEnt);
 	void OnEditorClosed(int entID);
+	virtual void Render(void *pTarget);
 
 protected:
 	

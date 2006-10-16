@@ -41,7 +41,7 @@ protected:
 	void OnDelete();
 	void OnCopy();
 	void OnCut();
-	void OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld);
+	void OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld, bool bSelectPasted = false);
 	void OnUndo();
 	void AddToUndo(TileEditOperation *pTileOperation);
 	void UpdateMenuStatus();

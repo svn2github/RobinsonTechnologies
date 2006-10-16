@@ -25,19 +25,11 @@ void TagManager::Kill()
 void TagManager::RegisterAsWarp(MovingEntity *pEnt, const string &targetName)
 {
 
-	if (targetName.empty()) return; //can't register a blank
-	
 	TagObject * pTag = GetFromHash(pEnt->GetNameHash());
 	if (!pTag)
 	{
-		LogError("Unable to locate entity %s to register as warp object to %s.  Note:  It must be a NAMED entity.",
-			pEnt->GetName().c_str(), targetName.c_str());
-		return;
-	}
-
-	if (targetName.empty())
-	{
-		LogMsg("Warp %s has a blank target. Ignoring.  Just so you know.", targetName.c_str());
+		LogError("Unable to locate entity %s to register as a warp object. It must be a named entity to use RegisterAsWarp.",
+			pEnt->GetName().c_str());
 		return;
 	}
 

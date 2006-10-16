@@ -161,10 +161,14 @@ void BrainTopPlayer::CheckForAttack()
 	{
 		if (m_attackTimer.IntervalReached())
 		{
-			try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), 
+			if (m_pParent->GetScriptObject()->FunctionExists("OnAttack"))
+			{
+
+				try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), 
 				"OnAttack", m_pParent);
-			} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAttack with playerbrain");
+			} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAttack with BrainTopPlayer");
 			m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
+			}
 		}
 	}
 }
@@ -188,8 +192,8 @@ void BrainTopPlayer::CheckForWarp()
 	
 		if (pZone)
 		{
-			//don't let them keep warping by holding down the key
-			//Let's warp dude!
+			//Let's warp?  Do a more accurate check
+
 			MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(pZone->m_entityID);
 			if (pEnt)
 			{	

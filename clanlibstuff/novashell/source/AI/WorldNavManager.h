@@ -15,6 +15,9 @@
 #include "GraphEdgeTypes.h"
 #include "GraphNodeTypes.h"
 
+#define C_WORLD_NAV_FILENAME "maps/world_nav_cache.dat"
+
+
 class World;
 class TagObject;
 class MovingEntity;

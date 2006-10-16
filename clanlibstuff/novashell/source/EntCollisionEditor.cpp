@@ -128,16 +128,21 @@ void EntCollisionEditor::AddCreateVert(CL_Vector2 vecPos)
 		localPos.y = max(localPos.y, m_rectArea.top);
 		localPos.y = min(localPos.y, m_rectArea.bottom);
 
+		
 	}
 
-	if (m_rectArea.is_inside(CL_Pointf(localPos.x, localPos.y)))
+	/*
+	if (!m_rectArea.is_inside(CL_Pointf(localPos.x, localPos.y)))
 	{
-		//it's a click in a valid position
-		if (m_pActiveLine)
-		{
-			//line is available to add this plot point to
-			m_pActiveLine->GetPointList()->push_back(localPos);
-		}
+
+	}
+	*/
+
+	//it's a click in a valid position
+	if (m_pActiveLine)
+	{
+		//line is available to add this plot point to
+		m_pActiveLine->GetPointList()->push_back(localPos);
 	}
 
 }
@@ -301,6 +306,7 @@ void EntCollisionEditor::OnOk()
 	
 	if (m_recalculateOffsetsWhenDone)
 	m_pCollisionData->RecalculateOffsets();
+
 	m_pCollisionData->SetDataChanged(true);
 
 	LogMsg("Final collision edit data:");
@@ -457,6 +463,16 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 
 }
 
+void EntCollisionEditor::SetSnap(bool bOn)
+{
+	m_pCheckBoxSnap->set_checked(bOn);
+}
+
+void EntCollisionEditor::SetClip(bool bOn)
+{
+	m_pCheckBoxClipToImage->set_checked(bOn);
+}
+
 void EntCollisionEditor::SetClippedDefaultBasedOnLine()
 {
 	m_pCheckBoxClipToImage ->set_checked(true);
@@ -514,6 +530,8 @@ void EntCollisionEditor::SetupLineForEdit(int line)
 void EntCollisionEditor::Render(void *pTarget)
 {
 	CL_GraphicContext *pGC = (CL_GraphicContext*) pTarget;
+	DrawBullsEyeWorld(m_pos, CL_Color(255,255,0,200), 10, pGC);
+
 	CL_Color col(255,0,0,255);
 	RenderVectorCollisionData(m_pos, m_col, pGC, true, &col, NULL);
 }
@@ -521,6 +539,8 @@ void EntCollisionEditor::Render(void *pTarget)
 void EntCollisionEditor::Update(float step)
 {
 }
+
+
 
 void EntCollisionEditor::OnPrevLine()
 {

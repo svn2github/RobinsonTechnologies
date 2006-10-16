@@ -20,6 +20,9 @@ class PathPlanner;
 #define C_ENT_TILE_RECT_KEY "_TileRect" //custom data that goes along with the tile ID
 #define C_ENT_DENSITY_KEY "_Density" //custom data to override density
 
+
+#define C_ENT_ROTATE_KEY "_CanRotate" //custom data to override density
+
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
@@ -106,7 +109,7 @@ public:
   bool GetEnableRotation();
   unsigned int GetDrawID() {return m_drawID;}
   float GetMass() {return m_body.GetMass();}
-  void SetMass(float mass){m_body.SetMass(0);}
+  void SetMass(float mass){m_body.SetMass(mass);}
   
   void SetDensity(float fDensity);
   void PostUpdate(float step);
@@ -221,6 +224,8 @@ public:
   bool GetVisibilityNotifications() {return m_bRequestsVisibilityNotifications;}
   void SetVisibilityNotifications(bool bNew) {m_bRequestsVisibilityNotifications = bNew;}
   void OnWatchListTimeout(bool bIsOnScreen);
+  int PlaySoundPositioned(const string &fName);
+  int PlaySound(const string &fName);
 
   enum ListenCollision
 {
@@ -332,6 +337,7 @@ protected:
 	unsigned int m_lastVisibilityNotificationID;
 	bool m_bRequestsVisibilityNotifications;
 	bool m_bOnScreen;
+	bool m_bCanRotate;
 
 };
 

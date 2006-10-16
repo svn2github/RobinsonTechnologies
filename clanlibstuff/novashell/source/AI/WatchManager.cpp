@@ -77,7 +77,7 @@ void WatchManager::Update(float step, unsigned int drawID)
 
 		if (itor->m_watchTimer < gameTick)
 		{
-			LogMsg("Removing %s from watch list", pEnt->GetName().c_str());
+			//LogMsg("Removing %s from watch list", pEnt->GetName().c_str());
 			itor = m_watchList.erase(itor);
 
 			//now, it's just going to instantly run the "OnLoseVisible" again if we don't do something..

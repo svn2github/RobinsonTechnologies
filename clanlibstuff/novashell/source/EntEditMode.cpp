@@ -734,7 +734,7 @@ void EntEditMode::OnCopy()
 	g_EntEditModeCopyBuffer = m_selectedTileList;
 }
 
-void EntEditMode::OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld)
+void EntEditMode::OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld, bool bSelectPasted )
 {
    //OPTIMIZE can avoid a copy operation of the undo buffer
 
@@ -744,8 +744,11 @@ void EntEditMode::OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld)
 	
 	//change selection to what we just pasted
 	
-	m_selectedTileList = editOperation;
-	m_selectedTileList.ApplyOffset(vecWorld-m_selectedTileList.GetUpperLeftPos());
+	if (bSelectPasted )
+	{
+		m_selectedTileList = editOperation;
+		m_selectedTileList.ApplyOffset(vecWorld-m_selectedTileList.GetUpperLeftPos());
+	}
 	
 	AddToUndo(&undo);
 }
@@ -814,7 +817,8 @@ void EntEditMode::CutSubTile(CL_Rect recCut)
 	//guess at the most suitable one
 	tile_list::iterator itor = tList.begin();
 	Tile *pTile = *tList.begin(); //default
-	
+	LayerManager &layerMan = GetWorld->GetLayerManager();
+
 	while (itor != tList.end())
 	{
 		
@@ -824,17 +828,35 @@ void EntEditMode::CutSubTile(CL_Rect recCut)
 			pTile = (*itor);
 		}
 
-		if ( (*itor)->GetBoundsSize().length() > pTile->GetBoundsSize().length())
+		int newTileSort = layerMan.GetLayerInfo( (*itor)->GetLayer()).GetSort();
+		int chosenTileSort = layerMan.GetLayerInfo( pTile->GetLayer()).GetSort();
+		if ( chosenTileSort < newTileSort)
 		{
-			//this is bigger, it's probably what they wanted
+			//this might be a better candidate
 			pTile = (*itor);
+		} else
+		{
+			if (newTileSort == chosenTileSort)
+			{
+				//anybodys guess
+
+				if ( (*itor)->GetBoundsSize().length() > pTile->GetBoundsSize().length())
+				{
+					//this is bigger, it's probably what they wanted
+					pTile = (*itor);
+				}
+				
+
+			}
 		}
+			
+			
 		itor++;
 	}
 
 	if (pTile->GetType() != C_TILE_TYPE_PIC)
 	{
-		CL_MessageBox::info("Don't know how to make a subtile out of this tile type.  Try a normal pic.", GetApp()->GetGUI());
+		CL_MessageBox::info("Can't make subtiles out of entities, only with normal tile pics.", GetApp()->GetGUI());
 		return;
 	}
 	//now that we have it, we need to create a new subtile from it, if possible
@@ -1019,7 +1041,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	{
 		CL_Vector2 vecMouseClickPos = CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y());
 		CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(vecMouseClickPos);
-		OnPaste(g_EntEditModeCopyBuffer, vecWorld);
+		OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 	}
 
 	break;
@@ -1036,7 +1058,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 				return;
 			}
 
-			OnPaste(g_EntEditModeCopyBuffer, vecWorld);
+			OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 		}
 	
 		break;
@@ -1220,7 +1242,6 @@ void EntEditMode::OnDefaultTileHardness()
 	//position.  But for entities, this isn't needed as the shape is always going to be centered around
 	//0,0
 
-//	bool useCollisionOffsets = !bIsEnt;
 	bool useCollisionOffsets = true;
 
 	pTile->GetCollisionData()->RemoveOffsets();
@@ -1229,6 +1250,7 @@ void EntEditMode::OnDefaultTileHardness()
 	//callback that is hit when editing is done
 
 	m_pEntCollisionEditor->Init(vEditPos, rec, pTile->GetCollisionData(), useCollisionOffsets);
+	m_pEntCollisionEditor->SetClip(!bIsEnt);
 }
 
 void EntEditMode::Render(void *pTarget)
@@ -1581,7 +1603,7 @@ void EntEditMode::BuildTilePropertiesMenu(TileEditOperation *pTileList)
 	offsetY+= 20;
 
 	CL_Label labelName2(CL_Point(SecondOffsetX, offsetY), "Name:", window.get_client_area());
-	CL_Rect rPos(0,0,100,16);
+	CL_Rect rPos(0,0,120,16);
 	rPos.apply_alignment(origin_top_left, - (labelName2.get_width()+labelName2.get_client_x()+5), -(offsetY));
 	CL_InputBox inputName(rPos, "", window.get_client_area());
 
@@ -1717,6 +1739,8 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		buttonOpenScript.enable(false);
 		buttonEditScript.enable(false);
 		inputName.enable(false);
+		inputName.set_text("<N/A, not an entity>");
+
 		listData.enable(false);
 		buttonAddData.enable(false);
 		buttonRemoveData.enable(false);
@@ -1894,6 +1918,8 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 		if (pEnt->GetCollisionData()->HasData())
 		{
+			
+			
 			PointList *pLine;
 
 			CL_Rectf r = pEnt->GetBoundsRect();
@@ -1920,6 +1946,10 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 			//move position to match where it was
 			pEnt->SetPos(pEnt->GetPos()+vMoveOffset);
+
+			//cleanup any weirdness
+			pEnt->GetCollisionData()->RecalculateOffsets();
+
 		} else
 		{
 			//still, because entities are centered, we should move it for them
@@ -1928,6 +1958,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			pEnt->SetPos(pEnt->GetPos()-vOffset);
 
 		}
+
 
 		OnDelete(); //kill the old one
 		

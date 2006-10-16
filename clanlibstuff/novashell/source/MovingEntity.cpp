@@ -242,6 +242,7 @@ void MovingEntity::HandleMessageString(const string &msg)
 void MovingEntity::SetDefaults()
 {
 	ClearColorMods();
+	m_bCanRotate = false;
 	SetMaxWalkSpeed(2.4f);
 	SetDesiredSpeed(GetMaxWalkSpeed());
 	m_nearbyTileList.clear();
@@ -470,8 +471,15 @@ CL_Rectf MovingEntity::GetWorldRect()
 	static CL_Origin origin;
 	static int x,y;
 	m_pSprite->get_alignment(origin, x, y);
+	x =  float(x) * m_pTile->GetScale().x;
+	y =  float(y) * m_pTile->GetScale().y;
+
 	static CL_Pointf offset;
+	r -= CL_Pointf(-x,y);
 	offset = calc_origin(origin, r.get_size());
+	//offset.x *= m_pTile->GetScale().x;
+	//offset.y *= m_pTile->GetScale().y;
+
 	r -= offset;
 	r += *(const CL_Pointf*)(&GetPos());
 	r += *(const CL_Pointf*)(&GetVisualOffset());
@@ -507,6 +515,18 @@ string MovingEntity::ProcessPath(const string &st)
 	}
 
 	return st;
+}
+
+int MovingEntity::PlaySoundPositioned(const string &fName)
+{
+	int hHandle = g_pSoundManager->Play(ProcessPath(fName).c_str());
+	return hHandle;
+}
+
+int MovingEntity::PlaySound(const string &fName)
+{
+	int hHandle = g_pSoundManager->Play(ProcessPath(fName).c_str());
+	return hHandle;
 }
 
 bool MovingEntity::SetVisualProfile(const string &resourceFileName, const string &profileName)
@@ -727,12 +747,25 @@ bool MovingEntity::Init()
 	}
 
 	//override settings with certain things found
-	if (m_dataManager.Exists(C_ENT_DENSITY_KEY))
+	if (m_dataManager.HasData())
 	{
+
 		
-		if (GetCollisionData() && GetCollisionData()->HasData())
+		if (m_dataManager.Exists(C_ENT_DENSITY_KEY))
 		{
-			SetDensity(CL_String::to_float(m_dataManager.Get(C_ENT_DENSITY_KEY)));
+			if (GetCollisionData() && GetCollisionData()->HasData())
+			{
+				SetDensity(CL_String::to_float(m_dataManager.Get(C_ENT_DENSITY_KEY)));
+			}
+		}
+
+		if (m_dataManager.Exists(C_ENT_ROTATE_KEY))
+		{
+			if (GetCollisionData() && GetCollisionData()->HasData())
+			{
+				EnableRotation(CL_String::to_bool(m_dataManager.Get(C_ENT_ROTATE_KEY)));
+			}
+
 		}
 	}
 
@@ -871,6 +904,15 @@ void MovingEntity::UpdateTilePosition()
 
 			 if (pInfo)
 			 {
+				
+				//load it if needed
+				 if (!pInfo->m_world.IsInitted())
+				 {
+					 GetWorldManager->LoadWorld(pInfo->m_world.GetDirPath(), false);
+					 pInfo->m_world.PreloadMap();
+
+				 }
+				 
 				pWorldToMoveTo = &pInfo->m_world;
 				m_body.GetPosition().x = m_moveToAtEndOfFrame.x;
 				m_body.GetPosition().y = m_moveToAtEndOfFrame.y;
@@ -1022,24 +1064,21 @@ void MovingEntity::SetDensity(float fDensity)
 {
 	m_fDensity = fDensity;
 	GetBody()->SetDensity(m_fDensity);
+	if (!m_bCanRotate)
+	{
+		GetBody()->SetInertia(0);
+	}
 }
 
 void MovingEntity::EnableRotation(bool bRotate)
 {
-	if (bRotate)
-	{
-		GetBody()->SetDensity(m_fDensity);
-
-	} else
-	{
-		GetBody()->SetInertia(0); //disable rotation
-
-	}
+	m_bCanRotate = bRotate;
+	SetDensity(m_fDensity);
 }
 
 bool MovingEntity::GetEnableRotation()
 {
-	return GetBody()->GetInertia() != 0;
+	return m_bCanRotate;
 }
 
 void MovingEntity::SetScale(const CL_Vector2 &vScale)
@@ -1082,7 +1121,7 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 
 	//link to data correctly
 	pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
-	GetBody()->SetDensity(m_fDensity);
+	SetDensity(m_fDensity);
 	
 	m_pCollisionData->SetScale(GetScale());
 }
@@ -1123,7 +1162,7 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 	if (pActiveLine)
 	{
 		pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
-		GetBody()->SetDensity(m_fDensity);
+		SetDensity(m_fDensity);
 	} else
 	{
 		SetMass(0); //immovable
@@ -1144,9 +1183,15 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 		x = GetSizeX();
 		y = GetSizeY();
 	}
-	
-	x *= 0.5f;
-	y *= 0.5f;
+
+	CL_Origin origin;
+	int offsetX,offsetY;
+	m_pSprite->get_alignment(origin, offsetX, offsetY);
+	CL_Pointf vecOrigin = calc_origin(origin,CL_Size(x,y));
+
+
+	CL_Rect colRect(-vecOrigin.x, -vecOrigin.y, x - vecOrigin.x, y - vecOrigin.y);
+
 	m_pCollisionData = new CollisionData;
 	
 	PointList pl;
@@ -1156,10 +1201,10 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 
 	//add our lines by hand
     pActiveLine->GetPointList()->resize(4);
-	pActiveLine->GetPointList()->at(0) = CL_Vector2(-x,-y);
-	pActiveLine->GetPointList()->at(1) = CL_Vector2(x,-y);
-	pActiveLine->GetPointList()->at(2) = CL_Vector2(x,y);
-	pActiveLine->GetPointList()->at(3) = CL_Vector2(-x,y);
+	pActiveLine->GetPointList()->at(0) = CL_Vector2(colRect.left,colRect.top);
+	pActiveLine->GetPointList()->at(1) = CL_Vector2(colRect.right,colRect.top);
+	pActiveLine->GetPointList()->at(2) = CL_Vector2(colRect.right, colRect.bottom);
+	pActiveLine->GetPointList()->at(3) = CL_Vector2(colRect.left, colRect.bottom);
 	pActiveLine->CalculateOffsets();
 	//get notified of collisions
  	m_collisionSlot = m_body.sig_collision.connect(this, &MovingEntity::OnCollision);
@@ -1167,7 +1212,8 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 	//link to data correctly
 	pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
 
-	GetBody()->SetDensity(1);
+	SetDensity(1);
+
 }
 
 void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
@@ -1659,8 +1705,11 @@ void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
 			g_watchManager.RemoveFromVisibilityList(this);
 		}
 
-		try {luabind::call_function<luabind::object>(GetScriptObject()->GetState(), "OnWatchTimeout", bIsOnScreen);
-		} LUABIND_ENT_CATCH( "Error while calling function OnWatchTimeout(bool bIsOnScreen)");
+		if (m_pScriptObject->FunctionExists("OnWatchTimeout"))
+		{
+			try {luabind::call_function<luabind::object>(GetScriptObject()->GetState(), "OnWatchTimeout", bIsOnScreen);
+			} LUABIND_ENT_CATCH( "Error while calling function OnWatchTimeout(bool bIsOnScreen)");
+		}
 
 	}
 }

@@ -210,7 +210,7 @@ void EntVisualProfileEditor::OnButtonDown(const CL_InputEvent &key)
 			return;
 		}
 		
-		ModifyActiveAnim(CL_Point(0,-1));
+		ModifyActiveAnim(CL_Point(0,1));
 		break;
 
 	case CL_KEY_DOWN:
@@ -219,7 +219,7 @@ void EntVisualProfileEditor::OnButtonDown(const CL_InputEvent &key)
 			MoveAnimSelection(1);
 			return;
 		}
-		ModifyActiveAnim(CL_Point(0,1));
+		ModifyActiveAnim(CL_Point(0,-1));
 		break;
 
 	case CL_KEY_DELETE:
@@ -233,3 +233,11 @@ void EntVisualProfileEditor::OnButtonDown(const CL_InputEvent &key)
 	}
 }
 
+
+void EntVisualProfileEditor::Render(void *pTarget)
+{
+	CL_GraphicContext *pGC = (CL_GraphicContext*) pTarget;
+
+	DrawBullsEyeWorld(m_pEnt->GetPos(), CL_Color(255,255,0,200), 10, pGC); //draw his center point
+
+}

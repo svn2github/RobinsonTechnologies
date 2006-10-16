@@ -52,6 +52,7 @@ public:
 	world_info_list * GetWorldInfoList() {return &m_worldInfoList;}
 	void ScanWorlds(const string &stPath);
 	bool SetActiveWorldByName(const string &stName);
+	void PreloadAllMaps();
 
 	CL_Signal_v0 sig_map_changed;
 

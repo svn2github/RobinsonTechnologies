@@ -167,6 +167,15 @@ WorldInfo * WorldManager::GetWorldInfoByPath(const string &stPath)
 	return NULL;
 }
 
+void WorldManager::PreloadAllMaps()
+{
+	world_info_list::iterator itor =m_worldInfoList.begin();
+	while (itor != m_worldInfoList.end())
+	{
+		SetActiveWorldByPath((*itor)->m_world.GetDirPath());
+		itor++;
+	}
+}
 
 WorldInfo * WorldManager::GetWorldInfoByName(const string &stName)
 {

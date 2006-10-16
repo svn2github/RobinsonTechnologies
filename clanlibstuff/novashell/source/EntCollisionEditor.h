@@ -26,8 +26,8 @@ public:
 	void Update(float step);
 	void OnOk();
 	bool GetDataChanged() {return m_bDataChanged;}
-	
-
+	void SetSnap(bool bOn);
+	void SetClip(bool bOn);
 private:
 	
 enum

@@ -8,7 +8,6 @@
 #include "NavGraphManager.h"
 #include "PathPlanner.h"
 
-#define C_WORLD_NAV_FILENAME "maps/world_nav_cache.dat"
 
 WorldNavManager g_worldNavManager;
 WorldNavManager::WorldNavManager()
@@ -30,7 +29,7 @@ void WorldNavManager::Kill()
 void WorldNavManager::Init()
 {
 	Kill();
-	m_pNavGraph = new NavGraph(false);
+	m_pNavGraph = new NavGraph(true);
 }
 
 void WorldNavManager::AddNode(TagObject *pTag)
@@ -60,8 +59,18 @@ void WorldNavManager::LinkTwoNodes(TagObject *pTagSrc, TagObject *pTag)
 	//OPTIMIZE:  Use sq version?
 	//LogMsg("Nodes connect!");
 	int cost = Vec2DDistance(pTag->GetPos(), pTagSrc->GetPos());
-	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTagSrc->m_graphNodeID, pTag->m_graphNodeID, cost));
+	
+	if (pTag->m_graphNodeID == -1)
+	{
+		LogError("Uh oh, %s doesn't have a graphNodeID yet.", pTag->m_tagName.c_str());
+		return;
+	}
+		m_pNavGraph->AddEdge(NavGraph::EdgeType(pTagSrc->m_graphNodeID, pTag->m_graphNodeID, cost));
+
+	/*
+	if (!pTag->m_warpTarget.empty())
 	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_graphNodeID,pTagSrc->m_graphNodeID, cost));
+	*/
 
 }
 
@@ -88,7 +97,7 @@ void WorldNavManager::LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc)
 				LinkTwoNodes(pTagSrc, pTag);
 			} else
 			{
-				LogMsg("Nodes don't connect");
+				//LogMsg("Nodes don't connect");
 			}
 			
 		} else
@@ -109,6 +118,10 @@ void WorldNavManager::LinkNode(TagObject *pTag)
 	//m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_pWorld->GetMasterNavMapID(), pTag->m_graphNodeID, cost));
 
 	//also we need to link to its real target
+	if (pTag->m_warpTarget != "none")
+	{
+
+	
 	pTarget = g_TagManager.GetFromString(pTag->m_warpTarget);
 	if (pTarget)
 	{
@@ -125,11 +138,12 @@ void WorldNavManager::LinkNode(TagObject *pTag)
 		}
 	} else
 	{
-		LogError("Warp %s Couldn't find warp target %s.", pTag->m_tagName.c_str(), pTag->m_warpTarget.c_str());
+		LogError("Warp %s Couldn't find warp target %s. (map might not be loaded yet, load it, then warp info will get cached)", pTag->m_tagName.c_str(), pTag->m_warpTarget.c_str());
 		//return;
 	}
 
 
+	}
 	//and a two way link to any other warp nodes it connects with
 
 	 LinkToConnectedWarpsOnSameMap(pTag);
@@ -146,14 +160,11 @@ void WorldNavManager::LinkMap(World *pMap)
 	for (itor = pMap->GetWarpTagHashList().begin(); itor != pMap->GetWarpTagHashList().end(); itor++)
 	{
 		pTag = g_TagManager.GetFromHash(*itor);
-		if (pTag)
+		if (pTag) //empty warptarget means it's on the receiving end of a one way warp
 		{
 			LinkNode(pTag);//link to the map hub
 
-		} else
-		{
-			LogError("MapNav Hash doesn't exist?!");
-		}
+		} 
 	}
 }
 

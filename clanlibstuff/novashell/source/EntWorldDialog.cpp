@@ -52,6 +52,23 @@ EntWorldDialog::~EntWorldDialog()
 	SAFE_DELETE(m_pWindow);
 }
 
+
+void EntWorldDialog::HandleMessageString(const std::string &msg)
+{
+
+	if (msg == "BootUpWorld")
+	{
+		GetGameLogic->ClearModPaths();
+		GetGameLogic->AddModPath(m_modInfo[g_defaultWorldDialogSelection].m_stDirName);
+		GetGameLogic->SetRestartEngineFlag(true);
+		SetDeleteFlag(true);
+	} else
+	{
+		LogError("Unknown message: %s", msg.c_str());
+	}
+	
+}
+
 void EntWorldDialog::ChangeSelection(int offset)
 {
 	int selected = m_pListWorld->get_current_item();
@@ -219,9 +236,12 @@ void EntWorldDialog::OnSelected(int selItem)
 		}
 
 		g_defaultWorldDialogSelection = modID;
-		GetGameLogic->ClearModPaths();
-		GetGameLogic->AddModPath(m_modInfo[modID].m_stDirName);
-		GetGameLogic->SetRestartEngineFlag(true);
-		SetDeleteFlag(true);
+		
+		//don't load it right away, wait for the mouse message to pass first
+
+		ScheduleSystem(150, ID(), "BootUpWorld");
+
+		m_pWindow->quit();
+
 
 }

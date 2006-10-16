@@ -78,6 +78,7 @@ public:
 
 	void Play(bool bOn)
 	{
+		if (m_file.empty()) return;
 		if (bOn)
 		{
 			if (m_handle == 0)
