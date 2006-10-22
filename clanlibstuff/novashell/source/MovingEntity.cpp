@@ -892,8 +892,9 @@ bool MovingEntity::Init()
 	if (!m_mainScript.empty())
 	if (!LoadScript(m_mainScript.c_str()))
 	{
+		stEmergencyMessage = "Ent "+CL_String::from_int(ID()) + " ("+GetName()+") can't find lua script " + m_mainScript +".";
+		LogError(stEmergencyMessage.c_str());
 		LoadScript(C_DEFAULT_SCRIPT);
-		stEmergencyMessage = "Can't find lua script " + m_mainScript +".  Loading default.lua instead.";
 	}
 
 	if (m_pSprite->is_null())
@@ -922,12 +923,6 @@ bool MovingEntity::Init()
 		SetSpriteData(m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT));
 	}
 
-	if (!stEmergencyMessage.empty())
-	{
-		//message box causes crashes!
-		//CL_MessageBox::info(stEmergencyMessage, GetApp()->GetGUI());
-		LogMsg("ERROR - %s", stEmergencyMessage.c_str());
-	}
 
 	//override settings with certain things found
 	if (m_dataManager.HasData())

@@ -37,7 +37,7 @@ void Goal_Approach::Activate()
 	}
 
 	m_bTriedComplexWay = true;
-	LogMsg("Ent %d (%s) is calculating a MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+	//LogMsg("Ent %d (%s) is calculating a MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);

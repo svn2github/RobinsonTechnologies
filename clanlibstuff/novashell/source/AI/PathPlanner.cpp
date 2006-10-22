@@ -132,12 +132,12 @@ PathPlanner::Path PathPlanner::GetPath()
 
   Path path =  m_pCurrentSearch->GetPathAsPathEdges();
 
-  int closest = GetClosestNodeToPosition( m_pWorld, m_pOwner->GetPos(), false, 2);
+  int closest = GetClosestNodeToPosition( m_pWorld, m_pOwner->GetPos(), false, 1);
 
   if (closest ==  no_closest_node_found)
   {
 	  //try again, this time allowing us to walk through creatures, better than nothing
-	  closest = GetClosestNodeToPosition( m_pWorld, m_pOwner->GetPos(),  true, 1);
+	  closest = GetClosestNodeToPosition( m_pWorld, m_pOwner->GetPos(),  true, 2);
  }
   path.push_front(PathEdge(m_pOwner->GetPos(),
                             GetNodePosition(closest),
