@@ -40,6 +40,7 @@ public:
 	bool HasData() {return m_points.size() > 0;}
 	bool ComputeConvexHull(); //any illegal verts are moved to legal positions, which creates dupes...
 	void RemoveDuplicateVerts(); //cut out any vert that has another vert sitting exactly on it
+	bool GetLineIntersection(const CL_Vector2 &a, const CL_Vector2 &b);
 
 protected:
 

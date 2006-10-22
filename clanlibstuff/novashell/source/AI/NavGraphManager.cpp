@@ -191,7 +191,7 @@ int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, cons
 
 	if (a == invalid_node_index)
 	{
-		LogError("Ent %d: %s in %s at %s: Not close enough to find a node", pEnt->ID(), pEnt->GetName().c_str(), pMap->GetName().c_str(),
+		LogMsg("Ent %d: %s in %s at %s: No pathfinding node close by, can't use pathmanager here", pEnt->ID(), pEnt->GetName().c_str(), pMap->GetName().c_str(),
 			PrintVector(pos).c_str());
 		return invalid_node_index;
 	}

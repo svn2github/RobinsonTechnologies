@@ -40,7 +40,7 @@ void BrainTopSeek::Update(float step)
 
 	m_pParent->SetVectorFacingTarget(v);
 
-	if (m_pParent->GetBrainManager()->GetState()->GetName() != "TopWalk")
+	if (!m_pParent->GetBrainManager()->GetState() || m_pParent->GetBrainManager()->GetState()->GetName() != "TopWalk")
 	{
 		m_pParent->GetBrainManager()->SetStateByName("TopWalk");
 	}

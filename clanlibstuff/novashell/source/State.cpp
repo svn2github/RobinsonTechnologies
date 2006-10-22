@@ -26,12 +26,6 @@ bool State::AnimIsLooping()
 		return true;
 	}
 
-	if (m_pParent->GetSprite()->get_frame_count() == 1)
-	{
-		//special case, things with only 1 frame never cycle normally, so have to force it
-		return true;
-	}
-
 	if (m_pParent->GetSprite()->is_finished())
 	{
 		m_pParent->GetSprite()->restart();

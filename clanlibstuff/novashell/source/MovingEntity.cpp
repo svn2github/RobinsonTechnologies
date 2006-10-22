@@ -14,7 +14,7 @@
 #include "AI/PathPlanner.h"
 #include "AI/WatchManager.h"
 
-
+#define C_ANIM_FRAME_LAST -1
 #define C_GROUND_RELAX_TIME_MS 150
 #define C_DEFAULT_SCRIPT_PATH "script/"
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
@@ -32,6 +32,7 @@ MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_pGoalManager = NULL;
 	m_mainScript = C_DEFAULT_SCRIPT;
 	m_iType = C_ENTITY_TYPE_MOVING;
+	m_pFont = NULL;
 	m_defaultTextColor = CL_Color(255,100,200,255);
 	m_bUsingCustomCollisionData = false;
 	m_brainManager.SetParent(this);
@@ -140,7 +141,7 @@ void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
 {
 	if (!m_pCollisionData)
 	{
-		LogError("Error, can't ScaleCollisionInfo, there is no collision data here");
+		//LogError("Error, can't ScaleCollisionInfo, there is no collision data here");
 		return;
 	}
 
@@ -151,6 +152,32 @@ void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
 void MovingEntity::SetListenCollision(int eListen)
 {
 	m_listenCollision = eListen;
+}
+
+int MovingEntity::GetLayerID()
+{
+	 assert(m_pTile);
+	 
+	 if (m_requestNewLayerID != C_LAYER_NONE) return m_requestNewLayerID;
+	 return m_pTile->GetLayer();
+
+}
+void MovingEntity::SetLayerID(int id)
+ {
+	 assert(m_pTile);
+	
+	if (!m_pTile->GetParentScreen())
+	{
+		LogError("You can't use SetLayerID() in OnInit, it hasn't been placed on a map  yet.  Use OnPostInit.");
+		return;
+	}
+	if (id != m_pTile->GetLayer())
+	{
+		m_requestNewLayerID = id;
+		m_bMovedFlag = true;
+
+	}
+
 }
 
 World * MovingEntity::GetMap()
@@ -210,6 +237,7 @@ void MovingEntity::Kill()
 	
 	SAFE_DELETE(m_pSprite);
 	SAFE_DELETE(m_pScriptObject);
+	SAFE_DELETE(m_pFont);
 
 
 	
@@ -241,7 +269,10 @@ void MovingEntity::HandleMessageString(const string &msg)
 
 void MovingEntity::SetDefaults()
 {
+	m_text.clear();
+	m_textRect = CL_Rect(0,0, 1024, 1024);
 	ClearColorMods();
+	m_requestNewLayerID = C_LAYER_NONE;
 	m_bCanRotate = false;
 	SetMaxWalkSpeed(2.4f);
 	SetDesiredSpeed(GetMaxWalkSpeed());
@@ -307,6 +338,121 @@ Goal_Think * MovingEntity::GetGoalManager()
 	//create it if it doesn't exist
 	if (m_pGoalManager) return m_pGoalManager;
 	return (m_pGoalManager = new Goal_Think(this, "Base"));
+}
+
+void MovingEntity::SetText(const string &text)
+{
+	m_text = text;
+	StringReplace("\\n", "\n", m_text);
+
+	if (m_text.empty())
+	{
+		SAFE_DELETE(m_pFont);
+	} else
+	{
+		if (!m_pFont)
+		{
+			if (GetGameLogic->GetGUIStyle())
+			{
+				m_pFont = new CL_Font("font_label", GetGameLogic->GetGUIStyle()->get_resources());
+			} else
+			{
+				m_pFont = new CL_Font(*GetApp()->GetFont(C_FONT_NORMAL));
+			}
+		}
+
+		m_pFont->set_alignment(origin_center,0,0);
+	}
+}
+
+CL_Vector2 MovingEntity::GetTextBounds()
+{
+	if (m_pFont)
+	{
+		float x,y;
+		m_pFont->get_scale(x,y);
+		//try to work around a clanlib bounds bug when dealing with small sizes
+		if (x < 1)
+		{
+			m_pFont->set_scale(x* (1+( (1-x)*0.3   )), y);
+		}
+
+		CL_Size size = m_pFont->get_size(m_text);
+
+		//put it back
+		m_pFont->set_scale(x,y);
+
+		return CL_Vector2(size.width, size.height);
+	} else
+	{
+		LogError("Can't use GetTextBounds(), entity %d (%s) doesn't have any font assigned (Use SetText first)", ID(), GetName().c_str());
+	}
+
+	return CL_Vector2(0,0);
+}
+
+void MovingEntity::SetTextRect(const CL_Rect &r)
+{
+	if (!m_pFont)
+	{
+		LogError("Can't use SetTextRect, entity %d (%s) doesn't have any font assigned (Use SetText first)", ID(), GetName().c_str());
+		return;
+	}
+
+	m_textRect = r;
+	
+}
+
+void MovingEntity::SetTextAlignment(int alignment, int x, int y)
+{
+	if (!m_pFont)
+	{
+		LogError("Can't use SetTextAlignment, entity %d (%s) doesn't have any font assigned (Use SetText first)", ID(), GetName().c_str());
+		return;
+	}
+
+	m_pFont->set_alignment(CL_Origin(alignment), x, y);
+}
+
+void MovingEntity::SetTextColor(CL_Color col)
+{
+	if (!m_pFont)
+	{
+		LogError("Can't use SetTextColor, entity %d (%s) doesn't have any font assigned (Use SetText first)", ID(), GetName().c_str());
+		return;
+	}
+
+	m_pFont->set_color(col);
+}
+
+void MovingEntity::SetTextScale(const CL_Vector2 &vecScale)
+{
+	if (!m_pFont)
+	{
+		LogError("Can't use SetTextScale, entity %d (%s) doesn't have any font assigned (Use SetText first)", ID(), GetName().c_str());
+		return;
+	}
+
+	m_pFont->set_scale(vecScale.x, vecScale.y);
+}
+
+CL_Vector2 MovingEntity::GetTextScale()
+{
+	if (!m_pFont)
+	{
+		LogError("Can't use GetTextScale, entity %d (%s) doesn't have any font assigned (Use SetText first)", ID(), GetName().c_str());
+		return CL_Vector2(0,0);
+	}
+
+	float x,y;
+	m_pFont->get_scale(x,y);
+	return CL_Vector2(x,y);
+}
+
+
+MovingEntity * MovingEntity::CreateEntity(CL_Vector2 pos, const string &script)
+{
+	return ::CreateEntity(pos, ProcessPathNoScript(script));
 }
 
 void MovingEntity::SetFacingTarget(int facing)
@@ -390,6 +536,16 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 	//load/save needed data
 	cl_uint8 ver = m_pTile->GetParentScreen()->GetVersion();
 
+	float orientation = m_body.GetOrientation();
+
+	if (helper.IsWriting() || ver > 0)
+	{
+		helper.process(m_vecFacing);
+		helper.process(m_facing);
+		helper.process(orientation);
+	}
+
+
     helper.process(m_mainScript);
 
 	string temp;
@@ -430,12 +586,17 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 
 	//LogMsg("Loading version %d", ver);
     GetData()->Serialize(helper);
+	SetVectorFacing(m_vecFacing);
 
 	if (!helper.IsWriting())
 	{
 		//we need to init this too
 		Init();
+		m_body.SetOrientation(orientation);
+		//SetSpriteByVisualStateAndFacing();
 	}
+
+
 }
 
 void MovingEntity::SetMainScriptFileName(const string &fileName)
@@ -452,7 +613,11 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 	pNew->SetName(GetName());
 	pNew->SetPos(GetPos());
 	*pNew->GetData() = m_dataManager; //copy our entity specific vars too
+	
+	pNew->SetVectorFacing(m_vecFacing);
 	pNew->Init();
+
+	pNew->GetBody()->SetOrientation(m_body.GetOrientation());
 
 	return pNew;
 }
@@ -517,8 +682,24 @@ string MovingEntity::ProcessPath(const string &st)
 	return st;
 }
 
+string MovingEntity::ProcessPathNoScript(const string &st)
+{
+	if (st[0] == '~')
+	{
+		return CL_String::get_path(m_mainScript) + (st.c_str()+1);
+	}
+
+	return st;
+}
+
 int MovingEntity::PlaySoundPositioned(const string &fName)
 {
+	if (GetWorld != GetMap())
+	{
+		//we're not in the same map
+		return C_SOUND_NONE;
+	}
+	
 	int hHandle = g_pSoundManager->Play(ProcessPath(fName).c_str());
 	return hHandle;
 }
@@ -664,10 +845,12 @@ void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
 
 tile_list & MovingEntity::GetNearbyTileList()
 {
+	/*
 	if (GetGameLogic->GetGamePaused())
 	{
 		m_nearbyTileList.clear();
 	}
+	*/
 	return m_nearbyTileList;
 }
 
@@ -939,10 +1122,19 @@ void MovingEntity::UpdateTilePosition()
 		
 		m_pTile->SetEntity(NULL); //so it won't delete us
 		TileEntity *pTileEnt = (TileEntity*) m_pTile->CreateClone();
+		
 		m_pTile->GetParentScreen()->RemoveTileByPointer(m_pTile);
+
 
 		//add it back
 		pTileEnt->SetEntity(this); //this will set our m_pTile automatically
+		
+		if (m_requestNewLayerID != C_LAYER_NONE)
+		{
+			m_pTile->SetLayer(m_requestNewLayerID);
+			m_requestNewLayerID = C_LAYER_NONE;
+		}
+
 		pWorldToMoveTo->AddTile(m_pTile);
 		m_bMovedFlag = false;
 	} 
@@ -955,6 +1147,22 @@ void MovingEntity::SetAnimByName(const string &name)
 	{
 		m_animID = GetVisualProfile()->TextToAnimID(name);
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
+	}
+}
+
+void MovingEntity::SetAnimFrame(int frame)
+{
+	if (GetSprite() && GetSprite()->get_frame_count() > 0)
+	{
+		if (frame == C_ANIM_FRAME_LAST)
+		{
+			frame = GetSprite()->get_frame_count();
+		}
+		GetSprite()->set_frame(frame);	
+		
+	} else
+	{
+		LogMsg("Error, ent %d (%s) can't set anim frame, no visual seems to be assigned to it. (Use OnPostInit maybe?)", ID(), GetName().c_str());
 	}
 }
 
@@ -989,8 +1197,15 @@ void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bo
 
 	if (m_collisionMode == COLLISION_MODE_NONE)
 	{
-		pBoolAllowCollision = false;
+		*pBoolAllowCollision = false;
 		return;
+	} else if (m_collisionMode == COLLISION_MODE_STATIC_ONLY)
+	{
+		if (pOtherBody->GetParentEntity() != 0)
+		{
+			*pBoolAllowCollision = false;
+			return;
+		}
 
 	}
 	m_bOldTouchedAGroundThisFrame = m_bTouchedAGroundThisFrame;
@@ -1092,8 +1307,16 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 	{
   		SAFE_DELETE(m_pCollisionData);
 	}
+	if (fileName == "")	
+	{
+		//guess they really don't want collision
+		m_bUsingCustomCollisionData = false;
+		return;
+	}
+	
 	m_pCollisionData = new CollisionData;
     m_bUsingCustomCollisionData = true;
+	
 	
 	m_pCollisionData->Load(ProcessPath(fileName)); //it will init a default if the file is not found, and automatically handle
 
@@ -1250,6 +1473,8 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 		pCol = &colCustomized; //replacement version
 	}
 
+	int lineCount = pCol->GetLineList()->size();
+
 	line_list::iterator lineListItor = pCol->GetLineList()->begin();
 	CBody *pWallBody;
 	while (lineListItor != pCol->GetLineList()->end())
@@ -1271,12 +1496,30 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 				colMyCustomized.GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
 				m_body.Collide(*pWallBody, step);
 
-				//fix it
-				m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
+				//the dangerous thing about Collide is it calls scripts which could replace or remove our collision info!
+				if (m_pCollisionData)
+				{
+					//fix it back from reversed mode
+					m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
 
+				} else
+				{
+					return;
+				}
+				
+				//we're assuming entities only have one collision line, we leave now to avoid a crash if their
+				//collision info was removed or changed in a possible script callback
+				if (pTile->GetType() == C_TILE_TYPE_ENTITY) return;
+
+				
 			} else
 			{
 				m_body.Collide(*pWallBody, step);
+
+				//we're assuming entities only have one collision line, we leave now to avoid a crash if their
+				//collision info was removed or changed in a possible script callback
+				if (pTile->GetType() == C_TILE_TYPE_ENTITY) return;
+
 			}
 			
 		} else
@@ -1284,7 +1527,6 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			//might be a ladder zone or something else we should take note of
 			if (lineListItor->HasData())
 			{
-			
 					//actually add the data
 					static Zone z;
 					z.m_materialID = lineListItor->GetType();
@@ -1305,7 +1547,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 				
 			}
 		}
-		
+	
 		lineListItor++;
 	}
 }
@@ -1466,6 +1708,9 @@ void MovingEntity::Render(void *pTarget)
 	static float yawHold, pitchHold;
 
 	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
+	CL_Vector2 vFinalScale = GetCamera->GetScale();
+	vFinalScale.x *= m_pTile->GetScale().x;
+	vFinalScale.y *= m_pTile->GetScale().y;
 
 	yawHold = m_pSprite->get_angle_yaw();
 	pitchHold = m_pSprite->get_angle_pitch();
@@ -1515,53 +1760,57 @@ void MovingEntity::Render(void *pTarget)
 	b = cl_min(b, 255); b = cl_max(0, b);
 	a = cl_min(a, 255); a = cl_max(0, a);
 		
-	static bool bUseParallax;
-	static Layer *pLayer;
-	static World *pWorld;
-	pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
-	static EntWorldCache *pWorldCache;
-    static CL_Vector2 vecPos;
-
-	pWorldCache = pWorld->GetMyWorldCache();
-
-	if (GetGameLogic->GetParallaxActive())
+	if (a > 0)
 	{
-		bUseParallax = true;
-		pLayer = &pWorld->GetLayerManager().GetLayerInfo(m_pTile->GetLayer());
+
 		
-		if (GetGameLogic->GetMakingThumbnail())
+		static bool bUseParallax;
+		static Layer *pLayer;
+		static World *pWorld;
+		pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+		static EntWorldCache *pWorldCache;
+		static CL_Vector2 vecPos;
+
+		pWorldCache = pWorld->GetMyWorldCache();
+
+		if (GetGameLogic->GetParallaxActive())
 		{
-			if (!pLayer->GetUseParallaxInThumbnail())
+			bUseParallax = true;
+			pLayer = &pWorld->GetLayerManager().GetLayerInfo(m_pTile->GetLayer());
+			
+			if (GetGameLogic->GetMakingThumbnail())
 			{
-				bUseParallax = false;
+				if (!pLayer->GetUseParallaxInThumbnail())
+				{
+					bUseParallax = false;
+				}
 			}
+		} else
+		{
+			bUseParallax = false;
 		}
-	} else
-	{
-		bUseParallax = false;
+
+		if (bUseParallax)
+		{
+			vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
+				pLayer->GetScrollMod()));
+		} else
+		{
+ 			vecPos = pWorldCache->WorldToScreen(vVisualPos);
+		}
+
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+
+		m_pSprite->set_scale(vFinalScale.x, vFinalScale.y);
+		//do the real blit
+		m_pSprite->set_color(CL_Color(r,g,b,a));
+		m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
+
+		//return things back to normal
+		m_pSprite->set_angle_yaw(yawHold);
+		m_pSprite->set_angle_pitch(pitchHold);
 	}
-
-	if (bUseParallax)
-	{
-		vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
-			pLayer->GetScrollMod()));
-	} else
-	{
- 		vecPos = pWorldCache->WorldToScreen(vVisualPos);
-	}
-
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
-
-	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y
-		* m_pTile->GetScale().y);
-	//do the real blit
-	m_pSprite->set_color(CL_Color(r,g,b,a));
-	m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
-
-	//return things back to normal
-	m_pSprite->set_angle_yaw(yawHold);
-	m_pSprite->set_angle_pitch(pitchHold);
 
 	/*
 	//***** debug, draw rect
@@ -1572,6 +1821,26 @@ void MovingEntity::Render(void *pTarget)
 	//*********
 	*/
 
+	/*
+	if (GetGameLogic->GetMakingThumbnail())
+	{
+		return;
+	}
+	*/
+
+	if (!m_text.empty())
+	{
+		//draw some text too
+		CL_Vector2 vecPos = GetMap()->GetMyWorldCache()->WorldToScreen(vVisualPos);
+		float textScaleX, textScaleY;
+		m_pFont->get_scale(textScaleX, textScaleY);
+		m_pFont->set_scale(textScaleX * GetCamera->GetScale().x, textScaleY *GetCamera->GetScale().y);
+		m_pFont->draw( vecPos.x, vecPos.y, m_text, pGC);
+		
+		//put it back to how it was
+		m_pFont->set_scale(textScaleX, textScaleY);
+	
+	}
 }
 
 void MovingEntity::RenderCollisionLists(CL_GraphicContext *pGC)
@@ -1631,6 +1900,9 @@ void MovingEntity::SetRunStringASAP(const string &command)
 
 void MovingEntity::ProcessPendingMoveAndDeletionOperations()
 {
+	
+	m_nearbyTileList.clear();
+
 	if (GetDeleteFlag())
 	{
 		//remove tile completely
@@ -1854,6 +2126,8 @@ bool MovingEntity::CanWalkBetween(World *pMap, CL_Vector2 from, CL_Vector2 to, b
 
 bool MovingEntity::IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures)
 {
+
+	if (!pMap) pMap = GetMap();
 	return !pMap->GetMyWorldCache()->IsAreaObstructed(pos, GetBoundingCollisionRadius(), bIgnoreLivingCreatures, this);
 }
 

@@ -14,6 +14,8 @@
 
 #include <cassert>
 
+#define C_SOUND_NONE 0
+
 class ISoundManager
 {
 public:
@@ -39,6 +41,7 @@ public:
 	virtual void SetVolume(int soundID, float volume) { assert(!"Not implemented with this driver yet");};
 	virtual void AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC) { assert(!"Not implemented with this driver yet");};
 	virtual	void RemoveAllEffects(int soundID) { assert(!"Not implemented with this driver yet");};
+	virtual void SetPan(int soundID, float pan) { assert(!"Not implemented with this driver yet");};//-1 to 1
 
 
 	enum
@@ -93,7 +96,7 @@ public:
 				//let's shut it off
 				if (m_pSoundManager)
 				m_pSoundManager->KillChannel(m_handle);
-				m_handle = 0;
+				m_handle = C_SOUND_NONE;
 			}
 		}
 	}

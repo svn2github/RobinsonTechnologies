@@ -28,6 +28,7 @@ void StateTopWalk::OnAdd()
 	{
 		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
 	}
+	m_bCallbackActive = m_pParent->GetScriptObject()->FunctionExists("OnWalkLoop");
 
 }
 
@@ -41,12 +42,11 @@ void StateTopWalk::Update(float step)
 	{
 		m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce( m_pParent->GetVectorFacing() * m_pParent->GetDesiredSpeed() );
 	}
-
 }
 
 void StateTopWalk::PostUpdate(float step)
 {
-	if (AnimIsLooping())
+	if (m_bCallbackActive && AnimIsLooping())
 	{
 		m_pParent->RunFunction("OnWalkLoop");
 	}

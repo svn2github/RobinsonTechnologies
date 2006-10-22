@@ -266,3 +266,47 @@ CBody & PointList::GetAsBody(const CL_Vector2 &vPos, CBody *pCustomBody)
 	 g_Body.SetVertArray(*(Vector*)& (vPos+m_vecOffset), (Vector*)&m_points[0], m_points.size());
 	 return g_Body;
 }
+
+bool PointList::GetLineIntersection(const CL_Vector2 &a, const CL_Vector2 &b)
+{
+	float lineA[4], lineB[4];
+	lineA[0] = a.x;
+	lineA[1] = a.y;
+
+	lineA[2] = b.x;
+	lineA[3] = b.y;
+
+		for (unsigned int i=0; i < GetPointList()->size();)
+			{
+	
+					lineB[0] = GetPointList()->at(i).x;
+					lineB[1] = GetPointList()->at(i).y;
+
+					int endLineIndex;
+
+					if (i == GetPointList()->size()-1)
+					{
+						endLineIndex=0;
+					} else
+					{
+						endLineIndex = i+1;
+					}
+
+					lineB[2] = GetPointList()->at(endLineIndex).x;
+					lineB[3] = GetPointList()->at(endLineIndex).y;
+
+				
+				//LogMsg("Line B is %.2f, %.2f - %.2f, %.2f", lineB[0],lineB[1],lineB[2],lineB[3] );
+				if (CL_LineMath::intersects(lineA, lineB))
+				{
+					
+					//LogMsg("Got intersection");
+					//ptCol = CL_LineMath::get_intersection(lineA, lineB);
+					return true;
+				}
+				i++;
+			}
+		
+
+	return false;
+}

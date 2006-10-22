@@ -39,9 +39,31 @@ void luabindVector(lua_State *pState)
 		
 		
 			,
+			
+			class_<CL_Rect>("Rect")
+			.def(constructor<>())
+			.def(constructor<CL_Rect>())
+			.def(constructor<int, int, int, int>())
+			.def_readwrite("left", &CL_Rect::left)
+			.def_readwrite("top", &CL_Rect::top)
+			.def_readwrite("right", &CL_Rect::right)
+			.def_readwrite("bottom", &CL_Rect::bottom)
+			.def(const_self + CL_Rect())
+			.def(const_self - CL_Rect())
+				.def(const_self == CL_Rect())
+			.def("GetWidth", &CL_Rect::get_width)
+			.def("GetHeight", &CL_Rect::get_height)
+			.def("IsOverlapped", &CL_Rect::get_height)
+			.def("__tostring", &RectToStringEx)
+
+			,
+			
 			//stand alone functions
 
 			def("Normalize", &NormalizeVector2)
 
 		];
+
+
+
 }

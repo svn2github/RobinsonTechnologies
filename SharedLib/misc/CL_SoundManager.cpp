@@ -134,6 +134,8 @@ void CL_SoundManager::AddEffect(int soundID, int effectID, float parmA, float pa
 			
 			{
 			CL_FadeFilter *pFade = new CL_FadeFilter(parmA);
+			//The CL_FadeFilter assumes the speed is 22.05
+			parmC = (parmC * ((pSession->m_session.get_frequency()/1000) /22.05f));
 			pSession->m_session.add_filter(pFade, true);
 			pFade->fade_to_volume(parmB, int(parmC));
 			break;
@@ -170,6 +172,18 @@ void CL_SoundManager::SetVolume(int soundID, float volume)
 		return;
 	}
 	pSession->m_session.set_volume(volume);
+}
+
+void CL_SoundManager::SetPan(int soundID, float pan) //-1 to 1
+{
+	SoundSession *pSession = GetSessionFromID(soundID);
+
+	if (!pSession)
+	{
+		LogMsg("SetPan: SoundID %d invalid", soundID);
+		return;
+	}
+	pSession->m_session.set_pan(pan);
 }
 
 

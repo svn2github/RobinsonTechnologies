@@ -224,11 +224,12 @@ CL_Vector2 MakeNormal(CL_Vector2 &a, CL_Vector2 &b)
 	vNorm.y = vTemp.x;
 	return vNorm;
 }
-void BlitMessage(string msg)
-{
 
-	
+void BlitMessage(string msg, int posY )
+{
 	CL_Font *pFont = GetApp()->GetFont(C_FONT_NORMAL);
+
+	if (posY == -1) posY = GetScreenY/2;
 
 	if (pFont)
 	{
@@ -240,7 +241,7 @@ void BlitMessage(string msg)
 		ts.draw_to_gb(msg, gb);
 		gb.set_alignment(origin_center);
 		gb.set_scale(1.5,1.5);
-		gb.draw(GetScreenX/2,GetScreenY/2);
+		gb.draw(GetScreenX/2,posY);
 		CL_Display::flip(2); //show it now
 	}
 }
@@ -251,6 +252,14 @@ string VectorToStringEx(const CL_Vector2 * pVec)
 {
 	char stTemp[256];
 	sprintf(stTemp, "X:%.2f Y: %.2f", pVec->x, pVec->y);
+	return string(stTemp);
+}
+
+
+string RectToStringEx(const CL_Rect * pR)
+{
+	char stTemp[256];
+	sprintf(stTemp, "Left: %d Top: %d Right %d Bottom %d", pR->left, pR->top, pR->right, pR->bottom);
 	return string(stTemp);
 }
 

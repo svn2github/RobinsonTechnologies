@@ -4,7 +4,7 @@
 #include "Screen.h"
 #include "misc/C2DMAtrix.h"
 
-void BlitMessage(string msg);
+void BlitMessage(string msg, int posY = -1);
 string ColorToString(const CL_Color &colr);
 CL_Color StringToColor(const string &stColor);
 CL_Vector2 StringToVector(const string &stVec);
@@ -12,6 +12,8 @@ CL_Rect StringToRect(const string &stColor);
 string RectToString(const CL_Rect &r);
 string VectorToString(const CL_Vector2 * pVec);
 string VectorToStringEx(const CL_Vector2 * pVec);
+string RectToStringEx(const CL_Rect * pR);
+
 
 void RenderVertexList(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCount, CL_Color &colr, CL_GraphicContext *pGC);
 CL_Vector2 MakeNormal(CL_Vector2 &a, CL_Vector2 &b);

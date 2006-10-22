@@ -31,7 +31,10 @@ public:
 protected:
 	
 
+
 private:
+
+	bool m_bCallbackActive;
 };
 
 #endif // StateTopIdle_h__

@@ -39,6 +39,17 @@ LayerManager::LayerManager()
 	
 }
 
+int LayerManager::GetLayerIDByName(const string &name)
+{
+	for (unsigned int i=0; i < GetLayerCount(); i++)
+	{
+		if (m_layerVec[i].GetName() == name)
+			return i;
+	}
+
+	return C_LAYER_NONE;
+}
+
 LayerManager::~LayerManager()
 {
 }

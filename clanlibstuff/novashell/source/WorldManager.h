@@ -53,6 +53,7 @@ public:
 	void ScanWorlds(const string &stPath);
 	bool SetActiveWorldByName(const string &stName);
 	void PreloadAllMaps();
+	void SaveAllMaps();
 
 	CL_Signal_v0 sig_map_changed;
 
@@ -65,5 +66,7 @@ protected:
 	World *m_pActiveWorld;
 	EntWorldCache *m_pActiveWorldCache;
 };
+
+bool ExistsInModPath(const string fName);
 
 #endif                  // include guard

@@ -65,12 +65,13 @@ void WorldNavManager::LinkTwoNodes(TagObject *pTagSrc, TagObject *pTag)
 		LogError("Uh oh, %s doesn't have a graphNodeID yet.", pTag->m_tagName.c_str());
 		return;
 	}
-		m_pNavGraph->AddEdge(NavGraph::EdgeType(pTagSrc->m_graphNodeID, pTag->m_graphNodeID, cost));
 
-	/*
-	if (!pTag->m_warpTarget.empty())
-	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_graphNodeID,pTagSrc->m_graphNodeID, cost));
-	*/
+	//we're on  the same map as another node, we want them to know it's possible to walk
+	//between them.  
+
+	m_pNavGraph->AddEdge(NavGraph::EdgeType(pTagSrc->m_graphNodeID, pTag->m_graphNodeID, cost));
+	//m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_graphNodeID, pTagSrc->m_graphNodeID, cost));
+
 
 }
 
@@ -95,6 +96,7 @@ void WorldNavManager::LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc)
 			if (DoNodesConnect(pTagSrc->m_pWorld, pTagSrc->m_graphNodeID, pTag->m_graphNodeID))
 			{
 				LinkTwoNodes(pTagSrc, pTag);
+				LinkTwoNodes(pTag, pTagSrc);
 			} else
 			{
 				//LogMsg("Nodes don't connect");
@@ -133,8 +135,14 @@ void WorldNavManager::LinkNode(TagObject *pTag)
 		{
 			m_pNavGraph->AddEdge(NavGraph::EdgeType(pTag->m_graphNodeID, pTarget->m_graphNodeID, cost));
 
-			//this may be a bad idea, but assume everything is two way for now?
-//			m_pNavGraph->AddEdge(NavGraph::EdgeType(pTarget->m_graphNodeID, pTag->m_graphNodeID,cost));
+			//the target may want to link back, let's figure out its entity
+
+			if (pTarget->m_warpTarget != "none")
+			{
+				//let him warp back to us, usually overkill because it's already one (the call will do nothing in that case)
+				//but sometimes it's needed to fix an error
+				m_pNavGraph->AddEdge(NavGraph::EdgeType(pTarget->m_graphNodeID, pTag->m_graphNodeID,cost));
+			}
 		}
 	} else
 	{
@@ -325,7 +333,13 @@ void WorldNavManager::StripUnrequiredNodesFromPath(MacroPathInfo &m)
 	
 	while (1)
 	{
-		assert(m.m_path.size() > 1 && "Huh?!");
+		if (m.m_path.size() < 2)
+		{
+			assert(!"Huh?!");
+			LogMsg("WorldNav node stripping error?");		
+			return;
+			
+		};
 		//get first node
 		pNodeEntA = ConvertWorldNodeToOwnerEntity(m.m_path.front(), false);
 		pNodeEntB = ConvertWorldNodeToOwnerEntity( *(++m.m_path.begin()), false );

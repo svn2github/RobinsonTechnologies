@@ -95,7 +95,10 @@ void EntChoiceDialog::HandleMessageString(const std::string &msg)
 	if (words[0] == "add_choice")
 	{
 		DialogChoice d;
-		d.m_result = words[2];
+		if (words.size() > 2)
+		{
+			d.m_result = words[2];
+		}
 		d.m_text = words[1];
 		m_choices.push_back(d);
 	} else
@@ -360,12 +363,15 @@ void EntChoiceDialog::OnSelection(int selItem)
 {
 	if (!m_pListWorld->is_enabled()) return; //already did this
 	
+	
+	if (m_pListWorld->get_count() < 1) return; //not ready for prime time
+
 	m_pListWorld->enable(false);
 	if (m_pWindow)
 	{
 		m_pWindow->enable(false);
 	}
-	
+
 	m_chosenID =  m_pListWorld->get_item(m_pListWorld->get_current_item())->user_data;
 	GetApp()->GetMyScriptManager()->RunFunction("OnDialogSelection");
 	m_mode = removing;	

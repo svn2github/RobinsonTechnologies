@@ -1210,7 +1210,7 @@ void EntEditMode::OnDefaultTileHardness()
 	if (!pTile->GetCollisionData())
 	{
 		//it's an entity but no collision data has been assigned
-		CL_MessageBox::info("This tile/entity doesn't have collision data enabled in it's script.", GetApp()->GetGUI());
+		CL_MessageBox::info("This tile/entity doesn't currently have collision data enabled.", GetApp()->GetGUI());
 		return;
 	}
 
@@ -1339,20 +1339,17 @@ void DrawSelectedTileBorder(Tile *pTile, CL_GraphicContext *pGC)
 	CL_Vector2 vecStart(worldRect.left, worldRect.top);
 	CL_Vector2 vecStop(worldRect.right, worldRect.bottom);
 	
+	vecStart = GetWorldCache->WorldToScreen(vecStart);
+	vecStop = GetWorldCache->WorldToScreen(vecStop);
+
+	pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(50,50,50,180));
+	
 	vecStop.x++;
 	vecStop.y++;
-	vecStart.x++;
-	vecStart.y++;
-
-	DrawRectFromWorldCoordinates(vecStart, vecStop, CL_Color(50,50,50,180), pGC);
-
-	vecStop.x--;
-	vecStop.y--;
 	vecStart.x--;
 	vecStart.y--;
-	DrawRectFromWorldCoordinates(vecStart, vecStop, CL_Color(255,255,255,180), pGC);
 
-	
+	pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(255,255,255,180));
 
 }
 
@@ -1908,6 +1905,9 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		pNewTile->SetBit(Tile::e_castShadow, pTile->GetBit(Tile::e_castShadow));
 		pNewTile->SetBit(Tile::e_sortShadow, pTile->GetBit(Tile::e_sortShadow));
 		pNewTile->SetBit(Tile::e_pathNode, pTile->GetBit(Tile::e_pathNode));
+		pNewTile->SetScale(pTile->GetScale());
+
+
 		pNewTile->SetLayer(pTile->GetLayer());
 		pEnt->SetImageFromTilePic((TilePic*)pTile);
 		pEnt->SetMainScriptFileName("");
@@ -1918,8 +1918,6 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 		if (pEnt->GetCollisionData()->HasData())
 		{
-			
-			
 			PointList *pLine;
 
 			CL_Rectf r = pEnt->GetBoundsRect();

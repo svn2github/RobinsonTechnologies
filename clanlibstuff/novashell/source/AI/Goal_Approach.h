@@ -19,6 +19,7 @@ public:
 	  {
 		  SetName("Approach");
 		  m_bTriedSimpleWay = false;
+		  m_bTriedComplexWay = false;
 	  }
 
 	  //the usual suspects
@@ -48,6 +49,7 @@ private:
 	int m_distanceRequired; //how close we have to be to our target
 	bool m_bWaitingForTurn;
 	unsigned int m_locationUpdateTimer;
+	bool m_bTriedComplexWay;
 };
 
 #endif

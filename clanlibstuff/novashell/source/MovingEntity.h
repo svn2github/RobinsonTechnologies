@@ -115,7 +115,7 @@ public:
   void PostUpdate(float step);
   void SetListenCollision(int eListen);
   int GetListenCollision() {return m_listenCollision;}
-
+  void SetAnimFrame(int frame);
   void SetListenCollisionStatic(int eListen) {m_listenCollisionStatic = eListen;}
   int GetListenCollisionStatic() {return m_listenCollisionStatic;}
   void AddForce(CL_Vector2 force) {m_body.AddForce( (*(Vector*)&force)*m_body.GetMass() );}
@@ -127,9 +127,10 @@ public:
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
   float GetDistanceFromEntityByID(int id);
   float GetDistanceFromPosition(const CL_Vector2 &pos);
+  MovingEntity * CreateEntity(CL_Vector2 pos, const string &script);
 
-  int GetLayerID() {assert(m_pTile); return m_pTile->GetLayer();}
-  void SetLayerID(int id) {assert(m_pTile); m_pTile->SetLayer(id); m_bMovedFlag = true;}
+  int GetLayerID();
+  void SetLayerID(int id);
   
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
   Zone * GetZoneWeAreOnByMaterialType(int matType);
@@ -143,6 +144,7 @@ public:
   int GetAnimID() {return m_animID;}
   void SetAnimPause(bool bPause) { m_bAnimPaused = bPause;}
   bool GetAnimPause() {return m_bAnimPaused;}
+  
   virtual void HandleMessageString(const string &msg);
   virtual bool HandleMessage(const Message &msg);
 
@@ -157,6 +159,8 @@ public:
   int GetFloorMaterialID() {return m_floorMaterialID;}
   BrainManager * GetBrainManager() {return &m_brainManager;}
   string ProcessPath(const string &st); //replaces ~ with current script path
+  string ProcessPathNoScript(const string &st); //doesn't add the "script" part
+
   void OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity *pProjectile);
   void SetFacing(int facing);
   void SetFacingTarget(int facing);
@@ -226,6 +230,15 @@ public:
   void OnWatchListTimeout(bool bIsOnScreen);
   int PlaySoundPositioned(const string &fName);
   int PlaySound(const string &fName);
+  void SetText(const string &text);
+  string GetText() {return m_text;}
+  CL_Vector2 GetTextBounds();
+ 
+  void SetTextColor(CL_Color color);
+  void SetTextAlignment(int alignment, int x, int y);
+  void SetTextScale(const CL_Vector2 &vecScale);
+  CL_Vector2 GetTextScale();
+  void SetTextRect(const CL_Rect &r);
 
   enum ListenCollision
 {
@@ -259,6 +272,7 @@ enum  CollisionMode
 
 	COLLISION_MODE_ALL = 0,
 	COLLISION_MODE_NONE,
+	COLLISION_MODE_STATIC_ONLY,
 
 	COLLISION_MODE_COUNT
 
@@ -338,6 +352,12 @@ protected:
 	bool m_bRequestsVisibilityNotifications;
 	bool m_bOnScreen;
 	bool m_bCanRotate;
+	int m_requestNewLayerID; //-1 if none requested
+
+	//stuff that may or may not be used for text in this entity
+	string m_text; //simple way to show text in  the game
+	CL_Font * m_pFont;
+	CL_Rect m_textRect;
 
 };
 

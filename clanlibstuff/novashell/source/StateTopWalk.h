@@ -32,6 +32,8 @@ protected:
 	
 
 private:
+
+	bool m_bCallbackActive;
 };
 
 #endif // StateTopWalk_h__

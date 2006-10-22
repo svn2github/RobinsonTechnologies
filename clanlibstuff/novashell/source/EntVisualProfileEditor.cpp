@@ -39,8 +39,6 @@ void EntVisualProfileEditor::OnClose()
 	}
 
 	SetDeleteFlag(true);
-
-	GetGameLogic->SetShowEntityCollisionData(m_bShowColDataSave);
 }
 
 int SetListBoxByString(CL_ListBox &lbox, const string &st)
@@ -121,12 +119,6 @@ bool EntVisualProfileEditor::Init(MovingEntity *pEnt)
 	m_slots.connect( m_pListAnims->sig_selection_changed(), this, &EntVisualProfileEditor::OnChangeAnim);
 
 	SetListBoxByString(*m_pListAnims, m_pEnt->GetVisualProfile()->AnimIDToText(m_pEnt->GetAnimID()));
-
-	 //int curIndex = SetListBoxByString(m_pListAnims, m_pEnt->GetVi)
-	
-	m_bShowColDataSave = GetGameLogic->GetShowEntityCollisionData();
-
-	GetGameLogic->SetShowEntityCollisionData(true);
 
 	return true; //success
 }

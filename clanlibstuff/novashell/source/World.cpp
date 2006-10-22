@@ -694,10 +694,15 @@ void World::ReInitEntities()
 					pEnt = ((TileEntity*)*tileItor)->GetEntity();
 					if (pEnt) 
 					{
+						float orientation = pEnt->GetBody()->GetOrientation();
+						CL_Vector2 facing = pEnt->GetVectorFacing();
 						pEnt->Kill();
+						pEnt->SetVectorFacing(facing);
 						pEnt->Init();
+						pEnt->GetBody()->SetOrientation(orientation);
+
 						pEnt->RunOnMapInsertIfNeeded();
-						pEnt->RunPostInitIfNeeded();
+						//pEnt->RunPostInitIfNeeded();
 					}
 
 					break;

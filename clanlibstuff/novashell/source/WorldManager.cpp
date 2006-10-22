@@ -177,6 +177,41 @@ void WorldManager::PreloadAllMaps()
 	}
 }
 
+bool ExistsInModPath(const string fName)
+{
+	string fNameWithPath = fName;
+	
+	if (!g_VFManager.LocateFile(fNameWithPath))
+	{
+		return false;
+	}
+
+	vector<string> paths;
+	g_VFManager.GetMountedDirectories(&paths);
+	
+	if (fNameWithPath.compare(0, paths.back().size(), paths.back()) == 0)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void WorldManager::SaveAllMaps()
+{
+	world_info_list::iterator itor =m_worldInfoList.begin();
+	while (itor != m_worldInfoList.end())
+	{
+		if (ExistsInModPath((*itor)->m_world.GetDirPath() + C_WORLD_DAT_FILENAME))
+		{
+			//LogMsg("Save %s?", (*itor)->m_world.GetDirPath().c_str());
+			(*itor)->m_world.ForceSaveNow();
+
+		}
+		itor++;
+	}
+}
+
 WorldInfo * WorldManager::GetWorldInfoByName(const string &stName)
 {
 	world_info_list::iterator itor =m_worldInfoList.begin();
@@ -263,7 +298,7 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 		if (&pWorldInfo->m_world == m_pActiveWorld)
 		{
 			//we're switching to the same world?
-			LogMsg("Swithing world focus to ourself?");
+			LogMsg("Switching world focus to ourself?");
 			return true;
 		}
 		if (!pCameraSetting)

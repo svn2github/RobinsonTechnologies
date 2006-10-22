@@ -247,30 +247,37 @@ void GameLogic::ResetUserProfile(string name)
 
     string stPath = m_strBaseUserProfilePath + "/" + name +"/" +m_activeWorldName+ string("/") + string(C_BASE_MAP_PATH);
 
-	CL_DirectoryScanner scanner;
 	//also delete all
 
 	LogMsg("Resetting!");
 	g_textManager.Reset();
 
-	if (scanner.scan(stPath, "*"))
 	{
-	while (scanner.next())
-	{
-		std::string file = scanner.get_name();
-		if (scanner.is_directory() && scanner.get_name() != "." && scanner.get_name() != "..")
+		//we want the scanner to deconstruct otherwise we can't remove the path it was working with
+		CL_DirectoryScanner scanner;
+		if (scanner.scan(stPath, "*"))
 		{
-			//no underscore at the start, let's show it
-			RemoveWorldFiles(stPath+"/"+scanner.get_name()+"/");
-			//now remove the directory
-			CL_Directory::remove(stPath+"/"+scanner.get_name(), false, false);
+			while (scanner.next())
+			{
+				std::string file = scanner.get_name();
+				if (scanner.is_directory() && scanner.get_name() != "." && scanner.get_name() != "..")
+				{
+					//no underscore at the start, let's show it
+					RemoveWorldFiles(stPath+"/"+scanner.get_name()+"/");
+					//now remove the directory
+					CL_Directory::remove(stPath+"/"+scanner.get_name(), false, false);
+				}
+			}
 		}
-	}
-	}
 
-	stPath = m_strBaseUserProfilePath + "/" + m_activeWorldName + "/" + name + string("/");
-	RemoveFile(stPath+"/"+string(C_PROFILE_DAT_FILENAME));
-	RemoveFile(m_strBaseUserProfilePath + "/" + m_activeWorldName + "/");
+	}
+	stPath = m_strBaseUserProfilePath + "/" + name + string("/") + m_activeWorldName +"/";
+
+	RemoveFile(stPath+string(C_WORLD_NAV_FILENAME));
+	RemoveFile(stPath+string(C_PROFILE_DAT_FILENAME));
+
+	CL_Directory::remove(m_strBaseUserProfilePath + "/" + name + string("/") + m_activeWorldName+"/"+ string(C_BASE_MAP_PATH));
+	CL_Directory::remove(m_strBaseUserProfilePath + "/" + name + string("/") + m_activeWorldName);
 	m_data.Clear();
 }
 
@@ -442,11 +449,23 @@ bool GameLogic::Init()
 		m_bRebuildCacheData = false;
 
 		//load all maps
+		CL_Display::clear(CL_Color(0,0,255));
+		BlitMessage("... loading all maps, please wait ...", (GetScreenY/2) -30);
 
 		m_worldManager.PreloadAllMaps();
 
+		CL_Display::clear(CL_Color(0,0,255));
+		BlitMessage("... linking all navigation graphs ...", (GetScreenY/2) -30);
+
 		//then rebuild node data
 		g_worldNavManager.LinkEverything();
+		CL_Display::clear(CL_Color(0,0,255));
+		BlitMessage("... saving out navgraph and tagcashe data ...", (GetScreenY/2) -30);
+
+		//now save everything, nothing will have changes except tagcache data
+		m_worldManager.SaveAllMaps();
+		SetRestartEngineFlag(true);
+		return true;
 	}
 
 	
@@ -766,10 +785,16 @@ void GameLogic::InitGameGUI(string xmlFile)
 
 }
 
-void ClearCacheDataFromWorldPath(string worldPath)
+void ClearCacheDataFromWorldPath(string worldPath, bool bCurModOnly)
 {
+	
+	string fileToDelete = worldPath+"/"+string(C_WORLD_NAV_FILENAME);
+
 	//first kill it's main navgraph file
-	RemoveFile(worldPath+"/"+string(C_WORLD_NAV_FILENAME));
+	if (!bCurModOnly || ExistsInModPath(fileToDelete))
+	{
+		RemoveFile(fileToDelete);
+	}
 	
 	//next scan each map path and remove cached data
 
@@ -777,6 +802,7 @@ void ClearCacheDataFromWorldPath(string worldPath)
 	CL_DirectoryScanner scanner;
 
 	scanner.scan(worldPath+"/"+string(C_BASE_MAP_PATH), "*");
+	
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
@@ -786,13 +812,16 @@ void ClearCacheDataFromWorldPath(string worldPath)
 				if (scanner.get_name()[0] != '.')
 				{
 					//no underscore at the start, let's show it
-					RemoveFile(worldPath+"/"+string(C_BASE_MAP_PATH)+"/"+scanner.get_name()+"/"+string(C_TAGCACHE_FILENAME));
+					fileToDelete = worldPath+"/"+string(C_BASE_MAP_PATH)+"/"+scanner.get_name()+"/"+string(C_TAGCACHE_FILENAME);
+
+					if (!bCurModOnly || ExistsInModPath(fileToDelete))
+					{
+						RemoveFile(fileToDelete);
+					}
 				}
 
 		}
 	}
-
-	
 }
 
 void GameLogic::DeleteAllCacheFiles()
@@ -806,10 +835,8 @@ void GameLogic::DeleteAllCacheFiles()
 
 		for (;itor != vecPaths.rend(); itor++)
 		{
-			ClearCacheDataFromWorldPath(*itor);
+			ClearCacheDataFromWorldPath(*itor, true);
 		}
-
-	
 }
 
 void GameLogic::Update(float step)
@@ -824,9 +851,7 @@ void GameLogic::Update(float step)
 		if (m_bRebuildCacheData)
 		{
 			DeleteAllCacheFiles();
-
 		}
-		
 		
 		Init();
 	}

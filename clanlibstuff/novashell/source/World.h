@@ -29,7 +29,7 @@ class NavGraphManager;
 typedef std::map<ScreenID, WorldChunk*> WorldMap;
 
 typedef std::list<unsigned int> tag_hash_list;
-#define C_WORLD_FILE_VERSION 0
+#define C_WORLD_FILE_VERSION 1
 
 enum
 {

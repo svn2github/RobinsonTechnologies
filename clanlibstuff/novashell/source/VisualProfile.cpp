@@ -432,12 +432,17 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 		//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 	} catch(CL_Error error)
 	{
-		LogError("Error with putting anim %s as state %s while building profile %s.  Make sure you spelled it right and it's in the xml.\n(%s)",
+		LogError("Error with putting anim %s as anim state %s while building profile %s.  Make sure you spelled it right and it's in the xml.\n(%s)",
 			stSpriteName.c_str(), stState.c_str(), GetName().c_str(), error.message.c_str());
 		SAFE_DELETE(m_animArray[animID].m_pSprite);
 		return;
 	}
 
+	if (m_animArray[animID].m_pSprite->get_frame_count() == 0)
+	{
+		//something is wrong
+		return;
+	}
 	m_animArray[animID].m_spriteName = stSpriteName;
 	
 	CL_Origin o;
@@ -456,8 +461,15 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 	{
 		m_animArray[animID].m_pSprite->set_angle_yaw(-180);
 		m_animArray[animID].m_pSprite->get_alignment(o, x, y);
+		
+		if (o == origin_top_left)
+		{
+			x += m_animArray[animID].m_pSprite->get_width();
+		}
 		m_animArray[animID].m_pSprite->set_alignment(o, -x, y);
 
+
+		
 	}
 
 	m_animArray[animID].m_name = stState;

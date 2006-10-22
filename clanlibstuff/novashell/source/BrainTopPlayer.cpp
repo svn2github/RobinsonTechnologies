@@ -276,32 +276,90 @@ void BrainTopPlayer::OnAction()
 	CL_Vector2 vStartPos = m_pParent->GetPos();
 	CL_Vector2 vFacing = m_pParent->GetVectorFacing();
 
-	const int actionRange = 60;
+	const int actionRange = 80;
+	const int raySpread = 8;
 	TileEntity *pTileEnt;
 	CL_Vector2 vEndPos;
 	vEndPos = vStartPos + (vFacing * actionRange);
 	
 	CL_Vector2 vCross = vFacing.cross();
-
 	CL_Vector2 vColPos;
+
 	Tile *pTile = NULL;
 
-	GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+	tile_list tilelist;
+	
+	CL_Vector2 scanRectTopLeft = vStartPos;
+	CL_Vector2 scanRectBottomRight = vEndPos;
+
+	switch (m_pParent->GetFacing())
+	{
+		case VisualProfile::FACING_DOWN:
+		case VisualProfile::FACING_UP:
+		case VisualProfile::FACING_LEFT:
+		case VisualProfile::FACING_RIGHT:
+
+			scanRectTopLeft -= vCross * raySpread*4;
+			scanRectBottomRight += vCross * raySpread*4;
+			break;
+
+		
+	}
+
+	CL_Rect r(scanRectTopLeft.x, scanRectTopLeft.y, scanRectBottomRight.x, scanRectBottomRight.y);
+	
+	//expand it to cover the other places we're going to scan
+	
+	m_pParent->GetMap()->GetMyWorldCache()->AddTilesByRect(r, &tilelist,m_pParent->GetMap()->GetLayerManager().GetCollisionList(), true);
+	GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+
+//	DrawRectFromWorldCoordinates(CL_Vector2(r.left, r.top), CL_Vector2(r.right, r.bottom),  CL_Color::white, CL_Display::get_current_window()->get_gc());
+//	DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
 
 	if (!pTile)
 	{
 		//try again
-		vEndPos += vCross * 20;
-		GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+		vEndPos += vCross * raySpread;
+	
+		GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
 	}
+	//DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
 
 	if (!pTile)
 	{
 		//try again
-		vEndPos += vCross * -40;
-		GetTileLineIntersection(vStartPos, vEndPos, m_pParent->GetNearbyTileList(), &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+		vEndPos += vCross * -(raySpread*2);
+		GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
 	}
+//	DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
 
+
+
+//try even more
+
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * (raySpread*3);
+		vStartPos += vCross * raySpread;
+	GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+//	DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * -(raySpread*4);
+		vStartPos += vCross * (-raySpread*2);
+	GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, m_pParent->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+//	DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
+
+
+
+	//CL_Display::flip(2); //show it now
 	if (pTile)
 	{
 		//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);

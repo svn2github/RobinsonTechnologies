@@ -25,7 +25,7 @@ void Goal_Approach::Activate()
 	RemoveAllSubgoals();
 
 	if (!UpdatePositionFromEntityID()) return; //there was an error, it will set the failed flag for us
-	
+
 	if (!m_bTriedSimpleWay && m_pDestMap == m_pOwner->GetMap())
 	{
 		m_bTriedSimpleWay = true;
@@ -36,8 +36,8 @@ void Goal_Approach::Activate()
 		//however, if this fails, we'll need it.
 	}
 
-
-		//LogMsg("Ent %d (%s) is calculating a MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+	m_bTriedComplexWay = true;
+	LogMsg("Ent %d (%s) is calculating a MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
@@ -57,6 +57,7 @@ void Goal_Approach::Activate()
 		m_macroPath.m_path.clear();
 		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
 		m_bTriedSimpleWay = false;
+		m_bTriedComplexWay = false;
 		return;
 
 	}
@@ -89,6 +90,7 @@ void Goal_Approach::ProcessNextMapChunk()
 	{
 		LogError("Node no longer exists?");
 		m_iStatus = inactive; //make it restart
+		m_bTriedComplexWay = false;
 	} else
 	{
 		assert(pNodeEnt->GetMap() == m_pOwner->GetMap() && "How this happen?!");
@@ -159,6 +161,11 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 		//LogMsg("Trying angle %s at pos %s", PrintVector(vecAngleFromTarget).c_str(), 
 	//		PrintVector(m_vDestination).c_str());
 	
+		//found a potential, let's do further checking for more accuracy?
+#ifdef _DEBUG
+//		DrawBullsEyeWorld(m_vDestination, CL_Color::red, 20, CL_Display::get_current_window()->get_gc());
+#endif
+	
 		if (m_pOwner->IsValidPosition(m_pDestMap, m_vDestination, true))
 		{
 			//cool
@@ -175,17 +182,12 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 		}
 
 		//well, we failed.  Perhaps there is a wall or something here blocking us.  Let's try from another angle.
-		/*
-		C2DMatrix RotationMatrix;
-		RotationMatrix.Rotate(float(PI/5));	
-		RotationMatrix.TransformVector(vecAngleFromTarget);
-		vecAngleFromTarget.unitize();
-		*/
-		CL_Vector2 vPerp = Vector2Perp(vecAngleFromTarget);
 
-		vecAngleFromTarget += vPerp;
+		float angle = atan2(vecAngleFromTarget.x, vecAngleFromTarget.y)- (PI/4);
+		angle = fmod(angle+PI, PI*2)-PI;
+		vecAngleFromTarget.x = sin(angle);
+		vecAngleFromTarget.y = cos(angle);
 		vecAngleFromTarget.unitize();
-
 		
 	}
 
@@ -212,6 +214,8 @@ bool Goal_Approach::CloseEnoughAndFacingTheRightWay()
 	if (m_pOwner->GetDistanceFromPosition(m_vDestination) > m_distanceRequired + padding)
 	{
 		//uh oh, we need to reroute, this will trigger it
+		m_bTriedSimpleWay = false;
+		m_bTriedComplexWay = false;
 		m_iStatus = inactive;
 		return false;
 	} 
@@ -268,9 +272,20 @@ int Goal_Approach::Process()
 
 	if (m_iStatus == failed)
 	{
+		if (m_bTriedSimpleWay && m_bTriedComplexWay)
+		{
 		LogMsg("Entity %d (%s) cannot find a path to approach entity %d, aborting",
 			m_pOwner->ID(), m_pOwner->GetName().c_str(), m_targetID);
 		return m_iStatus;
+		} else
+		{
+			m_iStatus = inactive;
+			//this will cause it to reactivate on  the next frame using the macro search which
+			//is more powerful
+
+			return m_iStatus;
+
+		}
 	}
 
 	if (m_iStatus == completed)

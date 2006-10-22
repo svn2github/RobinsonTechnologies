@@ -7,9 +7,12 @@
 #include "SearchTerminationPolicies.h"
 #include "../Message.h"
 #include "NodeTypeEnumerations.h"
+//#ifdef _DEBUG
 
-//#define SHOW_NAVINFO
+//	#define SHOW_NAVINFO
+//	#define PROFILE_PATHFINDING
 
+//#endif
 #include <cassert>
 
 //---------------------------- ctor -------------------------------------------
@@ -383,23 +386,23 @@ bool PathPlanner::IsPathNeededToGetToTarget(CL_Vector2 &TargetPos)
 //-----------------------------------------------------------------------------
 bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
 { 
-  #ifdef SHOW_NAVINFO
-    std::cout << "------------------------------------------------" << "";
-#endif
+ 
   GetReadyForNewSearch();
 
   //make a note of the target position.
   m_vDestinationPos = TargetPos;
 
- 
-  
+
+#ifdef PROFILE_PATHFINDING
+  int timer = GetTickCount();
+#endif
   //find the closest visible node to the bots position
-  int ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetMap(),m_pOwner->GetPos(), false, 2);
+  int ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetMap(),m_pOwner->GetPos(), false, 1);
 
   if (ClosestNodeToBot == no_closest_node_found)
   {
 	  //try again, this time allowing us to walk "through" creatures
-	  ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetMap(),m_pOwner->GetPos(), true, 1);
+	  ClosestNodeToBot = GetClosestNodeToPosition(m_pOwner->GetMap(),m_pOwner->GetPos(), true, 2);
   }
 
   //remove the destination node from the list and return false if no visible
@@ -409,7 +412,7 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
   if (ClosestNodeToBot == no_closest_node_found)
   { 
 #ifdef SHOW_NAVINFO
-    LogMsg("No closest node to bot found!");
+    LogMsg("No closest node to entity found!");
 #endif
 
     return false; 
@@ -420,12 +423,12 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
 #endif
 
   //find the closest visible node to the target position
-  int ClosestNodeToTarget = GetClosestNodeToPosition(m_pOwner->GetMap(),TargetPos, false, 2);
+  int ClosestNodeToTarget = GetClosestNodeToPosition(m_pOwner->GetMap(),TargetPos, false, 1);
   
   if (ClosestNodeToTarget == no_closest_node_found)
   { 
 	  //try again, this time allowing us to walk through creatures
-	  ClosestNodeToTarget = GetClosestNodeToPosition(m_pOwner->GetMap(),TargetPos, true, 1);
+	  ClosestNodeToTarget = GetClosestNodeToPosition(m_pOwner->GetMap(),TargetPos, true, 2);
   }
   
   //return false if there is a problem locating a visible node from the target.
@@ -435,7 +438,7 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
   if (ClosestNodeToTarget == no_closest_node_found)
   { 
 #ifdef SHOW_NAVINFO
-    LogMsg("No closest node to target %d",ClosestNodeToTarget);
+    LogMsg("No closest node to target %d (looking in %s at pos %s)",ClosestNodeToTarget, m_pOwner->GetMap()->GetName().c_str(), PrintVector(TargetPos).c_str());
 #endif
 
     return false; 
@@ -443,6 +446,10 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
 
   #ifdef SHOW_NAVINFO
     LogMsg("Closest node to target is %d", ClosestNodeToTarget);
+#endif
+
+#ifdef PROFILE_PATHFINDING
+	LogMsg("It took %d MS to calculate path", GetTickCount() - timer);
 #endif
 
   //create an instance of a the distributed A* search class

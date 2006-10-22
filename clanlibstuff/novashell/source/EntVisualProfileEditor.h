@@ -45,8 +45,6 @@ protected:
 
 	MovingEntity *m_pEnt; //the object we're working with
 
-	bool m_bShowColDataSave;
-
 private:
 };
 

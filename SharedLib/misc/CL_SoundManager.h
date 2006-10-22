@@ -65,6 +65,7 @@ public:
 	void AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC);
 	void SetVolume(int soundID, float volume);
 	void RemoveAllEffects(int soundID);
+	virtual void SetPan(int soundID, float pan); //-1 to 1
 
 protected:
 

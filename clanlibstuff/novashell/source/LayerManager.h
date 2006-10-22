@@ -9,6 +9,7 @@
 #ifndef LayerManager_HEADER_INCLUDED // include guard
 #define LayerManager_HEADER_INCLUDED  // include guard
 
+#define C_LAYER_NONE -1
 #define C_LAYER_FILENAME "layer.dat"
 const int C_LAYER_VERSION = 0;
 //some help to name these for generation functions, not really hardcoded though
@@ -125,6 +126,8 @@ public:
     virtual ~LayerManager();
 	unsigned int GetLayerCount() {return m_layerVec.size();}
 	Layer & GetLayerInfo(unsigned int layerID) {return m_layerVec[layerID];}
+	int GetLayerIDByName(const string &name);
+	
 	const vector<unsigned int> & GetDrawList() {return m_drawList;}
 	const vector<unsigned int> & GetEditActiveList() {return m_editActiveList;}
 	const vector<unsigned int> & GetAllList() {return m_allList;} //indexes of all layers

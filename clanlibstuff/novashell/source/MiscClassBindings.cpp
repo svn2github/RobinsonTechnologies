@@ -207,19 +207,26 @@ void luabindMisc(lua_State *pState)
 		.def("AddEffect", &ISoundManager::AddEffect)
 		.def("SetVolume", &ISoundManager::SetVolume)
 		.def("RemoveAllEffects", &ISoundManager::RemoveAllEffects)
+		.def("SetSpeedFactor", &ISoundManager::SetSpeedFactor)
+		.def("SetVolume", &ISoundManager::SetVolume)
 
 		,class_<TextManager>("TextManager")
 		.def("Add", &TextManager::Add)
 		.def("AddCustom", &TextManager::AddCustom)
 		.def("AddCustomScreen", &TextManager::AddCustomScreen)
 
+
+		,class_<LayerManager>("LayerManager")
+		.def("GetLayerIDByName", &LayerManager::GetLayerIDByName)
+		
 		,class_<World>("Map")
 		.def("SetPersistent", &World::SetPersistent)
 		.def("GetPersistent", &World::GetPersistent)
 		.def("SetAutoSave", &World::SetAutoSave)
 		.def("GetAutoSave", &World::GetAutoSave)
 		.def("GetName", &World::GetName)
-		
+		.def("GetLayerManager", &World::GetLayerManager)
+
 
 		,class_<WorldManager>("MapManager")
 		.def("SetActiveMapByName", &WorldManager::SetActiveWorldByName)
@@ -309,6 +316,12 @@ void luabindMisc(lua_State *pState)
 		def("VectorToFacing", &VectorToFacing),
 		def("LogError", &LogErrorLUA),
 		def("RunScript", &RunScript),
-		def("CreateEntitySpecial", &CreateEntitySpecial)
+		def("CreateEntitySpecial", &CreateEntitySpecial),
+		def("ColorToString", &ColorToString),
+		def("StringToColor", &StringToColor),
+		def("VectorToString", &VectorToString),
+		def("StringToVector", &StringToVector),
+		def("RectToString", &RectToString),
+		def("StringToRect", &StringToRect)
 		];
 }

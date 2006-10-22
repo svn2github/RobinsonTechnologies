@@ -14,12 +14,14 @@ void Goal_MoveToPosition::Activate()
   //make sure the subgoal list is clear.
   RemoveAllSubgoals();
 
+
   bool bUsePath = m_pOwner->GetPathPlanner()->IsPathNeededToGetToTarget(m_vDestination);
 
   if (bUsePath)
   {
 
 	  //LogMsg("Ent %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+
 
 	  //compute path
 	  if (m_pOwner->GetPathPlanner()->RequestPathToPosition(m_vDestination))
@@ -30,6 +32,8 @@ void Goal_MoveToPosition::Activate()
 
 		  //this is setup to do searches over time, but for now, let's just do the whole search now
 		  //and not mess with getting messages later about it
+
+		  
 		  do 
 		  {
 			  result = m_pOwner->GetPathPlanner()->CycleOnce();
@@ -70,7 +74,7 @@ void Goal_MoveToPosition::Activate()
 			  m_iStatus = failed;
 			  return;
 		  }
-		  LogMsg("%s had an error computing path.", m_pOwner->GetName().c_str());
+		  LogMsg("Ent %d (%s) was unable to compute a path to destination.", m_pOwner->ID(), m_pOwner->GetName().c_str());
 		  bUsePath = false;
 	  }
 

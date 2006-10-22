@@ -225,6 +225,23 @@ void EntWorldCache::RemoveTileFromList(Tile *pTile)
 			//also remove from the watch list to avoid a crash there
 			g_watchManager.OnEntityDeleted( pEnt);
 
+			/*
+			if (GetGameLogic->GetShowEntityCollisionData())
+			{
+				for (unsigned int i=0; i < m_entityList.size(); i++)
+				{
+					if (m_entityList[i])
+					{
+						//when debug tools are active, we need to keep the "NearbyTilesList" accurate to avoid
+						//crashes, otherwise it's not needed as it's recreate before use each frame.  However,
+						//when drawing collision outlines, we draw AFTER
+						m_entityList[i]->OnEntityDeleted(pEnt); 
+						break;
+					}
+				}
+			}
+			*/
+
 		}
 	}
 
@@ -833,6 +850,7 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 
 	Tile *pTile;
 	CL_Rect tempRect;
+	static CollisionData col;
 
 	for (; listItor != tilelist.end(); listItor++)
 	{
@@ -855,6 +873,13 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 					continue; //skip this
 				}
 			}
+			
+			if (pTile->UsesTileProperties() && pTile->GetType() == C_TILE_TYPE_PIC )
+			{
+				//we need a customized version
+				CreateCollisionDataWithTileProperties(pTile, col);
+				pCol = &col;
+			}
 
 			//do we overlap his collision info?
 			//we can't just check GetWorldColRect because it's not accurate enough, let's check each line and do the rect
@@ -869,7 +894,28 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 					CL_Vector2 offset = pTile->GetPos();
 					tempRect = CL_Rect(lineListItor->GetRect());
 					tempRect += CL_Point(offset.x, offset.y);
-					if ( tempRect.is_overlapped(r)) return true;
+					if ( tempRect.is_overlapped(r))
+					{
+						CL_Vector2 worldColCenter = offset+lineListItor->GetOffset();
+						CL_Vector2 facingAwayFromCollision = pos-worldColCenter;
+						facingAwayFromCollision.unitize();
+						CL_Vector2 worldColOutsideTarget = worldColCenter+ (facingAwayFromCollision* (max(tempRect.get_width(), tempRect.get_height())/2));
+
+						/*
+						DrawLineWithArrowWorld(pos, worldColOutsideTarget, 10, CL_Color::white, CL_Display::get_current_window()->get_gc());
+						
+						//found a potential, let's do further checking for more accuracy?
+						DrawBullsEyeWorld(offset+lineListItor->GetOffset(), CL_Color::white, 10, CL_Display::get_current_window()->get_gc());
+						CL_Display::flip(2); //show it now
+						*/
+
+						//remove offset
+						if (lineListItor->GetLineIntersection(pos- (offset+lineListItor->GetOffset()), worldColOutsideTarget- (offset+lineListItor->GetOffset())))
+						{
+							//we hit it.
+							return true;
+						}
+					}
 				}
 
 				lineListItor++;
