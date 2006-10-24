@@ -53,6 +53,7 @@ public:
 	bool CreateDir(const string &fname); //creates a dir in newest mounted path
 	bool LocateFile(string &fnameOut); //returns the correct path to find this file
 	void Reset(); //unmount everything
+	string GetLastMountedDirectory();
 
 	void GetMountedDirectories(vector<string> *pPathsOut);
 
