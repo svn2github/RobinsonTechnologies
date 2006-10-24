@@ -621,6 +621,7 @@ void SparseGraph<node_type, edge_type>::CullInvalidEdges()
           m_Nodes[curEdge->From()].Index() == invalid_node_index)
       {
         curEdge = (*curEdgeList).erase(curEdge);
+		if (curEdge == (*curEdgeList).end()) break; //SETH added to avoid debug crash in VC8
       }
     }
   }
