@@ -384,8 +384,11 @@ bool World::Load(string dirPath)
 	m_defaultTileSize = 0;
 	Init();
 
+
 	m_layerManager.Load(m_strDirPath+C_LAYER_FILENAME);
 	
+	BlitMessage("... loading ...");
+
 	CL_InputSource *pFile = g_VFManager.GetFile(m_strDirPath+C_WORLD_DAT_FILENAME);
 	if (!pFile)
 	{
@@ -396,7 +399,10 @@ bool World::Load(string dirPath)
 	try
 	{
 		//LogMsg("Loading world map...");
-	
+
+
+
+
 		CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
 
 		helper.process(m_version);
@@ -454,7 +460,7 @@ bool World::Load(string dirPath)
 		return false;
 	}
 
-	LogMsg("Loaded map.  %d non-empty chunks, size is %d by %d.", m_worldMap.size(), GetWorldX(), GetWorldY());
+	LogMsg("Loaded map %s.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), m_worldMap.size(), GetWorldX(), GetWorldY());
 	SAFE_DELETE(pFile);
 
 	m_bDataChanged = false;
@@ -474,20 +480,35 @@ bool World::SaveRequested()
 }
 
 
+void World::MarkAllMapPiecesAsNeedingToSave()
+{
+	WorldMap::const_iterator itor = m_worldMap.begin();
+	while (itor != m_worldMap.end())
+	{
+		if (!itor->second->IsEmpty())
+		{
+			itor->second->GetScreen(); //just accessing it causes it to precache
+			itor->second->SetDataChanged(true);
+		}
+		itor++;
+	}
+}
+
 void World::ForceSaveNow()
 {
 	m_bDataChanged = true;
+	MarkAllMapPiecesAsNeedingToSave();
 	Save(true);
 
 	WorldMap::const_iterator itor = m_worldMap.begin();
 	while (itor != m_worldMap.end())
 	{
-		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
+		if (!itor->second->IsEmpty())
 		{
 			itor->second->GetScreen()->Save(); //just accessing it causes it to precache
 		}
 		itor++;
-	}	
+	}
 }
 
 bool World::Save(bool bSaveTagCacheAlso)
@@ -497,21 +518,10 @@ bool World::Save(bool bSaveTagCacheAlso)
 	assert(m_strDirPath[m_strDirPath.length()-1] == '/' && "Save needs a path with an ending backslash on it");
 
 	g_VFManager.CreateDir(m_strDirPath); //creates the dir if needed in the last mounted file tree
-	
-	if (bSaveTagCacheAlso)
-	{
-		//first save our cached tag data
-		GetTagManager->Save(this);
-
-		if (!GetApp()->GetMyGameLogic()->UserProfileActive())
-		{
-			//also a good time to save out used textures, used for missing texture errors
-			GetHashedResourceManager->SaveUsedResources(this, m_strDirPath);
-		}
-	}
 
 	m_layerManager.Save(m_strDirPath+C_LAYER_FILENAME);
-	
+	bool bScreenDataWasModified = false;
+
 	//do we absolutely have to save?
 	bool bRequireSave = m_bDataChanged;
 
@@ -525,20 +535,44 @@ bool World::Save(bool bSaveTagCacheAlso)
 
 		while (itor != m_worldMap.end())
 		{
-			if (!itor->second->IsEmpty())
-			{
 				if (itor->second->GetChunkDataChanged())
 				{
 					bRequireSave = true;
 					break;
 				}
-			}
+
+				if (itor->second->GetDataChanged())
+				{
+					bScreenDataWasModified = true;
+					break;
+				}
+			
 			itor++;
 		}
 	}
 
+	if ( (bScreenDataWasModified  || bRequireSave) && !ExistsInModPath(m_strDirPath+C_WORLD_DAT_FILENAME))
+	{
+		//oh oh, we've modified a map we're modding.  To avoid nasty tagcache issues we'll need to
+		//copy the entire thing here.
+		MarkAllMapPiecesAsNeedingToSave();
+		bRequireSave = true;
+	}
+	if (bScreenDataWasModified || bRequireSave)
+	{
+		GetTagManager->Save(this);
+	}
+
 	if (!bRequireSave) return true; //abort the save, not needed
 
+		
+	
+		if (!GetApp()->GetMyGameLogic()->UserProfileActive())
+		{
+			//also a good time to save out used textures, used for missing texture errors
+			GetHashedResourceManager->SaveUsedResources(this, m_strDirPath);
+		}
+	
 
 	LogMsg("Saving world map header %s - (%d world chunks to look at, map size %d by %d)", GetName().c_str(), m_worldMap.size(),
 		GetWorldX(), GetWorldY());
@@ -584,11 +618,39 @@ bool World::Save(bool bSaveTagCacheAlso)
 void World::PreloadMap()
 {
 	WorldMap::const_iterator itor = m_worldMap.begin();
+	
+	GetNavGraph()->SetPerformLinkOnAdd(false);
+
 	while (itor != m_worldMap.end())
 	{
 		if (!itor->second->IsEmpty())
 		{
 			itor->second->GetScreen(); //just accessing it causes it to precache
+		}
+		itor++;
+	}	
+
+	GetNavGraph()->SetPerformLinkOnAdd(true);
+
+	BuildNavGraph();
+}
+
+void World::BuildNavGraph()
+{
+	if (!IsInitted()) return;
+
+	GetNavGraph()->Clear();
+
+	tile_list tileList;
+	tile_list::iterator tileItor;
+	
+	
+	WorldMap::const_iterator itor = m_worldMap.begin();
+	while (itor != m_worldMap.end())
+	{
+		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
+		{
+			itor->second->GetScreen()->LinkNavGraph();
 		}
 		itor++;
 	}	
@@ -716,8 +778,13 @@ void World::ReInitEntities()
 
 void World::RemoveUnusedFileChunks()
 {
+	
+	vector<string> paths;
+	g_VFManager.GetMountedDirectories(&paths);
+
+	
 	CL_DirectoryScanner scanner;
-	scanner.scan(m_strDirPath, "*.chunk");
+	scanner.scan(paths.back() +"/" +m_strDirPath, "*.chunk");
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
@@ -728,7 +795,7 @@ void World::RemoveUnusedFileChunks()
 			{
 				LogMsg("Deleting unused worldchunk file %s. (screenID %d)", scanner.get_name().c_str(),
 					worldchunk);
-				RemoveFile(m_strDirPath+scanner.get_name());
+				g_VFManager.RemoveFile(m_strDirPath+scanner.get_name());
 			}
 		}
 	}

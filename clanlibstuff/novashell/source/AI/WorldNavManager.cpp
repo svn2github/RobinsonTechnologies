@@ -335,8 +335,8 @@ void WorldNavManager::StripUnrequiredNodesFromPath(MacroPathInfo &m)
 	{
 		if (m.m_path.size() < 2)
 		{
-			assert(!"Huh?!");
-			LogMsg("WorldNav node stripping error?");		
+			//assert(!"Huh?!");
+			//LogMsg("WorldNav node stripping error?");		
 			return;
 			
 		};

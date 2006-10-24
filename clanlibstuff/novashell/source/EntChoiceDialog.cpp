@@ -182,15 +182,12 @@ void EntChoiceDialog::AddItems()
 			m_mode = waiting_for_selection;
 		}
 	}
-
 }
-
 
 void EntChoiceDialog::RemoveItems()
 {
 	if (m_timer.IntervalReached())
 	{
-
 		if (m_curElementToPlace == -1)
 		{
 			if (m_msgToShow.size() > 0)

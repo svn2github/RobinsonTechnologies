@@ -4,9 +4,8 @@
 
 int g_defaultWorldDialogSelection = 0;
 
-bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string stWorldPath)
+bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string fileName)
 {
-	string fileName = stWorldPath+"."+string(C_WORLD_INFO_EXTENSION);
 
 	FILE *fp = fopen(fileName.c_str(), "rb");
 	if (!fp) 
@@ -23,13 +22,109 @@ bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string stWorldPath)
 		{
 			pModInfo->m_stDisplayName = tok[1];
 		}
+		
+		if (CL_String::compare_nocase(tok[0], "engine_version_requested"))
+		{
+			pModInfo->m_engineVersionRequested = CL_String::to_float(tok[1]);
+		}
 
-		//scan more things later
+		if (CL_String::compare_nocase(tok[0], "add_world_requirement"))
+		{
+			ResourceInfoItem res;
+			res.m_modPath = tok[1];
+			res.m_requestedVersion = CL_String::to_float(tok[2]);
+			pModInfo->m_requestedResources.push_back(res);
+		}
+
 	}
 
 	fclose(fp);
 	return true;
 
+}
+bool LocateWorldPath(string m_path, string &pathOut)
+{
+	
+	if (exist( (m_path+ "." + string(C_WORLD_INFO_EXTENSION)).c_str()  ))
+	{
+		pathOut = m_path;
+		return true;
+	}
+	
+	
+	string modInfoFile = m_path+ "." + string(C_WORLD_INFO_EXTENSION);
+
+	if (!exist( modInfoFile.c_str()) )
+	{
+		//try another way
+		modInfoFile = GetGameLogic->GetWorldsDirPath() + "/"  +m_path+ "." + string(C_WORLD_INFO_EXTENSION);
+		if (exist(modInfoFile.c_str()))
+		{
+			//yep, use this
+			pathOut = GetGameLogic->GetWorldsDirPath() + "/"  +m_path;
+			return true;
+		} else
+		{
+			//try another way
+			modInfoFile = "worlds/" +m_path+ "." + string(C_WORLD_INFO_EXTENSION);
+			if (exist(modInfoFile.c_str()))
+			{
+				//yep, use this
+				pathOut = "worlds/" +m_path;
+				return true;
+			}
+		}
+	}
+
+
+	if (!exist( (modInfoFile+"." + string(C_WORLD_INFO_EXTENSION)).c_str()) )
+	{
+		LogError("Unable to locate %s.  World is missing perhaps?",  modInfoFile.c_str());
+		return false;
+	} else
+	{
+		pathOut = m_path;
+	}
+
+	return true;
+}
+
+void SetupModPathsFromWorldInfo(string modPath)
+{
+	//get data about it
+	ModInfoItem modInfo;
+	
+	if (CL_String::get_extension(modPath) == C_WORLD_INFO_EXTENSION)
+	{
+		//remove the .novashell part
+		modPath = modPath.substr(0, modPath.size()- (strlen(C_WORLD_INFO_EXTENSION)+1));
+	}
+
+	string modLocation;
+	if (LocateWorldPath(modPath, modLocation))
+	{
+		ReadWorldInfoFile(&modInfo, modLocation+"."+C_WORLD_INFO_EXTENSION);
+
+		//add mod required mod paths
+		for (unsigned int i=0; i < modInfo.m_requestedResources.size(); i++)
+		{
+			//check versions here later?	
+			string pathOut;
+			if (!LocateWorldPath(modInfo.m_requestedResources[i].m_modPath, pathOut))
+			{
+				char st[512];
+				sprintf(st, "This world requires another world, %s (v%.2f) which is missing.\n\nThis world will probably not run right.",
+					modInfo.m_requestedResources[i].m_modPath.c_str(), modInfo.m_requestedResources[i].m_requestedVersion);
+					ShowMessage("Can't find a world Dependency", st);
+			} else
+			{			
+				GetGameLogic->AddModPath(modInfo.m_requestedResources[i].m_modPath);
+			}
+		}
+
+
+		GetGameLogic->AddModPath(modPath);
+	}
 }
 
 
@@ -59,7 +154,7 @@ void EntWorldDialog::HandleMessageString(const std::string &msg)
 	if (msg == "BootUpWorld")
 	{
 		GetGameLogic->ClearModPaths();
-		GetGameLogic->AddModPath(m_modInfo[g_defaultWorldDialogSelection].m_stDirName);
+		SetupModPathsFromWorldInfo(m_modInfo[g_defaultWorldDialogSelection].m_stDirName);
 		GetGameLogic->SetRestartEngineFlag(true);
 		SetDeleteFlag(true);
 	} else
@@ -111,12 +206,10 @@ void EntWorldDialog::ScanDirectoryForModInfo(const string &path)
 	//scan map directory for available maps
 	CL_DirectoryScanner scanner;
 
-	scanner.scan(path, "*");
+	scanner.scan(path, string("*.")+C_WORLD_INFO_EXTENSION);
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
-		if (scanner.is_directory())
-		{
 			if (scanner.get_name()[0] != '_')
 				if (scanner.get_name()[0] != '.')
 				{
@@ -136,7 +229,7 @@ void EntWorldDialog::ScanDirectoryForModInfo(const string &path)
 						}
 				}
 
-		}
+		
 	}
 }
 
@@ -164,6 +257,8 @@ void EntWorldDialog::BuildWorldListBox()
 
 	m_pWindow = new CL_Window(rectSize+ptPos, "Novashell Game Creation System " + GetApp()->GetEngineVersionAsString() + " - Choose world to load", CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
 
+	int buttonCount = 2;
+
 	CL_Rect rectListBox = rectSize;
 	int borderOffset = 5;
 	rectListBox.left = borderOffset;
@@ -172,7 +267,7 @@ void EntWorldDialog::BuildWorldListBox()
 	rectListBox.bottom -= borderOffset*2;
 	rectListBox.bottom -= m_pWindow->get_component_at(0,0)->get_height();
 
-	rectListBox.bottom -= 25;
+	rectListBox.bottom -= (26*buttonCount);
 
 	//offset more, so we have a place to draw the buttons
 
@@ -206,12 +301,16 @@ void EntWorldDialog::BuildWorldListBox()
 	rectListBox.top = rectListBox.bottom + borderOffset;
 	rectListBox.bottom = rectListBox.top + 22;
 	
-	CL_Button *pBut = new CL_Button(rectListBox, "Play World", m_pWindow->get_client_area());
+	CL_Button *pBut = new CL_Button(rectListBox, "Play", m_pWindow->get_client_area());
 
 	//link to things so we know when they are clicked
 	m_slots.connect( m_pListWorld->sig_activated(), this, &EntWorldDialog::OnSelected);
 	m_slots.connect( pBut->sig_clicked(), this, &EntWorldDialog::OnClickLoad);
 
+	rectListBox.apply_alignment(origin_top_left,0, -26);
+	CL_Button *pButOnline = new CL_Button(rectListBox, "Connect online to download more", m_pWindow->get_client_area());
+	m_slots.connect( pButOnline->sig_clicked(), this, &EntWorldDialog::OnClickConnect);
+	
 	m_pListWorld->get_children().front()->set_focus(); //set focus to the real client area
 	
 }
@@ -219,6 +318,11 @@ void EntWorldDialog::BuildWorldListBox()
 void EntWorldDialog::OnClickLoad()
 {
 	OnSelected(-1);
+}
+
+void EntWorldDialog::OnClickConnect()
+{
+	ShowMessage("Seth is lazy", "In-game browsing/rating not functional yet!");
 }
 
 void EntWorldDialog::OnSelected(int selItem)

@@ -55,6 +55,8 @@ public:
 	void DeleteAllTilesOnLayer(unsigned int layer);
 	cl_uint8 GetVersion() {return m_version;}
 	void GetPtrToAllTiles(tile_list *pTileList); //this adds pointers to all this screen's tiles to the list sent in
+	void LinkNavGraph(); //expects the navgraph to have been recently cleared!
+
 	
 private:
 

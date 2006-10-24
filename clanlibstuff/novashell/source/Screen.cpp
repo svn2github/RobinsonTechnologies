@@ -89,12 +89,23 @@ Tile * Screen::GetTileByPosition(const CL_Vector2 &vecPos, unsigned int layer)
 	//do any of our tiles match this point?
 	tile_list::iterator itor = GetTileList(layer)->begin();
 
+	Tile *pTile;
+
 	while (itor != m_vecLayerList[layer].end())
 	{
-		if ( (*itor)->GetPos() == vecPos)
+		pTile = (*itor);
+		if (pTile)
 		{
-			//found it
-			return (*itor);
+			if (pTile->GetType() == C_TILE_TYPE_REFERENCE)
+			{
+				pTile = pTile->GetTileWereAReferenceFrom();
+			}
+
+			if ( pTile->GetPos() == vecPos)
+			{
+				//found it
+				return pTile;
+			}
 		}
 		itor++;
 	}
@@ -119,6 +130,7 @@ bool Screen::Save()
 	{
 		//instead of saving, we should destroy ourselves..
 		g_VFManager.RemoveFile(GetFileName());
+	
 		return false;
 	}
 
@@ -143,7 +155,7 @@ bool Screen::Save()
 		for (itor = pList->begin(); itor != pList->end(); ++itor)
 		{
 			//these exist for all tile types
-			if (  (*itor)->GetBit(Tile::e_notPersistent))
+			if (  (*itor)->GetBit(Tile::e_notPersistent) || (*itor)->GetType() == C_TILE_TYPE_REFERENCE)
 			{
 				//we don't want to save this one.. uh.. but we already said how many tiles
 				//were here and we don't want to traverse the list twice to count them..
@@ -166,8 +178,30 @@ bool Screen::Load()
 {
 	//LogMsg("Loading screen %d", m_pParentWorldChunk->GetScreenID());
 	SetRequestIsEmptyRefreshCheck(true);
-	CL_InputSource *pFile = g_VFManager.GetFile(GetFileName());
+	
+	//where is the original?
+	string realLocation = GetParentWorldChunk()->GetParentWorld()->GetDirPath()+"/"+C_WORLD_DAT_FILENAME;
 
+	CL_InputSource *pFile;
+	
+	if (g_VFManager.LocateFile(realLocation))
+	{
+		//let's load from here
+		try
+		{
+			pFile = new CL_InputSource_File(CL_String::get_path(realLocation)+CL_String::from_int(GetParentWorldChunk()->GetScreenID())+".chunk");
+		} catch(...)
+		{
+			return true;
+		}
+
+
+	} else
+	{
+		//load from wherever
+		pFile = g_VFManager.GetFile(GetFileName());
+	}
+	
 	if (!pFile) return true;
 
 	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
@@ -226,6 +260,8 @@ bool Screen::Load()
 					break;
 
 				case C_TILE_TYPE_REFERENCE:
+					//LogMsg("ignoring reference");
+
 					//ignore
 					break;
 				default:
@@ -414,6 +450,32 @@ bool Screen::RemoveTileByPointer(Tile *pSrcTile)
 	return false;
 }
 
+void Screen::LinkNavGraph()
+{
+	Tile *pTile;
+	tile_list::iterator itor;
+
+	NavGraphManager *pNav = GetParentWorldChunk()->GetParentWorld()->GetNavGraph();
+	
+	for (unsigned int i = 0; i < m_vecLayerList.size(); i++)
+	{
+		itor = m_vecLayerList[i].begin();
+
+		while (itor != m_vecLayerList[i].end())
+		{
+			pTile = (*itor);
+
+			if (pTile->GetBit(Tile::e_pathNode))
+			{
+				pTile->SetGraphNodeID(invalid_node_index); //assume that we've cleared the
+				//navgraph before calling this so it's all invalid anyway
+				pNav->AddTileNode(pTile);
+			}
+			itor++;
+		}
+	}
+}
+
 void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 {
 
@@ -452,6 +514,7 @@ void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 
 void Screen::AddTile(Tile *pTile)
 {
+		
 	pTile->SetParentScreen(this); //who knows when they'll need this data
 	GetTileList(pTile->GetLayer())->push_back(pTile);
 
@@ -469,6 +532,8 @@ void Screen::AddTile(Tile *pTile)
 
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
+	//	LogMsg("Adding tile %s", ((TileEntity*)pTile)->GetEntity()->GetName().c_str());
+
 		GetTagManager->Update(GetParentWorldChunk()->GetParentWorld(), ((TileEntity*)pTile)->GetEntity());
 	}
 

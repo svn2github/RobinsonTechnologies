@@ -539,15 +539,11 @@ void EntEditor::OnAddNewMap()
 
 	if (dlg.get_result_button() == 0)
 	{
-	
-		vector<string> paths;
-		g_VFManager.GetMountedDirectories(&paths);
-
 		string mapName = GetGameLogic->GetBaseMapPath() +  pName->get_text();
 		
 		if (pName->get_text().size() > 0)
 		{
-			if (CL_Directory::create(paths.back() + "/" + mapName))
+			if (CL_Directory::create(g_VFManager.GetLastMountedDirectory() + "/" + mapName))
 			{
 				CL_MessageBox::info("Created", "Map directory "+mapName+" created.  Note, this just makes a directory in the maps dir.  You can cut/paste/copy from file explorer too.", GetApp()->GetGUI());
 			
@@ -603,7 +599,7 @@ void EntEditor::OnDumpWorldNavStatistics()
 void EntEditor::OnRebuildNavigationMaps()
 {
 	
-	if (!ConfirmMessage("Rebuild tag/world navigation cache data", "This may clear up any weird data problems from the result of a crash or merging maps.\n\nMake sure the world is loaded that you would like this applied to.\n\nThis may take a long time, are you sure?")) return;
+	if (!ConfirmMessage("Rebuild tag/world navigation cache data", "This may clear up any weird data problems from the result of a crash or merging maps.\n\nMake sure the world/mod/saved game is loaded that you would like this applied to.\n\nThis may take a long time, are you sure?")) return;
 
 	GetGameLogic->RequestRebuildCacheData();
 	

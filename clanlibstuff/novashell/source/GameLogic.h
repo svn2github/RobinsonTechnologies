@@ -92,7 +92,7 @@ public:
 	  const string & GetWorldsDirPath() {return m_strWorldsDirPath;}
 	  const string & GetActiveWorldName();
 	  void InitGameGUI(string xmlFile); //don't make this const, we modify it in place
-
+		void OneTimeModSetup();
 	  CL_StyleManager_Bitmap * GetGUIStyle() {return m_pGUIStyle;}
 	  CL_GUIManager * GetGameGUI() {return m_pGUIManager;}
 	  void RequestRebuildCacheData();
@@ -150,6 +150,7 @@ private:
 	string m_activeWorldName;
 	string m_strWorldsDirPath;
 	bool m_bRebuildCacheData;
+	string m_rebuildUserName;
 
 	CL_ResourceManager * m_pGUIResources;
 	CL_StyleManager_Bitmap * m_pGUIStyle;
@@ -159,7 +160,7 @@ private:
 void MovePlayerToCamera();
 void MoveCameraToPlayer();
 void SetCameraToTrackPlayer();
-void ShowMessage(string title, string msg);
+void ShowMessage(string title, string msg, bool bForceClassicStyle = true);
 
 extern TagManager g_TagManager;
 extern CL_VirtualFileManager g_VFManager;

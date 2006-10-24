@@ -9,7 +9,9 @@
 NavGraphManager::NavGraphManager(World *pParent)
 {
 	m_pWorld = pParent;
-	m_pNavGraph = new NavGraph(false);
+	m_pNavGraph = NULL;
+	
+	Clear();
 }
 
 
@@ -17,6 +19,15 @@ NavGraphManager::~NavGraphManager()
 {
 	Kill();
 }
+void NavGraphManager::Clear()
+{
+	Kill();
+
+	m_pNavGraph = new NavGraph(false);
+	m_bPerformLinkOnAdd = true;
+
+}
+
 void NavGraphManager::Kill()
 {
 	SAFE_DELETE(m_pNavGraph);
@@ -110,6 +121,11 @@ void NavGraphManager::AddNeighborLinks(Tile *pTile)
 
 void NavGraphManager::AddTileNode(Tile *pTile)
 {
+	if (!GetPerformLinkOnAdd())
+	{
+		return; //we'll do it later
+	}
+	
 	pTile->SetGraphNodeID(m_pNavGraph->GetNextFreeNodeIndex());
 
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
@@ -126,6 +142,7 @@ void NavGraphManager::AddTileNode(Tile *pTile)
 	}
 
 	AddNeighborLinks(pTile);
+
 }
 
 void NavGraphManager::RemoveTileNode(Tile *pTile)
@@ -133,6 +150,7 @@ void NavGraphManager::RemoveTileNode(Tile *pTile)
 	assert(pTile->GetGraphNodeID() != invalid_node_index);
 	m_pNavGraph->RemoveNode(pTile->GetGraphNodeID());
 }
+
 
 void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 {
@@ -177,7 +195,15 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 
 bool NavGraphManager::DoNodesConnect(int a, int b)
 {
+
+	if (a == invalid_node_index || b == invalid_node_index)
+	{
+		LogMsg("DoNodesConnect was given a bad world node.");
+		return false;
+	}
+
 	assert(a != b && "They are the same node!");
+
 
 	//OPTIMIZE  can't this be optimized somehow?  We don't actually care about the path taken
 	typedef Graph_SearchAStar<NavGraph, Heuristic_Euclid> AStar;

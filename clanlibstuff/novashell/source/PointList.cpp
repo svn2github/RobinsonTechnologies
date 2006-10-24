@@ -267,6 +267,51 @@ CBody & PointList::GetAsBody(const CL_Vector2 &vPos, CBody *pCustomBody)
 	 return g_Body;
 }
 
+//stolen from jyk's snippet from GDNet: http://www.gamedev.net/community/forums/topic.asp?topic_id=304578
+
+bool IntersectCircleSegment(const CL_Vector2& c,        // center
+							float r,                            // radius
+							const CL_Vector2& p1,     // segment start
+							const CL_Vector2& p2)     // segment end
+{
+	CL_Vector2 dir = p2 - p1;
+	CL_Vector2 diff = c - p1;
+	float t = diff.dot(dir) / dir.dot(dir);
+	if (t < 0.0f)
+		t = 0.0f;
+	if (t > 1.0f)
+		t = 1.0f;
+	CL_Vector2 closest = p1 + (dir*t);
+	CL_Vector2 d = c - closest;
+	float distsqr = d.dot(d);
+	return distsqr <= r * r;
+}
+
+bool PointList::GetCircleIntersection(const CL_Vector2 &c, float radius)
+{
+	for (unsigned int i=0; i < GetPointList()->size();)
+	{
+		int endLineIndex;
+
+		if (i == GetPointList()->size()-1)
+		{
+			endLineIndex=0;
+		} else
+		{
+			endLineIndex = i+1;
+		}
+
+		if (IntersectCircleSegment(c, radius, GetPointList()->at(i), GetPointList()->at(endLineIndex)))
+		{
+			return true; 
+		}
+		
+		i++;
+	}
+
+	return false;
+}
+
 bool PointList::GetLineIntersection(const CL_Vector2 &a, const CL_Vector2 &b)
 {
 	float lineA[4], lineB[4];

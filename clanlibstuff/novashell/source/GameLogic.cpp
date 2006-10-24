@@ -17,6 +17,7 @@
 #include "AI/WorldNavManager.h"
 #include "AI/WatchManager.h"
 #include "GUIStyleBitmap/NS_MessageBox.h"
+#include "EntWorldDialog.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -65,14 +66,18 @@ GameLogic::GameLogic()
 	SetShowAI(false);
 	SetGameMode(C_GAME_MODE_TOP_VIEW); //default.  Also is automatically changed when player brains are initted.
 	m_activeWorldName = "base";
-	
+}
+
+void GameLogic::OneTimeModSetup()
+{
 	if (GetApp()->GetStartupParms().size() > 0)
 	{
 		LogMsg("Command line parms received:");
 	}
+
 	for (unsigned int i=0; i < GetApp()->GetStartupParms().size(); i++)
 	{
-		
+
 		LogMsg("	%s", GetApp()->GetStartupParms().at(i).c_str());
 		string p1 = GetApp()->GetStartupParms().at(i);
 		string p2;
@@ -90,13 +95,13 @@ GameLogic::GameLogic()
 			} else
 			{
 				m_strWorldsDirPath = p2;
-				
 			}
 		}
-	
+
 		if (CL_String::get_extension(p1) == C_WORLD_INFO_EXTENSION)
 		{
-			AddModPath(p1);
+			m_strWorldsDirPath = CL_String::get_path(p1);
+			SetupModPathsFromWorldInfo(p1);
 		}
 
 	}
@@ -107,6 +112,7 @@ void GameLogic::RequestRebuildCacheData()
 {
 	SetRestartEngineFlag(true);
 	m_bRebuildCacheData = true;
+	m_rebuildUserName = GetUserProfileName();
 }
 
 GameLogic::~GameLogic()
@@ -315,9 +321,6 @@ bool GameLogic::SetUserProfileName(const string &name)
 
 	//load globals
 	LoadGlobals();	
-
-	//g_worldNavManager.LinkEverything();
-
 	return true;
 }
 
@@ -353,71 +356,36 @@ void GameLogic::AddModPath(string s)
 bool GameLogic::Init()
 {
 
-	LogMsg("Initializing GameLogic");
-
-	g_pSoundManager->Kill();
+	assert(!GetWorld);
 	g_pSoundManager->Init();
-	g_MessageManager.Reset();
-	m_leftMouseButtonCallback.clear();
-
-	m_strUserProfileName.clear();
-	m_worldManager.Kill();
-	g_materialManager.Init();
-	g_watchManager.Clear();
-	GetVisualProfileManager->Kill();
 
 	g_VFManager.Reset();
+
 	g_VFManager.MountDirectoryPath(CL_Directory::get_current()+"/base");
 	
 	m_activeWorldName = "base";
-
+	ClearScreen();
+	CL_Display::flip(2); //show it now
 	string modInfoFile;
 	//now mount any mod paths
 	for (unsigned int i=0; i < m_modPaths.size(); i++)
 	{
-		modInfoFile = m_modPaths[i] + "." + string(C_WORLD_INFO_EXTENSION);
-
-		if (!exist( modInfoFile.c_str()) )
+		if (LocateWorldPath(m_modPaths[i], modInfoFile))
 		{
-			//try another way
-			string s = m_strWorldsDirPath + "/" + m_modPaths[i] + "." + string(C_WORLD_INFO_EXTENSION);
-			if (exist(s.c_str()))
-			{
-				//yep, use this
-				modInfoFile = s;
-			} else
-			{
-				//try another way
-				s = "worlds/" + m_modPaths[i] + "." + string(C_WORLD_INFO_EXTENSION);
-				if (exist(s.c_str()))
-				{
-					modInfoFile = s;
-				}
-
-			}
-		}
-
-		if (!exist( modInfoFile.c_str()) )
-		{
-			LogError("Unable to locate %s.  World is missing perhaps?",  modInfoFile.c_str());
-		} else
-		{
-			
-			m_strWorldsDirPath = CL_String::get_path(modInfoFile);
-			m_modPaths[i] = modInfoFile.substr(0, modInfoFile.size()- (strlen(C_WORLD_INFO_EXTENSION)+1));
+			//m_strWorldsDirPath = CL_String::get_path(modInfoFile);
+			m_modPaths[i] = modInfoFile;
 			LogMsg("Mounting world path %s.", m_modPaths[i].c_str());
 			g_VFManager.MountDirectoryPath(m_modPaths[i]);
 			m_activeWorldName = CL_String::get_filename(m_modPaths[i]);
-
 		}
+
 	}
 	
 	m_worldManager.ScanWorlds(m_strBaseMapPath);
 	m_pPlayer = NULL;
 	//calculate our user profile base path, later, this could be in the windows user dir or whatever is correct
 	m_strBaseUserProfilePath = CL_Directory::get_current() + "/profiles";
-	CL_Display::clear(CL_Color(0,0,255));
-    BlitMessage("... loading ...");
+	 BlitMessage("... loading ...");
 
 
 	if (IsOnReadOnlyDisk())
@@ -448,22 +416,28 @@ bool GameLogic::Init()
 	{
 		m_bRebuildCacheData = false;
 
+		if (!m_rebuildUserName.empty())
+		{
+			SetUserProfileName(m_rebuildUserName);
+		}
 		//load all maps
-		CL_Display::clear(CL_Color(0,0,255));
+		CL_Display::clear(CL_Color(0,0,0));
 		BlitMessage("... loading all maps, please wait ...", (GetScreenY/2) -30);
 
 		m_worldManager.PreloadAllMaps();
 
-		CL_Display::clear(CL_Color(0,0,255));
+		CL_Display::clear(CL_Color(0,0,0));
 		BlitMessage("... linking all navigation graphs ...", (GetScreenY/2) -30);
 
 		//then rebuild node data
 		g_worldNavManager.LinkEverything();
-		CL_Display::clear(CL_Color(0,0,255));
+		CL_Display::clear(CL_Color(0,0,0));
 		BlitMessage("... saving out navgraph and tagcashe data ...", (GetScreenY/2) -30);
 
 		//now save everything, nothing will have changes except tagcache data
 		m_worldManager.SaveAllMaps();
+
+	
 		SetRestartEngineFlag(true);
 		return true;
 	}
@@ -746,13 +720,26 @@ void GameLogic::Kill()
 	
 	//save out warp cache
 	g_worldNavManager.Save();
-	
 	m_worldManager.Kill();
+	
 	m_myEntityManager.Kill();
 
 	SAFE_DELETE(m_pGUIStyle);
 	SAFE_DELETE(m_pGUIResources);
 	SAFE_DELETE(m_pGUIManager);
+
+	LogMsg("Initializing GameLogic");
+
+	g_pSoundManager->Kill();
+	g_MessageManager.Reset();
+	m_leftMouseButtonCallback.clear();
+
+	m_strUserProfileName.clear();
+	g_materialManager.Init();
+	g_watchManager.Clear();
+	GetVisualProfileManager->Kill();
+
+	
 }
 
 void GameLogic::InitGameGUI(string xmlFile)
@@ -785,16 +772,12 @@ void GameLogic::InitGameGUI(string xmlFile)
 
 }
 
-void ClearCacheDataFromWorldPath(string worldPath, bool bCurModOnly)
+void ClearCacheDataFromWorldPath(string worldPath)
 {
-	
 	string fileToDelete = worldPath+"/"+string(C_WORLD_NAV_FILENAME);
 
 	//first kill it's main navgraph file
-	if (!bCurModOnly || ExistsInModPath(fileToDelete))
-	{
-		RemoveFile(fileToDelete);
-	}
+	RemoveFile(fileToDelete);
 	
 	//next scan each map path and remove cached data
 
@@ -813,11 +796,7 @@ void ClearCacheDataFromWorldPath(string worldPath, bool bCurModOnly)
 				{
 					//no underscore at the start, let's show it
 					fileToDelete = worldPath+"/"+string(C_BASE_MAP_PATH)+"/"+scanner.get_name()+"/"+string(C_TAGCACHE_FILENAME);
-
-					if (!bCurModOnly || ExistsInModPath(fileToDelete))
-					{
-						RemoveFile(fileToDelete);
-					}
+					RemoveFile(fileToDelete);
 				}
 
 		}
@@ -826,17 +805,8 @@ void ClearCacheDataFromWorldPath(string worldPath, bool bCurModOnly)
 
 void GameLogic::DeleteAllCacheFiles()
 {
-
 		LogMsg("Deleting all tagcache files..");
-		vector<string> vecPaths;
-		g_VFManager.GetMountedDirectories(&vecPaths);
-
-		vector<string>::reverse_iterator itor = vecPaths.rbegin();
-
-		for (;itor != vecPaths.rend(); itor++)
-		{
-			ClearCacheDataFromWorldPath(*itor, true);
-		}
+		ClearCacheDataFromWorldPath(g_VFManager.GetLastMountedDirectory());
 }
 
 void GameLogic::Update(float step)
@@ -995,21 +965,19 @@ void MoveCameraToPlayer()
 }
 
 
-void ShowMessage(string title, string msg)
+void ShowMessage(string title, string msg, bool bForceClassicStyle)
 {
-	
 	CL_GUIManager *pStyle = GetApp()->GetGUI();
 
 	GetGameLogic->SetShowMessageActive(true); //so it knows not to send mouse clicks to the engine while
 
-	if (GetGameLogic->GetGameGUI())
+	if (!bForceClassicStyle && GetGameLogic->GetGameGUI())
 	{
 			NS_MessageBox m(GetGameLogic->GetGameGUI(), title, msg, "Ok", "", "");
 			m.run();
 			GetGameLogic->SetShowMessageActive(false);
 			return;
 	}
-	
 	
 	CL_MessageBox message(title, msg, "Ok", "", "", pStyle);
 	

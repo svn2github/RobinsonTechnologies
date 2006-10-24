@@ -158,7 +158,7 @@ void App::OneTimeInit()
 
 	bool bFullscreen = true;
 #ifdef _DEBUG
-	bFullscreen = false;
+	//bFullscreen = false;
 #endif
     
     m_WindowDescription.set_size(CL_Size(1024, 768));
@@ -261,7 +261,9 @@ void App::OneTimeInit()
 	g_pSoundManager->Init();
 
 	m_pScriptManager = new ScriptManager;
+
 	m_pGameLogic = new GameLogic();
+	m_pGameLogic->OneTimeModSetup();
  
 	if (!m_pGameLogic || (!m_pGameLogic->Init())) throw CL_Error("Error initting game logic");
 }

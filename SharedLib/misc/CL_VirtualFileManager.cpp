@@ -229,6 +229,11 @@ void CL_VirtualFileManager::GetMountedDirectories(vector<string> *pPathsOut)
 return;
 }
 
+string CL_VirtualFileManager::GetLastMountedDirectory()
+{
+	return m_vecSource.back().m_strPath;
+}
+
 bool CL_VirtualFileManager::LocateFile(string &fnameOut)
 {
 	CL_VirtualFileSource *pSource = NULL;

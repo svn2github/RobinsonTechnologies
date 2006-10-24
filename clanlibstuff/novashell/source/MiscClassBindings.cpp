@@ -83,7 +83,7 @@ int GetEntityIDByName(const string &name)
 	return 0;
 }
 
-MovingEntity * GetEntityByWorldPos(CL_Vector2 v)
+MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore)
 {
 	if (!GetWorld)
 	{
@@ -102,15 +102,29 @@ MovingEntity * GetEntityByWorldPos(CL_Vector2 v)
 	GetWorldCache->AddTilesByRect(recArea, &tileList, GetWorld->GetLayerManager().GetDrawList());
 
 	//now we need to sort them
-	tileList.sort(compareTileByLayer);
+	g_pLayerManager = &GetWorld->GetLayerManager();
+	tileList.sort(compareTileBySortLevelOptimized);
 
-	if (tileList.rbegin() != tileList.rend())
+	tile_list::reverse_iterator itor = tileList.rbegin();
+	MovingEntity *pEnt;
+	
+	for( ;itor != tileList.rend(); itor++)
 	{
-		pTile = (*tileList.rbegin());
+		pTile = (*itor);
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 		{
+		   pEnt = ((TileEntity*)pTile)->GetEntity();
+
+		   if (pEnt->GetMap()->GetLayerManager().GetLayerInfo(pTile->GetLayer()).GetShowInEditorOnly())
+		   {
+				continue;
+		   }
+			if (pEnt == pEntToIgnore)
+			{
+				continue;
+			}
 			//looks good to me!
-			return ((TileEntity*)pTile)->GetEntity();
+			return pEnt;
 		}
 	}
 
@@ -226,6 +240,7 @@ void luabindMisc(lua_State *pState)
 		.def("GetAutoSave", &World::GetAutoSave)
 		.def("GetName", &World::GetName)
 		.def("GetLayerManager", &World::GetLayerManager)
+		.def("BuildLocalNavGraph", &World::BuildNavGraph)
 
 
 		,class_<WorldManager>("MapManager")

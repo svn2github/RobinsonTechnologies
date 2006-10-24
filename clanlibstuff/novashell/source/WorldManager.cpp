@@ -38,7 +38,7 @@ void WorldManager::ScanDirToAddWorlds(const string &stPath, const string &stLoca
 						AddWorld(stLocalPath+scanner.get_name());
 					} else
 					{
-						LogMsg("Ignoring additional %s", scanner.get_name().c_str());
+						//LogMsg("Ignoring additional %s", scanner.get_name().c_str());
 					}
 				}
 
@@ -105,9 +105,21 @@ bool WorldManager::AddWorld(string stPath)
 	
 	WorldInfo *pWorldInfo = new WorldInfo;
 	pWorldInfo->m_world.SetDirPath(stPath);
-	//precache its tagged entity info
-	GetTagManager->Load(&pWorldInfo->m_world);
+	
+	//precache its tagged entity info, but only if it's in the dir where the world is
+	
+	if (ExistsInModPath(stPath+"/"+C_TAGCACHE_FILENAME)
+		|| !ExistsInModPath(stPath+"/"+C_WORLD_DAT_FILENAME)
+		)
+	{
+		//basically, we only care what's in this data if:
+		//1. It's in our world path (last mounted)
+		//2. We don't have a local copy of that world.  If we did, we wouldn't
+		//care what something we were modding has to say about it
 
+		GetTagManager->Load(&pWorldInfo->m_world);
+	}
+	
 	m_worldInfoList.push_back(pWorldInfo);
 
 	return true;
@@ -185,11 +197,8 @@ bool ExistsInModPath(const string fName)
 	{
 		return false;
 	}
-
-	vector<string> paths;
-	g_VFManager.GetMountedDirectories(&paths);
 	
-	if (fNameWithPath.compare(0, paths.back().size(), paths.back()) == 0)
+	if (fNameWithPath.compare(0, g_VFManager.GetLastMountedDirectory().size(), g_VFManager.GetLastMountedDirectory()) == 0)
 	{
 		return true;
 	}
@@ -204,8 +213,12 @@ void WorldManager::SaveAllMaps()
 	{
 		if (ExistsInModPath((*itor)->m_world.GetDirPath() + C_WORLD_DAT_FILENAME))
 		{
+
 			//LogMsg("Save %s?", (*itor)->m_world.GetDirPath().c_str());
 			(*itor)->m_world.ForceSaveNow();
+
+			//might as well do some housecleaning while we're at it?  
+		//	(*itor)->m_world.RemoveUnusedFileChunks();
 
 		}
 		itor++;

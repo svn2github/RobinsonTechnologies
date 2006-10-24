@@ -379,7 +379,6 @@ void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, v
 
 //erm, never do this
 
-//only used here!
 LayerManager *g_pLayerManager;
 
 bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB) 
@@ -894,27 +893,44 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 					CL_Vector2 offset = pTile->GetPos();
 					tempRect = CL_Rect(lineListItor->GetRect());
 					tempRect += CL_Point(offset.x, offset.y);
-					if ( tempRect.is_overlapped(r))
+					//if ( tempRect.is_overlapped(r))
 					{
-						CL_Vector2 worldColCenter = offset+lineListItor->GetOffset();
+						CL_Vector2 picOffset;
+
+						if (pTile->GetType() == C_TILE_TYPE_PIC)
+						{
+							picOffset = lineListItor->GetOffset();
+						} else
+						{
+							picOffset = CL_Vector2::ZERO;
+						}
+						CL_Vector2 worldColCenter = offset+picOffset;
 						CL_Vector2 facingAwayFromCollision = pos-worldColCenter;
 						facingAwayFromCollision.unitize();
-						CL_Vector2 worldColOutsideTarget = worldColCenter+ (facingAwayFromCollision* (max(tempRect.get_width(), tempRect.get_height())/2));
+						CL_Vector2 worldColOutsideTarget = worldColCenter+ (facingAwayFromCollision* 10000);
 
-						/*
-						DrawLineWithArrowWorld(pos, worldColOutsideTarget, 10, CL_Color::white, CL_Display::get_current_window()->get_gc());
+						//DrawLineWithArrowWorld(pos, worldColOutsideTarget, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
 						
 						//found a potential, let's do further checking for more accuracy?
-						DrawBullsEyeWorld(offset+lineListItor->GetOffset(), CL_Color::white, 10, CL_Display::get_current_window()->get_gc());
-						CL_Display::flip(2); //show it now
-						*/
-
-						//remove offset
-						if (lineListItor->GetLineIntersection(pos- (offset+lineListItor->GetOffset()), worldColOutsideTarget- (offset+lineListItor->GetOffset())))
+						//DrawBullsEyeWorld(offset+picOffset, CL_Color::white, 10, CL_Display::get_current_window()->get_gc());
+						//CL_Display::flip(2); //show it now
+						
+						//this check figures out if the center is inside the poly or not by shooting a giant
+						//ray out from the center and seeing if it hits anything
+						CL_Vector2 localPos = pos- (offset+picOffset);
+						if (lineListItor->GetLineIntersection(localPos, worldColOutsideTarget- (offset+picOffset)))
 						{
 							//we hit it.
 							return true;
 						}
+
+						//now we need to do an additional check for situations where we're too close to the edge
+						if (lineListItor->GetCircleIntersection(localPos, radius))
+						{
+							return true;
+						}
+						
+
 					}
 				}
 

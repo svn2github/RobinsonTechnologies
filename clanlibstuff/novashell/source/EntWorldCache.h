@@ -83,5 +83,8 @@ protected:
 };
 
 bool compareTileByLayer(const Tile *pA, const Tile *pB) ;
+bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB);
 
+
+extern LayerManager *g_pLayerManager; //used for speeding up the sort
 #endif                  // include guard

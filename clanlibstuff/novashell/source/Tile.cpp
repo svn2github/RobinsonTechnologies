@@ -72,6 +72,12 @@ Tile::~Tile()
 const CL_Rectf & Tile::GetWorldColRect()
 {
 	static CL_Rectf r;
+	if (!GetCollisionData())
+	{
+		assert(!"Huh?  This doesn't have collision data!");
+		r = CL_Rectf(0,0,0,0);
+		return r;
+	}
 	r = GetCollisionData()->GetCombinedCollisionRect();
 	r += *(const CL_Pointf*)(&GetPos());
 	

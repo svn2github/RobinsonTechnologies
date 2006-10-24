@@ -93,10 +93,6 @@ bool Goal_Think::notPresent(unsigned int GoalType)const
   return true;
 }
 
-void Goal_Think::PushMoveToPosition(CL_Vector2 pos)
-{
-	AddSubgoal( new Goal_MoveToPosition(m_pOwner, pos));
-}
 
 void Goal_Think::PushMoveToTag(TagObject *pTag)
 {
@@ -210,11 +206,16 @@ Goal_Think * Goal_Think::AddNewGoal(const string &goalName)
 	return pGoal;
 }
 
+void Goal_Think::PushMoveToPosition(CL_Vector2 pos)
+{
+	AddSubgoal( new Goal_MoveToMapAndPos(m_pOwner, pos, m_pOwner->GetMap()));
+}
+
 //-------------------------- Queue Goals --------------------------------------
 //-----------------------------------------------------------------------------
 void Goal_Think::AddMoveToPosition(CL_Vector2 pos)
 {
-	AddBackSubgoal(new Goal_MoveToPosition(m_pOwner, pos));
+	AddBackSubgoal(new Goal_MoveToMapAndPos(m_pOwner, pos, m_pOwner->GetMap()));
 }
 
 

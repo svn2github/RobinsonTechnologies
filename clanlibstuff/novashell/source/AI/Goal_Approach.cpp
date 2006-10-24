@@ -133,9 +133,21 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 
 	m_pDestMap = pEnt->GetMap();
 
-	//bad idea to sit directly on top of  the entity, let's move off it
-	CL_Rectf c = pEnt->GetTile()->GetWorldColRect()- *(CL_Pointf*)&pEnt->GetPos();
 	
+	//bad idea to sit directly on top of  the entity, let's move off it
+	CL_Rectf c;
+	
+	
+	if (pEnt->GetCollisionData())
+	{
+		c = pEnt->GetTile()->GetWorldColRect()- *(CL_Pointf*)&pEnt->GetPos();
+	} else
+	{
+		//well, let's get the direction we want another way
+		CL_Vector2 pos = pEnt->GetPos();
+		c = CL_Rectf(pos.x - 5, pos.y - 5, pos.x+5, pos.y + 5);
+	}
+
 	CL_Vector2 vecAngleFromTarget;
 	
 	if (m_pDestMap == m_pOwner->GetMap())

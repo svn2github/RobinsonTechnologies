@@ -80,19 +80,28 @@ bool HashedResourceManager::Init()
 bool HashedResourceManager::AddGraphic(string str)
 {
 	//LogMsg("Adding %s to tile graphics", str.c_str());
-	
-	HashedResource *pResource = new HashedResource;
-	pResource->m_strFilename = str;
 
 	unsigned int resourceID = FileNameToID(str.c_str());
-	
+
 	HashedResourceMap::iterator itor = m_hashedResourceMap.find(resourceID);
 	
 	if (itor == m_hashedResourceMap.end()) 
 	{
+		HashedResource *pResource = new HashedResource;
+		pResource->m_strFilename = str;
+
 		m_hashedResourceMap.insert(std::make_pair(resourceID, pResource));
 	} else
 	{
+		//now here one of two things happened:
+		//1. The hash conflicted with another art piece, bad!
+		//2. A mod has the same graphic, overriding something it's modding.   In this
+		//case we should just ignore it.
+		
+		if (CL_String::get_filename(itor->second->m_strFilename) == CL_String::get_filename(str))
+		{
+			return true;
+		}
 		throw CL_Error("Hash conflict with graphic resource " + str + ".  Rename it!");
 		return false;
 	}

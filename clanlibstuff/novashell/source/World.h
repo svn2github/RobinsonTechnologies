@@ -120,10 +120,16 @@ public:
 	tag_hash_list & GetWarpTagHashList() {return m_warpTagHashIDList;}
 	void SaveAndKill();
 	bool IsWorldCacheInitted() {return m_pWorldCache != NULL;}
+	void SetDataChanged(bool bNew)
+	{
+		m_bDataChanged = true; //will save the main map file
+	}
+	void World::BuildNavGraph();
 
 private:
 
 	bool TestCoordPacker(int x, int y);
+	void MarkAllMapPiecesAsNeedingToSave();
 
 	//you can add new variables by adding enums, the datafile will stay compatible automatically
 	enum

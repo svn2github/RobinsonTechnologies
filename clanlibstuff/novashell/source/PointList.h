@@ -41,6 +41,7 @@ public:
 	bool ComputeConvexHull(); //any illegal verts are moved to legal positions, which creates dupes...
 	void RemoveDuplicateVerts(); //cut out any vert that has another vert sitting exactly on it
 	bool GetLineIntersection(const CL_Vector2 &a, const CL_Vector2 &b);
+	bool GetCircleIntersection(const CL_Vector2 &c, float radius);
 
 protected:
 

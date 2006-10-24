@@ -8,7 +8,7 @@ WorldChunk::WorldChunk(World *pParent)
 	m_pParent = pParent;
 	m_bIsEmpty = true;
 	m_pScreen = NULL;
-	m_bChunkDataChanged = true;
+	m_bChunkDataChanged = false;
 	for (int i=0; i < e_byteCount; i++) m_byteArray[i] = 0;
 	for (int i=0; i < e_intCount; i++) m_intArray[i] = 0;
 	for (int i=0; i < e_uintCount; i++) m_uintArray[i] = 0;

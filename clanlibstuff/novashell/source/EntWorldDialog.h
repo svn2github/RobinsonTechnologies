@@ -14,12 +14,24 @@
 #include "BaseGameEntity.h"
 
 
+class ResourceInfoItem
+{
+public:
+
+	string m_modPath;
+	float m_requestedVersion;
+};
+
 class ModInfoItem
 {
 public:
 
 	string m_stDirName;
 	string m_stDisplayName;
+	float m_engineVersionRequested;
+
+	vector<ResourceInfoItem> m_requestedResources;
+	
 };
 
 
@@ -41,6 +53,7 @@ private:
 	void OnSelected(int selItem);
 	void ChangeSelection(int offset);
 	bool WorldAlreadyInList(const ModInfoItem &m);
+	void OnClickConnect();
 
 	CL_Window *m_pWindow;
 	CL_ListBox *m_pListWorld; //control which worlds are drawn
@@ -49,5 +62,8 @@ private:
 	CL_SlotContainer m_slots; //generic one, easier
 
 };
+
+void SetupModPathsFromWorldInfo(string modPath);
+bool LocateWorldPath(string m_path, string &pathOut);
 
 #endif // EntWorldDialog_h__

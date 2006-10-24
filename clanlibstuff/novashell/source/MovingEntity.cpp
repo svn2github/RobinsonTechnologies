@@ -105,6 +105,12 @@ CL_Vector2 MovingEntity::GetVectorToEntityByID(int entID)
 CL_Vector2 MovingEntity::GetVectorToEntity(MovingEntity *pEnt)
 {
 	CL_Vector2 v = pEnt->GetPos()-GetPos();
+	if (v == CL_Vector2::ZERO)
+	{
+		//well, returning 0,0 can cause havok in the path planner, so
+		//let's guess
+		return m_vecFacing;
+	}
 	v.unitize();
 	return v;
 }
@@ -212,16 +218,11 @@ void MovingEntity::Kill()
 		m_pScriptObject->RunFunction("OnKill");
 	}
 
-	/*
-	if (IsPlaced())
+	if (m_bRequestsVisibilityNotifications)
 	{
-		if (!GetName().empty())	
-		{
-			GetTagManager->Remove(this);
-
-		}
+			g_watchManager.RemoveFromVisibilityList(this);
 	}
-	*/
+	
 
 	SAFE_DELETE(m_pPathPlanner);
 	SAFE_DELETE(m_pGoalManager);
@@ -566,11 +567,11 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 
 				if (pTag->GetPos() != GetPos())
 				{
-					LogError("%s's doesn't match his tagcache's position", GetName().c_str());
+					LogError("%s doesn't match his tagcache's position", GetName().c_str());
 				}
 				if (pTag->m_pWorld != GetMap())
 				{
-					LogError("%s's doesn't match his tagcache's world", GetName().c_str());
+					LogError("%s doesn't match his tagcache's world", GetName().c_str());
 				}
 			}
 		}

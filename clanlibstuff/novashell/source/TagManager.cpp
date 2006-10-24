@@ -348,7 +348,11 @@ void TagManager::AddCachedNameTag(unsigned int hashID, const TagObject &o)
 void TagManager::Load(World *pWorld)
 {
 	//LogMsg("Loading tag data..");
-	CL_InputSource *pFile = g_VFManager.GetFile(pWorld->GetDirPath()+C_TAGCACHE_FILENAME);
+	string fullPath = pWorld->GetDirPath()+C_WORLD_DAT_FILENAME;
+
+	//ok, let's make sure we load the tagcache from the dir that actually has a world in it
+	
+	CL_InputSource *pFile =  g_VFManager.GetFile(CL_String::get_path(fullPath)+"/"+C_TAGCACHE_FILENAME);
 
 	if (!pFile) return;
 	

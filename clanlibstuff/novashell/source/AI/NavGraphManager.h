@@ -38,6 +38,9 @@ public:
 	World * GetParent() {return m_pWorld;}
 	int GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, const CL_Vector2 pos, int nodeType);
 	bool DoNodesConnect(int a, int b);
+	void SetPerformLinkOnAdd(bool bNew) {m_bPerformLinkOnAdd = bNew;}
+	bool GetPerformLinkOnAdd(){return m_bPerformLinkOnAdd;}
+	void Clear();
 
 protected:
 	
@@ -50,6 +53,7 @@ private:
 	//this map's accompanying navigation graph
 	NavGraph*                          m_pNavGraph;  
 	World *m_pWorld;
+	bool m_bPerformLinkOnAdd; //allows us to delay linking until the whole work is loaded
 	
 };
 
