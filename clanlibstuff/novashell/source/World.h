@@ -14,7 +14,7 @@ This world class keeps track of the individual chunks that make up the world.
 #define C_DEFAULT_WORLD_Y 1
 #define C_DEFAULT_SCREEN_ID 0
 extern const CL_Vector2 g_worldDefaultCenterPos;
-#define C_WORLD_DAT_FILENAME "world.dat"
+#define C_WORLD_DAT_FILENAME "map.dat"
 
 #include "main.h"
 #include "Screen.h"

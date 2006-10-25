@@ -359,7 +359,7 @@ int VisualProfile::TextToAnimID(const string & stState)
 }
 
 
-int VisualProfile::SpriteToAnimID(const string & stState)
+int VisualProfile::SpriteToAnimID(const string & stState, bool bShowErrors)
 {
 	//check to see if it exists
 	for (unsigned int i=0; i < m_animArray.size(); i++)
@@ -370,7 +370,10 @@ int VisualProfile::SpriteToAnimID(const string & stState)
 			return i;
 		}
 	}
-	LogError("Unknown sprite name: %s.  Keep in mind they are case sensitive.", stState.c_str());
+	if (bShowErrors)
+	{
+		LogError("Unknown sprite name: %s.  Keep in mind they are case sensitive.", stState.c_str());
+	}
 	return -1;
 }
 
@@ -510,7 +513,7 @@ void VisualProfile::UpdateToDocument(CL_DomDocument &document)
 	{
 		string name = domList.item(c).get_attributes().get_named_item("name").get_node_value().c_str();
 
-		int animID = SpriteToAnimID(name);
+		int animID = SpriteToAnimID(name, false);
 		if (animID != -1)
 		{
 			//located it.  Let's update it

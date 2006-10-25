@@ -172,7 +172,7 @@ public:
 	VisualResource * GetParentVisualResource() {return m_pParent;}
 	void UpdateToDocument(CL_DomDocument &document);
     	vector<string> GetListOfActiveAnims();
-	int SpriteToAnimID(const string & stState);
+	int SpriteToAnimID(const string & stState, bool bShowErrors = false);
 	int SpriteToAnimID(CL_Sprite *pSprite); //compares by memory address
 	string AnimIDToText(int animID){return m_animArray[animID].m_name;}
 	int GetAnimID(int eState, int eFacing);

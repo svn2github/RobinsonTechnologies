@@ -818,11 +818,18 @@ void EntEditor::BuildWorldListBox()
 
 	while(itor != pList->end())
 	{
-		int id = m_pListBoxWorld->insert_item((*itor)->m_world.GetDirPath());
-		if (GetWorld->GetDirPath() == (*itor)->m_world.GetDirPath())	
+		bool showIt = true;
+		if ( (*itor)->m_world.GetDirPath().find("hidden_") == string::npos
+			|| GetWorld->GetDirPath() == (*itor)->m_world.GetDirPath())
 		{
-			//this should be highlighted now
-			m_pListBoxWorld->set_current_item(id);
+			int id = m_pListBoxWorld->insert_item((*itor)->m_world.GetDirPath());
+
+			if (GetWorld->GetDirPath() == (*itor)->m_world.GetDirPath())	
+			{
+				//this should be highlighted now
+				m_pListBoxWorld->set_current_item(id);
+			}
+
 		}
 		itor++;
 	}

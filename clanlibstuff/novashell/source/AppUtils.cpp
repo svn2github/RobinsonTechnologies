@@ -185,6 +185,16 @@ string PrintRect(CL_Rectf r)
 	return string(stTemp);
 }
 
+string PrintRectInt(CL_Rect r)
+{
+	char stTemp[256];
+
+	sprintf(stTemp, "Top: %d, Left: %d, Bottom: %d, Right: %d",
+		r.top, r.left, r.bottom, r.right);
+
+	return string(stTemp);
+}
+
 
 string PrintVector(CL_Vector2 v)
 {

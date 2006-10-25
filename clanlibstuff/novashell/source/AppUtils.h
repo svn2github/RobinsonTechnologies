@@ -25,6 +25,8 @@ unsigned int FileNameToID(const char * filename);
 bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore  = NULL, int limitSearchToThisTileType = C_TILE_TYPE_BLANK, bool bIgnoreMovingCreatures = false);
 string PrintVector(CL_Vector2 v);
 string PrintRect(CL_Rectf r);
+string PrintRectInt(CL_Rect r);
+
 void ResetFont(CL_Font *pFont); //set the centering, color and alpha back to default 
 string ExtractFinalDirName(string path); //not tested with paths with filenames yet
 bool compareLayerBySort(unsigned int pA, unsigned int pB); //for use with stl::sort

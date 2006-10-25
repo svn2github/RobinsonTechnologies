@@ -112,17 +112,17 @@ void LayerManager::BuildDefaultLayers()
 
 	m_layerVec[C_LAYER_BACKGROUND1].SetName("Background 1");
 	m_layerVec[C_LAYER_BACKGROUND1].SetSort(C_LAYER_BACKGROUND1);
-	m_layerVec[C_LAYER_BACKGROUND1].SetScrollMod(CL_Vector2(0.6f, 0.6f));
+	//m_layerVec[C_LAYER_BACKGROUND1].SetScrollMod(CL_Vector2(0.6f, 0.6f));
 	m_layerVec[C_LAYER_BACKGROUND1].SetUseInThumbnail(false);
 
 	m_layerVec[C_LAYER_BACKGROUND2].SetName("Background 2");
 	m_layerVec[C_LAYER_BACKGROUND2].SetSort(C_LAYER_BACKGROUND2);
-	m_layerVec[C_LAYER_BACKGROUND2].SetScrollMod(CL_Vector2(0.5f, 0.5f));
+	//m_layerVec[C_LAYER_BACKGROUND2].SetScrollMod(CL_Vector2(0.5f, 0.5f));
 	m_layerVec[C_LAYER_BACKGROUND2].SetUseInThumbnail(false);
 
 	m_layerVec[C_LAYER_BACKGROUND3].SetName("Background 3");
 	m_layerVec[C_LAYER_BACKGROUND3].SetSort(C_LAYER_BACKGROUND3);
-	m_layerVec[C_LAYER_BACKGROUND3].SetScrollMod(CL_Vector2(0.3f, 0.3f));
+	//m_layerVec[C_LAYER_BACKGROUND3].SetScrollMod(CL_Vector2(0.3f, 0.3f));
 	m_layerVec[C_LAYER_BACKGROUND3].SetUseInThumbnail(false);
 
 	m_layerVec[C_LAYER_MAIN].SetName("Main");
@@ -150,7 +150,7 @@ void LayerManager::BuildDefaultLayers()
 
 	m_layerVec[C_LAYER_OVERLAY2].SetName("Overlay 2");
 	m_layerVec[C_LAYER_OVERLAY2].SetSort(C_LAYER_OVERLAY2);
-	m_layerVec[C_LAYER_OVERLAY2].SetScrollMod(CL_Vector2(-0.07f, -0.07f));
+	//m_layerVec[C_LAYER_OVERLAY2].SetScrollMod(CL_Vector2(-0.07f, -0.07f));
 
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetName("Hidden Data");
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetSort(C_LAYER_HIDDEN_DATA);

@@ -30,7 +30,18 @@ CL_Rect Tile::GetWorldRectInt()
 {
 	static CL_Rectf r;
 	r = GetWorldRect();
-	return CL_Rect(r);
+	
+/*		
+	CL_Rect c(r);
+	if (c.left < -20000 || c.left > 20000)
+	{
+		LogMsg("BEFORE:  rect is %s",  PrintRect(r).c_str());
+		
+		LogMsg("AFTER:  rect is %s", PrintRectInt(c).c_str());
+	}
+*/
+
+	return CL_Rect(r.left, r.top, r.right, r.bottom);
 }
 
 Tile::~Tile()

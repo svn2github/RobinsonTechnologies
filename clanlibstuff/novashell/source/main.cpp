@@ -567,7 +567,7 @@ int App::main(int argc, char **argv)
 		message += 
 		
 		"Useful parms:\n\n" \
-		"	-world <world_directory_name>\n" \
+		"	c:\\MyWorld.novashell (loads this world)\n" \
 		"	-resolution <desired screen width> <desired screen height>\n" \
 		"	-window\n" \
 		"	-nosound\n" \
@@ -687,7 +687,8 @@ int App::main(int argc, char **argv)
                     
                     // This call updates input and performs other "housekeeping"
                     // call this each frame
-                    CL_System::keep_alive(); 
+                   
+					CL_System::keep_alive(); 
              } else
             {
                 //don't currently have focus   

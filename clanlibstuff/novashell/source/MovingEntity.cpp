@@ -179,6 +179,7 @@ void MovingEntity::SetLayerID(int id)
 	}
 	if (id != m_pTile->GetLayer())
 	{
+		LogMsg("New layer requested (%s)", GetName().c_str());
 		m_requestNewLayerID = id;
 		m_bMovedFlag = true;
 
@@ -634,22 +635,40 @@ CL_Rectf MovingEntity::GetWorldRect()
 	r.top = 0;
 	r.right = GetSizeX();
 	r.bottom = GetSizeY();
+	
 	static CL_Origin origin;
 	static int x,y;
+	
+	
 	m_pSprite->get_alignment(origin, x, y);
 	x =  float(x) * m_pTile->GetScale().x;
 	y =  float(y) * m_pTile->GetScale().y;
 
-	static CL_Pointf offset;
 	r -= CL_Pointf(-x,y);
+
+
+	static CL_Pointf offset;
+
 	offset = calc_origin(origin, r.get_size());
-	//offset.x *= m_pTile->GetScale().x;
-	//offset.y *= m_pTile->GetScale().y;
 
 	r -= offset;
-	r += *(const CL_Pointf*)(&GetPos());
-	r += *(const CL_Pointf*)(&GetVisualOffset());
+	r += *(const CL_Pointf*)&(GetPos());
+	
+		
+	r += *(const CL_Pointf*)&(GetVisualOffset());
+	
+/*
+	CL_Rect c(r);
+	if (c.bottom < -1000 || c.bottom > 1000)
+	{
+		LogMsg("BEFORE:  rect is %s. Pos is %s.  Visual offset is %s",  PrintRect(r).c_str(), VectorToString(&GetPos()).c_str(),
+			VectorToString(&GetVisualOffset()).c_str());
 
+		LogMsg("AFTER:  rect is %s.  Size X is %d.  ScaleX is %.2f.  Offset is %.2f, %.2f", PrintRectInt(c).c_str(), GetSizeX(),
+			m_pTile->GetScale().x, offset.x, offset.y);
+	}
+*/
+	
 	return r;
 }
 
@@ -1665,7 +1684,10 @@ void MovingEntity::ApplyGenericMovement(float step)
 
 CL_Vector2 MovingEntity::GetVisualOffset()
 {
-	if (GetCollisionData()) return -GetCollisionData()->GetCombinedOffsets();
+	if (m_pCollisionData && m_pCollisionData->HasData()) 
+	{
+		return -m_pCollisionData->GetCombinedOffsets();
+	}
 	return CL_Vector2(0,0);
 }
 

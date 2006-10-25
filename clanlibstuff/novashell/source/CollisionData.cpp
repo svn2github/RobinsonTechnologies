@@ -141,6 +141,7 @@ void CollisionData::RecalculateCombinedOffsets()
 	{
 		//uh oh, has no collision data.  At least let's make it 0's
 		m_collisionRect = CL_Rectf(0,0,0,0);
+	
 	}
 
 	if (m_vecCombinedOffset.x == 100000)
@@ -179,6 +180,8 @@ void CollisionData::RemoveOffsets()
 
 bool CollisionData::HasData()
 {
+	
+	if (m_lineList.empty()) return false;
 	line_list::iterator listItor = m_lineList.begin();
 
 	while (listItor != m_lineList.end())
@@ -326,22 +329,23 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 
 		//modify each vert on each line
 		CL_Rectf bounds = itor->GetRect();
+		CL_Rectf picBounds = pTile->GetBoundsRect();
 
 		for (unsigned int i=0; i < itor->GetPointList()->size(); i++)
 		{
 			
 			CL_Vector2 *p = &itor->GetPointList()->at(i);
 
-
+			
 			//do each vert
 			if (pTile->GetBit(Tile::e_flippedX))
 			{
-				p->x = bounds.right -p->x;
+				p->x = picBounds.right + (-p->x);
 			}
 
 			if (pTile->GetBit(Tile::e_flippedY))
 			{
-				p->y = bounds.bottom-p->y;
+				p->y = picBounds.bottom + (-p->y);
 			}
 
 			

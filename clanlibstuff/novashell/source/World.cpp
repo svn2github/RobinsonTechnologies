@@ -563,7 +563,7 @@ bool World::Save(bool bSaveTagCacheAlso)
 		GetTagManager->Save(this);
 	}
 
-	if (!bRequireSave) return true; //abort the save, not needed
+	if (!bRequireSave && !bScreenDataWasModified ) return true; //abort the save, not needed
 
 		
 	
@@ -577,7 +577,7 @@ bool World::Save(bool bSaveTagCacheAlso)
 	LogMsg("Saving world map header %s - (%d world chunks to look at, map size %d by %d)", GetName().c_str(), m_worldMap.size(),
 		GetWorldX(), GetWorldY());
 
-	//first save our world.dat file
+	//first save our map.dat file
 	CL_OutputSource *pFile = g_VFManager.PutFile(m_strDirPath+C_WORLD_DAT_FILENAME);
 	
 	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
@@ -631,7 +631,6 @@ void World::PreloadMap()
 	}	
 
 	GetNavGraph()->SetPerformLinkOnAdd(true);
-
 	BuildNavGraph();
 }
 

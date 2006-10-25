@@ -176,7 +176,7 @@ bool Screen::Save()
 
 bool Screen::Load()
 {
-	//LogMsg("Loading screen %d", m_pParentWorldChunk->GetScreenID());
+	
 	SetRequestIsEmptyRefreshCheck(true);
 	
 	//where is the original?
@@ -205,7 +205,6 @@ bool Screen::Load()
 	if (!pFile) return true;
 
 	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
-
 	try
 	{
 		int worldChunkPixelSize;
@@ -255,6 +254,7 @@ bool Screen::Load()
 						SAFE_DELETE(pTile);
 					} else
 					{
+						
 						AddTile(pTile);
 					}
 					break;
@@ -354,6 +354,9 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 				}
 				
 				pTileList->push_back(pTile);
+			} else
+			{
+				
 			}
 		} else
 		{
@@ -523,26 +526,27 @@ void Screen::AddTile(Tile *pTile)
 
 	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) 
 	{
-		return; //references don't need the edge cases figured out
+				return; //references don't need the edge cases figured out
 	}
 
 	GetParentWorldChunk()->SetDataChanged(true);
 
 	//we may also need to index info about this sprite if it has a tag name
 
-	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-	{
-	//	LogMsg("Adding tile %s", ((TileEntity*)pTile)->GetEntity()->GetName().c_str());
-
-		GetTagManager->Update(GetParentWorldChunk()->GetParentWorld(), ((TileEntity*)pTile)->GetEntity());
-	}
+	
 
 	if (pTile->GetBit(Tile::e_pathNode))
 	{
 		GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->AddTileNode(pTile);
 		//LogMsg("Added graphid %d", pTile->GetGraphNodeID());
 	}
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{
+		//LogMsg("Adding tile %s. Layer %d now has %d tiles. Rect is %s", ((TileEntity*)pTile)->GetEntity()->GetName().c_str(),
+		//	pTile->GetLayer(), GetTileList(pTile->GetLayer())->size(), PrintRectInt(tileRect).c_str());
 
+		GetTagManager->Update(GetParentWorldChunk()->GetParentWorld(), ((TileEntity*)pTile)->GetEntity());
+	}
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
 		((TileEntity*)pTile)->GetEntity()->RunOnMapInsertIfNeeded();
@@ -554,9 +558,10 @@ void Screen::AddTile(Tile *pTile)
 	//TODO do this a faster way
 	static CL_Rect tileRect; 
 	static CL_Rect unionRect;
-	//LogMsg("Adding tile to screen %d", GetParentWorldChunk()->GetScreenID());
 
 	tileRect = pTile->GetWorldCombinedRectInt();
+
+	
 	unionRect = tileRect.calc_union(m_pParentWorldChunk->GetRect());
 	if (unionRect == tileRect)
 	{

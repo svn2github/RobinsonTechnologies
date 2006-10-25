@@ -859,6 +859,13 @@ void EntEditMode::CutSubTile(CL_Rect recCut)
 		CL_MessageBox::info("Can't make subtiles out of entities, only with normal tile pics.", GetApp()->GetGUI());
 		return;
 	}
+	
+	if (pTile->GetScale() != CL_Vector2(1,1) || pTile->UsesTileProperties())
+	{
+		CL_MessageBox::info("Can only make subtiles out of tile pics that are not scaled or flipped.  Set scale to 1 1 first.", GetApp()->GetGUI());
+		return;
+	}
+	
 	//now that we have it, we need to create a new subtile from it, if possible
 	if (
 		(pTile->GetWorldRect().calc_union(recCut).get_width() != recCut.get_width())
