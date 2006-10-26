@@ -155,8 +155,8 @@ void CBody::AddForce(const Vector& F)
 {
 	if (IsUnmovable())
 	{
-		LogError("AddForce can't be called on Entity %d, it's not movable.  Give it collision data and call SetDensity to make it movable.",
-			GetParentEntity()->ID());
+		LogError("AddForce can't be called on Entity %d (%s), it's not movable.  Give it collision data and call SetDensity to make it movable.",
+			GetParentEntity()->ID(), GetParentEntity()->GetName().c_str());
 		return;
 	}
 

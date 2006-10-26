@@ -289,7 +289,7 @@ void EntCollisionEditor::OnRadioButtonChange(CL_RadioButton *pSelectedButton)
 	switch (m_mode)
 	{
 	case e_modeAddCreate:
-		m_pLabel->set_text("Left click to add points, click on another vertex to attach\nit.");
+		m_pLabel->set_text("Left click to add vertex points.");
 		break;
 	case e_modeAdjust:
 		m_pLabel->set_text("Click and drag verts to move, tap DELETE while dragging\nto remove a vertex.");

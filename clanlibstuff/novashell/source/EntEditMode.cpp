@@ -478,7 +478,7 @@ void EntEditMode::SnapSizeChanged()
 
 	m_snapSize = GetWorld->GetDefaultTileSize();
 
-	if (m_pListBaseTile)
+	if (m_pWindowBaseTile && m_pWindowBaseTile->is_enabled(false))
 	{
 		OnSelectBaseTilePage();
 	}
@@ -572,6 +572,14 @@ void EntEditMode::OnSelectBaseTilePage()
 	GetHashedResourceManager->PutGraphicIntoTileBuffer(resourceID, g_EntEditModeCopyBuffer, snap);
 }
 
+void EntEditMode::OnCloseBaseTileDialog()
+{
+	if (m_pWindowBaseTile)
+	{
+		m_pWindowBaseTile->enable(false);
+		//m_pWindowBaseTile->se
+	}
+}
 void EntEditMode::BuildBaseTilePageBox()
 {
 	SAFE_DELETE(m_pListBaseTile);
@@ -614,9 +622,11 @@ void EntEditMode::BuildBaseTilePageBox()
 		m_pListBaseTile->insert_item(GetStrippedFilename((*itor).second->m_strFilename));
 		itor++;
 	}
+	m_pListBaseTile->sort();
 
 	m_slotSelectedBaseTilePage = m_pListBaseTile->sig_selection_changed().connect(this, &EntEditMode::OnSelectBaseTilePage);
 	m_slots.connect( m_pListBaseTile->sig_mouse_dblclk(), this, &EntEditMode::OnSelectBaseTileDoubleClick);
+	m_slots.connect( m_pWindowBaseTile->sig_close(), this, &EntEditMode::OnCloseBaseTileDialog);
 
 }
 
@@ -1123,6 +1133,9 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 {
 	
 	if (!m_pEntCollisionEditor) return;
+	
+	m_pMenu->enable();
+
 	bool bDataChanged = m_pEntCollisionEditor->GetDataChanged();
 	
 	//last minute thing to update the tiles that might be modified
@@ -1255,6 +1268,8 @@ void EntEditMode::OnDefaultTileHardness()
 
 	m_pTileWeAreEdittingCollisionOn = pTile; //messy way of remembering this in the
 	//callback that is hit when editing is done
+
+	m_pMenu->enable(false);
 
 	m_pEntCollisionEditor->Init(vEditPos, rec, pTile->GetCollisionData(), useCollisionOffsets);
 	m_pEntCollisionEditor->SetClip(!bIsEnt);

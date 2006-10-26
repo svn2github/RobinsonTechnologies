@@ -834,6 +834,7 @@ void EntEditor::BuildWorldListBox()
 		itor++;
 	}
 	
+	m_pListBoxWorld->sort();
 	m_slot.connect( m_pListBoxWorld->sig_selection_changed(), this, &EntEditor::OnSelectMap);
 }
 

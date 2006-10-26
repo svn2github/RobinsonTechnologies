@@ -74,7 +74,8 @@ protected:
 
 	void PopUpImagePropertiesDialog(const string &fileName, unsigned int resourceID);
 	void OnSelectBaseTileDoubleClick(const CL_InputEvent &input);
-	
+	void OnCloseBaseTileDialog();
+
 	CL_Slot m_slotClose;
 	
 	CL_SlotContainer m_slots;
