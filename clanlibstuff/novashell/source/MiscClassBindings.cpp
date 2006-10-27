@@ -209,6 +209,8 @@ void luabindMisc(lua_State *pState)
 		.def("SetSimulationSpeedMod", &App::SetSimulationSpeedMod)
 		.def("GetSimulationSpeedMod", &App::GetSimulationSpeedMod)
 		.def("SetScreenSize", &App::SetScreenSize)
+		.def("GetEngineVersion", &App::GetEngineVersion)
+		.def("GetEngineVersionAsString", &App::GetEngineVersionAsString)
 
 		,class_<ISoundManager>("SoundManager")
 		.def("PlayMusic", &ISoundManager::PlayMusic)

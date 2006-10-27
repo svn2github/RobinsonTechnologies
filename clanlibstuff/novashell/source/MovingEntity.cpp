@@ -179,7 +179,6 @@ void MovingEntity::SetLayerID(int id)
 	}
 	if (id != m_pTile->GetLayer())
 	{
-		LogMsg("New layer requested (%s)", GetName().c_str());
 		m_requestNewLayerID = id;
 		m_bMovedFlag = true;
 

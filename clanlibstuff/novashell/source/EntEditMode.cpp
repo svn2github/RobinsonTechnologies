@@ -1504,7 +1504,7 @@ void EntEditMode::OnPropertiesAddData()
 
 string EntEditMode::PropertyMakeItemString(DataObject &o)
 {
-	return ("Name: |" + o.m_key+"|            Value: |"+o.Get()+"|");
+	return ("Name: |" + o.m_key+"|  Value: |"+o.Get()+"|");
 }
 
 void EntEditMode::OnPropertiesEditData(const CL_InputEvent &input)

@@ -263,9 +263,6 @@ void App::OneTimeInit()
 	m_pScriptManager = new ScriptManager;
 
 	m_pGameLogic = new GameLogic();
-	m_pGameLogic->OneTimeModSetup();
- 
-	if (!m_pGameLogic || (!m_pGameLogic->Init())) throw CL_Error("Error initting game logic");
 }
        
 bool App::SetScreenSize(int x, int y)
@@ -567,7 +564,7 @@ int App::main(int argc, char **argv)
 		message += 
 		
 		"Useful parms:\n\n" \
-		"	c:\\MyWorld.novashell (loads this world)\n" \
+		"	MyWorld.novashell\n" \
 		"	-resolution <desired screen width> <desired screen height>\n" \
 		"	-window\n" \
 		"	-nosound\n" \
@@ -634,7 +631,7 @@ int App::main(int argc, char **argv)
     try
     {
         OneTimeInit();
-     
+	
        	CL_Slot slot_quit = m_pWindow->sig_window_close().connect(this, &App::OnWindowClose);
        	CL_Slot slot_on_resize = m_pWindow->sig_resize().connect(this, &App::OnWindowResize);
         CL_Slot slot_on_lose_focus = m_pWindow->sig_lost_focus().connect(this, &App::OnLoseFocus);
@@ -645,6 +642,10 @@ int App::main(int argc, char **argv)
 		CL_Slot m_slotOnPaint = GetGUI()->sig_paint().connect(this, &App::OnRender);
 
   
+		m_pGameLogic->OneTimeModSetup();
+
+		if (!m_pGameLogic || (!m_pGameLogic->Init())) throw CL_Error("Error initting game logic");
+	
 		ClearTimingAfterLongPause();
 
 		// Class to give us the framerate

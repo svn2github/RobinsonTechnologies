@@ -115,13 +115,22 @@ void SetupModPathsFromWorldInfo(string modPath)
 				char st[512];
 				sprintf(st, "This world requires another world, %s (v%.2f) which is missing.\n\nThis world will probably not run right.",
 					modInfo.m_requestedResources[i].m_modPath.c_str(), modInfo.m_requestedResources[i].m_requestedVersion);
-					ShowMessage("Can't find a world Dependency", st);
+					ShowMessage("Can't find a world dependency", st);
 			} else
 			{			
 				GetGameLogic->AddModPath(modInfo.m_requestedResources[i].m_modPath);
 			}
 		}
 
+
+		if (modInfo.m_engineVersionRequested > GetApp()->GetEngineVersion())
+		{
+			char st[512];
+			sprintf(st, "This world requires version %.02f of Novashell.\n\nYou only have version %0.2f, please upgrade.\n\nWe'll try anyway though.",
+				modInfo.m_engineVersionRequested, GetApp()->GetEngineVersion());
+			ShowMessage("Can't find a world dependency", st);
+
+		}
 
 		GetGameLogic->AddModPath(modPath);
 	}
