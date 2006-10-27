@@ -906,7 +906,7 @@ void EntEditor::PopUpLayerPropertiesDialog(int layerID)
 	CL_CheckBox *pCheckBoxHasCollisionData = dlg.add_check_box("Has Collision Data", 
 		layerMan.GetLayerInfo(layerID).GetHasCollisionData() != 0, 150);
 
-	CL_CheckBox *pCheckBoxDepthSortWithinLayer = dlg.add_check_box("Depth sort by collision", 
+	CL_CheckBox *pCheckBoxDepthSortWithinLayer = dlg.add_check_box("Depth sort", 
 		layerMan.GetLayerInfo(layerID).GetDepthSortWithinLayer() != 0, 150);
 
 	CL_SlotContainer slots;

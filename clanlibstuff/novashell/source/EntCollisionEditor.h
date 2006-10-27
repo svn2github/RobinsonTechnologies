@@ -28,6 +28,11 @@ public:
 	bool GetDataChanged() {return m_bDataChanged;}
 	void SetSnap(bool bOn);
 	void SetClip(bool bOn);
+	void SetBullsEye(CL_Vector2 v)
+	{
+		m_trueEntityPosition = v;
+	}
+
 private:
 	
 enum
@@ -82,6 +87,8 @@ enum
 	CL_Vector2 m_dragStartPos ;
 	bool m_bDataChanged;
 	int m_curLine;
+
+	CL_Vector2 m_trueEntityPosition;
 
 };
 

@@ -22,7 +22,7 @@ class CollisionData
 public:
 
 	CollisionData();
-	CollisionData(const CL_Rect &rec) {m_rect = rec;};
+	CollisionData(const CL_Rect &rec);
     ~CollisionData();
 	void Clear();
 	const CL_Rect & GetRect() {return m_rect;} //resources use this, don't touch it
@@ -45,8 +45,8 @@ protected:
 	void ApplyScaleToAll(const CL_Vector2 &vScale);
 	int CountValidLineLists();
 	void SetRequestRectRecalculation() {m_bNeedsRecalc = true;}
-   void RecalculateCombinedOffsets();
-
+	void RecalculateCombinedOffsets();
+	void CollisionData::SetDefaults();
 private:
 	CL_Rect m_rect;
 	CL_Rectf m_collisionRect;

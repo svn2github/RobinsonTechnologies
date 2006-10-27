@@ -2,14 +2,27 @@
 #include "CollisionData.h"
 #include "GameLogic.h"
 #include "MaterialManager.h"
+CollisionData::CollisionData(const CL_Rect &rec)
+{
+	SetDefaults(); 
+	m_rect = rec;
+}
 
-CollisionData::CollisionData()
+void CollisionData::SetDefaults()
 {
 	m_dataChanged = false;
 	m_vecScale = CL_Vector2(1,1);
 	m_bNeedsRecalc = true;
 	m_vecCombinedOffset = CL_Vector2(0,0);
+
 }
+
+
+CollisionData::CollisionData()
+{
+	SetDefaults();
+}
+
 CollisionData::~CollisionData()
 {
 	SaveIfNeeded();

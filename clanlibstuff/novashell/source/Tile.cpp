@@ -405,6 +405,23 @@ void TilePic::Render(CL_GraphicContext *pGC)
 	RenderTilePic(this, pGC);
 }
 
+void TilePic::SetScale(const CL_Vector2 &v)
+{
+	if (v != m_vecScale)
+	{
+		if (m_bUsingCustomCollision)
+		{
+			m_bUsingCustomCollision = false;
+			SAFE_DELETE(m_pCollisionData);
+		} else
+		{
+			m_pCollisionData = false;
+		}
+	}
+	m_vecScale = v;
+}
+
+
 void TilePic::SaveToMasterCollision()
 {
 	if (m_bUsingCustomCollision)

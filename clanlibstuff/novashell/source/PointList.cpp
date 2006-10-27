@@ -127,15 +127,18 @@ bool PointList::ComputeConvexHull()
 		LogMsg("Not enough points, aborting computing convex hull.");
 		return false;
 	}
-	point_list ptsVec;
-	ptsVec.resize(m_points.size()+1, CL_Vector2(0,0));
-	
-	simpleHull_2D(&m_points[0], m_points.size(), &ptsVec[0]);
-	
-	//copy the new points over
-	for (unsigned int i=0; i < m_points.size(); i++)
+
+	if (m_points.size() > 3)
 	{
-		m_points[i] = ptsVec[i];
+		point_list ptsVec;
+		ptsVec.resize(m_points.size()+1, CL_Vector2(0,0));
+		simpleHull_2D(&m_points[0], m_points.size(), &ptsVec[0]);
+
+		//copy the new points over
+		for (unsigned int i=0; i < m_points.size(); i++)
+		{
+			m_points[i] = ptsVec[i];
+		}
 	}
 
 	RemoveDuplicateVerts();

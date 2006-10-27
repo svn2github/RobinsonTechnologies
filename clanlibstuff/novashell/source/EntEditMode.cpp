@@ -1241,6 +1241,7 @@ void EntEditMode::OnDefaultTileHardness()
 	
 	CL_Vector2 vEditPos = pTile->GetPos();
 
+	CL_Vector2 vOriginalPos = vEditPos;
 	if (bIsEnt)
 	{
 		rec.apply_alignment(origin_top_left,m_pOriginalEditEnt->GetVisualOffset().x, m_pOriginalEditEnt->GetVisualOffset().y);
@@ -1272,6 +1273,7 @@ void EntEditMode::OnDefaultTileHardness()
 	m_pMenu->enable(false);
 
 	m_pEntCollisionEditor->Init(vEditPos, rec, pTile->GetCollisionData(), useCollisionOffsets);
+	m_pEntCollisionEditor->SetBullsEye(vOriginalPos);
 	m_pEntCollisionEditor->SetClip(!bIsEnt);
 }
 

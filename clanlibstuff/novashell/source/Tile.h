@@ -131,6 +131,7 @@ public:
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);}
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, 
 		m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x, m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y);}
+	virtual void SetScale(const CL_Vector2 &v);
 	virtual CollisionData * GetCollisionData();
 	virtual void Render(CL_GraphicContext *pGC);
 	virtual void RenderShadow(CL_GraphicContext *pGC);

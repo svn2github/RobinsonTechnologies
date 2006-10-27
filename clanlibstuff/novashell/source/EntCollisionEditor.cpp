@@ -336,7 +336,7 @@ void EntCollisionEditor::OnChangeLineType()
 
 void EntCollisionEditor::OnClear()
 {
-	if (ConfirmMessage("Clear active line", "Are you sure you want to clear all points on the active line?"))
+	if (ConfirmMessage("Clear active shape", "Are you sure you want to clear the active shape?"))
 	{
 		if (m_pActiveLine)
 		{
@@ -349,7 +349,7 @@ void EntCollisionEditor::OnClear()
 
 void EntCollisionEditor::SetCollisionLineLabel()
 {
-	m_pLabelCurLine->set_text("(collision line "+ CL_String::from_int(m_curLine) + " of " + CL_String::from_int(
+	m_pLabelCurLine->set_text("(collision shape "+ CL_String::from_int(m_curLine) + " of " + CL_String::from_int(
 		m_col.GetLineList()->size())+")");
 
 }
@@ -357,6 +357,8 @@ void EntCollisionEditor::SetCollisionLineLabel()
 
 void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionData *pCollisionData, bool calcOffsets)
 {
+	m_trueEntityPosition = vPos;
+
 	m_pCollisionData =  pCollisionData; //remember location of the original and hope it doesn't change
 	m_col = *pCollisionData; //make a local copy
 
@@ -530,7 +532,7 @@ void EntCollisionEditor::SetupLineForEdit(int line)
 void EntCollisionEditor::Render(void *pTarget)
 {
 	CL_GraphicContext *pGC = (CL_GraphicContext*) pTarget;
-	DrawBullsEyeWorld(m_pos, CL_Color(255,255,0,200), 10, pGC);
+	DrawBullsEyeWorld(m_trueEntityPosition, CL_Color(255,255,0,200), 10, pGC);
 
 	CL_Color col(255,0,0,255);
 	RenderVectorCollisionData(m_pos, m_col, pGC, true, &col, NULL);
