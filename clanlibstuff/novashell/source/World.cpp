@@ -342,6 +342,7 @@ ScreenID World::GetScreenIDFromWorld(CL_Vector2 vecPos)
 void World::SetWorldChunkPixelSize(int widthAndHeight)
 {
 	m_worldChunkPixelSize = widthAndHeight;
+	m_bDataChanged = true;
 }
 
 CL_Vector2 World::SnapWorldCoords(CL_Vector2 vecWorld, int snapSize)
@@ -574,7 +575,7 @@ bool World::Save(bool bSaveTagCacheAlso)
 		}
 	
 
-	LogMsg("Saving world map header %s - (%d world chunks to look at, map size %d by %d)", GetName().c_str(), m_worldMap.size(),
+	LogMsg("Saving map header %s - (%d chunks to look at, map size %d by %d)", GetName().c_str(), m_worldMap.size(),
 		GetWorldX(), GetWorldY());
 
 	//first save our map.dat file

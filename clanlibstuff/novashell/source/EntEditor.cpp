@@ -293,7 +293,7 @@ void EntEditor::MapOptionsDialog()
 			(GetWorld->GetWorldRectInPixels().bottom / grid > SHRT_MAX)
 			)
 		{
-			if (!ConfirmMessage("Warning!", "This would create out of range chunks.  If you continue, we're going to clear tha map."))
+			if (!ConfirmMessage("Warning!", "This would create out of range chunks.  If you continue, we're going to clear the map.\n\n(Try a larger number to avoid this error)."))
 			{
 				return;
 			}

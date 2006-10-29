@@ -218,7 +218,7 @@ bool Screen::Load()
 		if (worldChunkPixelSize != GetParentWorldChunk()->GetParentWorld()->GetWorldChunkPixelSize())
 		{
 			SAFE_DELETE(pFile);
-			throw CL_Error("Corrupted map, or the worldchunk size doesn't match what we're loading");
+			throw CL_Error("Corrupted map, or the chunk size doesn't match what we're loading");
 		}
 
 		unsigned int count;

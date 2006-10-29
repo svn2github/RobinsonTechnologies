@@ -87,8 +87,8 @@ public:
 	void SetThumbnailHeight(int height) {m_intArray[e_intThumbnailHeight] = height; m_bDataChanged = true;}
 	int GetThumbnailWidth() {return m_intArray[e_intThumbnailWidth];}
 	int GetThumbnailHeight() {return m_intArray[e_intThumbnailHeight];}
-	float GetCacheSensitivity() {return m_floatArray[e_floatCacheSensitivity]; m_bDataChanged = true;}
-	void SetCacheSensitivity(float sensitivity) {m_floatArray[e_floatCacheSensitivity] = sensitivity;}
+	float GetCacheSensitivity() {return m_floatArray[e_floatCacheSensitivity];}
+	void SetCacheSensitivity(float sensitivity) {m_floatArray[e_floatCacheSensitivity] = sensitivity; m_bDataChanged = true;}
 	void InvalidateAllThumbnails();
 	void AddTile(Tile *pTile); //adds a tile automatically based on its pos/layer info
 	void GetAllWorldChunksWithinThisRect(std::vector<WorldChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks);
