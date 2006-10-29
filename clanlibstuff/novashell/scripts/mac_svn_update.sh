@@ -10,14 +10,14 @@ Pause()
 }
 
 
-//sh mac_update_clanlib_manually.sh
+sh mac_update_clanlib_manually.sh
 
 echo Updating Clanlib from SVN
 cd ~/dev/ClanLib-0.8
 #svn update
 
 echo Building clanlib...
-xcodebuild -project ClanLibUniversalBinaries.xcodeproj -configuration Deployment
+xcodebuild -project ClanLib_xcode_v2x.xcodeproj -configuration Deployment
 if [ $? -ne 0 ]
 then
 echo -e "Error building clanlib. \a"
@@ -25,7 +25,6 @@ Pause
 exit
 else
 echo "Success!"
-Pause
 fi 
 cd ../../rtsvn
 echo Updating project from SVN
