@@ -24,7 +24,7 @@ BaseGameEntity * CreateEntitySpecial(const string &EntName, const string &parms)
 		}
 
 
-	LogError("CreateSpecialEntity: Don't know what a %s is.", EntName.c_str());
+	LogError("CreateEntitySpecial: Don't know what a %s is.", EntName.c_str());
 	return 0;
 }
 

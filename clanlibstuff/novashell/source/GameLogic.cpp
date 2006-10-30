@@ -458,7 +458,6 @@ bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the ad
 	
 	if (!pEnt)
 	{
-		
 		if (m_modPaths.empty())
 		{
 			//assume they want to edit something in the base
@@ -466,9 +465,12 @@ bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the ad
 			{
 				BaseGameEntity *pEnt = EntityMgr->GetEntityByName("ChooseWorldDialog");
 				if (pEnt) pEnt->SetDeleteFlag(true);
-				
 				GetMyWorldManager()->SetActiveWorldByName("Generic Palette");
 
+			} else
+			{
+				BaseGameEntity *pEnt = EntityMgr->GetEntityByName("ChooseWorldDialog");
+				if (pEnt) pEnt->SetDeleteFlag(true);
 			}
 
 		}

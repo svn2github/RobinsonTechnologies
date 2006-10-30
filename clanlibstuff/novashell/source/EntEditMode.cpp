@@ -985,7 +985,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		break;
 	case CL_KEY_R:
 
-		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 		{
 			OnSelectSimilar();
 		}

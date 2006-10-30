@@ -74,6 +74,10 @@ MovingEntity * GetEntityByName(const string &name)
 	return (MovingEntity*)EntityMgr->GetEntityFromID(t->m_entID);
 }
 
+BaseGameEntity * GetSpecialEntityByName(const string &name)
+{
+	return EntityMgr->GetEntityByName(name);
+}
 
 int GetEntityIDByName(const string &name)
 {
@@ -327,6 +331,7 @@ void luabindMisc(lua_State *pState)
 		def("GetEntityByWorldPos", &GetEntityByWorldPos),
 		def("GetEntityByID", &GetEntityByID),
 		def("GetEntityByName", &GetEntityByName),
+		def("GetSpecialEntityByName", &GetSpecialEntityByName),
 		def("GetEntityIDByName", &GetEntityIDByName),
 		def("ShowMessage", &ShowMessage),
 		def("FacingToVector", &FacingToVector),
