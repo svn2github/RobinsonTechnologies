@@ -7,4 +7,4 @@ rm -r ../bin/worlds
 
 echo Coping media tree from master server
 cp -r /media/projects/clanlibstuff/novashell/bin/base ../bin/base
-cp -r /media/projects/clanlibstuff/novashell/bin/worlds ../bin/worlds
+cp -r /media/projects/clanlibstuff/novashell/bin/worlds ../bin
