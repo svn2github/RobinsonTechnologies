@@ -236,6 +236,22 @@ void Goal_Think::RenderEvaluations(int left, int top)const
   */
 }
 
+bool Goal_Think::IsGoalActiveByName(const string &name)
+{
+	if (name == m_goalName) return true;
+	if (!m_SubGoals.empty())
+	{
+		if (m_SubGoals.front()->GetName() == name) return true;
+		if (m_SubGoals.front()->GetType() == goal_think)
+		{
+			return ((Goal_Think*)m_SubGoals.front())->IsGoalActiveByName(name);
+		}
+	}
+
+		
+	return false;
+}
+
 void Goal_Think::Render()
 {
   std::list<Goal<MovingEntity>*>::iterator curG;

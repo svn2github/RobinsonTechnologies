@@ -239,6 +239,8 @@ public:
   void SetTextScale(const CL_Vector2 &vecScale);
   CL_Vector2 GetTextScale();
   void SetTextRect(const CL_Rect &r);
+  void SetAttach(int entityID, CL_Vector2 vOffset);
+  MovingEntity * Clone(World *pMap, CL_Vector2 vecPos);
 
   enum ListenCollision
 {
@@ -358,6 +360,9 @@ protected:
 	string m_text; //simple way to show text in  the game
 	CL_Font * m_pFont;
 	CL_Rect m_textRect;
+
+	int m_attachEntID;
+	CL_Vector2 m_attachOffset;
 
 };
 

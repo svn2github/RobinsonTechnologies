@@ -313,6 +313,8 @@ void luabindMisc(lua_State *pState)
 		.def("PushNewGoal", &Goal_Think::PushNewGoal)
 		.def("AddNewGoal", &Goal_Think::AddNewGoal)
 
+		.def("IsGoalActiveByName", &Goal_Think::IsGoalActiveByName)
+
 		.def("GetGoalCountByName", &Goal_Think::GetGoalCountByName)
 
 		,class_<WatchManager>("WatchManager")

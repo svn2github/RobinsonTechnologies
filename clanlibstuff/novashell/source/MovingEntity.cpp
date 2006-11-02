@@ -270,6 +270,7 @@ void MovingEntity::HandleMessageString(const string &msg)
 
 void MovingEntity::SetDefaults()
 {
+	m_attachEntID = C_ENTITY_NONE;
 	m_text.clear();
 	m_textRect = CL_Rect(0,0, 1024, 1024);
 	ClearColorMods();
@@ -2148,3 +2149,34 @@ bool MovingEntity::IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgn
 	return !pMap->GetMyWorldCache()->IsAreaObstructed(pos, GetBoundingCollisionRadius(), bIgnoreLivingCreatures, this);
 }
 
+
+MovingEntity * MovingEntity::Clone(World *pMap, CL_Vector2 vecPos)
+{
+	Tile *pNew = m_pTile->CreateClone();
+	
+	MovingEntity *pNewEnt = ((TileEntity*)pNew)->GetEntity();
+	pNewEnt->SetPos(vecPos);
+
+	pMap->AddTile(pNew);
+	return pNewEnt;
+}
+
+void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
+{
+
+	if (entityID != C_ENTITY_CAMERA)
+	{
+		LogError("We only support attaching to the camera right now");
+		return;
+	}
+	
+	m_attachEntID = entityID;
+	m_attachOffset = vOffset;
+	
+
+	if (entityID == C_ENTITY_CAMERA)
+	{
+		
+
+	}
+}

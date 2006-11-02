@@ -153,6 +153,8 @@ void luabindEntity(lua_State *pState)
 			.def("SetTextScale", &MovingEntity::SetTextScale)
 			.def("GetTextScale", &MovingEntity::GetTextScale)
 			.def("SetTextRect", &MovingEntity::SetTextRect)
+			.def("SetAttach", &MovingEntity::SetAttach)
+			.def("Clone", &MovingEntity::Clone)
 	];
 }
 

@@ -37,7 +37,10 @@ void Goal_Approach::Activate()
 	}
 
 	m_bTriedComplexWay = true;
-	//LogMsg("Ent %d (%s) is calculating a MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+	
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+	LogMsg("Ent %d (%s) is calculating an Approach MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+#endif
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
@@ -82,7 +85,10 @@ void Goal_Approach::ProcessNextMapChunk()
 
 	int nextNodeID = m_macroPath.m_path.front();
 
-	//LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+
+	LogMsg("Approach: %s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
+#endif
 
 	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID, true);
 
@@ -170,8 +176,11 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 
 		m_vDestination = GetPointOutsideOfRectFromInside(c, vecAngleFromTarget, padding) + pEnt->GetPos();
 	
-		//LogMsg("Trying angle %s at pos %s", PrintVector(vecAngleFromTarget).c_str(), 
-	//		PrintVector(m_vDestination).c_str());
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+
+		LogMsg("Approach of %s: Trying angle %s at pos %s", m_pOwner->GetName().c_str(), PrintVector(vecAngleFromTarget).c_str(), 
+			PrintVector(m_vDestination).c_str());
+#endif
 	
 		//found a potential, let's do further checking for more accuracy?
 #ifdef _DEBUG
@@ -324,14 +333,46 @@ int Goal_Approach::Process()
 
 				} else
 				{
-					//LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
-					//	m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+
+					LogMsg("Approach: Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
+							m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
+#endif
+
+					if (pNodeEnt->GetScriptObject())
+					{
+						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPreWarp"))
+						{
+							try {	luabind::call_function<bool>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPreWarp", m_pOwner);
+							} catch (luabind::error &e) 
+							{
+								ShowLUAMessagesIfNeeded(e.state(), 1); 
+								LogError("Error occurred in Warp entity ID %d while entity %d (%s) was warping through it with goal AI",
+									pNodeEnt->ID(), m_pOwner->ID(), m_pOwner->GetName().c_str());
+							}
+
+						}
+					}
 
 					m_pOwner->SetPosAndMap(pNodeEnt->GetPos(), pNodeEnt->GetMap()->GetName());
 					m_macroPath.m_path.pop_front();
 					m_iStatus = active;
 					m_bRequestNextChunk = true;
 
+					if (pNodeEnt->GetScriptObject())
+					{
+						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPostWarp"))
+						{
+							try {	luabind::call_function<bool>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPostWarp", m_pOwner);
+							} catch (luabind::error &e) 
+							{
+								ShowLUAMessagesIfNeeded(e.state(), 1); 
+								LogError("Error occurred in Warp entity ID %d while entity %d (%s) was warping through it with goal AI",
+									pNodeEnt->ID(), m_pOwner->ID(), m_pOwner->GetName().c_str());
+							}
+
+						}
+					}
 				}
 			}
 		} else
@@ -391,7 +432,9 @@ void Goal_Approach::Terminate()
 void Goal_Approach::LostFocus()
 {
 	m_iStatus = inactive;
-	//LogMsg("Aboarting goal_Approach..");
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+	LogMsg("Approach of %s: Aboarting goal_Approach..", m_pOwner->GetName().c_str());
+#endif
 	m_bTriedSimpleWay = false;
 	RemoveAllSubgoals();
 }

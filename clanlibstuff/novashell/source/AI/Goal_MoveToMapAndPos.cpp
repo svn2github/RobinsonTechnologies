@@ -7,6 +7,7 @@
 #include "Goal_MoveToPosition.h"
 #include "message_types.h"
 
+
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
 void Goal_MoveToMapAndPos::Activate()
@@ -27,7 +28,10 @@ void Goal_MoveToMapAndPos::Activate()
 		//however, if this fails, we'll need it.
 	}
 
-	//LogMsg("Ent %d (%s) is calculating a MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+	LogMsg("Ent %d (%s) is calculating a MACRO path.  Cur facing is %s, facing target is %s.", m_pOwner->ID(), m_pOwner->GetName().c_str(),
+		PrintVector(m_pOwner->GetVectorFacing()).c_str(), PrintVector(m_pOwner->GetVectorFacingTarget()).c_str());
+#endif
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
@@ -41,8 +45,12 @@ void Goal_MoveToMapAndPos::Activate()
 	
 	if (m_macroPath.m_path.size() == 1)
 	{
-		//if this happens, it means we CAN actually go directly there without warping.  Possible the 
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+		LogMsg("Ent %d (%s) can get there without wapring actually", m_pOwner->ID(), m_pOwner->GetName().c_str());
+			
+#endif	//if this happens, it means we CAN actually go directly there without warping.  Possibly the 
 		//m_bTriedSimpleWay thing failed.
+
 		assert(m_pDestMap == m_pOwner->GetMap());
 		m_macroPath.m_path.clear();
 		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
@@ -62,16 +70,23 @@ void Goal_MoveToMapAndPos::ProcessNextMapChunk()
 
 	if (!m_macroPath.IsValid())
 	{
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+		LogMsg("Ent %d (%s) is done with micro path, go straight to the right spot",
+		m_pOwner->ID(), m_pOwner->GetName().c_str());
+#endif
+
 		//no more macro path, just move to the right spot now and we're done
 		assert(m_pDestMap == m_pOwner->GetMap() && "How this happen?!");
-		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
 		m_bTriedSimpleWay = false; //if we have to recompute, we can try this way again
+		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
 		return;
 	}
 	
 	int nextNodeID = m_macroPath.m_path.front();
 	
-	//LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+	LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
+#endif
 
 	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID, true);
 	
@@ -128,13 +143,44 @@ int Goal_MoveToMapAndPos::Process()
 
 				} else
 				{
-					//LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
-					//	m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+					LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
+						m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
+#endif
+					if (pNodeEnt->GetScriptObject())
+					{
+						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPreWarp"))
+						{
+							try {	luabind::call_function<bool>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPreWarp", m_pOwner);
+							} catch (luabind::error &e) 
+							{
+								ShowLUAMessagesIfNeeded(e.state(), 1); 
+								LogError("Error occurred in Warp entity ID %d while entity %d (%s) was warping through it with goal AI",
+									pNodeEnt->ID(), m_pOwner->ID(), m_pOwner->GetName().c_str());
+							}
 
+						}
+					}
 					m_pOwner->SetPosAndMap(pNodeEnt->GetPos(), pNodeEnt->GetMap()->GetName());
 					m_macroPath.m_path.pop_front();
 					m_iStatus = active;
 					m_bRequestNextChunk = true;
+
+					if (pNodeEnt->GetScriptObject())
+					{
+						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPostWarp"))
+						{
+							try {	luabind::call_function<bool>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPostWarp", m_pOwner);
+							} catch (luabind::error &e) 
+							{
+								ShowLUAMessagesIfNeeded(e.state(), 1); 
+								LogError("Error occurred in Warp entity ID %d while entity %d (%s) was warping through it with goal AI",
+									pNodeEnt->ID(), m_pOwner->ID(), m_pOwner->GetName().c_str());
+							}
+
+						}
+					}
+
 				
 				}
 			}
@@ -190,7 +236,11 @@ void Goal_MoveToMapAndPos::Terminate()
 void Goal_MoveToMapAndPos::LostFocus()
 {
 	m_iStatus = inactive;
-	 //LogMsg("Aboarting goal_Movetomapandpos..");
+	 
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+
+	LogMsg("Ent %d (%s) Aborting goal_Movetomapandpos.. (brain lost focus)", m_pOwner->ID(), m_pOwner->GetName().c_str());
+#endif
 	m_bTriedSimpleWay = false;
     RemoveAllSubgoals();
 }

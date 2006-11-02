@@ -19,8 +19,10 @@ void Goal_MoveToPosition::Activate()
 
   if (bUsePath)
   {
+		#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
 
-	  //LogMsg("Ent %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+			LogMsg("Ent %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+#endif
 
 
 	  //compute path
