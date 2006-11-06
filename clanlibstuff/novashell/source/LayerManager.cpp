@@ -147,10 +147,12 @@ void LayerManager::BuildDefaultLayers()
 	m_layerVec[C_LAYER_OVERLAY1].SetName("Overlay 1");
 	m_layerVec[C_LAYER_OVERLAY1].SetSort(C_LAYER_OVERLAY1);
 	m_layerVec[C_LAYER_OVERLAY1].SetHasCollisionData(true);
+	m_layerVec[C_LAYER_OVERLAY1].SetDepthSortWithinLayer(true);
 
 	m_layerVec[C_LAYER_OVERLAY2].SetName("Overlay 2");
 	m_layerVec[C_LAYER_OVERLAY2].SetSort(C_LAYER_OVERLAY2);
 	//m_layerVec[C_LAYER_OVERLAY2].SetScrollMod(CL_Vector2(-0.07f, -0.07f));
+	m_layerVec[C_LAYER_OVERLAY2].SetDepthSortWithinLayer(true);
 
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetName("Hidden Data");
 	m_layerVec[C_LAYER_HIDDEN_DATA].SetSort(C_LAYER_HIDDEN_DATA);
@@ -166,6 +168,28 @@ void LayerManager::BuildDefaultLayers()
 	m_layerVec[C_LAYER_HIDDEN_DATA2].SetHasCollisionData(true);
 	m_layerVec[C_LAYER_HIDDEN_DATA2].SetIsEditActive(false);
 	m_layerVec[C_LAYER_HIDDEN_DATA2].SetIsDisplayed(false);
+
+
+	m_layerVec[C_LAYER_GUI1].SetName("GUI 1");
+	m_layerVec[C_LAYER_GUI1].SetSort(C_LAYER_GUI1);
+	m_layerVec[C_LAYER_GUI1].SetHasCollisionData(false);
+	m_layerVec[C_LAYER_GUI1].SetUseInThumbnail(false);
+	m_layerVec[C_LAYER_GUI1].SetIsEditActive(true);
+	m_layerVec[C_LAYER_GUI1].SetIsDisplayed(true);
+
+	m_layerVec[C_LAYER_GUI2].SetName("GUI 2");
+	m_layerVec[C_LAYER_GUI2].SetSort(C_LAYER_GUI2);
+	m_layerVec[C_LAYER_GUI2].SetHasCollisionData(false);
+	m_layerVec[C_LAYER_GUI2].SetUseInThumbnail(false);
+	m_layerVec[C_LAYER_GUI2].SetIsEditActive(true);
+	m_layerVec[C_LAYER_GUI2].SetIsDisplayed(true);
+
+	m_layerVec[C_LAYER_GUI3].SetName("GUI 3");
+	m_layerVec[C_LAYER_GUI3].SetSort(C_LAYER_GUI3);
+	m_layerVec[C_LAYER_GUI3].SetHasCollisionData(false);
+	m_layerVec[C_LAYER_GUI3].SetUseInThumbnail(false);
+	m_layerVec[C_LAYER_GUI3].SetIsEditActive(true);
+	m_layerVec[C_LAYER_GUI3].SetIsDisplayed(true);
 
 
 	BuildLists();

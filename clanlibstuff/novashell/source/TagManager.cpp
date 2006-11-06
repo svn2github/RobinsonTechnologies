@@ -290,7 +290,13 @@ void TagManager::Save(World *pWorld)
 							LogError("Tagcache data for %s is wrong", itorO->m_tagName.c_str());
 						} else
 						{
-							
+							if (!pEnt->GetPersistent())
+							{
+								//uh oh, the entity is not going to be saved, this tag stuff shouldn't either
+								itorO++;
+								continue;
+
+							}
 							itorO->m_pos = pEnt->GetPos();
 						}
 

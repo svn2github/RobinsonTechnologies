@@ -168,6 +168,13 @@ int MovingEntity::GetLayerID()
 	 return m_pTile->GetLayer();
 
 }
+
+void MovingEntity::SetLayerByName(const string &name)
+{
+	SetLayerID(GetMap()->GetLayerManager().GetLayerIDByName(name));
+}
+
+
 void MovingEntity::SetLayerID(int id)
  {
 	 assert(m_pTile);
@@ -213,7 +220,7 @@ void MovingEntity::ClearColorMods()
 void MovingEntity::Kill()
 {
 
-	if (m_pScriptObject && m_pScriptObject->FunctionExists("OnKill"))
+	if (m_pScriptObject && m_pScriptObject->FunctionExists("OnKill") && m_bHasRunPostInit)
 	{
 		m_pScriptObject->RunFunction("OnKill");
 	}
@@ -270,6 +277,7 @@ void MovingEntity::HandleMessageString(const string &msg)
 
 void MovingEntity::SetDefaults()
 {
+	m_bLockedScale = false;
 	m_attachEntID = C_ENTITY_NONE;
 	m_text.clear();
 	m_textRect = CL_Rect(0,0, 1024, 1024);
@@ -405,7 +413,7 @@ void MovingEntity::SetTextRect(const CL_Rect &r)
 	
 }
 
-void MovingEntity::SetTextAlignment(int alignment, int x, int y)
+void MovingEntity::SetTextAlignment(int alignment, CL_Vector2 v)
 {
 	if (!m_pFont)
 	{
@@ -413,7 +421,7 @@ void MovingEntity::SetTextAlignment(int alignment, int x, int y)
 		return;
 	}
 
-	m_pFont->set_alignment(CL_Origin(alignment), x, y);
+	m_pFont->set_alignment(CL_Origin(alignment), v.x, v.y);
 }
 
 void MovingEntity::SetTextColor(CL_Color col)
@@ -857,6 +865,18 @@ Zone * MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int mat
 void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
 {
 	m_pSprite->get_alignment(origin, x, y);
+}
+
+void MovingEntity::SetAlignment(int origin, CL_Vector2 v)
+{
+
+	if (m_pSprite)
+	{
+		m_pSprite->set_alignment(CL_Origin(origin), v.x, v.y);
+	} else
+	{
+		LogError("Entity %d (%s) can't set alignment, it has no sprite visual yet.", ID(), GetName().c_str());
+	}
 }
 
 
@@ -1706,7 +1726,15 @@ void MovingEntity::RenderShadow(void *pTarget)
 
 	vecPos = pWorldCache->WorldToScreen(vVisualPos);
 
-	m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y * m_pTile->GetScale().y);
+	if (m_bLockedScale)
+	{
+		m_pSprite->set_scale( m_pTile->GetScale().x, m_pTile->GetScale().y);
+
+	} else
+	{
+		m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y * m_pTile->GetScale().y);
+
+	}
 
 	short a = min(50, 255 + m_colorModAlpha);
 	
@@ -1726,9 +1754,14 @@ void MovingEntity::Render(void *pTarget)
 	static float yawHold, pitchHold;
 
 	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
-	CL_Vector2 vFinalScale = GetCamera->GetScale();
-	vFinalScale.x *= m_pTile->GetScale().x;
-	vFinalScale.y *= m_pTile->GetScale().y;
+	CL_Vector2 vFinalScale = m_pTile->GetScale();
+
+		
+	if (!m_bLockedScale)
+	{
+		vFinalScale.x *= GetCamera->GetScale().x;
+		vFinalScale.y *= GetCamera->GetScale().y;
+	}
 
 	yawHold = m_pSprite->get_angle_yaw();
 	pitchHold = m_pSprite->get_angle_pitch();
@@ -1808,6 +1841,14 @@ void MovingEntity::Render(void *pTarget)
 			bUseParallax = false;
 		}
 
+		if (m_bLockedScale)
+		{
+			vecPos = m_attachOffset;
+		} else
+		{
+
+		
+
 		if (bUseParallax)
 		{
 			vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
@@ -1816,6 +1857,8 @@ void MovingEntity::Render(void *pTarget)
 		{
  			vecPos = pWorldCache->WorldToScreen(vVisualPos);
 		}
+		}
+
 
 		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
@@ -1823,8 +1866,10 @@ void MovingEntity::Render(void *pTarget)
 		m_pSprite->set_scale(vFinalScale.x, vFinalScale.y);
 		//do the real blit
 		m_pSprite->set_color(CL_Color(r,g,b,a));
+		
+		
 		m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
-
+		
 		//return things back to normal
 		m_pSprite->set_angle_yaw(yawHold);
 		m_pSprite->set_angle_pitch(pitchHold);
@@ -1850,14 +1895,22 @@ void MovingEntity::Render(void *pTarget)
 	{
 		//draw some text too
 		CL_Vector2 vecPos = GetMap()->GetMyWorldCache()->WorldToScreen(vVisualPos);
+		
 		float textScaleX, textScaleY;
 		m_pFont->get_scale(textScaleX, textScaleY);
-		m_pFont->set_scale(textScaleX * GetCamera->GetScale().x, textScaleY *GetCamera->GetScale().y);
-		m_pFont->draw( vecPos.x, vecPos.y, m_text, pGC);
 		
+		if (m_bLockedScale)
+		{
+			m_pFont->set_scale(textScaleX , textScaleY);
+			vecPos = m_attachOffset;
+		} else
+		{
+			m_pFont->set_scale(textScaleX * GetCamera->GetScale().x, textScaleY *GetCamera->GetScale().y);
+
+		}
+		m_pFont->draw( vecPos.x, vecPos.y, m_text, pGC);
 		//put it back to how it was
 		m_pFont->set_scale(textScaleX, textScaleY);
-	
 	}
 }
 
@@ -1982,6 +2035,39 @@ if (GetGameLogic->GetGamePaused()) return;
 		ApplyGenericMovement(step);
 	}
 
+	if (m_attachEntID != C_ENTITY_NONE)
+	{
+		if (m_attachEntID == C_ENTITY_CAMERA)
+		{
+			
+			CL_Vector2 vPos = GetCamera->GetPos();
+
+			if (m_bLockedScale)
+			{
+				vPos.x += (m_attachOffset.x / GetCamera->GetScale().x);
+				vPos.y += (m_attachOffset.y / GetCamera->GetScale().y);
+
+			} else
+			{
+				vPos += m_attachOffset;
+			}
+
+
+			if (GetMap() != GetWorld)
+			{
+				
+				
+				SetPosAndMap(vPos, GetWorld->GetName());
+			} else
+			{
+				
+				
+				SetPos(vPos);
+			}
+
+		}
+	}
+
 }
 
 void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
@@ -2045,6 +2131,8 @@ void MovingEntity::PostUpdate(float step)
 
 	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
+
+
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
 	{
 		float gravity = pWorld->GetGravity();
@@ -2089,6 +2177,8 @@ void MovingEntity::PostUpdate(float step)
 
 		//get ready for next frame
 		m_bTouchedAGroundThisFrame = false;
+
+		
 	}
 
 }
@@ -2156,7 +2246,12 @@ MovingEntity * MovingEntity::Clone(World *pMap, CL_Vector2 vecPos)
 	
 	MovingEntity *pNewEnt = ((TileEntity*)pNew)->GetEntity();
 	pNewEnt->SetPos(vecPos);
-
+	if (!pMap)
+	{
+		//use our own active map, none was specific
+		pMap = GetMap();
+	}
+	
 	pMap->AddTile(pNew);
 	return pNewEnt;
 }
@@ -2164,7 +2259,7 @@ MovingEntity * MovingEntity::Clone(World *pMap, CL_Vector2 vecPos)
 void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 {
 
-	if (entityID != C_ENTITY_CAMERA)
+	if (entityID != C_ENTITY_CAMERA && entityID != C_ENTITY_NONE)
 	{
 		LogError("We only support attaching to the camera right now");
 		return;
@@ -2176,7 +2271,7 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 
 	if (entityID == C_ENTITY_CAMERA)
 	{
-		
-
+		g_watchManager.Add(this, INT_MAX);
+		m_bLockedScale = true;
 	}
 }

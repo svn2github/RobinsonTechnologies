@@ -82,6 +82,7 @@ public:
   virtual CL_Rectf GetWorldRect();
   const CL_Rect & GetBoundsRect();
   void GetAlignment(CL_Origin &origin, int &x, int &y);
+  void SetAlignment(int origin, CL_Vector2 v);
   void UpdateTilePosition();
   CollisionData * GetCollisionData() {return m_pCollisionData;}
   bool SetVisualProfile(const string &resourceFileName, const string &profileName);
@@ -131,6 +132,8 @@ public:
 
   int GetLayerID();
   void SetLayerID(int id);
+  void SetLayerByName(const string &name);
+
   
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
   Zone * GetZoneWeAreOnByMaterialType(int matType);
@@ -235,7 +238,8 @@ public:
   CL_Vector2 GetTextBounds();
  
   void SetTextColor(CL_Color color);
-  void SetTextAlignment(int alignment, int x, int y);
+  void SetTextAlignment(int alignment, CL_Vector2 v);
+
   void SetTextScale(const CL_Vector2 &vecScale);
   CL_Vector2 GetTextScale();
   void SetTextRect(const CL_Rect &r);
@@ -363,6 +367,7 @@ protected:
 
 	int m_attachEntID;
 	CL_Vector2 m_attachOffset;
+	bool m_bLockedScale; //if true, we don't scale with the camera
 
 };
 

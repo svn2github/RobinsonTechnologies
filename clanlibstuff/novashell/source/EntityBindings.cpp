@@ -105,12 +105,16 @@ void luabindEntity(lua_State *pState)
 			.def("GetVisualState", &MovingEntity::GetVisualState)
 			.def("GetLayerID", &MovingEntity::GetLayerID)
 			.def("SetLayerID", &MovingEntity::SetLayerID)
+			.def("SetLayerByName", &MovingEntity::SetLayerByName)
 			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&)) &MovingEntity::RunFunction)
 			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object)) &MovingEntity::RunFunction)
 			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object)) &MovingEntity::RunFunction)
 			.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
 			.def("GetScale", &MovingEntity::GetScale)
 			.def("SetScale", &MovingEntity::SetScale)
+			.def("GetSizeX", &MovingEntity::GetSizeX)
+			.def("GetSizeY", &MovingEntity::GetSizeY)
+
 			.def("SetCollisionScale", &MovingEntity::SetCollisionScale)
 			.def("GetCollisionScale", &MovingEntity::GetCollisionScale)
 			.def("SetTrigger", &MovingEntity::SetTrigger)
@@ -155,6 +159,8 @@ void luabindEntity(lua_State *pState)
 			.def("SetTextRect", &MovingEntity::SetTextRect)
 			.def("SetAttach", &MovingEntity::SetAttach)
 			.def("Clone", &MovingEntity::Clone)
+			.def("SetAlignment", &MovingEntity::SetAlignment)
+			
 	];
 }
 
