@@ -160,6 +160,13 @@ void luabindEntity(lua_State *pState)
 			.def("SetAttach", &MovingEntity::SetAttach)
 			.def("Clone", &MovingEntity::Clone)
 			.def("SetAlignment", &MovingEntity::SetAlignment)
+			.def("SetImage", &MovingEntity::SetImage)
+			.def("SetImageByID", &MovingEntity::SetImageByID)
+			.def("GetImageClipRect", &MovingEntity::GetImageClipRect)
+			.def("GetImageID", &MovingEntity::GetImageID)
+			.def("GetAttachedEntityID", &MovingEntity::GetAttachEntityID)
+			.def("GetAttachOffset", &MovingEntity::GetAttachOffset)
+			.def("SetAttachOffset", &MovingEntity::SetAttachOffset)
 			
 	];
 }

@@ -315,7 +315,7 @@ void MovingEntity::SetDefaults()
 	m_bHasRunPostInit = false;
 	m_bHasRunOnMapInsert = false;
 	m_bRequestsVisibilityNotifications = false;
-	m_lastVisibilityNotificationID = 0;
+	m_lastVisibilityNotificationID = INT_MAX; //it starts at 0, so max_int is better to use than 0 as the default
 	m_bOnScreen = false;
 
 }
@@ -885,14 +885,71 @@ void MovingEntity::SetAlignment(int origin, CL_Vector2 v)
 
 tile_list & MovingEntity::GetNearbyTileList()
 {
-	/*
-	if (GetGameLogic->GetGamePaused())
-	{
-		m_nearbyTileList.clear();
-	}
-	*/
 	return m_nearbyTileList;
 }
+
+CL_Rect MovingEntity::GetImageClipRect()
+{
+	return StringToRect(m_dataManager.Get(C_ENT_TILE_RECT_KEY));
+
+}
+
+unsigned int MovingEntity::GetImageID()
+{
+	return CL_String::to_int(m_dataManager.Get(C_ENT_TILE_PIC_ID_KEY));
+}
+void MovingEntity::SetImage(const string &fileName, CL_Rect *pSrcRect)
+{
+	SetImageByID(FileNameToID(fileName.c_str()), pSrcRect);
+}
+
+bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
+{
+
+	CL_Surface *pSurf = GetHashedResourceManager->GetResourceByHashedID(picID);
+	if (!pSurf)
+	{
+		LogError("Error, entity %d (%s) is unable to find image with hash %d to use.", ID(), GetName().c_str(), picID);
+		return false;
+	} 
+
+	int x = 0;
+	int y = 0;
+	CL_Origin align = origin_top_left; //default
+
+	if (m_pSprite && m_pSprite->get_frame_count() != 0)
+	{
+		m_pSprite->get_alignment(align, x,y);
+	}
+
+	SAFE_DELETE(m_pSprite);
+
+	m_pSprite = new CL_Sprite();
+	static CL_Rect imageRect;
+	if (pSrcRect == NULL || *pSrcRect == CL_Rect(0,0,0,0))
+	{
+		//use default image size
+		imageRect = CL_Rect(0,0, pSurf->get_width()-1, pSurf->get_height()-1);
+		pSrcRect = &imageRect;
+	}
+	m_pSprite->add_frame(*pSurf, *pSrcRect);
+	m_pSprite->set_alignment(align,x,y);
+
+	if (m_bUsingCustomCollisionData)
+	{
+		SAFE_DELETE(m_pCollisionData);
+		m_bUsingCustomCollisionData = false;
+	}
+
+	SetCollisionInfoFromPic(picID, *pSrcRect);
+
+	m_bUsingSimpleSprite = true;
+	m_dataManager.Set(C_ENT_TILE_PIC_ID_KEY, CL_String::from_int(picID));
+	m_dataManager.Set(C_ENT_TILE_RECT_KEY, RectToString(*pSrcRect));
+
+	return true;
+}
+
 
 bool MovingEntity::Init()
 {
@@ -903,24 +960,12 @@ bool MovingEntity::Init()
 	
 	if (picID != 0)
 	{
-		
-		CL_Surface *pSurf = GetHashedResourceManager->GetResourceByHashedID(picID);
-		if (!pSurf)
-		{
-			LogError("Error, entity %d (%s) is unable to find image with hash %d to use.", ID(), GetName().c_str(), picID);
-		} else
-		{
 			CL_Rect picSrcRect = StringToRect(m_dataManager.Get(C_ENT_TILE_RECT_KEY));
 		
-			m_pSprite = new CL_Sprite();
-			m_pSprite->add_frame(*pSurf, picSrcRect);
-	
-			m_pSprite->set_alignment(origin_top_left,0,0);
-
-			assert(!m_pCollisionData);
-			SetCollisionInfoFromPic(picID, picSrcRect);
-			m_bUsingSimpleSprite = true;
-		}
+			if (SetImageByID(picID, &picSrcRect))
+			{
+				m_pSprite->set_alignment(origin_center,0,0);
+			}
 	}
 
 	if (!m_pSprite)
@@ -1984,6 +2029,29 @@ void MovingEntity::ProcessPendingMoveAndDeletionOperations()
 	{
 		UpdateTilePosition();
 	}
+
+
+	//while we're at it, if any entities are attached, make sure they "update".  Don't worry, it's smart enough
+	//not to allow something to update twice if it's already done it
+
+	if (!m_attachedEntities.empty())
+	{
+		list<int>::iterator itor;
+		MovingEntity *pEnt;
+
+		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
+		{
+
+			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
+			if (pEnt)
+			{
+				pEnt->ProcessPendingMoveAndDeletionOperations();
+			}
+			itor++;
+
+		}
+	}
+
 }
 
 void MovingEntity::CheckVisibilityNotifications(unsigned int notificationID)
@@ -2002,7 +2070,11 @@ void MovingEntity::Update(float step)
 
 if (GetGameLogic->GetGamePaused()) return;
 
-
+	if (g_watchManager.GetVisibilityID() == m_lastVisibilityNotificationID)
+	{
+		//we've already run our update
+		return;
+	}
 	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 
 	ClearColorMods();
@@ -2055,19 +2127,61 @@ if (GetGameLogic->GetGamePaused()) return;
 
 			if (GetMap() != GetWorld)
 			{
-				
-				
 				SetPosAndMap(vPos, GetWorld->GetName());
 			} else
 			{
-				
-				
 				SetPos(vPos);
 			}
 
+		}else
+
+		{
+			//we're stuck to a common entity
+			MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
+			if (!pEnt)
+			{
+				SetDeleteFlag(true);
+			} else
+			{
+				if (GetMap() != pEnt->GetMap())
+				{
+					SetPosAndMap(pEnt->GetPos()+m_attachOffset, pEnt->GetMap()->GetName());
+				} else
+				{
+					SetPos(pEnt->GetPos()+m_attachOffset);
+				}
+
+			}
+		
+
+		}
+	} 
+
+	//while we're at it, if any entities are attached, make sure they "update".  Don't worry, it's smart enough
+	//not to allow something to update twice if it's already done it
+
+	if (!m_attachedEntities.empty())
+	{
+		list<int>::iterator itor;
+		MovingEntity *pEnt;
+		
+		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
+		{
+			
+			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
+			if (pEnt)
+			{
+				pEnt->Update(step);
+			} else
+			{
+				itor = m_attachedEntities.erase(itor);
+				continue;
+			}
+			itor++;
+			 
 		}
 	}
-
+	
 }
 
 void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
@@ -2183,6 +2297,8 @@ void MovingEntity::PostUpdate(float step)
 
 }
 
+
+
 void MovingEntity::SetImageFromTilePic(TilePic *pTilePic)
 {
 	m_dataManager.Set(C_ENT_TILE_PIC_ID_KEY, CL_String::from_int(pTilePic->m_resourceID));
@@ -2256,14 +2372,21 @@ MovingEntity * MovingEntity::Clone(World *pMap, CL_Vector2 vecPos)
 	return pNewEnt;
 }
 
+void MovingEntity::OnAttachedEntity(int entID)
+{
+	m_attachedEntities.push_back(entID);
+}
+
 void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 {
 
+	/*
 	if (entityID != C_ENTITY_CAMERA && entityID != C_ENTITY_NONE)
 	{
 		LogError("We only support attaching to the camera right now");
 		return;
 	}
+	*/
 	
 	m_attachEntID = entityID;
 	m_attachOffset = vOffset;
@@ -2273,5 +2396,28 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 	{
 		g_watchManager.Add(this, INT_MAX);
 		m_bLockedScale = true;
+	} else
+	{
+	
+		//we're stuck to a common entity
+		MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
+		if (!pEnt)
+		{
+			LogError("Warning: Ent %d (%s) can't attach to entity ID %d, doesn't exist", ID(), GetName().c_str(),
+				m_attachEntID);
+		} else
+		{
+			if (GetMap() != pEnt->GetMap())
+			{
+				SetPosAndMap(pEnt->GetPos()+m_attachOffset, pEnt->GetMap()->GetName());
+			} else
+			{
+				SetPos(pEnt->GetPos()+m_attachOffset);
+			}
+			
+			pEnt->OnAttachedEntity(ID());
+		}
+
+	
 	}
 }

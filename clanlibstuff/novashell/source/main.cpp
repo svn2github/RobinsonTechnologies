@@ -111,6 +111,11 @@ App::~App()
  
 }
 
+void App::SetWindowTitle(const string &title)
+{
+	CL_Display::get_current_window()->set_title(title);
+}
+
 unsigned int App::GetUniqueNumber()
 {
 	if (m_uniqueNum == UINT_MAX)
@@ -151,6 +156,11 @@ void App::OneTimeDeinit()
 }
 
         
+string App::GetDefaultTitle()
+{
+	return "Novashell Game Creation System " + App::GetEngineVersionAsString();
+}
+
 void App::OneTimeInit()
 {
   
@@ -202,7 +212,7 @@ void App::OneTimeInit()
 
 	m_WindowDescription.set_fullscreen(bFullscreen);
     m_WindowDescription.set_bpp(32);
-    m_WindowDescription.set_title("Novashell Game Creation System");
+    m_WindowDescription.set_title(GetDefaultTitle());
     m_WindowDescription.set_allow_resize(false);
   
 

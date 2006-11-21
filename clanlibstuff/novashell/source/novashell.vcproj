@@ -542,6 +542,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainBob.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainBob.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainColorFade.cpp"
 						>
 					</File>

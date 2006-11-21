@@ -9,6 +9,9 @@
 #include "AI/WatchManager.h"
 #include "MaterialManager.h"
 
+#define C_TILE_EDIT_UNDO_LEVEL 20
+
+
 EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
 	 SetName("worldcache");
@@ -23,6 +26,33 @@ EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 #endif
 	 
 }
+
+void EntWorldCache::PushUndoOperation(const operation_deque &op)
+{
+	if (m_undoDeque.size() >= C_TILE_EDIT_UNDO_LEVEL)
+	{
+		m_undoDeque.pop_back();
+	}
+	m_undoDeque.push_front(op);
+}
+
+void EntWorldCache::PopUndoOperation()
+{
+	if (m_undoDeque.size() == 0) return;
+	
+	//undo one sequence of events
+	
+	while (!m_undoDeque.front().empty())
+	{
+		m_undoDeque.front().front().SetIgnoreParallaxOnNextPaste();
+		m_undoDeque.front().front().PasteToWorld(m_undoDeque.front().front().GetUpperLeftPos(), TileEditOperation::PASTE_UPPER_LEFT, NULL);
+		m_undoDeque.front().pop_front();
+	}
+
+	m_undoDeque.pop_front();
+}
+
+
 
 void EntWorldCache::SetWorld( World * pWorld)
 {

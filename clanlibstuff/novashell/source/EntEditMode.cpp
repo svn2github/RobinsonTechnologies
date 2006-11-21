@@ -10,6 +10,7 @@
 #include "MessageManager.h"
 #include "VisualProfileManager.h"
 #include "EntVisualProfileEditor.h"
+#include "MiscClassBindings.h"
 
 #define C_SCALE_MOD_AMOUNT 0.01f
 
@@ -43,7 +44,7 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_bDialogIsOpen = false;
 	m_pPropertiesInputScript= NULL;
 	m_pPropertiesListData = NULL;
-	
+	m_operation = C_OP_NOTHING;
 	SetName("edit mode");
 	Init();
 }
@@ -60,11 +61,20 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 	sprintf(stTemp, "Mouse Pos: X: %.1f Y: %.1f", mouseWorldPos.x, mouseWorldPos.y);
 	m_pLabelMain->set_text(stTemp);
 
+	//mouse is being dragged?  well, just in case.
+	m_vecDragStop = mouseWorldPos;
+
+
+	/*
+	if (!CL_Display::get_current_window()->get_position()->is_inside(key.mouse_pos))
+	{
+		LogMsg("Lost mouse");
+	}
+*/
+
 	if (m_dragInProgress)
 	{
-		//mouse is being dragged
-		m_vecDragStop = mouseWorldPos;
-
+	
 		if (CL_Keyboard::get_keycode(CL_KEY_SPACE))
 		{
 			CL_Vector2 oldWorldPos = GetWorldCache->ScreenToWorld(CL_Vector2(m_vecLastMousePos.x,m_vecLastMousePos.y));
@@ -214,6 +224,8 @@ void EntEditMode::OnReplace()
 
 
 		OnPaste(g_EntEditModeCopyBuffer, destPos+vPasteOffset);
+
+		PushUndosIntoUndoOperation();
 	}
 
 }
@@ -244,6 +256,9 @@ void EntEditMode::ScaleSelection(CL_Vector2 vMod, bool bBigMovement)
 		temp.SetIgnoreParallaxOnNextPaste();
 	OnPaste(temp, temp.GetUpperLeftPos());
 	m_selectedTileList = temp;
+
+	PushUndosIntoUndoOperation();
+
 }
 
 void EntEditMode::ScaleUpSelected()
@@ -260,6 +275,7 @@ void EntEditMode::Init()
 {
 	Kill();
 
+	
 	//setup GUI
 	m_pWindow = new CL_Window(CL_Rect(0, 0, 200, 150), "Tile Edit Floating Palette", CL_Window::close_button, GetApp()->GetGUI());
 	
@@ -491,6 +507,9 @@ void EntEditMode::SnapCheckBoxedClicked()
 
 void EntEditMode::Kill()
 {
+	
+	SetOperation(C_OP_NOTHING);
+
 	if (m_pEntCollisionEditor)
 	{
 		//close this thing too
@@ -685,6 +704,26 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 	
 	case CL_MOUSE_LEFT:
 		{
+			
+			if (m_operation == C_OP_MOVE)
+			{
+
+				
+				if ( (m_vecDragStop- m_vecDragStart).length() < 1)
+				{
+					
+					m_operation = C_OP_NOTHING; //don't want the undo to cache a meaningless copy
+					//they clicked one thing, without really dragging.  Treat it special
+					ClearSelection();
+					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
+				} else
+				{
+					SetOperation(C_OP_NOTHING); //this handles the paste and undu buffer for us
+
+				}
+			}
+			
+			
 			//highlight selected tile(s)
 			
 			if (!m_dragInProgress) break; //not a real drag was happening
@@ -714,7 +753,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 				operation = TileEditOperation::C_OPERATION_SUBTRACT;
 			}
 
-			if ( (m_vecDragStop- m_vecDragStart).length() < 1)
+			if ( (m_vecDragStop- m_vecDragStart).length() < 2)
 			{
 				//they clicked one thing, without really dragging.  Treat it special
 				m_selectedTileList.AddTileByPoint(m_vecDragStart, operation, GetWorld->GetLayerManager().GetEditActiveList());
@@ -766,16 +805,12 @@ void EntEditMode::OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld,
 void EntEditMode::UpdateMenuStatus()
 {
 	//grey out undo button if it has no data
-	m_pMenuUndo->enable(m_undo.size() != 0);
+	if (GetWorldCache)
+	m_pMenuUndo->enable(GetWorldCache->GetUndoOpsAvailableCount() != 0);
 }
 void EntEditMode::AddToUndo( TileEditOperation *pTileOperation)
 {
 	if (pTileOperation->IsEmpty()) return;
-
-	if (m_undo.size() >= C_TILE_EDIT_UNDO_LEVEL)
-	{
-		m_undo.pop_back();
-	}
 
 	TileEditOperation to;
 	m_undo.push_front(to);
@@ -783,15 +818,24 @@ void EntEditMode::AddToUndo( TileEditOperation *pTileOperation)
 	UpdateMenuStatus();
 }
 
+void EntEditMode::PushUndosIntoUndoOperation()
+{
+
+	if (m_undo.empty()) return;
+
+	GetWorldCache->PushUndoOperation(m_undo);
+	m_undo.clear();
+
+	UpdateMenuStatus();
+
+}
+
 void EntEditMode::OnUndo()
 {
 	//LogMsg("Undo size is %u", m_undo.size());
-
-	if (m_undo.size() == 0) return;
-    m_undo.front().SetIgnoreParallaxOnNextPaste();
-	m_undo.front().PasteToWorld(m_undo.front().GetUpperLeftPos(), TileEditOperation::PASTE_UPPER_LEFT, NULL);
-	m_undo.pop_front();
+	GetWorldCache->PopUndoOperation();
 	UpdateMenuStatus();
+	ClearSelection();
 }
 
 void EntEditMode::OnDelete()
@@ -808,6 +852,8 @@ void EntEditMode::OnCut()
 {
 	OnCopy();
 	OnDelete();
+	PushUndosIntoUndoOperation();
+
 }
 
 void EntEditMode::CutSubTile(CL_Rect recCut)
@@ -910,6 +956,8 @@ void EntEditMode::OffsetSelectedItems(CL_Vector2 vOffset, bool bBigMovement)
 	temp.SetIgnoreParallaxOnNextPaste();
 	OnPaste(temp, temp.GetUpperLeftPos());
 	m_selectedTileList = temp;
+
+	PushUndosIntoUndoOperation();
 }
 
 void EntEditMode::HandleMessageString(const string &msg)
@@ -932,6 +980,79 @@ void EntEditMode::HandleMessageString(const string &msg)
 		LogMsg("Don't know how to handle message %s", msg.c_str());
 	}
 
+}
+
+
+bool EntEditMode::MouseIsOverSelection(CL_Point ptMouse)
+{
+	if (m_selectedTileList.m_selectedTileList.empty()) return false; //can't be, nothing is there
+
+	//get the mouse coords in world coordindates
+	CL_Vector2 mousePos = GetWorldCache->ScreenToWorld(CL_Vector2(ptMouse.x, ptMouse.y));
+
+	Tile *pSelTile;
+	if (pSelTile = m_selectedTileList.GetTileAtPos(mousePos))
+	{
+		//the mouse cursor is over a selected tile	
+		Tile *pWorldSelTile = GetTileByWorldPos(GetWorld,mousePos, GetWorld->GetLayerManager().GetEditActiveList());
+		return TilesAreSimilar(pWorldSelTile, pSelTile);
+
+	} else
+	{
+		return false;
+	}
+
+}
+
+void EntEditMode::SetOperation(int op)
+{
+
+
+	if (op == C_OP_NOTHING && m_operation == C_OP_MOVE && GetWorldCache)
+	{
+		//Delete the old ones
+		Tile blankTile; 
+		AddToUndo(&m_selectedTileList);
+		m_selectedTileList.FillSelection(&blankTile);
+
+		//paste the new ones
+		
+		CL_Vector2 vecStart( m_vecDragStop.x -m_vecDragStart.x, m_vecDragStop.y - m_vecDragStart.y);
+		vecStart += m_selectedTileList.GetUpperLeftPos();
+
+		if (GetWorld->GetSnapEnabled())
+		{
+			vecStart = GetWorld->SnapWorldCoords(vecStart, m_snapSize);
+
+		} else
+		{
+			vecStart = GetWorld->SnapWorldCoords(vecStart, m_dragSnap);
+		}
+
+		TileEditOperation undo;
+		m_selectedTileList.PasteToWorld(vecStart, TileEditOperation::PASTE_UPPER_LEFT, &undo);
+
+		//change selection to what we just pasted
+
+		m_selectedTileList.ApplyOffset(vecStart-m_selectedTileList.GetUpperLeftPos());
+	
+		AddToUndo(&undo);
+
+		PushUndosIntoUndoOperation();
+
+
+	}
+
+	m_operation = op;
+	//LogMsg("Setting op to %d", op);
+	
+	switch(op)
+	{
+		case C_OP_MOVE:
+		//we'll want to draw our selection as we move it, without really pasting it
+
+		break;
+	}
 }
 
 void EntEditMode::onButtonDown(const CL_InputEvent &key)
@@ -978,8 +1099,26 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 
 		if (!m_dragInProgress)
 		{
+			//do want to to drag out a selection box or move something?
+
+		
 			m_vecDragStart = GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
 			m_vecDragStop = m_vecDragStart;
+
+
+			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+			{
+				//check to see if we can "grab" the current selection and move it
+				if (MouseIsOverSelection(key.mouse_pos))
+				{
+					
+					//initiate a tile move operation
+					SetOperation(C_OP_MOVE);
+					return;
+				}
+			}
+
+			
 			m_dragInProgress = true;
 		}
 		break;
@@ -1032,6 +1171,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 
     case CL_KEY_DELETE:
 			OnDelete();
+			PushUndosIntoUndoOperation();
+
 		break;
 
 	case CL_KEY_E:
@@ -1059,6 +1200,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		CL_Vector2 vecMouseClickPos = CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y());
 		CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(vecMouseClickPos);
 		OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
+		PushUndosIntoUndoOperation();
 	}
 
 	break;
@@ -1076,6 +1218,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			}
 
 			OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
+			PushUndosIntoUndoOperation();
+		
 		}
 	
 		break;
@@ -1123,6 +1267,32 @@ void EntEditMode::DrawActiveBrush(CL_GraphicContext *pGC)
   DrawRectFromWorldCoordinates(vecMouse, vecBottomRight, CL_Color(255,0,0,150), pGC);
 }
 
+
+void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
+{
+	if (m_selectedTileList.IsEmpty()) return;
+	CL_Vector2 vecStart( m_vecDragStop.x -m_vecDragStart.x, m_vecDragStop.y - m_vecDragStart.y);
+	
+	vecStart += m_selectedTileList.GetUpperLeftPos();
+	
+	
+	if (GetWorld->GetSnapEnabled())
+	{
+		vecStart = GetWorld->SnapWorldCoords(vecStart, m_snapSize);
+
+	} else
+	{
+		vecStart = GetWorld->SnapWorldCoords(vecStart, m_dragSnap);
+	}
+	
+	CL_Vector2 vecStop(vecStart.x + m_selectedTileList.GetSelectionSizeInWorldUnits().x, vecStart.y + m_selectedTileList.GetSelectionSizeInWorldUnits().y);
+
+	vecStart = GetWorldCache->WorldToScreen(vecStart);
+	vecStop = GetWorldCache->WorldToScreen(vecStop);
+
+	pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(50,255,50,180));
+
+}
 
 void EntEditMode::OnProperties()
 {
@@ -1341,6 +1511,13 @@ void EntEditMode::Render(void *pTarget)
 	}
 
 	if (m_pEntCollisionEditor) return; //don't draw this extra GUI stuff right now
+	
+	if (m_operation == C_OP_MOVE)
+	{
+		//LogMsg("Rendering..");
+		DrawSelection(pGC);
+	}
+	
 	if (m_dragInProgress)
 	{
 		m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap).x - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).x),
@@ -1903,7 +2080,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		
 		//paste our selection, this helps by creating an undo for us
 		OnPaste(*pTileList, pTileList->GetUpperLeftPos());
-
+		PushUndosIntoUndoOperation();
 		if (selectedLayer != originalLayer)
 		{
 			//couldn't change it before, because the paste needed it to delete the old tiles			
@@ -1914,6 +2091,8 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 		//update our current selection
 		pTileList->UpdateSelectionFromWorld();
+
+
 
 	} else if (m_guiResponse == C_GUI_CONVERT)
 	{
@@ -1991,6 +2170,8 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		m_selectedTileList.SetIgnoreParallaxOnNextPaste();
 		//paste our selection, this helps by creating an undo for us
 		OnPaste(m_selectedTileList, m_selectedTileList.GetUpperLeftPos());
+		PushUndosIntoUndoOperation();
+
 		GetWorld->ReInitCollisionOnTilePics();
 
 	}

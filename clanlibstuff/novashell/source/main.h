@@ -111,6 +111,7 @@ public:
 	vector<string> & GetStartupParms() {return m_startupParms;}
 	float GetEngineVersion() {return m_engineVersion;}
 	string GetEngineVersionAsString() {return m_engineVersionString;}
+	void SetWindowTitle(const string &title);
 
 	enum eVideoRefresh
 	{
@@ -128,6 +129,7 @@ public:
 
 	void SetFont(int fontID, CL_Font *pFont) {m_pFonts[fontID] = pFont;} //we'll delete it ourselves later
 	bool GetRequestedQuit() {return m_bQuit;}
+	string GetDefaultTitle();
 
 private:
     

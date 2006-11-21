@@ -68,6 +68,8 @@ public:
 	void ClearSelection();
 	void AddTileToSelection(int operation, bool bPerformDupeCheck, Tile *pTile);
 	selectedTile_list::iterator FindTileByLocation(selectedTile_list &tileList, Tile *pTile);
+	Tile * GetTileAtPos(const CL_Vector2 & pos); //returns tile that is touching this coordinate, doesn't sort
+
 	void AddTilesByWorldRect(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec);
 	void AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec, Tile *pSrcTile);
 
@@ -85,6 +87,8 @@ public:
 	void SetIgnoreParallaxOnNextPaste() {m_bIgnoreParallaxOnNextPaste = true;}
 	void ApplyScaleMod(CL_Vector2 vMod);
 	void UpdateSelectionFromWorld(); //replaces tiles with their latest versions from the active world map
+	CL_Rectf GetSelectionRectInWorldUnits();
+	Tile * GetTileInSelectionByWorldPos(const CL_Vector2 &pos);
 
 	enum
 	{
@@ -115,6 +119,7 @@ protected:
 };
 
 typedef std::deque<TileEditOperation> operation_deque;
+bool TilesAreSimilar(Tile *pTile, Tile *pSrcTile);
 
 
 #endif                  // include guard

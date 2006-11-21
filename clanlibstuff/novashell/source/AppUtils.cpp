@@ -341,7 +341,10 @@ CL_Rect StringToRect(const string &stColor)
 	//break it apart and recreate it as a color
 	std::vector<string> stTok = CL_String::tokenize(stColor, " ", true);
 
-	assert(stTok.size() == 4);
+	if (stTok.size() < 4)
+	{
+		return CL_Rect(0,0,0,0); //invalid rect
+	}
 
 	CL_Rect r;
 	r.top = CL_String::to_int(stTok[0]);

@@ -4,6 +4,21 @@
 
 int g_defaultWorldDialogSelection = 0;
 
+
+void RemoveEndingCR(string &text)
+{
+	if (*text.rbegin() == 10)
+	{
+		text.erase(text.size()-1, 1);
+	}
+
+	if (*text.rbegin() == '\n')
+	{
+		text.erase(text.size()-1, 1);
+	}
+
+}
+
 bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string fileName)
 {
 
@@ -21,6 +36,8 @@ bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string fileName)
 		if (CL_String::compare_nocase(tok[0], "world_name"))
 		{
 			pModInfo->m_stDisplayName = tok[1];
+			
+			RemoveEndingCR(pModInfo->m_stDisplayName);
 		}
 		
 		if (CL_String::compare_nocase(tok[0], "engine_version_requested"))
@@ -132,7 +149,10 @@ void SetupModPathsFromWorldInfo(string modPath)
 
 		}
 
+		
 		GetGameLogic->AddModPath(modPath);
+		GetApp()->SetWindowTitle(modInfo.m_stDisplayName);
+
 	}
 }
 

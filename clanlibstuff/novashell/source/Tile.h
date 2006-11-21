@@ -142,4 +142,6 @@ public:
 
 };
 
+bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile);
+
 #endif                  // include guard

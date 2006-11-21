@@ -85,6 +85,12 @@ void TileEditOperation::ClearSelection()
 	m_bIgnoreParallaxOnNextPaste = false;
 }
 
+
+CL_Rectf TileEditOperation::GetSelectionRectInWorldUnits()
+{
+	return CL_Rectf(GetUpperLeftPos().x, GetUpperLeftPos().y, GetLowerRightPos().x, GetLowerRightPos().y);
+}
+
 CL_Vector2 TileEditOperation::GetUpperLeftPos()
 {
 	RecomputeBoundsIfNeeded();
@@ -207,16 +213,26 @@ void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int opera
 	GetWorldCache->AddTilesByRect(recArea, &tileList, layerIDVec);
 
 	//now we need to sort them
-	tileList.sort(compareTileByLayer);
+	g_pLayerManager = &GetWorld->GetLayerManager();
+	tileList.sort(compareTileBySortLevelOptimized);
 
-	if (tileList.rbegin() != tileList.rend())
+	tile_list::reverse_iterator itor = tileList.rbegin();
+	
+	while(itor != tileList.rend())
 	{
-		pTile = (*tileList.rbegin())->CreateClone();
+		if (!PixelAccurateHitDetection(vecDragStart, *itor))
+		{
+			 itor++;
+			 continue;
+		}
+		
+		pTile = (*itor)->CreateClone();
 		if (pTile)
 		{
 			AddTileToSelection(operation, bPerformDupeCheck, pTile);
 		}
 		SAFE_DELETE(pTile);
+		break;
 	}
 }
 
@@ -249,6 +265,8 @@ void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, cons
 
 }
 
+
+
 void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec, Tile *pSrcTile)
 {
 	Tile *pTile = NULL;
@@ -274,59 +292,8 @@ void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragSt
 
 		pTile = (*itor);
 
-		if (pTile->GetType() != pSrcTile->GetType())
-		{
-			//can't be a match here
-			itor++;
-			continue;
-		}
-
-		if (pTile->GetType() == C_TILE_TYPE_PIC)
-		{	
-			if (  ((TilePic*)pTile)->m_resourceID == ((TilePic*)pSrcTile)->m_resourceID)
-			{
-				if (  ((TilePic*)pTile)->m_rectSrc == ((TilePic*)pSrcTile)->m_rectSrc)
-				{
-					bSimilar = true;
-				}
-			}
-		}
-
-		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-		{	
-		    TileEntity * pEntTile = (TileEntity*)pTile;
-			TileEntity * pSrcEntTile = (TileEntity*)pSrcTile;
-
-			if (pSrcEntTile->GetEntity()->GetMainScriptFileName().empty())
-			{
-				if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
-				{
-					//well, they both have no script set.  Are they using the same image?
-					if (pSrcEntTile->GetEntity()->GetCollisionData() == pEntTile->GetEntity()->GetCollisionData())
-					{
-						bSimilar = true;
-					}
-
-				}
-
-			} else
-			{
-				if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
-				{
-					//they use the same script.  But I guess we should check farther than that...
-					if (pSrcEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_PIC_ID_KEY) == 
-						pEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_PIC_ID_KEY)
-						&&
-						pSrcEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_RECT_KEY) == 
-						pEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_RECT_KEY)
-						)
-					{
-						bSimilar = true;
-					}
-					
-				}
-			}
-		}
+			bSimilar = TilesAreSimilar(pTile, pSrcTile);
+		
 	
 		if (bSimilar)
 		{
@@ -342,6 +309,36 @@ void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragSt
 
 }
 
+Tile * TileEditOperation::GetTileAtPos(const CL_Vector2 & pos)
+{
+	selectedTile_list::iterator itor = m_selectedTileList.begin();
+
+	Tile *pChosenTile = NULL;
+	g_pLayerManager = &GetWorld->GetLayerManager();
+
+	while (itor != m_selectedTileList.end())
+	{
+		if ((*itor)->m_pTile->GetWorldCombinedRect().is_inside(CL_Pointf(pos.x, pos.y)))
+		{
+			//found it?
+			if (pChosenTile)
+			{
+				if (compareTileBySortLevelOptimized(pChosenTile, (*itor)->m_pTile))
+				{
+					pChosenTile = (*itor)->m_pTile;
+				}
+			} else
+			{
+				pChosenTile = (*itor)->m_pTile;
+			}
+		}
+		itor++;
+	}
+
+	return pChosenTile;
+}
+
+//tile sent in is checked to be an exact position match
 selectedTile_list::iterator TileEditOperation::FindTileByLocation(selectedTile_list &tileList, Tile *pTile)
 {
 	selectedTile_list::iterator itor = tileList.begin();
@@ -629,4 +626,65 @@ void TileEditOperation::ApplyScaleMod(CL_Vector2 vMod)
 	//and finally, adjust our bounding boxes
 	SetNeedsFullBoundsCheck(true);
 
+}
+
+
+bool TilesAreSimilar(Tile *pTile, Tile *pSrcTile)
+{
+	
+	
+	if (pTile->GetType() != pSrcTile->GetType())
+	{
+		//can't be a match here
+		return false;
+	}
+
+	if (pTile->GetType() == C_TILE_TYPE_PIC)
+	{	
+		if (  ((TilePic*)pTile)->m_resourceID == ((TilePic*)pSrcTile)->m_resourceID)
+		{
+			if (  ((TilePic*)pTile)->m_rectSrc == ((TilePic*)pSrcTile)->m_rectSrc)
+			{
+				return true;
+			}
+		}
+	}
+
+	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+	{	
+		TileEntity * pEntTile = (TileEntity*)pTile;
+		TileEntity * pSrcEntTile = (TileEntity*)pSrcTile;
+
+		if (pSrcEntTile->GetEntity()->GetMainScriptFileName().empty())
+		{
+			if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
+			{
+				//well, they both have no script set.  Are they using the same image?
+				if (pSrcEntTile->GetEntity()->GetCollisionData() == pEntTile->GetEntity()->GetCollisionData())
+				{
+					return true;
+				}
+
+			}
+
+		} else
+		{
+			if (  pEntTile->GetEntity()->GetMainScriptFileName() == pSrcEntTile->GetEntity()->GetMainScriptFileName())
+			{
+				//they use the same script.  But I guess we should check farther than that...
+				if (pSrcEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_PIC_ID_KEY) == 
+					pEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_PIC_ID_KEY)
+					&&
+					pSrcEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_RECT_KEY) == 
+					pEntTile->GetEntity()->GetData()->Get(C_ENT_TILE_RECT_KEY)
+					)
+				{
+					return true;
+				}
+
+			}
+		}
+	}
+
+	return false;
 }

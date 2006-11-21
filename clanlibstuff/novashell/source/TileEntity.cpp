@@ -117,3 +117,72 @@ CBody * TileEntity::GetCustomBody()
 	assert(m_pEntity);
 	return m_pEntity->GetBody();
 }
+
+
+bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
+{
+
+	//get the real pixels, this is very slow because we're probably downloading from the video card
+	//OPTIMIZE:  We could set most sprites to cache the pixelbuffer...
+	
+   CL_PixelBuffer pBuf;
+
+   switch (pTile->GetType())
+	{
+	case C_TILE_TYPE_ENTITY:
+		{
+			const CL_Sprite *pSprite = ((TileEntity*)pTile)->GetEntity()->GetSprite();
+			
+			if (!pSprite || pSprite->get_frame_count() == 0)
+			{
+				assert(!"Huh?");
+				return false;
+			}
+
+			pBuf = pSprite->get_frame_pixeldata(pSprite->get_current_frame());
+
+		}
+		break;
+
+	default:
+		assert(!"Unsupported tile type");
+		return true; //always report a hit
+	}
+
+	
+   //we now have the pixels and can do a hit test.  But we need to figure out where to check
+
+
+   CL_Rectf r = pTile->GetWorldRect(); 
+
+   vWorldPos.x -= r.left;
+   vWorldPos.y -= r.top;
+
+   //apply scale
+
+   vWorldPos.x *= pTile->GetScale().x;
+   vWorldPos.y *= pTile->GetScale().y;
+
+   //do the actual check
+
+	pBuf.lock();
+   if (pBuf.get_pixel(vWorldPos.x, vWorldPos.y).get_alpha() > 0)
+   {
+	   //LogMsg("Hit at %.2f, %.2f", vWorldPos.x, vWorldPos.y);
+	   return true;
+   } else
+   {
+	  // LogMsg("Miss");
+   }
+	pBuf.unlock();
+  
+	/*
+	CL_Surface c(pBuf);
+
+	c.draw(0,0);
+	CL_Display::flip(); //show it now
+	Sleep(200);
+	*/
+	
+	return false;
+}

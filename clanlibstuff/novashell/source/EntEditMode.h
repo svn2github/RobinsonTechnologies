@@ -13,7 +13,6 @@
 #include "Screen.h"
 #include "TileEditOperation.h"
 
-#define C_TILE_EDIT_UNDO_LEVEL 20
 
 class EntCollisionEditor;
 class DataObject;
@@ -122,6 +121,10 @@ protected:
 	void OnPropertiesEditData(const CL_InputEvent &input);
 	void PropertiesSetDataManagerFromListBox(DataManager *pData, CL_ListBox &listBox);
 	void OnExternalDialogClose(int entID);
+	bool MouseIsOverSelection(CL_Point ptMouse);
+	void SetOperation(int op);
+	void DrawSelection(CL_GraphicContext *pGC);
+	void PushUndosIntoUndoOperation();
 
 	enum
 	{
@@ -130,9 +133,17 @@ protected:
 		C_GUI_CONVERT
 
 	};
+
+	enum
+	{
+		C_OP_NOTHING,
+		C_OP_MOVE
+	};
+
 	int m_guiResponse;
 	CL_InputBox *m_pPropertiesInputScript;
 	CL_ListBox *m_pPropertiesListData;
+	int m_operation; //if we're currently drag-moving or not
 
 };
 

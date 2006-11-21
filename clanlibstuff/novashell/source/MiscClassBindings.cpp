@@ -87,12 +87,54 @@ int GetEntityIDByName(const string &name)
 	return 0;
 }
 
-MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore)
+Tile * GetTileByWorldPos(World *pWorld, CL_Vector2 v, vector<unsigned int> layerIDVec)
+{
+	if (!pWorld)
+	{
+
+		LogMsg("GetTileByWorldPos: Error, invalid map");
+		return NULL;
+	}
+
+	Tile *pTile = NULL;
+
+	CL_Rect recArea(v.x, v.y, v.x + 0.1f, v.y + 0.1f);
+
+	//returns a list of tile pointers, we shouldn't free them!
+	tile_list tileList;
+
+	pWorld->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
+
+	//now we need to sort them
+	g_pLayerManager = &pWorld->GetLayerManager();
+	tileList.sort(compareTileBySortLevelOptimized);
+
+	tile_list::reverse_iterator itor = tileList.rbegin();
+	
+	for( ;itor != tileList.rend(); itor++)
+	{
+		pTile = (*itor);
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY || pTile->GetType() == C_TILE_TYPE_PIC)
+		{
+			
+			//looks good to me!
+			return pTile;
+		}
+	}
+
+	//couldn't find anything
+	return NULL;
+
+}
+
+
+
+MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, bool bPixelAccurate)
 {
 	if (!GetWorld)
 	{
 
-		LogMsg("GetEntityByWorldPos: Error, no world is active right now.");
+		LogMsg("GetEntityByWorldPos: Error, no map is active right now.");
 		return NULL;
 	}
 
@@ -128,7 +170,14 @@ MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore)
 				continue;
 			}
 			//looks good to me!
-			return pEnt;
+			
+			if (!bPixelAccurate || PixelAccurateHitDetection(v, pTile))
+			{
+				return pEnt;
+			} else
+			{
+				continue;
+			}
 		}
 	}
 
@@ -215,6 +264,7 @@ void luabindMisc(lua_State *pState)
 		.def("SetScreenSize", &App::SetScreenSize)
 		.def("GetEngineVersion", &App::GetEngineVersion)
 		.def("GetEngineVersionAsString", &App::GetEngineVersionAsString)
+		.def("SetWindowTitle", &App::SetWindowTitle)
 
 		,class_<ISoundManager>("SoundManager")
 		.def("PlayMusic", &ISoundManager::PlayMusic)

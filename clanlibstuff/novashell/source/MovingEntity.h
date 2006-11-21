@@ -94,6 +94,12 @@ public:
   void SetIsOnGround(bool bOnGround);
   CBody * GetBody(){return &m_body;}
   void SetSpriteData(CL_Sprite *pSprite);
+ // void SetImageClipRect(const CL_Rect &r);
+  CL_Rect GetImageClipRect();
+  unsigned int GetImageID(); //returns 0 if not applicable
+  bool SetImageByID(unsigned int picID, CL_Rect *pSrcRect);
+  void SetImage(const string &fileName, CL_Rect *pSrcRect);
+
   bool LoadScript(const char *pFileName);
   void SetMainScriptFileName(const string &fileName);
   const string & GetMainScriptFileName() {return m_mainScript;}
@@ -244,7 +250,11 @@ public:
   CL_Vector2 GetTextScale();
   void SetTextRect(const CL_Rect &r);
   void SetAttach(int entityID, CL_Vector2 vOffset);
+  int GetAttachEntityID() {return m_attachEntID;}
+  CL_Vector2 GetAttachOffset() {return m_attachOffset;}
+  void SetAttachOffset(const CL_Vector2 &pos) {m_attachOffset = pos;}
   MovingEntity * Clone(World *pMap, CL_Vector2 vecPos);
+  void OnAttachedEntity(int entID);
 
   enum ListenCollision
 {
@@ -368,6 +378,7 @@ protected:
 	int m_attachEntID;
 	CL_Vector2 m_attachOffset;
 	bool m_bLockedScale; //if true, we don't scale with the camera
+	list<int> m_attachedEntities; 
 
 };
 

@@ -11,7 +11,7 @@
 #include "BaseGameEntity.h"
 #include "World.h"
 #include "Screen.h"
-
+#include "TileEditOperation.h"
 
 typedef std::vector<WorldChunk*> EntWorldChunkVector;
 typedef std::vector<Tile*> tile_vector;
@@ -55,6 +55,9 @@ public:
 	//note, GCC didn't like me sending these as references
 	bool IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, Tile *pTileToIgnore= NULL, bool bIgnoreMovingCreatures = false);
 	bool IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity); //good for figuring out if an entity can fit here or not
+	void PushUndoOperation(const operation_deque &op);
+	void PopUndoOperation();
+	int GetUndoOpsAvailableCount() {return m_undoDeque.size();};
 
 protected:
 
@@ -79,6 +82,10 @@ protected:
 	unsigned int m_uniqueDrawID; //so an entity can tell if another entity has already "thought"
 	vector<unsigned int> m_activeTriggers; //well, the entities that hold them anyway
 	CL_SlotContainer m_slots;
+
+
+	deque<operation_deque> m_undoDeque; //a deque that contains deques of undos, think of one deque as one undo operation
+
 
 };
 

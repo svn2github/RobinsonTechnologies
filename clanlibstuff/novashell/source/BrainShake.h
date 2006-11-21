@@ -27,7 +27,7 @@ protected:
 private:
 
 	CL_Vector2 m_lastDisplacement;
-	bool m_bFirstTime;
+
 };
 
 #endif // BrainShake_h__

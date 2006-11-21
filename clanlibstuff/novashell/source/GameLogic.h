@@ -87,7 +87,7 @@ public:
 	  void SetShowPathfinding(bool bNew) {m_bShowPathfinding = bNew;}
 	  bool GetShowAI() {return m_bShowAI;}
 	  void SetShowAI(bool bNew) {m_bShowAI = bNew;}
-	  void ClearModPaths() {m_modPaths.clear();}
+	  void ClearModPaths() {m_modPaths.clear(); GetApp()->SetWindowTitle(GetApp()->GetDefaultTitle());}
 	  void AddModPath(string s);
 	  const string & GetWorldsDirPath() {return m_strWorldsDirPath;}
 	  const string & GetActiveWorldName();
