@@ -122,6 +122,9 @@ CBody * TileEntity::GetCustomBody()
 bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 {
 
+	bool flippedx = false;
+	bool flippedy = false;
+
 	//get the real pixels, this is very slow because we're probably downloading from the video card
 	//OPTIMIZE:  We could set most sprites to cache the pixelbuffer...
 	
@@ -139,13 +142,25 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 				return false;
 			}
 
+			if (pSprite->get_base_angle() != 0)
+			{
+				//we don't know how to do this with rotation..
+				return true;
+			}
+
+			if (pSprite->get_angle_pitch() != 0) flippedy = true;
+			if (pSprite->get_angle_yaw() != 0) flippedx = true;
+
+			
 			pBuf = pSprite->get_frame_pixeldata(pSprite->get_current_frame());
+			
+
 
 		}
 		break;
 
 	default:
-		assert(!"Unsupported tile type");
+	//	assert(!"Unsupported tile type");
 		return true; //always report a hit
 	}
 
@@ -158,6 +173,19 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
    vWorldPos.x -= r.left;
    vWorldPos.y -= r.top;
 
+   
+   //if the image is flipped, we need to account for it
+
+   if (flippedx)
+   {
+	   vWorldPos.x = pBuf.get_width()-vWorldPos.x;
+   }
+ 
+   if (flippedy)
+   {
+	   vWorldPos.y = pBuf.get_height()-vWorldPos.y;
+   }
+
    //apply scale
 
    vWorldPos.x *= pTile->GetScale().x;
@@ -168,11 +196,11 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 	pBuf.lock();
    if (pBuf.get_pixel(vWorldPos.x, vWorldPos.y).get_alpha() > 0)
    {
-	   //LogMsg("Hit at %.2f, %.2f", vWorldPos.x, vWorldPos.y);
+	   LogMsg("Hit at %.2f, %.2f", vWorldPos.x, vWorldPos.y);
 	   return true;
    } else
    {
-	  // LogMsg("Miss");
+	   LogMsg("Miss");
    }
 	pBuf.unlock();
   
