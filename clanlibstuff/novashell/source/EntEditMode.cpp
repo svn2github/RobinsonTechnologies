@@ -1112,7 +1112,13 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			m_vecDragStop = m_vecDragStart;
 
 
-			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU))
+			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU)
+				
+#ifdef __APPLE__
+				&& !CL_Keyboard::get_keycode(CL_KEY_COMMAND)
+#endif
+				
+				)
 			{
 				//check to see if we can "grab" the current selection and move it
 				if (MouseIsOverSelection(key.mouse_pos))
@@ -1224,7 +1230,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			CL_Vector2 vecMouseClickPos = CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y());
 			CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(vecMouseClickPos);
 
-			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU))
 			{
 				//control right click opens a special menu instead of pasting
 			    BuildTilePropertiesMenu(&m_selectedTileList);
