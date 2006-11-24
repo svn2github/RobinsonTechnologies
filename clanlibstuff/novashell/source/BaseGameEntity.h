@@ -16,6 +16,14 @@
 #include <iosfwd>
 #include <ClanLib/signals.h>
 
+enum
+{
+	C_ENTITY_CAMERA = -1,
+	C_ENTITY_NONE
+};
+	
+
+
 class TileEntity;
 class Message;
 
