@@ -25,7 +25,11 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_slots.connect (CL_Keyboard::sig_key_down(), this, &EntEditMode::onButtonDown);
 	m_slots.connect (CL_Keyboard::sig_key_up(), this, &EntEditMode::onButtonUp);
 	m_slots.connect(CL_Mouse::sig_move(), this, &EntEditMode::OnMouseMove);
+
+	m_slots.connect(CL_Mouse::sig_key_dblclk(), this, &EntEditMode::OnMouseDoubleClick);
+
 	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntEditMode::OnMapChange);
+	m_pContextMenu = NULL;
 
 	m_pTileWeAreEdittingCollisionOn = NULL;
 	m_dragSnap = 1.0f;
@@ -61,8 +65,13 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 	sprintf(stTemp, "Mouse Pos: X: %.1f Y: %.1f", mouseWorldPos.x, mouseWorldPos.y);
 	m_pLabelMain->set_text(stTemp);
 
+	if (!m_pContextMenu || !m_pContextMenu->is_open())
+	{
+
+	
 	//mouse is being dragged?  well, just in case.
-	m_vecDragStop = mouseWorldPos;
+		m_vecDragStop = mouseWorldPos;
+	}
 
 
 	/*
@@ -508,6 +517,7 @@ void EntEditMode::SnapCheckBoxedClicked()
 void EntEditMode::Kill()
 {
 	
+
 	SetOperation(C_OP_NOTHING);
 
 	if (m_pEntCollisionEditor)
@@ -517,6 +527,7 @@ void EntEditMode::Kill()
 		m_pEntCollisionEditor = NULL;
 	}
 	
+	SAFE_DELETE(m_pContextMenu);
 	SAFE_DELETE(m_pCheckBoxSnap);
 	SAFE_DELETE(m_pInputBoxSnapSize);
 	SAFE_DELETE(m_pListBaseTile);
@@ -704,7 +715,8 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 	
 	case CL_MOUSE_LEFT:
 		{
-			
+			KillContextMenu();
+	
 			if (m_operation == C_OP_MOVE)
 			{
 
@@ -718,7 +730,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
 				} else
 				{
-					SetOperation(C_OP_NOTHING); //this handles the paste and undu buffer for us
+					SetOperation(C_OP_NOTHING); //this handles the paste and undo buffer for us
 
 				}
 			}
@@ -832,6 +844,8 @@ void EntEditMode::PushUndosIntoUndoOperation()
 
 void EntEditMode::OnUndo()
 {
+	KillContextMenu();
+
 	//LogMsg("Undo size is %u", m_undo.size());
 	GetWorldCache->PopUndoOperation();
 	UpdateMenuStatus();
@@ -840,6 +854,9 @@ void EntEditMode::OnUndo()
 
 void EntEditMode::OnDelete()
 {
+	
+	KillContextMenu();
+
 	if (m_selectedTileList.IsEmpty()) return;
 	//delete selection
 	Tile blankTile; 
@@ -850,6 +867,8 @@ void EntEditMode::OnDelete()
 
 void EntEditMode::OnCut()
 {
+	KillContextMenu();
+
 	OnCopy();
 	OnDelete();
 	PushUndosIntoUndoOperation();
@@ -1060,6 +1079,101 @@ void EntEditMode::SetOperation(int op)
 	}
 }
 
+void EntEditMode::OnMouseDoubleClick(const CL_InputEvent &key)
+{
+	switch(key.id)
+	{
+/*	
+	case CL_MOUSE_LEFT:
+			//they double clicked
+			if (!CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU))
+			{
+				//control right click opens a special menu instead of pasting
+				BuildTilePropertiesMenu(&m_selectedTileList);
+				return;
+			}
+			break;
+			*/
+
+	}
+
+}
+
+void EntEditMode::OnPasteContext()
+{
+	CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(m_lastContextWorldPos);
+	OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
+	PushUndosIntoUndoOperation();
+	KillContextMenu();
+
+}
+
+void EntEditMode::KillContextMenu()
+{
+	if (m_pContextMenu)
+	m_pContextMenu->collapse();
+}
+
+void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
+{
+	
+	CL_Size rsize = CL_Size(50,20);
+	CL_Rect r = CL_Rect(clickPos.x, clickPos.y, clickPos.x + rsize.width, clickPos.y + rsize.height);
+	
+	SAFE_DELETE(m_pContextMenu);
+
+	m_lastContextWorldPos = GetWorldCache->ScreenToWorld(clickPos);
+
+
+	//check to see if we can "grab" the current selection and move it
+	if (m_selectedTileList.IsEmpty())
+	{
+		//why not just select whatever is here?
+		m_selectedTileList.AddTileByPoint(m_lastContextWorldPos, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
+
+		
+	}
+
+
+
+	m_pContextMenu = new CL_Menu(r, GetApp()->GetGUI());
+	CL_MenuNode *pItem;
+	m_pContextMenu->set_event_passing(false);
+	m_pContextMenu->set_vertical(true);
+	m_pContextMenu->set_auto_resize(true);
+	
+	pItem = m_pContextMenu->create_item("Cut (Ctrl+X)");
+	m_slots.connect(pItem->sig_clicked(),this, &EntEditMode::OnCut);
+	pItem->set_close_on_click(true);
+	pItem->enable(!m_selectedTileList.IsEmpty());
+
+	pItem = m_pContextMenu->create_item("Copy (Ctrl+C)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnCopy);
+	pItem->set_close_on_click(true);
+	pItem->enable(!m_selectedTileList.IsEmpty());
+
+	pItem = m_pContextMenu->create_item("Paste (Ctrl-V)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnPasteContext);
+	pItem->set_close_on_click(true);
+
+	pItem->enable(!g_EntEditModeCopyBuffer.IsEmpty());
+
+	pItem = m_pContextMenu->create_item("Properties (Ctrl-E)");
+	
+	pItem->enable(!m_selectedTileList.IsEmpty());
+	
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnProperties);
+
+
+	
+	m_pContextMenu->set_click_to_open(false);
+	//m_pContextMenu->set_root_collapsing(true);
+	
+	m_pContextMenu->open();
+
+	
+}
+
 void EntEditMode::onButtonDown(const CL_InputEvent &key)
 {
 	if (m_pEntCollisionEditor) return; //now is a bad time
@@ -1099,10 +1213,14 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	case CL_KEY_DOWN:
 		ScheduleSystem(1, ID(), ("offset_selected|0|1|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
-
-		
+	
 	case CL_MOUSE_LEFT:
 
+		if (!GetWorld) 
+		{
+			LogMsg("Error, no map is active?!");
+			return;
+		}
 		if (!m_dragInProgress)
 		{
 			//do want to to drag out a selection box or move something?
@@ -1221,6 +1339,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(vecMouseClickPos);
 		OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 		PushUndosIntoUndoOperation();
+		SAFE_DELETE(m_pContextMenu);
+
 	}
 
 	break;
@@ -1228,17 +1348,17 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	case CL_MOUSE_RIGHT:
 		{
 			CL_Vector2 vecMouseClickPos = CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y());
+			
+			OpenContextMenu(vecMouseClickPos);
+			/*
+			CL_Vector2 vecMouseClickPos = CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y());
 			CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(vecMouseClickPos);
 
-			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU))
-			{
-				//control right click opens a special menu instead of pasting
-			    BuildTilePropertiesMenu(&m_selectedTileList);
-				return;
-			}
+		
 
 			OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 			PushUndosIntoUndoOperation();
+			*/
 		
 		}
 	
@@ -1280,7 +1400,7 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 void EntEditMode::DrawActiveBrush(CL_GraphicContext *pGC)
 {
   if (g_EntEditModeCopyBuffer.IsEmpty()) return;
-  CL_Vector2 vecMouse = ConvertMouseToCenteredSelectionUpLeft(CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y()));
+  CL_Vector2 vecMouse = ConvertMouseToCenteredSelectionUpLeft(m_vecDragStop);
   CL_Vector2 vecBottomRight = (vecMouse + (g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()));
 
   SelectedTile *pSelTile = (*g_EntEditModeCopyBuffer.m_selectedTileList.begin());
@@ -1316,6 +1436,7 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 
 void EntEditMode::OnProperties()
 {
+	KillContextMenu();
 	BuildTilePropertiesMenu(&m_selectedTileList);
 }
 

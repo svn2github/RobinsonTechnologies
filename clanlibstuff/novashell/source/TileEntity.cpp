@@ -188,8 +188,8 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 
    //apply scale
 
-   vWorldPos.x *= pTile->GetScale().x;
-   vWorldPos.y *= pTile->GetScale().y;
+   vWorldPos.x /= pTile->GetScale().x;
+   vWorldPos.y /= pTile->GetScale().y;
 
    //do the actual check
 

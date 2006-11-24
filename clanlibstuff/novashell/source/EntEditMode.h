@@ -41,6 +41,7 @@ protected:
 	void OnCopy();
 	void OnCut();
 	void OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld, bool bSelectPasted = false);
+	void OnPasteContext();
 	void OnUndo();
 	void AddToUndo(TileEditOperation *pTileOperation);
 	void UpdateMenuStatus();
@@ -74,6 +75,7 @@ protected:
 	void PopUpImagePropertiesDialog(const string &fileName, unsigned int resourceID);
 	void OnSelectBaseTileDoubleClick(const CL_InputEvent &input);
 	void OnCloseBaseTileDialog();
+	void KillContextMenu();
 
 	CL_Slot m_slotClose;
 	
@@ -125,6 +127,8 @@ protected:
 	void SetOperation(int op);
 	void DrawSelection(CL_GraphicContext *pGC);
 	void PushUndosIntoUndoOperation();
+	void OnMouseDoubleClick(const CL_InputEvent &input);
+	void OpenContextMenu(CL_Vector2 clickPos);
 
 	enum
 	{
@@ -144,7 +148,8 @@ protected:
 	CL_InputBox *m_pPropertiesInputScript;
 	CL_ListBox *m_pPropertiesListData;
 	int m_operation; //if we're currently drag-moving or not
-
+	CL_Vector2 m_lastContextWorldPos;
+	CL_Menu *m_pContextMenu;
 };
 
 
