@@ -12,6 +12,12 @@
 #include "NavGraphManager.h"
 #include "TimeSlicedGraphAlgorithms.h"
 
+
+#ifdef _DEBUG
+#define C_SHOW_PATHFINDING_DEBUG_INFO
+#endif
+
+
 /*
 #include "SparseGraph.h"
 #include "PathEdge.h"

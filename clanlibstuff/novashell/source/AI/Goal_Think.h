@@ -69,6 +69,7 @@ public:
   //the entToFaceID can be an entity ID or a direction (FACING_LEFT, etc) or FACING_NONE to not look anywhere
   void PushSay(const string &msg, int entToFaceID);
   void PushSayByID(const string &msg, int entID, int entToFaceID);
+  bool IsGoalActiveByName(const string &name);
 
   //this renders the evaluations (goal scores) at the specified location
   void  RenderEvaluations(int left, int top)const;
