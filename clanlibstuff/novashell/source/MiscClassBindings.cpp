@@ -87,7 +87,7 @@ int GetEntityIDByName(const string &name)
 	return 0;
 }
 
-Tile * GetTileByWorldPos(World *pWorld, CL_Vector2 v, vector<unsigned int> layerIDVec)
+Tile * GetTileByWorldPos(World *pWorld, CL_Vector2 v, vector<unsigned int> layerIDVec, bool bPixelAccurate)
 {
 	if (!pWorld)
 	{
@@ -118,7 +118,17 @@ Tile * GetTileByWorldPos(World *pWorld, CL_Vector2 v, vector<unsigned int> layer
 		{
 			
 			//looks good to me!
-			return pTile;
+			
+			//looks good to me!
+
+			if (!bPixelAccurate || PixelAccurateHitDetection(v, pTile))
+			{
+				return pTile;
+			} else
+			{
+				continue;
+			}
+			
 		}
 	}
 
@@ -238,7 +248,6 @@ void luabindMisc(lua_State *pState)
 		.def("GetSpecial", &CMaterial::GetSpecial)
 
 		,class_<GameLogic>("GameLogic")
-		.def("SetLeftMouseButtonCallback", &GameLogic::SetLeftMouseButtonCallback)
 		.def("ToggleEditMode", &GameLogic::ToggleEditMode)
 		.def("SetUserProfileName", &GameLogic::SetUserProfileName)
 		.def("GetUserProfileName", &GameLogic::GetUserProfileName)
@@ -335,8 +344,11 @@ void luabindMisc(lua_State *pState)
 
 		,class_<CameraSetting>("CameraSettings")
 
-		,class_<ScriptKeyManager>("KeyManager")
-		.def("AssignKey", &ScriptKeyManager::AssignKey)
+		,class_<ScriptKeyManager>("InputManager")
+		.def("AddBinding", &ScriptKeyManager::AddBinding)
+		.def("RemoveBinding", &ScriptKeyManager::RemoveBinding)
+		.def("GetMousePos", &ScriptKeyManager::GetMousePos)
+		.def("SetMousePos", &ScriptKeyManager::SetMousePos)
 
 		,class_<Goal_Think>("GoalManager")
 		.def("PushMoveToPosition", &Goal_Think::PushMoveToPosition)

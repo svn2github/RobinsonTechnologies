@@ -46,6 +46,7 @@ GameLogic::GameLogic()
 	m_slots.connect(CL_Keyboard::sig_key_down(), this, &GameLogic::OnKeyDown);
 	m_slots.connect(CL_Keyboard::sig_key_up(), this, &GameLogic::OnKeyUp);
 	m_slots.connect(CL_Mouse::sig_key_up(), this, &GameLogic::OnMouseUp);
+	m_slots.connect(CL_Mouse::sig_key_down(), this, &GameLogic::OnMouseDown);
     m_editorID = 0;
 	m_bRestartEngineFlag = false;
 	m_bShowEntityCollisionData = false;
@@ -203,10 +204,6 @@ void GameLogic::ClearScreen()
 	}
 }
 
-void GameLogic::SetLeftMouseButtonCallback(const string &luaFunctionName)
-{
-	m_leftMouseButtonCallback = luaFunctionName;
-}
 
 string StripDangerousFromString(const string &name)
 {
@@ -660,8 +657,27 @@ void GameLogic::Zoom(bool zoomCloser)
 	GetCamera->InstantUpdate();
 }
 
+void GameLogic::OnMouseDown(const CL_InputEvent &key)
+{
+	if (!GetGamePaused())
+	{
+		if (g_keyManager.HandleEvent(key, true))
+		{
+			return;
+		}
+	}
+}
+
 void GameLogic::OnMouseUp(const CL_InputEvent &key)
 {
+
+	if (!GetGamePaused())
+	{
+		if (g_keyManager.HandleEvent(key, false))
+		{
+			return;
+		}
+	}
 
 	switch(key.id)
 	{

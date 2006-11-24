@@ -40,7 +40,7 @@ private:
 	bool CloseEnoughAndFacingTheRightWay();
 
 	//the position the bot wants to reach
-	CL_Vector2 m_vDestination;
+	CL_Vector2 m_vDestination, m_vLookPosition;
 	World * m_pDestMap;
 	bool m_bTriedSimpleWay;
 	MacroPathInfo m_macroPath;

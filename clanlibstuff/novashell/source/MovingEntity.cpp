@@ -652,7 +652,7 @@ CL_Rectf MovingEntity::GetWorldRect()
 	x =  float(x) * m_pTile->GetScale().x;
 	y =  float(y) * m_pTile->GetScale().y;
 
-	r -= CL_Pointf(-x,y);
+	r -= CL_Pointf(-x,-y);
 
 
 	static CL_Pointf offset;
@@ -1252,7 +1252,7 @@ void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, MovingEntity 
 
 	if (!GetScriptObject() || !GetScriptObject()->FunctionExists("OnDamage")) return;
 
-	try {luabind::call_function<bool>(m_pScriptObject->GetState(), "OnDamage", normal, depth, enemy, damage, uservar, pProjectile);
+	try {luabind::call_function<void>(m_pScriptObject->GetState(), "OnDamage", normal, depth, enemy, damage, uservar, pProjectile);
 	} LUABIND_ENT_CATCH("Error while calling OnDamage(Vector2 normal, float depth, enemy, int damage, int uservar, projectile)");
 }
 
@@ -2197,7 +2197,7 @@ void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
 
 		if (m_pScriptObject->FunctionExists("OnWatchTimeout"))
 		{
-			try {luabind::call_function<luabind::object>(GetScriptObject()->GetState(), "OnWatchTimeout", bIsOnScreen);
+			try {luabind::call_function<void>(GetScriptObject()->GetState(), "OnWatchTimeout", bIsOnScreen);
 			} LUABIND_ENT_CATCH( "Error while calling function OnWatchTimeout(bool bIsOnScreen)");
 		}
 

@@ -26,6 +26,7 @@ public:
 	bool m_bAlt;
 	bool m_bCtrl;
 	string m_callback;
+	int m_entityID;
 };
 
 
@@ -41,8 +42,13 @@ public:
 
 	//Send "" as the callback to remove assignment.
 	//Send "g,shift" to mean shifted-g.
-	void AssignKey(const string &keyName, const string &callbackFunction);
+	void AddBinding(const string &keyName, const string &callbackFunction, int entityID);
 	bool HandleEvent(const CL_InputEvent &key, bool bKeyDown);
+	CL_Vector2 GetMousePos();
+	void SetMousePos(const CL_Vector2 &pos);
+	int StringToInputID(vector<string> & word, const string & keyName);
+	bool RemoveBinding(const string &keyName, const string &callbackFunction, int entityID);
+	void PrintStatistics();
 
 protected:
 	

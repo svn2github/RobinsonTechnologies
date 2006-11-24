@@ -151,7 +151,7 @@ int Goal_MoveToMapAndPos::Process()
 					{
 						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPreWarp"))
 						{
-							try {	luabind::call_function<bool>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPreWarp", m_pOwner);
+							try {	luabind::call_function<void>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPreWarp", m_pOwner);
 							} catch (luabind::error &e) 
 							{
 								ShowLUAMessagesIfNeeded(e.state(), 1); 
@@ -170,7 +170,7 @@ int Goal_MoveToMapAndPos::Process()
 					{
 						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPostWarp"))
 						{
-							try {	luabind::call_function<bool>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPostWarp", m_pOwner);
+							try {	luabind::call_function<void>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPostWarp", m_pOwner);
 							} catch (luabind::error &e) 
 							{
 								ShowLUAMessagesIfNeeded(e.state(), 1); 

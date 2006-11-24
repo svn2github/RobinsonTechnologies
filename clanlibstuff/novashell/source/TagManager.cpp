@@ -203,7 +203,8 @@ void TagManager::Remove(MovingEntity *pEnt)
 
 void TagManager::PrintStatistics()
 {
-	LogMsg("\n ** TagManager Statistics **");
+	LogMsg("");
+	LogMsg("  ** TagManager Statistics **");
 
 	//count instances
 
@@ -252,7 +253,7 @@ if (pEnt)
   	itor++;	
 	}
 
-	LogMsg("  %d names hashed.", m_tagMap.size());
+	LogMsg("    %d tag names active.\n", m_tagMap.size());
 }
 
 void TagManager::Save(World *pWorld)

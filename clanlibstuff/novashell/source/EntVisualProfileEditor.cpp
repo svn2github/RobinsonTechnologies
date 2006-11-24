@@ -84,7 +84,7 @@ bool EntVisualProfileEditor::Init(MovingEntity *pEnt)
 	new CL_Label(CL_Point(buttonOffsetX, curY), "Use the arrow keys to adjust the offset of the selected animation.  Hold", m_pWindow->get_client_area()); curY += 16;
 	new CL_Label(CL_Point(buttonOffsetX, curY), "shift to move in larger increments.", m_pWindow->get_client_area()); curY += 16;
 	new CL_Label(CL_Point(buttonOffsetX, curY), "", m_pWindow->get_client_area()); curY += 16;
-	new CL_Label(CL_Point(buttonOffsetX, curY), "Use Control+Up/Down to quickly change animations.", m_pWindow->get_client_area()); curY += 16;
+	new CL_Label(CL_Point(buttonOffsetX, curY), "Use Control+Up/Down to quickly change\nanimations.", m_pWindow->get_client_area()); curY += 16;
 
 	m_slots.connect(pButton->sig_clicked(), this, &EntVisualProfileEditor::OnClose);
 

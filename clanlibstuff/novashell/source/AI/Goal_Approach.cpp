@@ -169,6 +169,7 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 
 	float padding = max(ourRect.get_height(), ourRect.get_width()) + 1;
 
+	m_vLookPosition = pEnt->GetPos(); //where we want to look and where we want to stand are two different things
 	//is this a valid point?
 	int tries = 9;
 	while(tries--)
@@ -244,8 +245,11 @@ bool Goal_Approach::CloseEnoughAndFacingTheRightWay()
 	RemoveAllSubgoals(); //no longer need to move, we're close enough, go into idle
 
 	m_bWaitingForTurn = true;
-	m_pOwner->SetFacingTarget( VectorToFacing(m_pOwner->GetVectorToPosition(m_vDestination)));
-	if (!m_pOwner->IsFacingTarget(0.5)) return false;
+	m_pOwner->SetFacingTarget( VectorToFacing(m_pOwner->GetVectorToPosition(m_vLookPosition)));
+	if (!m_pOwner->IsFacingTarget(0.5)) 
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -343,7 +347,7 @@ int Goal_Approach::Process()
 					{
 						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPreWarp"))
 						{
-							try {	luabind::call_function<bool>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPreWarp", m_pOwner);
+							try {	luabind::call_function<void>(pNodeEnt->GetScriptObject()->GetState(), "OnGoalPreWarp", m_pOwner);
 							} catch (luabind::error &e) 
 							{
 								ShowLUAMessagesIfNeeded(e.state(), 1); 

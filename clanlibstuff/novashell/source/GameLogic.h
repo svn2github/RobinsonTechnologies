@@ -62,7 +62,6 @@ public:
 	  void SetParallaxActive(bool bNew) {m_bParallaxActive = bNew;}
 	  bool GetParallaxActive() {return m_bParallaxActive;}
 	  const string & GetScriptRootDir() {return m_strScriptRootDir;}
-	  void SetLeftMouseButtonCallback(const string &luaFunctionName);
 	  bool ToggleEditMode(); //returns true if it was turned on, false if it was turned off
 	  void SetMakingThumbnail(bool bNew) {m_bMakingThumbnail = bNew;}
 	  bool GetMakingThumbnail() {return m_bMakingThumbnail;}
@@ -114,6 +113,8 @@ public:
 private:
 
 	void OnMouseUp(const CL_InputEvent &key);
+	void OnMouseDown(const CL_InputEvent &key);
+
 	void Zoom(bool zoomCloser);
 	void OnRender();
     void OnKeyDown(const CL_InputEvent &key);

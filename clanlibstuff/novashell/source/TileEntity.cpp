@@ -196,11 +196,11 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 	pBuf.lock();
    if (pBuf.get_pixel(vWorldPos.x, vWorldPos.y).get_alpha() > 0)
    {
-	   LogMsg("Hit at %.2f, %.2f", vWorldPos.x, vWorldPos.y);
+	 //  LogMsg("Hit at %.2f, %.2f", vWorldPos.x, vWorldPos.y);
 	   return true;
    } else
    {
-	   LogMsg("Miss");
+	  // LogMsg("Miss");
    }
 	pBuf.unlock();
   

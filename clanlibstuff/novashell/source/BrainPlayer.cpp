@@ -198,7 +198,7 @@ void BrainPlayer::CheckForDoor()
 			MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(pZone->m_entityID);
 			if (pEnt)
 			{	
-				 try {luabind::call_function<bool>(pEnt->GetScriptObject()->GetState(), 
+				 try {luabind::call_function<void>(pEnt->GetScriptObject()->GetState(), 
 					 "OnWarp", m_pParent);
 					 } LUABIND_ENT_BRAIN_CATCH("Error while calling OnWarp(Entity)");
 			} else
@@ -486,7 +486,7 @@ void BrainPlayer::CheckForAttack()
 			{
 
 			
-			try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), 
+			try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), 
 				"OnAttack", m_pParent);
 			} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAttack with BrainPlayer");
 			m_Keys &= ~C_KEY_ATTACK; //don't let them hold down the key
@@ -615,7 +615,7 @@ void BrainPlayer::OnAction()
 			 pTileEnt = static_cast<TileEntity*>(pTile);
 			 if (pTileEnt->GetEntity()->GetScriptObject() && pTileEnt->GetEntity()->GetScriptObject()->FunctionExists("OnAction"))
 			 {
-					try {luabind::call_function<bool>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
+					try {luabind::call_function<void>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
 						"OnAction", m_pParent);
 					} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAction(Entity)");
 			 } 
@@ -695,7 +695,7 @@ bool TryToDoActionAtPoint(const CL_Vector2 &vecPos, MovingEntity *pEnt)
 				{
 					
 					MovingEntity *m_pParent = pEnt; //hack so the macro works right
-					try {luabind::call_function<bool>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
+					try {luabind::call_function<void>(pTileEnt->GetEntity()->GetScriptObject()->GetState(), 
 						"OnAction", pEnt);
 					} LUABIND_ENT_BRAIN_CATCH("Error while calling OnAction(Entity)");
 

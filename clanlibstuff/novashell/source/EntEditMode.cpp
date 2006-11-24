@@ -994,13 +994,18 @@ bool EntEditMode::MouseIsOverSelection(CL_Point ptMouse)
 	if (pSelTile = m_selectedTileList.GetTileAtPos(mousePos))
 	{
 		//the mouse cursor is over a selected tile	
-		Tile *pWorldSelTile = GetTileByWorldPos(GetWorld,mousePos, GetWorld->GetLayerManager().GetEditActiveList());
-		return TilesAreSimilar(pWorldSelTile, pSelTile);
+		Tile *pWorldSelTile = GetTileByWorldPos(GetWorld,mousePos, GetWorld->GetLayerManager().GetEditActiveList(), false);
 
-	} else
-	{
-		return false;
+		assert(pWorldSelTile);
+
+		if (pWorldSelTile)
+		{
+			return TilesAreSimilar(pWorldSelTile, pSelTile);
+		}
+
 	}
+
+	return false;
 
 }
 
@@ -1095,6 +1100,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		ScheduleSystem(1, ID(), ("offset_selected|0|1|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
 
+		
 	case CL_MOUSE_LEFT:
 
 		if (!m_dragInProgress)
@@ -1106,13 +1112,21 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			m_vecDragStop = m_vecDragStart;
 
 
-			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU))
 			{
 				//check to see if we can "grab" the current selection and move it
 				if (MouseIsOverSelection(key.mouse_pos))
 				{
 					
 					//initiate a tile move operation
+					SetOperation(C_OP_MOVE);
+					return;
+				} else if (GetTileByWorldPos(GetWorld,m_vecDragStart, GetWorld->GetLayerManager().GetEditActiveList(), true))
+					{
+					//well, heck, why not let them just drag whatever tile they are over?
+
+					ClearSelection();
+					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
 					SetOperation(C_OP_MOVE);
 					return;
 				}

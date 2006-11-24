@@ -13,14 +13,14 @@
 
 //this works inside of MovingEntity
 #define LUABIND_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
-	LogError(a.c_str());}
+	LogError(a.c_str());} catch (...) {LogError("Unknown LUA error, inalid return type maybe? : %s", a.c_str());}
 //this works inside of MovingEntity
 #define LUABIND_ENT_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
-	LogError("Entity %d (%s) : %s", ID(), GetName().c_str(), a);}
+	LogError("Entity %d (%s) : %s", ID(), GetName().c_str(), a);} catch (...) {LogError("Unknown LUA error in Entity %d (%s) : %s.  Invalid return type maybe?", ID(), GetName().c_str(), a);}
 
 //this works inside of brains
 #define LUABIND_ENT_BRAIN_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
-	LogError("Entity %d (%s) : %s", m_pParent->ID(), m_pParent->GetName().c_str(), a);}
+	LogError("Entity %d (%s) : %s", m_pParent->ID(), m_pParent->GetName().c_str(), a);} catch (...) {LogError("Unknown LUA error (Invalid return type maybe?) in Entity %d (%s) : %s", m_pParent->ID(), m_pParent->GetName().c_str(), a);}
 
 #include "ScriptKeyManager.h"
 

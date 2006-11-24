@@ -110,8 +110,10 @@ bool HashedResourceManager::AddGraphic(string str)
 
 void HashedResourceManager::PrintStatistics()
 {
-	LogMsg("\n **Hashed Resource Manager");
-	LogMsg("  %d items hashed.", m_hashedResourceMap.size());
+	LogMsg("");
+	LogMsg("  ** Hashed Resource Manager **");
+
+	LogMsg("    %d items hashed.", m_hashedResourceMap.size());
 }
 
 void HashedResourceManager::Kill()

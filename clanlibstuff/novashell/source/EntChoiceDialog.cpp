@@ -392,7 +392,7 @@ void EntChoiceDialog::FinalSelectionProcessing()
 
 		if (m_pParent)
 		{
-			try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), 
+			try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), 
 				m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result);
 			} LUABIND_ENT_BRAIN_CATCH( ("Error while calling" + m_callbackFunctionName).c_str());
 		} else
