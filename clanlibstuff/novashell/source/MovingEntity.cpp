@@ -652,7 +652,12 @@ CL_Rectf MovingEntity::GetWorldRect()
 	x =  float(x) * m_pTile->GetScale().x;
 	y =  float(y) * m_pTile->GetScale().y;
 
-	r -= CL_Pointf(-x,-y);
+	if (origin == origin_center)
+	{
+		y = -y;
+	}
+	
+	r -= CL_Pointf(-x,y);
 
 
 	static CL_Pointf offset;
