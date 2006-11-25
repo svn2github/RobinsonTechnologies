@@ -70,7 +70,7 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 
 	
 	//mouse is being dragged?  well, just in case.
-		m_vecDragStop = mouseWorldPos;
+		m_vecDragStop = CL_Vector2(key.mouse_pos.x,key.mouse_pos.y);
 	}
 
 
@@ -234,8 +234,9 @@ void EntEditMode::OnReplace()
 
 		OnPaste(g_EntEditModeCopyBuffer, destPos+vPasteOffset);
 
-		PushUndosIntoUndoOperation();
 	}
+
+	PushUndosIntoUndoOperation();
 
 }
 
@@ -1101,7 +1102,8 @@ void EntEditMode::OnMouseDoubleClick(const CL_InputEvent &key)
 
 void EntEditMode::OnPasteContext()
 {
-	CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(m_lastContextWorldPos);
+
+	CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(m_vecDragStop);
 	OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 	PushUndosIntoUndoOperation();
 	KillContextMenu();
@@ -1130,11 +1132,7 @@ void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 	{
 		//why not just select whatever is here?
 		m_selectedTileList.AddTileByPoint(m_lastContextWorldPos, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
-
-		
 	}
-
-
 
 	m_pContextMenu = new CL_Menu(r, GetApp()->GetGUI());
 	CL_MenuNode *pItem;
