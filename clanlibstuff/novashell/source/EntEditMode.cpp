@@ -88,7 +88,7 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 		{
 			CL_Vector2 oldWorldPos = GetWorldCache->ScreenToWorld(CL_Vector2(m_vecLastMousePos.x,m_vecLastMousePos.y));
 			//let's move our start by the amount they dragged with space bar down, old photshop trick
-			m_vecDragStart -= (oldWorldPos-m_vecDragStop);
+			m_vecDragStart -= (oldWorldPos-GetWorldCache->ScreenToWorld(m_vecDragStop));
 		}
 	}
 
@@ -722,7 +722,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 			{
 
 				
-				if ( (m_vecDragStop- m_vecDragStart).length() < 1)
+				if ( (GetWorldCache->ScreenToWorld(m_vecDragStop)- m_vecDragStart).length() < 1)
 				{
 					
 					m_operation = C_OP_NOTHING; //don't want the undo to cache a meaningless copy
@@ -1041,8 +1041,9 @@ void EntEditMode::SetOperation(int op)
 		m_selectedTileList.FillSelection(&blankTile);
 
 		//paste the new ones
-		
-		CL_Vector2 vecStart( m_vecDragStop.x -m_vecDragStart.x, m_vecDragStop.y - m_vecDragStart.y);
+		CL_Vector2 worldDragStop = GetWorldCache->ScreenToWorld(m_vecDragStop);
+
+		CL_Vector2 vecStart(worldDragStop.x -m_vecDragStart.x, worldDragStop.y - m_vecDragStart.y);
 		vecStart += m_selectedTileList.GetUpperLeftPos();
 
 		if (GetWorld->GetSnapEnabled())
@@ -1122,6 +1123,13 @@ void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 	CL_Size rsize = CL_Size(50,20);
 	CL_Rect r = CL_Rect(clickPos.x, clickPos.y, clickPos.x + rsize.width, clickPos.y + rsize.height);
 	
+
+	//we might need to adjust this so it's actually on the screen
+
+	CL_Rect screenRect = CL_Rect(0,0,GetScreenX, GetScreenY);
+
+
+
 	SAFE_DELETE(m_pContextMenu);
 
 	m_lastContextWorldPos = GetWorldCache->ScreenToWorld(clickPos);
@@ -1168,6 +1176,35 @@ void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 	//m_pContextMenu->set_root_collapsing(true);
 	
 	m_pContextMenu->open();
+	m_pContextMenu->paint();
+
+	r = m_pContextMenu->get_position_with_children();
+	
+	CL_Rect rectUnion = screenRect.calc_union(r);
+
+	if (rectUnion != r)
+	{
+		//it needs to be adjusted to not hang off the screen
+
+		int offsetx = r.get_width() - rectUnion.get_width();
+		int offsety = r.get_height() - rectUnion.get_height();
+
+		
+		
+		r.apply_alignment(origin_top_left, offsetx, 0);
+
+
+		if (offsety != 0)
+		{
+			//we're low on the screen, let's move the whole menu above us
+			r.top = clickPos.y - (r.get_height() + 2);
+
+		}
+
+		m_pContextMenu->set_position(r.left, r.top);
+
+	
+	}
 
 	
 }
@@ -1225,7 +1262,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 
 		
 			m_vecDragStart = GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
-			m_vecDragStop = m_vecDragStart;
+			m_vecDragStop = CL_Vector2(key.mouse_pos.x, key.mouse_pos.y);
 
 
 			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU)
@@ -1409,7 +1446,10 @@ void EntEditMode::DrawActiveBrush(CL_GraphicContext *pGC)
 void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 {
 	if (m_selectedTileList.IsEmpty()) return;
-	CL_Vector2 vecStart( m_vecDragStop.x -m_vecDragStart.x, m_vecDragStop.y - m_vecDragStart.y);
+	
+	CL_Vector2 worldDragStop = GetWorldCache->ScreenToWorld(m_vecDragStop);
+
+	CL_Vector2 vecStart( worldDragStop.x -m_vecDragStart.x, worldDragStop.y - m_vecDragStart.y);
 	
 	vecStart += m_selectedTileList.GetUpperLeftPos();
 	
@@ -1659,10 +1699,13 @@ void EntEditMode::Render(void *pTarget)
 	
 	if (m_dragInProgress)
 	{
-		m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap).x - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).x),
-			int(GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap).y - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).y)));
+		
+		//
+		CL_Vector2 worldStop = GetWorldCache->ScreenToWorld(m_vecDragStop);
+		m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(worldStop, m_dragSnap).x - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).x),
+			int(GetWorld->SnapWorldCoords(worldStop, m_dragSnap).y - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).y)));
 		//draw a rect on the screen
-		DrawRectFromWorldCoordinates(m_vecDragStart, m_vecDragStop, CL_Color(255,255,0,200), pGC);
+		DrawRectFromWorldCoordinates(m_vecDragStart, worldStop, CL_Color(255,255,0,200), pGC);
 	} else
 	{
 		//draw the brush, if available
