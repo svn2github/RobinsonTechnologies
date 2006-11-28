@@ -967,6 +967,8 @@ void EntEditor::OnLayerDoubleClick(const CL_InputEvent &input)
 {
 	int index = m_pListLayerActive->get_item(input.mouse_pos);
 	if (index == -1) return;
+	
+	//LogMsg("Double click!");
 
 	PopUpLayerPropertiesDialog(m_pListLayerActive->get_item(index)->user_data);
 }

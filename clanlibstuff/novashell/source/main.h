@@ -130,6 +130,8 @@ public:
 	void SetFont(int fontID, CL_Font *pFont) {m_pFonts[fontID] = pFont;} //we'll delete it ourselves later
 	bool GetRequestedQuit() {return m_bQuit;}
 	string GetDefaultTitle();
+	void SetCursorVisible(bool bNew);
+	bool GetCursorVisible();
 
 private:
     
@@ -185,6 +187,7 @@ private:
 	string m_engineVersionString;
 	bool m_bRenderedGameGUI; //used for some complicated GUI trickery to work with model dialog boxes
 	CL_FramerateCounter *m_pFrameRate;
+	bool m_bCursorVisible;
 	
 };
 

@@ -117,7 +117,6 @@ public:
   unsigned int GetDrawID() {return m_drawID;}
   float GetMass() {return m_body.GetMass();}
   void SetMass(float mass){m_body.SetMass(mass);}
-  
   void SetDensity(float fDensity);
   void PostUpdate(float step);
   void SetListenCollision(int eListen);
@@ -255,6 +254,10 @@ public:
   void SetAttachOffset(const CL_Vector2 &pos) {m_attachOffset = pos;}
   MovingEntity * Clone(World *pMap, CL_Vector2 vecPos);
   void OnAttachedEntity(int entID);
+  void SetRunUpdateEveryFrame(bool bNew) {m_bRunUpdateEveryFrame = bNew;}
+  bool GetRunUpdateEveryFrame() {return m_bRunUpdateEveryFrame;}
+  void SetDampening(float f) {m_customDampening = f;}
+  bool FunctionExists(const char * pFunctionName);
 
   enum ListenCollision
 {
@@ -379,6 +382,8 @@ protected:
 	CL_Vector2 m_attachOffset;
 	bool m_bLockedScale; //if true, we don't scale with the camera
 	list<int> m_attachedEntities; 
+	bool m_bRunUpdateEveryFrame;
+	float m_customDampening;
 
 };
 

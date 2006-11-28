@@ -102,6 +102,13 @@ CL_Vector2 MovingEntity::GetVectorToEntityByID(int entID)
 	return CL_Vector2(0,0);
 }
 
+bool MovingEntity::FunctionExists(const char * pFunctionName)
+{
+	if (!m_pScriptObject) return false;
+
+	return m_pScriptObject->FunctionExists(pFunctionName);
+}
+
 CL_Vector2 MovingEntity::GetVectorToEntity(MovingEntity *pEnt)
 {
 	CL_Vector2 v = pEnt->GetPos()-GetPos();
@@ -277,6 +284,7 @@ void MovingEntity::HandleMessageString(const string &msg)
 
 void MovingEntity::SetDefaults()
 {
+	m_bRunUpdateEveryFrame = false;
 	m_bLockedScale = false;
 	m_attachEntID = C_ENTITY_NONE;
 	m_text.clear();
@@ -317,6 +325,7 @@ void MovingEntity::SetDefaults()
 	m_bRequestsVisibilityNotifications = false;
 	m_lastVisibilityNotificationID = INT_MAX; //it starts at 0, so max_int is better to use than 0 as the default
 	m_bOnScreen = false;
+	m_customDampening = -1;
 
 }
 
@@ -2086,6 +2095,14 @@ if (GetGameLogic->GetGamePaused()) return;
 
 	RunPostInitIfNeeded();
 
+
+	if (m_bRunUpdateEveryFrame)
+	{
+		try {luabind::call_function<void>(m_pScriptObject->GetState(), "Update", step);
+		} LUABIND_ENT_CATCH("Error while calling function Update");
+
+	}
+
 	UpdateTriggers(step);
 
 	if (m_pGoalManager)
@@ -2245,9 +2262,11 @@ void MovingEntity::PostUpdate(float step)
 	
 	m_brainManager.PostUpdate(step);
 
-	const static float groundDampening = 1.6f;
-	const static float angleDampening = 0.01f;
+	float groundDampening = 1.6f;
+	float angleDampening = 0.01f;
 
+	if (m_customDampening != -1) groundDampening = m_customDampening;
+	
 	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
 
@@ -2283,8 +2302,10 @@ void MovingEntity::PostUpdate(float step)
 				//this is only run if things don't have real brains
 			SetIsOnGround(true);
 
-			const static float top_groundDampening = 0.06f;
+			float top_groundDampening = 0.06f;
 			const static float top_angleDampening = 0.002f;
+
+			if (m_customDampening != -1) top_groundDampening = m_customDampening;
 
 			set_float_with_target(&m_body.GetLinVelocity().x, 0, top_groundDampening * step);
 			set_float_with_target(&m_body.GetLinVelocity().y, 0, top_groundDampening * step);

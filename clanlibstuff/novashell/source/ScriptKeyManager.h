@@ -21,10 +21,12 @@ public:
 		m_bShifted = false;
 		m_bAlt = false;
 		m_bCtrl = false;
+		m_bAlways = false;
 	}
 	bool m_bShifted;
 	bool m_bAlt;
 	bool m_bCtrl;
+	bool m_bAlways;
 	string m_callback;
 	int m_entityID;
 };

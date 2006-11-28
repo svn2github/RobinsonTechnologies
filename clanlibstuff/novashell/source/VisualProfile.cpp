@@ -1,6 +1,7 @@
 #include "AppPrecomp.h"
 #include "VisualProfile.h"
 #include "VisualResource.h"
+#include "GameLogic.h"
 
 VisualProfile::VisualProfile()
 {
@@ -101,6 +102,20 @@ vector<string> VisualProfile::GetListOfActiveAnims()
 	return anims;
 }
 
+int VisualProfile::GetFirstValidAnimIndex()
+{
+	for (unsigned int i=0; i < m_animArray.size(); i++)
+	{
+		if (IsActive(i))
+		{
+			//bingo
+			return i;		
+		}
+	}
+
+	return 0;
+}
+
 CL_Sprite * VisualProfile::GetSpriteByAnimID(int animID)
 {
 	if (animID < 0 || animID >= int(m_animArray.size()))
@@ -112,14 +127,22 @@ CL_Sprite * VisualProfile::GetSpriteByAnimID(int animID)
 		if (!IsActive(animID))
 		{
 			
-			if (!IsActive(IDLE_LEFT))
+			int emergencyID = IDLE_LEFT;
+			
+			if (!IsActive(emergencyID))
 			{
-				throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID));
+				emergencyID = GetFirstValidAnimIndex();
+			}
+			
+			if (IsActive(emergencyID))
+			{
+				throw ("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID) + ".\n\nUnfortunately, no other animations in it's xml are found to use instead.");
+				return NULL;
 			} else
 			{
 				LogError( ("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)).c_str() );
 			}
-			return m_animArray[IDLE_LEFT].m_pSprite;
+			return m_animArray[emergencyID].m_pSprite;
 		}
 	}
 
@@ -331,8 +354,19 @@ int VisualProfile::GetAnimID(int eState, int eFacing)
 
 	if (!IsActive(animID))
 	{
+		int emergencyID = IDLE_LEFT;
 
-		throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)+" (" + m_animArray[animID].m_name+")" );
+		if (!IsActive(emergencyID))
+		{
+			emergencyID = GetFirstValidAnimIndex();
+		}
+
+		if (!IsActive(emergencyID))
+		{
+			throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)+" (" + m_animArray[animID].m_name+")" );	
+		}
+
+		return emergencyID;
 	}
 
 	return animID;
@@ -340,7 +374,14 @@ int VisualProfile::GetAnimID(int eState, int eFacing)
 
 CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 {
-	return m_animArray[GetAnimID(eState, eFacing)].m_pSprite;
+	int animID = GetAnimID(eState, eFacing);
+
+	if (!IsActive(animID))
+	{
+		animID = GetFirstValidAnimIndex();
+	};
+
+	return m_animArray[animID].m_pSprite;
 }
 
 int VisualProfile::TextToAnimID(const string & stState)
@@ -435,9 +476,12 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 		//clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 	} catch(CL_Error error)
 	{
-		LogError("Error with putting anim %s as anim state %s while building profile %s.  Make sure you spelled it right and it's in the xml.\n(%s)",
+		char st[4096];
+		sprintf(st, "Error with putting anim %s as anim state %s while building profile %s.  Make sure you spelled it right and it's in the xml.\n(%s)",
 			stSpriteName.c_str(), stState.c_str(), GetName().c_str(), error.message.c_str());
 		SAFE_DELETE(m_animArray[animID].m_pSprite);
+		
+		ShowMessage("XML Anim loading error", st, true);
 		return;
 	}
 

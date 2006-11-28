@@ -1016,8 +1016,7 @@ bool EntEditMode::MouseIsOverSelection(CL_Point ptMouse)
 		//the mouse cursor is over a selected tile	
 		Tile *pWorldSelTile = GetTileByWorldPos(GetWorld,mousePos, GetWorld->GetLayerManager().GetEditActiveList(), false);
 
-		assert(pWorldSelTile);
-
+	
 		if (pWorldSelTile)
 		{
 			return TilesAreSimilar(pWorldSelTile, pSelTile);
@@ -1031,7 +1030,6 @@ bool EntEditMode::MouseIsOverSelection(CL_Point ptMouse)
 
 void EntEditMode::SetOperation(int op)
 {
-
 
 	if (op == C_OP_NOTHING && m_operation == C_OP_MOVE && GetWorldCache)
 	{
@@ -1063,9 +1061,7 @@ void EntEditMode::SetOperation(int op)
 		m_selectedTileList.ApplyOffset(vecStart-m_selectedTileList.GetUpperLeftPos());
 	
 		AddToUndo(&undo);
-
 		PushUndosIntoUndoOperation();
-
 
 	}
 
@@ -1085,17 +1081,31 @@ void EntEditMode::OnMouseDoubleClick(const CL_InputEvent &key)
 {
 	switch(key.id)
 	{
-/*	
+	
 	case CL_MOUSE_LEFT:
-			//they double clicked
+			
+			m_operation = C_OP_NOTHING;
+			//SetOperation(C_OP_NOTHING);
+			
+			//they double clicked?
 			if (!CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU))
 			{
-				//control right click opens a special menu instead of pasting
-				BuildTilePropertiesMenu(&m_selectedTileList);
-				return;
+				if (!m_selectedTileList.IsEmpty())
+				{
+
+					if (MouseIsOverSelection(key.mouse_pos))
+					{
+						//control right click opens a special menu instead of pasting
+						BuildTilePropertiesMenu(&m_selectedTileList);
+						return;
+					}
+
+				}
+
+				
 			}
 			break;
-			*/
+			
 
 	}
 
@@ -1579,7 +1589,7 @@ void EntEditMode::OnDefaultTileHardness()
 	if (!pTile->GetCollisionData())
 	{
 		//it's an entity but no collision data has been assigned
-		CL_MessageBox::info("This tile/entity doesn't currently have collision data enabled.", GetApp()->GetGUI());
+		CL_MessageBox::info("This tile/entity doesn't currently have collision data enabled.\n(Add this:LoadCollisionInfo(\"~/name.col\"); to its script?", GetApp()->GetGUI());
 		return;
 	}
 
@@ -1915,7 +1925,7 @@ void EntEditMode::OnPropertiesConvert()
 }
 void EntEditMode::BuildTilePropertiesMenu(TileEditOperation *pTileList)
 {
-
+if (m_bDialogIsOpen) return;
 	//change options on one or many tiles
 	if (pTileList->IsEmpty())
 	{

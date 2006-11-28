@@ -215,7 +215,7 @@ void App::OneTimeInit()
     m_WindowDescription.set_title(GetDefaultTitle());
     m_WindowDescription.set_allow_resize(false);
   
-
+	m_bCursorVisible = true;
     m_WindowDescription.set_flipping_buffers(2);
     m_WindowDescription.set_refresh_rate(75);
 	SetRefreshType(FPS_AT_REFRESH);
@@ -343,6 +343,26 @@ void App::OnWindowClose()
    m_bQuit = true; //quit the app
 }
 
+void App::SetCursorVisible(bool bNew)
+{
+
+if (m_bCursorVisible == bNew) return;
+
+	if (bNew)
+	{
+		m_pWindow->show_cursor();
+	} else
+	{
+		m_pWindow->hide_cursor();
+	}
+	m_bCursorVisible = bNew;
+	
+}
+
+bool App::GetCursorVisible()
+{
+	return m_bCursorVisible;
+}
 void App::SetupMouseClipping()
 {
  
@@ -365,6 +385,8 @@ void App::SetupMouseClipping()
         }
     }
 #endif
+
+
 }
 
 void App::OnLoseFocus()
@@ -698,8 +720,7 @@ int App::main(int argc, char **argv)
                     
                     // This call updates input and performs other "housekeeping"
                     // call this each frame
-                   
-					CL_System::keep_alive(); 
+            		CL_System::keep_alive(); 
              } else
             {
                 //don't currently have focus   

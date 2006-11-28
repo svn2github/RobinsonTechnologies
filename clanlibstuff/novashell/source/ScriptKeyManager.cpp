@@ -55,7 +55,7 @@ int ScriptKeyManager::StringToInputID(vector<string> & word, const string & keyN
 	{
 		int id = pKeyboard->string_to_keyid(word[i]);
 
-		if ( id != CL_KEY_CONTROL && id != CL_KEY_SHIFT)
+		if ( word.size() == 1 || (id != CL_KEY_CONTROL && id != CL_KEY_SHIFT) )
 		{
 			keyId = id;
 			break;
@@ -119,7 +119,7 @@ bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callba
 
 	if (m_map.end() == itor)
 	{
-		LogMsg("GetInputManager:RemovingBinding failed to find binding %s, %s.", keyName, callbackFunction);
+		LogMsg("GetInputManager:RemovingBinding failed to find binding %s, %s.", keyName.c_str(), callbackFunction.c_str());
 		return false;
 	}
 
@@ -185,12 +185,21 @@ void ScriptKeyManager::AddBinding(const string &keyName, const string &callbackF
 	KeyInfo k;
 	k.m_callback = callbackFunction;
 
+	if (keyID == CL_KEY_SHIFT || keyID == CL_KEY_CONTROL || keyID == CL_KEY_MENU)
+	{
+		k.m_bAlways = true;
+	}
+
 	CL_InputDevice *pKeyboard = &CL_Display::get_current_window()->get_ic()->get_keyboard();
 
 	//check for special keys
 	for (unsigned int i=0; i < word.size(); i++)
 	{
-		
+		if (word[i] == "always")
+		{
+			k.m_bAlways = true; //always reacts, regardless of which modifiers are down
+			continue;
+		}
 	
 		int specialID = pKeyboard->string_to_keyid(word[i]);
 
@@ -248,8 +257,9 @@ bool ScriptKeyManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 	{
 		KeyInfo *pKeyInfo = &(*ritor);
 
-		if (pKeyInfo->m_bCtrl == CL_Keyboard::get_keycode(CL_KEY_CONTROL)
-			&& pKeyInfo->m_bShifted == CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+		if (pKeyInfo->m_bAlways || (pKeyInfo->m_bCtrl == CL_Keyboard::get_keycode(CL_KEY_CONTROL)
+			&& pKeyInfo->m_bShifted == CL_Keyboard::get_keycode(CL_KEY_SHIFT)) 
+			)
 		{
 			bool bKeepPassingItOn = true;
 			

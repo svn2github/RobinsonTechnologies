@@ -176,7 +176,7 @@ public:
 	int SpriteToAnimID(CL_Sprite *pSprite); //compares by memory address
 	string AnimIDToText(int animID){return m_animArray[animID].m_name;}
 	int GetAnimID(int eState, int eFacing);
-	
+	int GetFirstValidAnimIndex();
 
 protected:
 
