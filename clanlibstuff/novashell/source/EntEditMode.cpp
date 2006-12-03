@@ -1321,8 +1321,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			if (m_dragInProgress)
 			{
 				m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap);
-				m_vecDragStop = GetWorld->SnapWorldCoords(m_vecDragStop, m_dragSnap);
-				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(m_vecDragStop.x), int(m_vecDragStop.y));
+				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecDragStop), m_dragSnap);
+				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
 				rec.normalize();
 				CutSubTile(rec);
 			} else if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
