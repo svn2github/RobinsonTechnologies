@@ -54,6 +54,7 @@ public:
 	bool SetActiveWorldByName(const string &stName);
 	void PreloadAllMaps();
 	void SaveAllMaps();
+	bool LoadWorldByName(const string &stName);
 
 	CL_Signal_v0 sig_map_changed;
 

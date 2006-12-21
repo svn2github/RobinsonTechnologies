@@ -444,6 +444,17 @@ void MovingEntity::SetTextColor(CL_Color col)
 	m_pFont->set_color(col);
 }
 
+CL_Color MovingEntity::GetTextColor()
+{
+	if (!m_pFont)
+	{
+		LogError("Can't use GetTextColor, entity %d (%s) doesn't have any font assigned (Use SetText first)", ID(), GetName().c_str());
+		return CL_Color(0,0,0);
+	}
+
+	return m_pFont->get_color();
+}
+
 void MovingEntity::SetTextScale(const CL_Vector2 &vecScale)
 {
 	if (!m_pFont)
@@ -1806,6 +1817,19 @@ void MovingEntity::RenderShadow(void *pTarget)
 
 }
 
+void MovingEntity::Stop()
+{
+	GetBody()->GetNetForce() = Vector(0,0);
+	GetBody()->GetLinVelocity() = Vector(0,0);
+	GetBody()->GetAngVelocity() = 0;
+
+	if (GetBrainManager()->GetBrainBase())
+	{
+		//a brain may have it's own way to stop, for instance, releasing keys
+		GetBrainManager()->SendToBrainBase("stop");
+	}
+
+}
 void MovingEntity::Render(void *pTarget)
 {
 	
@@ -1967,9 +1991,17 @@ void MovingEntity::Render(void *pTarget)
 			m_pFont->set_scale(textScaleX * GetCamera->GetScale().x, textScaleY *GetCamera->GetScale().y);
 
 		}
+
+		float oldAlpha = m_pFont->get_alpha();
+		a = m_pFont->get_color().get_alpha() + m_colorModAlpha;
+		a = cl_min(a, 255); a = cl_max(0, a);
+
+		m_pFont->set_alpha(float(a)/255);
 		m_pFont->draw( vecPos.x, vecPos.y, m_text, pGC);
+
 		//put it back to how it was
 		m_pFont->set_scale(textScaleX, textScaleY);
+		m_pFont->set_alpha(oldAlpha);
 	}
 }
 

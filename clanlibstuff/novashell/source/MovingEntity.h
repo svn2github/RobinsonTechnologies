@@ -68,7 +68,7 @@ public:
   CL_Rectf GetCollisionRect();
   float GetBoundingCollisionRadius();
   bool IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures);
-
+  void Stop();
   void SetCollisionScale(const CL_Vector2 &vScale);
   void ApplyGenericMovement(float step);
   tile_list & GetNearbyTileList(); //note, this may not be valid if you're deleting tiles!  For debug only
@@ -243,6 +243,7 @@ public:
   CL_Vector2 GetTextBounds();
  
   void SetTextColor(CL_Color color);
+  CL_Color GetTextColor();
   void SetTextAlignment(int alignment, CL_Vector2 v);
 
   void SetTextScale(const CL_Vector2 &vecScale);

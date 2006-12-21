@@ -314,6 +314,7 @@ void luabindMisc(lua_State *pState)
 		.def("SetActiveMapByName", &WorldManager::SetActiveWorldByName)
 		.def("GetActiveMap", &WorldManager::GetActiveWorld)
 		.def("UnloadMapByName", &WorldManager::UnloadWorldByName)
+		.def("LoadMapByName", &WorldManager::LoadWorldByName)
 		
 		,class_<TagManager>("TagManager")
 		.def("GetFromString", &TagManager::GetFromString)

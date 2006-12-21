@@ -125,13 +125,22 @@ bool WorldManager::AddWorld(string stPath)
 	return true;
 }
 
+bool WorldManager::LoadWorldByName(const string &stName)
+{
+	WorldInfo *pWorldInfo = GetWorldInfoByName(stName);
+
+	if (!pWorldInfo) return false;
+
+	return LoadWorld(pWorldInfo->m_world.GetDirPath(), false);
+}
+
 bool WorldManager::LoadWorld(string stPath, bool bSetActiveIfNoneIs)
 {
 	WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 
 	if (!pWorldInfo) 
 	{
-		throw CL_Error("Couldn't load world " + stPath);
+		throw CL_Error("Couldn't load map " + stPath);
 		return false;
 	}
 
@@ -296,6 +305,7 @@ bool WorldManager::SetActiveWorldByName(const string &stName)
 	SetActiveWorldByPath(pWorldInfo->m_world.GetDirPath());
 	return true;
 }
+
 
 //if pCameraSettings isn't null, we just use it and don't allow maps to 'remember'.  If null,
 //it's probably the editor and we DO want to remember with that
