@@ -95,7 +95,10 @@ public:
 	  CL_StyleManager_Bitmap * GetGUIStyle() {return m_pGUIStyle;}
 	  CL_GUIManager * GetGameGUI() {return m_pGUIManager;}
 	  void RequestRebuildCacheData();
-	  
+	  void ShowLoadingMessage();
+	  void ResetLastUpdateTimer() { m_lastUpdateTime = CL_System::get_time();} //resets how many MS we've been stuck in a function
+	  unsigned int GetTimeSinceLastUpdateMS() {return CL_System::get_time()-m_lastUpdateTime;}  //how many MS we've been stuck in a function
+
 	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
 	  //But its reliance on this var should be as minimum as possible.
 	  
@@ -138,7 +141,6 @@ private:
 	bool m_bParallaxActive;
 	bool m_bMakingThumbnail; //if true we're in the middle of making a thumbnail
 	string m_strScriptRootDir;
-	string m_leftMouseButtonCallback; //name of the lua function to call
 	DataManager m_data; //to store global variables controlled by Lua
 	bool m_bShowingMessageWindow;
 	bool m_bShowFPS;
@@ -152,6 +154,7 @@ private:
 	string m_strWorldsDirPath;
 	bool m_bRebuildCacheData;
 	string m_rebuildUserName;
+	unsigned int m_lastUpdateTime;
 
 	CL_ResourceManager * m_pGUIResources;
 	CL_StyleManager_Bitmap * m_pGUIStyle;

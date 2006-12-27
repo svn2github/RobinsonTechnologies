@@ -10,6 +10,13 @@
 #ifndef ScriptKeyManager_h__
 #define ScriptKeyManager_h__
 
+enum
+{
+	C_INPUT_GAME_ONLY = 0,
+	C_INPUT_EDITOR_ONLY,
+	C_INPUT_GAME_AND_EDITOR
+};
+
 class KeyInfo
 {
 public:
@@ -22,13 +29,16 @@ public:
 		m_bAlt = false;
 		m_bCtrl = false;
 		m_bAlways = false;
+		m_inputMode = C_INPUT_GAME_ONLY;
 	}
+
 	bool m_bShifted;
 	bool m_bAlt;
 	bool m_bCtrl;
 	bool m_bAlways;
 	string m_callback;
 	int m_entityID;
+	int m_inputMode;
 };
 
 

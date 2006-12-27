@@ -82,7 +82,8 @@ private:
 	void OnEditGameStartLua();
 	void OnDumpWorldNavStatistics();
 	void OnRebuildNavigationMaps();
-	
+	void OnResetCameraScale();
+
     enum
 	{
 		e_modeTileEdit = 0,

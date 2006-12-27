@@ -276,6 +276,7 @@ void luabindMisc(lua_State *pState)
 		.def("SetWindowTitle", &App::SetWindowTitle)
 		.def("SetCursorVisible", &App::SetCursorVisible)
 		.def("GetCursorVisible", &App::GetCursorVisible)
+		.def("GetPlatform", &App::GetPlatform)
 
 		,class_<ISoundManager>("SoundManager")
 		.def("PlayMusic", &ISoundManager::PlayMusic)

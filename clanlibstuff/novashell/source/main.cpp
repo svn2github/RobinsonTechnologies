@@ -111,6 +111,21 @@ App::~App()
  
 }
 
+int App::GetPlatform()
+{
+#ifdef __APPLE__
+
+	return C_PLATFORM_OSX;
+#elif defined (WIN32)
+
+	return C_PLATFORM_WINDOWS;
+#else
+
+	return C_PLATFORM_LINUX;
+#endif
+
+}
+
 void App::SetWindowTitle(const string &title)
 {
 	CL_Display::get_current_window()->set_title(title);

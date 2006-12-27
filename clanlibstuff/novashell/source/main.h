@@ -24,6 +24,12 @@ enum
 
 extern ISoundManager *g_pSoundManager;
 
+enum
+{
+	C_PLATFORM_WINDOWS = 0,
+	C_PLATFORM_OSX,
+	C_PLATFORM_LINUX
+};
 
 //this stream_redirector taken from a snippet taken from Gabriel Fleseriu's post on codeguru
 
@@ -132,6 +138,7 @@ public:
 	string GetDefaultTitle();
 	void SetCursorVisible(bool bNew);
 	bool GetCursorVisible();
+	int GetPlatform();
 
 private:
     

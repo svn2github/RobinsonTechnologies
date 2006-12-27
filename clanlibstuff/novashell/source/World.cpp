@@ -154,7 +154,7 @@ void World::SetDirPath(const string &str)
 void World::SetDefaultTileSize(int size)
 {
   m_defaultTileSize = size;
-  m_bDataChanged = true;
+  SetModified(true) ;
 }
 
 const CL_Rect *World::GetWorldRect()
@@ -342,7 +342,7 @@ ScreenID World::GetScreenIDFromWorld(CL_Vector2 vecPos)
 void World::SetWorldChunkPixelSize(int widthAndHeight)
 {
 	m_worldChunkPixelSize = widthAndHeight;
-	m_bDataChanged = true;
+	SetModified(true);
 }
 
 CL_Vector2 World::SnapWorldCoords(CL_Vector2 vecWorld, int snapSize)
@@ -388,7 +388,7 @@ bool World::Load(string dirPath)
 
 	m_layerManager.Load(m_strDirPath+C_LAYER_FILENAME);
 	
-	BlitMessage("... loading ...");
+	GetGameLogic->ShowLoadingMessage();
 
 	CL_InputSource *pFile = g_VFManager.GetFile(m_strDirPath+C_WORLD_DAT_FILENAME);
 	if (!pFile)
@@ -464,7 +464,7 @@ bool World::Load(string dirPath)
 	LogMsg("Loaded map %s.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), m_worldMap.size(), GetWorldX(), GetWorldY());
 	SAFE_DELETE(pFile);
 
-	m_bDataChanged = false;
+	SetModified(false) ; //how could it be modified?  we just loaded it
 	return true; //actually loaded something
 }
 
@@ -497,7 +497,7 @@ void World::MarkAllMapPiecesAsNeedingToSave()
 
 void World::ForceSaveNow()
 {
-	m_bDataChanged = true;
+	SetModified(true) ;
 	MarkAllMapPiecesAsNeedingToSave();
 	Save(true);
 
@@ -511,6 +511,45 @@ void World::ForceSaveNow()
 		itor++;
 	}
 }
+
+void World::SetDataChanged(bool bChanged)
+{
+	m_bDataChanged = bChanged;
+}
+void World::SetModified(bool bModified)
+{
+	m_bDataChanged = bModified;
+}
+
+bool World::GetModified()
+{
+
+	if (m_bDataChanged) return true;
+
+	WorldMap::const_iterator itor;
+
+		//if a worldchunk changed (like the thumbnail, or a worldchunk was added), we need to save everything anyway.  this is kind of bad design..
+
+		itor = m_worldMap.begin();
+
+		while (itor != m_worldMap.end())
+		{
+			if (itor->second->GetChunkDataChanged())
+			{
+				return true;
+			}
+
+			if (itor->second->GetDataChanged())
+			{
+				return true;
+			}
+
+			itor++;
+		}
+
+		return false;
+}
+
 
 bool World::Save(bool bSaveTagCacheAlso)
 {

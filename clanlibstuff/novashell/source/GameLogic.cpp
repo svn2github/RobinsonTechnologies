@@ -27,7 +27,7 @@
 
 #define C_PROFILE_DAT_FILENAME "profile.dat"
 
-
+#define C_TIME_TO_WAIT_BEFORE_SHOWING_LOADING_MESSAGE_MS 500
 const unsigned int C_PROFILE_DAT_VERSION = 0;
 
 CL_VirtualFileManager g_VFManager;
@@ -107,6 +107,15 @@ void GameLogic::OneTimeModSetup()
 
 	}
 
+}
+
+void GameLogic::ShowLoadingMessage()
+{
+	if (GetTimeSinceLastUpdateMS() > C_TIME_TO_WAIT_BEFORE_SHOWING_LOADING_MESSAGE_MS)
+	{
+		BlitMessage("... loading ...");
+		ResetLastUpdateTimer();
+	}
 }
 
 void GameLogic::RequestRebuildCacheData()
@@ -382,7 +391,7 @@ bool GameLogic::Init()
 	m_pPlayer = NULL;
 	//calculate our user profile base path, later, this could be in the windows user dir or whatever is correct
 	m_strBaseUserProfilePath = CL_Directory::get_current() + "/profiles";
-	 BlitMessage("... loading ...");
+	GetGameLogic->ShowLoadingMessage();
 
 
 	if (IsOnReadOnlyDisk())
@@ -570,7 +579,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 			//they handled it, let's ignore it
 			return;
 		}
-	
+	/*
 	switch (key.id)
 	{
 
@@ -589,7 +598,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		Zoom(true);
 		break;
 	}
-
+*/
 	if (!GetEditorActive())
 	{
 
@@ -640,73 +649,21 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 	}
 }
 
-void GameLogic::Zoom(bool zoomCloser)
-{
-	CL_Vector2 vecScale = GetCamera->GetScale();
-	float scaleSpeed = 0.85f;
-
-	if (zoomCloser)
-	{
-		vecScale *= scaleSpeed;
-	} else
-	{
-		vecScale /= scaleSpeed;
-	}
-
-	GetCamera->SetScale(vecScale);
-	GetCamera->InstantUpdate();
-}
-
 void GameLogic::OnMouseDown(const CL_InputEvent &key)
 {
-	if (!GetGamePaused())
-	{
 		if (g_keyManager.HandleEvent(key, true))
 		{
 			return;
 		}
-	}
 }
 
 void GameLogic::OnMouseUp(const CL_InputEvent &key)
 {
 
-	if (!GetGamePaused())
-	{
 		if (g_keyManager.HandleEvent(key, false))
 		{
 			return;
 		}
-	}
-
-	switch(key.id)
-	{
-	case CL_MOUSE_LEFT:
-		if (!GetEditorActive())
-		{
-
-			if (!GetShowMessageActive())
-			if (!m_leftMouseButtonCallback.empty())
-			{
-
-				try {luabind::call_function<void>(GetScriptManager->GetMainState(), 
-					m_leftMouseButtonCallback.c_str(), CL_Vector2(key.mouse_pos.x,key.mouse_pos.y));
-				}  LUABIND_CATCH(m_leftMouseButtonCallback);
-				
-			}
-		}
-
-		break;
-
-	
-	case CL_MOUSE_WHEEL_UP:
-		Zoom(true);
-		break;
-
-	case CL_MOUSE_WHEEL_DOWN:
-		Zoom(false);
-		break;
-	}
 
 }
 
@@ -750,8 +707,7 @@ void GameLogic::Kill()
 
 	g_pSoundManager->Kill();
 	g_MessageManager.Reset();
-	m_leftMouseButtonCallback.clear();
-
+	
 	m_strUserProfileName.clear();
 	g_materialManager.Init();
 	g_watchManager.Clear();
@@ -829,6 +785,9 @@ void GameLogic::DeleteAllCacheFiles()
 
 void GameLogic::Update(float step)
 {
+
+	ResetLastUpdateTimer(); //this is checked to see if we need to show a "please wait, loading" type thing
+
 	if (m_bRestartEngineFlag)
 	{
 		m_bRestartEngineFlag = false;

@@ -271,6 +271,8 @@ void HashedResource::SetHasColorKey(bool bActive, CL_Color col)
 
 bool HashedResource::LoadImage()
 {
+	GetGameLogic->ShowLoadingMessage();
+
 	SAFE_DELETE(m_pImage);
 
 	CL_PixelBuffer p = CL_ProviderFactory::load(m_strFilename);

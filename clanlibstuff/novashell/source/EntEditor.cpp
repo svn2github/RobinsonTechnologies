@@ -370,7 +370,7 @@ void EntEditor::SetTipLabel(std::string tip)
 
 void EntEditor::SetDefaultTipLabel()
 {
-   m_pLabel->set_text("Use the mouse wheel or +/- to zoom in/out.\n\nHold the middle mouse button and drag to move.");
+   m_pLabel->set_text("Use the mouse wheel or +/- to zoom in/out.\n\nHold and drag the middle mouse button to pan.");
 }
 
 void EntEditor::OnSaveMap()
@@ -406,9 +406,14 @@ void EntEditor::OnToggleLockAtRefresh()
 
 void EntEditor::OnResetCamera()
 {
-	GetCamera->Reset();
-	GetCamera->InstantUpdate();
+	GetScriptManager->RunFunction("OnEditorResetCamera", true);
 }
+
+void EntEditor::OnResetCameraScale()
+{
+	GetScriptManager->RunFunction("OnEditorResetCameraScale", true);
+}
+
 
 void EntEditor::OnDumpEngineStatistics()
 {
@@ -424,8 +429,15 @@ void EntEditor::OnDumpEngineStatistics()
 
 void EntEditor::OnRestart()
 {
-//	if (ConfirmMessage("Restart Engine", "Save all and restart engine?")) return;
-	GetGameLogic->SetRestartEngineFlag(true);
+	/*
+	if (GetWorld && !GetWorld->GetPersistent() && GetWorld->GetModified())
+	{
+		if (!ConfirmMessage("Restart Engine", "Map has unsaved changed.  Are you sure you wish to quit?")) return;
+
+	}
+	*/
+
+	GetScriptManager->RunFunction("OnRestartEngine", true);
 }
 
 void OpenScriptForEditing(string scriptName)
@@ -742,7 +754,9 @@ if (GetGameLogic->GetUserProfileName().empty())
 	//pItem = m_pMenu->create_item("Utilities/Import from Dink Map");
 	//m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateDink);
 
-	pItem = m_pMenu->create_item("Utilities/Reset Camera Position to 0,0");
+	pItem = m_pMenu->create_item("Utilities/Reset Camera Scale to 1:1 (R)");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnResetCameraScale);
+	pItem = m_pMenu->create_item("Utilities/Reset Camera Scale to 1:1 and position to 0,0 (Shift+R)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnResetCamera);
 
 

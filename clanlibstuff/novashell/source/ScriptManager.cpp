@@ -304,6 +304,18 @@ void ScriptManager::RunFunction(const char *pFuncName)
 
 }
 
+void ScriptManager::RunFunction(const char *pFuncName, bool bBool)
+{
+	try { 
+		luabind::call_function<void>(m_pMainState, pFuncName, bBool);
+	} catch 
+		(luabind::error &e)
+	{
+		ShowLUAMessagesIfNeeded(e.state(), 1);
+	}
+
+}
+
 void ScriptManager::RunString(const char *pString)
 {
 	int result = luaL_dostring(m_pMainState, pString);

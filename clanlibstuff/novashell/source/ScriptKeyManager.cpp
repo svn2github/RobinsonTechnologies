@@ -57,8 +57,11 @@ int ScriptKeyManager::StringToInputID(vector<string> & word, const string & keyN
 
 		if ( word.size() == 1 || (id != CL_KEY_CONTROL && id != CL_KEY_SHIFT) )
 		{
-			keyId = id;
-			break;
+			if (id != 0)
+			{
+				keyId = id;
+				break;
+			}
 		}
 
 		//check for mouse stuff
@@ -127,13 +130,38 @@ bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callba
 
 	bool bCtrl = false;
 	bool bShifted = false;
+	bool bAlways = false;
+
+	int inputMode = C_INPUT_GAME_ONLY;
 
 	//check for special keys
 	for (unsigned int i=0; i < word.size(); i++)
 	{
+	
+		if (word[i] == "always")
+		{
+			bAlways = true; //always reacts, regardless of which modifiers are down
+			continue;
+		} 
+
+		if (word[i] == "editor_only")
+		{
+			inputMode = C_INPUT_EDITOR_ONLY;
+			continue;
+		}
+
+		if (word[i] == "game_and_editor")
+		{
+			inputMode = C_INPUT_GAME_AND_EDITOR;
+			continue;
+		}
+	
+		
 	int specialID = pKeyboard->string_to_keyid(word[i]);
 
 	if (specialID == keyID) continue; //we already handled this one..
+
+
 
 		switch (specialID)
 		{
@@ -155,7 +183,8 @@ bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callba
 	for (;ritor != ki.rend(); ritor++)
 	{
 
-		if ((*ritor).m_bShifted == bShifted && (*ritor).m_bCtrl == bCtrl && entityID == (*ritor).m_entityID)
+		if ((*ritor).m_bShifted == bShifted && (*ritor).m_bCtrl == bCtrl && entityID == (*ritor).m_entityID
+			&& (*ritor).m_bAlways == bAlways && (*ritor).m_inputMode == inputMode)
 		{
 			//we found it!
 			ki.erase( (++ritor).base()); //weirdness to convert it to a normal iterator
@@ -198,6 +227,18 @@ void ScriptKeyManager::AddBinding(const string &keyName, const string &callbackF
 		if (word[i] == "always")
 		{
 			k.m_bAlways = true; //always reacts, regardless of which modifiers are down
+			continue;
+		} 
+		
+		if (word[i] == "editor_only")
+		{
+			k.m_inputMode = C_INPUT_EDITOR_ONLY;
+			continue;
+		}
+
+		if (word[i] == "game_and_editor")
+		{
+			k.m_inputMode = C_INPUT_GAME_AND_EDITOR;
 			continue;
 		}
 	
@@ -253,9 +294,21 @@ bool ScriptKeyManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 
 	ritor = v.rbegin();
 
+	bool bEditorOpen = GetGameLogic->GetEditorActive();
+
 	for (;ritor != v.rend(); ritor++)
 	{
 		KeyInfo *pKeyInfo = &(*ritor);
+
+		switch (pKeyInfo->m_inputMode)
+		{
+		case C_INPUT_GAME_ONLY:
+			if (bEditorOpen) continue;
+			break;
+		case C_INPUT_EDITOR_ONLY:
+			if (!bEditorOpen) continue;
+			break;
+		}
 
 		if (pKeyInfo->m_bAlways || (pKeyInfo->m_bCtrl == CL_Keyboard::get_keycode(CL_KEY_CONTROL)
 			&& pKeyInfo->m_bShifted == CL_Keyboard::get_keycode(CL_KEY_SHIFT)) 

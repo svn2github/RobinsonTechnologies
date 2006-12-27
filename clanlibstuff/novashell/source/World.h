@@ -120,11 +120,10 @@ public:
 	tag_hash_list & GetWarpTagHashList() {return m_warpTagHashIDList;}
 	void SaveAndKill();
 	bool IsWorldCacheInitted() {return m_pWorldCache != NULL;}
-	void SetDataChanged(bool bNew)
-	{
-		m_bDataChanged = true; //will save the main map file
-	}
-	void World::BuildNavGraph();
+	void SetDataChanged(bool bNew);
+	void BuildNavGraph();
+	bool GetModified(); //this checks the world and all screesn to see if anything needs to be saved
+	void SetModified(bool bModified);
 
 private:
 
