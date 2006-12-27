@@ -362,6 +362,8 @@
 		5DD105BE0AF25BF500C448F3 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A30AF25BE800C448F3 /* ClanApp.framework */; };
 		5DD105BF0AF25BF500C448F3 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A40AF25BE800C448F3 /* ClanCore.framework */; };
 		5DD105C00AF25BF500C448F3 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */; };
+		5DEB6E210B168AEF00D74729 /* BrainBob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB6E200B168AEF00D74729 /* BrainBob.cpp */; };
+		5DEB6E220B168AEF00D74729 /* BrainBob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB6E200B168AEF00D74729 /* BrainBob.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -704,6 +706,7 @@
 		5DD105A30AF25BE800C448F3 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
 		5DD105A40AF25BE800C448F3 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
 		5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
+		5DEB6E200B168AEF00D74729 /* BrainBob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainBob.cpp; sourceTree = "<group>"; };
 		8D0C4E970486CD37000505A6 /* novashell_debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell_debug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -810,6 +813,7 @@
 		5D1A384D0A382D17005FF1C0 /* Brains */ = {
 			isa = PBXGroup;
 			children = (
+				5DEB6E200B168AEF00D74729 /* BrainBob.cpp */,
 				5D81050F0AD62099004605B8 /* BrainColorFade.cpp */,
 				5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */,
 				5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */,
@@ -1495,6 +1499,7 @@
 				5D8109290AD6220E004605B8 /* scrollbar_Bitmap.cpp in Sources */,
 				5D81092A0AD6220E004605B8 /* stylemanager_Bitmap.cpp in Sources */,
 				5D81092B0AD6220E004605B8 /* window_Bitmap.cpp in Sources */,
+				5DEB6E210B168AEF00D74729 /* BrainBob.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1655,6 +1660,7 @@
 				5D8109330AD6220E004605B8 /* scrollbar_Bitmap.cpp in Sources */,
 				5D8109340AD6220E004605B8 /* stylemanager_Bitmap.cpp in Sources */,
 				5D8109350AD6220E004605B8 /* window_Bitmap.cpp in Sources */,
+				5DEB6E220B168AEF00D74729 /* BrainBob.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
