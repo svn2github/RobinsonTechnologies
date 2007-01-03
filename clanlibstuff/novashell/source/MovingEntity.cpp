@@ -178,6 +178,12 @@ int MovingEntity::GetLayerID()
 
 void MovingEntity::SetLayerByName(const string &name)
 {
+	if (!IsPlaced())
+	{
+		LogError("Entity %d (%s) cannot use SetLayerByName yet, he hasn't been placed on the map.  Use this in OnPostInit instead.",
+			ID(), GetName().c_str());
+		return;
+	}
 	SetLayerID(GetMap()->GetLayerManager().GetLayerIDByName(name));
 }
 

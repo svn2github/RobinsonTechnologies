@@ -129,7 +129,7 @@ bool WorldManager::LoadWorldByName(const string &stName)
 {
 	WorldInfo *pWorldInfo = GetWorldInfoByName(stName);
 
-	if (!pWorldInfo) return false;
+	if (pWorldInfo) return false;
 
 	return LoadWorld(pWorldInfo->m_world.GetDirPath(), false);
 }
