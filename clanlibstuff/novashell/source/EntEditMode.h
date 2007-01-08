@@ -29,6 +29,7 @@ public:
 
 	EntEditMode();
     virtual ~EntEditMode();
+	bool IsDialogOpen(bool bCheckModelessDialogToo);
 
 protected:
 	
@@ -59,7 +60,6 @@ protected:
 	void OnCollisionDataEditEnd(int id);
 	void OnSnapSizeChanged(const string &st);
 	void BuildDefaultEntity();
-	bool IsDialogOpen();
 	void OffsetSelectedItems(CL_Vector2 vOffset, bool bBigMovement);
 	virtual void HandleMessageString(const string &msg);
 	void OnMapChange();
@@ -76,6 +76,7 @@ protected:
 	void OnSelectBaseTileDoubleClick(const CL_InputEvent &input);
 	void OnCloseBaseTileDialog();
 	void KillContextMenu();
+	void OnHideModeChanged(bool bHide);
 
 	CL_Slot m_slotClose;
 	
@@ -86,7 +87,8 @@ protected:
 	CL_Label *m_pLabelSelection;
 	CL_Label *m_pLabelMain;
 	CL_CheckBox *m_pCheckBoxSnap;
-	CL_InputBox *m_pInputBoxSnapSize; //what tile size we should emulate
+	CL_InputBox *m_pInputBoxSnapSizeX; //what tile size we should emulate
+	CL_InputBox *m_pInputBoxSnapSizeY; //what tile size we should emulate
 
 	CL_Vector2 m_vecDragStart, m_vecDragStop;
 	TileEditOperation m_selectedTileList;
@@ -101,7 +103,7 @@ protected:
 
 	CL_ListBox *m_pListBaseTile;
 	CL_Window * m_pWindowBaseTile;
-	int m_snapSize;
+	CL_Vector2 m_vecSnapSize;
 	CL_Point m_vecLastMousePos;
 	EntCollisionEditor * m_pEntCollisionEditor;
 	Tile *m_pTileWeAreEdittingCollisionOn;
@@ -109,7 +111,7 @@ protected:
 	MovingEntity *m_pOriginalEditEnt;
 	bool m_bDialogIsOpen; //if true, we know not to respond to DELETE key presses to delete items and things
 
-	float m_dragSnap;
+	CL_Vector2 m_vecDragSnap; 
 
 	//for the properties dialog
 

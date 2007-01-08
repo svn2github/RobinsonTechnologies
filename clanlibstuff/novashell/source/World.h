@@ -65,7 +65,7 @@ public:
 	CL_Vector2 ScreenIDToWorldPos(ScreenID screenID);
     ScreenID GetScreenIDFromWorld(CL_Vector2 vecPos);
 	//tile_list * GetTileListByWorld(CL_Vector2 vecPos, int layer, Screen **ppScreenOut);
-	CL_Vector2 SnapWorldCoords(CL_Vector2 vecWorld, int snapSize);
+	CL_Vector2 SnapWorldCoords(CL_Vector2 vecWorld, CL_Vector2 vecSnap);
 	const string &GetDirPath(){return m_strDirPath;};//it includes the trailing backslash
 	void SetDirPath(const string &str);
 	bool Load(string dirPath=""); //attempts to load, returns false if nothing was loaded. It also
@@ -73,10 +73,12 @@ public:
 	bool Save(bool bSaveTagCacheAlso);
 	WorldMap * GetWorldMap() {return &m_worldMap;}
 	int GetWorldChunkPixelSize() {return m_worldChunkPixelSize;}
-	int GetDefaultTileSize() {return m_defaultTileSize;}
+	int GetDefaultTileSizeX() {return m_defaultTileSizeX;}
+	int GetDefaultTileSizeY() {return m_uintArray[e_uintDefaultTileSizeY];}
 	void DeleteExistingMap();
-	bool IsInitted() {return m_defaultTileSize != 0;}
-	void SetDefaultTileSize(int size);
+	bool IsInitted() {return m_defaultTileSizeX != 0;}
+	void SetDefaultTileSizeX(int size);
+	void SetDefaultTileSizeY(int size);
 	void SetWorldChunkPixelSize(int widthAndHeight);
 	CameraSetting * GetCameraSetting() {return &m_cameraSetting;}
 	CL_Color GetBGColor() {CL_Color color; color.color = m_uintArray[e_uintBGColor]; return color;}
@@ -162,7 +164,7 @@ private:
 	enum
 	{
 		e_uintBGColor = 0, //what color the background clear should be
-		
+		e_uintDefaultTileSizeY,
 		//add more above here
 		e_uintCount
 	};
@@ -177,7 +179,7 @@ private:
 	cl_uint8 m_version;
 	CL_Rect m_worldRect;
 	int m_worldChunkPixelSize;
-	int m_defaultTileSize; //default is 64
+	int m_defaultTileSizeX; //default is 64
 	//stuff we don't
 	WorldMap m_worldMap;
 

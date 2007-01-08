@@ -35,6 +35,8 @@ public:
 
 private:
 	
+	void OnHideModeChanged(bool bHide);
+
 enum
 {
  e_modeAddCreate,

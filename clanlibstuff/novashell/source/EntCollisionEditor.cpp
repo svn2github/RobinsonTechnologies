@@ -6,6 +6,7 @@
 #include "physics/Body.h"
 #include "MaterialManager.h"
 #include "MovingEntity.h"
+#include "EntEditor.h"
 
 #define C_COL_VERT_SIZE 6.0f
 
@@ -31,11 +32,22 @@ EntCollisionEditor::EntCollisionEditor(): BaseGameEntity(BaseGameEntity::GetNext
 	m_recalculateOffsetsWhenDone = true;
 	SetName("coleditor");
 
+	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
+	if (pEditor)
+	{
+		m_slots.connect(pEditor->sig_hide_mode_changed, this, &EntCollisionEditor::OnHideModeChanged);
+	}
+
 }
 
 EntCollisionEditor::~EntCollisionEditor()
 {
 	Kill();
+}
+
+void EntCollisionEditor::OnHideModeChanged(bool bHide)
+{
+	m_pWindow->show(!bHide);
 }
 
 void EntCollisionEditor::Kill()

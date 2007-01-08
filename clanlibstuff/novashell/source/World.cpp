@@ -16,7 +16,9 @@ World::World()
 	m_pNavGraphManager = NULL;
 	m_bDataChanged = true;
 	m_pWorldCache = NULL;
-	m_defaultTileSize = 0;
+	SetDefaultTileSizeX(0);
+	SetDefaultTileSizeY(64);
+
 	for (int i=0; i < e_byteCount; i++) m_byteArray[i] = 0;
 	for (int i=0; i < e_intCount; i++) m_intArray[i] = 0;
 	for (int i=0; i < e_uintCount; i++) m_uintArray[i] = 0;
@@ -151,10 +153,17 @@ void World::SetDirPath(const string &str)
 	m_strMapName = ExtractFinalDirName(m_strDirPath);
 }
 
-void World::SetDefaultTileSize(int size)
+void World::SetDefaultTileSizeX(int size)
 {
-  m_defaultTileSize = size;
+  m_defaultTileSizeX = size;
   SetModified(true) ;
+}
+
+
+void World::SetDefaultTileSizeY(int size)
+{
+	m_uintArray[e_uintDefaultTileSizeY] = size;
+	SetModified(true) ;
 }
 
 const CL_Rect *World::GetWorldRect()
@@ -232,11 +241,12 @@ void World::Init(CL_Rect worldRect)
     Kill();
 	m_version = C_WORLD_FILE_VERSION;
 
-	if (m_defaultTileSize == 0)
+	if (m_defaultTileSizeX == 0)
 	{
 		//set some defaults
 		m_worldChunkPixelSize = 512;
-		m_defaultTileSize = 64;
+		SetDefaultTileSizeX(64);
+		SetDefaultTileSizeY(64);
 		SetThumbnailWidth(C_DEFAULT_THUMBNAIL_WIDTH);
 		SetThumbnailHeight(C_DEFAULT_THUMBNAIL_HEIGHT);
 		SetBGColor(CL_Color(0,0,100));
@@ -345,10 +355,10 @@ void World::SetWorldChunkPixelSize(int widthAndHeight)
 	SetModified(true);
 }
 
-CL_Vector2 World::SnapWorldCoords(CL_Vector2 vecWorld, int snapSize)
+CL_Vector2 World::SnapWorldCoords(CL_Vector2 vecWorld, CL_Vector2 vecSnap)
 {
-  vecWorld.x -= altfmod(vecWorld.x, snapSize);
-  vecWorld.y -= altfmod(vecWorld.y, snapSize);
+  vecWorld.x -= altfmod(vecWorld.x, vecSnap.x);
+  vecWorld.y -= altfmod(vecWorld.y, vecSnap.y);
   return vecWorld;
 }
 
@@ -382,7 +392,7 @@ bool World::Load(string dirPath)
 
 	//init defaults, if loading an older file format they may be important
 	
-	m_defaultTileSize = 0;
+	SetDefaultTileSizeX(0);
 	Init();
 
 
@@ -419,7 +429,7 @@ bool World::Load(string dirPath)
 
 		m_cameraSetting.Serialize(helper);
 		helper.process(m_worldChunkPixelSize);
-		helper.process(m_defaultTileSize);
+		helper.process(m_defaultTileSizeX);
 
 		helper.process_smart_array(m_byteArray, e_byteCount);
 		helper.process_smart_array(m_intArray, e_intCount);
@@ -553,7 +563,7 @@ bool World::GetModified()
 
 bool World::Save(bool bSaveTagCacheAlso)
 {
-	if (m_defaultTileSize == 0) return false; //don't actually save.. nothing was loaded
+	if (m_defaultTileSizeX == 0) return false; //don't actually save.. nothing was loaded
 
 	assert(m_strDirPath[m_strDirPath.length()-1] == '/' && "Save needs a path with an ending backslash on it");
 
@@ -627,7 +637,7 @@ bool World::Save(bool bSaveTagCacheAlso)
 	helper.process(m_worldRect);
 	m_cameraSetting.Serialize(helper);
 	helper.process(m_worldChunkPixelSize);
-	helper.process(m_defaultTileSize);
+	helper.process(m_defaultTileSizeX);
 
 	helper.process_smart_array(m_byteArray, e_byteCount);
 	helper.process_smart_array(m_intArray, e_intCount);

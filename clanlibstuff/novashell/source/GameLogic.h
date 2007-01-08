@@ -98,6 +98,7 @@ public:
 	  void ShowLoadingMessage();
 	  void ResetLastUpdateTimer() { m_lastUpdateTime = CL_System::get_time();} //resets how many MS we've been stuck in a function
 	  unsigned int GetTimeSinceLastUpdateMS() {return CL_System::get_time()-m_lastUpdateTime;}  //how many MS we've been stuck in a function
+	  bool IsEditorDialogOpen();
 
 	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
 	  //But its reliance on this var should be as minimum as possible.

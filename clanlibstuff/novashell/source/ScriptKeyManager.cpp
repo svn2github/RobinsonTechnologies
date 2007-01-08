@@ -307,6 +307,17 @@ bool ScriptKeyManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 			break;
 		case C_INPUT_EDITOR_ONLY:
 			if (!bEditorOpen) continue;
+			
+			bool IsDialogOpen();
+			if (GetGameLogic->IsEditorDialogOpen())
+			{
+			//	if (bKeyDown == true)
+				{
+					//with a dialog open we don't want to run crazy code right now..
+					continue;
+				}
+			}
+			
 			break;
 		}
 

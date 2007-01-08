@@ -69,6 +69,23 @@ GameLogic::GameLogic()
 	m_activeWorldName = "base";
 }
 
+bool GameLogic::IsEditorDialogOpen()
+{
+	if (!GetEditorActive()) return false;
+
+	EntEditMode *pEditMode = (EntEditMode*)EntityMgr->GetEntityByName("edit mode");
+	if (pEditMode)
+	{
+		return pEditMode->IsDialogOpen(true);
+	} 
+
+	EntEditor *pEditor = (EntEditor*)EntityMgr->GetEntityFromID(m_editorID);
+	if (pEditor) return pEditor->IsDialogOpen();
+	
+	LogError("EditorHasDialogOpen can't find it?");
+	return false;
+
+}
 void GameLogic::OneTimeModSetup()
 {
 	if (GetApp()->GetStartupParms().size() > 0)
@@ -579,26 +596,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 			//they handled it, let's ignore it
 			return;
 		}
-	/*
-	switch (key.id)
-	{
-
-#ifdef __APPLE__
-	case CL_KEY_NUMPAD_SUBTRACT:
-#endif
-	case CL_KEY_SUBTRACT:
-		Zoom(false);
-		break;
-
-#ifdef __APPLE__
-	case CL_KEY_NUMPAD_ADD:
-#endif
-	case CL_KEY_ADD:
-
-		Zoom(true);
-		break;
-	}
-*/
+	
 	if (!GetEditorActive())
 	{
 
@@ -713,7 +711,6 @@ void GameLogic::Kill()
 	g_watchManager.Clear();
 	GetVisualProfileManager->Kill();
 
-	
 }
 
 void GameLogic::InitGameGUI(string xmlFile)
@@ -735,8 +732,6 @@ void GameLogic::InitGameGUI(string xmlFile)
 
 		GetApp()->SetFont(C_FONT_GRAY,  new CL_Font("font_gray", m_pGUIResources));
 		GetApp()->SetFont(C_FONT_NORMAL, new CL_Font("font_dialog", m_pGUIResources));
-
-
 
 	} else
 	{

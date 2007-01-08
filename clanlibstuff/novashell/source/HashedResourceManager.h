@@ -35,7 +35,7 @@ public:
 
 	HashedResourceMap * GetHashedResourceMap() {return &m_hashedResourceMap;}
 	HashedResource * GetResourceClassByHashedID(unsigned int resourceID);
-	void PutGraphicIntoTileBuffer(int resourceID, TileEditOperation &op, int gridSizeInPixels);
+	void PutGraphicIntoTileBuffer(int resourceID, TileEditOperation &op, CL_Vector2 gridSizeInPixels);
 	void PutSubGraphicIntoTileBuffer(TilePic *pTile, TileEditOperation &op, CL_Rect srcRect);
 	void PrintStatistics();
 	void SaveUsedResources(World *pWorld, string path);

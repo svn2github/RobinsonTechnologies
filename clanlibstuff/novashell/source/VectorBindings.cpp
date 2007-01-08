@@ -53,7 +53,7 @@ void luabindVector(lua_State *pState)
 				.def(const_self == CL_Rect())
 			.def("GetWidth", &CL_Rect::get_width)
 			.def("GetHeight", &CL_Rect::get_height)
-			.def("IsOverlapped", &CL_Rect::get_height)
+			.def("IsOverlapped", &CL_Rect::is_overlapped)
 			.def("__tostring", &RectToStringEx)
 
 			,

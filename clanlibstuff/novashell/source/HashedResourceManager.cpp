@@ -197,9 +197,9 @@ CollisionData * HashedResourceManager::GetCollisionDataByHashedIDAndRect(unsigne
 
 //here we manually break up a vanilla image into tiles and put it in the buffer given for easy copy and
 //pasting into a real map
-void HashedResourceManager::PutGraphicIntoTileBuffer(int resourceID, TileEditOperation &op, int gridSizeInPixels)
+void HashedResourceManager::PutGraphicIntoTileBuffer(int resourceID, TileEditOperation &op, CL_Vector2 gridSizeInPixels)
 {
-	CL_Size sizeGrid(gridSizeInPixels, gridSizeInPixels);
+	CL_Size sizeGrid(gridSizeInPixels.x, gridSizeInPixels.y);
 	op.ClearSelection();
 	CL_Surface *pPic = GetResourceByHashedID(resourceID);
 	
@@ -210,7 +210,7 @@ void HashedResourceManager::PutGraphicIntoTileBuffer(int resourceID, TileEditOpe
 	CL_Size sz = CL_Size(pPic->get_width(),pPic->get_height());
 	TilePic *pTilePic;
 
-	if (gridSizeInPixels == 0)
+	if (gridSizeInPixels.x == 0)
 	{
 		//just one giant tile is fine
 		sizeGrid = sz;

@@ -22,6 +22,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_pLabel = NULL;
    m_pMenu = NULL;
    m_pButton = NULL;
+   m_bScrollingMap = false;
    m_pButtonToggleEditMode = NULL;
  
    m_bGenerateActive = false;
@@ -33,14 +34,18 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_bShowPathfinding = GetGameLogic->GetShowPathfinding();
    m_bShowAI = GetGameLogic->GetShowAI();
 
-   m_slot.connect(CL_Mouse::sig_move(),this, &EntEditor::OnMouseMove);
    m_slot.connect(CL_Keyboard::sig_key_down(), this, &EntEditor::onButtonDown);
    m_slot.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntEditor::OnMapChange);
+
+   m_slot.connect(CL_Mouse::sig_move(),this, &EntEditor::OnMouseMove);
+   m_slot.connect(CL_Mouse::sig_key_down(),this, &EntEditor::OnMouseDown);
+   m_slot.connect(CL_Mouse::sig_key_up(),this, &EntEditor::OnMouseUp);
 
    m_pLayerLabel = NULL;
    m_pListLayerActive = NULL;
    m_pListLayerDisplay = NULL;
    m_pLayerListWindow = NULL;
+   m_bHideMode = false;
    
    GetGameLogic->SetGamePaused(true);
 
@@ -95,6 +100,35 @@ void EntEditor::KillLayerListStuff()
 	SAFE_DELETE(m_pLayerListWindow);
 
 }
+
+void EntEditor::OnMouseUp(const CL_InputEvent &key)
+{
+	switch(key.id)
+	{
+		case CL_MOUSE_LEFT:
+				m_bScrollingMap = false;
+		break;
+	}
+}
+
+void EntEditor::OnMouseDown(const CL_InputEvent &key)
+{
+
+	switch(key.id)
+	{
+
+		case CL_MOUSE_LEFT:
+			if (CL_Keyboard::get_keycode(CL_KEY_SPACE))
+			{
+				//if they hold down space, let's let them scroll the map, photoshop style
+				m_bScrollingMap = true;
+				return;
+			}
+		break;
+	}
+
+}
+
 void EntEditor::onButtonDown(const CL_InputEvent &key)
 {
 	switch(key.id)
@@ -171,14 +205,18 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 			m_pListBoxWorld->set_current_item(selection);
 
 		}
+		break;
 	}
 }
 
 void EntEditor::OnMouseMove(const CL_InputEvent &key)
 {
-	if (CL_Mouse::get_keycode(CL_MOUSE_MIDDLE))
+	if (CL_Mouse::get_keycode(CL_MOUSE_MIDDLE) || m_bScrollingMap)
 	{
 		CL_Point ptOffset = m_vecLastMousePos-CL_Point(CL_Mouse::get_x(), CL_Mouse::get_y());
+		
+		//LogMsg("Moving %d %d", ptOffset.x, ptOffset.y);
+
 		GetCamera->SetTargetPos(GetWorldCache->ScreenToWorld(CL_Vector2(ptOffset.x, ptOffset.y)));
 		GetCamera->InstantUpdate();
 	}
@@ -535,6 +573,40 @@ void EntEditor::OnOpenScript()
 	}
 }
 
+void EntEditor::SetHideMode(bool bHide)
+{
+	LogMsg("Toggling hide mode");
+	m_bHideMode = bHide;
+	
+	m_pWindow->show(!bHide);
+	if (m_pWorldListWindow) m_pWorldListWindow->show(!bHide);
+	if (m_pLayerListWindow) m_pLayerListWindow->show(!bHide);
+	
+	sig_hide_mode_changed(bHide); //broadcast this to anybody who is interested
+} 
+
+bool EntEditor::GetHideMode()
+{
+	return m_bHideMode;
+}
+
+void EntEditor::HandleMessageString(const string &msg)
+{
+	vector<string> words = CL_String::tokenize(msg, "|");
+
+	if (words[0] == "toggle_hide")
+	{
+		SetHideMode(!GetHideMode());
+
+	} else
+		
+		{
+			LogMsg("Don't know how to handle message %s", msg.c_str());
+		}
+
+}
+
+
 void EntEditor::OnAddNewMap()
 {
 	
@@ -733,6 +805,10 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_pMenuWorldChunkCheckbox->set_selected(m_bShowWorldChunkGridLines);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleWorldChunkGrid);
 
+	pItem = m_pMenu->create_item("Display/Show\\Hide Editor Palettes (Tab)");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnShowHidePalettes);
+
+
 	pItem = m_pMenu->create_item("Display/Dump Engine Statistics");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnDumpEngineStatistics);
 
@@ -792,6 +868,10 @@ if (GetGameLogic->GetUserProfileName().empty())
 	return true;
 }
 
+void EntEditor::OnShowHidePalettes()
+{
+	SetHideMode(true);
+}
 
 void EntEditor::OnSelectMap()
 {
@@ -1178,7 +1258,8 @@ void EntEditor::OnGenerateDink()
 	SAFE_DELETE(m_pGenerator);
 	BlitMessage("Deleting old map...");
 	GetWorld->DeleteExistingMap();
-	GetWorld->SetDefaultTileSize(50);
+	GetWorld->SetDefaultTileSizeX(50);
+	GetWorld->SetDefaultTileSizeY(50);
 	GetWorld->SetWorldChunkPixelSize(50*12); //match how dink screens where
 	GetWorld->Init();
 	GetCamera->Reset();
@@ -1294,6 +1375,23 @@ void EntEditor::ForceChooseScreenMode(bool bOn)
 
 void EntEditor::Render(void *pTarget)
 {
+	string profile = "** Master Files **";
+
+	if (!GetGameLogic->GetUserProfileName().empty())
+	{
+		profile = GetGameLogic->GetUserProfileName();
+	}
+
+	
+	//draw bar at the top of the screen
+	CL_Rect r(0,0,GetScreenX, 15);
+	CL_Display::fill_rect(r, CL_Color(0,0,0,80));
+
+	//draw the text over it
+	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
+	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, profile + " - TAB to restore");
+
 }
 
 void EntEditor::Update(float step)

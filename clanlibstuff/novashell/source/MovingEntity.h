@@ -122,6 +122,7 @@ public:
   void SetListenCollision(int eListen);
   int GetListenCollision() {return m_listenCollision;}
   void SetAnimFrame(int frame);
+  int GetAnimFrame();
   void SetListenCollisionStatic(int eListen) {m_listenCollisionStatic = eListen;}
   int GetListenCollisionStatic() {return m_listenCollisionStatic;}
   void AddForce(CL_Vector2 force) {m_body.AddForce( (*(Vector*)&force)*m_body.GetMass() );}

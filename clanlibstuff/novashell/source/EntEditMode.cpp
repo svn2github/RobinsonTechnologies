@@ -29,15 +29,17 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_slots.connect(CL_Mouse::sig_key_dblclk(), this, &EntEditMode::OnMouseDoubleClick);
 
 	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntEditMode::OnMapChange);
+
 	m_pContextMenu = NULL;
 
 	m_pTileWeAreEdittingCollisionOn = NULL;
-	m_dragSnap = 1.0f;
+	m_vecDragSnap = CL_Vector2(1.0f, 1.0f);
 	m_pWindow = NULL;
 	m_pLabelMain = NULL;
 	m_pLabelSelection = NULL;
 	m_pCheckBoxSnap = NULL;
-	m_pInputBoxSnapSize = NULL;
+	m_pInputBoxSnapSizeX = NULL;
+	m_pInputBoxSnapSizeY = NULL;
 	
 	m_pWindowBaseTile = NULL;
 	m_pListBaseTile = NULL;
@@ -84,6 +86,7 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 	if (m_dragInProgress)
 	{
 	
+		
 		if (CL_Keyboard::get_keycode(CL_KEY_SPACE))
 		{
 			CL_Vector2 oldWorldPos = GetWorldCache->ScreenToWorld(CL_Vector2(m_vecLastMousePos.x,m_vecLastMousePos.y));
@@ -281,6 +284,11 @@ void EntEditMode::ScaleDownSelected()
 	ScaleSelection(CL_Vector2(1 - C_SCALE_MOD_AMOUNT, 1 -C_SCALE_MOD_AMOUNT), CL_Keyboard::get_keycode(CL_KEY_SHIFT));
 }
 
+void EntEditMode::OnHideModeChanged(bool bHide)
+{
+	m_pWindow->show(!bHide);
+}
+
 void EntEditMode::Init()
 {
 	Kill();
@@ -301,12 +309,13 @@ void EntEditMode::Init()
 	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
 	if (!pEditor) throw CL_Error("Unable to locate editor entity");
 	pEditor->SetTipLabel(
-		"Tile Edit Mode - Use the mouse wheel or +/- to zoom in/out.  Hold the middle mouse button and drag to move camera.  Hold and drag or click with the left mouse button to make a selection.\n" \
+		"Tile Edit Mode - Use the mouse wheel or +/- to zoom in/out.  Drag the middle mouse button or Space+Left mouse button to pan map.  Hold and drag or click with the left mouse button to make a selection.\n" \
 		"\n"\
 		"Hold Shift,Alt, or Ctrl while clicking to add/remove/toggle from selection.  Use arrow keys to nudge selection one pixel.  (think photoshop controls)\n"\
 		"");
 
 	m_pWindow->set_event_passing(false);
+	m_slots.connect(pEditor->sig_hide_mode_changed, this, &EntEditMode::OnHideModeChanged);
 
 	m_pMenu = new CL_Menu(m_pWindow->get_client_area());
 	CL_MenuNode *pItem;
@@ -375,23 +384,40 @@ void EntEditMode::Init()
 	pItem->enable(false);
 
 	CL_Point offset = CL_Point(2,30);
-	m_pCheckBoxSnap = new CL_CheckBox(offset, "Grid Snap - Size", m_pWindow->get_client_area());
+	m_pCheckBoxSnap = new CL_CheckBox(offset, "Grid Snap - X", m_pWindow->get_client_area());
 	m_slots.connect(m_pCheckBoxSnap->sig_clicked(), this, &EntEditMode::SnapCheckBoxedClicked);
 
 	m_pCheckBoxSnap->set_focusable(false);
-	//make the coordinate input box
+	//make the coordinate input boxes
 	
 	CL_Point tmp = offset+CL_Point(m_pCheckBoxSnap->get_width(), -2);
-	CL_Rect recSize(tmp, CL_Size(50,16));
+	CL_Rect recSize(tmp, CL_Size(30,16));
 	
-	m_pInputBoxSnapSize = new CL_InputBox(CL_String::from_int(m_snapSize), m_pWindow->get_client_area());
+	if (GetWorld)
+	{
+		m_vecSnapSize.x = GetWorld->GetDefaultTileSizeX();
+		m_vecSnapSize.y = GetWorld->GetDefaultTileSizeY();
+	}
+
 	
-    m_pInputBoxSnapSize->set_position(recSize);
+	m_pInputBoxSnapSizeX = new CL_InputBox(CL_String::from_int(int(m_vecSnapSize.x)), m_pWindow->get_client_area());
+    m_pInputBoxSnapSizeX->set_position(recSize);
 	
 	//m_slots.connect(m_pInputBoxSnapSize->sig_lost_focus(), this, &EntEditMode::SnapSizeChanged);
-	m_slots.connect(m_pInputBoxSnapSize->sig_return_pressed(), this, &EntEditMode::SnapSizeChanged);
-	m_slots.connect(m_pInputBoxSnapSize->sig_changed(), this, &EntEditMode::OnSnapSizeChanged);
-	
+	m_slots.connect(m_pInputBoxSnapSizeX->sig_return_pressed(), this, &EntEditMode::SnapSizeChanged);
+	m_slots.connect(m_pInputBoxSnapSizeX->sig_changed(), this, &EntEditMode::OnSnapSizeChanged);
+
+	//need another label for the Y box
+	CL_Label *pLabel = new CL_Label(tmp + CL_Point(33,2), "Y", m_pWindow->get_client_area());
+
+
+	m_pInputBoxSnapSizeY = new CL_InputBox(CL_String::from_int(int(m_vecSnapSize.y)), m_pWindow->get_client_area());
+	recSize.apply_alignment(origin_top_left, -43, 0);
+	m_pInputBoxSnapSizeY->set_position(recSize);
+
+	m_slots.connect(m_pInputBoxSnapSizeY->sig_return_pressed(), this, &EntEditMode::SnapSizeChanged);
+	m_slots.connect(m_pInputBoxSnapSizeY->sig_changed(), this, &EntEditMode::OnSnapSizeChanged);
+
 	//m_pInputBoxSnapSize->set_position()
 	offset.y += m_pCheckBoxSnap->get_height();
 	GetSettingsFromWorld();
@@ -486,23 +512,38 @@ void EntEditMode::SnapSizeChanged()
 {
 	if (m_pCheckBoxSnap->is_checked())
 	{
-		m_pInputBoxSnapSize->enable(true);
-		int snap = CL_String::to_int(m_pInputBoxSnapSize->get_text());
+		m_pInputBoxSnapSizeX->enable(true);
+		m_pInputBoxSnapSizeY->enable(true);
+		int snapX = CL_String::to_int(m_pInputBoxSnapSizeX->get_text());
+		int snapY = CL_String::to_int(m_pInputBoxSnapSizeY->get_text());
 
-		if (snap < 1) return;
+		if (snapX > 0)
+		{
+			snapX = max(1, snapX);
+			snapX = min(snapX, 4048);
+			GetWorld->SetDefaultTileSizeX(snapX);
+			m_pInputBoxSnapSizeX->set_text(CL_String::from_int(snapX));
+		}
 
-		snap = max(1, snap);
-		snap = min(snap, 4048);
-		GetWorld->SetDefaultTileSize(snap);
+		if (snapY > 0)
+		{
+			snapY = max(1, snapY);
+			snapY = min(snapY, 4048);
+			GetWorld->SetDefaultTileSizeY(snapY);
+			m_pInputBoxSnapSizeY->set_text(CL_String::from_int(snapY));
+		}
+
+
 		GetWorld->SetSnapEnabled(true);
-		m_pInputBoxSnapSize->set_text(CL_String::from_int(snap));
 	} else
 	{
-		m_pInputBoxSnapSize->enable(false);
+		m_pInputBoxSnapSizeX->enable(false);
+		m_pInputBoxSnapSizeY->enable(false);
 		GetWorld->SetSnapEnabled(false);
 	}
 
-	m_snapSize = GetWorld->GetDefaultTileSize();
+	m_vecSnapSize.x = GetWorld->GetDefaultTileSizeX();
+	m_vecSnapSize.y = GetWorld->GetDefaultTileSizeY();
 
 	if (m_pWindowBaseTile && m_pWindowBaseTile->is_enabled(false))
 	{
@@ -530,7 +571,8 @@ void EntEditMode::Kill()
 	
 	SAFE_DELETE(m_pContextMenu);
 	SAFE_DELETE(m_pCheckBoxSnap);
-	SAFE_DELETE(m_pInputBoxSnapSize);
+	SAFE_DELETE(m_pInputBoxSnapSizeX);
+	SAFE_DELETE(m_pInputBoxSnapSizeY);
 	SAFE_DELETE(m_pListBaseTile);
 	SAFE_DELETE(m_pWindowBaseTile);
 	SAFE_DELETE(m_pMenu);
@@ -598,9 +640,9 @@ void EntEditMode::OnSelectBaseTilePage()
 	int resourceID = FileNameToID(m_pListBaseTile->get_current_text().c_str());
 
 	//break apart this pic into chunks
-	int snap = 0;
-	if (m_pCheckBoxSnap->is_checked()) snap = m_snapSize;
-	GetHashedResourceManager->PutGraphicIntoTileBuffer(resourceID, g_EntEditModeCopyBuffer, snap);
+	CL_Vector2 vecSnap = CL_Vector2(0,0);
+	if (m_pCheckBoxSnap->is_checked()) vecSnap = m_vecSnapSize;
+	GetHashedResourceManager->PutGraphicIntoTileBuffer(resourceID, g_EntEditModeCopyBuffer, vecSnap);
 }
 
 void EntEditMode::OnCloseBaseTileDialog()
@@ -662,7 +704,7 @@ void EntEditMode::BuildBaseTilePageBox()
 }
 
 //helps us know when it's a bad time to process hotkeys
-bool EntEditMode::IsDialogOpen()
+bool EntEditMode::IsDialogOpen(bool bCheckModelessDialogToo)
 {
 	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
 	if (pEditor)
@@ -670,6 +712,12 @@ bool EntEditMode::IsDialogOpen()
 		if (pEditor->IsDialogOpen()) return true;
 	}
 	if (m_bDialogIsOpen) return true;
+
+	if (bCheckModelessDialogToo)
+	{
+		if (m_pInputBoxSnapSizeX->has_focus()) return true;
+		if (m_pInputBoxSnapSizeY->has_focus()) return true;
+	}
 
 	return false;
 }
@@ -698,7 +746,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 		return; //now is a bad time for most stuff
 	}
 
-	if (IsDialogOpen()) 
+	if (IsDialogOpen(false)) 
 	{
 		//we must be doing something in a dialog, don't want to delete entities accidently	
 		return;
@@ -1046,11 +1094,11 @@ void EntEditMode::SetOperation(int op)
 
 		if (GetWorld->GetSnapEnabled())
 		{
-			vecStart = GetWorld->SnapWorldCoords(vecStart, m_snapSize);
+			vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecSnapSize);
 
 		} else
 		{
-			vecStart = GetWorld->SnapWorldCoords(vecStart, m_dragSnap);
+			vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecDragSnap);
 		}
 
 		TileEditOperation undo;
@@ -1223,7 +1271,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 {
 	if (m_pEntCollisionEditor) return; //now is a bad time
 
-	if (IsDialogOpen()) 
+	if (IsDialogOpen(false)) 
 	{
 		//we must be doing something in a dialog, don't want to delete entities accidently	
 		return;
@@ -1261,19 +1309,28 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	
 	case CL_MOUSE_LEFT:
 
+		
 		if (!GetWorld) 
 		{
 			LogMsg("Error, no map is active?!");
 			return;
 		}
+		
+
+			if (CL_Keyboard::get_keycode(CL_KEY_SPACE))
+			{
+				//they probably want to move the map, let EntEditor handle it
+				return;
+			}
+		
 		if (!m_dragInProgress)
 		{
 			//do want to to drag out a selection box or move something?
+			GetApp()->GetGUI()->set_focus(GetApp()->GetGUI());
 
 		
 			m_vecDragStart = GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
 			m_vecDragStop = CL_Vector2(key.mouse_pos.x, key.mouse_pos.y);
-
 
 			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU)
 				
@@ -1320,8 +1377,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			//two modes of copy, one to cut out subtiles..
 			if (m_dragInProgress)
 			{
-				m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap);
-				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecDragStop), m_dragSnap);
+				m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap);
+				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecDragStop), m_vecDragSnap);
 				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
 				rec.normalize();
 				CutSubTile(rec);
@@ -1425,17 +1482,17 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 	if (g_EntEditModeCopyBuffer.IsEmpty())
 	{
 		//this is no selection, so let's just convert to what they are highlighting
-		return GetWorld->SnapWorldCoords(vecMouse, 1);
+		return GetWorld->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
 		return vecMouse;
 	}
 
 	vecMouse -= g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()/2;
 	if (m_pCheckBoxSnap->is_checked())
 	{
-		vecMouse = GetWorld->SnapWorldCoords(vecMouse, m_snapSize);
+		vecMouse = GetWorld->SnapWorldCoords(vecMouse, m_vecSnapSize);
 	} else
 	{
-		vecMouse = GetWorld->SnapWorldCoords(vecMouse, 1);
+		vecMouse = GetWorld->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
 
 	}
 	//vecMouse += CL_Vector2(GetWorld->GetDefaultTileSize()/2, GetWorld->GetDefaultTileSize()/2);
@@ -1466,11 +1523,11 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 	
 	if (GetWorld->GetSnapEnabled())
 	{
-		vecStart = GetWorld->SnapWorldCoords(vecStart, m_snapSize);
+		vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecSnapSize);
 
 	} else
 	{
-		vecStart = GetWorld->SnapWorldCoords(vecStart, m_dragSnap);
+		vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecDragSnap);
 	}
 	
 	CL_Vector2 vecStop(vecStart.x + m_selectedTileList.GetSelectionSizeInWorldUnits().x, vecStart.y + m_selectedTileList.GetSelectionSizeInWorldUnits().y);
@@ -1712,8 +1769,8 @@ void EntEditMode::Render(void *pTarget)
 		
 		//
 		CL_Vector2 worldStop = GetWorldCache->ScreenToWorld(m_vecDragStop);
-		m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(worldStop, m_dragSnap).x - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).x),
-			int(GetWorld->SnapWorldCoords(worldStop, m_dragSnap).y - GetWorld->SnapWorldCoords(m_vecDragStart, m_dragSnap).y)));
+		m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).x - GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap).x),
+			int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).y - GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap).y)));
 		//draw a rect on the screen
 		DrawRectFromWorldCoordinates(m_vecDragStart, worldStop, CL_Color(255,255,0,200), pGC);
 	} else
@@ -2380,8 +2437,10 @@ void EntEditMode::GetSettingsFromWorld()
 	if (GetWorld)	
 	{
 		m_pCheckBoxSnap->set_checked(GetWorld->GetSnapEnabled());
-		m_snapSize = GetWorld->GetDefaultTileSize();
-		m_pInputBoxSnapSize->set_text(CL_String::from_int(m_snapSize));
+		m_vecSnapSize.x = GetWorld->GetDefaultTileSizeX();
+		m_vecSnapSize.y = GetWorld->GetDefaultTileSizeY();
+		m_pInputBoxSnapSizeX->set_text(CL_String::from_int(m_vecSnapSize.x));
+		m_pInputBoxSnapSizeY->set_text(CL_String::from_int(m_vecSnapSize.y));
 	}
 }
 

@@ -1277,6 +1277,20 @@ void MovingEntity::SetAnimFrame(int frame)
 	}
 }
 
+int MovingEntity::GetAnimFrame()
+{
+	if (GetSprite())
+	{
+		return GetSprite()->get_current_frame();
+
+	} else
+	{
+		LogMsg("Error, ent %d (%s) can't get anim frame, no visual seems to be assigned to it. (Use OnPostInit maybe?)", ID(), GetName().c_str());
+	}
+
+	return 0;
+}
+
 void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity * pProjectile)
 {
 	SetOnLadder(false);

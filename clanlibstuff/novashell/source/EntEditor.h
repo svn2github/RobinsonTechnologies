@@ -32,6 +32,11 @@ public:
 	void BuildWorldListBox();
 	void BuildLayerControlBox();
 	bool IsDialogOpen() {return m_bDialogOpen;}
+	virtual void HandleMessageString(const string &msg);
+	void SetHideMode(bool bHide);
+	bool GetHideMode();
+
+	CL_Signal_v1<bool> sig_hide_mode_changed;
 
 private:
     
@@ -58,6 +63,9 @@ private:
 	void validator_numbers(char &character, bool &accept);
 	void MapOptionsDialog();
 	void onButtonDown(const CL_InputEvent &key);
+	void OnMouseDown(const CL_InputEvent &key);
+	void OnMouseUp(const CL_InputEvent &key);
+	void OnShowHidePalettes();
 	void OnToggleWorldChunkGrid();
 	void OnToggleShowCollision();
 	void OnToggleShowPathfinding();
@@ -131,10 +139,11 @@ private:
 	bool m_bShowCollision;
 	bool m_bShowPathfinding;
 	bool m_bShowAI;
+	bool m_bHideMode;
 	
 	CL_MenuItem *m_pMenuGamePausedCheckbox;
 	bool m_bDialogOpen;
-
+	bool m_bScrollingMap;
     GeneratorInterface *m_pGenerator; //the class to create our random world, different generators can be plugged in
 };
 
