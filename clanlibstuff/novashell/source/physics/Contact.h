@@ -1,7 +1,6 @@
 //------------------------------------------------------------------------------------------------ 
 ////////////////////////////////////////////////////////////////////////////////////////////////// 
 // 
-// File          : Contact.h
 // 
 // Created by    : OR - 07/02/2004 12:42:04
 // 
@@ -62,6 +61,66 @@ private:
 	void AddContactPair	 (const Vector& CA, const Vector& CB);
 };
 
+/*
+Object: Material
+Stores data and properties for an individual material.
+
+About:
+
+You can only create and access materials through the <MaterialManager>.
+
+Group: Member Functions
+*/
+
+/*
+func: SetType
+(code)
+nil SetType(number materialType)
+(end)
+Sets what kind of basic behavior this should have.  For properties like ladders and warps, you need to set this. This is done for you in setup_constants.lua.
+
+Parameters:
+
+materialType - Should be sent one of the <C_MATERIAL_TYPE_CONSTANTS>.
+
+*/
+
+/*
+func: GetType
+(code)
+number GetType()
+(end)
+
+Returns:
+
+The material type.
+*/
+
+/*
+func: SetSpecial
+(code)
+nil SetSpecial(number materialSpecial)
+(end)
+Sets extra properties for a material.  Not really used yet, but might be useful for designating special kinds of collisions later.
+
+Parameters:
+
+materialSpecial - Should be sent one of the <C_MATERIAL_SPECIAL_CONSTANTS>.
+
+*/
+
+/*
+func: GetSpecial
+(code)
+number GetSpecial()
+(end)
+
+Returns:
+
+The special property.  Because it's just special like that.
+*/
+
+
 
 class CMaterial
 {
@@ -114,6 +173,22 @@ public:
 	}
 	int GetType() {return m_type;}
 
+/*
+group: C_MATERIAL_TYPE_CONSTANTS
+
+constant: C_MATERIAL_TYPE_NORMAL
+The default.  Just a normal thing you can bump into.
+
+constant: C_MATERIAL_TYPE_VERTICAL_LADDER
+Tells the engine to treat this material as a ladder.  Only used in 2d side view brain at the moment.
+
+constant: C_MATERIAL_TYPE_WARP
+Tells the engine to treat this material like a magical warp.  Causes the entities OnWarp function to be run.
+
+constant: C_MATERIAL_TYPE_DUMMY
+For tweaking sorting and smart shadows.  The engine ignores it for collision but will still calculate the depth dot (lowest point of collision) and shadow information based on it.  Good for tweaking those things, make sure it's the first line in a collision shape.
+*/
+
 	enum
 	{
 		C_MATERIAL_TYPE_NORMAL = 0,
@@ -125,7 +200,13 @@ public:
 		C_MATERIAL_TYPE_COUNT
 
 	};
+	/*
+	group: C_MATERIAL_SPECIAL_CONSTANTS
 
+	constant: C_MATERIAL_SPECIAL_NONE
+	Default, no special properties.
+
+	*/
 	enum
 	{
 		C_MATERIAL_SPECIAL_NONE = 0,
