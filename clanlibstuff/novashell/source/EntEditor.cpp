@@ -1372,7 +1372,6 @@ void EntEditor::ForceChooseScreenMode(bool bOn)
 }
 
 
-
 void EntEditor::Render(void *pTarget)
 {
 	string profile = "** Master Files **";
@@ -1381,7 +1380,6 @@ void EntEditor::Render(void *pTarget)
 	{
 		profile = GetGameLogic->GetUserProfileName();
 	}
-
 	
 	//draw bar at the top of the screen
 	CL_Rect r(0,0,GetScreenX, 15);

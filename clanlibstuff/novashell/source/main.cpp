@@ -12,6 +12,7 @@
   //#define C_USE_FMOD
 #endif
 
+
 ISoundManager *g_pSoundManager;
 
 #ifdef C_USE_FMOD
@@ -835,3 +836,185 @@ catch (int param)
     return 0;
 }
 
+
+//lua natural docs stuff
+/*
+Object: App
+General functions related to the whole application.
+
+About:
+This is automatically created by the engine and always available.  You can access it this way:
+
+(code)
+GetApp:RunSomeCoolFunctionInIt()
+(end)
+
+Group: Member Functions
+
+func: GetEngineVersion
+(code)
+number GetEngineVersion()
+(end)
+
+Returns:
+The current engine version in numerical form, for example, 0.16.
+
+func: GetEngineVersionAsString
+(code)
+string GetEngineVersionAsString()
+(end)
+
+Returns:
+The current engine version in string form, for example, "0.16"
+
+func: GetPlatform
+(code)
+number GetPlatform()
+(end)
+
+Returns:
+One of the <C_PLATFORM_CONSTANTS>.
+
+func: SetWindowTitle
+(code)
+nil SetWindowTitle(string newTitle)
+(end)
+If you don't like the default window text, you can specify your own.  Only visible when tabbed out or in windowed mode.
+
+func: SetCursorVisible
+(code)
+nil SetCursorVisible(boolean bVisible)
+(end)
+Parameters:
+bVisible - If true, the system cursor (this means the mouse pointer in most cases btw) will be shown, otherwise it's made invisible.
+
+func: GetCursorVisible
+(code)
+boolean GetCursorVisible()
+(end)
+
+Returns: True if the system cursor is currently visible.
+
+func: SetScreenSize
+(code)
+boolean SetScreenSize(number x, number y);
+(end)
+
+Allows on-the-fly screensize changes by script.  Up to you to specify valid resolutions if you're currently fullscreen.
+
+Parameters:
+
+x - The desired screen width
+y - The desired screen height
+
+Returns:
+
+True on success.  Except it doesn't detect errors yet, so I guess always true.
+
+Warning:
+
+This only works right under Windows at the moment.  Not sure what's up with that yet, gotta dig in to Clanlib I guess.
+
+func: ParmExists
+(code)
+boolean ParmExists(string parmToFind)
+(end)
+
+Allows you to check if the game was run with a certain command line parameter or not.
+
+Parameters:
+
+parmToFind - The parm you want to check for, for example, "-cheatmode" or something.
+
+Returns:
+
+True if the parm was found.
+
+func: GetTick
+(code)
+number GetTick()
+(end)
+The current system time. Generally, you want to use <GetGameTick> instead.
+
+Returns:
+
+The current system time in milleseconds.
+
+func: GetGameTick
+(code)
+number GetGameTick()
+(end)
+
+This is what you use to time things.
+
+* This always starts at 0 when a new game/profile is started
+* It's persistent, ie, it's automatically saved and loaded with the profile
+* Is aware of pausing and changing the game speed.  If the game is running at 2X, this advances twice as fast too.
+
+Returns:
+
+The current game time in milleseconds.
+
+func: SetGameLogicSpeed
+(code)
+void SetGameLogicSpeed( number updateMhz);
+(end)
+
+The idea here is that you can choose to update the game logic at 20 times a second, or 100, and everything will move the same speed.  However, if you want "super smooth" movement, it should match the video cards refresh rate.  By default, it goes fullscreen asking for 75 mhz, so normally you don't want to touch this.
+
+If you want to play with speed, use <SetSimulationSpeedMod>.
+
+Note:
+
+It doesn't quite work right yet, changing this DOES affect game speed, and it shouldn't, just don't touch it
+
+func: SetGameSpeed
+(code)
+nil SetGameSpeed(number baseGameSpeed)
+(end)
+
+Changing this should affect all gravity, physics and movement, but WITHOUT changing the speed of GetGameTick(), if that makes any sense.  It's sort of complicated.  Just don't touch it to be safe.
+
+If you want to play with speed, use <SetSimulationSpeedMod>.
+
+Note:
+
+Doesn't quite work as aspected yet anyway
+
+func: SetSimulationSpeedMod
+(code)
+nil SetSimulationSpeedMod( number speedModifier)
+(end)
+
+Setting this to 2 means the game will operate twice as fast. Setting to 0.5 would mean half speed (slow mooootion).
+
+Game Design Note:
+By default, TAB is assigned to make the game run fast using this, it's good for testing and I reccommend that you leave it in as it's handy for skipping slow sequences for players too.
+
+Worried people will run super fast and cheat?:
+
+It can't be used to cheat, because, well, everything is going fast, not just the player.
+
+func: GetSimulationSpeedMod
+(code)
+function GetSimulationSpeedMod()
+(end)
+
+Return:
+
+Gets the current simulation speed mod.
+*/
+
+
+
+/*
+
+Group: C_PLATFORM_CONSTANTS
+
+constants: C_PLATFORM_WINDOWS
+
+constants: C_PLATFORM_OSX
+
+constants: C_PLATFORM_LINUX
+
+*/

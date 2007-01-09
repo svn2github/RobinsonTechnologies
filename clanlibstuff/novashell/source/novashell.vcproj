@@ -1990,6 +1990,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\GlobalScriptFunctionBindings.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\GlobalScriptFunctionBindings.h"
+						>
+					</File>
+					<File
 						RelativePath=".\luabindBindings.cpp"
 						>
 						<FileConfiguration

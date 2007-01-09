@@ -11,6 +11,7 @@
 #include "VisualProfileManager.h"
 #include "EntVisualProfileEditor.h"
 #include "MiscClassBindings.h"
+#include "GlobalScriptFunctionBindings.h"
 
 #define C_SCALE_MOD_AMOUNT 0.01f
 

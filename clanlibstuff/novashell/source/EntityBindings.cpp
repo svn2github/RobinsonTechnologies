@@ -62,9 +62,57 @@ void luabindEntity(lua_State *pState)
 			.def("SetDeleteFlag", &BaseGameEntity::SetDeleteFlag)
 			.def("Send", &BaseGameEntity::HandleMessageString)
 
+
+/*
+
+Object: Entity
+The Entity object.  It's huge.
+
+About:
+
+These are the stars of the show.
+
+Advanced abilities such as:
+
+ * An attached script
+ * The BrainManager
+ * The GoalManager
+ * Collision information
+ * Pathfinding system
+ * Triggers
+ 
+are initialized on demand, only wasting memory if they are actually used.
+
+Group: Member Functions
+*/
+
 			,class_<MovingEntity, BaseGameEntity>("Entity")
 			.def(constructor<>())
+			
+			/*
+			func: GetPos
+			(code)
+			Vector2 GetPos()
+			(end)
+
+			Returns:
+
+			A <Vector2> object containing the entity's position.
+			*/
+			
 			.def("GetPos", &MovingEntity::GetPos)
+
+			/*
+			func: SetPos
+			(code)
+			nil SetPos(Vector2 vPos)
+			(end)
+
+			Parameters:
+
+			vPos - a <Vector2> object containing the position to move to.
+			*/
+
 			.def("SetPos", &MovingEntity::SetPos)
 			.def("SetPosAndMap", &MovingEntity::SetPosAndMap)
 			.def("SetVisualProfile", &MovingEntity::SetVisualProfile)
@@ -173,7 +221,9 @@ void luabindEntity(lua_State *pState)
 			.def("SetRunUpdateEveryFrame", &MovingEntity::SetRunUpdateEveryFrame)
 			.def("GetRunUpdateEveryFrame", &MovingEntity::GetRunUpdateEveryFrame)
 			.def("SetDampening", &MovingEntity::SetDampening)
-			
+
+
+			//Group -=-=-=-
 	];
 }
 

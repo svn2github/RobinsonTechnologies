@@ -327,7 +327,7 @@ void EntCollisionEditor::OnOk()
 	m_pCollisionData->GetLineList()->begin()->ComputeConvexHull();
 	m_pCollisionData->GetLineList()->begin()->PrintPoints();
 
-	//NOTE:  Check OnCollisionDataEditEnd in EntEditMode to see what else we do after ending an edit
+	//OTE:  Check OnCollisionDataEditEnd in EntEditMode to see what else we do after ending an edit
 	SetDeleteFlag(true);
 
 }

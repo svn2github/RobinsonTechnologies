@@ -17,6 +17,7 @@ void MaterialManager::Init()
 {
 	m_vecMat.clear();
 }
+
 int MaterialManager::AddMaterial(float fCoF, float fCoR, float fCoS, float fSep, const CL_Color &col, const string &name)
 {
 	CMaterial m;

@@ -19,27 +19,232 @@ void NormalizeVector2(CL_Vector2 &v)
 
 void luabindVector(lua_State *pState)
 {
+
+	/*
+	Title: Math Related Objects
+
+	Object: Vector2
+	The Vector2 object.
+
+	About:
+
+	Most functions in Novashell take a <Vector2> instead of an x and y separately.
+
+	Usage:
+	(code)
+	vPos = Vector2(5,5);
+	vPos = vPos + (vPos*2);
+	LogMsg("Hey, vPos is " .. tostring(vPos) .. " and the length is " .. vPos:Length());
+	//Output is "Hey, vPos is X:15.00 Y: 15.00 and the length is 21.21320343076"
+
+	vPos.x = vPos.x/1.54; //let's only modify the x coordinate
+
+	LogMsg("My god, vPos.x is " .. vPos.x);
+	//Output is "My god, vPos.x is 9.7402601242065"
+
+	//Let's turn it into a unit vector
+	vPos = Normalize(vPos); 
+	//Uh, Normalize should be a member function, hope to fix that later
+
+	(end)
+
+	Note:
+	If you use tostring() to show a Vector2, it is formatted and truncated to two decimal points for display.  Internally it's still double accuracy, like all all Lua numbers.
+	
+	Group: Local Variables
+
+	Variable: x
+	The x coordinate.
+
+	Variable: y
+	The y coordinate.
+
+	Group: Initialization
+	
+	func: Vector2
+	(code)
+	Vector2()
+	(end)
+	Defaults to 0,0 if initialized with no parameters.
+
+	func: Vector2(Vector2)
+	(code)
+	Vector2(Vector2 vSomeVec)
+	(end)
+	A <Vector2> can be initialized with the values from another <Vector2> object.
+
+	func: Vector2(x,y)
+	(code)
+	Vector2(number x, number, y)
+	(end)
+	A <Vector2> can be initialized with a standard x and y passed in separately.
+
+	So anytime a function asks for a <Vector2> and you don't have one, keep in mind you can always just type *Vector2(x,y)*. (Replacing x and y with the numbers you want.)
+
+	Group: Member Functions
+	*/
+
 	module(pState)
 		[
+
 			class_<CL_Vector2>("Vector2")
 			.def(constructor<>())
 			.def(constructor<CL_Vector2>())
 			.def(constructor<float, float>())
 			.def_readwrite("x", &CL_Vector2::x)
 			.def_readwrite("y", &CL_Vector2::y)
+			
+			/*
+			func: Length
+			(code)
+			number Length()
+			(end)
+
+			Returns:
+			The length of the vector.
+			*/
+
+			/*
+			func: Dot
+			(code)
+			number Dot(Vector2 vVec)
+			(end)
+
+			Returns:
+			The dot product of the operation.
+			*/
+
+			/*
+			func: Cross
+			(code)
+			Vector2 Cross()
+			(end)
+
+			Returns:
+			The cross product of the vector.
+			*/
+
+
+			.def("Length", &CL_Vector2::length)
+			.def("Dot", &CL_Vector2::dot)
+			.def("Cross", &CL_Vector2::cross)
+		    .def("__tostring", &VectorToStringEx)
+			/*
+
+			Group: Operators
+			*/
+
+			/*
+			Function: Assignment Operator
+			=Vector2
+
+			Example of assignment:
+			(code)
+			newVec = oldVec
+			(end)
+
+			Function: Addition Operator
+			+Vector2
+
+			Example of addition:
+			(code)
+			vPos = vPos + Vector2(1,1); //add 1 to x and y in the vPos vector
+			(end)
+
+			Function: Subtraction Operator
+			-Vector2
+
+			Example of subtraction:
+			(code)
+			vPos = vPos - Vector2(1,0); //remove 1 from vPos's x coordinate
+			(end)
+
+			Function: Multiply Operator
+			*number
+
+			Example of scaler multiplication:
+			(code)
+			vPos = Vector(1,2);
+			vPos = vPos * 10;  //vPos.x is now 10, vPos.y is now 20.
+			(end)
+
+			Function: Division Operator
+			*number
+
+			Example of scaler division:
+			(code)
+			vPos = Vector(1,0);
+			vPos = vPos /2;  //vPos.x is now 0.5, vPos.y is still 0 of course.
+			(end)
+
+			Function: Equality Operator
+			==Vector2
+
+			Example of using the equality operator:
+			(code)
+			if (vPos == vYourPos) then LogMsg("They are the same"); end;
+			(end)
+
+			Function: Inequality Operator
+			!=Vector2
+
+			Example of using the inequality operator:
+			(code)
+			if (vPos != vYourPos) then LogMsg("By jove, these are different"); end;
+			(end)
+
+			*/
+
 			.def(const_self + CL_Vector2())
 			.def(const_self - CL_Vector2())
 			.def(const_self / float())
 			.def(const_self * float())
 			.def(const_self == CL_Vector2())
-			.def("Length", &CL_Vector2::length)
-			.def("Dot", &CL_Vector2::dot)
-			.def("Cross", &CL_Vector2::cross)
-		    .def("__tostring", &VectorToStringEx)
-		
-		
+	
 			,
 			
+/*
+Object: Rect
+The Rect object.
+
+Group: Local Variables
+
+Variable: left
+The left coordinate.
+
+Variable: top
+The top coordinate.
+
+Variable: right
+The right coordinate.
+
+Variable: bottom
+The bottom coordinate.
+
+Group: Initialization
+
+func: Rect
+(code)
+Rect()
+(end)
+Defaults to all zeroes if initialized with no parameters.
+
+func: Rect(Rect)
+(code)
+Rect(Rect vSomeRect)
+(end)
+A <Rect> can be initialized with the values from another <Rect> object.
+
+func: Rect(left,top,right,bottom)
+(code)
+Rect(number left, number top, number right, number bottom)
+(end)
+A <Rect> can be initialized with four numbers.
+
+Group: Member Functions
+
+*/
+
 			class_<CL_Rect>("Rect")
 			.def(constructor<>())
 			.def(constructor<CL_Rect>())
@@ -48,14 +253,88 @@ void luabindVector(lua_State *pState)
 			.def_readwrite("top", &CL_Rect::top)
 			.def_readwrite("right", &CL_Rect::right)
 			.def_readwrite("bottom", &CL_Rect::bottom)
+
+
+			/*
+			func: GetWidth
+			(code)
+			number GetWidth()
+			(end)
+			
+			Returns:
+
+			The actual width of the rect.
+			*/
+
+		
+			.def("GetWidth", &CL_Rect::get_width)
+			
+			/*
+			func: GetHeight
+			(code)
+			number GetHeight()
+			(end)
+
+			Returns:
+
+			The actual height of the rect.
+			*/
+
+			.def("GetHeight", &CL_Rect::get_height)
+			
+			/*
+			func: IsOverlapped
+			(code)
+			boolean IsOverlapped(Rect rectB)
+			(end)
+
+			Returns:
+
+			True if the two rectangles overlap at all.
+			*/
+
+			.def("IsOverlapped", &CL_Rect::is_overlapped)
+
+			/*
+			func: CalculateUnion
+			(code)
+			Rect CalculateUnion(Rect rectB)
+			(end)
+
+			Returns:
+
+			A <Rect> the exact size of the union.
+			*/
+
+			.def("CalculateUnion", &CL_Rect::calc_union)
+
+			/*
+			Group: Operators
+
+			func: Addition Operator
+			+Rect
+			
+			Usage:
+			(code)
+			rectArea = rectHouse + Rect(100,0,0,0); //we added 100 to rectArea.left
+			(end)
+
+			func: Subtraction Operator
+			-Rect
+
+			Usage:
+			(code)
+			rectArea = rectHouse - rectAreaToRemove;
+			(end)
+
+			*/
+			
 			.def(const_self + CL_Rect())
 			.def(const_self - CL_Rect())
 				.def(const_self == CL_Rect())
-			.def("GetWidth", &CL_Rect::get_width)
-			.def("GetHeight", &CL_Rect::get_height)
-			.def("IsOverlapped", &CL_Rect::is_overlapped)
 			.def("__tostring", &RectToStringEx)
 
+	
 			,
 			
 			//stand alone functions

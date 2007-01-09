@@ -19,6 +19,7 @@
 #include "GUIStyleBitmap/NS_MessageBox.h"
 #include "EntWorldDialog.h"
 
+
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
@@ -475,7 +476,9 @@ bool GameLogic::Init()
 	return true;
 }
 
-bool GameLogic::ToggleEditMode() //returns NULL if it was toggled off, or the address if on
+
+
+bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the editor
 {
 	EntEditor * pEnt = (EntEditor *)EntityMgr->GetEntityByName("editor");
 	

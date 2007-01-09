@@ -12,6 +12,7 @@ using namespace luabind;
 #include "VectorBindings.h"
 #include "EntityBindings.h"
 #include "MiscClassBindings.h"
+#include "GlobalScriptFunctionBindings.h"
 #include "MaterialManager.h"
 #include "TextManager.h"
 #include "GameLogic.h"
@@ -22,6 +23,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabindVector(pLuaState);
 	luabindEntity(pLuaState);
 	luabindMisc(pLuaState);
+	luabindGlobalFunctions(pLuaState);
 
 	//add some global functions
 	luabind::globals(pLuaState)["GetMaterialManager"] = &g_materialManager;

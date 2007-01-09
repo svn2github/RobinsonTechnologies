@@ -8,6 +8,49 @@
 #ifndef main_HEADER_INCLUDED // include guard
 #define main_HEADER_INCLUDED  // include guard
 
+//stuff for the lua docs
+
+/*
+Section: Overview
+
+Novashell  Game Creation System Scripting API Reference:
+
+Wow, that's a long title.  
+
+Lua and you:
+
+Novashell uses Lua 5.1 under the hood.  You can use google to find good tutorials on how it works.
+
+Novashell specific Lua additions:
+
+* // C++ style comments are supported
+* != (inequality) operator is supported
+
+Questionable and confusing practices:
+
+Be aware that object pointers are passed into lua on a regular basis and this is inherently dangerous, but good for speed.
+
+For instance, *ent = GetEntityByName("Player")* returns not a giant entity object, but a dinky little pointer to a an entity.
+
+So?:
+
+So you can't copy it by saying *newEnt = ent*  You'd only be copying the pointer, not making a new entity. (To make a new entity, you could use *newEnt = ent:Clone(map, position)* though)
+
+So why is so much stuff missing?:
+
+Because writing documentation is boring! :)  On the bright side, this is generated from the C++ source so it's very likely I'll be able to finish it and keep it updated without too much pain. If I start lagging, please come by the forums (http://www.rtsoft.com/forums) and verbally abuse me.
+
+Links:
+
+Novashell home - <http://www.rtsoft.com/novashell>
+Seth - (seth@rtsoft.com)
+
+
+
+*/
+
+
+
 #define C_BASE_MAP_PATH "maps"
 
 enum
