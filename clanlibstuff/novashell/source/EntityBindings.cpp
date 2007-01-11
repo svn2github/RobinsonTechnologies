@@ -66,11 +66,13 @@ void luabindEntity(lua_State *pState)
 /*
 
 Object: Entity
-The Entity object.  It's huge.
+The Entity object.
 
 About:
 
-These are the stars of the show.
+The heart of the Novashell system is the flexible <Entity> object.
+
+An <Entity> can represent a patch of ground, an chair, a persistent database, a warp, a health bar, a text overlay or a drooling monster.
 
 Advanced abilities such as:
 
