@@ -19,5 +19,5 @@ just listed in the order it was added and the dates are very rough.
 * Fixed problem where the installer didn't remember where you last installed when installing a new version (win)
 * Redid timing, removed SetGameSpeed and SetGameLogicSpeed, it's all handled internally for you and adjusted on the fly when needed for a smoother experience.  Well, hopefully.  Let me know if there are any jerkiness problems.
 * Lua "package" library disabled for security reasons (Ian)
-
+* LogMsg/printf and LogError now can display up to 12,288 bytes and will properly truncate if sent a message larger instead of crashing (Ian)
 

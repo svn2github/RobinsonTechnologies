@@ -317,7 +317,7 @@
 ** CHANGE it to undefined as soon as you do not need a global 'loadlib'
 ** function (the function is still available as 'package.loadlib').
 */
-#define LUA_COMPAT_LOADLIB
+//#define LUA_COMPAT_LOADLIB
 
 /*
 @@ LUA_COMPAT_VARARG controls compatibility with old vararg feature.
