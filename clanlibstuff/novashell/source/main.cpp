@@ -557,8 +557,8 @@ void App::Update()
 	{
 		//very important, here we set the min and max range of allowed logic updates.  Too small, and physics might break, too large and.. uh..
 		//well nothing bad should happen but still, 120 is probably enough for any monitor to "look smooth".
-		int logicMhz = max(60, 1000/deltaTick);
-		logicMhz = min(120, logicMhz);
+		int logicMhz = cl_max(60, 1000/deltaTick);
+		logicMhz = cl_min(120, logicMhz);
 		SetGameLogicSpeed(1000 / logicMhz );
 	}
 
