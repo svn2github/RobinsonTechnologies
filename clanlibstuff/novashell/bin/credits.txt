@@ -1,0 +1,24 @@
+Programming and design:
+Seth A. Robinson (www.rtsoft.com)
+
+Physics code based on source by:
+Olivier Renault
+
+Pixel art used in the Top View RPG example created by:
+Daniel Cook (www.lostgarden.com)
+
+Additional Art:
+Akiko Robinson
+
+Novashell is powered by the Clanlib Game SDK (www.clanlib.org)
+
+Special thanks:
+
+whisperstorm
+Loken
+Uhfgood
+Ian
+Sphair
+nmerci
+Magnus Norddahl
+

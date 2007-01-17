@@ -1,0 +1,23 @@
+Stuff that's been changed or added.  I don't have a strict version system right now, stuff is
+just listed in the order it was added and the dates are very rough.
+
+1-11-2007
+
+* BUGFIX: Rect:IsOverlapped now works (Ian)
+* Color:Setalpha changed to Color:SetAlpha (Ian)
+* Added Rect:CalculateUnion script command
+* Good chunk of the API is now documented at www.rtsoft.com/novashell/docs/api
+* lua's "io" lib and the dangerous parts of "os" lib are disabled in lua for security reasons, I had actually thought I did this before, whups.. (Ian)
+* history.txt file is now included with the windows version, will always be accurate, even between forum release notes (shair)
+* Added license.txt, credits.txt (sparse, will add as I go), and readme.txt.  Windows installer text now just loads the readme.txt
+* Commented out a LogMsg command in the beer invaders example (it was for debugging..)
+* This history.txt file can be viewed from the main novashell page (automatically updated during installer builds)
+
+1-17-2007
+
+* Fixed visual glitch with candles in the inn in the top view rpg example
+* Fixed problem where the installer didn't remember where you last installed when installing a new version (win)
+* Redid timing, removed SetGameSpeed and SetGameLogicSpeed, it's all handled internally for you and adjusted on the fly when needed for a smoother experience.  Well, hopefully.  Let me know if there are any jerkiness problems.
+* Lua "package" library disabled for security reasons (Ian)
+
+
