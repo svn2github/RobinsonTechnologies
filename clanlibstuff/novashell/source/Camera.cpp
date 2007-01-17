@@ -185,8 +185,11 @@ void Camera::InstantUpdate()
 
 void Camera::Update(float step)
 {
-	m_vecScale = Lerp(m_vecScale, m_vecScaleTarget, m_scaleLerp);
+	assert(step != 0);
+	
+	m_vecScale = Lerp(m_vecScale, m_vecScaleTarget, min(m_scaleLerp*step, 1));
 
+	
 	UpdateTarget();
   	
 	if (m_bInstantUpdateASAP)
@@ -195,7 +198,7 @@ void Camera::Update(float step)
 		InstantUpdate();
 	}
 	
-	m_vecPos = Lerp(m_vecPos,m_vecTargetPos, m_moveLerp);
+	m_vecPos = Lerp(m_vecPos,m_vecTargetPos, min(m_moveLerp*step, 1));
 
 	static const float fuzz = 0.01f;
 

@@ -52,7 +52,7 @@ BrandingText " "
   !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${_TITLE_}. (${_VERSION_} released on ${_COMPILE_DATE_})\r\n\r\nClick Next to continue."
   !define MUI_WELCOMEPAGE_TITLE "${_TITLE_} ${_VERSION_} Installer"
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE "readme.txt"
+  !insertmacro MUI_PAGE_LICENSE "..\bin\readme.txt"
   
   
   ;Customize component texts
@@ -88,6 +88,10 @@ Section "-Main Game" SecMain
 SectionIn RO
   SetOutPath "$INSTDIR"
   File "..\bin\game.exe"
+  File "..\bin\readme.txt"
+  File "..\bin\license.txt"
+  File "..\bin\history.txt"
+  File "..\bin\credits.txt"
   File "..\bin\libjpeg.dll"
   File "..\bin\libpng13.dll"
   File "..\bin\zlib1.dll"
@@ -100,7 +104,7 @@ CreateDirectory "$SMPROGRAMS\${_TITLE_}"
 ;ok, this will create a Folder in your Start menue
 
   ;Store installation folder
-  WriteRegStr HKLM "Software\RTSOFT\DSCROLL" "path" $INSTDIR
+  WriteRegStr HKLM "Software\RTSOFT\NOVASHELL" "path" $INSTDIR
 
   ;write uninstall strings
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${_TITLE_}" "DisplayName" "${_TITLE_} (remove only)"

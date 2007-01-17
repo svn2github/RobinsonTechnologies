@@ -57,8 +57,10 @@ void BrainSideBase::OnAdd()
 
 void BrainSideBase::Update(float step)
 {
-	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
+	CL_Vector2 curForce = m_pParent->GetLinearVelocity(); //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
+	//m_force /= step;
+
 	#define C_SIDE_ACCEL_POWER 0.17f
 	Clamp(m_force.x, -C_SIDE_ACCEL_POWER, C_SIDE_ACCEL_POWER); //limit force to accel power
 	
@@ -68,8 +70,10 @@ void BrainSideBase::Update(float step)
 	} else
 	{
 		//LogMsg("in air!");
-
 	}
+
+	m_force *= step;
+
 
 	m_pParent->SetSpriteByVisualStateAndFacing();
 

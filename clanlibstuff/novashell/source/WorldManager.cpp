@@ -350,7 +350,7 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 		{
 			GetCamera->SetCameraSettings(*pCameraSetting);
 			GetCamera->SetInstantUpdateOnNextFrame(true);
-			GetCamera->Update(0);
+			GetCamera->Update(1);
 		}
 		
 	    sig_map_changed(); //broadcast this to anybody who is interested

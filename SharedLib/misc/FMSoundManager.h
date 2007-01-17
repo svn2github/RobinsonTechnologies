@@ -6,12 +6,15 @@
 #ifndef FMSoundManager_HEADER_INCLUDED // include guard
 #define FMSoundManager_HEADER_INCLUDED  // include guard
 
-#include <vector>
-#include <string>
-#include "ISoundManager.h"
+#ifdef _CLANLIB
+#include "MiscUtils.h"
+#else
+#include "all.h" //my old basecode for dungeon scroll
+#endif
 
-using namespace std;
-#include <fmod.h>
+#include "ISoundManager.h"
+#include "fmod.h"
+
 
 class CFMSound
 {
@@ -47,6 +50,7 @@ public:
     virtual void KillChannel(int i_channel);
     virtual bool IsInitted() {return m_b_ready;}
     virtual bool IsMusicPlaying();
+	void Preload(const char *p_fname);
 
 private:
 

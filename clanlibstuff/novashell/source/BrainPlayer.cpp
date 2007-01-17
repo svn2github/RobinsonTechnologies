@@ -164,7 +164,7 @@ void BrainPlayer::OnKeyUp(const CL_InputEvent &key)
 	}
 }
 
-void BrainPlayer::AttemptToJump()
+void BrainPlayer::AttemptToJump(float step)
 {
 	if (m_pParent->IsOnGround() && m_jumpTimer < GetApp()->GetGameTick())
 	{
@@ -172,7 +172,7 @@ void BrainPlayer::AttemptToJump()
 		m_jumpTimer = GetApp()->GetGameTick()+C_PLAYER_JUMP_AGAIN_LENGTH_MS;
 		m_jumpBurstTimer = GetApp()->GetGameTick()+C_PLAYER_JUMP_SECOND_BURST_MS;
 		m_bAppliedSecondJumpForce = false;
-		m_curJumpForce = C_PLAYER_JUMP_INITIAL_FORCE * m_pParent->GetScale().y;
+		m_curJumpForce =  (C_PLAYER_JUMP_INITIAL_FORCE * m_pParent->GetScale().y) ;
 		m_pParent->SetIsOnGround(false); //don't wait for the ground timer to run out
 		g_pSoundManager->PlayMixed(m_jumpSound.c_str());
 		m_pParent->GetBody()->GetLinVelocity().y = 0;
@@ -418,9 +418,10 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 		//LogMsg("Move angle: %s", PrintVector(m_moveAngle).c_str());
 		
 		force = CL_Vector2(m_moveAngle)*desiredSpeed;
-		CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
+		CL_Vector2 curForce = m_pParent->GetLinearVelocity(); //figure out what needs to change to get our desired total force
 		force = force-curForce;
 	
+		//force /= step;
 		Clamp(force.x, -accelPower, accelPower); //limit force to accel power
 
 		if (!m_pParent->IsOnGround() || m_jumpTimer > GetApp()->GetGameTick())
@@ -448,13 +449,13 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 		{
 			if (!m_bAppliedSecondJumpForce)
 			{
-				force.y = -m_curJumpForce;
+				force.y = - (m_curJumpForce);
 				m_curJumpForce = C_PLAYER_JUMP_SECOND_FORCE;
 				m_bAppliedSecondJumpForce = true;
 			} else
 			{
 
-				force.y = -m_curJumpForce;
+				force.y = - (m_curJumpForce);
 				m_curJumpForce *= C_PLAYER_JUMP_FORCE_WEAKEN_MULT;
 			}
 		}
@@ -474,6 +475,10 @@ void BrainPlayer::CalculateForce(CL_Vector2 &force, float step)
 				}
 		}
 	}
+
+
+
+
 }
 
 void BrainPlayer::CheckForAttack()
@@ -513,7 +518,7 @@ void BrainPlayer::UpdateMovement(float step)
 		if ( m_Keys & C_KEY_UP && !m_pParent->GetOnLadder())
 		{
 			m_bRequestJump = false;
-			AttemptToJump();
+			AttemptToJump(step);
 		}
 
 		//if not moving, force idle state

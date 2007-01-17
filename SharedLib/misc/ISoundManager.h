@@ -10,9 +10,14 @@
 #ifndef ISoundManager_h__
 #define ISoundManager_h__
 
-#include "MiscUtils.h"
-
+#ifndef _OLD_LIBRARY
+	#include "MiscUtils.h"
+#else
+	#include "all.h" //my old basecode for dungeon scroll
+#endif
 #include <cassert>
+
+using namespace std;
 
 #define C_SOUND_NONE 0
 

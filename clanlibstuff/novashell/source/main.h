@@ -152,7 +152,7 @@ public:
 	void SetGameLogicSpeed(float fNew);
 	void SetGameSpeed(float fNew);
 	void SetGameTick(unsigned int num);
-	unsigned int GetTick(){return CL_System::get_time();}
+	unsigned int GetTick(){return m_lastFrameTime;}
 	bool ParmExists(const string &parm);
 	void SetSimulationSpeedMod(float fNew) {m_simulationSpeedMod = fNew;}
 	float GetSimulationSpeedMod() {return m_simulationSpeedMod;}

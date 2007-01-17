@@ -44,13 +44,13 @@ File: Overview  (main.h)
 
 Group: Objects  {
 
+   File: App  (main.cpp)
    File: GameLogic  (GameLogic.h)
+   File: Entity  (EntityBindings.cpp)
    File: MaterialManager  (MaterialManager.h)
    File: Material  (physics\Contact.h)
-   File: Misc Objects  (MiscClassBindings.cpp)
-   File: App  (main.cpp)
-   File: Entity  (EntityBindings.cpp)
    File: Math Related Objects  (VectorBindings.cpp)
+   File: Misc Objects  (MiscClassBindings.cpp)
    }  # Group: Objects
 
 File: Global Functions  (GlobalScriptFunctionBindings.cpp)

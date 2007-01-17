@@ -178,11 +178,17 @@ void BrainTopPlayer::CalculateForce(float step)
 {
 	float accelPower = C_PLAYER_ACCEL_POWER;
 
-	CL_Vector2 curForce = m_pParent->GetLinearVelocity()/step; //figure out what needs to change to get our desired total force
+	//LogMsg("Step: %.3f", step);
+	CL_Vector2 curForce = m_pParent->GetLinearVelocity(); //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
+
+	//m_force /= step;
 
 	Clamp(m_force.x, -accelPower, accelPower); //limit force to accel power
 	Clamp(m_force.y, -accelPower, accelPower); //limit force to accel power
+
+	m_force *= step;
+
 }
 
 void BrainTopPlayer::CheckForWarp()
@@ -227,7 +233,14 @@ void BrainTopPlayer::UpdateMovement(float step)
 
 	//LogMsg("Cur Linear: %.2f, %.2f  Impulse: %.2f, %.2f", GetBody()->GetLinVelocity().x, GetBody()->GetLinVelocity().y, force.x, force.y);
 
+
+	
+	//m_force /= step;
+
+	//LogMsg("Force applied: %s", PrintVector(m_force).c_str());
+
 	m_pParent->AddForce(m_force);
+
 
 	if (m_pParent->GetBody()->GetLinVelocity().Length() > 1)
 	{

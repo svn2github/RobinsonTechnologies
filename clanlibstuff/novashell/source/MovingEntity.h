@@ -125,9 +125,8 @@ public:
   int GetAnimFrame();
   void SetListenCollisionStatic(int eListen) {m_listenCollisionStatic = eListen;}
   int GetListenCollisionStatic() {return m_listenCollisionStatic;}
-  void AddForce(CL_Vector2 force) {m_body.AddForce( (*(Vector*)&force)*m_body.GetMass() );}
-  void AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque) {m_body.AddForce( (*(Vector*)&force)*m_body.GetMass(),
-	  (*(Vector*)&torque)*m_body.GetMass());}
+  void AddForce(CL_Vector2 force);
+  void AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque);
   CL_Vector2 GetForce() {return *(CL_Vector2*)&m_body.GetNetForce();};
   CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_body.GetLinVelocity();}
   void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}

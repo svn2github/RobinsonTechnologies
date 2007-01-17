@@ -50,7 +50,7 @@ protected:
 	void OnKeyDown(const CL_InputEvent &key);
 	void OnMouseUp(const CL_InputEvent &key);
 	void UpdateMovement(float step);
-	void AttemptToJump();
+	void AttemptToJump(float step);
 	void PostUpdate(float step);
 	void CheckForLadder();
 	void OnAction();

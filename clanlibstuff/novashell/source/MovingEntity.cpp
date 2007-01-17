@@ -2258,6 +2258,18 @@ if (GetGameLogic->GetGamePaused()) return;
 	
 }
 
+void MovingEntity::AddForce(CL_Vector2 force)
+{
+	assert(GetApp()->GetDelta() != 0);
+	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass()) / GetApp()->GetDelta() );
+}
+
+void MovingEntity::AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque)
+{
+	m_body.AddForce( (*(Vector*)&force)*m_body.GetMass(), (*(Vector*)&torque)*m_body.GetMass());
+}
+
+
 void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
 {
 	if (!bIsOnScreen)
@@ -2328,22 +2340,25 @@ void MovingEntity::PostUpdate(float step)
 		float gravity = pWorld->GetGravity();
 		if (gravity != 0)
 		{
-			if ( (m_body.GetLinVelocity().y /step) < C_MAX_FALLING_DOWN_SPEED)
+			if ( (m_body.GetLinVelocity().y) < C_MAX_FALLING_DOWN_SPEED)
 			{
-				m_body.AddForce(Vector(0, pWorld->GetGravity() * m_body.GetMass()) * step);
+		//		LogMsg("Dampening: %.2f", (pWorld->GetGravity() * m_body.GetMass()) );
+				//AddForce(CL_Vector2(0, pWorld->GetGravity() ));
+				m_body.AddForce(Vector(0, (pWorld->GetGravity() * m_body.GetMass()) ));
 			}
 			
 			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
 			{
-	
-			if (!m_brainManager.GetBrainBase() && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
-				&& GetBody()->GetAngVelocity() < 0.01f)
-			{
-				//slow down
-				set_float_with_target(&m_body.GetLinVelocity().x, 0, groundDampening * step);
-				set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening* step);
-				set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening* step);
-			}
+		
+				if (!m_brainManager.GetBrainBase() && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
+					&& GetBody()->GetAngVelocity() < 0.01f)
+				{
+					//slow down
+					//LogMsg("Dampening: %.2f", groundDampening / step);
+					set_float_with_target(&m_body.GetLinVelocity().x, 0, groundDampening * step);
+					set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening * step);
+					set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening *step);
+				}
 			}
 
 		} else
@@ -2369,7 +2384,6 @@ void MovingEntity::PostUpdate(float step)
 
 		//get ready for next frame
 		m_bTouchedAGroundThisFrame = false;
-
 		
 	}
 

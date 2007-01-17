@@ -1,6 +1,5 @@
 #include "FMSoundManager.h"
 #include <fmod_errors.h> 
-#include "MiscUtils.h"
 
 CFMSoundManager::CFMSoundManager()
 {
@@ -84,6 +83,10 @@ CFMSound * CFMSoundManager::PreloadSound(const char *p_fname)
    //invalidate this pointer!
 }
 
+void CFMSoundManager::Preload(const char *p_fname)
+{
+	PreloadSound(p_fname);
+}
 
 int CFMSoundManager::PlayMixed(const char *p_fname)
 {

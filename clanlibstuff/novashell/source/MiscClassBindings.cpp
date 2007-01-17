@@ -169,8 +169,8 @@ myColor = Color(255,255,255,255);
 		.def("InitGameGUI", &GameLogic::InitGameGUI)
 
 		,class_<App>("App")
-		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)
-		.def("SetGameSpeed", &App::SetGameSpeed)
+//		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)
+	//	.def("SetGameSpeed", &App::SetGameSpeed)
 		.def("GetGameTick", &App::GetGameTick)
 		.def("GetTick", &App::GetTick)
 		.def("ParmExists", &App::ParmExists)

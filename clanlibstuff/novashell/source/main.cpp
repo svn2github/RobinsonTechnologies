@@ -88,11 +88,11 @@ App::App()
 	m_pHashedResourceManager = NULL;
 	m_gameTick = 0;
 	m_bRequestVideoInit = false;
-	m_baseGameSpeed = 1000.0f / 75.0f;
+	m_baseGameSpeed = 10;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-	m_engineVersion = 0.16f;
-	m_engineVersionString = "0.16";
+	m_engineVersion = 0.17f;
+	m_engineVersionString = "0.17";
 
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
@@ -233,14 +233,11 @@ void App::OneTimeInit()
   
 	m_bCursorVisible = true;
     m_WindowDescription.set_flipping_buffers(2);
-    m_WindowDescription.set_refresh_rate(75);
+    m_WindowDescription.set_refresh_rate(60);
 	SetRefreshType(FPS_AT_REFRESH);
-   
-	
-
+  
     m_pWindow = new CL_DisplayWindow(m_WindowDescription);
-    
-	
+  
 	g_Console.Init();
 
     m_pResourceManager = new CL_ResourceManager("base/resources.xml", false);
@@ -511,9 +508,7 @@ void App::OnKeyUp(const CL_InputEvent &key)
 void App::ClearTimingAfterLongPause()
 {
     m_lastFrameTime = CL_System::get_time();
-    m_delta = 1;
-    m_deltaTarget = 1;
-	m_thinkTicksToUse = 0;
+ 	m_thinkTicksToUse = 0;
 }
 
 void App::RequestAppExit()
@@ -533,7 +528,8 @@ void App::SetGameLogicSpeed(float fNew)
 }
 void App::ComputeSpeed()
 {
-	m_delta = GetGameLogicSpeed()/GetGameSpeed();
+	
+	m_delta = GetGameLogicSpeed()/(1000/60); 
 }
 
 void App::SetGameSpeed(float fNew)
@@ -549,14 +545,25 @@ void App::SetGameTick(unsigned int num)
 void App::Update()
 {
 	//figure out our average delta frame
-	unsigned int deltaTick = CL_System::get_time() -  m_lastFrameTime;
-
-	m_lastFrameTime = CL_System::get_time();
-
-	m_delta = GetGameLogicSpeed()/GetGameSpeed();
+	static unsigned int frameTime;
+	frameTime = CL_System::get_time();
+	unsigned int deltaTick = frameTime -  m_lastFrameTime;
+	m_lastFrameTime = frameTime;
 	m_thinkTicksToUse += (float(deltaTick) * m_simulationSpeedMod);
-	m_thinkTicksToUse = min(m_thinkTicksToUse, GetGameLogicSpeed()*5);
+	
+	if (deltaTick != 0)
+	{
+		//very important, here we set the min and max range of allowed logic updates.  Too small, and physics might break, too large and.. uh..
+		//well nothing bad should happen but still, 120 is probably enough for any monitor to "look smooth".
+		int logicMhz = max(60, 1000/deltaTick);
+		logicMhz = min(120, logicMhz);
+		SetGameLogicSpeed(1000 / logicMhz );
+	}
 
+
+	//LogMsg("Delta: %.2f", m_delta);
+
+#define C_MAX_TIME_PER_LOGIC_UPDATE_MS 200 //avoid mega slow down
 
 	while (m_thinkTicksToUse >= GetGameLogicSpeed())
 	{
@@ -568,7 +575,18 @@ void App::Update()
 		m_pGameLogic->Update(m_delta);
 		m_bJustRenderedFrame = false;
 		m_thinkTicksToUse -= GetGameLogicSpeed();
+		if ( frameTime + C_MAX_TIME_PER_LOGIC_UPDATE_MS < CL_System::get_time())
+		{
+			//our CPU can't keep up, skip the rest for now so we can get a visual update
+			m_thinkTicksToUse = 0;
+			break;
+
+
+		}
 	}
+
+
+	
 }
 
 void log_to_cout(const std::string &channel, int level, const std::string &message)
@@ -955,32 +973,6 @@ Returns:
 
 The current game time in milleseconds.
 
-func: SetGameLogicSpeed
-(code)
-void SetGameLogicSpeed( number updateMhz);
-(end)
-
-The idea here is that you can choose to update the game logic at 20 times a second, or 100, and everything will move the same speed.  However, if you want "super smooth" movement, it should match the video cards refresh rate.  By default, it goes fullscreen asking for 75 mhz, so normally you don't want to touch this.
-
-If you want to play with speed, use <SetSimulationSpeedMod>.
-
-Note:
-
-It doesn't quite work right yet, changing this DOES affect game speed, and it shouldn't, just don't touch it
-
-func: SetGameSpeed
-(code)
-nil SetGameSpeed(number baseGameSpeed)
-(end)
-
-Changing this should affect all gravity, physics and movement, but WITHOUT changing the speed of GetGameTick(), if that makes any sense.  It's sort of complicated.  Just don't touch it to be safe.
-
-If you want to play with speed, use <SetSimulationSpeedMod>.
-
-Note:
-
-Doesn't quite work as aspected yet anyway
-
 func: SetSimulationSpeedMod
 (code)
 nil SetSimulationSpeedMod( number speedModifier)
@@ -989,7 +981,7 @@ nil SetSimulationSpeedMod( number speedModifier)
 Setting this to 2 means the game will operate twice as fast. Setting to 0.5 would mean half speed (slow mooootion).
 
 Game Design Note:
-By default, TAB is assigned to make the game run fast using this, it's good for testing and I reccommend that you leave it in as it's handy for skipping slow sequences for players too.
+By default, TAB is assigned to make the game run fast using this, it's good for testing and I recommend that you leave it in as it's handy for skipping slow sequences for players too.
 
 Worried people will run super fast and cheat?:
 
