@@ -76,6 +76,9 @@ enum
 
 //this stream_redirector taken from a snippet taken from Gabriel Fleseriu's post on codeguru
 
+#define C_LOGGING_BUFFER_SIZE (4096*3)
+
+
 class stream_redirector
 {
 public:

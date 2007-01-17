@@ -26,7 +26,6 @@ ISoundManager *g_pSoundManager;
 App MyApp; //declare the main app global
 App * GetApp(){return &MyApp;}
 
-#define C_LOGGING_BUFFER_SIZE (4096*3)
 
 void LogMsg(const char *lpFormat, ...)
 {
@@ -34,7 +33,7 @@ void LogMsg(const char *lpFormat, ...)
 	va_list Marker;
     char szBuf[C_LOGGING_BUFFER_SIZE];
     va_start(Marker, lpFormat);
-    vsprintf_s(szBuf,C_LOGGING_BUFFER_SIZE, lpFormat, Marker);
+    vsprintf(szBuf, lpFormat, Marker);
     va_end(Marker);
     char stTemp[C_LOGGING_BUFFER_SIZE+256];
 
@@ -56,7 +55,7 @@ void LogError(const char *lpFormat, ...)
     va_list Marker;
     char szBuf[C_LOGGING_BUFFER_SIZE];
     va_start(Marker, lpFormat);
-	vsprintf_s(szBuf,C_LOGGING_BUFFER_SIZE, lpFormat, Marker);
+	vsprintf(szBuf, lpFormat, Marker);
 	va_end(Marker);
     char stTemp[C_LOGGING_BUFFER_SIZE+256];
 	g_Console.AddError(szBuf);

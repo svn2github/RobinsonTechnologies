@@ -362,6 +362,11 @@ int luaPrint(lua_State *L)
 		lua_pop(L, 1);  /* pop result */
 	}
 	//str += "\n";
+	if (str.length() > C_LOGGING_BUFFER_SIZE)
+	{
+		str.resize(C_LOGGING_BUFFER_SIZE);
+	}
+
 	LogMsg(str.c_str());
 	return 0;
 	

@@ -196,7 +196,12 @@ MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, boo
 
 void LogErrorLUA(const char *pMessage)
 {
-	LogError(pMessage);
+	string s = pMessage;
+	if (s.length() > C_LOGGING_BUFFER_SIZE)
+	{
+		s.resize(C_LOGGING_BUFFER_SIZE);
+	}
+	LogError(s.c_str());
 }
 
 bool RunScript(const string &scriptName)
