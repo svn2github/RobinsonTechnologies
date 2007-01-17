@@ -5,6 +5,8 @@
 #include "GameLogic.h"
 #include "EntWorldCache.h"
 #include "MovingEntity.h"
+#include "AppUtils.h"
+
 #define C_DEFAULT_LERP 0.3f
 
 Camera::Camera()
