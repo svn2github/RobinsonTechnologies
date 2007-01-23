@@ -57,6 +57,7 @@ public:
 	void LoadMainScript(const char *pScriptName);
     void RunFunction(const char *pFuncName);
 	void RunFunction(const char *pFuncName, bool bBool);
+	void RunFunction(const char *pFuncName, BaseGameEntity *pBaseGameEntity);
 	void RunString(const char *pString);
 
 	lua_State * GetMainState() {return m_pMainState;}

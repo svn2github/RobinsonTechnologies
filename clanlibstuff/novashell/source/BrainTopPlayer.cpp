@@ -305,7 +305,7 @@ void BrainTopPlayer::OnAction()
 	CL_Vector2 scanRectTopLeft = vStartPos;
 	CL_Vector2 scanRectBottomRight = vEndPos;
 
-	switch (m_pParent->GetFacing())
+	switch (  VectorToFacing(vFacing) )
 	{
 		case VisualProfile::FACING_DOWN:
 		case VisualProfile::FACING_UP:

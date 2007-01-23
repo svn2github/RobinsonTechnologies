@@ -313,7 +313,17 @@ void ScriptManager::RunFunction(const char *pFuncName, bool bBool)
 	{
 		ShowLUAMessagesIfNeeded(e.state(), 1);
 	}
+}
 
+void ScriptManager::RunFunction(const char *pFuncName, BaseGameEntity *pBaseGameEntity)
+{
+	try { 
+		luabind::call_function<void>(m_pMainState, pFuncName, pBaseGameEntity);
+	} catch 
+		(luabind::error &e)
+	{
+		ShowLUAMessagesIfNeeded(e.state(), 1);
+	}
 }
 
 void ScriptManager::RunString(const char *pString)

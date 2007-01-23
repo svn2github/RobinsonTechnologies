@@ -175,6 +175,8 @@ public:
   int GetFacing(){return m_facing;}
   void SetVectorFacing(const CL_Vector2 &v);
   void SetVectorFacingTarget(const CL_Vector2 &v);
+  int GetFacingTarget();
+
   CL_Vector2 GetVectorFacing();
   CL_Vector2 GetVectorFacingTarget();
  
@@ -259,7 +261,8 @@ public:
   bool GetRunUpdateEveryFrame() {return m_bRunUpdateEveryFrame;}
   void SetDampening(float f) {m_customDampening = f;}
   bool FunctionExists(const char * pFunctionName);
-
+  void SetTurnSpeed(float fNew) {m_turnSpeed = fNew;}
+  float GetTurnSpeed() {return m_turnSpeed;}
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -385,6 +388,7 @@ protected:
 	list<int> m_attachedEntities; 
 	bool m_bRunUpdateEveryFrame;
 	float m_customDampening;
+	float m_turnSpeed;
 
 };
 

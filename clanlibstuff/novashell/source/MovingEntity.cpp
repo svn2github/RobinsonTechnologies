@@ -23,6 +23,7 @@
 //provides a work around
 #define C_TICKS_ON_GROUND_NEEDED_TO_TRIGGER_GROUND 1
 
+#define C_DEFAULT_TURN_SPEED 0.1f
 
 #define C_DEFAULT_DENSITY 0.4f
 
@@ -294,6 +295,7 @@ void MovingEntity::SetDefaults()
 	m_bLockedScale = false;
 	m_attachEntID = C_ENTITY_NONE;
 	m_text.clear();
+	m_turnSpeed = C_DEFAULT_TURN_SPEED;
 	m_textRect = CL_Rect(0,0, 1024, 1024);
 	ClearColorMods();
 	m_requestNewLayerID = C_LAYER_NONE;
@@ -496,6 +498,12 @@ void MovingEntity::SetFacingTarget(int facing)
 	SetVectorFacingTarget(FacingToVector(facing));
 }
 
+int MovingEntity::GetFacingTarget()
+{
+	return VectorToFacing(m_vecFacingTarget);
+}
+
+
 void MovingEntity::SetVisualState(int visualState)
 {
 	if (m_visualState != visualState) 
@@ -534,6 +542,7 @@ CL_Vector2 MovingEntity::GetVectorFacingTarget()
 
 void MovingEntity::SetName(const std::string &name)
 {
+	
 	SetNameEx(name, true);
 
 }

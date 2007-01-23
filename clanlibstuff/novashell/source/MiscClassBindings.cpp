@@ -237,6 +237,7 @@ myColor = Color(255,255,255,255);
 		.def("SetTargetPos", &Camera::SetTargetPos)
 		.def("SetTargetPosCentered", &Camera::SetTargetPosCentered)
 		.def("SetEntityTrackingByID", &Camera::SetEntTracking)
+		.def("GetEntityTrackingByID", &Camera::GetEntTracking)
 		.def("InstantUpdate", &Camera::InstantUpdate)
 		.def("SetScale", &Camera::SetScale)
 		.def("SetScaleTarget", &Camera::SetScaleTarget)
@@ -252,11 +253,18 @@ myColor = Color(255,255,255,255);
 		.def("GetID", &TagObject::GetID)
 		.def("GetPos", &TagObject::GetPos)
 
+		,class_<Zone>("Zone")
+		.def_readwrite("boundingRect", &Zone::m_boundingRect)
+		.def_readwrite("entityID", &Zone::m_entityID)
+		.def_readwrite("materialID", &Zone::m_materialID)
+		.def_readwrite("vPos", &Zone::m_vPos)
+
 		,class_<CameraSetting>("CameraSettings")
 
 		,class_<ScriptKeyManager>("InputManager")
 		.def("AddBinding", &ScriptKeyManager::AddBinding)
 		.def("RemoveBinding", &ScriptKeyManager::RemoveBinding)
+		.def("RemoveBindingsByEntity", &ScriptKeyManager::RemoveBindingsByEntity)
 		.def("GetMousePos", &ScriptKeyManager::GetMousePos)
 		.def("SetMousePos", &ScriptKeyManager::SetMousePos)
 

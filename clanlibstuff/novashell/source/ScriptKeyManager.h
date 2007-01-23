@@ -17,6 +17,8 @@ enum
 	C_INPUT_GAME_AND_EDITOR
 };
 
+class MovingEntity;
+
 class KeyInfo
 {
 public:
@@ -61,6 +63,7 @@ public:
 	int StringToInputID(vector<string> & word, const string & keyName);
 	bool RemoveBinding(const string &keyName, const string &callbackFunction, int entityID);
 	void PrintStatistics();
+	void RemoveBindingsByEntity(MovingEntity *pEnt);
 
 protected:
 	

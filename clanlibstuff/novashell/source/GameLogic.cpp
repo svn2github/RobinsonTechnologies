@@ -381,7 +381,10 @@ bool GameLogic::Init()
 {
 
 	assert(!GetWorld);
-	g_pSoundManager->Init();
+	if (g_pSoundManager)
+	{
+		g_pSoundManager->Init();
+	}
 
 	g_VFManager.Reset();
 
@@ -554,7 +557,7 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 	if (pNew)
 	{
 		m_pPlayer = pNew;
-		luabind::globals(GetScriptManager->GetMainState())["g_PlayerID"] = m_pPlayer->ID();
+		luabind::globals(GetScriptManager->GetMainState())["g_playerID"] = m_pPlayer->ID();
 
 		if (m_pPlayer->GetBrainManager()->GetBrainBase())
 		{
@@ -575,7 +578,7 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 				GetCamera->SetEntTracking(0);
 			}
 		}
-		luabind::globals(GetScriptManager->GetMainState())["g_PlayerID"] = 0;
+		luabind::globals(GetScriptManager->GetMainState())["g_playerID"] = 0;
 		m_pPlayer = pNew;
 	}
 
@@ -706,7 +709,11 @@ void GameLogic::Kill()
 
 	LogMsg("Initializing GameLogic");
 
-	g_pSoundManager->Kill();
+	if (g_pSoundManager)
+	{
+		g_pSoundManager->Kill();
+	}
+
 	g_MessageManager.Reset();
 	
 	m_strUserProfileName.clear();

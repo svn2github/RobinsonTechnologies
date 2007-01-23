@@ -2,7 +2,7 @@
 #include "StateTopWalk.h"
 #include "MovingEntity.h"
 
-StateTopWalk registryInstanceStateTopWalk(NULL); //self register ourselves i nthe brain registry
+StateTopWalk registryInstanceStateTopWalk(NULL); //self register ourselves in the brain registry
 
 StateTopWalk::StateTopWalk(MovingEntity * pParent):State(pParent)
 {
@@ -38,7 +38,7 @@ void StateTopWalk::OnRemove()
 
 void StateTopWalk::Update(float step)
 {
-	if (m_pParent->IsFacingTarget(1))
+	if (m_pParent->IsFacingTarget(0.5))
 	{
 		m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce( m_pParent->GetVectorFacing() * m_pParent->GetDesiredSpeed() );
 	}

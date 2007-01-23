@@ -16,6 +16,7 @@ BrainTopSeek::BrainTopSeek(MovingEntity * pParent):Brain(pParent)
 	}
 
 	m_vecTarget = CL_Vector2::ZERO;
+	m_bUsingTarget = false;
 	//LogMsg("Top seek added");
 }
 
@@ -33,24 +34,29 @@ void BrainTopSeek::OnRemove()
 void BrainTopSeek::Update(float step)
 {
 	
-	CL_Vector2 v(m_vecTarget-m_pParent->GetPos());
-	
-	float dist = v.length();
-	v.unitize();
+	if (m_bUsingTarget)
+	{
+		CL_Vector2 v(m_vecTarget-m_pParent->GetPos());
 
-	m_pParent->SetVectorFacingTarget(v);
+		float dist = v.length();
+		v.unitize();
+
+		m_pParent->SetVectorFacingTarget(v);
+
+
+		dist = dist / 10;
+
+		if (dist < 1)
+		{
+			//close enough
+			m_pParent->HandleMessage(Message(C_MSG_SEEK_ARRIVED));
+		}
+
+	}
 
 	if (!m_pParent->GetBrainManager()->GetState() || m_pParent->GetBrainManager()->GetState()->GetName() != "TopWalk")
 	{
 		m_pParent->GetBrainManager()->SetStateByName("TopWalk");
-	}
-
-	dist = dist / 10;
-	
-	if (dist < 1)
-	{
-		//close enough
-		m_pParent->HandleMessage(Message(C_MSG_SEEK_ARRIVED));
 	}
 
 }
@@ -66,6 +72,7 @@ void BrainTopSeek::HandleMsg(const string &msg)
 		if (words[0] == "target")
 		{
 			m_vecTarget = StringToVector(words[1]);
+			m_bUsingTarget = true;
 		} else
 		{
 			LogMsg("Brain %s doesn't understand keyword %s", GetName(), words[0].c_str());

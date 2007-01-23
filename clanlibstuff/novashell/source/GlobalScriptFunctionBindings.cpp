@@ -220,6 +220,110 @@ bool RunScript(const string &scriptName)
 }
 
 
+MovingEntity * GetEntityByRay(World * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int actionRange, int raySpread, MovingEntity *pEntToIgnore)
+{
+
+	TileEntity *pTileEnt;
+	CL_Vector2 vEndPos;
+	vEndPos = vStartPos + (vFacing * actionRange);
+
+	CL_Vector2 vCross = vFacing.cross();
+	CL_Vector2 vColPos;
+
+	Tile *pTile = NULL;
+
+	tile_list tilelist;
+
+	CL_Vector2 scanRectTopLeft = vStartPos;
+	CL_Vector2 scanRectBottomRight = vEndPos;
+
+	
+if (raySpread != 0) 
+{
+	switch (  VectorToFacing(vFacing) )
+	{
+	case VisualProfile::FACING_DOWN:
+	case VisualProfile::FACING_UP:
+	case VisualProfile::FACING_LEFT:
+	case VisualProfile::FACING_RIGHT:
+
+		scanRectTopLeft -= vCross * raySpread*4;
+		scanRectBottomRight += vCross * raySpread*4;
+		break;
+
+
+	}
+}
+
+	CL_Rect r(scanRectTopLeft.x, scanRectTopLeft.y, scanRectBottomRight.x, scanRectBottomRight.y);
+
+	//expand it to cover the other places we're going to scan
+
+	pMap->GetMyWorldCache()->AddTilesByRect(r, &tilelist,pMap->GetLayerManager().GetCollisionList(), true);
+	GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pEntToIgnore->GetTile(), C_TILE_TYPE_ENTITY );
+
+		//DrawRectFromWorldCoordinates(CL_Vector2(r.left, r.top), CL_Vector2(r.right, r.bottom),  CL_Color::white, CL_Display::get_current_window()->get_gc());
+		//DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
+if (raySpread != 0)
+{
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * raySpread;
+
+		GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pEntToIgnore->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+	
+//	DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * -(raySpread*2);
+		GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pEntToIgnore->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+	//	DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
+
+
+	//try even more
+
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * (raySpread*3);
+		vStartPos += vCross * raySpread;
+		GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pEntToIgnore->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+//		DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
+	if (!pTile)
+	{
+		//try again
+		vEndPos += vCross * -(raySpread*4);
+		vStartPos += vCross * (-raySpread*2);
+		GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pEntToIgnore->GetTile(), C_TILE_TYPE_ENTITY );
+	}
+//		DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+
+}
+
+
+
+//	CL_Display::flip(2); //show it now
+	if (pTile)
+	{
+		//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
+		pTileEnt = static_cast<TileEntity*>(pTile);
+		return pTileEnt->GetEntity();
+	}
+
+	return NULL; //nothing useful found
+}
+
+
+
 /*
 Section: Global Functions
 These functions are global and can be run from anywhere, they aren't attached to any specific object.
@@ -268,7 +372,8 @@ void luabindGlobalFunctions(lua_State *pState)
 			def("RectToString", &RectToString),
 			//func: StringToRect
 			//
-			def("StringToRect", &StringToRect)
+			def("StringToRect", &StringToRect),
+			def("GetEntityByRay", &GetEntityByRay)
 
 			//Group: -=-=-=-=-=-
 		];

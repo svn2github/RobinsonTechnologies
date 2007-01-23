@@ -105,10 +105,45 @@ int ScriptKeyManager::StringToInputID(vector<string> & word, const string & keyN
 	if (keyId == C_KEY_UNASSIGNED)
 	{
 
-		LogError("Error converting %s to an input ID. (must be lower case!)", keyName.c_str());
+		LogError("Error converting %s to an input ID. (must be lower case, also, don't use 'always' with only the control key)", keyName.c_str());
 	}
 
 	return keyId;
+}
+
+void ScriptKeyManager::RemoveBindingsByEntity(MovingEntity *pEnt)
+{
+
+	ScriptKeyMap::iterator itor = m_map.begin();
+
+	for (;itor != m_map.end();)
+	{
+
+		vector<KeyInfo> &ki = itor->second;
+
+		for (vector<KeyInfo>::iterator kitor = ki.begin(); kitor != ki.end(); )
+		{
+			if ( (*kitor).m_entityID == pEnt->ID())
+			{
+				//remove this
+				kitor = ki.erase(kitor);
+				continue;
+			}
+
+			kitor++;
+
+		}
+
+		if (ki.empty())
+		{
+			itor = m_map.erase(itor);
+			continue;
+		}
+
+
+		itor++;
+	}
+
 }
 
 bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callbackFunction, int entityID)
@@ -188,6 +223,13 @@ bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callba
 		{
 			//we found it!
 			ki.erase( (++ritor).base()); //weirdness to convert it to a normal iterator
+			
+			if (ki.empty())
+			{
+				//we might as well kill this old thing, nothing left in the array
+				m_map.erase(itor);
+			}
+
 			return true;
 		}
 

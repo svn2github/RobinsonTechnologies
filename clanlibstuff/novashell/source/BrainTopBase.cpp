@@ -2,7 +2,7 @@
 #include "BrainTopBase.h"
 #include "MovingEntity.h"
 
-BrainTopBase registryInstanceBrainTopBase(NULL); //self register ourselves i nthe brain registry
+BrainTopBase registryInstanceBrainTopBase(NULL); //self register ourselves in the brain registry
 
 BrainTopBase::BrainTopBase(MovingEntity * pParent):Brain(pParent)
 {
@@ -53,7 +53,6 @@ void BrainTopBase::AddWeightedForce(const CL_Vector2 & force)
 void BrainTopBase::OnAdd()
 {
 	m_pParent->GetBrainManager()->SetBrainBase(this);
-	m_turnSpeed = 0.1f;
 	ResetForNextFrame();
 }
 
@@ -70,7 +69,7 @@ void BrainTopBase::Update(float step)
 	m_force *= step;
 
 	
-		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_turnSpeed *step);
+		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_pParent->GetTurnSpeed() *step);
 
 //		LogMsg("Adding force: %s", PrintVector(m_force).c_str());
 

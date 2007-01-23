@@ -31,6 +31,7 @@ protected:
 	
 
 	CL_Vector2 m_vecTarget;
+	bool m_bUsingTarget;
 
 private:
 };

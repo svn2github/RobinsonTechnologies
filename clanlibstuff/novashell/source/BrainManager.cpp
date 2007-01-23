@@ -227,6 +227,27 @@ Brain * BrainManager::GetBrainByName(const string &brainName)
 
 	return NULL; //couldn't find this brain
 }
+
+int BrainManager::Remove(const string &brainName)
+{
+	int count = 0;
+	brain_vector::iterator itor = m_brainVec.begin();
+	while (itor != m_brainVec.end())
+	{
+		if ( !(*itor)->GetDeleteFlag())
+			if ( (*itor)->GetName() == brainName)
+			{
+				//found it
+				count++;
+				(*itor)->SetDeleteFlag(true);
+			}
+			itor++;
+	}
+
+	return count;
+}
+
+
 void BrainManager::SetBrainBase(Brain *pBrain)
 {
 	if (m_pBrainBase)

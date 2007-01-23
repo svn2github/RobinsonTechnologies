@@ -71,10 +71,9 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
 
 EntEditor::~EntEditor()
 {
-	GetScriptManager->RunFunction("OnCloseEditor");
- 	SetCameraToTrackPlayer();
+	SetCameraToTrackPlayer();
 	DisableAllModes();
-	
+
 	SAFE_DELETE(m_pListBoxWorld);
 	SAFE_DELETE(m_pWorldListWindow);
 
@@ -89,6 +88,7 @@ EntEditor::~EntEditor()
 	GetGameLogic->SetGamePaused(false); //unpause the game if it was
 	GetGameLogic->SetEditorActive(false);
 	//GetApp()->GetGUI()->close();
+	GetScriptManager->RunFunction("OnCloseEditor");
 
 }
 

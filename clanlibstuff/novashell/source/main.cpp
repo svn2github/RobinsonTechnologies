@@ -235,7 +235,7 @@ void App::OneTimeInit()
   
 	m_bCursorVisible = true;
     m_WindowDescription.set_flipping_buffers(2);
-    m_WindowDescription.set_refresh_rate(60);
+    m_WindowDescription.set_refresh_rate(75);
 	SetRefreshType(FPS_AT_REFRESH);
   
     m_pWindow = new CL_DisplayWindow(m_WindowDescription);

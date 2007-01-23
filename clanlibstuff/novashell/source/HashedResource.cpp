@@ -298,7 +298,7 @@ bool HashedResource::Init()
 	
 	if (m_bColorKeyActive)
 	{	
-		//OPTIMIZEL: load image again, this time it will know to substute the colorkey.  This is a waste of time, but
+		//OPTIMIZE: load image again, this time it will know to substitute the colorkey.  This is a waste of time, but
 		//we need to know the image dimensions (which can change) before loading the col data with the current
 		//setup.
 

@@ -133,6 +133,9 @@ Group: Member Functions
 			.def("GetMass", &MovingEntity::GetMass)
 			.def("SetDesiredSpeed", &MovingEntity::SetDesiredSpeed)
 			.def("SetMaxWalkSpeed", &MovingEntity::SetMaxWalkSpeed)
+			.def("SetTurnSpeed", &MovingEntity::SetTurnSpeed)
+			.def("GetTurnSpeed", &MovingEntity::GetTurnSpeed)
+
 			.def("AddForce", &MovingEntity::AddForce)
 			.def("Stop", &MovingEntity::Stop)
 			.def("AddForceAndTorque", &MovingEntity::AddForceAndTorque)
@@ -149,7 +152,10 @@ Group: Member Functions
 			.def("SetSpriteByVisualStateAndFacing", &MovingEntity::SetSpriteByVisualStateAndFacing)
 			.def("GetFacing", &MovingEntity::GetFacing)
 			.def("SetFacing", &MovingEntity::SetFacing)
+
 			.def("SetFacingTarget", &MovingEntity::SetFacingTarget)
+			.def("GetFacingTarget", &MovingEntity::GetFacingTarget)
+
 			.def("GetVectorFacing", &MovingEntity::GetVectorFacing)
 			.def("GetVectorFacingTarget", &MovingEntity::GetVectorFacingTarget)
 			.def("SetVectorFacing", &MovingEntity::SetVectorFacing)
@@ -224,6 +230,7 @@ Group: Member Functions
 			.def("GetRunUpdateEveryFrame", &MovingEntity::GetRunUpdateEveryFrame)
 			.def("SetDampening", &MovingEntity::SetDampening)
 
+			.def("GetActiveZoneByMaterialType", &MovingEntity::GetNearbyZoneByCollisionRectAndType)
 
 			//Group -=-=-=-
 	];

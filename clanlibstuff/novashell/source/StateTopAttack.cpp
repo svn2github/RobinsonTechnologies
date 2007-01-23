@@ -35,7 +35,7 @@ void StateTopAttack::Update(float step)
 
 void StateTopAttack::PostUpdate(float step)
 {
-	if (AnimIsLooping())
+	if (AnimIsLooping() && m_pParent->GetScriptObject()->FunctionExists("OnAttackLoop"))
 	{
 		m_pParent->RunFunction("OnAttackLoop");
 	}

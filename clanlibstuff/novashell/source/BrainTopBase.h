@@ -39,7 +39,6 @@ private:
 
 	CL_Vector2 m_force;
 	float m_maxForce;
-	float m_turnSpeed;
 };
 
 #endif // BrainTopBase_h__

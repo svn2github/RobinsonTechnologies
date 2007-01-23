@@ -42,6 +42,11 @@ EntChoiceDialog::EntChoiceDialog(const string &initMessage): BaseGameEntity(Base
 
 EntChoiceDialog::~EntChoiceDialog()
 {
+	if (GetApp() && GetApp()->GetMyScriptManager())	
+	{
+		GetApp()->GetMyScriptManager()->RunFunction("OnDialogClose", (BaseGameEntity*)this);
+	}
+
 	SAFE_DELETE(m_pListWorld);
 	SAFE_DELETE(m_pWindow);
 	GetApp()->GetMyGameLogic()->SetGamePaused(false);
@@ -119,7 +124,7 @@ void EntChoiceDialog::HandleMessageString(const std::string &msg)
 			if (m_startingSelection.empty()) m_startingSelection = m_choices[0].m_result; //default to first option
 			AddItems(); //add the first one
 			CalculateCenteredWindowPosition();
-			GetApp()->GetMyScriptManager()->RunFunction("OnDialogOpen");
+			GetApp()->GetMyScriptManager()->RunFunction("OnDialogOpen", (BaseGameEntity*)this);
 		} else
 	{
 		LogMsg("EntChoiceDialog: Don't know how to handle message %s", msg.c_str());
@@ -370,7 +375,7 @@ void EntChoiceDialog::OnSelection(int selItem)
 	}
 
 	m_chosenID =  m_pListWorld->get_item(m_pListWorld->get_current_item())->user_data;
-	GetApp()->GetMyScriptManager()->RunFunction("OnDialogSelection");
+	GetApp()->GetMyScriptManager()->RunFunction("OnDialogSelection", (BaseGameEntity*)this);
 	m_mode = removing;	
 	m_timer.SetIntervalReached();
 	m_curElementToPlace = m_pListWorld->get_count()-1;
@@ -379,7 +384,7 @@ void EntChoiceDialog::OnSelection(int selItem)
 
 void EntChoiceDialog::OnHighlighted(int index)
 {
-	GetApp()->GetMyScriptManager()->RunFunction("OnDialogChangeSelection");
+	GetApp()->GetMyScriptManager()->RunFunction("OnDialogChangeSelection",(BaseGameEntity*) this);
 }
 
 void EntChoiceDialog::FinalSelectionProcessing()
@@ -393,11 +398,13 @@ void EntChoiceDialog::FinalSelectionProcessing()
 		if (m_pParent)
 		{
 			try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), 
-				m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result);
+				m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result, (BaseGameEntity*)this);
 			} LUABIND_ENT_BRAIN_CATCH( ("Error while calling" + m_callbackFunctionName).c_str());
 		} else
 		{
 			LogMsg("ChoiceDialog: Can't send result %s, entity no longer exists", m_choices[m_chosenID].m_result.c_str());
 		}
 	}
+
+
 }

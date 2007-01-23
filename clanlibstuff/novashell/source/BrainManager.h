@@ -64,6 +64,7 @@ public:
 	BrainManager();
 	virtual ~BrainManager();
 	Brain * Add(const string &brainName, const string &initMsg);
+	int Remove(const string &brainName); //returns how many brains were removed
 	void SetParent(MovingEntity *pEnt) {m_pParent = pEnt;}
 
 	void Kill();
@@ -83,7 +84,6 @@ public:
 	State * SetState(State *pState);
 	State * SetStateByName(const string &stateName);
 	const char * GetStateByName();
-
 	Brain * GetBrainBase(){return m_pBrainBase;}
 	void SetBrainBase(Brain *pBrain);
 
