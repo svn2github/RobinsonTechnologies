@@ -10,9 +10,9 @@
 
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
-Goal_Say::Goal_Say(MovingEntity* pBot,	const string &msg, int entID, int entToFaceID):
+Goal_Say::Goal_Say(MovingEntity* pBot,	const string &msg, int entID, int entToFaceID, int delayMS):
 
-Goal<MovingEntity>(pBot, goal_say), m_text(msg), m_entID(entID), m_entToFaceID(entToFaceID)
+Goal<MovingEntity>(pBot, goal_say), m_text(msg), m_entID(entID), m_entToFaceID(entToFaceID),m_waitOverrideMS(delayMS)
 {
 	m_delayTimer = 0;
 }
@@ -44,12 +44,11 @@ void Goal_Say::Activate()
 
 	if (!m_text.empty())
 	{
-
-	
+		
 		m_delayTimer = GetApp()->GetGameTick()+g_textManager.Add(m_text, pEnt);
 	} else
 	{
-		m_delayTimer = 100;
+		m_delayTimer = GetApp()->GetGameTick()+100;
 	}
 
 	if (m_delayTimer != 0 && m_entToFaceID != VisualProfile::FACING_NONE)
@@ -68,6 +67,12 @@ void Goal_Say::Activate()
 			}
 		}
 	}
+
+	if (m_waitOverrideMS != -1)
+	{
+		m_delayTimer = GetApp()->GetGameTick()+m_waitOverrideMS;
+	}
+
 }
 
 

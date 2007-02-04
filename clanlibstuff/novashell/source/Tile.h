@@ -41,6 +41,7 @@ public:
 	const CL_Vector2 & GetScale() {return m_vecScale;}
 	virtual void SetScale(const CL_Vector2 &v);
 	virtual const CL_Vector2 & GetPos() {return m_vecPos;}
+	CL_Vector2 GetPosSafe() {return GetPos();}
 	virtual void SetPos(const CL_Vector2 &vecPos) {m_vecPos = vecPos;}
 	bool IsEdgeCase() {return m_pEdgeCaseList != NULL;}
 	virtual Tile * CreateClone(); //must be handled in derived class
@@ -73,7 +74,6 @@ public:
 	CL_Color GetColor() {return m_color;}
 	int GetGraphNodeID() {return m_graphNodeID;}
 	void SetGraphNodeID(int id) {assert(m_graphNodeID == invalid_node_index); m_graphNodeID = id;}
-	
 enum
 {
  e_flippedX = D_BIT_0,

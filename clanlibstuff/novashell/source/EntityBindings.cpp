@@ -5,6 +5,7 @@
 #include "Brain.h"
 #include "State.h"
 #include "AI/Goal_Think.h"
+#include "ListBindings.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -19,6 +20,12 @@ using namespace luabind;
 string EntityToString(BaseGameEntity * pEnt)
 {
 	return "Entity " + CL_String::from_int(pEnt->ID()) + " (" + pEnt->GetName()+")";
+}
+
+
+TileList GetNearbyTileListForScript(MovingEntity *pEnt)
+{
+	return TileList(&pEnt->GetNearbyTileList());
 }
 
 void luabindEntity(lua_State *pState)
@@ -43,6 +50,7 @@ void luabindEntity(lua_State *pState)
 			,class_<BrainManager>("BrainManager")
 			.def("Add", &BrainManager::Add)
 			.def("SendToBrainByName", &BrainManager::SendToBrainByName)
+			.def("Remove", &BrainManager::Remove)
 			.def("AskBrainByName", &BrainManager::AskBrainByName)
 			.def("SetStateByName", &BrainManager::SetStateByName)
 			.def("GetStateByName", &BrainManager::GetStateByName)
@@ -55,7 +63,7 @@ void luabindEntity(lua_State *pState)
 			.def("GetName", &State::GetName)
 
 			,class_<BaseGameEntity>("BaseEntity")
-			.def("ID", &BaseGameEntity::ID)
+			.def("GetID", &BaseGameEntity::ID)
 			.def("GetName", &BaseGameEntity::GetName)
 			.def("SetName", &BaseGameEntity::SetName)
 			.def("__tostring", &EntityToString)
@@ -102,7 +110,7 @@ Group: Member Functions
 			A <Vector2> object containing the entity's position.
 			*/
 			
-			.def("GetPos", &MovingEntity::GetPos)
+			.def("GetPos", &MovingEntity::GetPosSafe)
 
 			/*
 			func: SetPos
@@ -132,18 +140,29 @@ Group: Member Functions
 			.def("SetMass", &MovingEntity::SetMass)
 			.def("GetMass", &MovingEntity::GetMass)
 			.def("SetDesiredSpeed", &MovingEntity::SetDesiredSpeed)
-			.def("SetMaxWalkSpeed", &MovingEntity::SetMaxWalkSpeed)
+			.def("SetMaxMovementSpeed", &MovingEntity::SetMaxWalkSpeed)
 			.def("SetTurnSpeed", &MovingEntity::SetTurnSpeed)
 			.def("GetTurnSpeed", &MovingEntity::GetTurnSpeed)
 
-			.def("AddForce", &MovingEntity::AddForce)
+			.def("SetGravityOverride", &MovingEntity::SetGravityOverride)
+			.def("GetGravityOverride", &MovingEntity::GetGravityOverride)
+
 			.def("Stop", &MovingEntity::Stop)
-			.def("AddForceAndTorque", &MovingEntity::AddForceAndTorque)
+			.def("StopX", &MovingEntity::StopX)
+			.def("StopY", &MovingEntity::StopY)
+			.def("AddForce", &MovingEntity::AddForceBurst)
+			.def("AddForceAndTorque", &MovingEntity::AddForceAndTorqueBurst)
+
+			.def("AddForceConstant", &MovingEntity::AddForce)
+			.def("AddForceAndTorqueConstant", &MovingEntity::AddForceAndTorque)
+
 			.def("GetLinearVelocity", &MovingEntity::GetLinearVelocity)
 			.def("SetPersistent", &MovingEntity::SetPersistent)
 			.def("GetPersistent", &MovingEntity::GetPersistent)
-			.def("InZoneByMaterialType", &MovingEntity::InZoneByMaterialType)
 			.def("GetOnLadder", &MovingEntity::GetOnLadder)
+			.def("GetOnGround", &MovingEntity::IsOnGround)
+			.def("GetOnGroundAccurate", &MovingEntity::IsOnGroundAccurate)
+			.def("SetOnGround", &MovingEntity::SetIsOnGround)
 			.def("SetDefaultTextColor", &MovingEntity::SetDefaultTextColor)
 			.def("Data", &MovingEntity::GetData)
 			.def("SetPosAndMapByTagName", &MovingEntity::SetPosAndMapByTagName)
@@ -160,6 +179,8 @@ Group: Member Functions
 			.def("GetVectorFacingTarget", &MovingEntity::GetVectorFacingTarget)
 			.def("SetVectorFacing", &MovingEntity::SetVectorFacing)
 			.def("SetVectorFacingTarget", &MovingEntity::SetVectorFacingTarget)
+			.def("IsFacingTarget", &MovingEntity::IsFacingTarget)
+
 			.def("SetVisualState", &MovingEntity::SetVisualState)
 			.def("GetVisualState", &MovingEntity::GetVisualState)
 			.def("GetLayerID", &MovingEntity::GetLayerID)
@@ -230,7 +251,14 @@ Group: Member Functions
 			.def("GetRunUpdateEveryFrame", &MovingEntity::GetRunUpdateEveryFrame)
 			.def("SetDampening", &MovingEntity::SetDampening)
 
+			.def("InZoneByMaterialType", &MovingEntity::InZoneByMaterialType)
+			.def("InNearbyZoneByMaterialType", &MovingEntity::InNearbyZoneByMaterialType)
 			.def("GetActiveZoneByMaterialType", &MovingEntity::GetNearbyZoneByCollisionRectAndType)
+			.def("GetNearbyZoneByMaterialType", &MovingEntity::GetNearbyZoneByPointAndType)
+			.def("GetWorldCollisionRect", &MovingEntity::GetWorldCollisionRect)
+			.def("GetCollisionRect", &MovingEntity::GetCollisionRect)
+
+			.def("GetNearbyTileList", &GetNearbyTileListForScript)
 
 			//Group -=-=-=-
 	];

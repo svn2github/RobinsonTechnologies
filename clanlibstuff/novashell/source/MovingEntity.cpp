@@ -5,7 +5,6 @@
 #include "EntWorldCache.h"
 #include "EntCollisionEditor.h"
 #include "ScriptManager.h"
-#include "BrainPlayer.h"
 #include "BrainShake.h"
 #include "VisualProfileManager.h"
 #include "physics/Contact.h"
@@ -26,6 +25,24 @@
 #define C_DEFAULT_TURN_SPEED 0.1f
 
 #define C_DEFAULT_DENSITY 0.4f
+
+#define C_GRAVITY_OVERRIDE_DISABLED 9999999
+
+Zone g_ZoneEmpty;
+
+class ZoneEmptyInit
+{
+public:
+	ZoneEmptyInit()
+	{
+		g_ZoneEmpty.m_entityID = C_ENTITY_NONE;
+		g_ZoneEmpty.m_materialID = CMaterial::C_MATERIAL_TYPE_NONE;
+		g_ZoneEmpty.m_vPos = CL_Vector2::ZERO;
+
+	}
+};
+
+ZoneEmptyInit zoneEmpty;
 
 MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
@@ -334,6 +351,7 @@ void MovingEntity::SetDefaults()
 	m_lastVisibilityNotificationID = INT_MAX; //it starts at 0, so max_int is better to use than 0 as the default
 	m_bOnScreen = false;
 	m_customDampening = -1;
+	m_gravityOverride = C_GRAVITY_OVERRIDE_DISABLED;
 
 }
 
@@ -768,12 +786,16 @@ int MovingEntity::PlaySoundPositioned(const string &fName)
 		return C_SOUND_NONE;
 	}
 	
+	if (!g_pSoundManager) return C_SOUND_NONE;
+
 	int hHandle = g_pSoundManager->Play(ProcessPath(fName).c_str());
 	return hHandle;
 }
 
 int MovingEntity::PlaySound(const string &fName)
 {
+	if (!g_pSoundManager) return C_SOUND_NONE;
+
 	int hHandle = g_pSoundManager->Play(ProcessPath(fName).c_str());
 	return hHandle;
 }
@@ -793,6 +815,12 @@ void MovingEntity::SetPos(const CL_Vector2 &new_pos)
 	m_body.GetPosition().x = new_pos.x;
 	m_body.GetPosition().y = new_pos.y;
 	m_bMovedFlag = true;
+
+	if (!m_strWorldToMoveTo.empty())
+	{
+		LogMsg("Warning: SetPos() command issued to Entity %d (%s) ignored, because a a map-move request was scheduled this frame",
+			ID(), GetName().c_str());
+	}
 }
 
 bool MovingEntity::SetPosAndMapByTagName(const string &name)
@@ -823,8 +851,6 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName)
 {
 
-
-
 	if (worldName != m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetName())
 	{
 //		LogMsg("Changing world to %s", worldName.c_str());
@@ -847,23 +873,25 @@ void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldNa
 }
 
 
-Zone * MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
+Zone MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
 {
+	
 	for (unsigned int i=0; i < m_zoneVec.size(); i++)
 	{
 		if (g_materialManager.GetMaterial(m_zoneVec[i].m_materialID)->GetType() == matType)
 		{
-			return &m_zoneVec[i]; //valid for the rest of this frame
+			return m_zoneVec[i]; //valid for the rest of this frame
 		}
 	}
 
- return NULL; //nothing found
+	return g_ZoneEmpty;
+
 }
 
-Zone * MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
+Zone MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
 {
 
-	if ( m_zoneVec.size() == 0) return NULL;
+	if ( m_zoneVec.size() == 0) return g_ZoneEmpty;
 
 	static CL_Rectf r;
 	r = m_pTile->GetWorldColRect();
@@ -874,16 +902,16 @@ Zone * MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
 		{
 			if (r.is_overlapped(m_zoneVec[i].m_boundingRect + *(CL_Pointf*)&(m_zoneVec[i].m_vPos)) )
 			{
-				return &m_zoneVec[i]; //valid for the rest of this frame
+				return m_zoneVec[i]; //valid for the rest of this frame
 			}
 			
 		}
 	}
 
-	return NULL; //nothing found
+	return g_ZoneEmpty;
 }
 
-Zone * MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType)
+Zone MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType)
 {
 	static CL_Vector2 v;
 	for (unsigned int i=0; i < m_zoneVec.size(); i++)
@@ -894,12 +922,13 @@ Zone * MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int mat
 			v -= m_zoneVec[i].m_vPos;
 			if (m_zoneVec[i].m_boundingRect.is_inside(*(CL_Pointf*)&(v)))
 			{
-				return &m_zoneVec[i]; //valid for the rest of this frame
+				return m_zoneVec[i]; //valid for the rest of this frame
 			}
 		}
 	}
 
-	return NULL; //nothing found
+	return g_ZoneEmpty;
+
 }
 
 void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
@@ -1347,9 +1376,9 @@ void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bo
 
 	if (N.y < -0.7f) //higher # here means allows a stronger angled surface to count as "ground"
 	{
+		//LogMsg("%s Touched ground of some sort", GetName().c_str());
 		m_bTouchedAGroundThisFrame = true;
 		m_floorMaterialID = pOtherBody->GetMaterial()->GetID();
-
 	}
 
 	if (pOtherBody->GetParentEntity() != 0)
@@ -1402,6 +1431,7 @@ void MovingEntity::SetIsOnGround(bool bOnGround)
 	if (bOnGround)
 	{
 		m_groundTimer = GetApp()->GetGameTick()+C_GROUND_RELAX_TIME_MS;
+		m_bTouchedAGroundThisFrame = true;
 	} else
 	{
 		m_groundTimer = 0;
@@ -1745,8 +1775,6 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 
 void MovingEntity::ApplyGenericMovement(float step)
 {
-	m_nearbyTileList.clear();
-	m_zoneVec.clear();
 
 	//schedule tile update if needed
 	m_bMovedFlag = true;
@@ -1791,6 +1819,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 
 		if (m_ticksOnGround >= C_TICKS_ON_GROUND_NEEDED_TO_TRIGGER_GROUND)
 		{
+			//LogMsg("%s turned on ground true", GetName().c_str());
 			SetIsOnGround(true);
 		}
 	} else
@@ -1851,14 +1880,22 @@ void MovingEntity::Stop()
 	GetBody()->GetNetForce() = Vector(0,0);
 	GetBody()->GetLinVelocity() = Vector(0,0);
 	GetBody()->GetAngVelocity() = 0;
-
-	if (GetBrainManager()->GetBrainBase())
-	{
-		//a brain may have it's own way to stop, for instance, releasing keys
-		GetBrainManager()->SendToBrainBase("stop");
-	}
-
 }
+
+void MovingEntity::StopY()
+{
+	GetBody()->GetNetForce().y = 0;
+	GetBody()->GetLinVelocity().y = 0;
+	GetBody()->GetAngVelocity() = 0;
+}
+
+void MovingEntity::StopX()
+{
+	GetBody()->GetNetForce().x = 0;
+	GetBody()->GetLinVelocity().x = 0;
+	GetBody()->GetAngVelocity() = 0;
+}
+
 void MovingEntity::Render(void *pTarget)
 {
 	
@@ -2151,6 +2188,8 @@ if (GetGameLogic->GetGamePaused()) return;
 		return;
 	}
 	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
+	m_bRanPostUpdate = false;
+	m_bRanApplyPhysics = false;
 
 	ClearColorMods();
 
@@ -2163,7 +2202,7 @@ if (GetGameLogic->GetGamePaused()) return;
 		} LUABIND_ENT_CATCH("Error while calling function Update");
 
 	}
-
+	
 	UpdateTriggers(step);
 
 	if (m_pGoalManager)
@@ -2181,12 +2220,46 @@ if (GetGameLogic->GetGamePaused()) return;
 	if (!m_bAnimPaused)
 	m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
 
+	if (!m_attachedEntities.empty())
+	{
+		list<int>::iterator itor;
+		MovingEntity *pEnt;
+
+		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
+		{
+
+			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
+			if (pEnt)
+			{
+				pEnt->Update(step);
+			} else
+			{
+				itor = m_attachedEntities.erase(itor);
+				continue;
+			}
+			itor++;
+
+		}
+	}
+
+	//get ready for next frame
+	m_bTouchedAGroundThisFrame = false;
+
+
+}
+
+void MovingEntity::ApplyPhysics(float step)
+{
 	//apply gravity and things
+	m_zoneVec.clear();
+
+	if (m_bRanApplyPhysics) return; else m_bRanApplyPhysics = true;
 
 	if (!GetBody()->IsUnmovable() && GetCollisionData())
 	{
 		//the draw ID let's other objects know that we've already processed
 		m_drawID = GetWorldCache->GetUniqueDrawID();
+
 		ApplyGenericMovement(step);
 	}
 
@@ -2194,7 +2267,7 @@ if (GetGameLogic->GetGamePaused()) return;
 	{
 		if (m_attachEntID == C_ENTITY_CAMERA)
 		{
-			
+
 			CL_Vector2 vPos = GetCamera->GetPos();
 
 			if (m_bLockedScale)
@@ -2235,7 +2308,7 @@ if (GetGameLogic->GetGamePaused()) return;
 				}
 
 			}
-		
+
 
 		}
 	} 
@@ -2247,35 +2320,45 @@ if (GetGameLogic->GetGamePaused()) return;
 	{
 		list<int>::iterator itor;
 		MovingEntity *pEnt;
-		
+
 		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
 		{
-			
+
 			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
 			if (pEnt)
 			{
-				pEnt->Update(step);
+				pEnt->ApplyPhysics(step);
 			} else
 			{
 				itor = m_attachedEntities.erase(itor);
 				continue;
 			}
 			itor++;
-			 
+
 		}
 	}
-	
 }
 
 void MovingEntity::AddForce(CL_Vector2 force)
 {
 	assert(GetApp()->GetDelta() != 0);
-	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass()) / GetApp()->GetDelta() );
+	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass())  );
+}
+
+void MovingEntity::AddForceBurst(CL_Vector2 force)
+{
+	assert(GetApp()->GetDelta() != 0);
+	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass()) / GetApp()->GetDelta()  );
 }
 
 void MovingEntity::AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque)
 {
 	m_body.AddForce( (*(Vector*)&force)*m_body.GetMass(), (*(Vector*)&torque)*m_body.GetMass());
+}
+
+void MovingEntity::AddForceAndTorqueBurst(CL_Vector2 force, CL_Vector2 torque)
+{
+	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass()) / GetApp()->GetDelta(),  ((*(Vector*)&torque)*m_body.GetMass()) / GetApp()->GetDelta());
 }
 
 
@@ -2320,7 +2403,10 @@ void MovingEntity::SetIsOnScreen(bool bNew)
 
 void MovingEntity::PostUpdate(float step)
 {
+	
 	if (GetGameLogic->GetGamePaused()) return;
+
+	if (m_bRanPostUpdate) return; else m_bRanPostUpdate = true;
 
 	if (m_bRequestsVisibilityNotifications)
 	{
@@ -2335,67 +2421,97 @@ void MovingEntity::PostUpdate(float step)
 	
 	m_brainManager.PostUpdate(step);
 
-	float groundDampening = 1.6f;
-	float angleDampening = 0.01f;
+	float groundDampening = 0.05f;
 
 	if (m_customDampening != -1) groundDampening = m_customDampening;
 	
 	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
 
-
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
 	{
-		float gravity = pWorld->GetGravity();
+		float gravity;
+
+		if (m_gravityOverride != C_GRAVITY_OVERRIDE_DISABLED)
+		{
+			gravity = m_gravityOverride;
+		} else
+		{
+			gravity = pWorld->GetGravity();
+		}
+
 		if (gravity != 0)
 		{
+			//change to allow gravity in any direction!
 			if ( (m_body.GetLinVelocity().y) < C_MAX_FALLING_DOWN_SPEED)
 			{
-		//		LogMsg("Dampening: %.2f", (pWorld->GetGravity() * m_body.GetMass()) );
-				//AddForce(CL_Vector2(0, pWorld->GetGravity() ));
-				m_body.AddForce(Vector(0, (pWorld->GetGravity() * m_body.GetMass()) ));
-			}
+
 			
-			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
-			{
-		
-				if (!m_brainManager.GetBrainBase() && IsOnGround() && GetBody()->GetLinVelocity().Length() < 0.15f
-					&& GetBody()->GetAngVelocity() < 0.01f)
+				AddForce(CL_Vector2(0, (gravity)) );
+			
+				if (!IsOnGroundAccurate())
 				{
-					//slow down
-					//LogMsg("Dampening: %.2f", groundDampening / step);
-					set_float_with_target(&m_body.GetLinVelocity().x, 0, groundDampening * step);
-					set_float_with_target(&m_body.GetLinVelocity().y, 0, groundDampening * step);
-					set_float_with_target(&m_body.GetAngVelocity(), 0, angleDampening *step);
+					//LogMsg(" %s In the air", GetName().c_str());
+					//additional gravity
+					AddForce(CL_Vector2(0, (gravity*3)) );
+
 				}
+			
+
+			}
+
+			if (IsOnGround() && m_body.GetLinVelocity().Length() < 0.4)
+			{
+				//LogMsg(" %s dampening", GetName().c_str());
+				//apply dampening
+				set_float_with_target(&m_body.GetLinVelocity().x, 0, (groundDampening) * step);
+				set_float_with_target(&m_body.GetLinVelocity().y, 0, (groundDampening) * step);
+				set_float_with_target(&m_body.GetAngVelocity(), 0, (groundDampening/3) *step);
 			}
 
 		} else
 		{
-		
-			if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_TOP_VIEW && !m_brainManager.GetBrainBase())
-			{
-				//this is only run if things don't have real brains
-			SetIsOnGround(true);
+			//no gravity active
+			
+				//LogMsg(" %s dampening", GetName().c_str());
+				//apply dampening
+				set_float_with_target(&m_body.GetLinVelocity().x, 0, (groundDampening) * step);
+				set_float_with_target(&m_body.GetLinVelocity().y, 0, (groundDampening) * step);
+				set_float_with_target(&m_body.GetAngVelocity(), 0, (groundDampening/3) *step);
 
-			float top_groundDampening = 0.06f;
-			const static float top_angleDampening = 0.002f;
-
-			if (m_customDampening != -1) top_groundDampening = m_customDampening;
-
-			set_float_with_target(&m_body.GetLinVelocity().x, 0, top_groundDampening * step);
-			set_float_with_target(&m_body.GetLinVelocity().y, 0, top_groundDampening * step);
-			set_float_with_target(&m_body.GetAngVelocity(), 0, top_angleDampening * step);
-			}
 		}
 
 		GetBody()->Update(step);
 
-		//get ready for next frame
-		m_bTouchedAGroundThisFrame = false;
 		
 	}
 
+
+	if (!m_attachedEntities.empty())
+	{
+		list<int>::iterator itor;
+		MovingEntity *pEnt;
+
+		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
+		{
+
+			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
+			if (pEnt)
+			{
+				pEnt->PostUpdate(step);
+			} else
+			{
+				itor = m_attachedEntities.erase(itor);
+				continue;
+			}
+			itor++;
+
+		}
+	}
+
+	m_nearbyTileList.clear();
+	
+	
 }
 
 
@@ -2423,6 +2539,13 @@ CL_Rectf MovingEntity::GetCollisionRect()
 	//OPTIMIZE for gods sake, cache this
 	if (!m_pTile->GetCollisionData()) return CL_Rectf(0,0,0,0);
 	return m_pTile->GetCollisionData()->GetCombinedCollisionRect();
+}
+
+CL_Rectf MovingEntity::GetWorldCollisionRect()
+{
+	//OPTIMIZE for gods sake, cache this
+	if (!m_pTile->GetCollisionData()) return CL_Rectf(0,0,0,0);
+	return m_pTile->GetWorldColRect();
 }
 
 float MovingEntity::GetBoundingCollisionRadius()
@@ -2522,3 +2645,4 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 	
 	}
 }
+

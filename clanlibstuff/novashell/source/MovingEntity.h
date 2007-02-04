@@ -10,6 +10,7 @@
 #include "DataManager.h"
 #include "BrainManager.h"
 #include "Trigger.h"
+#include "physics/Contact.h"
 
 class Goal_Think;
 class PathPlanner;
@@ -58,6 +59,7 @@ public:
   void SetNameEx(const std::string &name, bool bRemoveOldTag);
 
   const CL_Vector2 & GetPos() {return *(CL_Vector2*)&m_body.GetPosition();}
+  CL_Vector2 GetPosSafe() {return *(CL_Vector2*)&m_body.GetPosition();}
   void  SetPos(const CL_Vector2 &new_pos);
   void SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName);
   int GetSizeX(){ return int(m_pSprite->get_width() * m_pTile->GetScale().x); };
@@ -66,21 +68,28 @@ public:
   void SetScale(const CL_Vector2 &vScale);
   CL_Vector2 GetCollisionScale();
   CL_Rectf GetCollisionRect();
+  CL_Rectf GetWorldCollisionRect();
+  virtual CL_Rectf GetWorldRect();
+  const CL_Rect & GetBoundsRect();
+
   float GetBoundingCollisionRadius();
+  
   bool IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures);
   void Stop();
+  void StopY();
+  void StopX();
+
   void SetCollisionScale(const CL_Vector2 &vScale);
   void ApplyGenericMovement(float step);
   tile_list & GetNearbyTileList(); //note, this may not be valid if you're deleting tiles!  For debug only
   CL_Rectf & GetLastScanArea(){return m_scanArea;}
   bool IsAtRest() {return m_bIsAtRest;}
-  bool IsOnGround() {return m_groundTimer > GetApp()->GetGameTick();}
+  bool IsOnGround() {return m_groundTimer >= GetApp()->GetGameTick();}
+  bool IsOnGroundAccurate() {return m_bTouchedAGroundThisFrame;}
   luabind::object RunFunction(const string &func);
   luabind::object RunFunction(const string &func, luabind::object obj1);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3);
-  virtual CL_Rectf GetWorldRect();
-  const CL_Rect & GetBoundsRect();
   void GetAlignment(CL_Origin &origin, int &x, int &y);
   void SetAlignment(int origin, CL_Vector2 v);
   void UpdateTilePosition();
@@ -88,6 +97,7 @@ public:
   bool SetVisualProfile(const string &resourceFileName, const string &profileName);
   virtual void  Update(float step);
   virtual void  Render(void *pTarget);
+  void ApplyPhysics(float step);
   void RenderCollisionLists(CL_GraphicContext *pGC);
   void RenderShadow(void *pTarget);
   BaseGameEntity * CreateClone(TileEntity *pTile);
@@ -126,7 +136,11 @@ public:
   void SetListenCollisionStatic(int eListen) {m_listenCollisionStatic = eListen;}
   int GetListenCollisionStatic() {return m_listenCollisionStatic;}
   void AddForce(CL_Vector2 force);
+  void AddForceBurst(CL_Vector2 force);
+
   void AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque);
+  void AddForceAndTorqueBurst(CL_Vector2 force, CL_Vector2 torque);
+
   CL_Vector2 GetForce() {return *(CL_Vector2*)&m_body.GetNetForce();};
   CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_body.GetLinVelocity();}
   void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}
@@ -141,11 +155,12 @@ public:
 
   
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
-  Zone * GetZoneWeAreOnByMaterialType(int matType);
-  Zone * GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType);
-  Zone * GetNearbyZoneByCollisionRectAndType(int matType);
+  Zone GetZoneWeAreOnByMaterialType(int matType);
+  Zone GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType);
+  Zone GetNearbyZoneByCollisionRectAndType(int matType);
 
-  bool InZoneByMaterialType(int matType) {return GetZoneWeAreOnByMaterialType(matType) != NULL;}
+  bool InZoneByMaterialType(int matType) {return GetZoneWeAreOnByMaterialType(matType).m_materialID != CMaterial::C_MATERIAL_TYPE_NONE;}
+  bool InNearbyZoneByMaterialType(const CL_Vector2 &vPos, int matType) {return GetNearbyZoneByPointAndType(vPos, matType).m_materialID != CMaterial::C_MATERIAL_TYPE_NONE;}
   bool GetOnLadder() {return m_bOnLadder;}
   void SetOnLadder(bool bOnLadder) {m_bOnLadder = bOnLadder;}
   CL_Sprite * GetSprite(){return m_pSprite;}
@@ -263,6 +278,9 @@ public:
   bool FunctionExists(const char * pFunctionName);
   void SetTurnSpeed(float fNew) {m_turnSpeed = fNew;}
   float GetTurnSpeed() {return m_turnSpeed;}
+  void SetGravityOverride(float g) {m_gravityOverride = g;}
+  float GetGravityOverride() {return m_gravityOverride;}
+  
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -389,12 +407,15 @@ protected:
 	bool m_bRunUpdateEveryFrame;
 	float m_customDampening;
 	float m_turnSpeed;
-
+	bool m_bRanPostUpdate;
+	bool m_bRanApplyPhysics;
+	float m_gravityOverride;
 };
 
 MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName); //creates an entity and puts it in the world
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile);
 
+extern Zone g_ZoneEmpty; //to save time this is preinitted
 
 #endif

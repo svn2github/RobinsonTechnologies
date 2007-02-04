@@ -21,3 +21,82 @@ just listed in the order it was added and the dates are very rough.
 * Lua "package" library disabled for security reasons (Ian)
 * LogMsg/printf and LogError now can display up to 12,288 bytes and will properly truncate if sent a message larger instead of crashing (Ian)
 
+1-25-2007
+
+** NOTE:  This version has a lot of scripting changes that will most likely break anything you made before.  The tutorial part where you apply a brain wouldn't work now either, I'll do the real brain tutorial soon, now that the final brain system is almost ready. **
+
+** All brains and states were renamed!!!  There is only one brain now, "StandardBase" and all the examples now use it.  This simplifies everything.  The scripts that control the player
+character are more complicated now, as they handle key bindings etc, so you'll probably want to copy from those.
+
+* Using -nosound will no longer crash - but it does cause some scripting errors, as the sound object doesn't exist... (Sphair)
+* Added Entity:GetFacingTarget script command
+* Added Entity:GetTurnSpeed and Entity:SetTurnSpeed script commands
+* Added InputManager:RemoveBindingsByEntity script command
+* Added Camera:GetEntityTrackingByID script command
+* OnCloseEditor is now run after the editor is really closed instead of before, so camera tweaks could be added there if needed
+* Added Entity:GetActiveZoneByMaterialType() script command
+* g_PlayerID was renamed g_playerID, g_EditorActive renamed g_editorActive for consistancy
+* ChoiceDialog now also passes itself back as a parm with most callbacks (as a BaseEntity), this way lots of functionality can be added later by sending/receiving text messages
+* dialog_audio.lua renamed to dialog.lua
+* ChoiceDialog now calls "OnDialogClose(dialog)" when closing itself (this is a global function in dialog.lua)
+* ChoiceDialogs can now be canceled with Escape.  Check dialog.lua for the details, it's all handled in script.  If g_dialogCanBeCanceled set to true right before creating a ChoiceDialog, it will be unskippable. 
+* Moved the top view RPG walls to a different layer and setup the layer to have the same sort level.  They still get sorted as if they were on the entity layer, useful for organization.
+* TopPlayer brain was removed, now players and characters use the same brain type, the script handles more of the work, such as keymapping.  This is simpler and more flexible.
+* Added -nomusic parm support, so I can test while listening to mp3's better
+* OnDialogCloseNotify(dialog) and OnDialogOpenNotify(dialog) are now called on the active player if they exist (dialog.lua)
+* Renamed Entity:ID() to Entity:GetID() for consistance
+* Brain::AddText (and friends) now can optionally take an extra parm to force a specific delay (not of how long the text shows, but of how long the brain manager waits for it)
+* Top RPG example now starts with a short cutscene, illustrates how to force the player to walk somewhere and say something.  Human control is automatically disabled while the goal manager has a goal.  (check top_player.lua's Update() to see where)
+* Some changes made to the visual profile system, it's now required that loop ="yes" for anim cycles such as walks.
+* Dink example updated to use new player control system
+* Added Entity:StopX and Entity:StopY script commands.
+* TreeWorld is halfway done being converted to use the same brain as everybody else, there will no longer be separate side and top view brains
+* States TopIdle, TopAttack etc became Idle, Attack
+* Brain TopBase became StandardBase (and everything uses it now, side/top NPC/player etc)
+
+* Game time is now properly paused when the app loses focus, before, it would "catch up"
+* Game time is paused during loading delays (I think more than a 500 MS pause counts as a loading delay, that's when it showing the loading message), made more sense then having it "catch up"
+* Added GetCollisionByRay script command.  It's a bit of a monster in that it takes a lot of parms, but it allows very flexible ray picking (single and spread types), and a special debug mode to visually see the rays
+
+1-28-2007
+
+* Script command "IsFacingTarget(tolerance)" added
+* Fixed script bug where a troll would run his OnAttack too many times (whisperstorm)
+* Updated the top view troll AI a little bit, now only swings if he's facing the player
+* Added "Rectf" type to script, a floating point version of Rect
+* Added Entity:GetCollisionRect and Entity:GetWorldCollisionRect to script (returns Rectf)
+* BugFix: local v = this:GetPos(); v.x = 400; no longer moves the player
+* Fixed problem with zone cache being empty, might have only affected new func
+* Added Entity:GetNearbyZoneByMaterialType, Entity:GetWorldCollisionRect, and Entity:GetCollisionRect script commands
+* Tweaked gravity math, things don't fall so fast on treetest
+
+1-29-2007
+* BrainBase now respects the "SetCanRotate()" command
+* Added brain "ForceVisual", built to be used alongside any base brain, for overriding visuals, more controls for it to  be added later, such as specifying a custom 8 way directional sprite mapping on the fly if needed, from the same or multiple visual profiles.  Currently it knows "force_anim" to set a single animation
+
+1-30-2007
+
+* "lost_player_focus" warning no longer appears on the log (left over from when there was a player-specific brain)
+* -nosound parm works better
+* side view example making progress but still can't climb ladders.. uh.. working on that
+
+1-31-2007
+
+* Added Entity:GetBrainManager():Remove() script command
+
+2-2-2007
+
+* Vector:Normalize() script command added (and the standalone global NormalizeVector2() was removed
+* GetCollisionByRay is no longer a global, but Map:GetCollisionByRay  (it used to take a map as the first parm, now it doesn't)
+* Added TileList and LayerList script objects
+* Added GetVisibleLayers, GetAllLayers, GetCollisionLayers to LayerManager
+* Added Map:GetTilesByRect
+* Added Tile object to script
+* Treeworld's gui is initted in game_start.lua's OnIntroMenuStart() instead of in the player script, now you can cut and paste 100 players without 100 GUI's
+* Entity:SetMaxWalkSpeed renamed to Entity:SetMaxMovementSpeed
+* The new and improved Treeworld player brain is pretty functional now, just need to add a system for the walk/ladder sounds.  This will be handled in script too
+
+2-4-2007
+
+* Added LoopingSound object to script
+* Added climb/walk sounds to the tree world player brain script

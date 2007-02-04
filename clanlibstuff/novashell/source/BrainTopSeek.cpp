@@ -27,7 +27,7 @@ BrainTopSeek::~BrainTopSeek()
 void BrainTopSeek::OnRemove()
 {
 	//LogMsg("TopSeek removed");
-	m_pParent->GetBrainManager()->SetStateByName("TopIdle");
+	m_pParent->GetBrainManager()->SetStateByName("Idle");
 	
 }
 
@@ -54,9 +54,9 @@ void BrainTopSeek::Update(float step)
 
 	}
 
-	if (!m_pParent->GetBrainManager()->GetState() || m_pParent->GetBrainManager()->GetState()->GetName() != "TopWalk")
+	if (!m_pParent->GetBrainManager()->GetState() || m_pParent->GetBrainManager()->GetState()->GetName() != "Walk")
 	{
-		m_pParent->GetBrainManager()->SetStateByName("TopWalk");
+		m_pParent->GetBrainManager()->SetStateByName("Walk");
 	}
 
 }

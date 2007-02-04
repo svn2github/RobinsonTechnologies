@@ -199,6 +199,17 @@ void BrainManager::SendToBrainBase(const string &msg)
 	GetBrainBase()->HandleMsg(msg);
 }
 
+void BrainManager::SendToBrainBaseSimple(int message, int user1, int user2)
+{
+	if (!GetBrainBase())
+	{
+		LogError("No base brain assigned yet.");
+		return;
+	}
+
+	GetBrainBase()->HandleSimpleMessage(message, user1, user2);
+}
+
 string BrainManager::AskBrainByName(const string &brainName, const string &msg)
 {
 	Brain *pBrain = GetBrainByName(brainName);
@@ -286,6 +297,9 @@ State * BrainManager::SetState(State *pState)
 
 State * BrainManager::SetStateByName(const string &stateName)
 {
+	
+	if (InState(stateName)) return m_pActiveState;
+
 	return SetState(StateRegistry::GetInstance()->CreateStateByName(stateName, m_pParent));
 }
 

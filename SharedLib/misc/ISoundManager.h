@@ -63,57 +63,5 @@ protected:
 private:
 };
 
-//helper for looping sounds
-class LoopingSound
-{
-public:
-
-	LoopingSound()
-	{	
-		m_handle = 0;
-	}
-
-	~LoopingSound()
-	{
-		Play(false);
-	}
-
-	void Init(ISoundManager *pSoundManager, string file)
-	{
-		m_pSoundManager = pSoundManager;
-		m_file = file;
-	}
-
-	void Play(bool bOn)
-	{
-		if (m_file.empty()) return;
-		if (bOn)
-		{
-			if (m_handle == 0)
-			{
-				if (m_pSoundManager)
-				m_handle = m_pSoundManager->PlayLooping(m_file.c_str());
-			}
-		} else
-		{
-			if (m_handle != 0)
-			{
-				//let's shut it off
-				if (m_pSoundManager)
-				m_pSoundManager->KillChannel(m_handle);
-				m_handle = C_SOUND_NONE;
-			}
-		}
-	}
-
-private:
-
-	ISoundManager *m_pSoundManager;
-	string m_file;
-	int m_handle;
-
-};
-
-
 
 #endif // ISoundManager_h__

@@ -93,8 +93,8 @@ App::App()
 	m_baseGameSpeed = 10;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-	m_engineVersion = 0.17f;
-	m_engineVersionString = "0.17";
+	m_engineVersion = 0.18f;
+	m_engineVersionString = "0.18";
 
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
@@ -263,30 +263,21 @@ void App::OneTimeInit()
 	m_pVisualProfileManager = new VisualProfileManager;
 
 #ifdef C_USE_FMOD
-	if (!ParmExists("-nosound"))
 	g_pSoundManager = new CFMSoundManager;
 #else
-	if (!ParmExists("-nosound"))
+
+	g_pSoundManager = new CL_SoundManager;
+#endif
+
+//now to init it
+
+	if (g_pSoundManager && !ParmExists("-nosound"))
 	{
-		try
-		{
-			g_pSoundManager = new CL_SoundManager;
-		}
-		catch(CL_Error error)
-		{
-			std::cout << "Sound Error: " << error.message.c_str() << std::endl;	
-			//oh well, who really needs sound, anyway?
-			SAFE_DELETE(g_pSoundManager);
-		}
+		g_pSoundManager->Init();
 	}
 	
-#endif
-	
-	if (g_pSoundManager)
-	g_pSoundManager->Init();
 
 	m_pScriptManager = new ScriptManager;
-
 	m_pGameLogic = new GameLogic();
 }
        
@@ -587,8 +578,6 @@ void App::Update()
 		}
 	}
 
-
-	
 }
 
 void log_to_cout(const std::string &channel, int level, const std::string &message)
@@ -636,6 +625,7 @@ int App::main(int argc, char **argv)
 		"	-resolution <desired screen width> <desired screen height>\n" \
 		"	-window\n" \
 		"	-nosound\n" \
+		"	-nomusic\n" \
 		"";
 
 
@@ -672,11 +662,12 @@ int App::main(int argc, char **argv)
 
 #ifndef C_USE_FMOD
 
-		//if (!ParmExists("-nosound"))
-
+		
 		CL_SetupSound setup_sound;
 		CL_SetupVorbis setup_vorbis;
 		CL_SoundOutput sound_output(44100);
+		
+
 #endif
 
    
@@ -781,6 +772,7 @@ int App::main(int argc, char **argv)
 				}
 				CL_System::sleep(1);
                 CL_System::keep_alive();
+				ClearTimingAfterLongPause();
             }
             
         }

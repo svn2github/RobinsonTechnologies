@@ -850,11 +850,19 @@ void EntWorldCache::Update(float step)
 		{
 			m_entityList.at(i)->Update(step);
 		}
-
 		//world-wide updates too
 		g_watchManager.Update(step, m_uniqueDrawID);
-		
+
+
 		for (unsigned int i=0; i < m_entityList.size(); i++)
+		{
+			m_entityList.at(i)->ApplyPhysics(step);
+		}
+
+		//world-wide updates too
+		g_watchManager.ApplyPhysics(step);
+
+			for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
 			m_entityList.at(i)->PostUpdate(step);
 		}

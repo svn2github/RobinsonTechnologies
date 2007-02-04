@@ -8,7 +8,7 @@ class Goal_Say : public Goal<MovingEntity>
 {
 public:
 
-	Goal_Say(MovingEntity* pBot, const string &msg, int entID, int entToFaceID);
+	Goal_Say(MovingEntity* pBot, const string &msg, int entID, int entToFaceID, int delayMS);
 
 	//the usual suspects
 	void Activate();
@@ -26,6 +26,7 @@ private:
 	int m_entID;
 	unsigned int m_delayTimer;
 	int m_entToFaceID;
+	int m_waitOverrideMS; //if not -1, it means we'll use it instead of the normal text delay
 	
 
 };

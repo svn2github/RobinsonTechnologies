@@ -23,7 +23,7 @@ public:
 	virtual ~StateTopAttack();
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
-	virtual const char * GetName() {return "TopAttack";};
+	virtual const char * GetName() {return "Attack";};
 	virtual State * CreateInstance(MovingEntity *pParent) {return new StateTopAttack(pParent);}
 	virtual void OnAdd();
 	virtual void OnRemove();

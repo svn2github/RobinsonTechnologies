@@ -133,6 +133,18 @@ void WatchManager::PostUpdate(float step)
 	}
 }
 
+
+void WatchManager::ApplyPhysics(float step)
+{
+	EntWorldCache *pWorldCache = GetWorldCache;
+	assert(pWorldCache);
+
+	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
+	{
+		m_postUpdateList.at(i)->ApplyPhysics(step);
+	}
+}
+
 void WatchManager::AddEntityToVisibilityList(MovingEntity *pEnt)
 {
 	m_visibilityNotificationList.push_back(pEnt);

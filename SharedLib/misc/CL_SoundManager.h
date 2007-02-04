@@ -58,7 +58,7 @@ public:
 
 	virtual int PlayLooping(const char *p_fname);
 	virtual void KillChannel(int i_channel);
-	virtual bool IsInitted() {return false;}
+	virtual bool IsInitted() {return m_bInitted;}
 	virtual bool IsMusicPlaying();
 
 	virtual void SetSpeedFactor(int soundID, float mod); //a mod of 2 would play twice as fast
@@ -78,6 +78,7 @@ protected:
 
 	CL_SoundBuffer_Session m_music;
 	int m_baseID;
+	bool m_bInitted;
 
 private:
 };

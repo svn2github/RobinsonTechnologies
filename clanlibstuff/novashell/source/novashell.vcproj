@@ -570,11 +570,15 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainManager.cpp"
+						RelativePath=".\BrainForceVisual.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\BrainPlayer.cpp"
+						RelativePath=".\BrainForceVisual.h"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainManager.cpp"
 						>
 					</File>
 					<File
@@ -582,15 +586,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainSideBase.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainTopBase.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainTopPlayer.cpp"
 						>
 					</File>
 					<File
@@ -618,11 +614,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\StateSideSimpleIdle.cpp"
+						RelativePath=".\StatePain.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\StateSideSimpleWalk.cpp"
+						RelativePath=".\StatePain.h"
 						>
 					</File>
 					<File
@@ -635,18 +631,6 @@
 					</File>
 					<File
 						RelativePath=".\StateTopIdle.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopPlayerAttack.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopPlayerIdle.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopPlayerWalk.cpp"
 						>
 					</File>
 					<File
@@ -1998,6 +1982,22 @@
 						>
 					</File>
 					<File
+						RelativePath=".\ListBindings.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\ListBindings.h"
+						>
+					</File>
+					<File
+						RelativePath=".\LoopingSoundBindings.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\LoopingSoundBindings.h"
+						>
+					</File>
+					<File
 						RelativePath=".\luabindBindings.cpp"
 						>
 						<FileConfiguration
@@ -2011,6 +2011,14 @@
 					</File>
 					<File
 						RelativePath=".\MiscClassBindings.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\TileBindings.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\TileBindings.h"
 						>
 					</File>
 					<File
@@ -2328,27 +2336,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\StateSideSimpleIdle.h"
-						>
-					</File>
-					<File
-						RelativePath=".\StateSideSimpleWalk.h"
-						>
-					</File>
-					<File
 						RelativePath=".\StateTopIdle.h"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopPlayerAttack.h"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopPlayerIdle.h"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopPlayerWalk.h"
 						>
 					</File>
 					<File
@@ -2376,23 +2364,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\BrainPlayer.h"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainShake.h"
 						>
 					</File>
 					<File
-						RelativePath=".\BrainSideBase.h"
-						>
-					</File>
-					<File
 						RelativePath=".\BrainTopBase.h"
-						>
-					</File>
-					<File
-						RelativePath=".\BrainTopPlayer.h"
 						>
 					</File>
 				</Filter>
@@ -2874,6 +2850,10 @@
 				</Filter>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath="..\bin\history.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

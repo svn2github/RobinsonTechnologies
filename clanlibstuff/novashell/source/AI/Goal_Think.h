@@ -63,13 +63,22 @@ public:
   void PushMoveToTag(TagObject *pTag);
   void AddMoveToTag(TagObject *pTag);
 
-  void AddSay(const string &msg, int entToFaceID);
-  void AddSayByID(const string &msg, int entID, int entToFaceID);
+  void AddSay(const string &msg, int entToFaceID, int delayMS);
+  void AddSay(const string &msg, int entToFaceID) {AddSay(msg, entToFaceID, -1);} //for luabind
+
+  void AddSayByID(const string &msg, int entID, int entToFaceID, int delayMS);
+  void AddSayByID(const string &msg, int entID, int entToFaceID) {AddSayByID(msg, entID, entToFaceID, -1);}
 
   //the entToFaceID can be an entity ID or a direction (FACING_LEFT, etc) or FACING_NONE to not look anywhere
-  void PushSay(const string &msg, int entToFaceID);
-  void PushSayByID(const string &msg, int entID, int entToFaceID);
+  void PushSay(const string &msg, int entToFaceID, int delayMS);
+  void PushSay(const string &msg, int entToFaceID) {PushSay(msg, entToFaceID, -1);}
+
+  void PushSayByID(const string &msg, int entID, int entToFaceID, int delayMS);
+  void PushSayByID(const string &msg, int entID, int entToFaceID){return PushSayByID(msg, entID, entToFaceID, -1);}
+
   bool IsGoalActiveByName(const string &name);
+	
+  int GetGoalCount();
 
   //this renders the evaluations (goal scores) at the specified location
   void  RenderEvaluations(int left, int top)const;

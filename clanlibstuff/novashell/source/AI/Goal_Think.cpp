@@ -71,6 +71,12 @@ int Goal_Think::Process()
   return m_iStatus;
 }
 
+int Goal_Think::GetGoalCount()
+{
+
+	return m_SubGoals.size();
+}
+
 //----------------------------- Update ----------------------------------------
 // 
 //  this method iterates through each goal option to determine which one has
@@ -150,9 +156,9 @@ void Goal_Think::AddDelay(int timeMS)
 	AddBackSubgoal( new Goal_Delay(m_pOwner,  timeMS));
 }
 
-void Goal_Think::AddSay(const string &msg, int entToFaceID)
+void Goal_Think::AddSay(const string &msg, int entToFaceID, int delayMS)
 {
-	AddSayByID(msg, m_pOwner->ID(), entToFaceID);
+	AddSayByID(msg, m_pOwner->ID(), entToFaceID, delayMS);
 }
 
 void Goal_Think::AddApproach(int entToFaceID, int distanceRequired)
@@ -163,12 +169,12 @@ void Goal_Think::AddApproach(int entToFaceID, int distanceRequired)
 void Goal_Think::AddApproachAndSay(const string &msg, int entToFaceID, int distanceRequired)
 {
 	AddBackSubgoal( new Goal_Approach(m_pOwner,  entToFaceID, distanceRequired));
-	AddBackSubgoal( new Goal_Say(m_pOwner, msg, m_pOwner->ID(), entToFaceID));
+	AddBackSubgoal( new Goal_Say(m_pOwner, msg, m_pOwner->ID(), entToFaceID,-1));
 }
 
 void Goal_Think::PushApproachAndSay(const string &msg, int entToFaceID, int distanceRequired)
 {
-	AddSubgoal( new Goal_Say(m_pOwner, msg,m_pOwner->ID(), entToFaceID));
+	AddSubgoal( new Goal_Say(m_pOwner, msg,m_pOwner->ID(), entToFaceID,-1));
 	AddSubgoal( new Goal_Approach(m_pOwner,  entToFaceID, distanceRequired));
 }
 
@@ -177,19 +183,19 @@ void Goal_Think::PushApproach(int entToFaceID, int distanceRequired)
 	AddSubgoal( new Goal_Approach(m_pOwner,  entToFaceID, distanceRequired));
 }
 
-void Goal_Think::AddSayByID(const string &msg, int entID, int entToFaceID)
+void Goal_Think::AddSayByID(const string &msg, int entID, int entToFaceID, int delayMS)
 {
-	AddBackSubgoal( new Goal_Say(m_pOwner,  msg, entID, entToFaceID));
+	AddBackSubgoal( new Goal_Say(m_pOwner,  msg, entID, entToFaceID, delayMS));
 }
 
-void Goal_Think::PushSay(const string &msg, int entToFaceID)
+void Goal_Think::PushSay(const string &msg, int entToFaceID, int delayMS)
 {
-	PushSayByID(msg, m_pOwner->ID(), entToFaceID);
+	PushSayByID(msg, m_pOwner->ID(), entToFaceID, delayMS);
 }
 
-void Goal_Think::PushSayByID(const string &msg, int entID, int entToFaceID)
+void Goal_Think::PushSayByID(const string &msg, int entID, int entToFaceID, int delayMS)
 {
-	AddSubgoal( new Goal_Say(m_pOwner,  msg, entID, entToFaceID));
+	AddSubgoal( new Goal_Say(m_pOwner,  msg, entID, entToFaceID, delayMS));
 }
 
 Goal_Think * Goal_Think::PushNewGoal(const string &goalName)

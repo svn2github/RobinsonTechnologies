@@ -23,7 +23,7 @@ public:
 	virtual ~StateTopWalk();
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
-	virtual const char * GetName() {return "TopWalk";};
+	virtual const char * GetName() {return "Walk";};
 	virtual State * CreateInstance(MovingEntity *pParent) {return new StateTopWalk(pParent);}
 	virtual void OnAdd();
 	virtual void OnRemove();

@@ -5,16 +5,6 @@
 
 #define C_MAX_DIALOG_TEXT_WIDTH 1024 //will be truncated to the screen size if required as well
 
-void PreparePlayerForPause()
-{
-	MovingEntity *pPlayer = GetGameLogic->GetMyPlayer();
-	
-	if (pPlayer)
-	{
-		pPlayer->GetBrainManager()->SendToBrainBase("stop");
-	}
-}
-
 
 EntChoiceDialog::EntChoiceDialog(const string &initMessage): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
@@ -28,7 +18,6 @@ EntChoiceDialog::EntChoiceDialog(const string &initMessage): BaseGameEntity(Base
 	m_callbackFunctionName = "OnDialogResponse";
 	m_textRect = CL_Rect(0,0,0,0);
 
-	PreparePlayerForPause();
 
 	m_slots.connect (CL_Keyboard::sig_key_down(), this, &EntChoiceDialog::OnButtonDown);
 	m_timer.SetUseSystemTime(true);

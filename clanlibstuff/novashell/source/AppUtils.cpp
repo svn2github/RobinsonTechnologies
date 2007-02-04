@@ -273,6 +273,13 @@ string RectToStringEx(const CL_Rect * pR)
 	return string(stTemp);
 }
 
+string RectfToStringEx(const CL_Rectf * pR)
+{
+	char stTemp[256];
+	sprintf(stTemp, "Left: %.3f Top: %.3f Right %.3f Bottom %.3f", pR->left, pR->top, pR->right, pR->bottom);
+	return string(stTemp);
+}
+
 string VectorToString(const CL_Vector2 * pVec)
 {
 	return CL_String::from_float(pVec->x) + " " + CL_String::from_float(pVec->y);

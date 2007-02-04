@@ -40,6 +40,7 @@ public:
 	int GetWatchCount() {return m_watchList.size();}
 	void RemoveFromVisibilityList(MovingEntity *pEnt);
 	void Remove(MovingEntity *pEnt);
+	void ApplyPhysics(float step);
 
 	unsigned int GetVisibilityID() {return m_visibilityID;}
 

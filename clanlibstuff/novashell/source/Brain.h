@@ -16,6 +16,12 @@
 
 class MovingEntity;
 
+
+enum
+{
+	C_BRAIN_MESSAGE_DONT_SET_VISUAL //used if we don't want the base brain to specify a visual for some reason
+};
+
 class Brain
 {
 public:
@@ -32,6 +38,7 @@ public:
 	virtual void OnRemove(){};
 	virtual void HandleMsg(const string &msg) {return;}
 	virtual string HandleAskMsg(const string &msg) {return "";}
+	virtual int HandleSimpleMessage(int message, int user1, int user2) {return 0;}
 	virtual void AddWeightedForce(const CL_Vector2 & force){assert(!"This brain not setup to be a base brain!");};
 	virtual unsigned int GetKeys(){return 0;}
 	void SetDeleteFlag(bool bFlag) {m_bDeleteFlag = bFlag;}

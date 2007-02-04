@@ -133,6 +133,8 @@ void GameLogic::ShowLoadingMessage()
 	{
 		BlitMessage("... loading ...");
 		ResetLastUpdateTimer();
+		GetApp()->ClearTimingAfterLongPause();
+
 	}
 }
 
@@ -381,7 +383,7 @@ bool GameLogic::Init()
 {
 
 	assert(!GetWorld);
-	if (g_pSoundManager)
+	if (g_pSoundManager && !GetApp()->ParmExists("-nosound"))
 	{
 		g_pSoundManager->Init();
 	}
@@ -547,10 +549,13 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 		//tell the entity that currently holds the players focus he just lost it
 		int newID = 0;
 		if (pNew != 0) newID = pNew->ID();
+		
+		/*
 		if (m_pPlayer->GetBrainManager()->GetBrainBase())
 		{
 			m_pPlayer->GetBrainManager()->SendToBrainBase("lost_player_focus="+CL_String::from_int(newID));
 		}
+		*/
 	}
 	
 	//also let's tell the script about it
@@ -559,10 +564,13 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 		m_pPlayer = pNew;
 		luabind::globals(GetScriptManager->GetMainState())["g_playerID"] = m_pPlayer->ID();
 
+		/*
+		//no longer needed
 		if (m_pPlayer->GetBrainManager()->GetBrainBase())
 		{
 			m_pPlayer->GetBrainManager()->SendToBrainBase("got_player_focus");
 		}
+		*/
 
 		//also setup ourselves to be notified when it is destroyed
 		m_playerDestroyedSlot = pNew->sig_delete.connect(this, &GameLogic::OnPlayerDeleted);

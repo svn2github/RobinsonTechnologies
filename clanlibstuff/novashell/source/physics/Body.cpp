@@ -158,7 +158,7 @@ void CBody::AddForce(const Vector& F)
 			GetParentEntity()->ID(), GetParentEntity()->GetName().c_str());
 		return;
 	}
-
+	
 	m_xNetForce += F;
 }
 

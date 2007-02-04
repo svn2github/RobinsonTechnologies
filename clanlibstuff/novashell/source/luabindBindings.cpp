@@ -17,14 +17,19 @@ using namespace luabind;
 #include "TextManager.h"
 #include "GameLogic.h"
 #include "AI/WatchManager.h"
+#include "ListBindings.h"
+#include "TileBindings.h"
+#include "LoopingSoundBindings.h"
 
 void RegisterLuabindBindings(lua_State *pLuaState)
 {
 	luabindVector(pLuaState);
+	luabindTile(pLuaState);
 	luabindEntity(pLuaState);
 	luabindMisc(pLuaState);
 	luabindGlobalFunctions(pLuaState);
-
+	luabindList(pLuaState);
+	luabindLoopingSound(pLuaState);
 	//add some global functions
 	luabind::globals(pLuaState)["GetMaterialManager"] = &g_materialManager;
 	luabind::globals(pLuaState)["GetApp"] = GetApp();

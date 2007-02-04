@@ -28,7 +28,7 @@ bool State::AnimIsLooping()
 
 	if (m_pParent->GetSprite()->is_finished())
 	{
-		m_pParent->GetSprite()->restart();
+		//m_pParent->GetSprite()->restart();
 		return true;
 	}
 

@@ -1,7 +1,7 @@
 //  ***************************************************************
-//  StateTopPlayerAttack - Creation date: 07/24/2006
+//  StatePain - Creation date: 01/28/2007
 //  -------------------------------------------------------------
-//  Robinson Technologies Copyright (C) 2006 - All Rights Reserved
+//  Robinson Technologies Copyright (C) 2007 - All Rights Reserved
 //
 //  ***************************************************************
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)
@@ -11,20 +11,20 @@
 //it will automatically register itself and be available
 //from lua script as a state behavior.
 
-#ifndef StateTopPlayerAttack_h__
-#define StateTopPlayerAttack_h__
+#ifndef StatePain_h__
+#define StatePain_h__
 
 #include "State.h"
 
-class StateTopPlayerAttack: public State
+class StatePain: public State
 {
 public:
-	StateTopPlayerAttack(MovingEntity *pParent);
-	virtual ~StateTopPlayerAttack();
+	StatePain(MovingEntity *pParent);
+	virtual ~StatePain();
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
-	virtual const char * GetName() {return "TopPlayerAttack";};
-	virtual State * CreateInstance(MovingEntity *pParent) {return new StateTopPlayerAttack(pParent);}
+	virtual const char * GetName() {return "Pain";};
+	virtual State * CreateInstance(MovingEntity *pParent) {return new StatePain(pParent);}
 	virtual void OnAdd();
 	virtual void OnRemove();
 
@@ -34,4 +34,4 @@ protected:
 private:
 };
 
-#endif // StateTopPlayerAttack_h__
+#endif // StatePain_h__

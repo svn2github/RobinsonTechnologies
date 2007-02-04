@@ -165,6 +165,9 @@ ScriptObject::~ScriptObject()
 {
 	//clear the only reference needed for garbage collection to occur
 	luaL_unref (GetScriptManager->GetMainState(),LUA_GLOBALSINDEX, m_threadReference);
+
+	//and force garbage collect to happen now
+	//luaB_collectgarbage(GetScriptManager->GetMainState());
 }
 
 void ScriptObject::SetGlobal(const string& key, int value)

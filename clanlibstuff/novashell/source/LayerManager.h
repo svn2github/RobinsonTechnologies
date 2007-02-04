@@ -135,6 +135,10 @@ public:
 	const vector<unsigned int> & GetEditActiveList() {return m_editActiveList;}
 	const vector<unsigned int> & GetAllList() {return m_allList;} //indexes of all layers
 	const vector<unsigned int> & GetCollisionList() {return m_collisionList;} //indexes of all layers
+	vector<unsigned int> GetCollisionListNoConst() {return m_collisionList;} //indexes of all layers
+	vector<unsigned int> GetAllListNoConst() {return m_allList;} //indexes of all layers
+	vector<unsigned int> GetDrawListNoConst() {return m_drawList;}
+
 	void BuildLists();
 	void PopulateIDVectorWithAllLayers(vector<unsigned int> &layerIDVecOut);
 	void Remove(int layerID);

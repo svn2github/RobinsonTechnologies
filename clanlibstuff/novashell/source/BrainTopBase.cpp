@@ -15,7 +15,7 @@ BrainTopBase::BrainTopBase(MovingEntity * pParent):Brain(pParent)
 
 	SetSort(100); //always run last
 
-
+	m_controlFilter = CL_Vector2(1,1); //full control
 }
 
 BrainTopBase::~BrainTopBase()
@@ -26,6 +26,17 @@ void BrainTopBase::ResetForNextFrame()
 {
 	m_maxForce = m_pParent->GetMaxWalkSpeed();
 	m_force = CL_Vector2::ZERO;
+	m_DontMessWithVisual = false;
+}
+
+int BrainTopBase::HandleSimpleMessage(int message, int user1, int user2)
+{
+	if (message == C_BRAIN_MESSAGE_DONT_SET_VISUAL)
+	{
+		m_DontMessWithVisual = true;
+	}
+
+	return 0;
 }
 
 void BrainTopBase::AddWeightedForce(const CL_Vector2 & force)
@@ -66,21 +77,50 @@ void BrainTopBase::Update(float step)
 	Clamp(m_force.x, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
 	Clamp(m_force.y, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
 
-	m_force *= step;
-
 	
-		m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_pParent->GetTurnSpeed() *step);
+	m_force.x *= m_controlFilter.x;
+	m_force.y *= m_controlFilter.y;
+	
+	m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_pParent->GetTurnSpeed() *step);
+	
+	m_pParent->AddForce(m_force);
 
-//		LogMsg("Adding force: %s", PrintVector(m_force).c_str());
-
-		m_pParent->AddForce(m_force);
-
-	m_pParent->SetSpriteByVisualStateAndFacing();		
+	if (!m_DontMessWithVisual)
+	{
+		m_pParent->SetSpriteByVisualStateAndFacing();		
+	}
 
 	//completely stop rotation
+	if (!m_pParent->GetEnableRotation())
 	m_pParent->GetBody()->GetAngVelocity() = 0;
 
 }
+
+
+void BrainTopBase::HandleMsg(const string &msg)
+{
+	vector<string> messages = CL_String::tokenize(msg, ";",true);
+
+	for (unsigned int i=0; i < messages.size(); i++)
+	{
+		vector<string> words = CL_String::tokenize(messages[i], "=",true);
+
+		if (words[0] == "control_filterx")
+		{
+			m_controlFilter.x = CL_String::to_float(words[1]);
+		} 
+		else if (words[0] == "control_filtery")
+		{
+			m_controlFilter.y = CL_String::to_float(words[1]);
+		} 
+				else
+				{
+					LogMsg("Brain %s doesn't understand keyword '%s'", GetName(), words[0].c_str());
+				}
+	}
+
+}
+
 
 void BrainTopBase::PostUpdate(float step)
 {

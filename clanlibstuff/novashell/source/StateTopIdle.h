@@ -23,7 +23,7 @@ public:
 	virtual ~StateTopIdle();
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
-	virtual const char * GetName() {return "TopIdle";};
+	virtual const char * GetName() {return "Idle";};
 	virtual State * CreateInstance(MovingEntity *pParent) {return new StateTopIdle(pParent);}
 	virtual void OnAdd();
 	virtual void OnRemove();

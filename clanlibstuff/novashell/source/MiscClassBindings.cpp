@@ -13,7 +13,7 @@
 #include "AI/Goal_Think.h"
 #include "AI/WatchManager.h"
 #include "EntCreationUtils.h"
-
+#include "ListBindings.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -23,6 +23,199 @@
 
 
 using namespace luabind;
+
+
+
+
+enum
+{
+	//don't modify the order, the scripting counts on it
+	C_RAY_ENTITIES = 0,
+	C_RAY_TILE_PIC,
+	C_RAY_EVERYTHING,
+	C_RAY_DEBUG_MODE
+};
+
+
+
+Zone GetCollisionByRay(World * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int actionRange, int raySpread, MovingEntity *pEntToIgnore, int mode, bool bIgnoreCreatures)
+{
+
+	int tileScanMode = C_TILE_TYPE_BLANK; //everything
+
+	Tile *pTileToIgnore = NULL;
+
+	if (pEntToIgnore) pTileToIgnore = pEntToIgnore->GetTile();
+	bool bDebug = false;
+
+	switch (mode)
+	{
+	case C_RAY_EVERYTHING: break;
+	case C_RAY_ENTITIES: tileScanMode = C_TILE_TYPE_ENTITY; break;
+	case C_RAY_TILE_PIC: tileScanMode = C_TILE_TYPE_PIC; break;
+	case C_RAY_DEBUG_MODE:
+		bDebug = true;
+		break;
+	default:
+		LogError("GetCollisionByRay reports unknown mode: %d", mode);
+	}
+
+
+	CL_Vector2 vEndPos;
+	vEndPos = vStartPos + (vFacing * actionRange);
+
+	CL_Vector2 vCross = vFacing.cross();
+	CL_Vector2 vColPos;
+
+	Tile *pTile = NULL;
+
+	tile_list tilelist;
+
+	CL_Vector2 scanRectTopLeft = vStartPos;
+	CL_Vector2 scanRectBottomRight = vEndPos;
+
+
+	if (raySpread != 0) 
+	{
+		switch (  VectorToFacing(vFacing) )
+		{
+		case VisualProfile::FACING_DOWN:
+		case VisualProfile::FACING_UP:
+		case VisualProfile::FACING_LEFT:
+		case VisualProfile::FACING_RIGHT:
+
+			scanRectTopLeft -= vCross * raySpread*4;
+			scanRectBottomRight += vCross * raySpread*4;
+			break;
+
+		}
+	}
+
+
+	CL_Rect r(scanRectTopLeft.x, scanRectTopLeft.y, scanRectBottomRight.x, scanRectBottomRight.y);
+
+	//expand it to cover the other places we're going to scan
+
+	pMap->GetMyWorldCache()->AddTilesByRect(r, &tilelist,pMap->GetLayerManager().GetCollisionList(), true);
+	GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pTileToIgnore, tileScanMode, bIgnoreCreatures );
+
+	if (bDebug)
+	{
+		DrawRectFromWorldCoordinates(CL_Vector2(r.left, r.top), CL_Vector2(r.right, r.bottom),  CL_Color::white, CL_Display::get_current_window()->get_gc());
+		DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+	}
+
+	if (raySpread != 0)
+	{
+		if (!pTile)
+		{
+			//try again
+			vEndPos += vCross * raySpread;
+
+			GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pTileToIgnore, tileScanMode , bIgnoreCreatures);
+		}
+
+		if (bDebug)
+		{
+			DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+		}
+
+		if (!pTile)
+		{
+			//try again
+			vEndPos += vCross * -(raySpread*2);
+			GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pTileToIgnore, tileScanMode , bIgnoreCreatures);
+		}
+
+		if (bDebug)
+		{
+			DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+		}
+
+
+
+		//try even more
+
+		if (!pTile)
+		{
+			//try again
+			vEndPos += vCross * (raySpread*3);
+			vStartPos += vCross * raySpread;
+			GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pTileToIgnore, tileScanMode , bIgnoreCreatures);
+		}
+
+		if (bDebug)
+		{
+			DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+		}
+
+		if (!pTile)
+		{
+			//try again
+			vEndPos += vCross * -(raySpread*4);
+			vStartPos += vCross * (-raySpread*2);
+			GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pTileToIgnore, tileScanMode, bIgnoreCreatures);
+		}
+
+		if (bDebug)
+		{
+			DrawLineWithArrowWorld(vStartPos, vEndPos, 5, CL_Color::white, CL_Display::get_current_window()->get_gc());
+		}
+
+	}
+
+
+
+	if (bDebug)
+	{
+		CL_Display::flip(2); //show it now
+	}
+
+	if (pTile)
+	{
+
+		Zone z;
+		z.m_entityID = C_ENTITY_NONE;
+		z.m_materialID = CMaterial::C_MATERIAL_TYPE_NONE;
+
+
+		z.m_vPos = vColPos;
+		z.m_boundingRect = pTile->GetWorldColRect();
+		line_list::iterator litor = pTile->GetCollisionData()->GetLineList()->begin();
+
+		z.m_materialID = litor->GetType(); //kind of a hack, we're assuming there is only one type here.. bad us
+
+		if (z.m_materialID == CMaterial::C_MATERIAL_TYPE_DUMMY)
+		{
+			//fine, we'll do one more check..
+			if (pTile->GetCollisionData()->GetLineList()->size() > 1)
+			{
+				litor++;
+				z.m_materialID = litor->GetType(); 
+			}
+
+		}
+
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			z.m_entityID = ((TileEntity*)pTile)->GetEntity()->ID();
+		}
+		//LogMsg("Found tile at %.2f, %.2f", vColPos.x, vColPos.y);
+		return z;
+	}
+
+	return g_ZoneEmpty;
+
+}
+
+
+TileList GetTileListByRect(World *pMap, const CL_Rect &r, vector<unsigned int> &layerList, bool bWithCollisionOnly)
+{
+	tile_list tilelist;
+	pMap->GetMyWorldCache()->AddTilesByRect(r, &tilelist,layerList, bWithCollisionOnly);
+
+	return (TileList(&tilelist));
+}
 
 
 //more class definitions
@@ -206,6 +399,9 @@ myColor = Color(255,255,255,255);
 
 		,class_<LayerManager>("LayerManager")
 		.def("GetLayerIDByName", &LayerManager::GetLayerIDByName)
+		.def("GetCollisionLayers", &LayerManager::GetCollisionListNoConst)
+		.def("GetVisibleLayers", &LayerManager::GetDrawListNoConst)
+		.def("GetAllLayers", &LayerManager::GetAllListNoConst)
 		
 		,class_<World>("Map")
 		.def("SetPersistent", &World::SetPersistent)
@@ -215,6 +411,8 @@ myColor = Color(255,255,255,255);
 		.def("GetName", &World::GetName)
 		.def("GetLayerManager", &World::GetLayerManager)
 		.def("BuildLocalNavGraph", &World::BuildNavGraph)
+		.def("GetCollisionByRay", &GetCollisionByRay)
+		.def("GetTilesByRect", &GetTileListByRect)
 
 
 		,class_<WorldManager>("MapManager")
@@ -279,10 +477,17 @@ myColor = Color(255,255,255,255);
 		.def("PushApproach", &Goal_Think::PushApproach)
 		.def("PushApproachAndSay", &Goal_Think::PushApproachAndSay)
 
-		.def("AddSay", &Goal_Think::AddSay)
-		.def("AddSayByID", &Goal_Think::AddSayByID)
-		.def("PushSay", &Goal_Think::PushSay)
-		.def("PushSayByID", &Goal_Think::PushSayByID)
+		.def("AddSay", ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::AddSay)
+		.def("AddSay", ( void(Goal_Think::*)(const string&, int)) &Goal_Think::AddSay)
+
+		.def("PushSay",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::PushSay)
+		.def("PushSay",  ( void(Goal_Think::*)(const string&, int)) &Goal_Think::PushSay)
+		
+		.def("AddSayByID",  ( void(Goal_Think::*)(const string&, int,int,int)) &Goal_Think::AddSayByID)
+		.def("AddSayByID",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::AddSayByID)
+
+		.def("PushSayByID",  ( void(Goal_Think::*)(const string&, int,int,int)) &Goal_Think::PushSayByID)
+		.def("PushSayByID",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::PushSayByID)
 
 		.def("PushRunScriptString", &Goal_Think::PushRunScriptString)
 		.def("AddRunScriptString", &Goal_Think::AddRunScriptString)
@@ -296,6 +501,7 @@ myColor = Color(255,255,255,255);
 		.def("IsGoalActiveByName", &Goal_Think::IsGoalActiveByName)
 
 		.def("GetGoalCountByName", &Goal_Think::GetGoalCountByName)
+		.def("GetGoalCount", &Goal_Think::GetGoalCount)
 
 		,class_<WatchManager>("WatchManager")
 		.def("Add", &WatchManager::Add)

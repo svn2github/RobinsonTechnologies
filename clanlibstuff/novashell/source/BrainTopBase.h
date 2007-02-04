@@ -24,12 +24,15 @@ public:
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
 
-	virtual const char * GetName() {return "TopBase";};
+	virtual const char * GetName() {return "StandardBase";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainTopBase(pParent);}
 	virtual void OnAdd();
 
 	//for use by other brains directly
 	virtual void AddWeightedForce(const CL_Vector2 & force);
+	virtual void HandleMsg(const string &msg);
+
+	virtual int HandleSimpleMessage(int message, int user1, int user2);
 
 protected:
 
@@ -39,6 +42,8 @@ private:
 
 	CL_Vector2 m_force;
 	float m_maxForce;
+	CL_Vector2 m_controlFilter; //how much force actually gets applied
+	bool m_DontMessWithVisual;
 };
 
 #endif // BrainTopBase_h__

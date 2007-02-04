@@ -8,6 +8,7 @@ extern CL_VirtualFileManager g_VFManager;
 CL_SoundManager::CL_SoundManager()
 {
 	m_baseID = 0;
+	m_bInitted = false;
 }
 
 void CL_SoundManager::MuteAll(bool b_new)
@@ -16,6 +17,8 @@ void CL_SoundManager::MuteAll(bool b_new)
 
 bool CL_SoundManager::Init()
 {
+	Kill();
+	m_bInitted = true;
 	return true;
 }
 
@@ -28,6 +31,8 @@ CL_SoundManager::~CL_SoundManager()
 
 int CL_SoundManager::Play(const char *p_fname)
 {
+	if (!m_bInitted) return C_SOUND_NONE;
+
 	SoundResource *pBuff = LocateSound(p_fname);
 	if (!pBuff) return 0;
 	
@@ -42,6 +47,8 @@ int CL_SoundManager::Play(const char *p_fname)
 
 SoundResource * CL_SoundManager::LocateSound(const char *pFname)
 {
+	if (!m_bInitted) return NULL;
+
 	string fileName = pFname;
 	if (!g_VFManager.LocateFile(fileName))
 	{
@@ -69,6 +76,8 @@ SoundResource * CL_SoundManager::LocateSound(const char *pFname)
 
 int CL_SoundManager::PlayMixed(const char *p_fname)
 {
+	if (!m_bInitted) return C_SOUND_NONE;
+
 	SoundResource *pBuff = LocateSound(p_fname);
 	if (!pBuff) return 0;
 	int id = GetUniqueID();
@@ -81,6 +90,8 @@ int CL_SoundManager::PlayMixed(const char *p_fname)
 
 int CL_SoundManager::PlayLooping(const char *p_fname)
 {
+	if (!m_bInitted) return C_SOUND_NONE;
+
 	SoundResource *pBuff = LocateSound(p_fname);
 	if (!pBuff) return 0;
 	int id = GetUniqueID();
@@ -107,6 +118,9 @@ SoundSession * CL_SoundManager::GetSessionFromID(int id)
 
 void CL_SoundManager::RemoveAllEffects(int soundID)
 {
+	
+	if (!m_bInitted) return;
+
 	SoundSession *pSession = GetSessionFromID(soundID);
 
 	if (!pSession)
@@ -120,6 +134,8 @@ void CL_SoundManager::RemoveAllEffects(int soundID)
 
 void CL_SoundManager::AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC)
 {
+	if (!m_bInitted) return;
+
 	SoundSession *pSession = GetSessionFromID(soundID);
 
 	if (!pSession)
@@ -152,6 +168,8 @@ void CL_SoundManager::AddEffect(int soundID, int effectID, float parmA, float pa
 
 void CL_SoundManager::SetSpeedFactor(int soundID, float mod)
 {
+	if (!m_bInitted) return;
+
 	SoundSession *pSession = GetSessionFromID(soundID);
 
 	if (!pSession)
@@ -164,6 +182,8 @@ void CL_SoundManager::SetSpeedFactor(int soundID, float mod)
 
 void CL_SoundManager::SetVolume(int soundID, float volume)
 {
+	if (!m_bInitted) return;
+
 	SoundSession *pSession = GetSessionFromID(soundID);
 
 	if (!pSession)
@@ -176,6 +196,8 @@ void CL_SoundManager::SetVolume(int soundID, float volume)
 
 void CL_SoundManager::SetPan(int soundID, float pan) //-1 to 1
 {
+	if (!m_bInitted) return;
+
 	SoundSession *pSession = GetSessionFromID(soundID);
 
 	if (!pSession)
@@ -189,11 +211,15 @@ void CL_SoundManager::SetPan(int soundID, float pan) //-1 to 1
 
 void CL_SoundManager::KillChannel(int i_channel)
 {
+	if (!m_bInitted) return;
+
 	m_soundSessions.erase(i_channel);
 }
 
 int CL_SoundManager::PlayMusic( const char *p_fname, int i_loop_count)
 {
+	if (!m_bInitted) return C_SOUND_NONE;
+
 	SoundResource *pBuff = LocateSound(p_fname);
 	if (!pBuff) return 0;
 	m_music.stop();
@@ -220,11 +246,16 @@ void CL_SoundManager::Kill()
 	KillMusic();
 	m_soundSessions.clear();
 	m_soundResources.clear();
+
+	m_baseID = 0;
+	m_bInitted = false;
 }
 
 void CL_SoundManager::UpdateSounds()
 {
 	//kill any dead sounds
+
+	if (!m_bInitted) return;
 
 	soundSessionMap::iterator itor;
 	for (itor = m_soundSessions.begin(); itor != m_soundSessions.end();)

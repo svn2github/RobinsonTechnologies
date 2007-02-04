@@ -310,7 +310,7 @@ void EntEditMode::Init()
 	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
 	if (!pEditor) throw CL_Error("Unable to locate editor entity");
 	pEditor->SetTipLabel(
-		"Tile Edit Mode - Use the mouse wheel or +/- to zoom in/out.  Drag the middle mouse button or Space+Left mouse button to pan map.  Hold and drag or click with the left mouse button to make a selection.\n" \
+		"Tile Edit Mode - Use the mouse wheel or +/- to zoom in/out.  Drag the middle mouse button or Space+Left mouse button to pan.  Drag or click with the left mouse button to make a selection.\n" \
 		"\n"\
 		"Hold Shift,Alt, or Ctrl while clicking to add/remove/toggle from selection.  Use arrow keys to nudge selection one pixel.  (think photoshop controls)\n"\
 		"");

@@ -12,9 +12,9 @@
 using namespace luabind;
 
 
-void NormalizeVector2(CL_Vector2 &v)
+void NormalizeVector2(CL_Vector2 * pV)
 {
-	v.unitize();
+	pV->unitize();
 }
 
 void luabindVector(lua_State *pState)
@@ -43,8 +43,7 @@ void luabindVector(lua_State *pState)
 	//Output is "My god, vPos.x is 9.7402601242065"
 
 	//Let's turn it into a unit vector
-	vPos = Normalize(vPos); 
-	//Uh, Normalize should be a member function, hope to fix that later
+	vPos.Normalize(); 
 
 	(end)
 
@@ -105,6 +104,15 @@ void luabindVector(lua_State *pState)
 			*/
 
 			/*
+			func: Normalize
+			(code)
+			number Normalize()
+			(end)
+
+			Turns the vector into a unit vector.
+			*/
+
+			/*
 			func: Dot
 			(code)
 			number Dot(Vector2 vVec)
@@ -125,6 +133,7 @@ void luabindVector(lua_State *pState)
 			*/
 
 
+			.def("Normalize", &NormalizeVector2)
 			.def("Length", &CL_Vector2::length)
 			.def("Dot", &CL_Vector2::dot)
 			.def("Cross", &CL_Vector2::cross)
@@ -248,6 +257,7 @@ Group: Member Functions
 			class_<CL_Rect>("Rect")
 			.def(constructor<>())
 			.def(constructor<CL_Rect>())
+			.def(constructor<CL_Rectf>())
 			.def(constructor<int, int, int, int>())
 			.def_readwrite("left", &CL_Rect::left)
 			.def_readwrite("top", &CL_Rect::top)
@@ -333,13 +343,140 @@ Group: Member Functions
 			.def(const_self - CL_Rect())
 				.def(const_self == CL_Rect())
 			.def("__tostring", &RectToStringEx)
-
-	
 			,
 			
-			//stand alone functions
+			/*
+			Object: Rectf
+			The Rectf object.
 
-			def("Normalize", &NormalizeVector2)
+			Group: Local Variables
+
+			Variable: left
+			The left coordinate.
+
+			Variable: top
+			The top coordinate.
+
+			Variable: right
+			The right coordinate.
+
+			Variable: bottom
+			The bottom coordinate.
+
+			Group: Initialization
+
+			func: Rectf
+			(code)
+			Rectf()
+			(end)
+			Defaults to all zeroes if initialized with no parameters.
+
+			func: Rectf(Rectf)
+			(code)
+			Rectf(Rectf vSomeRectf)
+			(end)
+			A <Rectf> can be initialized with the values from another <Rectf> object.
+
+			func: Rectf(left,top,right,bottom)
+			(code)
+			Rectf(number left, number top, number right, number bottom)
+			(end)
+			A <Rectf> can be initialized with four numbers.
+
+			Group: Member Functions
+
+			*/
+
+			class_<CL_Rectf>("Rectf")
+			.def(constructor<>())
+			.def(constructor<CL_Rectf>())
+			.def(constructor<float, float, float, float>())
+			.def_readwrite("left", &CL_Rectf::left)
+			.def_readwrite("top", &CL_Rectf::top)
+			.def_readwrite("right", &CL_Rectf::right)
+			.def_readwrite("bottom", &CL_Rectf::bottom)
+
+
+			/*
+			func: GetWidth
+			(code)
+			number GetWidth()
+			(end)
+
+			Returns:
+
+			The actual width of the Rectf.
+			*/
+
+
+			.def("GetWidth", &CL_Rectf::get_width)
+
+			/*
+			func: GetHeight
+			(code)
+			number GetHeight()
+			(end)
+
+			Returns:
+
+			The actual height of the Rectf.
+			*/
+
+			.def("GetHeight", &CL_Rectf::get_height)
+
+			/*
+			func: IsOverlapped
+			(code)
+			boolean IsOverlapped(Rectf RectfB)
+			(end)
+
+			Returns:
+
+			True if the two Rectfangles overlap at all.
+			*/
+
+			.def("IsOverlapped", &CL_Rectf::is_overlapped)
+
+			/*
+			func: CalculateUnion
+			(code)
+			Rectf CalculateUnion(Rectf RectfB)
+			(end)
+
+			Returns:
+
+			A <Rectf> the exact size of the union.
+			*/
+
+			.def("CalculateUnion", &CL_Rectf::calc_union)
+
+			/*
+			Group: Operators
+
+			func: Addition Operator
+			+Rectf
+
+			Usage:
+			(code)
+			RectfArea = RectfHouse + Rectf(100,0,0,0); //we added 100 to RectfArea.left
+			(end)
+
+			func: Subtraction Operator
+			-Rectf
+
+			Usage:
+			(code)
+			RectfArea = RectfHouse - RectfAreaToRemove;
+			(end)
+
+			*/
+
+			.def(const_self + CL_Rectf())
+			.def(const_self - CL_Rectf())
+			.def(const_self == CL_Rectf())
+			.def("__tostring", &RectfToStringEx)
+
+
 
 		];
 
