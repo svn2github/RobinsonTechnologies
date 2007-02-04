@@ -2849,6 +2849,30 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="Physics"
+				>
+				<File
+					RelativePath=".\physics\Body.h"
+					>
+				</File>
+				<File
+					RelativePath=".\physics\Contact.h"
+					>
+				</File>
+				<File
+					RelativePath=".\physics\Matrix.h"
+					>
+				</File>
+				<File
+					RelativePath=".\physics\Polygon.h"
+					>
+				</File>
+				<File
+					RelativePath=".\physics\vector.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath="..\bin\history.txt"

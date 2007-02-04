@@ -176,6 +176,9 @@ public:
 /*
 group: C_MATERIAL_TYPE_CONSTANTS
 
+constant: C_MATERIAL_TYPE_NONE
+Means invalid material.  Signals a zone with no data when using GetWallByRay()
+
 constant: C_MATERIAL_TYPE_NORMAL
 The default.  Just a normal thing you can bump into.
 
@@ -191,6 +194,7 @@ For tweaking sorting and smart shadows.  The engine ignores it for collision but
 
 	enum
 	{
+		C_MATERIAL_TYPE_NONE = -1,
 		C_MATERIAL_TYPE_NORMAL = 0,
 		C_MATERIAL_TYPE_VERTICAL_LADDER,
 		C_MATERIAL_TYPE_WARP,
