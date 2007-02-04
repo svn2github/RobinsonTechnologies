@@ -115,6 +115,7 @@ void ScriptKeyManager::RemoveBindingsByEntity(MovingEntity *pEnt)
 {
 
 	ScriptKeyMap::iterator itor = m_map.begin();
+	ScriptKeyMap::iterator itorTemp;
 
 	for (;itor != m_map.end();)
 	{
@@ -136,7 +137,9 @@ void ScriptKeyManager::RemoveBindingsByEntity(MovingEntity *pEnt)
 
 		if (ki.empty())
 		{
-			itor = m_map.erase(itor);
+			itorTemp = itor;
+			itor++;
+			m_map.erase(itorTemp);
 			continue;
 		}
 
