@@ -15,20 +15,12 @@
 		5D1A38580A382D48005FF1C0 /* BrainShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A38500A382D48005FF1C0 /* BrainShake.cpp */; };
 		5D2F67170A86F4D800419CA6 /* StateTopAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */; };
 		5D2F67180A86F4D800419CA6 /* StateTopIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */; };
-		5D2F67190A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */; };
-		5D2F671A0A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */; };
-		5D2F671B0A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */; };
 		5D2F671C0A86F4D800419CA6 /* StateTopWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */; };
 		5D2F671D0A86F4D800419CA6 /* StateTopAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */; };
 		5D2F671E0A86F4D800419CA6 /* StateTopIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */; };
-		5D2F671F0A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */; };
-		5D2F67200A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */; };
-		5D2F67210A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */; };
 		5D2F67220A86F4D800419CA6 /* StateTopWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */; };
 		5D2F67250A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */; };
-		5D2F67260A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */; };
 		5D2F67270A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */; };
-		5D2F67280A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */; };
 		5D58A7BF0A15832C005974C1 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A79F0A15832C005974C1 /* lapi.c */; };
 		5D58A7C00A15832C005974C1 /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A00A15832C005974C1 /* lauxlib.c */; };
 		5D58A7C10A15832C005974C1 /* lbaselib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A10A15832C005974C1 /* lbaselib.c */; };
@@ -85,6 +77,18 @@
 		5D66058C0ABFCECE00892168 /* EntWorldDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */; };
 		5D66058D0ABFCECE00892168 /* EntCreationUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */; };
 		5D66058E0ABFCECE00892168 /* EntWorldDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */; };
+		5D67C47E0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
+		5D67C47F0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
+		5D7A78190B757D74003C896A /* ListBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78160B757D74003C896A /* ListBindings.cpp */; };
+		5D7A781A0B757D74003C896A /* LoopingSoundBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */; };
+		5D7A781B0B757D74003C896A /* TileBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78180B757D74003C896A /* TileBindings.cpp */; };
+		5D7A781C0B757D74003C896A /* ListBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78160B757D74003C896A /* ListBindings.cpp */; };
+		5D7A781D0B757D74003C896A /* LoopingSoundBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */; };
+		5D7A781E0B757D74003C896A /* TileBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78180B757D74003C896A /* TileBindings.cpp */; };
+		5D7A78200B757D9B003C896A /* StatePain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A781F0B757D9B003C896A /* StatePain.cpp */; };
+		5D7A78210B757D9B003C896A /* StatePain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A781F0B757D9B003C896A /* StatePain.cpp */; };
+		5D7A78230B757DC0003C896A /* BrainForceVisual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */; };
+		5D7A78240B757DC0003C896A /* BrainForceVisual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */; };
 		5D8105070AD6207B004605B8 /* Goal_Approach.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8105030AD6207B004605B8 /* Goal_Approach.cpp */; };
 		5D8105090AD6207B004605B8 /* Goal_Say.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8105050AD6207B004605B8 /* Goal_Say.cpp */; };
 		5D81050B0AD6207B004605B8 /* Goal_Approach.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8105030AD6207B004605B8 /* Goal_Approach.cpp */; };
@@ -187,21 +191,15 @@
 		5D87788A0A1555F600363BAA /* MiscUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778220A1555F600363BAA /* MiscUtils.cpp */; };
 		5D9682860A5DF79A0015B20A /* BrainColorFlash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */; };
 		5D9682870A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */; };
-		5D9682880A5DF79A0015B20A /* BrainSideBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827F0A5DF79A0015B20A /* BrainSideBase.cpp */; };
 		5D9682890A5DF79A0015B20A /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682800A5DF79A0015B20A /* State.cpp */; };
 		5D96828A0A5DF79A0015B20A /* StateDie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682810A5DF79A0015B20A /* StateDie.cpp */; };
 		5D96828B0A5DF79A0015B20A /* StateFrozen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682820A5DF79A0015B20A /* StateFrozen.cpp */; };
-		5D96828C0A5DF79A0015B20A /* StateSideSimpleIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682830A5DF79A0015B20A /* StateSideSimpleIdle.cpp */; };
-		5D96828D0A5DF79A0015B20A /* StateSideSimpleWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682840A5DF79A0015B20A /* StateSideSimpleWalk.cpp */; };
 		5D96828E0A5DF79A0015B20A /* Trigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682850A5DF79A0015B20A /* Trigger.cpp */; };
 		5D96828F0A5DF79A0015B20A /* BrainColorFlash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */; };
 		5D9682900A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */; };
-		5D9682910A5DF79A0015B20A /* BrainSideBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827F0A5DF79A0015B20A /* BrainSideBase.cpp */; };
 		5D9682920A5DF79A0015B20A /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682800A5DF79A0015B20A /* State.cpp */; };
 		5D9682930A5DF79A0015B20A /* StateDie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682810A5DF79A0015B20A /* StateDie.cpp */; };
 		5D9682940A5DF79A0015B20A /* StateFrozen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682820A5DF79A0015B20A /* StateFrozen.cpp */; };
-		5D9682950A5DF79A0015B20A /* StateSideSimpleIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682830A5DF79A0015B20A /* StateSideSimpleIdle.cpp */; };
-		5D9682960A5DF79A0015B20A /* StateSideSimpleWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682840A5DF79A0015B20A /* StateSideSimpleWalk.cpp */; };
 		5D9682970A5DF79A0015B20A /* Trigger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682850A5DF79A0015B20A /* Trigger.cpp */; };
 		5D9F8B070AB6CDBF000546C2 /* NavGraphManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B030AB6CDBE000546C2 /* NavGraphManager.cpp */; };
 		5D9F8B080AB6CDBF000546C2 /* PathPlanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */; };
@@ -362,6 +360,8 @@
 		5DD105BE0AF25BF500C448F3 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A30AF25BE800C448F3 /* ClanApp.framework */; };
 		5DD105BF0AF25BF500C448F3 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A40AF25BE800C448F3 /* ClanCore.framework */; };
 		5DD105C00AF25BF500C448F3 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */; };
+		5DD4D5400B4B5B47009E3C24 /* BrainFadeIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */; };
+		5DD4D5410B4B5B47009E3C24 /* BrainFadeIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */; };
 		5DEB6E210B168AEF00D74729 /* BrainBob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB6E200B168AEF00D74729 /* BrainBob.cpp */; };
 		5DEB6E220B168AEF00D74729 /* BrainBob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB6E200B168AEF00D74729 /* BrainBob.cpp */; };
 /* End PBXBuildFile section */
@@ -413,12 +413,8 @@
 		5D1A38510A382D48005FF1C0 /* BrainShake.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainShake.h; sourceTree = "<group>"; };
 		5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopAttack.cpp; sourceTree = "<group>"; };
 		5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopIdle.cpp; sourceTree = "<group>"; };
-		5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopPlayerAttack.cpp; sourceTree = "<group>"; };
-		5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopPlayerIdle.cpp; sourceTree = "<group>"; };
-		5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopPlayerWalk.cpp; sourceTree = "<group>"; };
 		5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopWalk.cpp; sourceTree = "<group>"; };
 		5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainTopBase.cpp; sourceTree = "<group>"; };
-		5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainTopPlayer.cpp; sourceTree = "<group>"; };
 		5D58A79F0A15832C005974C1 /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
 		5D58A7A00A15832C005974C1 /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lauxlib.c; sourceTree = "<group>"; };
 		5D58A7A10A15832C005974C1 /* lbaselib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lbaselib.c; sourceTree = "<group>"; };
@@ -481,6 +477,12 @@
 		5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntVisualProfileEditor.cpp; sourceTree = "<group>"; };
 		5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntCreationUtils.cpp; sourceTree = "<group>"; };
 		5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntWorldDialog.cpp; sourceTree = "<group>"; };
+		5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalScriptFunctionBindings.cpp; sourceTree = "<group>"; };
+		5D7A78160B757D74003C896A /* ListBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ListBindings.cpp; path = ../source/ListBindings.cpp; sourceTree = SOURCE_ROOT; };
+		5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopingSoundBindings.cpp; path = ../source/LoopingSoundBindings.cpp; sourceTree = SOURCE_ROOT; };
+		5D7A78180B757D74003C896A /* TileBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TileBindings.cpp; path = ../source/TileBindings.cpp; sourceTree = SOURCE_ROOT; };
+		5D7A781F0B757D9B003C896A /* StatePain.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StatePain.cpp; sourceTree = "<group>"; };
+		5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainForceVisual.cpp; sourceTree = "<group>"; };
 		5D8105030AD6207B004605B8 /* Goal_Approach.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_Approach.cpp; path = AI/Goal_Approach.cpp; sourceTree = "<group>"; };
 		5D8105040AD6207B004605B8 /* Goal_Approach.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_Approach.h; path = AI/Goal_Approach.h; sourceTree = "<group>"; };
 		5D8105050AD6207B004605B8 /* Goal_Say.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_Say.cpp; path = AI/Goal_Say.cpp; sourceTree = "<group>"; };
@@ -503,7 +505,6 @@
 		5D8776DC0A15555400363BAA /* Brain.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Brain.cpp; sourceTree = "<group>"; };
 		5D8776DD0A15555400363BAA /* Brain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Brain.h; sourceTree = "<group>"; };
 		5D8776DE0A15555400363BAA /* BrainPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainPlayer.cpp; sourceTree = "<group>"; };
-		5D8776DF0A15555400363BAA /* BrainPlayer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainPlayer.h; sourceTree = "<group>"; };
 		5D8776E00A15555400363BAA /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		5D8776E20A15555400363BAA /* CameraSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CameraSetting.cpp; sourceTree = "<group>"; };
 		5D8776E40A15555400363BAA /* CollisionData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionData.cpp; sourceTree = "<group>"; };
@@ -669,12 +670,9 @@
 		5D8778230A1555F600363BAA /* MiscUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MiscUtils.h; sourceTree = "<group>"; };
 		5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainColorFlash.cpp; sourceTree = "<group>"; };
 		5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainFadeOutAndDelete.cpp; sourceTree = "<group>"; };
-		5D96827F0A5DF79A0015B20A /* BrainSideBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainSideBase.cpp; sourceTree = "<group>"; };
 		5D9682800A5DF79A0015B20A /* State.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = State.cpp; sourceTree = "<group>"; };
 		5D9682810A5DF79A0015B20A /* StateDie.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateDie.cpp; sourceTree = "<group>"; };
 		5D9682820A5DF79A0015B20A /* StateFrozen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateFrozen.cpp; sourceTree = "<group>"; };
-		5D9682830A5DF79A0015B20A /* StateSideSimpleIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateSideSimpleIdle.cpp; sourceTree = "<group>"; };
-		5D9682840A5DF79A0015B20A /* StateSideSimpleWalk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateSideSimpleWalk.cpp; sourceTree = "<group>"; };
 		5D9682850A5DF79A0015B20A /* Trigger.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Trigger.cpp; sourceTree = "<group>"; };
 		5D9F8B030AB6CDBE000546C2 /* NavGraphManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NavGraphManager.cpp; path = AI/NavGraphManager.cpp; sourceTree = "<group>"; };
 		5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PathPlanner.cpp; path = AI/PathPlanner.cpp; sourceTree = "<group>"; };
@@ -706,6 +704,7 @@
 		5DD105A30AF25BE800C448F3 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
 		5DD105A40AF25BE800C448F3 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
 		5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
+		5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainFadeIn.cpp; sourceTree = "<group>"; };
 		5DEB6E200B168AEF00D74729 /* BrainBob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainBob.cpp; sourceTree = "<group>"; };
 		8D0C4E970486CD37000505A6 /* novashell_debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell_debug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -813,15 +812,15 @@
 		5D1A384D0A382D17005FF1C0 /* Brains */ = {
 			isa = PBXGroup;
 			children = (
+				5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */,
+				5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */,
 				5DEB6E200B168AEF00D74729 /* BrainBob.cpp */,
 				5D81050F0AD62099004605B8 /* BrainColorFade.cpp */,
 				5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */,
 				5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */,
 				5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */,
-				5D2F67240A86F4FA00419CA6 /* BrainTopPlayer.cpp */,
 				5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */,
 				5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */,
-				5D96827F0A5DF79A0015B20A /* BrainSideBase.cpp */,
 				5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */,
 				5D1A384F0A382D48005FF1C0 /* BrainManager.h */,
 				5D1A38500A382D48005FF1C0 /* BrainShake.cpp */,
@@ -829,7 +828,6 @@
 				5D8776DC0A15555400363BAA /* Brain.cpp */,
 				5D8776DD0A15555400363BAA /* Brain.h */,
 				5D8776DE0A15555400363BAA /* BrainPlayer.cpp */,
-				5D8776DF0A15555400363BAA /* BrainPlayer.h */,
 			);
 			name = Brains;
 			sourceTree = "<group>";
@@ -1110,17 +1108,13 @@
 		5D9682980A5DF7A80015B20A /* States */ = {
 			isa = PBXGroup;
 			children = (
+				5D7A781F0B757D9B003C896A /* StatePain.cpp */,
 				5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */,
 				5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */,
-				5D2F67130A86F4D800419CA6 /* StateTopPlayerAttack.cpp */,
-				5D2F67140A86F4D800419CA6 /* StateTopPlayerIdle.cpp */,
-				5D2F67150A86F4D800419CA6 /* StateTopPlayerWalk.cpp */,
 				5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */,
 				5D9682800A5DF79A0015B20A /* State.cpp */,
 				5D9682810A5DF79A0015B20A /* StateDie.cpp */,
 				5D9682820A5DF79A0015B20A /* StateFrozen.cpp */,
-				5D9682830A5DF79A0015B20A /* StateSideSimpleIdle.cpp */,
-				5D9682840A5DF79A0015B20A /* StateSideSimpleWalk.cpp */,
 			);
 			name = States;
 			sourceTree = "<group>";
@@ -1137,6 +1131,9 @@
 		5DC490540A16EB3B007BE8D2 /* lua */ = {
 			isa = PBXGroup;
 			children = (
+				5D7A78160B757D74003C896A /* ListBindings.cpp */,
+				5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */,
+				5D7A78180B757D74003C896A /* TileBindings.cpp */,
 				5D8777B70A1555F600363BAA /* src */,
 			);
 			name = lua;
@@ -1196,6 +1193,7 @@
 		5DCDB01E0A19AE590043DCFA /* Script */ = {
 			isa = PBXGroup;
 			children = (
+				5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */,
 				5D8776F30A15555400363BAA /* EntityBindings.h */,
 				5D8776F40A15555400363BAA /* EntityManager.cpp */,
 				5D87773A0A15555400363BAA /* VectorBindings.cpp */,
@@ -1453,21 +1451,14 @@
 				5D1A38540A382D48005FF1C0 /* BrainShake.cpp in Sources */,
 				5D9682860A5DF79A0015B20A /* BrainColorFlash.cpp in Sources */,
 				5D9682870A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp in Sources */,
-				5D9682880A5DF79A0015B20A /* BrainSideBase.cpp in Sources */,
 				5D9682890A5DF79A0015B20A /* State.cpp in Sources */,
 				5D96828A0A5DF79A0015B20A /* StateDie.cpp in Sources */,
 				5D96828B0A5DF79A0015B20A /* StateFrozen.cpp in Sources */,
-				5D96828C0A5DF79A0015B20A /* StateSideSimpleIdle.cpp in Sources */,
-				5D96828D0A5DF79A0015B20A /* StateSideSimpleWalk.cpp in Sources */,
 				5D96828E0A5DF79A0015B20A /* Trigger.cpp in Sources */,
 				5D2F67170A86F4D800419CA6 /* StateTopAttack.cpp in Sources */,
 				5D2F67180A86F4D800419CA6 /* StateTopIdle.cpp in Sources */,
-				5D2F67190A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */,
-				5D2F671A0A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */,
-				5D2F671B0A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */,
 				5D2F671C0A86F4D800419CA6 /* StateTopWalk.cpp in Sources */,
 				5D2F67250A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */,
-				5D2F67260A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */,
 				5D5BCA990AB550A0004C08CE /* Goal_Delay.cpp in Sources */,
 				5D5BCA9A0AB550A0004C08CE /* Goal_FollowPath.cpp in Sources */,
 				5D5BCA9B0AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp in Sources */,
@@ -1500,6 +1491,13 @@
 				5D81092A0AD6220E004605B8 /* stylemanager_Bitmap.cpp in Sources */,
 				5D81092B0AD6220E004605B8 /* window_Bitmap.cpp in Sources */,
 				5DEB6E210B168AEF00D74729 /* BrainBob.cpp in Sources */,
+				5DD4D5400B4B5B47009E3C24 /* BrainFadeIn.cpp in Sources */,
+				5D67C47E0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */,
+				5D7A78190B757D74003C896A /* ListBindings.cpp in Sources */,
+				5D7A781A0B757D74003C896A /* LoopingSoundBindings.cpp in Sources */,
+				5D7A781B0B757D74003C896A /* TileBindings.cpp in Sources */,
+				5D7A78200B757D9B003C896A /* StatePain.cpp in Sources */,
+				5D7A78230B757DC0003C896A /* BrainForceVisual.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1614,21 +1612,14 @@
 				5D1A38580A382D48005FF1C0 /* BrainShake.cpp in Sources */,
 				5D96828F0A5DF79A0015B20A /* BrainColorFlash.cpp in Sources */,
 				5D9682900A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp in Sources */,
-				5D9682910A5DF79A0015B20A /* BrainSideBase.cpp in Sources */,
 				5D9682920A5DF79A0015B20A /* State.cpp in Sources */,
 				5D9682930A5DF79A0015B20A /* StateDie.cpp in Sources */,
 				5D9682940A5DF79A0015B20A /* StateFrozen.cpp in Sources */,
-				5D9682950A5DF79A0015B20A /* StateSideSimpleIdle.cpp in Sources */,
-				5D9682960A5DF79A0015B20A /* StateSideSimpleWalk.cpp in Sources */,
 				5D9682970A5DF79A0015B20A /* Trigger.cpp in Sources */,
 				5D2F671D0A86F4D800419CA6 /* StateTopAttack.cpp in Sources */,
 				5D2F671E0A86F4D800419CA6 /* StateTopIdle.cpp in Sources */,
-				5D2F671F0A86F4D800419CA6 /* StateTopPlayerAttack.cpp in Sources */,
-				5D2F67200A86F4D800419CA6 /* StateTopPlayerIdle.cpp in Sources */,
-				5D2F67210A86F4D800419CA6 /* StateTopPlayerWalk.cpp in Sources */,
 				5D2F67220A86F4D800419CA6 /* StateTopWalk.cpp in Sources */,
 				5D2F67270A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */,
-				5D2F67280A86F4FA00419CA6 /* BrainTopPlayer.cpp in Sources */,
 				5D5BCAA30AB550A0004C08CE /* Goal_Delay.cpp in Sources */,
 				5D5BCAA40AB550A0004C08CE /* Goal_FollowPath.cpp in Sources */,
 				5D5BCAA50AB550A0004C08CE /* Goal_MoveToMapAndPos.cpp in Sources */,
@@ -1661,6 +1652,13 @@
 				5D8109340AD6220E004605B8 /* stylemanager_Bitmap.cpp in Sources */,
 				5D8109350AD6220E004605B8 /* window_Bitmap.cpp in Sources */,
 				5DEB6E220B168AEF00D74729 /* BrainBob.cpp in Sources */,
+				5DD4D5410B4B5B47009E3C24 /* BrainFadeIn.cpp in Sources */,
+				5D67C47F0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */,
+				5D7A781C0B757D74003C896A /* ListBindings.cpp in Sources */,
+				5D7A781D0B757D74003C896A /* LoopingSoundBindings.cpp in Sources */,
+				5D7A781E0B757D74003C896A /* TileBindings.cpp in Sources */,
+				5D7A78210B757D9B003C896A /* StatePain.cpp in Sources */,
+				5D7A78240B757DC0003C896A /* BrainForceVisual.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

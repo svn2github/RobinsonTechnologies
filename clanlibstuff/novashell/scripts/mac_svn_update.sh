@@ -14,7 +14,7 @@ Pause()
 
 echo Updating Clanlib from SVN
 cd ~/dev/ClanLib-0.8
-#svn update
+svn update
 
 echo Building clanlib...
 xcodebuild -project ClanLib_xcode_v2x.xcodeproj -configuration Deployment
