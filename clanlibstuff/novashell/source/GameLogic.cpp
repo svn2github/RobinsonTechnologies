@@ -630,17 +630,20 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 				if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 				{
 					SetShowPathfinding(!GetShowPathfinding());
-				} else
-				{
+				} 
+			}
+			break;
+
+		case CL_KEY_Q:
+			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+			{
 					if (GetWorld)
 					{
 						GetWorldCache->SetDrawCollision(!GetWorldCache->GetDrawCollision());
 					}
-
-				}
-				
 			}
 			break;
+
 	
 		case CL_KEY_F:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))

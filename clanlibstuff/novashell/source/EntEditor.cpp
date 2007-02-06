@@ -168,10 +168,17 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 			if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 			{
 				OnToggleShowPathfinding();
-			} else
-			{
-				OnToggleShowCollision();
-			}
+			} 
+		}
+		break;
+
+	
+
+	case CL_KEY_Q:
+
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+					OnToggleShowCollision();
 		}
 		break;
 
@@ -775,7 +782,7 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_pMenuShowFPSCheckbox->set_selected(GetGameLogic->GetShowFPS());
 	m_slot.connect(pItem->sig_clicked(),GetGameLogic, &GameLogic::ToggleShowFPS);
 
-	pItem = m_pMenu->create_toggle_item("Display/Show Map Collision Data (Ctrl+H)");
+	pItem = m_pMenu->create_toggle_item("Display/Show Map Collision Data (Ctrl+Q)");
 	m_pMenuShowCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuShowCollisionCheckbox->set_selected(m_bShowCollision);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowCollision);
@@ -1182,6 +1189,12 @@ void EntEditor::OnLayerChange()
 	//copy all settings to the real world
 	for (int i=0; i < m_pListLayerActive->get_count();i++)
 	{
+		if ( (layerMan.GetLayerInfo(m_pListLayerDisplay->get_item(i)->user_data).IsDisplayed()!= NULL) != m_pListLayerDisplay->is_selected(i))
+		{
+			//a change was made to the display layer.  Force the edit layer to match, less confusing for the user
+			m_pListLayerActive->set_selected(i, m_pListLayerDisplay->is_selected(i));
+		}
+
 		layerMan.GetLayerInfo(m_pListLayerDisplay->get_item(i)->user_data).SetIsDisplayed(m_pListLayerDisplay->is_selected(i));
 		layerMan.GetLayerInfo(m_pListLayerActive->get_item(i)->user_data).SetIsEditActive(m_pListLayerActive->is_selected(i));
 	}
@@ -1381,14 +1394,17 @@ void EntEditor::Render(void *pTarget)
 		profile = GetGameLogic->GetUserProfileName();
 	}
 	
-	//draw bar at the top of the screen
-	CL_Rect r(0,0,GetScreenX, 15);
-	CL_Display::fill_rect(r, CL_Color(0,0,0,80));
+	if (m_bHideMode)
+	{
+		//draw bar at the top of the screen
+		CL_Rect r(0,0,GetScreenX, 15);
+		CL_Display::fill_rect(r, CL_Color(0,0,0,80));
 
-	//draw the text over it
-	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
-	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
-	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, profile + " - TAB to restore");
+		//draw the text over it
+		ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+		GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
+		GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, profile + " - TAB to restore");
+	}
 
 }
 

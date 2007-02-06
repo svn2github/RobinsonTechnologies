@@ -52,6 +52,7 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_pPropertiesInputScript= NULL;
 	m_pPropertiesListData = NULL;
 	m_operation = C_OP_NOTHING;
+	m_bHideSelection = false;
 	SetName("edit mode");
 	Init();
 }
@@ -125,6 +126,8 @@ void EntEditMode::OnSelectSimilar()
 	
 	while (itor != tempList.m_selectedTileList.end())
 	{
+
+		m_bHideSelection = false;
 		int operation = TileEditOperation::C_OPERATION_ADD;
 		m_selectedTileList.AddTilesByWorldRectIfSimilar(CL_Vector2(r.left,r.top), CL_Vector2(r.right,r.bottom), operation, GetWorld->GetLayerManager().GetEditActiveList(), (*itor)->m_pTile);
 
@@ -335,6 +338,12 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Edit/Delete (DELETE)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDelete);
 
+	pItem = m_pMenu->create_item("Edit/Deselect (Ctrl+D)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDeselect);
+
+	pItem = m_pMenu->create_item("Edit/Hide Selection Box (Ctrl+H)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnHideSelection);
+
 
 	pItem = m_pMenu->create_item("Edit/ ");
 	pItem = m_pMenu->create_item("Edit/(Ctrl-V or right mouse button to paste selection)");
@@ -365,10 +374,10 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Utilities/Note: Tile from tile only works when everything is on the same bitmap");
 	pItem->enable(false);
 
-	pItem = m_pMenu->create_item("Modify Selected/Edit properties (Ctrl-E or Ctrl+Right Mouse Button)");
+	pItem = m_pMenu->create_item("Modify Selected/Edit properties (Ctrl-E)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnProperties);
 
-	pItem = m_pMenu->create_item("Modify Selected/Edit collision data (Toggle) (Ctrl-D)");
+	pItem = m_pMenu->create_item("Modify Selected/Edit collision data (Toggle) (Ctrl-W)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDefaultTileHardness);
 
 	pItem = m_pMenu->create_item("Modify Selected/Edit visual profile  (Ctrl-Shift-E) (if applicable)");
@@ -739,7 +748,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 	{
 	  switch (key.id)
 		{
-		case CL_KEY_D:
+		case CL_KEY_W:
 			m_pEntCollisionEditor->OnOk();
 			break;
 		}
@@ -749,14 +758,14 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 
 	if (IsDialogOpen(false)) 
 	{
-		//we must be doing something in a dialog, don't want to delete entities accidently	
+		//we must be doing something in a dialog, don't want to delete entities accidentally	
 		return;
 	}
 
 	switch(key.id)
 	{
 	
-	case CL_KEY_D:
+	case CL_KEY_W:
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 		{
 			OnDefaultTileHardness();
@@ -777,6 +786,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 					m_operation = C_OP_NOTHING; //don't want the undo to cache a meaningless copy
 					//they clicked one thing, without really dragging.  Treat it special
 					ClearSelection();
+					m_bHideSelection = false;			
 					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
 				} else
 				{
@@ -801,10 +811,12 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 				!CL_Keyboard::get_keycode(CL_KEY_MENU)
 				)
 			{
+				m_bHideSelection = false;			
+
 				ClearSelection();
 			}
 			m_dragInProgress = false;
-
+			
 			int operation = TileEditOperation::C_OPERATION_TOGGLE;
 			if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 			{
@@ -817,11 +829,12 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 
 			if ( (m_vecDragStop- m_vecDragStart).length() < 2)
 			{
+				m_bHideSelection = false;			
 				//they clicked one thing, without really dragging.  Treat it special
 				m_selectedTileList.AddTileByPoint(m_vecDragStart, operation, GetWorld->GetLayerManager().GetEditActiveList());
 			} else
 			{
-			
+				m_bHideSelection = false;			
 				m_selectedTileList.AddTilesByWorldRect(m_vecDragStart, m_vecDragStop, operation, GetWorld->GetLayerManager().GetEditActiveList());
 			}
 		}
@@ -836,6 +849,7 @@ void EntEditMode::SelectByLayer(const vector<unsigned int> &layerVec)
 	int operation = TileEditOperation::C_OPERATION_ADD;
 
 	CL_Rectf r = GetCamera->GetViewRectWorld();
+	m_bHideSelection = false;
 	m_selectedTileList.AddTilesByWorldRect(CL_Vector2(r.left,r.top), CL_Vector2(r.right,r.bottom), operation, layerVec);
 
 }
@@ -1267,6 +1281,84 @@ void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 
 	
 }
+void EntEditMode::OnDeselect()
+{
+	m_selectedTileList.ClearSelection();
+}
+
+void EntEditMode::OnHideSelection()
+{
+	
+	m_bHideSelection = !m_bHideSelection;
+
+	if (m_bHideSelection)
+	{
+		LogMsg("Selection box hidden.");
+	} else
+	{
+		LogMsg("Selection box un-hidden.");
+	}
+}
+
+void EntEditMode::FloodFill(CL_Rect r)
+{
+	
+	if (g_EntEditModeCopyBuffer.IsEmpty())
+	{
+		CL_MessageBox::info("Can't flood fill, you need to select something and hit Ctrl-C to put it into the buffer first.", GetApp()->GetGUI());
+		return;
+	}
+
+	CL_Vector2 vOffset;
+
+	if (m_pCheckBoxSnap->is_checked()) 
+	{
+		vOffset = m_vecSnapSize;
+		CL_Vector2 vUpLeftTemp = GetWorld->SnapWorldCoords(CL_Vector2(r.left, r.top), vOffset);
+		r.left = vUpLeftTemp.x;
+		r.top = vUpLeftTemp.y;
+
+	} else
+	{
+		//use the whole size..
+		vOffset = g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits();
+	
+	}
+
+	if (vOffset.x == 0 || vOffset.y == 0)
+	{
+		CL_MessageBox::info("Can't flood fill - invalid spacing.  If grid snap is on, make sure one isn't set to 0.", GetApp()->GetGUI());
+		return;
+
+	}
+
+	if (g_EntEditModeCopyBuffer.m_selectedTileList.size() > 10)
+	{
+		if (!ConfirmMessage("Flood Fill With Multiple Tiles", "This may take a long time, are you sure?")) return;
+	}
+
+	LogMsg("Flood filling %s using spacing of %s.",PrintRectInt(r).c_str(), PrintVector(vOffset).c_str());
+
+
+	CL_Vector2 vPos = CL_Vector2(r.left, r.top);
+
+	for (; vPos.y < r.bottom;)
+	{
+		for (; vPos.x < r.right;)
+		{
+			//paste it here
+			g_EntEditModeCopyBuffer.SetIgnoreParallaxOnNextPaste();
+			OnPaste(g_EntEditModeCopyBuffer, vPos);
+			vPos.x += vOffset.x;
+		}
+
+		vPos.x = r.left;
+		vPos.y += vOffset.y;
+
+	}
+
+	PushUndosIntoUndoOperation();
+}
 
 void EntEditMode::onButtonDown(const CL_InputEvent &key)
 {
@@ -1289,6 +1381,34 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	
 	case VK_CLOSE_BRACKET:
 		ScaleUpSelected();
+		break;
+
+	case CL_KEY_D:
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			OnDeselect();
+		}
+		break;
+
+	case CL_KEY_H:
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			OnHideSelection();
+
+		}
+		break;
+
+	case CL_KEY_F:
+		if (m_dragInProgress)
+		{
+				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecDragStop), m_vecDragSnap);
+			CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
+			rec.normalize();
+
+			FloodFill(rec);
+		}
+
+
 		break;
 
 	//nudging
@@ -1507,7 +1627,9 @@ void EntEditMode::DrawActiveBrush(CL_GraphicContext *pGC)
   CL_Vector2 vecBottomRight = (vecMouse + (g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()));
 
   SelectedTile *pSelTile = (*g_EntEditModeCopyBuffer.m_selectedTileList.begin());
-  DrawRectFromWorldCoordinates(vecMouse, vecBottomRight, CL_Color(255,0,0,150), pGC);
+  
+   DrawRectFromWorldCoordinates(vecMouse, vecBottomRight, CL_Color(255,0,0,150), pGC);
+ 
 }
 
 
@@ -1534,10 +1656,10 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 	CL_Vector2 vecStop(vecStart.x + m_selectedTileList.GetSelectionSizeInWorldUnits().x, vecStart.y + m_selectedTileList.GetSelectionSizeInWorldUnits().y);
 
 	vecStart = GetWorldCache->WorldToScreen(vecStart);
-	vecStop = GetWorldCache->WorldToScreen(vecStop);
+		vecStop = GetWorldCache->WorldToScreen(vecStop);
 
-	pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(50,255,50,180));
-
+		pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(50,255,50,180));
+	
 }
 
 void EntEditMode::OnProperties()
@@ -1751,10 +1873,13 @@ void EntEditMode::Render(void *pTarget)
 
 	}
 	
-	while (itor != m_selectedTileList.m_selectedTileList.end())
+	if (!m_bHideSelection)
 	{
-		DrawSelectedTileBorder((*itor)->m_pTile, pGC);
-		itor++;
+		while (itor != m_selectedTileList.m_selectedTileList.end())
+		{
+			DrawSelectedTileBorder((*itor)->m_pTile, pGC);
+			itor++;
+		}
 	}
 
 	if (m_pEntCollisionEditor) return; //don't draw this extra GUI stuff right now
@@ -1765,7 +1890,7 @@ void EntEditMode::Render(void *pTarget)
 		DrawSelection(pGC);
 	}
 	
-	if (m_dragInProgress)
+	if (m_dragInProgress && m_vecDragStart != GetWorldCache->ScreenToWorld(m_vecDragStop))
 	{
 		
 		//
@@ -1774,6 +1899,18 @@ void EntEditMode::Render(void *pTarget)
 			int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).y - GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap).y)));
 		//draw a rect on the screen
 		DrawRectFromWorldCoordinates(m_vecDragStart, worldStop, CL_Color(255,255,0,200), pGC);
+
+//draw a little help thing
+		//draw bar at the top of the screen
+		CL_Rect r(0,GetScreenY-15,GetScreenX, GetScreenY);
+		CL_Display::fill_rect(r, CL_Color(0,0,0,80));
+
+		//draw the text over it
+		ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+		GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
+		GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,GetScreenY-7,"Selection Drag - Press F to flood fill with current tile, Ctrl-C to cut tile from a tile");
+
+
 	} else
 	{
 		//draw the brush, if available

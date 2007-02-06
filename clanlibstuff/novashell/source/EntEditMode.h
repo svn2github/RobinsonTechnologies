@@ -131,6 +131,9 @@ protected:
 	void PushUndosIntoUndoOperation();
 	void OnMouseDoubleClick(const CL_InputEvent &input);
 	void OpenContextMenu(CL_Vector2 clickPos);
+	void OnHideSelection();
+	void OnDeselect();
+	void FloodFill(CL_Rect r);
 
 	enum
 	{
@@ -152,6 +155,7 @@ protected:
 	int m_operation; //if we're currently drag-moving or not
 	CL_Vector2 m_lastContextWorldPos;
 	CL_Menu *m_pContextMenu;
+	bool m_bHideSelection;
 };
 
 

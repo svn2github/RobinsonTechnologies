@@ -100,3 +100,13 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 
 * Added LoopingSound object to script
 * Added climb/walk sounds to the tree world player brain script
+
+2-5-2007
+
+* Selecting/deselecting a display layer causes the edit layer to also change, as rarely would you want to not see a layer and still select it
+* Added flood fill function - drag out a rect and tap F.  If grid snap is set, it uses it for spacing.
+* Moved show hardness/collision from Ctrl-H to Ctrl-Q
+* Moved edit collision from Ctrl-D to Ctrl-W
+* Ctrl-H now hides the selection box, good for when lining up tiles (like photoshop)
+* Ctrl-D now performs deselect (like photoshop)
+
