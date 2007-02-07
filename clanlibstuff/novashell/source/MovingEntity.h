@@ -31,6 +31,14 @@ class PathPlanner;
 #endif
 
 
+enum
+{
+	C_BLEND_MODE_NORMAL,
+	C_BLEND_MODE_ADDITIVE,
+	C_BLEND_MODE_NEGATIVE
+
+};
+
 class Brain;
 class VisualProfile;
 
@@ -280,7 +288,9 @@ public:
   float GetTurnSpeed() {return m_turnSpeed;}
   void SetGravityOverride(float g) {m_gravityOverride = g;}
   float GetGravityOverride() {return m_gravityOverride;}
-  
+  void SetBlendMode(int blendMode) {m_blendMode = blendMode;}
+  int GetBlendMode() {return m_blendMode;}
+
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -410,6 +420,7 @@ protected:
 	bool m_bRanPostUpdate;
 	bool m_bRanApplyPhysics;
 	float m_gravityOverride;
+	int m_blendMode;
 };
 
 MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName); //creates an entity and puts it in the world

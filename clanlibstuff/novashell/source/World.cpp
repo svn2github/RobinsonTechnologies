@@ -802,8 +802,10 @@ void World::ReInitEntities()
 				{
 
 				case C_TILE_TYPE_ENTITY:
+					
 					pEnt = ((TileEntity*)*tileItor)->GetEntity();
-					if (pEnt) 
+					//we don't want to reinit things attached to the camera because generally those are GUI elements and get screwy
+					if (pEnt && pEnt->GetAttachEntityID() != C_ENTITY_CAMERA) 
 					{
 						float orientation = pEnt->GetBody()->GetOrientation();
 						CL_Vector2 facing = pEnt->GetVectorFacing();
@@ -811,9 +813,7 @@ void World::ReInitEntities()
 						pEnt->SetVectorFacing(facing);
 						pEnt->Init();
 						pEnt->GetBody()->SetOrientation(orientation);
-
 						pEnt->RunOnMapInsertIfNeeded();
-						//pEnt->RunPostInitIfNeeded();
 					}
 
 					break;

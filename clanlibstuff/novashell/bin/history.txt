@@ -110,3 +110,19 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Ctrl-H now hides the selection box, good for when lining up tiles (like photoshop)
 * Ctrl-D now performs deselect (like photoshop)
 
+2-6-2007
+
+* Added Entity:SetBlendMode(), added C_BLENDING_MODE_ADDITIVE to setup_constants.lua.  It's hard finding interesting
+	blending modes that work right with alpha.. hrm.  Made the TreeWorld player weapon use it, should try it for lighting effects later I guess.
+
+2-7-2007
+
+* Cleaned up the visual profile system, removed unneeded data from most of the example .xml's (support is still there, but things like base_angle and rotation offsets don't need to clutter everything, it makes it look more confusing then it is)
+* Visual Profile's now store the x/y offset per Anim, so mirrored animations can have different offsets.  The editor's visual profile editor now uses it automatically, don't need to hand edit or worry about it
+* Mouse wheel zoom now works while using the visual profile editor
+* After editing a visual profile, entities are reinitted so changes are visible everywhere in the active world instantly without restarting
+* After a script edit/visual profile change entities attached to the camera are ignored during the re-init phase.  Those items are generally GUI and just got screwed up by reinitting them, forcing you to quit/continue to have them look right again
+* Erased some unused scripts from treeworld
+* BUGFIX: Invisible walls/solid blocks problem fixed (system palette had gotten color key mode turned on somehow, whups)
+
+

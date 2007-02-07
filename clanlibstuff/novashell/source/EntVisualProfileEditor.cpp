@@ -23,10 +23,25 @@ EntVisualProfileEditor::~EntVisualProfileEditor()
 	SAFE_DELETE(m_pWindow);
 }
 
+bool EntVisualProfileEditor::IsDialogOpen()
+{
+	//if yes, keyboard and mouse editting controls will be killed so we don't zoom or do things while editing text
+	return false;
+}
+
 void EntVisualProfileEditor::OnEditorClosed(int entID)
 {
 	OnClose();
 }
+
+void EntVisualProfileEditor::OnEntityDeleted(int entID)
+{
+	//well, the entity we were editing was just deleted, this could happen when the game is shutdown.
+	//Don't bother saving..
+	SetDeleteFlag(true);
+
+}
+
 void EntVisualProfileEditor::OnClose()
 {
 	//save and close
@@ -38,7 +53,15 @@ void EntVisualProfileEditor::OnClose()
 		m_pEnt->GetVisualProfile()->GetParentVisualResource()->Save();
 	}
 
+	
 	SetDeleteFlag(true);
+
+	//now, we don't really have to do this, and we shouldn't if it's slow, but it's less confusing if we reinit all possible sprites that could
+	//have been affected.
+
+	GetWorld->ReInitEntities();
+		
+
 }
 
 int SetListBoxByString(CL_ListBox &lbox, const string &st)
@@ -60,7 +83,6 @@ int SetListBoxByString(CL_ListBox &lbox, const string &st)
 
 void EntVisualProfileEditor::OnChangeAnim()
 {
-
 	m_pEnt->SetAnimByName(m_pListAnims->get_current_text());
 }
 
@@ -92,7 +114,7 @@ bool EntVisualProfileEditor::Init(MovingEntity *pEnt)
 	m_slots.connect(EntityMgr->GetEntityByName("edit mode")->sig_delete, this, &EntVisualProfileEditor::OnEditorClosed);
 
 	//what if the entity itself is destroy for some reason?  handle that too
-	m_slots.connect(m_pEnt->sig_delete, this, &EntVisualProfileEditor::OnEditorClosed);
+	m_slots.connect(m_pEnt->sig_delete, this, &EntVisualProfileEditor::OnEntityDeleted);
 
 
 	//set the list of anims that can be clicked
@@ -180,6 +202,7 @@ void EntVisualProfileEditor::MoveAnimSelection(int offset)
 	int selected = m_pListAnims->get_current_item();
 	selected = altmod(selected + offset, m_pListAnims->get_count());
 	m_pListAnims->set_current_item(selected);
+	m_pListAnims->set_top_item(selected);
 }
 
 void EntVisualProfileEditor::OnButtonDown(const CL_InputEvent &key)

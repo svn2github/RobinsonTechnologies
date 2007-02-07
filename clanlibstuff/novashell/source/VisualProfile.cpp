@@ -463,7 +463,7 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 	string stSpriteName = node.get_attribute("spritename");
 	bool mirrorx = CL_String::to_bool(node.get_attribute("mirrorx"));
 	bool mirrory = CL_String::to_bool(node.get_attribute("mirrory"));
-	
+
 	if (IsActive(animID))
 	{
 		LogError("Error, state %s already has a sprite attached to it in profile %s.", stState.c_str(), GetName().c_str());
@@ -498,26 +498,32 @@ void VisualProfile::AddAnimInfo(CL_DomElement &node)
 	if (mirrory)
 	{
 		m_animArray[animID].m_pSprite->set_angle_pitch(-180);
-
-		m_animArray[animID].m_pSprite->get_alignment(o, x, y);
-		m_animArray[animID].m_pSprite->set_alignment(o, x, -y);
-
 	}
 
 	if (mirrorx)
 	{
 		m_animArray[animID].m_pSprite->set_angle_yaw(-180);
-		m_animArray[animID].m_pSprite->get_alignment(o, x, y);
-		
-		if (o == origin_top_left)
-		{
-			x += m_animArray[animID].m_pSprite->get_width();
-		}
-		m_animArray[animID].m_pSprite->set_alignment(o, -x, y);
-
-
-		
 	}
+
+	m_animArray[animID].m_pSprite->get_alignment(o, x, y);
+
+	if (node.has_attribute("x"))
+	{
+		x = CL_String::to_int(node.get_attribute("x"));
+	}
+	if (node.has_attribute("y"))
+	{
+		y = CL_String::to_int(node.get_attribute("y"));
+	}
+
+	/*
+	if (o == origin_top_left)
+	{
+		x += m_animArray[animID].m_pSprite->get_width();
+	}
+	*/
+
+	m_animArray[animID].m_pSprite->set_alignment(o, x, y);
 
 	m_animArray[animID].m_name = stState;
 }
@@ -548,22 +554,73 @@ void VisualProfile::UpdateDocumentSpriteFromAnim(CL_DomNode *node, ProfileAnim *
 	} 
 }
 
+void VisualProfile::UpdateProfileAnim(CL_DomElement &node)
+{
+	string stState = node.get_attribute("state");
+	int animID = TextToAnimIDCreatedIfNeeded(stState);
+
+	//get offset data from the anim itself and plug it in if needed
+
+	if (!IsActive(animID))
+	{
+		LogError("Strange, state %s has no valid sprite attached to it in profile %s.", stState.c_str(), GetName().c_str());
+		return;
+	}
+	//LogMsg("Saving offsets to state %s in profile %s.", stState.c_str(), GetName().c_str());
+
+	CL_Origin o;
+	int x,y;
+
+	m_animArray[animID].m_pSprite->get_alignment(o, x, y);
+
+	node.set_attribute("x", CL_String::from_int(x));
+	node.set_attribute("y", CL_String::from_int(y));
+
+}
+
+void VisualProfile::UpdateProfile(CL_DomNode *pNode)
+{
+
+	CL_DomNode cur_node;
+
+	for (
+		cur_node = pNode->get_first_child();
+		!cur_node.is_null();
+	cur_node = cur_node.get_next_sibling())
+	{
+		if (!cur_node.is_element()) continue;
+		CL_DomElement cur_element = cur_node.to_element();
+		string type = cur_element.get_tag_name();
+
+		if (type == "anim")
+		{
+			UpdateProfileAnim(cur_element);
+		} else
+		{
+			LogMsg("Warning: Don't know what %s is in the %s profile xml", type.c_str(), m_name.c_str());
+		}
+	}
+}
+
+
 void VisualProfile::UpdateToDocument(CL_DomDocument &document)
 {
+	
 	CL_DomElement domRoot = document.get_document_element();
 	CL_DomNodeList domList;
-	domList = domRoot.get_elements_by_tag_name("sprite");
+	domList = domRoot.get_elements_by_tag_name("profile");
 	for (int c=0; c < domList.get_length(); c++)
 	{
 		string name = domList.item(c).get_attributes().get_named_item("name").get_node_value().c_str();
 
-		int animID = SpriteToAnimID(name, false);
-		if (animID != -1)
+		if (name == GetName())
 		{
-			//located it.  Let's update it
-			UpdateDocumentSpriteFromAnim(&domList.item(c), &m_animArray[animID]);
+			//bingo, this is the profile we want to edit
+			UpdateProfile(&domList.item(c));
+
 		}
 	}
+	
 }
 
 bool VisualProfile::Init(VisualResource *pVisualResource, const string &profileName)

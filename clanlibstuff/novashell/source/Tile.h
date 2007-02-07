@@ -92,7 +92,7 @@ protected:
 	
 	cl_uint8 m_type;
 
-	//this data is around for every tile type wether you need it or not, but actually gets saved and
+	//this data is around for every tile type whether you need it or not, but actually gets saved and
 	//loaded in subclasses
 	CL_Vector2 m_vecPos; //where we're located if applicable
 	CL_Vector2 m_vecScale;

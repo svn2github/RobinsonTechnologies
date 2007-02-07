@@ -259,6 +259,8 @@ Group: Member Functions
 			.def("GetCollisionRect", &MovingEntity::GetCollisionRect)
 
 			.def("GetNearbyTileList", &GetNearbyTileListForScript)
+			.def("SetBlendMode", &MovingEntity::SetBlendMode)
+			.def("GetBlendMode", &MovingEntity::GetBlendMode)
 
 			//Group -=-=-=-
 	];

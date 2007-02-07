@@ -352,7 +352,7 @@ void MovingEntity::SetDefaults()
 	m_bOnScreen = false;
 	m_customDampening = -1;
 	m_gravityOverride = C_GRAVITY_OVERRIDE_DISABLED;
-
+	m_blendMode = C_BLEND_MODE_NORMAL;
 }
 
 void MovingEntity::SetNavNodeType(int n)
@@ -2016,8 +2016,33 @@ void MovingEntity::Render(void *pTarget)
 		//do the real blit
 		m_pSprite->set_color(CL_Color(r,g,b,a));
 		
-		
-		m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
+		if (m_blendMode != C_BLEND_MODE_NORMAL)
+		{
+			CL_BlendFunc src,dest;
+			m_pSprite->get_blend_func(src, dest);
+			switch (m_blendMode)
+			{
+			case C_BLEND_MODE_ADDITIVE:
+
+				m_pSprite->set_blend_func(blend_src_alpha, blend_one); //screen/additive
+				break;
+			case C_BLEND_MODE_NEGATIVE:
+				m_pSprite->set_blend_func(blend_src_alpha_saturate, blend_one_minus_src_alpha);  //Negative?
+				break;
+			default:
+				LogError("Unknown blend mode: %d", m_blendMode);
+			}
+
+			m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
+
+			m_pSprite->set_blend_func(src, dest); //put it back how it was
+
+		} else
+		{
+			m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
+		}
+
+
 		
 		//return things back to normal
 		m_pSprite->set_angle_yaw(yawHold);

@@ -183,6 +183,9 @@ protected:
 	void AddAnimInfo(CL_DomElement &node);
 	int TextToAnimIDCreatedIfNeeded(const string & stState);
 	void UpdateDocumentSpriteFromAnim(CL_DomNode *node, ProfileAnim *anim);
+	void UpdateProfileAnim(CL_DomElement &node);
+	void UpdateProfile(CL_DomNode *pNode);
+
 
 	string m_name;
 	VisualResource *m_pParent;

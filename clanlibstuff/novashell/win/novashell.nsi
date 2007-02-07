@@ -182,6 +182,11 @@ Section "Uninstall"
 ;default delete
 
   Delete "$INSTDIR\game.exe"
+  Delete "$INSTDIR\history.txt"
+  Delete "$INSTDIR\license.txt"
+  Delete "$INSTDIR\readme.txt"
+  Delete "$INSTDIR\credits.txt"
+  
   Delete "$INSTDIR\libjpeg.dll"
   Delete "$INSTDIR\libpng13.dll"
   Delete "$INSTDIR\Uninstall.exe"

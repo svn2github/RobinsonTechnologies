@@ -721,14 +721,26 @@ bool EntEditMode::IsDialogOpen(bool bCheckModelessDialogToo)
 	{
 		if (pEditor->IsDialogOpen()) return true;
 	}
-	if (m_bDialogIsOpen) return true;
-
+	
 	if (bCheckModelessDialogToo)
 	{
 		if (m_pInputBoxSnapSizeX->has_focus()) return true;
 		if (m_pInputBoxSnapSizeY->has_focus()) return true;
 	}
 
+
+	EntVisualProfileEditor *pVisEditor = (EntVisualProfileEditor*) EntityMgr->GetEntityByName("visualeditor");
+	if (pVisEditor)
+	{
+		return pVisEditor->IsDialogOpen();
+	}
+
+	//the secondary check is done for script based hot keys and mouse wheels.. but in general, even though a dialog
+	//is open, we still want to be able to zoom, so ..
+	
+	if (m_bDialogIsOpen) return true;
+
+	
 	return false;
 }
 
