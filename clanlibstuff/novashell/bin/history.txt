@@ -125,4 +125,6 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Erased some unused scripts from treeworld
 * BUGFIX: Invisible walls/solid blocks problem fixed (system palette had gotten color key mode turned on somehow, whups)
 
-
+* Fixed Detail 2 layer in top view rpg example (outside) to sort with the entity layers, dunno why that wasn't
+	set before
+* Trying to add an invalid brain type now is an error rather than normal log message

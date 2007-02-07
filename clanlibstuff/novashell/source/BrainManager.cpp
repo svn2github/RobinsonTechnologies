@@ -159,7 +159,7 @@ Brain * BrainManager::Add(const string &brainName, const string &initMsg)
 
 	if (!pNewBrain)
 	{
-		LogMsg("Brain name %s was not found in the brain registry.  It's case sensitive.  Valid brains are:", brainName.c_str());
+		LogError("Brain name %s was not found in the brain registry.  It's case sensitive.  Valid brains are:", brainName.c_str());
 		BrainRegistry::GetInstance()->ListAllBrains();
 		return NULL;
 	}
