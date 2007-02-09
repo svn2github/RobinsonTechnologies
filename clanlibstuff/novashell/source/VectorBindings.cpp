@@ -214,7 +214,7 @@ void luabindVector(lua_State *pState)
 			
 /*
 Object: Rect
-The Rect object.
+The Rect object.  Holds only whole integer numbers, no decimal points allowed.
 
 Group: Local Variables
 
@@ -347,7 +347,7 @@ Group: Member Functions
 			
 			/*
 			Object: Rectf
-			The Rectf object.
+			The Rectf object.  This version supports fractions and decimal points.
 
 			Group: Local Variables
 
@@ -395,7 +395,6 @@ Group: Member Functions
 			.def_readwrite("top", &CL_Rectf::top)
 			.def_readwrite("right", &CL_Rectf::right)
 			.def_readwrite("bottom", &CL_Rectf::bottom)
-
 
 			/*
 			func: GetWidth

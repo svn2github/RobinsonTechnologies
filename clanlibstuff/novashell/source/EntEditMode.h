@@ -29,7 +29,7 @@ public:
 
 	EntEditMode();
     virtual ~EntEditMode();
-	bool IsDialogOpen(bool bCheckModelessDialogToo);
+	bool IsDialogOpen(bool bCheckModelessDialogToo, bool bIsZoomOrMovement = false);
 
 protected:
 	
@@ -90,7 +90,7 @@ protected:
 	CL_InputBox *m_pInputBoxSnapSizeX; //what tile size we should emulate
 	CL_InputBox *m_pInputBoxSnapSizeY; //what tile size we should emulate
 
-	CL_Vector2 m_vecDragStart, m_vecDragStop;
+	CL_Vector2 m_vecDragStart, m_vecScreenDragStop;
 	TileEditOperation m_selectedTileList;
 	bool m_dragInProgress;
 
@@ -134,6 +134,9 @@ protected:
 	void OnHideSelection();
 	void OnDeselect();
 	void FloodFill(CL_Rect r);
+	void RefreshActiveBrush(CL_Point mousePos);
+	void DrawDragRect(CL_GraphicContext *pGC);
+
 
 	enum
 	{

@@ -506,10 +506,12 @@ CL_Vector2 MovingEntity::GetTextScale()
 }
 
 
-MovingEntity * MovingEntity::CreateEntity(CL_Vector2 pos, const string &script)
+
+MovingEntity * MovingEntity::CreateEntity(World *pMap, CL_Vector2 pos, const string &script)
 {
-	return ::CreateEntity(pos, ProcessPathNoScript(script));
+	return ::CreateEntity(pMap, pos, ProcessPathNoScript(script));
 }
+
 
 void MovingEntity::SetFacingTarget(int facing)
 {
@@ -995,7 +997,7 @@ bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 
 	m_pSprite = new CL_Sprite();
 	static CL_Rect imageRect;
-	if (pSrcRect == NULL || *pSrcRect == CL_Rect(0,0,0,0))
+	if (pSrcRect == NULL )
 	{
 		//use default image size
 		imageRect = CL_Rect(0,0, pSurf->get_width()-1, pSurf->get_height()-1);
@@ -1447,6 +1449,8 @@ void MovingEntity::SetDensity(float fDensity)
 	{
 		GetBody()->SetInertia(0);
 	}
+
+	if (fDensity == 0) SetMass(0);
 }
 
 void MovingEntity::EnableRotation(bool bRotate)
@@ -2629,14 +2633,6 @@ void MovingEntity::OnAttachedEntity(int entID)
 void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 {
 
-	/*
-	if (entityID != C_ENTITY_CAMERA && entityID != C_ENTITY_NONE)
-	{
-		LogError("We only support attaching to the camera right now");
-		return;
-	}
-	*/
-	
 	m_attachEntID = entityID;
 	m_attachOffset = vOffset;
 	

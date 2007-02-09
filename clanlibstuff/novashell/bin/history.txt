@@ -128,3 +128,18 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Fixed Detail 2 layer in top view rpg example (outside) to sort with the entity layers, dunno why that wasn't
 	set before
 * Trying to add an invalid brain type now is an error rather than normal log message
+
+2-8-2007
+
+* CreateEntity(vPos, scriptFileName) was changed to CreateEntity(Map, vPos, scriptFileName)
+* Snap mode is now active during drag selection - makes it a lot easier to cut out tiles with Ctrl-C at a specific size
+* Some progress made on the Scripting API.. uh.. 30% done maybe
+
+* SetCanRotate renamed SetEnableRotationPhysics (less confusing)
+
+2-9-2007
+
+* BUGFIX: Fixed issue with Ctrl-Left selection toggle not working with grid snap enabled
+* Dragging selections and moving in general was improved, especially when in snap mode (nmceri)
+* BUGFIX: Visual profile editor works better
+* I got Akiko to do a new style sheet for the novashell webpages.. it's uh.. very brown now.. hrm.

@@ -357,9 +357,11 @@ void World::SetWorldChunkPixelSize(int widthAndHeight)
 
 CL_Vector2 World::SnapWorldCoords(CL_Vector2 vecWorld, CL_Vector2 vecSnap)
 {
-  vecWorld.x -= altfmod(vecWorld.x, vecSnap.x);
-  vecWorld.y -= altfmod(vecWorld.y, vecSnap.y);
-  return vecWorld;
+	
+	vecWorld.x -= altfmod(vecWorld.x+vecSnap.x, vecSnap.x);
+	vecWorld.y -= altfmod(vecWorld.y+vecSnap.y, vecSnap.y);
+
+	return vecWorld;
 }
 
 void World::InvalidateAllThumbnails()

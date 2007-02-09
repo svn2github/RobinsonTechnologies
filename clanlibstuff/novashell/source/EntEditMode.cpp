@@ -46,7 +46,7 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_pListBaseTile = NULL;
 
 	m_dragInProgress = false;
-	m_vecDragStart = m_vecDragStop = CL_Vector2(0,0);
+	m_vecDragStart = m_vecScreenDragStop = CL_Vector2(0,0);
 	m_pEntCollisionEditor = NULL;
 	m_bDialogIsOpen = false;
 	m_pPropertiesInputScript= NULL;
@@ -62,6 +62,15 @@ EntEditMode::~EntEditMode()
 	Kill();
 }
 
+void EntEditMode::RefreshActiveBrush(CL_Point mousePos)
+{
+	if (!m_pContextMenu || !m_pContextMenu->is_open())
+	{
+		//mouse is being dragged?  well, just in case.
+		m_vecScreenDragStop = CL_Vector2(mousePos.x,mousePos.y);
+	}
+}
+
 void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 {
 	CL_Vector2 mouseWorldPos =GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x,key.mouse_pos.y));
@@ -69,13 +78,7 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 	sprintf(stTemp, "Mouse Pos: X: %.1f Y: %.1f", mouseWorldPos.x, mouseWorldPos.y);
 	m_pLabelMain->set_text(stTemp);
 
-	if (!m_pContextMenu || !m_pContextMenu->is_open())
-	{
-
-	
-	//mouse is being dragged?  well, just in case.
-		m_vecDragStop = CL_Vector2(key.mouse_pos.x,key.mouse_pos.y);
-	}
+	RefreshActiveBrush(key.mouse_pos);
 
 
 	/*
@@ -91,9 +94,36 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 		
 		if (CL_Keyboard::get_keycode(CL_KEY_SPACE))
 		{
+			
+			
 			CL_Vector2 oldWorldPos = GetWorldCache->ScreenToWorld(CL_Vector2(m_vecLastMousePos.x,m_vecLastMousePos.y));
-			//let's move our start by the amount they dragged with space bar down, old photshop trick
-			m_vecDragStart -= (oldWorldPos-GetWorldCache->ScreenToWorld(m_vecDragStop));
+			//let's move our start by the amount they dragged with space bar down, old photoshop trick
+			
+			if (m_pCheckBoxSnap->is_checked())
+			{
+				CL_Vector2 vOffset = oldWorldPos-GetWorldCache->ScreenToWorld(m_vecScreenDragStop);
+				 //move by snap
+				
+				if (abs(vOffset.x) > 3)
+				{
+					if (vOffset.x > 0)
+					m_vecDragStart.x -= m_vecSnapSize.x; else
+					m_vecDragStart.x += m_vecSnapSize.x;
+				}
+
+				if (abs(vOffset.y) > 3)
+				{
+					if (vOffset.y > 0)
+						m_vecDragStart.y -= m_vecSnapSize.y; else
+						m_vecDragStart.y += m_vecSnapSize.y;
+				}
+
+
+			} else
+			{
+				//freeform moving
+				m_vecDragStart -= (oldWorldPos-GetWorldCache->ScreenToWorld(m_vecScreenDragStop));
+			}
 		}
 	}
 
@@ -714,7 +744,7 @@ void EntEditMode::BuildBaseTilePageBox()
 }
 
 //helps us know when it's a bad time to process hotkeys
-bool EntEditMode::IsDialogOpen(bool bCheckModelessDialogToo)
+bool EntEditMode::IsDialogOpen(bool bCheckModelessDialogToo, bool bEvasive)
 {
 	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
 	if (pEditor)
@@ -728,12 +758,15 @@ bool EntEditMode::IsDialogOpen(bool bCheckModelessDialogToo)
 		if (m_pInputBoxSnapSizeY->has_focus()) return true;
 	}
 
-
+	
 	EntVisualProfileEditor *pVisEditor = (EntVisualProfileEditor*) EntityMgr->GetEntityByName("visualeditor");
 	if (pVisEditor)
 	{
+		if (bEvasive) return true; //allow this to happen most of the time
+	
 		return pVisEditor->IsDialogOpen();
 	}
+	
 
 	//the secondary check is done for script based hot keys and mouse wheels.. but in general, even though a dialog
 	//is open, we still want to be able to zoom, so ..
@@ -768,7 +801,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 		return; //now is a bad time for most stuff
 	}
 
-	if (IsDialogOpen(false)) 
+	if (IsDialogOpen(false, true)) 
 	{
 		//we must be doing something in a dialog, don't want to delete entities accidentally	
 		return;
@@ -792,7 +825,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 			{
 
 				
-				if ( (GetWorldCache->ScreenToWorld(m_vecDragStop)- m_vecDragStart).length() < 1)
+				if ( (GetWorldCache->ScreenToWorld(m_vecScreenDragStop)- m_vecDragStart).length() < 1)
 				{
 					
 					m_operation = C_OP_NOTHING; //don't want the undo to cache a meaningless copy
@@ -813,7 +846,11 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 			if (!m_dragInProgress) break; //not a real drag was happening
 
 			//scan every tile within this range
-			m_vecDragStop =  GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
+			m_vecScreenDragStop =  GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
+
+		
+			
+			
 			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) &&
 				!CL_Keyboard::get_keycode(CL_KEY_SHIFT) &&
 #ifdef __APPLE__
@@ -839,16 +876,36 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 				operation = TileEditOperation::C_OPERATION_SUBTRACT;
 			}
 
-			if ( (m_vecDragStop- m_vecDragStart).length() < 2)
+			if ( (m_vecScreenDragStop- m_vecDragStart).length() < 2)
 			{
 				m_bHideSelection = false;			
 				//they clicked one thing, without really dragging.  Treat it special
 				m_selectedTileList.AddTileByPoint(m_vecDragStart, operation, GetWorld->GetLayerManager().GetEditActiveList());
+		
+			
+
 			} else
 			{
+				
+				if (m_pCheckBoxSnap->is_checked())
+				{
+					
+					//these tweaks allow the snapped grid to be inclusive of the tile we're half on
+					if (m_vecScreenDragStop.x > m_vecDragStart.x) m_vecScreenDragStop.x += m_vecSnapSize.x; else m_vecDragStart.x += m_vecSnapSize.x;
+					if (m_vecScreenDragStop.y > m_vecDragStart.y) m_vecScreenDragStop.y += m_vecSnapSize.y; else m_vecDragStart.y += m_vecSnapSize.y;
+
+					
+					m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);
+					m_vecScreenDragStop = GetWorld->SnapWorldCoords(m_vecScreenDragStop, m_vecSnapSize);
+				}
+
 				m_bHideSelection = false;			
-				m_selectedTileList.AddTilesByWorldRect(m_vecDragStart, m_vecDragStop, operation, GetWorld->GetLayerManager().GetEditActiveList());
+				m_selectedTileList.AddTilesByWorldRect(m_vecDragStart, m_vecScreenDragStop, operation, GetWorld->GetLayerManager().GetEditActiveList());
+
+		
 			}
+			RefreshActiveBrush(key.mouse_pos);
+
 		}
 
 		break;
@@ -1114,13 +1171,17 @@ void EntEditMode::SetOperation(int op)
 		m_selectedTileList.FillSelection(&blankTile);
 
 		//paste the new ones
-		CL_Vector2 worldDragStop = GetWorldCache->ScreenToWorld(m_vecDragStop);
+		CL_Vector2 worldDragStop = GetWorldCache->ScreenToWorld(m_vecScreenDragStop);
 
 		CL_Vector2 vecStart(worldDragStop.x -m_vecDragStart.x, worldDragStop.y - m_vecDragStart.y);
 		vecStart += m_selectedTileList.GetUpperLeftPos();
 
 		if (GetWorld->GetSnapEnabled())
 		{
+			
+			if (m_selectedTileList.m_selectedTileList.size() == 1)
+				vecStart = worldDragStop; //special case when in snap mode
+			
 			vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecSnapSize);
 
 		} else
@@ -1189,7 +1250,7 @@ void EntEditMode::OnMouseDoubleClick(const CL_InputEvent &key)
 void EntEditMode::OnPasteContext()
 {
 
-	CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(m_vecDragStop);
+	CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(m_vecScreenDragStop);
 	OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 	PushUndosIntoUndoOperation();
 	KillContextMenu();
@@ -1326,10 +1387,6 @@ void EntEditMode::FloodFill(CL_Rect r)
 	if (m_pCheckBoxSnap->is_checked()) 
 	{
 		vOffset = m_vecSnapSize;
-		CL_Vector2 vUpLeftTemp = GetWorld->SnapWorldCoords(CL_Vector2(r.left, r.top), vOffset);
-		r.left = vUpLeftTemp.x;
-		r.top = vUpLeftTemp.y;
-
 	} else
 	{
 		//use the whole size..
@@ -1376,7 +1433,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 {
 	if (m_pEntCollisionEditor) return; //now is a bad time
 
-	if (IsDialogOpen(false)) 
+	if (IsDialogOpen(false, true)) 
 	{
 		//we must be doing something in a dialog, don't want to delete entities accidently	
 		return;
@@ -1413,8 +1470,15 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	case CL_KEY_F:
 		if (m_dragInProgress)
 		{
-				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecDragStop), m_vecDragSnap);
-			CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
+				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
+			
+				if (m_pCheckBoxSnap->is_checked())
+				{
+					worldVecDragStop = GetWorld->SnapWorldCoords(worldVecDragStop, m_vecSnapSize);
+					m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);;
+				}
+
+				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
 			rec.normalize();
 
 			FloodFill(rec);
@@ -1463,7 +1527,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 
 		
 			m_vecDragStart = GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
-			m_vecDragStop = CL_Vector2(key.mouse_pos.x, key.mouse_pos.y);
+			m_vecScreenDragStop = CL_Vector2(key.mouse_pos.x, key.mouse_pos.y);
 
 			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) && !CL_Keyboard::get_keycode(CL_KEY_SHIFT) && !CL_Keyboard::get_keycode(CL_KEY_MENU)
 				
@@ -1473,6 +1537,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 				
 				)
 			{
+			
+
 				//check to see if we can "grab" the current selection and move it
 				if (MouseIsOverSelection(key.mouse_pos))
 				{
@@ -1491,7 +1557,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 				}
 			}
 
-			
+		
 			m_dragInProgress = true;
 		}
 		break;
@@ -1511,7 +1577,19 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			if (m_dragInProgress)
 			{
 				m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap);
-				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecDragStop), m_vecDragSnap);
+				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
+				
+				if (m_pCheckBoxSnap->is_checked())
+				{
+					
+					//these tweaks allow the snapped grid to be inclusive of the tile we're half on
+					if (worldVecDragStop.x > m_vecDragStart.x) worldVecDragStop.x += m_vecSnapSize.x; else m_vecDragStart.x += m_vecSnapSize.x;
+					if (worldVecDragStop.y > m_vecDragStart.y) worldVecDragStop.y += m_vecSnapSize.y; else m_vecDragStart.y += m_vecSnapSize.y;
+
+					m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);
+					worldVecDragStop = GetWorld->SnapWorldCoords(worldVecDragStop, m_vecSnapSize);
+				}
+		
 				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
 				rec.normalize();
 				CutSubTile(rec);
@@ -1619,13 +1697,20 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 		return vecMouse;
 	}
 
-	vecMouse -= g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()/2;
 	if (m_pCheckBoxSnap->is_checked())
 	{
 		vecMouse = GetWorld->SnapWorldCoords(vecMouse, m_vecSnapSize);
+
+		if (g_EntEditModeCopyBuffer.m_selectedTileList.size() > 1)
+		{
+			//center the selection over the mouse cursor..
+			vecMouse -= g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()/2;
+		}
+
 	} else
 	{
 		vecMouse = GetWorld->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
+		vecMouse -= g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()/2;
 
 	}
 	//vecMouse += CL_Vector2(GetWorld->GetDefaultTileSize()/2, GetWorld->GetDefaultTileSize()/2);
@@ -1635,7 +1720,7 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 void EntEditMode::DrawActiveBrush(CL_GraphicContext *pGC)
 {
   if (g_EntEditModeCopyBuffer.IsEmpty()) return;
-  CL_Vector2 vecMouse = ConvertMouseToCenteredSelectionUpLeft(m_vecDragStop);
+  CL_Vector2 vecMouse = ConvertMouseToCenteredSelectionUpLeft(m_vecScreenDragStop);
   CL_Vector2 vecBottomRight = (vecMouse + (g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()));
 
   SelectedTile *pSelTile = (*g_EntEditModeCopyBuffer.m_selectedTileList.begin());
@@ -1649,7 +1734,7 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 {
 	if (m_selectedTileList.IsEmpty()) return;
 	
-	CL_Vector2 worldDragStop = GetWorldCache->ScreenToWorld(m_vecDragStop);
+	CL_Vector2 worldDragStop = GetWorldCache->ScreenToWorld(m_vecScreenDragStop);
 
 	CL_Vector2 vecStart( worldDragStop.x -m_vecDragStart.x, worldDragStop.y - m_vecDragStart.y);
 	
@@ -1658,20 +1743,62 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 	
 	if (GetWorld->GetSnapEnabled())
 	{
+		if (m_selectedTileList.m_selectedTileList.size() == 1)
+		vecStart = GetWorldCache->ScreenToWorld(m_vecScreenDragStop);
+		
 		vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecSnapSize);
 
 	} else
 	{
 		vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecDragSnap);
+	
 	}
 	
 	CL_Vector2 vecStop(vecStart.x + m_selectedTileList.GetSelectionSizeInWorldUnits().x, vecStart.y + m_selectedTileList.GetSelectionSizeInWorldUnits().y);
 
 	vecStart = GetWorldCache->WorldToScreen(vecStart);
-		vecStop = GetWorldCache->WorldToScreen(vecStop);
+	vecStop = GetWorldCache->WorldToScreen(vecStop);
 
 		pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(50,255,50,180));
 	
+}
+
+void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
+{
+	//
+	CL_Vector2 worldStop = GetWorldCache->ScreenToWorld(m_vecScreenDragStop);
+	CL_Vector2 worldStart = m_vecDragStart;
+	if (m_pCheckBoxSnap->is_checked())
+	{
+#ifdef _DEBUG
+		LogMsg("DragStart is %s", PrintVector(m_vecDragStart).c_str());
+#endif	
+
+		//these tweaks allow the snapped grid to be inclusive of the tile we're half on
+		if (worldStop.x > worldStart.x) worldStop.x += m_vecSnapSize.x; else worldStart.x += m_vecSnapSize.x;
+		if (worldStop.y > worldStart.y) worldStop.y += m_vecSnapSize.y; else worldStart.y += m_vecSnapSize.y;
+		worldStart = GetWorld->SnapWorldCoords(worldStart, m_vecSnapSize);
+#ifdef _DEBUG
+		LogMsg("Converted to %s", PrintVector(worldStart).c_str());
+#endif
+		worldStop = GetWorld->SnapWorldCoords(worldStop, m_vecSnapSize);
+	}
+
+
+	m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).x - GetWorld->SnapWorldCoords(worldStart, m_vecDragSnap).x),
+		int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).y - GetWorld->SnapWorldCoords(worldStart, m_vecDragSnap).y)));
+	//draw a rect on the screen
+	DrawRectFromWorldCoordinates(worldStart, worldStop, CL_Color(255,255,0,200), pGC);
+
+	//draw a little help bar text thing
+	CL_Rect r(0,GetScreenY-15,GetScreenX, GetScreenY);
+	CL_Display::fill_rect(r, CL_Color(0,0,0,80));
+
+	//draw the text over it
+	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
+	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,GetScreenY-7,"Selection Drag - Press F to flood fill with current tile, Ctrl-C to cut tile from a tile");
+
 }
 
 void EntEditMode::OnProperties()
@@ -1902,26 +2029,10 @@ void EntEditMode::Render(void *pTarget)
 		DrawSelection(pGC);
 	}
 	
-	if (m_dragInProgress && m_vecDragStart != GetWorldCache->ScreenToWorld(m_vecDragStop))
+	if (m_dragInProgress && m_vecDragStart != GetWorldCache->ScreenToWorld(m_vecScreenDragStop))
 	{
-		
-		//
-		CL_Vector2 worldStop = GetWorldCache->ScreenToWorld(m_vecDragStop);
-		m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).x - GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap).x),
-			int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).y - GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap).y)));
-		//draw a rect on the screen
-		DrawRectFromWorldCoordinates(m_vecDragStart, worldStop, CL_Color(255,255,0,200), pGC);
-
-//draw a little help thing
-		//draw bar at the top of the screen
-		CL_Rect r(0,GetScreenY-15,GetScreenX, GetScreenY);
-		CL_Display::fill_rect(r, CL_Color(0,0,0,80));
-
-		//draw the text over it
-		ResetFont(GetApp()->GetFont(C_FONT_GRAY));
-		GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
-		GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,GetScreenY-7,"Selection Drag - Press F to flood fill with current tile, Ctrl-C to cut tile from a tile");
-
+		DrawDragRect(pGC);
+	
 
 	} else
 	{

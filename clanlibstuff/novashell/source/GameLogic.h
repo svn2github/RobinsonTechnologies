@@ -260,7 +260,7 @@ name - The profile name you want to delete.
 
 Note:
 
-Novashell never uses a dangerous deltree type way to delete things, it carefully verifies and scans the directory and only deletes only valid novashell data.
+Novashell never uses a dangerous deltree type way to delete things, it carefully verifies and scans the directory deletes only valid novashell data.
 
 */
 

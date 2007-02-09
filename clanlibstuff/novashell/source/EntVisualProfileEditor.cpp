@@ -209,11 +209,11 @@ void EntVisualProfileEditor::OnButtonDown(const CL_InputEvent &key)
 {
 	switch(key.id)
 	{
-	case CL_KEY_LEFT:
+	case CL_KEY_RIGHT:
 		ModifyActiveAnim(CL_Point(-1,0));
 		break;
 
-	case CL_KEY_RIGHT:
+	case CL_KEY_LEFT:
 		ModifyActiveAnim(CL_Point(1,0));
 		break;
 

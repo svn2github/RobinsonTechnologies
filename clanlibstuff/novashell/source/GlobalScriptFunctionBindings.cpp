@@ -232,6 +232,9 @@ Section: Global Functions
 These functions are global and can be run from anywhere, they aren't attached to any specific object.
 */
 
+
+//Group: Misc
+
 void luabindGlobalFunctions(lua_State *pState)
 {
 	module(pState)
@@ -239,47 +242,586 @@ void luabindGlobalFunctions(lua_State *pState)
 
 			//stand alone functions
 			
-			//func: CreateEntity
+
+			/*
+			func: LogMsg
+			(code)
+			nil LogMsg (string message)
+			(end)
+
+			Adds a message to the log.  You can see it by bringing up the console, or checking the log.txt file.
+			Lua's native "print" function is routed to use LogMsg also.
+			Parameters:
+			message - Any text you want to display or log.
+			*/
+
+
+			def("LogError", &LogErrorLUA),
+
+			/*
+			func: LogError
+			(code)
+			nil LogError (string message)
+			(end)
+
+			Like <LogMsg> but forces the console to pop-up and prints in red.  Should be used for serious errors that you want to know about.
+
+			Logged to log.txt.
+
+			Parameters:
+			message - Any text.  Note that it prepends the "Error: " to your message automatically.
+			*/
+
+
+			/*
+			func: CreateEntity
+			(code)
+			Entity CreateEntity(Map map, Vector2 vPos, string scriptFileName)
+			(end)
 			
-			//Creates a new entity at a specific location.  It expects the position and script to use.
+			Creates an entity on the specified map at vPos and inits it using the script file name specified.
+
+			Another method of creating entities is using <Entity::GetPos>.
+
+			There is an <Entity::CreateEntity> version that is identical except it allows relative paths (relative to the entity's script) to be used.
+			
+			Parameters:
+			map - The map to initialize the entity on.  If nil is passed in, the currently active map will be used.
+			vPos - The position to create the entity at.
+			scriptFileName - The script it should be initialized with.
+
+			Returns:
+			A handle to the <Entity> created.
+			*/
+
+			def("RunScript", &RunScript),
+
+			/*
+			func: RunScript
+			(code)
+			boolean RunScript (string name)
+			(end)
+
+			Loads a lua script.  If loaded by an entity, keep in mind the script will only exist in the entity's name space, not globally.
+
+			Because lua's other native script loading functions are disabled for security reasons this is the only way to load a script within a script.
+
+			Like images, sounds, and other data, scripts are searched for in mounted worlds in reverse order, so mods can override scripts if needed.
+
+			Usage:
+			(code)
+			RunScript("script/system/sound.lua"); //load the sound module so everybody can use its functions
+			(end)
+
+			Parameters:
+			name - Path and file name.  Paths trying to reference outside of the world directory tree will be invalid.
+
+			Returns:
+			True if the script was found and loaded.
+			*/
+
 			def("CreateEntity", &CreateEntity),
 
-			//func: Schedule
+			/*
+			func: Schedule
+			(code)
+			Schedule (number deliveryMS, number targetID, string message)
+			(end)
+
+			Schedules a line of lua script to be run after a delay.
+
+			If an entity ID is specified, the script is run from its namespace.
+
+			Internally, <GetGameTick> is used, so messages are paused/modified by the current game speed.
+
+			You can use backslashes to escape quotes or apostrophes if needed.
+
+			If an entity ID is specified and it doesn't exist at the time of delivery, the message is discarded.
+
+			Usage:
+
+			(code)
+			//delete the entity in 100 milliseconds
+			Schedule(100, this:GetID(), "this:SetDeleteFlag(true);"); 
 			
-			//Schedule a piece of script to be run by an entity at a specific time.
+			//add the fade out and delete brain in 800 ms to "ent"
+			Schedule(800, ent:GetID(), "this:GetBrainManager():Add(\"FadeOutAndDelete\",'');"); 
+
+			(end)
+
+			Parameters:
+			deliveryMS - How long to wait before delivering in milliseconds.  500 would mean half a second later.
+			targetID - Entity ID of who should run the script, or C_ENTITY_NONE for none.
+			message - The line of lua code that should be executed.
+			*/
+	
+			def("CreateEntitySpecial", &CreateEntitySpecial),
+
+			/*
+			func: CreateEntitySpecial
+			(code)
+			BaseEntity CreateEntitySpecial(string name, string parms)
+			(end)
+
+			Special kinds of entities like dialogs must be created with this function.
 			
+			For simplicity, their real class types are not made available to lua, only the <BaseEntity> interface is accessible.
+			
+			So how can you control them?  Primarily through <BaseEntity::Send> with text.
+
+			List of special entity types:
+
+			* ChoiceDialog
+			* WorldChooseDialog
+
+			Uh.. Scan the example script files for these words for examples.
+			
+			Parameters:
+			name - The kind of special entity you want to create.  
+			parms - Same as using <BaseEntity::Send> but gets sent during initialization.
+
+			Returns:
+			A handle to the <BaseEntity> created.
+			*/
+
 			def("Schedule", &Schedule),
 			
-			//func: ScheduleSystem
-			//
+			/*
+			func: ScheduleSystem
+			(code)
+			nil Schedule (number deliveryMS, number targetID, string message)
+			(end)
+
+			Identical to <Schedule> except <GetTick> is used for timing.  This means messages will be delivered after the delay takes place, regardless of game speed or if the game is paused for dialog.
+			*/
+			
 			def("ScheduleSystem", &ScheduleSystem),
-			//func: ScreenToWorld
-			//
-			def("ScreenToWorld", &ScreenToWorld),
-			def("WorldToScreen", &WorldToScreen),
+			
+			
+
 			def("GetEntityByWorldPos", &GetEntityByWorldPos),
+			
+			
+			/*
+			func: GetEntityByWorldPos
+			(code)
+			Entity GetEntityByWorldPos (Vector2 vPos, Entity entityToIgnore, boolean bPixelAccurate)
+			(end)
+
+			Returns the <Entity> handle at the specified position.  If there is more than one, it returns the one "on top".
+
+			This function uses all visible layers and the active map for its check.
+			
+			Usage:
+
+			(code)
+			local pt = ScreenToWorld(GetInputManager:GetMousePos());
+			local ent = GetEntityByWorldPos(pt, this, true); //get all entities but ignore ourself, be pixel accurate
+
+			if (ent != nil) then
+				LogMsg("The mouse is over entity # " .. ent:GetID());
+			else
+				LogMsg("Didn't find anybody.");
+			end
+			(end)
+
+			Parameters:
+			vPos - The point in the world we should check,
+			entityToIgnore - If this isn't nil, we'll ignore this entity during our checks.
+			bPixelAccurate - If true, we'll ignore entities that are transparent at the pixel location clicked. (slower)
+
+			Returns:
+			The <Entity> found, or nil if nothing was found.
+			*/
+
+			
 			def("GetEntityByID", &GetEntityByID),
+			
+			/*
+			func: GetEntityByID
+			(code)
+			Entity GetEntityByID (number entityID)
+			(end)
+
+			Converts an entityID to an <Entity> handle.  Very fast.
+
+			Usage:
+
+			(code)
+			LogMsg("This entity's ID is " .. GetEntityById(ent:GetID()):GetID()); // a ridiculous example
+			(end)
+
+			Parameters:
+			entityID - Every entity has a unique number it can be referenced by. (unique to that gaming session, not saved/loaded)
+			
+			Returns:
+			The <Entity> found, or nil if the ID is invalid.
+			*/
 			def("GetEntityByName", &GetEntityByName),
-			def("GetSpecialEntityByName", &GetSpecialEntityByName),
+			
+			/*
+			func: GetEntityByName
+			(code)
+			Entity GetEntityByName (string name)
+			(end)
+
+			Converts a name to an Entity. Very fast. The entity's map will be loaded if needed.  
+
+			Usage:
+
+			(code)
+			local entGun = GetEntityByName("Gun"); //if an entity is named Gun anywhere in the world, we'll get it.
+			(end)
+
+			Parameters:
+			name - The name set in the editor or with <Entity::SetName>.  Names are always unique.
+
+			Returns:
+			The <Entity> found, or nil if the entity can't be located.
+			*/
+			
+		
+			
 			def("GetEntityIDByName", &GetEntityIDByName),
+			
+			/*
+			func: GetEntityIDByName
+			(code)
+			EntityID GetEntityIDByName (string name)
+			(end)
+
+			Like <GetEntityByName> except it returns the entityID instead of the entity.
+
+			Usage:
+
+			(code)
+			local entID = GetEntityIDByName("player");
+			if (entID != C_ENTITY_NONE) then
+				LogMsg("Found entityID " .. entID .. ".  His name is " .. GetEntityByID(entID):GetName());
+			end
+			(end)
+
+			Parameters:
+			name - The entity's name set in the editor or with <Entity::SetName>.  Names are always unique.
+
+			Returns:
+			The entity's ID if found, or <C_ENTITY_NONE> if the entity can't be located.
+			*/
+
+			def("GetSpecialEntityByName", &GetSpecialEntityByName),
+
+			/*
+			func: GetSpecialEntityByName
+			(code)
+			BaseEntity GetSpecialEntityByName (string name)
+			(end)
+
+			Certain non-entity objects can exist and be manipulated at times using the <BaseEntity> handle.
+
+			Usage:
+
+			(code)
+			local ent = GetSpecialEntityByName("editor");
+			if (ent != nil) then ent:SetDeleteFlag(true); end; //kill the editor window if it exists
+
+			if (GetSpecialEntityByName("ChoiceDialog") != nil) then LogMsg("A dialog window is active."); end;
+			(end)
+
+			Parameters:
+			name - Special entities usually have pre-defined names.
+
+			Returns:
+			The <BaseEntity> found, or nil if nothing is found.
+			*/
+
+			
 			def("ShowMessage", &ShowMessage),
-			def("FacingToVector", &FacingToVector),
-			def("VectorToFacing", &VectorToFacing),
-			def("LogError", &LogErrorLUA),
-			def("RunScript", &RunScript),
-			def("CreateEntitySpecial", &CreateEntitySpecial),
-			def("ColorToString", &ColorToString),
-			def("StringToColor", &StringToColor),
-			def("VectorToString", &VectorToString),
-			def("StringToVector", &StringToVector),
+			
+			/*
+			func: ShowMessage
+			(code)
+			nil ShowMessage (string title, string msg, boolean bForceClassicStyle)
+			(end)
+
+			Quick way to pop-up a message box to show the user something.  The user must hit OK to continue.
+
+			Usage:
+
+			(code)
+			ShowMessage("Error", "You shall not pass!", true);
+			(end)
+
+			Parameters:
+			title - The text at the top of the message box
+			msg - The main text.  Use \n to add a line feed
+			bForceClassicStyle - Normally the style will uses the active game dialog style, but by passing true here you can force the boring silver style.
+			
+			*/
+
+			/*
+			func: Lerp
+			(code)
+			number Lerp (number originalNum, number targetNum, number lerpAmount)
+			(end)
+
+			Lerp (a quasi-acronym for linear interpolation) is a method to make one number change into another number over time.
+
+			If you want an effect where a player's score "counts up" as he gets points, but don't want it to take two hours when he scores a million, lerping is for you!
+
+			Usage:
+
+			(code)
+			displayScore = Lerp(displayScore, actualScore, 0.1); //lerp by ten percent, call every frame
+			LogMsg("You have " .. displayScore .. " Points!"); //watch as the number counts up
+			(end)
+
+			Parameters:
+			originalNum - The number to start with
+			targetNum - the number we want to eventually end up with
+			lerpAmount - the percent of the difference to modify the number by
+			
+			Returns:
+
+			The modified number.
+			*/
 
 			def("Lerp", &LerpNumber),
 
+	
+			//Group: Conversion
+			
+			def("ScreenToWorld", &ScreenToWorld),
+
+			/*
+			func: ScreenToWorld
+			(code)
+			Vector2 ScreenToWorld (Vector2 vScreenPos)
+			(end)
+
+			Converts a screen position (0,0 being the upper left of your monitor) to a world position based on the active map and camera position.
+
+			Usage:
+
+			(code)
+			//figure out where the mouse is pointing, in world coordinates
+			local vPos = ScreenToWorld(GetInputManager:GetMousePos());
+			LogMsg("The mouse is currently hovering over " .. tostring(vPos) .. " in world coordinates.");
+			(end)
+
+			Parameters:
+			vScreenPos - The screen position you need converted to world coordinates.
+
+			Returns:
+			The position converted to world coordinates.
+
+			*/
+
+
+
+
+			def("WorldToScreen", &WorldToScreen),
+
+			/*
+			func: WorldToScreen
+			(code)
+			Vector2 WorldToScreen (Vector2 vWorldPos)
+			(end)
+
+			The opposite of <ScreenToWorld>.
+
+			Parameters:
+			vWorldPos - The world position you want converted to screen coordinates.  May be negative or larger than your monitor size.
+
+			Returns:
+			The position converted to screen coordinates.
+			*/
+
+
+			def("FacingToVector", &FacingToVector),
+			/*
+			func: FacingToVector
+			(code)
+			Vector2 FacingToVector (number facing)
+			(end)
+
+			Converts a directional constant ( <C_FACING_CONSTANTS> ) into a unit vector.
+
+			Usage:
+
+			(code)
+			LogMsg("The down direction is unit vector " .. FacingToVector(C_FACING_DOWN));
+			(end)
+
+			Parameters:
+			facing - One of the <C_FACING_CONSTANTS> constants.
+			
+			Returns:
+			A <Vector2> object containing a unit vector of the direction.
+			
+			*/
+			
+			def("VectorToFacing", &VectorToFacing),
+			
+			/*
+			func: VectorToFacing
+			(code)
+			facing VectorToFacing (Vector2 vDirection)
+			(end)
+
+			Converts a unit vector into a <C_FACING_CONSTANTS> facing.
+
+			Parameters:
+			vDirection - A <Vector2> object containing a unit vector.
+
+			Returns:
+			The <C_FACING_CONSTANTS> that bests fits the direction.
+			*/
+
+			
+		
+		
+			def("ColorToString", &ColorToString),
+		
+			/*
+			func: ColorToString
+			(code)
+			string ColorToString (Color color)
+			(end)
+
+			Converts a <Color> to a string format.  Useful for saving it through <Entity:Data>.
+
+			Usage:
+			(code)
+			local colorString = ColorToString(Color(255,255,255,255));
+			LogMsg("Neat.  In string format, that color is " .. colorString);
+			local myColor = StringToColor(colorString);
+			LogMsg("We converted it back!");
+			(end)
+
+			Parameters:
+			color - A <Color> object.
+
+			Returns:
+			A string formatted with the color data.
+			*/
+
+			def("StringToColor", &StringToColor),
+			
+			/*
+			func: StringToColor
+			(code)
+			Color StringToColor (string colorText)
+			(end)
+
+			Converts a color formatted like "255 255 255 255" to a <Color> object.
+
+			Parameters:
+			colorText - Colors in a string.
+
+			Returns:
+			A <Color> object.
+			*/
+
+			def("VectorToString", &VectorToString),
+			
+			/*
+			func: VectorToString
+			(code)
+			string VectorToString (Vector2 v)
+			(end)
+
+			Converts a <Vector2> to a string format.  Useful for saving it through <Entity:Data>.
+
+			Parameters:
+			v - A <Vector2> that you want converted.
+
+			Returns:
+			A string containing something like "343.2343 54.23"
+			*/
+
+			def("StringToVector", &StringToVector),
+
+			/*
+			func: StringToVector
+			(code)
+			Vector2 StringToVector (string textVector)
+			(end)
+
+			Converts a string like "23.4 5" to a <Vector2>.
+
+			Parameters:
+			textVector - A string with two numbers in it.
+
+			Returns:
+			A <Vector2> object.
+			*/
+
+
+		
 			def("RectToString", &RectToString),
-			//func: StringToRect
-			//
+			
+			/*
+			func: RectToString
+			(code)
+			string RectToString (Rect r)
+			(end)
+
+			Converts a <Rect> to a string format.  Useful for saving it through <Entity:Data>.
+
+			Parameters:
+			r - A <Rect> that you want converted.
+
+			Returns:
+			A string containing something like "0 0 100 100"
+			*/
+
+			
 			def("StringToRect", &StringToRect)
 		
-			//Group: -=-=-=-=-=-
-		];
+			/*
+			func: StringToRect
+			(code)
+			Vector2 StringToRect (string textRect)
+			(end)
+
+			Converts a string like "0 0 10 10" to a <Rect>.
+
+			Parameters:
+			textRect - A string with four numbers in it.
+
+			Returns:
+			A <Rect> object.
+			*/
+
+
+			//Group: Constants
+
+			/*
+
+			group: C_FACING_CONSTANTS
+
+			constant: C_FACING_NONE
+			Means no facing at all.
+
+			constant: C_FACING_LEFT
+
+			constant: C_FACING_UP_LEFT
+
+			constant: C_FACING_UP
+
+			constant: C_FACING_UP_RIGHT
+
+			constant: C_FACING_RIGHT
+
+			constant: C_FACING_DOWN_RIGHT
+
+			constant: C_FACING_DOWN
+
+			constant: C_FACING_DOWN_LEFT
+
+			constant: C_FACING_COUNT
+
+			How many directions we support, this will be 8.
+			*/
+	];
 }

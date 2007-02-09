@@ -155,7 +155,7 @@ public:
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
   float GetDistanceFromEntityByID(int id);
   float GetDistanceFromPosition(const CL_Vector2 &pos);
-  MovingEntity * CreateEntity(CL_Vector2 pos, const string &script);
+  MovingEntity * CreateEntity(World *pMap, CL_Vector2 pos, const string &script);
 
   int GetLayerID();
   void SetLayerID(int id);
@@ -423,7 +423,7 @@ protected:
 	int m_blendMode;
 };
 
-MovingEntity * CreateEntity(CL_Vector2 vecPos, string scriptFileName); //creates an entity and puts it in the world
+MovingEntity * CreateEntity(World *pMap, CL_Vector2 vecPos, string scriptFileName);
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile);
 
