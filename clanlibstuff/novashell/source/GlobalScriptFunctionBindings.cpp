@@ -208,7 +208,7 @@ void LogErrorLUA(const char *pMessage)
 bool RunScript(const string &scriptName)
 {
 
-	string fileName = scriptName;
+	string fileName = C_DEFAULT_SCRIPT_PATH + scriptName;
 
 	if (!g_VFManager.LocateFile(fileName))
 	{
@@ -306,11 +306,11 @@ void luabindGlobalFunctions(lua_State *pState)
 
 			Because lua's other native script loading functions are disabled for security reasons this is the only way to load a script within a script.
 
-			Like images, sounds, and other data, scripts are searched for in mounted worlds in reverse order, so mods can override scripts if needed.
+			Like images, sounds, and other data, scripts are searched for in mounted worlds in reverse order, so "mods" can override scripts if needed.
 
 			Usage:
 			(code)
-			RunScript("script/system/sound.lua"); //load the sound module so everybody can use its functions
+			RunScript("system/sound.lua"); //load the sound module so everybody can use its functions
 			(end)
 
 			Parameters:

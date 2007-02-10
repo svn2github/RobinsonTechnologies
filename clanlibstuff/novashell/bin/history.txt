@@ -147,3 +147,7 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 2-10-2007
 
 * BUGFIX: Dragging multiple selection works right with snap mode (whups!)
+* RunScript no longer requires "script/" in the path, this is assumed.  Change your scripts! (Ian)
+* dofile() re-added as an alias for RunScript (Ian)
+* System console improved:  now shows overlay of "` to close or Ctrl-C to place text in system clipboard"
+* "dofile", "load" and "loadstring" removed.  For real this time?! (Ian)

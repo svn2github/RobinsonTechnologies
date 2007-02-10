@@ -15,7 +15,6 @@
 
 #define C_ANIM_FRAME_LAST -1
 #define C_GROUND_RELAX_TIME_MS 150
-#define C_DEFAULT_SCRIPT_PATH "script/"
 #define C_DEFAULT_SCRIPT "system/ent_default.lua"
 #define C_DISTANCE_NOT_ON_SAME_MAP 2000000000
 //there are issues with sliding along walls thinking it's a ground when they are built out of small blocks, this

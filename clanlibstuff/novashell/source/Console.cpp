@@ -2,6 +2,7 @@
 #include "Console.h"
 #include "main.h"
 #include "AppUtils.h"
+#include "ClanLib/Core/System/clipboard.h"
 
 Console g_Console;
 #define C_MAX_LOG_LINES 50
@@ -22,6 +23,26 @@ Console::~Console()
 
 }
 
+void Console::CopyToTextBuffer()
+{
+
+	string final;
+
+	console_cont::iterator itor;
+
+	for (itor = m_lineVec.begin(); itor != m_lineVec.end(); itor++)
+	{
+		
+		vector<string> lines = CL_String::tokenize(itor->m_text, "\n", false);
+		for (unsigned int i=0; i < lines.size(); i++)
+		{
+			final += lines[i]+"\r\n";
+		}
+	}
+
+	CL_Clipboard::set_text(final);
+}
+
 void Console::OnKeyDown(const CL_InputEvent &key)
 {
 	switch (key.id)
@@ -29,6 +50,19 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 		case CL_KEY_TILDE: //aka GRAVE or backtick
 		m_bOnScreen = !m_bOnScreen;
 		//LogMsg("Toggling console display");
+		break;
+
+
+		case CL_KEY_C:
+			if (m_bOnScreen && CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+
+			{
+				//let's put this in the text buffer
+				CopyToTextBuffer();
+				LogMsg("Log copied to system text buffer.");
+			}
+
+			break;
 	}
 }
 
@@ -57,6 +91,19 @@ void Console::AddError(const string line)
 	AddGeneric(item);
   
 	SetOnScreen(true);
+}
+
+void Console::RenderGUIOverlay()
+{
+
+	//draw bar at the top of the screen
+	CL_Rect r(0,0,GetScreenX, 15);
+	CL_Display::fill_rect(r, CL_Color(200,0,0,255));
+
+	//draw the text over it
+	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
+	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, "System Log - Press ` (backtick) to close or Ctrl-C to copy text into system clipboard");
 }
 
 void Console::Render()
@@ -97,4 +144,6 @@ void Console::Render()
 
 	//pFont->set_alpha(1);
 	
+	RenderGUIOverlay();
+
 }

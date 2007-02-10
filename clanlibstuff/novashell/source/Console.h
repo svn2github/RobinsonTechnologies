@@ -43,6 +43,8 @@ public:
 protected:
 
 	void AddGeneric(ConsoleItem &item);
+	void CopyToTextBuffer();
+	void RenderGUIOverlay();
 
 
 	console_cont m_lineVec;

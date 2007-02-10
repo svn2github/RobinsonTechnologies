@@ -16,6 +16,8 @@ class Goal_Think;
 class PathPlanner;
 //#include "AI/Goal_Think.h"
 
+#define C_DEFAULT_SCRIPT_PATH "script/"
+
 #define C_MAX_FALLING_DOWN_SPEED 20 //gravity won't be applied to objects going faster than this
 #define C_ENT_TILE_PIC_ID_KEY "_TilePicID" //custom data to signal we use a simple single tilepic for our image
 #define C_ENT_TILE_RECT_KEY "_TileRect" //custom data that goes along with the tile ID
