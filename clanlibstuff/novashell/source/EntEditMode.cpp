@@ -1699,13 +1699,18 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 
 	if (m_pCheckBoxSnap->is_checked())
 	{
-		vecMouse = GetWorld->SnapWorldCoords(vecMouse, m_vecSnapSize);
-
+		
 		if (g_EntEditModeCopyBuffer.m_selectedTileList.size() > 1)
 		{
 			//center the selection over the mouse cursor..
 			vecMouse -= g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()/2;
+
+			//and a little less to feel right
+			vecMouse += m_vecSnapSize/2;
 		}
+
+		vecMouse = GetWorld->SnapWorldCoords(vecMouse, m_vecSnapSize);
+
 
 	} else
 	{

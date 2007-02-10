@@ -143,3 +143,7 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Dragging selections and moving in general was improved, especially when in snap mode (nmceri)
 * BUGFIX: Visual profile editor works better
 * I got Akiko to do a new style sheet for the novashell webpages.. it's uh.. very brown now.. hrm.
+
+2-10-2007
+
+* BUGFIX: Dragging multiple selection works right with snap mode (whups!)
