@@ -1017,51 +1017,532 @@ vForce - A <Vector2> object containing how much force to add.  this:AddForce(Vec
 /*
 func: AddForceAndTorque
 (code)
-nil AddForceAndTorque(Vector2 force, Vector2 vTorque)
+nil AddForceAndTorque(Vector2 vForce, Vector2 vTorque)
 (end)
 
 Adds a force as well as a rotational torque.  Normally you only need <AddForce> and don't care about torque.
 
 Parameters:
 
-force - A <Vector2> object containing how much force to add.  this:AddForce(Vector2(20,0)) would send someone to the right.
+vForce - A <Vector2> object containing how much force to add.  this:AddForce(Vector2(20,0)) would send someone to the right.
+vTorque - A <Vector2> containing the torque to add.  This doesn't even make sense, shouldn't it be a number?  Uh, will get back to this.
 */
 
 .def("AddForceConstant", &MovingEntity::AddForce)
+
+/*
+func: AddForceConstant
+(code)
+nil AddForceConstant(Vector2 vForce)
+(end)
+
+When applying a steady force over time (like gravity), you should use this function instead of <AddForce> for greater stability across fluctuating framerates. You still need to apply it every frame.
+
+Tech note:
+
+The reason for this is the actual physics simulation runs between 60 and 120 hz to match the current FPS for the smoothest visual movement.  (regardless of FPS, the game will update 60 times a second minimum) Applying a force over time intelligently requires slightly different math.
+
+Parameters:
+
+vForce - A <Vector2> object containing how much force to add.
+*/
+
 .def("AddForceAndTorqueConstant", &MovingEntity::AddForceAndTorque)
 
+/*
+func: AddForceAndTorqueConstant
+(code)
+nil AddForceAndTorqueConstant(Vector2 vForce, Vector2 vTorque)
+(end)
+
+Like <AddForceConstant> but also accepts a rotational vector.
+
+Parameters:
+
+vForce - A <Vector2> object containing how much force to add.  this:AddForce(Vector2(20,0)) would send someone to the right.
+vTorque - A <Vector2> containing the torque to add.  This doesn't even make sense, shouldn't it be a number?  Uh, will get back to this.
+
+*/
+
+
 .def("GetLinearVelocity", &MovingEntity::GetLinearVelocity)
+
+/*
+func: GetLinearVelocity
+(code)
+Vector2 GetLinearVelocity()
+(end)
+
+Usage:
+(code)
+LogMsg("Whee!  We're moving at " .. tostring(this:GetLinearVelocity());
+(end)
+
+Returns:
+
+The speed the entity is actually moving.
+*/
+
+
 .def("GetOnGround", &MovingEntity::IsOnGround)
+
+/*
+func: GetOnGround
+(code)
+boolean GetOnGround()
+(end)
+
+Returns:
+
+True if the entity is currently standing on a platform or another entity.
+
+This is useful to check if the player should be able to "jump" or not.
+
+The engine automatically applies a little processing to smooth it and make it 'feel' right.  Use <GetOnGroundAccurate> if you want raw unprocessed data.
+*/
+
 .def("SetOnGround", &MovingEntity::SetIsOnGround)
+
+/*
+func: SetOnGround
+(code)
+nil SetOnGround(boolean bOnGround)
+(end)
+
+This can hint to the engine that the entity should or shouldn't be processed as if it is 'standing' on top of another object or ground.
+
+TreeWorld uses this to fine tune when the player can jump or not.  Only applicable to side view games?
+
+Parameters:
+
+bOnGround - true if the user is on the ground, false it in the air
+*/
+
 .def("GetOnGroundAccurate", &MovingEntity::IsOnGroundAccurate)
+
+/*
+func: GetOnGroundAccurate
+(code)
+bool GetOnGroundAccurate()
+(end)
+
+Returns:
+
+True if entity is currently on the ground or sitting on something.  This data is un-smoothed, so small bounces and things may cause it to change quickly.
+*/
+
 .def("SetCollisionScale", &MovingEntity::SetCollisionScale)
+
+/*
+func: SetCollisionScale
+(code)
+nil SetCollisionScale(Vector2 vScale);
+(end)
+
+When scaling an entity, it's collision data will automatically be scaled with it.
+
+Parameters:
+
+vScale - A <Vector2> object containing the new absolute scale.  Vector2(2,2) would be twice as big, Vector2(0.5,0.5) would be half as big.
+*/
+
 .def("GetCollisionScale", &MovingEntity::GetCollisionScale)
+
+/*
+func: GetCollisionScale
+(code)
+Vector2 GetCollisionScale();
+(end)
+
+Returns:
+
+The current scale of the entity.
+*/
+
+
 .def("SetDampening", &MovingEntity::SetDampening)
+
+/*
+func: SetDampening
+(code)
+nil SetDampening(number dampening)
+(end)
+
+Changing the dampening controls how quickly an entity will slide to a stop.  Think of it like friction.
+
+For things with  their own locomotion to start and stop them, this should probably be set to 0.
+
+Parameters:
+
+dampening - The new dampening amount.  Default is 0.05.
+*/
+
 
 //Group: AI Related
 
 .def("GetBrainManager", &MovingEntity::GetBrainManager)
+
+/*
+func: GetBrainManager
+(code)
+BrainManager GetBrainManager()
+(end)
+
+Returns:
+
+A handle to this entity's unique <BrainManager>.  Behind the scenes, this is created upon the first access.
+*/
+
 .def("GetGoalManager", &MovingEntity::GetGoalManager)
+
+/*
+func: GetGoalManager
+(code)
+GoalManager GetGoalManager()
+(end)
+
+Returns:
+
+A handle to this entity's unique <GoalManager>.  Behind the scenes, this is created upon the first access.
+*/
+
 .def("SetDesiredSpeed", &MovingEntity::SetDesiredSpeed)
+
+/*
+func: SetDesiredSpeed
+(code)
+nil SetDesiredSpeed(number desiredSpeed)
+(end)
+
+Brain states such as Walk will use this speed to move.
+
+Will be limited by whatever <SetMaxMovementSpeed> is set to.
+
+Parameters:
+
+desiredSpeed - How fast the entity wants to move.
+*/
+
 .def("SetMaxMovementSpeed", &MovingEntity::SetMaxWalkSpeed)
+
+/*
+func: SetMaxMovementSpeed
+(code)
+nil SetMaxMovementSpeed(number maxMoveSpeed)
+(end)
+
+Limits the internal move force of the entity to this speed.  For instance, even if a walking entity suddenly chose to dodge a bullet, it may move faster than his walk speed, but will still be limited by this speed.
+
+Parameters:
+
+maxMoveSpeed - The fastest this entity can move from its own power.
+*/
+
+
 .def("SetTurnSpeed", &MovingEntity::SetTurnSpeed)
+
+/*
+func: SetTurnSpeed
+(code)
+nil SetTurnSpeed(number turnSpeed)
+(end)
+
+The <GoalManager> or manual calls to <SetFacingTarget> will cause the player to turn using this speed.
+
+Parameters:
+
+turnSpeed - How quick an entity can turn.
+*/
+
+
 .def("GetTurnSpeed", &MovingEntity::GetTurnSpeed)
-.def("GetFacing", &MovingEntity::GetFacing)
+
+/*
+func: GetTurnSpeed
+(code)
+number GetTurnSpeed()
+(end)
+
+Returns:
+
+How fast this entity can turn.
+*/
 .def("SetFacing", &MovingEntity::SetFacing)
+
+/*
+func: SetFacing
+(code)
+nil SetFacing(number facing)
+(end)
+
+Causes an entity to instantly turn to this direction.  <SetFacingTarget> is also set internally, so the entity will keep facing this direction.
+For more accuracy, see <SetVectorFacing>.
+
+Parameters:
+
+facing - One of the <C_FACING_CONSTANTS>.
+*/
+
+
+
+.def("GetFacing", &MovingEntity::GetFacing)
+
+/*
+func: GetFacing
+(code)
+number GetFacing()
+(end)
+
+Use <GetVectorFacing> for more accuracy.
+
+Returns:
+
+One of the <C_FACING_CONSTANTS> to best describe the direction the entity is currently facing.
+
+*/
+
+
 .def("SetFacingTarget", &MovingEntity::SetFacingTarget)
+
+/*
+func: SetFacingTarget
+(code)
+nil SetFacingTarget(number facing)
+(end)
+
+Cause an entity to "turn" towards a certain direction.  If you want him to turn instantaneously, use <SetFacing> instead.
+For more accuracy, see <SetVectorFacingTarget>.
+
+Parameters:
+
+facing - One of the <C_FACING_CONSTANTS>.
+*/
+
+
 .def("GetFacingTarget", &MovingEntity::GetFacingTarget)
-.def("GetVectorFacing", &MovingEntity::GetVectorFacing)
-.def("GetVectorFacingTarget", &MovingEntity::GetVectorFacingTarget)
+
+/*
+func: GetFacingTarget
+(code)
+number GetFacingTarget()
+(end)
+
+Allows you to see where this entity wants to face.  He may or not be facing there at the time.  See <IsFacingTarget> to check for that.
+
+Use <GetVectorFacing> for more accuracy.
+
+Returns:
+
+One of the <C_FACING_CONSTANTS> to best describe the direction this entity wants to face.
+*/
+
 .def("SetVectorFacing", &MovingEntity::SetVectorFacing)
+
+/*
+func: SetVectorFacing
+(code)
+nil SetVectorFacing(Vector2 vDirection)
+(end)
+
+Causes an entity to instantly turn to this direction.  <SetVectorFacingTarget> is also set internally, so the entity will keep facing this direction.
+
+Parameters:
+
+vDirection - A <Vector2> object containing the normalized direction vector we should face.
+*/
+
+
+.def("GetVectorFacing", &MovingEntity::GetVectorFacing)
+
+/*
+func: GetVectorFacing
+(code)
+Vector2 GetVectorFacing()
+(end)
+
+Returns:
+
+A <Vector2> object containing a unit vector of the entity's current direction.
+*/
+
 .def("SetVectorFacingTarget", &MovingEntity::SetVectorFacingTarget)
-.def("GetVectorToEntity", &MovingEntity::GetVectorToEntity)
-.def("GetVectorToEntityByID", &MovingEntity::GetVectorToEntityByID)
-.def("GetVectorToPosition", &MovingEntity::GetVectorToPosition)
-.def("GetDistanceFromEntityByID", &MovingEntity::GetDistanceFromEntityByID)
-.def("GetDistanceFromPosition", &MovingEntity::GetDistanceFromPosition)
-.def("SetNavNodeType", &MovingEntity::SetNavNodeType)
-.def("SetHasPathNode", &MovingEntity::SetHasPathNode)
+
+/*
+func: SetVectorFacingTarget
+(code)
+nil SetVectorFacingTarget(Vector2 vDirection)
+(end)
+
+Cause an entity to turn towards a specified direction.
+
+Parameters:
+
+vDirection - A <Vector2> object containing a normalized direction vector we should turn to.
+*/
+.def("GetVectorFacingTarget", &MovingEntity::GetVectorFacingTarget)
+
+/*
+func: GetVectorFacingTarget
+(code)
+Vector2 GetVectorFacingTarget()
+(end)
+
+Returns:
+
+A <Vector2> object containing a unit vector of the entitys facing target.
+*/
+
 .def("IsFacingTarget", &MovingEntity::IsFacingTarget)
+
+/*
+func: IsFacingTarget
+(code)
+boolean IsFacingTarget(number toleranceRadians)
+(end)
+
+Allows you to test to see if this entity has turned to face it's facing target. (set with <SetFacingTarget> or <SetVectorFacingTarget>)
+
+Usage:
+(code)
+
+//Is the entity facing its target yet?
+
+if (this:IsFacingTarget(1.3)) then
+		LogMsg("Oh yeah.  We've turned close enough.");
+	end
+(end)
+
+Parameters:
+
+toleranceRadians - How far off we can be and still think of it as "facing" the direction.
+
+Returns:
+
+True if facing the target
+*/
+
+.def("GetVectorToEntity", &MovingEntity::GetVectorToEntity)
+
+/*
+func: GetVectorToEntity
+(code)
+Vector2 GetVectorToEntity(Entity ent)
+(end)
+
+Parameters:
+
+ent - The <Entity> you'd like to get a direction to.
+
+Returns:
+
+A <Vector2> object containing a unit vector describing which way to the entity in question.
+*/
+
+
+.def("GetVectorToEntityByID", &MovingEntity::GetVectorToEntityByID)
+
+/*
+func: GetVectorToEntityID
+(code)
+Vector2 GetVectorToEntity(number entityID)
+(end)
+
+Parameters:
+
+entityID - An ID of an <Entity>.
+
+Returns:
+
+A <Vector2> object containing a unit vector describing which way to the entity in question.
+*/
+
+.def("GetVectorToPosition", &MovingEntity::GetVectorToPosition)
+
+/*
+func: GetVectorToPosition
+(code)
+Vector2 GetVectorToPosition(Vector2 vPos)
+(end)
+
+Parameters:
+
+vPos - A <Vector2> holding the map coordinates we want a vector to.
+
+Returns:
+
+A <Vector2> object containing a unit vector describing which way to the position in question.
+*/
+
+
+.def("GetDistanceFromEntityByID", &MovingEntity::GetDistanceFromEntityByID)
+
+
+/*
+func: GetDistanceFromEntityByID
+(code)
+number GetDistanceFromEntityByID(number entityID)
+(end)
+
+Parameters:
+
+entityID - The entity we'd like to measure the distance to.
+
+Returns:
+
+The distance to the entity, -1 if the entity is invalid, <C_DISTANCE_NOT_ON_SAME_MAP> if they are not on the same map. 
+*/
+
+.def("GetDistanceFromPosition", &MovingEntity::GetDistanceFromPosition)
+
+/*
+func: GetDistanceFromPosition
+(code)
+number GetDistanceFromPosition(Vector2 vPos)
+(end)
+
+Parameters:
+
+vPos - A <Vector2> of the position we want the distance to.
+
+Returns:
+
+The distance to the position.
+*/
+
+
+.def("SetHasPathNode", &MovingEntity::SetHasPathNode)
+
+/*
+func: SetHasPathNode
+(code)
+nil SetHasPathNode(boolean bHasPathNode)
+(end)
+
+If an entity has this enabled, the path-finding system will use it as a node.  Nodes are automatically connected to nearby and reachable nodes.
+
+Must be set in an entity's OnInit().
+
+Parameters:
+
+bHasPathNode - If true, it becomes part of the path-finding graph.
+*/
+
+.def("SetNavNodeType", &MovingEntity::SetNavNodeType)
+
+/*
+func: SetNavNodeType
+(code)
+number SetNavNodeType(number nodeType)
+(end)
+
+Must be set in an entity's OnInit().  Special entity things like warps and doors use this to let the path-finding system know what's going on.
+
+Parameters:
+
+nodeType - One of the <C_NODE_TYPE_CONSTANTS>.
+*/
+
+
 .def("IsOnSameMapAsEntityByID", &MovingEntity::IsOnSameMapAsEntityByID)
 .def("IsCloseToEntity", &MovingEntity::IsCloseToEntity)
 .def("IsCloseToEntityByID", &MovingEntity::IsCloseToEntityByID)
@@ -1194,6 +1675,28 @@ Used with <Entity::SetGravityOverride>.
 
 constants: C_GRAVITY_OVERRIDE_DISABLED
 Use the default <Map>'s gravity on this entity instead of a user defined one.
+
+Group: C_DISTANCE_CONSTANTS
+Various uses.
+
+constants: C_DISTANCE_TALK
+How close someone should be to talk.
+
+constants: C_DISTANCE_CLOSE
+The closest you can get to someone/something.
+
+constants: C_DISTANCE_NOT_ON_SAME_MAP
+If <Entity::GetDistanceFromEntityByID> returns this, you know the entity in question has left the map.
+
+Group: C_NODE_TYPE_CONSTANTS
+Use with <Entity::SetNavNodeType> to describes special properties related to path-finding.
+
+constants: C_NODE_TYPE_NORMAL
+A normal node, nothing special.
+
+constants: C_NODE_TYPE_WARP
+A warp or door.  Path-finding engine needs to track it in a special way.
+
 */
 
 

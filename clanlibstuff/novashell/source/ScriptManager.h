@@ -16,7 +16,7 @@
 	LogError(a.c_str());} catch (...) {LogError("Unknown LUA error, inalid return type maybe? : %s", a.c_str());}
 //this works inside of MovingEntity
 #define LUABIND_ENT_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
-	LogError("Entity %d (%s) : %s", ID(), GetName().c_str(), a);} catch (...) {LogError("Unknown LUA error in Entity %d (%s) : %s.  Invalid return type maybe?", ID(), GetName().c_str(), a);}
+	LogError("Entity %d (%s) : %s (Entity's main script is %s)", ID(), GetName().c_str(), a, GetMainScriptFileName().c_str());} catch (...) {LogError("Unknown LUA error in Entity %d (%s) : %s.  Invalid return type maybe?", ID(), GetName().c_str(), a);}
 
 //this works inside of brains
 #define LUABIND_ENT_BRAIN_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
@@ -59,6 +59,7 @@ public:
 	void RunFunction(const char *pFuncName, bool bBool);
 	void RunFunction(const char *pFuncName, BaseGameEntity *pBaseGameEntity);
 	void RunString(const char *pString);
+	void SetGlobal(const char * pGlobalName, int value);
 
 	lua_State * GetMainState() {return m_pMainState;}
 
