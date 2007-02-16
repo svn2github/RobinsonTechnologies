@@ -196,3 +196,198 @@ private:
 
 void RemoveWorldFiles(const string &path); //util for deleting stuff
 
+
+
+//natural docs stuff
+/*
+Object: Map
+A Map is a single area that can be any size and contain any amount of tiles and entities.
+
+Most of these map settings are also available in the editor under Map Properties.
+
+If the map is saved (by defaults maps auto-save and are persistent), changes made are remembered.
+
+See also:
+
+<MapManager>
+
+Group: Member Functions
+
+func: SetPersistent
+(code)
+nil SetPersistent(boolean bPersistent)
+(end)
+By default, maps are persistent, meaning all changes are remembered and automatically saved in the player's profile. (the original is not changed, only the player's modified version of it)
+
+This only has meaning when a player profile is active.
+
+Parameters:
+
+bPersistant - True if the map should be persistent and changes remembered, false if not
+
+func: GetPersistent
+(code)
+boolean GetPersistent()
+(end)
+
+Returns:
+
+True if the map is persistent and changes will be remembered on a per-player-profile basis.
+
+func: SetAutoSave
+(code)
+nil SetAutoSave(boolean bAutoSave)
+(end)
+
+This only applies when a visual profile is not yet loaded.
+
+For title screens, auto-save is usually turned off because no player profile is loaded, yet we don't want to save after we mess up the screen.
+
+Parameters:
+
+bAutoSave - True if the map should automatically be saved without needing to choose "Save map now" from the editor.
+
+func: GetAutoSave
+(code)
+boolean GetAutoSave()
+(end)
+
+Returns:
+
+True if auto-save is currently enabled.
+
+func: GetName
+(code)
+string GetName()
+(end)
+
+Returns:
+
+The map name.  (the name of its directory)
+
+func: GetLayerManager
+(code)
+LayerManager GetLayerManager()
+(end)
+
+Returns:
+
+This map's <LayerManager>, containing all information about its layers and layer settings.
+
+func: BuildLocalNavGraph
+(code)
+nil BuildLocalNavGraph()
+(end)
+
+Rebuilds the navigational graph for this map.
+
+In general, this isn't needed, as navigational graphs are grown/destroyed fluidly on the fly as the map changes.
+
+func: GetCollisionByRay
+(code)
+Zone GetCollisionByRay(Vector2 vStartPos, Vector2 vDir, number rayRange, number raySpread, Entity entToIgnore, number mode, boolean bIgnoreCreatures)
+(end)
+
+Allows you to shoot a ray from any point in this map and see what it hits.
+
+The returned <Zone> object's *vPos* member will contain the exact position of the hit, its other values will contain additional information about the collision.
+
+Usage:
+(code)
+//let's shoot a ray in front of this entity and see if it detects any other entities)
+
+local rayRange = 80;
+local raySpread = 8; //causes 5 rays to be shot in a spread formation 8 units apart, easier to detect hits.  0 to use 1 ray only
+local entToIgnore = this;
+local hitZone = this:GetMap():GetCollisionByRay(this:GetPos(), this:GetVectorFacing(), rayRange, raySpread, entToIgnore, C_RAY_ENTITIES, false);
+
+if (hitZone.entityID != C_ENTITY_NONE) then
+//we have an entity in front of us!
+
+local ent = GetEntityByID(hitZone.entityID);
+LogMsg("Entity " .. tostring(ent) .. " is sitting in front of us.");
+
+end
+
+(end)
+
+Parameters:
+
+vStartPos - A <Vector2> object containing the start position of the ray.
+vDir - A unit vector containing the direction of the ray.
+rayRange - How far the ray can reach.
+raySpread - 0 for a single ray, otherwise will shoot five rays in a spread formation, this distance apart from each one.
+entToIgnore - An <Entity> we should ignore during the check, otherwise nil
+mode - One of the <C_RAY_CONSTANTS>.  Use <C_RAY_DEBUG_MODE> to visually see the rays being shot.
+bIgnoreCreature - If true, creatures are ignored during the check.
+
+Returns:
+
+A <Zone> object containing information on what was hit.  The Zone's materialID will be <C_MATERIAL_TYPE_NONE> if no collision occured.
+
+
+func: GetTilesByRect
+(code)
+TileList GetTilesByRect(Rect rect, LayerList layers, boolean bWithCollisionOnly)
+(end)
+This allows you to grab a list of all the entities and tiles in a rectangular area of the map.
+
+You can later cycle through the list examining each one, or move or copy the list to a new place. (well, the moving/pasting as a group isn't accessible yet in script, coming soon?)
+
+Usage:
+(code)
+
+//grab all tiles/entities we're touching
+
+local layerList = this:GetMap():GetLayerManager():GetVisibleLayers(); //what layers we'll scan
+local tileList = this:GetMap():GetTilesByRect( Rect(this:GetWorldCollisionRect()), layerList, false); //grab them
+
+LogMsg("Found " .. tileList:GetCount() .. " tiles after scanning the " .. layerList:GetCount() .. " layers.");
+
+//ok, now we have our list and need to run through and look at each one
+
+local tile; 
+
+while true do
+
+tile = tileList:GetNext();
+if (tile == nil) then break; end;
+
+LogMsg("Found tile type " .. tile:GetType());
+
+if (tile:GetType() == C_TILE_TYPE_ENTITY and tile:GetAsEntity():GetID() != this:GetID()) then
+LogMsg("We are standing near an entity that isn't us! It's ID is " ..  tile:GetAsEntity():GetID());
+end
+end
+(end)
+
+Parameters:
+
+rect - A <Rect> object containing the area we should grab tiles from.  Any tile/entity that overlays this area will be included.
+layers - A <LayerList> object containing which layers should be included for the search.
+bWidthCollisionOnly - If true, entities/tiles without collision information will be ignored.
+
+Returns:
+
+A <TileList> object containing handles to all the tiles/entities found. If <TileList::GetCount> is 0, nothing was found.
+
+Section: Related Constants
+
+Group: C_RAY_CONSTANTS
+Used with <Map::GetCollisionByRay>.
+
+constant: C_RAY_ENTITIES
+The ray will hit only entities.
+
+constant: C_RAY_TILE_PIC
+The ray will hit only tile pics.
+
+constant: C_RAY_EVERYTHING
+The ray will hit entities as well as tile pics.
+
+constant: C_RAY_DEBUG_MODE
+The rays will be visually drawn on the screen, helps to figure out problems.  Slow, so don't leave this on. Hits everything.
+
+*/
+
+
