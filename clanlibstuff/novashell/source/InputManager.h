@@ -47,11 +47,11 @@ public:
 typedef std::map<unsigned int, vector<KeyInfo> > ScriptKeyMap;
 
 
-class ScriptKeyManager
+class InputManager
 {
 public:
-	ScriptKeyManager();
-	virtual ~ScriptKeyManager();
+	InputManager();
+	virtual ~InputManager();
 	void Init(); //clear it
 
 	//Send "" as the callback to remove assignment.

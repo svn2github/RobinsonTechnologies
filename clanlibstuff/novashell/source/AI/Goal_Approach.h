@@ -6,7 +6,7 @@
 #include "Goal_Types.h"
 #include "WorldNavManager.h"
 
-class World;
+class Map;
 
 class Goal_Approach : public Goal_Composite<MovingEntity>
 {
@@ -41,7 +41,7 @@ private:
 
 	//the position the bot wants to reach
 	CL_Vector2 m_vDestination, m_vLookPosition;
-	World * m_pDestMap;
+	Map * m_pDestMap;
 	bool m_bTriedSimpleWay;
 	MacroPathInfo m_macroPath;
 	bool m_bRequestNextChunk;

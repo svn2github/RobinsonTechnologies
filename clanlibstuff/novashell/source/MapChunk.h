@@ -10,7 +10,7 @@
 #define WorldChunk_HEADER_INCLUDED  // include guard
 
 class Screen;
-class World;
+class Map;
 typedef int ScreenID;
 
 
@@ -18,12 +18,12 @@ typedef int ScreenID;
 #define C_WORLDCHUNK_PADDING_SIZE 32 
 #define C_THUMBNAIL_FORMAT CL_PixelFormat::rgb888
 
-class WorldChunk
+class MapChunk
 {
 public:
 
-    WorldChunk(World *pParent);
-    virtual ~WorldChunk();
+    MapChunk(Map *pParent);
+    virtual ~MapChunk();
 
 	void SetScreen(Screen *pScreen);
 
@@ -44,7 +44,7 @@ public:
 	bool IsScreenLoaded() {return m_pScreen != NULL;}
 	bool IsEmpty(); //if true, this map is totally empty, no need to load/save it
 	void UnloadScreen();
-	World * GetParentWorld() {return m_pParent;}
+	Map * GetParentWorld() {return m_pParent;}
 	void KillThumbnail();
 	const CL_Rect & GetRect();
 	bool GetChunkDataChanged() {return m_bChunkDataChanged;} //applies only to this class
@@ -80,7 +80,7 @@ protected:
 	};
 
 
-	World * m_pParent;
+	Map * m_pParent;
 	cl_uint8 m_byteArray[e_byteCount];
 	cl_int32 m_intArray[e_intCount];
 	cl_uint32 m_uintArray[e_uintCount];

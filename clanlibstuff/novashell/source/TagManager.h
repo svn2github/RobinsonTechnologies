@@ -8,7 +8,7 @@
 
 #include "AI/NodeTypeEnumerations.h"
 
-class World;
+class Map;
 class MovingEntity;
 
 const int C_TAG_DATA_VERSION  = 1;
@@ -27,7 +27,7 @@ public:
 	int GetID() {return m_entID;} //will be 0 unless already loaded, this is normal
 
 	CL_Vector2 m_pos;
-	World *m_pWorld;
+	Map *m_pWorld;
 	int m_entID; //so we can keep track of the owner of a tag, even with multiple tags of the same name
 	
 	string m_warpTarget; //if not empty, this is the tagname of where this can warp to.  It's used in the
@@ -47,13 +47,13 @@ public:
     ~TagManager();
 
 	void Kill();
-	void Update(World *pWorld, MovingEntity *pEnt);
+	void Update(Map *pWorld, MovingEntity *pEnt);
 	void Remove(MovingEntity *pEntity);
 	void RemoveByHashID(unsigned int hashID, int entID); //should never be used except to erase a bad tag, just use 0 for the entity
 	TagObject * GetFromString(const string &name);
 	TagObject * GetFromHash(unsigned int hashID);
-	void Save(World *pWorld);
-	void Load(World *pWorld);
+	void Save(Map *pWorld);
+	void Load(Map *pWorld);
 	void PrintStatistics();
 	CL_Vector2 GetPosFromName(const string &name);
 

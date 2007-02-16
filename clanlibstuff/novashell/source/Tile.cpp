@@ -252,7 +252,7 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 
 	static bool bUseParallax;
 	static Layer *pLayer;
-	static World *pWorld;
+	static Map *pWorld;
 	pWorld = pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 	static EntWorldCache *pWorldCache;
 	
@@ -346,7 +346,7 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 	static CL_Vector2 vecPos;
 
 	static Layer *pLayer;
-	static World *pWorld;
+	static Map *pWorld;
 	pWorld = pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 	static EntWorldCache *pWorldCache;
 	pWorldCache = pWorld->GetMyWorldCache();

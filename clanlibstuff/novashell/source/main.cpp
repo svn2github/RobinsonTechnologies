@@ -995,6 +995,8 @@ Gets the current simulation speed mod.
 
 /*
 
+//Section: Related Constants
+
 Group: C_PLATFORM_CONSTANTS
 
 constants: C_PLATFORM_WINDOWS

@@ -8,7 +8,7 @@
 #include "MessageManager.h"
 #include "TextManager.h"
 #include "TagManager.h"
-#include "ScriptKeyManager.h"
+#include "InputManager.h"
 #include "VisualProfileManager.h"
 #include "AI/Goal_Think.h"
 #include "AI/WatchManager.h"
@@ -38,7 +38,7 @@ enum
 
 
 
-Zone GetCollisionByRay(World * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int actionRange, int raySpread, MovingEntity *pEntToIgnore, int mode, bool bIgnoreCreatures)
+Zone GetCollisionByRay(Map * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int actionRange, int raySpread, MovingEntity *pEntToIgnore, int mode, bool bIgnoreCreatures)
 {
 
 	int tileScanMode = C_TILE_TYPE_BLANK; //everything
@@ -209,7 +209,7 @@ Zone GetCollisionByRay(World * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, i
 }
 
 
-TileList GetTileListByRect(World *pMap, const CL_Rect &r, vector<unsigned int> &layerList, bool bWithCollisionOnly)
+TileList GetTileListByRect(Map *pMap, const CL_Rect &r, vector<unsigned int> &layerList, bool bWithCollisionOnly)
 {
 	tile_list tilelist;
 	pMap->GetMyWorldCache()->AddTilesByRect(r, &tilelist,layerList, bWithCollisionOnly);
@@ -403,14 +403,14 @@ myColor = Color(255,255,255,255);
 		.def("GetVisibleLayers", &LayerManager::GetDrawListNoConst)
 		.def("GetAllLayers", &LayerManager::GetAllListNoConst)
 		
-		,class_<World>("Map")
-		.def("SetPersistent", &World::SetPersistent)
-		.def("GetPersistent", &World::GetPersistent)
-		.def("SetAutoSave", &World::SetAutoSave)
-		.def("GetAutoSave", &World::GetAutoSave)
-		.def("GetName", &World::GetName)
-		.def("GetLayerManager", &World::GetLayerManager)
-		.def("BuildLocalNavGraph", &World::BuildNavGraph)
+		,class_<Map>("Map")
+		.def("SetPersistent", &Map::SetPersistent)
+		.def("GetPersistent", &Map::GetPersistent)
+		.def("SetAutoSave", &Map::SetAutoSave)
+		.def("GetAutoSave", &Map::GetAutoSave)
+		.def("GetName", &Map::GetName)
+		.def("GetLayerManager", &Map::GetLayerManager)
+		.def("BuildLocalNavGraph", &Map::BuildNavGraph)
 		.def("GetCollisionByRay", &GetCollisionByRay)
 		.def("GetTilesByRect", &GetTileListByRect)
 
@@ -459,12 +459,12 @@ myColor = Color(255,255,255,255);
 
 		,class_<CameraSetting>("CameraSettings")
 
-		,class_<ScriptKeyManager>("InputManager")
-		.def("AddBinding", &ScriptKeyManager::AddBinding)
-		.def("RemoveBinding", &ScriptKeyManager::RemoveBinding)
-		.def("RemoveBindingsByEntity", &ScriptKeyManager::RemoveBindingsByEntity)
-		.def("GetMousePos", &ScriptKeyManager::GetMousePos)
-		.def("SetMousePos", &ScriptKeyManager::SetMousePos)
+		,class_<InputManager>("InputManager")
+		.def("AddBinding", &InputManager::AddBinding)
+		.def("RemoveBinding", &InputManager::RemoveBinding)
+		.def("RemoveBindingsByEntity", &InputManager::RemoveBindingsByEntity)
+		.def("GetMousePos", &InputManager::GetMousePos)
+		.def("SetMousePos", &InputManager::SetMousePos)
 
 		,class_<Goal_Think>("GoalManager")
 		.def("PushMoveToPosition", &Goal_Think::PushMoveToPosition)

@@ -1,6 +1,6 @@
 #include "AppPrecomp.h"
 #include "CameraSetting.h"
-#include "World.h"
+#include "Map.h"
 
 CameraSetting::CameraSetting()
 {
@@ -8,8 +8,8 @@ CameraSetting::CameraSetting()
 	for (int i=0; i < e_intCount; i++) m_intArray[i] = 0;
 
 
-	VecPos() = g_worldDefaultCenterPos;
-	VecTargetPos() = g_worldDefaultCenterPos;
+	VecPos() = g_mapDefaultCenterPos;
+	VecTargetPos() = g_mapDefaultCenterPos;
 	
 	VecTargetScale() = VecScale() = CL_Vector2(1,1);
 }

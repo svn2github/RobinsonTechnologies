@@ -1,7 +1,7 @@
 #include "AppPrecomp.h"
 #include "WorldNavManager.h"
 #include "TagManager.h"
-#include "WorldManager.h"
+#include "MapManager.h"
 #include "GameLogic.h"
 #include "TimeSlicedGraphAlgorithms.h"
 #include "GraphAlgorithms.h"
@@ -48,7 +48,7 @@ void WorldNavManager::RemoveNode(TagObject *pTag)
 	pTag->m_graphNodeID = invalid_node_index;
 }
 
-bool WorldNavManager::DoNodesConnect(World *pMap, int a, int b)
+bool WorldNavManager::DoNodesConnect(Map *pMap, int a, int b)
 {
 	//well, there must be some awesome shortcut to figure this out where you don't care about the path, but for now:
 	return pMap->GetNavGraph()->DoNodesConnect(ConvertWorldNodeToMapNode(a), ConvertWorldNodeToMapNode(b));
@@ -158,7 +158,7 @@ void WorldNavManager::LinkNode(TagObject *pTag)
 	
 }
 
-void WorldNavManager::LinkMap(World *pMap)
+void WorldNavManager::LinkMap(Map *pMap)
 {
 	
 	//scan through and link all nodes to its master node, and also the node it warps to
@@ -195,7 +195,7 @@ void WorldNavManager::LinkEverything()
 //certain kinds of map nodes like warps have extra data so we can figure out what their node ID is on the map nav graph (the
 //map nav graph is the thing that helps us figure out where doors lead to quickly)
 
-int WorldNavManager::ConvertMapNodeToWorldNode(World *pMap, int mapNode)
+int WorldNavManager::ConvertMapNodeToWorldNode(Map *pMap, int mapNode)
 {
 
 	NavGraphNodeExtra &n = pMap->GetNavGraph()->GetGraph().GetNode( mapNode);
@@ -414,7 +414,7 @@ void WorldNavManager::StripUnrequiredNodesFromPath(MacroPathInfo &m)
 
 }
 
-MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, World *pDestMap, CL_Vector2 vDest)
+MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, Map *pDestMap, CL_Vector2 vDest)
 {
 	//first we need to locate a door, any door, it doesn't have to  be the closest, it just has to be reachable
 	int startWarpID = pEnt->GetMap()->GetNavGraph()->GetClosestSpecialNode(pEnt, pEnt->GetMap(), pEnt->GetPos(), C_NODE_TYPE_WARP);

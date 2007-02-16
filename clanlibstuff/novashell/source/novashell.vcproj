@@ -723,6 +723,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Map.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MapChunk.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Message.cpp"
 					>
 				</File>
@@ -762,32 +770,6 @@
 				</File>
 				<File
 					RelativePath=".\VisualResource.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\World.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-							PrecompiledHeaderThrough="AppPrecomp.h"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions=""
-							PrecompiledHeaderThrough="AppPrecomp.h"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\WorldChunk.cpp"
 					>
 				</File>
 				<Filter
@@ -900,6 +882,14 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\InputManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MapManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\MaterialManager.cpp"
 					>
 				</File>
@@ -942,10 +932,6 @@
 					RelativePath=".\VisualProfileManager.cpp"
 					>
 				</File>
-				<File
-					RelativePath=".\WorldManager.cpp"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="Physics"
@@ -970,10 +956,6 @@
 			<Filter
 				Name="Script"
 				>
-				<File
-					RelativePath=".\ScriptKeyManager.cpp"
-					>
-				</File>
 				<File
 					RelativePath=".\ScriptManager.cpp"
 					>
@@ -2517,7 +2499,15 @@
 					>
 				</File>
 				<File
+					RelativePath=".\InputManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\LayerManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MapManager.h"
 					>
 				</File>
 				<File
@@ -2544,10 +2534,6 @@
 					RelativePath=".\VisualProfileManager.h"
 					>
 				</File>
-				<File
-					RelativePath=".\WorldManager.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="DataH"
@@ -2562,6 +2548,14 @@
 				</File>
 				<File
 					RelativePath=".\HashedResource.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Map.h"
+					>
+				</File>
+				<File
+					RelativePath=".\MapChunk.h"
 					>
 				</File>
 				<File
@@ -2588,22 +2582,10 @@
 					RelativePath=".\VisualResource.h"
 					>
 				</File>
-				<File
-					RelativePath="world.h"
-					>
-				</File>
-				<File
-					RelativePath=".\WorldChunk.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="ScriptH"
 				>
-				<File
-					RelativePath=".\ScriptKeyManager.h"
-					>
-				</File>
 				<File
 					RelativePath=".\ScriptManager.h"
 					>

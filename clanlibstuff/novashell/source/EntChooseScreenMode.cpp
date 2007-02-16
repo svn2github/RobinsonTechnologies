@@ -183,8 +183,8 @@ void EntChooseScreenMode::GenerateThumbnailsIfNeeded()
 		//no active world
 		return;
 	}
-	WorldMap *pWorldMap = GetWorld->GetWorldMap();
-	WorldMap::const_iterator itor = pWorldMap->begin();
+	map_chunk_map *pWorldMap = GetWorld->GetChunkMap();
+	map_chunk_map::const_iterator itor = pWorldMap->begin();
 
 	while (itor != pWorldMap->end())
 	{
@@ -271,7 +271,7 @@ void EntChooseScreenMode::DrawBlock(int x, int y)
 	y += GetWorld->GetWorldRect()->top;
 
 	ScreenID screenID = GetWorld->GetScreenID(x,y);
-	WorldChunk *pWorldChunk;
+	MapChunk *pWorldChunk;
 
     if (pWorldChunk = GetWorld->DoesWorldChunkExist(screenID))
     {
@@ -311,7 +311,7 @@ void EntChooseScreenMode::SetupInfoPanel(ScreenID screenID)
 
 	string st;
 
-	WorldChunk *pChunk;
+	MapChunk *pChunk;
 
 	if (screenID != C_INVALID_SCREEN)
 	{
@@ -337,7 +337,7 @@ void EntChooseScreenMode::SetupInfoPanel(ScreenID screenID)
 	{
 		if (GetWorld)
 		{
-			st = CL_String::from_int(GetWorld->GetWorldMap()->size()) + " screens exist.";
+			st = CL_String::from_int(GetWorld->GetChunkMap()->size()) + " screens exist.";
 		}
 	}
 	
@@ -377,7 +377,7 @@ void EntChooseScreenMode::DrawViewScreenOverlay()
 CL_Vector2 EntChooseScreenMode::WorldToScreen(CL_Vector2 vecWorldPos)
 {
 
-	World *pWorld = GetWorld;
+	Map *pWorld = GetWorld;
 
 	ScreenID screenID = pWorld->GetScreenIDFromWorld(vecWorldPos);
 

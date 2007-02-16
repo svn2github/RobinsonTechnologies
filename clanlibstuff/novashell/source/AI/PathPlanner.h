@@ -23,7 +23,7 @@
 #include "PathEdge.h"
 */
 class MovingEntity;
-class World;
+class Map;
 
 class PathPlanner
 {
@@ -87,7 +87,7 @@ public:
   //returns the index of the closest visible and unobstructed graph node to
   //the given position
   //if it fails, it returns  no_closest_node_found
-  int GetClosestNodeToPosition(World *pMap, CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride=1.0f) const;
+  int GetClosestNodeToPosition(Map *pMap, CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride=1.0f) const;
 
   bool IsPathNeededToGetToTarget(CL_Vector2 &TargetPos);
 
@@ -103,7 +103,7 @@ private:
 	//this is the position the bot wishes to plan a path to reach
 	CL_Vector2                            m_vDestinationPos;
 
-	World * m_pWorld;
+	Map * m_pWorld;
 	NavGraphManager::NavGraph &m_NavGraph;
 
 	//only smooths the first and last node

@@ -18,7 +18,7 @@
 #define C_WORLD_NAV_FILENAME "maps/world_nav_cache.dat"
 
 
-class World;
+class Map;
 class TagObject;
 class MovingEntity;
 
@@ -61,7 +61,7 @@ public:
 	void RemoveNode(TagObject *pTag);
 	void LinkNode(TagObject *pTag);
 	void LinkEverything();
-	MacroPathInfo FindPathToMapAndPos(MovingEntity *pEnt, World *pDestMap, CL_Vector2 vDest);
+	MacroPathInfo FindPathToMapAndPos(MovingEntity *pEnt, Map *pDestMap, CL_Vector2 vDest);
 	void DumpStatistics();
 	MovingEntity * ConvertWorldNodeToOwnerEntity(int nodeID, bool bLoadWorldIfRequired);
 
@@ -72,7 +72,7 @@ protected:
 	
 	void LinkTwoNodes(TagObject *pTagSrc, TagObject *pTag);
 	void LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc);
-	bool DoNodesConnect(World *pMap, int a, int b);
+	bool DoNodesConnect(Map *pMap, int a, int b);
 
 	enum
 	{
@@ -83,12 +83,12 @@ protected:
 	};
 
 	void Kill();
-	void LinkMap(World *pMap);
+	void LinkMap(Map *pMap);
 	void StripUnrequiredNodesFromPath(MacroPathInfo &m);
 	void Serialize(CL_FileHelper &helper);
 
 	//these are not that fast, use with caution.
-	int ConvertMapNodeToWorldNode(World *pMap, int mapNode);
+	int ConvertMapNodeToWorldNode(Map *pMap, int mapNode);
 	int ConvertWorldNodeToMapNode(int nodeID);
 	
 	//this map's accompanying navigation graph

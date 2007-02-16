@@ -5,11 +5,15 @@
 #include "ClanLib/Core/System/clipboard.h"
 
 Console g_Console;
-#define C_MAX_LOG_LINES 50
+#define C_MAX_LOG_LINES 200
+#define C_PAGE_SCROLL_LINES 50
+
+
 
 Console::Console()
 { 
 	m_bOnScreen = false; 
+	m_curViewIndexOffset = 0;
 }
 
 
@@ -50,6 +54,7 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 		case CL_KEY_TILDE: //aka GRAVE or backtick
 		m_bOnScreen = !m_bOnScreen;
 		//LogMsg("Toggling console display");
+		m_curViewIndexOffset = 0; //reset this
 		break;
 
 
@@ -61,7 +66,27 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 				CopyToTextBuffer();
 				LogMsg("Log copied to system text buffer.");
 			}
+			break;
 
+#ifdef _WIN32
+		case CL_KEY_PRIOR:
+#else
+	case CL_KEY_PAGE_UP:
+#endif
+			m_curViewIndexOffset += C_PAGE_SCROLL_LINES;
+			break;
+
+	
+#ifdef _WIN32
+	case CL_KEY_NEXT:
+#else
+	case CL_KEY_PAGE_DOWN:
+		LogMsg("Page down");
+#endif
+		
+		m_curViewIndexOffset -= C_PAGE_SCROLL_LINES;
+		
+		if (m_curViewIndexOffset < 0) m_curViewIndexOffset = 0;
 			break;
 	}
 }
@@ -103,14 +128,14 @@ void Console::RenderGUIOverlay()
 	//draw the text over it
 	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
 	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
-	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, "System Log - Press ` (backtick) to close or Ctrl-C to copy text into system clipboard");
+	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, "System Log - Press ` (backtick) to close, Ctrl-C into system clipboard, Page-Up/Page-Down to scroll");
 }
 
 void Console::Render()
 {
 	if (!m_bOnScreen) return;
 	//figure out overall size
-	CL_Rect r(0,GetScreenY/6, GetScreenX, GetScreenY);
+	CL_Rect r(0,15, GetScreenX, GetScreenY);
 	CL_Display::fill_rect(r, CL_Color(0,0,0,140));
 
 	CL_Font *pFont = GetApp()->GetFont(C_FONT_GRAY);
@@ -128,6 +153,9 @@ void Console::Render()
 
 	int posy = r.bottom-15;
 	int posx = 10;
+	
+	int linesToSkip = m_curViewIndexOffset;
+
 	for (itor = m_lineVec.rbegin(); itor != m_lineVec.rend(); itor++)
 	{
 		pFont->set_color(itor->m_color);
@@ -136,9 +164,24 @@ void Console::Render()
 		for (unsigned int i=0; i < lines.size(); i++)
 		{
 			//DrawWithShadow(posx, posy, lines[i], itor->m_color);
-			pFont->draw(posx, posy, lines[i]);
-			
-			posy -= pFont->get_height();
+	
+			if (linesToSkip > 0)
+			{
+				//this is bad way to implement a scrollback buffer because it's going to get slower the farther you scroll back.  Uh..
+				linesToSkip--;
+			} else
+			{
+				pFont->draw(posx, posy, lines[i]);
+				posy -= pFont->get_height();
+
+			}
+	
+		}
+
+		if (posy < 15) 
+		{
+			//can't fit anymore on the screen
+			break;
 		}
 	}
 

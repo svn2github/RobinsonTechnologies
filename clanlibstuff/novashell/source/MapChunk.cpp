@@ -1,9 +1,9 @@
 #include "AppPrecomp.h"
-#include "WorldChunk.h"
+#include "MapChunk.h"
 #include "Screen.h"
-#include "World.h"
+#include "Map.h"
 
-WorldChunk::WorldChunk(World *pParent)
+MapChunk::MapChunk(Map *pParent)
 {
 	m_pParent = pParent;
 	m_bIsEmpty = true;
@@ -17,18 +17,18 @@ WorldChunk::WorldChunk(World *pParent)
 	m_pThumbPixelData = NULL;	
 }
 
-WorldChunk::~WorldChunk()
+MapChunk::~MapChunk()
 {
 	SAFE_DELETE(m_pScreen);
 	KillThumbnail();
 }
 
-void WorldChunk::KillThumbnail()
+void MapChunk::KillThumbnail()
 {
 	SAFE_DELETE(m_pThumb);
 	SAFE_DELETE(m_pThumbPixelData);
 }
-void WorldChunk::SetDataChanged(bool bNeedsSaving)
+void MapChunk::SetDataChanged(bool bNeedsSaving)
 {
 	m_byteArray[e_byteDataChanged] = bNeedsSaving;
 	
@@ -38,13 +38,13 @@ void WorldChunk::SetDataChanged(bool bNeedsSaving)
 	}
 }
 
-void WorldChunk::SetNeedsThumbnailRefresh(bool bNeedsRefresh)
+void MapChunk::SetNeedsThumbnailRefresh(bool bNeedsRefresh)
 {
 	m_byteArray[e_byteNeedsThumbNailRefreshed] = bNeedsRefresh;
 	
 }
 
-void WorldChunk::SetThumbNail(CL_PixelBuffer *pPixBuffer)
+void MapChunk::SetThumbNail(CL_PixelBuffer *pPixBuffer)
 {
 	KillThumbnail();
 	m_pThumb = pPixBuffer;
@@ -52,13 +52,13 @@ void WorldChunk::SetThumbNail(CL_PixelBuffer *pPixBuffer)
 
 }
 
-void WorldChunk::SetScreen(Screen *pScreen)
+void MapChunk::SetScreen(Screen *pScreen)
 {
 	SAFE_DELETE(m_pScreen);
 	m_pScreen = pScreen;
 }
 
-void WorldChunk::UnloadScreen()
+void MapChunk::UnloadScreen()
 {
 	//save memory by killing off parts of the map we aren't using
 	if (m_pScreen)
@@ -70,7 +70,7 @@ void WorldChunk::UnloadScreen()
 	}
 }
 
-bool WorldChunk::Serialize(CL_OutputSource *pOutput)
+bool MapChunk::Serialize(CL_OutputSource *pOutput)
 {
 	
 	CL_FileHelper helper(pOutput); //will autodetect if we're loading or saving
@@ -98,7 +98,7 @@ bool WorldChunk::Serialize(CL_OutputSource *pOutput)
 	return true;
 }
 
-bool WorldChunk::Serialize(CL_InputSource *pInput)
+bool MapChunk::Serialize(CL_InputSource *pInput)
 {
 	
 	assert(!m_pThumbPixelData && !m_pThumb && !m_pScreen && "This should not be initted!");
@@ -134,7 +134,7 @@ bool WorldChunk::Serialize(CL_InputSource *pInput)
 	return true;
 }
 
-Screen * WorldChunk::GetScreen(bool bLoadOnDemand)
+Screen * MapChunk::GetScreen(bool bLoadOnDemand)
 {
 	if (m_pScreen) return m_pScreen;
 	
@@ -154,7 +154,7 @@ Screen * WorldChunk::GetScreen(bool bLoadOnDemand)
 	return m_pScreen;
 }
 
-bool WorldChunk::IsEmpty()
+bool MapChunk::IsEmpty()
 {
 	if (m_pScreen) 
 	{
@@ -164,7 +164,7 @@ bool WorldChunk::IsEmpty()
 	return m_bIsEmpty; //our cached version
 }
 
-void WorldChunk::SetScreenID(ScreenID screenID)
+void MapChunk::SetScreenID(ScreenID screenID)
 {
 	 m_intArray[e_intScreenID] = screenID;
 
@@ -174,7 +174,7 @@ void WorldChunk::SetScreenID(ScreenID screenID)
 	 m_rect.top = vecUpLeft.y;
 	 m_rect.set_size( CL_Size(m_pParent->GetWorldChunkPixelSize(),m_pParent->GetWorldChunkPixelSize()));
 }
-const CL_Rect & WorldChunk::GetRect()
+const CL_Rect & MapChunk::GetRect()
 {
 	return m_rect;
 }

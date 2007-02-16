@@ -596,7 +596,7 @@ void GameLogic::SetMyPlayer(MovingEntity *pNew)
 
 void GameLogic::OnKeyUp(const CL_InputEvent &key)
 {
-		if (g_keyManager.HandleEvent(key, false) )
+		if (g_inputManager.HandleEvent(key, false) )
 		{
 			//they handled it, let's ignore it
 			return;
@@ -605,7 +605,7 @@ void GameLogic::OnKeyUp(const CL_InputEvent &key)
 
 void GameLogic::OnKeyDown(const CL_InputEvent &key)
 {
-		if (g_keyManager.HandleEvent(key, true))
+		if (g_inputManager.HandleEvent(key, true))
 		{
 			//they handled it, let's ignore it
 			return;
@@ -666,7 +666,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 
 void GameLogic::OnMouseDown(const CL_InputEvent &key)
 {
-		if (g_keyManager.HandleEvent(key, true))
+		if (g_inputManager.HandleEvent(key, true))
 		{
 			return;
 		}
@@ -675,7 +675,7 @@ void GameLogic::OnMouseDown(const CL_InputEvent &key)
 void GameLogic::OnMouseUp(const CL_InputEvent &key)
 {
 
-		if (g_keyManager.HandleEvent(key, false))
+		if (g_inputManager.HandleEvent(key, false))
 		{
 			return;
 		}

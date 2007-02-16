@@ -1,20 +1,20 @@
 #include "AppPrecomp.h"
 #include "Screen.h"
-#include "WorldChunk.h"
-#include "World.h"
+#include "MapChunk.h"
+#include "Map.h"
 #include "GameLogic.h"
 #include "TileEntity.h"
 #include "MovingEntity.h"
 #include "AI/NavGraphManager.h"
 
-Screen::Screen(WorldChunk *pParent)
+Screen::Screen(MapChunk *pParent)
 {
 	m_pParentWorldChunk = pParent;
 	//LogMsg("initting screen");
 	m_vecLayerList.resize(1);
 	m_bReCheckIfEmpty = false;
 	m_bIsEmpty = true;
-	m_version = C_WORLD_FILE_VERSION; //it's possible chunks might not be loaded/saved for a while even though the
+	m_version = C_MAP_FILE_VERSION; //it's possible chunks might not be loaded/saved for a while even though the
 	//map is, keep tracking per screen gives us flexibility with upgrades
 }
 
@@ -49,7 +49,7 @@ Screen::~Screen()
 }
 
 
-WorldChunk * Screen::GetParentWorldChunk()
+MapChunk * Screen::GetParentWorldChunk()
 {
 	assert(m_pParentWorldChunk && "Huh?!");
 	return (m_pParentWorldChunk);
@@ -140,7 +140,7 @@ bool Screen::Save()
 	//might be helpful to remember these later
 	helper.process_const(GetParentWorldChunk()->GetParentWorld()->GetWorldChunkPixelSize());
 	helper.process_const(cl_uint32(m_vecLayerList.size()));
-	m_version = C_WORLD_FILE_VERSION;
+	m_version = C_MAP_FILE_VERSION;
 	helper.process(m_version);
 
 	tile_list::iterator itor;
@@ -180,7 +180,7 @@ bool Screen::Load()
 	SetRequestIsEmptyRefreshCheck(true);
 	
 	//where is the original?
-	string realLocation = GetParentWorldChunk()->GetParentWorld()->GetDirPath()+"/"+C_WORLD_DAT_FILENAME;
+	string realLocation = GetParentWorldChunk()->GetParentWorld()->GetDirPath()+"/"+C_MAP_DAT_FILENAME;
 
 	CL_InputSource *pFile;
 	
@@ -573,7 +573,7 @@ void Screen::AddTile(Tile *pTile)
 	//we expand beyond the bounds of this screen.  We'll notify the other screens about this with a reference that
 	//points to this one, the only real instance. When references are deleted, this tile will be updated and vice-versa.
 
-	std::vector <WorldChunk*> wcVector;
+	std::vector <MapChunk*> wcVector;
 	m_pParentWorldChunk->GetParentWorld()->GetAllWorldChunksWithinThisRect(wcVector, pTile->GetWorldCombinedRectInt(), true);
 
 

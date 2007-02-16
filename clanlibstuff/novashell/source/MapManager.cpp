@@ -1,7 +1,7 @@
 #include "AppPrecomp.h"
-#include "World.h"
+#include "Map.h"
 #include "EntWorldCache.h"
-#include "WorldManager.h"
+#include "MapManager.h"
 #include "GameLogic.h"
 #include "AI/WorldNavManager.h"
 #include "AI/WatchManager.h"
@@ -109,7 +109,7 @@ bool WorldManager::AddWorld(string stPath)
 	//precache its tagged entity info, but only if it's in the dir where the world is
 	
 	if (ExistsInModPath(stPath+"/"+C_TAGCACHE_FILENAME)
-		|| !ExistsInModPath(stPath+"/"+C_WORLD_DAT_FILENAME)
+		|| !ExistsInModPath(stPath+"/"+C_MAP_DAT_FILENAME)
 		)
 	{
 		//basically, we only care what's in this data if:
@@ -220,7 +220,7 @@ void WorldManager::SaveAllMaps()
 	world_info_list::iterator itor =m_worldInfoList.begin();
 	while (itor != m_worldInfoList.end())
 	{
-		if (ExistsInModPath((*itor)->m_world.GetDirPath() + C_WORLD_DAT_FILENAME))
+		if (ExistsInModPath((*itor)->m_world.GetDirPath() + C_MAP_DAT_FILENAME))
 		{
 
 			//LogMsg("Save %s?", (*itor)->m_world.GetDirPath().c_str());
@@ -375,7 +375,7 @@ EntWorldCache * WorldManager::GetActiveWorldCache()
 //	assert(m_pActiveWorldCache && "Uh oh");
 	return m_pActiveWorldCache;
 }
-World* WorldManager::GetActiveWorld()
+Map* WorldManager::GetActiveWorld()
 {
 	//assert(m_pActiveWorld && "Uh oh");
   return m_pActiveWorld;

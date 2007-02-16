@@ -22,7 +22,7 @@
 #define LUABIND_ENT_BRAIN_CATCH(a) catch (luabind::error &e) { ShowLUAMessagesIfNeeded(e.state(), 1); \
 	LogError("Entity %d (%s) : %s", m_pParent->ID(), m_pParent->GetName().c_str(), a);} catch (...) {LogError("Unknown LUA error (Invalid return type maybe?) in Entity %d (%s) : %s", m_pParent->ID(), m_pParent->GetName().c_str(), a);}
 
-#include "ScriptKeyManager.h"
+#include "InputManager.h"
 
 class ScriptObject
 {
@@ -69,7 +69,7 @@ lua_State * m_pMainState;
 
 };
 
-extern ScriptKeyManager g_keyManager;
+extern InputManager g_inputManager;
 
 int luaPrint(lua_State *L);
 void ShowLUAMessagesIfNeeded(lua_State *pState, int result);

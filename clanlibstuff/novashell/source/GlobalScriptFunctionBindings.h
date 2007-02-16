@@ -6,8 +6,8 @@
 void luabindGlobalFunctions(lua_State *pState);
 
 class Tile;
-class World;
+class Map;
 
-Tile * GetTileByWorldPos(World *pWorld, CL_Vector2 v, std::vector<unsigned int> layerIDVec, bool bPixelAccurate);
+Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, std::vector<unsigned int> layerIDVec, bool bPixelAccurate);
 
 #endif // GlobalScriptFunctionBindings_h__

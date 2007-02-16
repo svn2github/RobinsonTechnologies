@@ -307,7 +307,7 @@ int PathPlanner::CycleOnce()const
 //
 //  returns the index of the closest visible graph node to the given position
 //-----------------------------------------------------------------------------
-int PathPlanner::GetClosestNodeToPosition(World * pMap, CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride)const
+int PathPlanner::GetClosestNodeToPosition(Map * pMap, CL_Vector2 pos, bool bIgnoreLivingCreatures, float distanceModOverride)const
 {
   double ClosestSoFar = MaxDouble;
   int   ClosestNode  = no_closest_node_found;

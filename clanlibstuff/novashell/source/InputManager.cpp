@@ -1,5 +1,5 @@
 #include "AppPrecomp.h"
-#include "ScriptKeyManager.h"
+#include "InputManager.h"
 #include "GameLogic.h"
 #include "ScriptManager.h"
 
@@ -12,16 +12,16 @@
 #define C_KEY_UNASSIGNED -1
 
 
-ScriptKeyManager::ScriptKeyManager()
+InputManager::InputManager()
 {
 	Init();
 }
 
-ScriptKeyManager::~ScriptKeyManager()
+InputManager::~InputManager()
 {
 }
 
-void ScriptKeyManager::PrintStatistics()
+void InputManager::PrintStatistics()
 {
 	LogMsg("");
 	LogMsg("  ** InputManager Statistics **");
@@ -35,7 +35,7 @@ void ScriptKeyManager::PrintStatistics()
 	LogMsg("    %d input bindings active.", totalBinds);
 }
 
-int ScriptKeyManager::StringToInputID(vector<string> & word, const string & keyName)
+int InputManager::StringToInputID(vector<string> & word, const string & keyName)
 {
 	
 	word = CL_String::tokenize(keyName, ",");
@@ -111,7 +111,7 @@ int ScriptKeyManager::StringToInputID(vector<string> & word, const string & keyN
 	return keyId;
 }
 
-void ScriptKeyManager::RemoveBindingsByEntity(MovingEntity *pEnt)
+void InputManager::RemoveBindingsByEntity(MovingEntity *pEnt)
 {
 
 	ScriptKeyMap::iterator itor = m_map.begin();
@@ -149,7 +149,7 @@ void ScriptKeyManager::RemoveBindingsByEntity(MovingEntity *pEnt)
 
 }
 
-bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callbackFunction, int entityID)
+bool InputManager::RemoveBinding(const string &keyName, const string &callbackFunction, int entityID)
 {
 	vector<string> word;
 	
@@ -169,6 +169,12 @@ bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callba
 	bool bCtrl = false;
 	bool bShifted = false;
 	bool bAlways = false;
+
+	if (keyID == CL_KEY_SHIFT || keyID == CL_KEY_CONTROL || keyID == CL_KEY_MENU)
+	{
+		bAlways = true;
+	}
+
 
 	int inputMode = C_INPUT_GAME_ONLY;
 
@@ -241,7 +247,7 @@ bool ScriptKeyManager::RemoveBinding(const string &keyName, const string &callba
 	return false;
 }
 
-void ScriptKeyManager::AddBinding(const string &keyName, const string &callbackFunction, int entityID)
+void InputManager::AddBinding(const string &keyName, const string &callbackFunction, int entityID)
 {
 	vector<string> word;
 	
@@ -313,12 +319,12 @@ void ScriptKeyManager::AddBinding(const string &keyName, const string &callbackF
 	ki.push_back(k);
 }
 
-CL_Vector2 ScriptKeyManager::GetMousePos()
+CL_Vector2 InputManager::GetMousePos()
 {
 	return CL_Vector2(CL_Mouse::get_x(), CL_Mouse::get_y());
 }
 
-void ScriptKeyManager::SetMousePos(const CL_Vector2 &pos)
+void InputManager::SetMousePos(const CL_Vector2 &pos)
 {
 	CL_Mouse::set_position(pos.x, pos.y);
 }
@@ -326,7 +332,7 @@ void ScriptKeyManager::SetMousePos(const CL_Vector2 &pos)
 
 
 //returns true if handled, false if not
-bool ScriptKeyManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
+bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 {
 	ScriptKeyMap::iterator itor = m_map.find(key.id);
 	if (itor == m_map.end()) return false; //we don't have it
@@ -401,7 +407,7 @@ bool ScriptKeyManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 }
 
 
-void ScriptKeyManager::Init()
+void InputManager::Init()
 {
 	m_map.clear();
 }

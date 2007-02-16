@@ -6,7 +6,7 @@
 #include "AStarHeuristicPolicies.h"
 #include "PathPlanner.h"
 
-NavGraphManager::NavGraphManager(World *pParent)
+NavGraphManager::NavGraphManager(Map *pParent)
 {
 	m_pWorld = pParent;
 	m_pNavGraph = NULL;
@@ -211,7 +211,7 @@ bool NavGraphManager::DoNodesConnect(int a, int b)
 	return search.IsPathValid();
 }
 
-int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, World *pMap, const CL_Vector2 pos, int nodeType)
+int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, Map *pMap, const CL_Vector2 pos, int nodeType)
 {
 	int a = pEnt->GetPathPlanner()->GetClosestNodeToPosition(pMap, pos, true);
 

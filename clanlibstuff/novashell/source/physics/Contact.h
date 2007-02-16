@@ -174,6 +174,10 @@ public:
 	int GetType() {return m_type;}
 
 /*
+
+Title: Material Related Constants
+
+
 group: C_MATERIAL_TYPE_CONSTANTS
 
 constant: C_MATERIAL_TYPE_NONE

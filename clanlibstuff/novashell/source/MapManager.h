@@ -10,7 +10,7 @@
 #define WorldManager_HEADER_INCLUDED  // include guard
 
 #include "AppPrecomp.h"
-#include "World.h"
+#include "Map.h"
 #include "EntWorldCache.h"
 
 //things needed for each world map
@@ -24,7 +24,7 @@ public:
 		m_worldCache.ClearCache();
 		m_world.SaveAndKill();
 	}
-	World m_world;
+	Map m_world;
 	EntWorldCache m_worldCache;
 };
 
@@ -42,7 +42,7 @@ public:
 	bool LoadWorld(string stPath, bool bSetActiveIfNoneIs = true); //load main data file, with thumbnails
 	void UnloadWorldByName(const string &stName);
 
-	World * GetActiveWorld();
+	Map * GetActiveWorld();
 	EntWorldCache * GetActiveWorldCache();
 	bool SetActiveWorldByPath(const string &stPath, CameraSetting *pCameraSetting = NULL); //returns false if failed
 	void Update(float step);
@@ -64,7 +64,7 @@ protected:
 	void ScanDirToAddWorlds(const string &stPath, const string &stLocalPath);
 
 	world_info_list m_worldInfoList;
-	World *m_pActiveWorld;
+	Map *m_pActiveWorld;
 	EntWorldCache *m_pActiveWorldCache;
 };
 

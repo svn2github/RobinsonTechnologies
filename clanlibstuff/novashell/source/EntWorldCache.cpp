@@ -54,7 +54,7 @@ void EntWorldCache::PopUndoOperation()
 
 
 
-void EntWorldCache::SetWorld( World * pWorld)
+void EntWorldCache::SetWorld( Map * pWorld)
 {
 	if (!m_pWorld)
 	{
@@ -138,7 +138,7 @@ CL_Vector2 EntWorldCache::ScreenToWorld(const CL_Vector2 &vecScreen)
 bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 {
 	assert(m_pWorld);
-	WorldChunk *pWorldChunk = m_pWorld->GetWorldChunk(screenID);
+	MapChunk *pWorldChunk = m_pWorld->GetMapChunk(screenID);
 
 	if (!pWorldChunk->GetNeedsThumbnailRefresh())
 	{
@@ -157,7 +157,7 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 		return false;
 	}
 
-	World *pWorld = pWorldChunk->GetParentWorld();
+	Map *pWorld = pWorldChunk->GetParentWorld();
 	short width = pWorld->GetThumbnailWidth();
 	short height = pWorld->GetThumbnailHeight();
 
@@ -595,7 +595,7 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
     static int startingX;
 	unsigned int scanID = GetApp()->GetUniqueNumber();
 	static CL_Rect scanRec;
-	static WorldChunk *pWorldChunk;
+	static MapChunk *pWorldChunk;
 	static CL_Rect screenRec;
 	static bool bScanMoreOnTheRight, bScanMoreOnTheBottom;
 	Screen *pScreen;
@@ -608,7 +608,7 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
 
 		assert(rec.top <= rec.bottom && "this should never happen");
 		//get the screen the upper left is on
-		pWorldChunk = m_pWorld->GetWorldChunk(CL_Vector2(scanRec.left, scanRec.top));
+		pWorldChunk = m_pWorld->GetMapChunk(CL_Vector2(scanRec.left, scanRec.top));
 		screenRec = pWorldChunk->GetRect();
 		//truncate to the screen size if we need to
 		

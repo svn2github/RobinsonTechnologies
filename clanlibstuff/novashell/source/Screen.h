@@ -24,7 +24,7 @@ flower and an "on-top" overlay.  They are ordered by the sorted by the layer par
 
 #define C_INVALID_SCREEN INT_MAX
 class Tile;
-class WorldChunk;
+class MapChunk;
 
 typedef std::list<Tile*> tile_list;
 typedef std::vector <tile_list> layer_list;
@@ -33,7 +33,7 @@ class Screen
 {
 public:
 
-    Screen(WorldChunk *pParent);
+    Screen(MapChunk *pParent);
     ~Screen();
 
 	Tile * GetTileByPosition(const CL_Vector2 &vecPos, unsigned int layer); //get the tile that is exactly at this position
@@ -42,7 +42,7 @@ public:
 	tile_list * GetTileList(unsigned int layer); //get tiles on this layer
 	layer_list * GetLayerList() {return &m_vecLayerList;}
 	bool IsEmpty(); //returns true if there is absolutely nothing in the screen
-	WorldChunk * GetParentWorldChunk();
+	MapChunk * GetParentWorldChunk();
 	bool Save();
 	bool Load();
 	std::string GetFileName(); //the filename of our datafile (if we've saved)
@@ -63,7 +63,7 @@ private:
   void DeleteTileData();
   void RemoveTileByItor(tile_list::iterator &itor, unsigned int layer); //the itor will contain the next valid itor after the erase
 
-  WorldChunk *m_pParentWorldChunk; //the worldchunk that owns us, not saved, but set when  loaded
+  MapChunk *m_pParentWorldChunk; //the worldchunk that owns us, not saved, but set when  loaded
   layer_list m_vecLayerList;
 
   bool m_bIsEmpty;

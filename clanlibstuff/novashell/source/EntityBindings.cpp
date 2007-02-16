@@ -93,6 +93,27 @@ Advanced abilities such as:
  
 are initialized on demand, only wasting memory if they are actually used.
 
+Scripting:
+
+If a script is assigned to an entity, its <Entity> object can always be reached by accessing "this" from its namespace.
+
+Add the following functions in your script and they will automatically be called at the correct time:
+
+(code)
+function OnInit() //run upon initialization
+	LogMsg("Hey, I'm entity # " .. this:GetID() .. " and I've been initialized.");
+end
+
+function OnPostInit() //run after being placed on a map
+end
+
+function OnKill() //run right before being destroyed/removed
+end
+
+(end)
+You can also request to receive other callbacks for collision, triggers, and updates every logic cycle.
+
+
 Relative paths:
 
 After a script is loaded, the ~/ character sequence can be used to mean a relative path from the script that is loaded.
@@ -105,7 +126,7 @@ this:SetVisualProfile("~/duck_headless.xml", "duck_head");
 this:LoadCollisionInfo("~/head.col");
 (end)
 
-Namespace:
+Script Namespace:
 
 An entity contains it's own lua namespace, with the global namespace used as a fallback if nothing local is found.
 
@@ -121,7 +142,7 @@ _G.g_myNewGlobal = 3;
 The _G forces the global namespace to be used.
 (end)
 
-To get local variable data from an entity, use Entity::RunFunction() which gives you access to its local functions.
+To get local variable data from an entity from another entity or the global level, use <Entity::RunFunction> which gives you access to its local functions and namespace.
 
 Group: General
 */
@@ -428,7 +449,7 @@ Using this you can change the color of an entity.  Technically, you're just sett
 
 So if you start with white, you can make any color by removing the colors you don't want.
 
-A <Color> object also contains an alpha value, this let's you set the translucency.  (This happens on top of whatever per-pixel alpha the image already has)
+A <Color> object also contains an alpha value, this lets you set the translucency.  (This happens on top of whatever per-pixel alpha the image already has)
 
 Usage:
 (code)
@@ -1532,7 +1553,7 @@ bHasPathNode - If true, it becomes part of the path-finding graph.
 /*
 func: SetNavNodeType
 (code)
-number SetNavNodeType(number nodeType)
+nil SetNavNodeType(number nodeType)
 (end)
 
 Must be set in an entity's OnInit().  Special entity things like warps and doors use this to let the path-finding system know what's going on.
@@ -1544,63 +1565,856 @@ nodeType - One of the <C_NODE_TYPE_CONSTANTS>.
 
 
 .def("IsOnSameMapAsEntityByID", &MovingEntity::IsOnSameMapAsEntityByID)
+
+/*
+func: IsOnSameMapAsEntityByID
+(code)
+boolean IsOnSameMapAsEntityByID(number entID)
+(end)
+
+A quick way to test if another entity is or isn't on the same map.  Will return false if the entityID is invalid.
+
+Parameters:
+
+entID - The entity ID of who you're checking
+
+Returns:
+
+True if the entity is somewhere on the same map.
+*/
+
+
 .def("IsCloseToEntity", &MovingEntity::IsCloseToEntity)
+
+/*
+func: IsCloseToEntity
+(code)
+boolean IsCloseToEntity(Entity ent, number distance)
+(end)
+
+A quick way to test if another entity is within a certain range.
+
+Returns false if entity is not within range of distance or on another map.
+
+Parameters:
+
+ent - A handle to a valid <Entity> object.
+
+distance - How close they have to be to return true.
+
+Returns:
+
+True if the entity is within the range of the distance specified.
+*/
+
+
+
 .def("IsCloseToEntityByID", &MovingEntity::IsCloseToEntityByID)
+
+/*
+func: IsCloseToEntityByID
+(code)
+boolean IsCloseToEntityByID(number entityID, number distance)
+(end)
+
+Like <IsCloseToEntity> but takes an ID.  If the entity ID is invalid, false will be returned.
+
+Parameters:
+
+entityID - The ID of the entity we're interested in.
+
+distance - How close they have to be to return true.
+
+Returns:
+
+True if the entity is within the range of the distance specified.
+*/
+
+
 .def("CanWalkTo", &MovingEntity::CanWalkTo)
-.def("IsValidPosition", &MovingEntity::IsValidPosition)
+
+/*
+func: CanWalkTo
+(code)
+boolean CanWalkTo(Vector2 vPos, boolean bIgnoreLivingCreatures)
+(end)
+
+Lets you know if this entity can walk straight to a specific point without being blocked by any walls or optionally, creatures.
+
+Note:  
+
+This only tests against edges.  So if you're inside of a giant collision shape for some reason, it wouldn't catch it.
+Not connected to the path-finding system, this is a very simple check.
+
+Parameters:
+
+vPos - A <Vector2> object specifying the target position.
+bIgnoreLivingCreatures - If true, creatures will be ignored during the check.
+
+Returns:
+
+True if the entity can walk to the position in question without bumping into anything.
+*/
+
+.def("CanWalkBetween", &MovingEntity::CanWalkBetween)
+
+/*
+func: CanWalkBetween
+(code)
+boolean CanWalkBetween(Map map, Vector2 vFrom, Vector2 vTo, boolean bIgnoreLivingCreatures)
+(end)
+
+Like <CanWalkTo> but can check any point on any map, instead of assuming you mean the entity's current location and map.
+
+Note:  
+
+This only tests against edges.  So if you're inside of a giant collision shape for some reason, it wouldn't catch it.
+Not connected to the path-finding system, this is a very simple check.
+
+Parameters:
+
+map - A valid <Map> object handle.
+vFrom - A <Vector2> object specying the start position.
+vTo - A <Vector2> object specifying the end position.
+bIgnoreLivingCreatures - If true, creatures will be ignored during the check.
+
+Returns:
+
+True if the entity can walk between the two positions without bumping into anything.
+*/
+
 .def("HasLineOfSightToPosition", &MovingEntity::CanWalkTo)
+/*
+func: HasLineOfSightToPosition
+(code)
+boolean HasLineOfSightToPosition(Vector2 vPos, boolean bIgnoreLivingCreatures)
+(end)
+
+Lets you know if you can see a position from the current point or not.  Internally, this just uses CanWalk to, but this may change later.
+
+Parameters:
+
+vPos - A <Vector2> object specifying the target position.
+bIgnoreLivingCreatures - If true, creatures will be ignored during the check.
+
+Returns:
+
+True if the entity can see the position.
+*/
+
+
+.def("IsValidPosition", &MovingEntity::IsValidPosition)
+
+/*
+func: IsValidPosition
+(code)
+boolean IsValidPosition(Map map, Vector2 vPos, boolean bIgnoreLivingCreatures)
+(end)
+
+Let's find out if the entity can comfortably fit in this position.
+
+Parameters:
+
+map - The <Map> to check on.
+vPos - A <Vector2> object specifying the position to test.
+bIgnoreLivingCreatures - If true, creatures will be ignored during the check.
+
+Returns:
+
+True if the entity can be moved here without overlapping any walls or other collidable things.
+*/
 
 
 //Group: Scripting Related
+
 .def("SetVisibilityNotifications", &MovingEntity::SetVisibilityNotifications)
+
+/*
+func: SetVisibilityNotifications
+(code)
+nil SetVisibilityNotifications(boolean bEnable)
+(end)
+
+By enabling visibility notifications, you will get a script callback when an entity becomes visible and when he loses visibility.
+
+Being visible means he's close enough to the screen to be drawn.
+
+After enabling, you need to create the following script functions to handle the callbacks:
+(code)
+function OnGetVisible()
+end
+
+function OnLoseVisible() //we left the screen
+end
+(end)
+
+Parameters:
+
+bEnable - true to turn it on, false to disable.
+*/
+
 .def("SetRunUpdateEveryFrame", &MovingEntity::SetRunUpdateEveryFrame)
+
+/*
+func: SetRunUpdateEveryFrame
+(code)
+nil SetRunUpdateEveryFrame(boolean bEnable)
+(end)
+
+By enabling this option, a script callback is called at every logic cycle. (a minimum of 60 times a second of game-time)
+
+You must add the following function to handle the callback.
+
+(code)
+//this is run every logic tick
+//step is the delta, sometimes this is useful for math.
+//Most functions such as AddForce internally compute the delta into
+//the math for you, so you don't have to worry about it.
+function Update(step)
+end
+(end)
+
+Parameters:
+
+bEnable - true to turn it on, false to disable.
+*/
+
 .def("GetRunUpdateEveryFrame", &MovingEntity::GetRunUpdateEveryFrame)
+/*
+func: GetRunUpdateEveryFrame
+(code)
+boolean GetRunUpdateEveryFrame()
+(end)
+
+Returns:
+
+True if we're currently running Update(step) every game tick for this entity.
+*/
+
 .def("SetTrigger", &MovingEntity::SetTrigger)
+
+/*
+func: SetTrigger
+(code)
+nil SetTrigger(number triggerType, number typeParm, number triggerBehavior, number behaviorParm)
+(end)
+
+A trigger is a way to get a callback when the player enters or leaves a specific area.
+
+They are much cheaper (in terms of CPU cycles) then other methods of notification.
+
+The music and ambient sound objects use triggers to know when to play music.
+
+Only one trigger per entity is allowed.  If you set it again, it wipes out the old one that was there.
+
+After a trigger is created, you need to create functions to handle its callbacks.
+
+Usage:
+
+(code)
+function OnInit()
+
+	//setup a trigger that will tell us not only when the player enters and leaves an area, but
+	//will also call "OnTriggerInside" every 2000 MS (2 seconds).
+	this:SetTrigger(C_TRIGGER_TYPE_REGION_IMAGE, 0, C_TRIGGER_BEHAVIOR_PULSE, 2000);
+end
+
+//handle the trigger callbacks
+
+function OnTriggerEnter(ent)
+	LogMsg("Entering region!  Entity touched us at " .. tostring(ent:GetPos()));
+end
+
+function OnTriggerExit(ent)
+	LogMsg("Leaving region");
+end
+
+function OnTriggerInside(ent)
+	LogMsg("Inside region!");
+	//he's still standing on the hot lava, hurt him!  Or whatever.
+end
+
+(end)
+
+Parameters:
+
+triggerType - One of the <C_TRIGGER_TYPE_CONSTANTS>, describes what causes the trigger to activate.
+typeParm - The meaning varies depending on the trigger type.
+triggerBehavior - One of the <C_TRIGGER_BEHAVIOR_CONSTANTS>. Desribes what happens after a trigger activates.
+behaviorParm - The meaning varies depending on the trigger behavior.
+
+(end)
+
+Returns:
+
+True if we're currently running Update() every game tick for this entity.
+*/
+
 .def("RunFunction", (luabind::object(MovingEntity::*) (const string&)) &MovingEntity::RunFunction)
 .def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object)) &MovingEntity::RunFunction)
 .def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object)) &MovingEntity::RunFunction)
 .def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+
+.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+
+
+
+//luabind no likey
+//.def("RunFunction", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunction)
+
+/*
+func: RunFunction
+(code)
+variable RunFunction(string functionName, parms, ...)
+(end)
+
+This runs a function in the entity's namespace. (probably a function you wrote in the entity's script)
+
+Up to seven parameters can be sent.
+
+If you just want to run code from an entity's namespace, rather than a function, use <Schedule> instead.
+
+This function is useful because it lets you easily run functions in OTHER entities and get information via what they return.
+
+Note:
+
+A scripting error will be shown if the function doesn't exist.  If you'd like it to silently fail, use <RunFunctionIfExists> or use <FunctionExists> to check before running.
+
+Parameters:
+
+functionName - The function the entity should run.
+variable parms - Up to seven parameters of any type may be sent to match whatever function you're calling.
+
+Returns:
+
+Returns whatever the function you called returns.
+*/
+
+
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&)) &MovingEntity::RunFunctionIfExists)
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&, luabind::object)) &MovingEntity::RunFunctionIfExists)
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object)) &MovingEntity::RunFunctionIfExists)
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunctionIfExists)
+
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunctionIfExists)
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunctionIfExists)
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunctionIfExists)
+.def("RunFunctionIfExists", (luabind::object(MovingEntity::*) (const string&, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object, luabind::object)) &MovingEntity::RunFunctionIfExists)
+
+
+/*
+func: RunFunctionIfExists
+(code)
+variable RunFunctionIfExists(string functionName, parms, ...)
+(end)
+
+Identical to <RunFunction> except it silently fails if the function doesn't exist instead of throwing a hissy fit error.
+
+Parameters:
+
+functionName - The function the entity should run.
+variable parms - Up to seven parameters of any type may be sent to match whatever function you're calling.
+
+Returns:
+
+Returns whatever the function you called returns.
+*/
+
+
+
 .def("FunctionExists", &MovingEntity::FunctionExists)
-.def("OnDamage", &MovingEntity::OnDamage)
+
+/*
+func: FunctionExists
+(code)
+boolean FunctionExists(string functionName)
+(end)
+
+Parameters:
+
+functionName - the function name you want to see if this entity has or not.
+
+Returns:
+
+True if the function exists.
+*/
+
+
+//.def("OnDamage", &MovingEntity::OnDamage)
+
+
 .def("DumpScriptInfo", &MovingEntity::DumpScriptInfo)
 
+
+/*
+func: DumpScriptInfo
+(code)
+nil DumpScriptInfo()
+(end)
+
+This is a diagnostic function that will send all functions and variables in this entity's scripting namespace to the debug console.
+
+You'll need to bring up the debug console to see the output, or check the log.txt file when you're done.
+*/
 
 
 //Group: Audio Related
 .def("PlaySound", &MovingEntity::PlaySound)
+
+/*
+func: PlaySound
+(code)
+number PlaySound(string soundFile)
+(end)
+
+Similar to using <SoundManager::Play> but lets you use paths relative to this entity's main script.
+
+Parameters:
+
+soundFile - The file name to play.
+
+Returns:
+
+The soundID handle.  This can be used with the <SoundManager> for additional controls if needed.
+
+*/
+
+
 .def("PlaySoundPositioned", &MovingEntity::PlaySoundPositioned)
+
+/*
+func: PlaySoundPositioned
+(code)
+number PlaySound(string soundFile)
+(end)
+
+If the entity is near the screen then the sound will be heard with appropriate panning and volume.
+
+If the entity is too far from the camera or on a different map, the sound isn't played.
+
+Note:
+
+Panning/stereo effects not implemented, internally it's just using <PlaySound> right now.
+
+Parameters:
+
+soundFile - The file name to play.
+
+Returns:
+
+The soundID handle.  This can be used with the <SoundManager> for additional controls if needed.
+
+
+*/
 
 //Group: Text Related
 
+
 .def("SetText", &MovingEntity::SetText)
+
+/*
+func: SetText
+(code)
+nil SetText(string text)
+(end)
+
+Setting this causes text to be drawn over the entity.
+
+Use \n for a line break.
+
+If you try to use other text functions before using <SetText>, they will fail and tell you to call <SetText> first, as this also initializes the data structures required for text-related functionality.
+
+To position and orient the text, use <SetTextAlignment>.
+
+If <SetTextRect> is also set, the text will automatically be wrapped. (not implemented yet)
+
+Note:
+
+Text is sorted along with the entity, meaning it can be obscured by other objects, unlike text drawn through the <TextManager>.
+
+Text is normally scaled up and down when the camera zooms out, unlike text drawn through the <TextManager>.  The exception to this is when you <SetAttach> to <C_ENTITY_CAMERA>, in this case it will not scale with the camera.  (more useful for GUI things)
+
+Parameters:
+
+text - The text you'd like to display.
+*/
+
 .def("GetText", &MovingEntity::GetText)
+
+/*
+func: GetText
+(code)
+string GetText()
+(end)
+
+Returns:
+
+The text that was set with <SetText>.
+*/
+
+
 .def("GetTextBounds", &MovingEntity::GetTextBounds)
+
+/*
+func: GetTextBounds
+(code)
+Vector2 GetTextBounds()
+(end)
+
+Returns:
+
+A <Vector2> object containing the size the text will take when drawn.
+*/
+
+
 .def("SetTextAlignment", &MovingEntity::SetTextAlignment)
+
+/*
+func: SetTextAlignment
+(code)
+nil SetTextAlignment(number origin, Vector2 vOffset)
+(end)
+
+Allows you to position text more accurately.  For instance, to put a name hovering over a monster, do this in his script:
+(code)
+this:SetText("Gary");
+this:SetTextAlignment(C_ORIGIN_CENTER, Vector2(0,50)); //50 units above
+(end)
+
+Parameters:
+
+origin - One of the <C_ORIGIN_CONSTANTS>.
+vOffset - A <Vector2> object containing an offset to place the text.  Use Vector2(0,0) for no offset.
+*/
+
 .def("SetTextColor", &MovingEntity::SetTextColor)
+
+/*
+func: SetTextColor
+(code)
+nil SetTextColor(Color color)
+(end)
+
+Parameters:
+
+color - A <Color> object containing the new color to use for text.
+*/
+
+.def("GetTextColor", &MovingEntity::GetTextColor)
+
+/*
+func: GetTextColor
+(code)
+Color GetTextColor()
+(end)
+
+Returns:
+
+A <Color> object containing the current text color.  Defaults to white.
+*/
+
 .def("SetTextScale", &MovingEntity::SetTextScale)
+
+/*
+func: SetTextScale
+(code)
+nil SetTextScale(Vector2 vScale)
+(end)
+
+Parameters:
+
+vScale - A <Vector2> object containing the new text scale.  Vector2(2,2) would mean twice as big.
+*/
+
+
 .def("GetTextScale", &MovingEntity::GetTextScale)
+
+/*
+func: GetTextScale
+(code)
+Vector2 GetTextScale()
+(end)
+
+Returns:
+
+A <Vector2> object containing the current text scale.
+*/
+
 .def("SetTextRect", &MovingEntity::SetTextRect)
-.def("SetDefaultTextColor", &MovingEntity::SetDefaultTextColor)
+
+/*
+func: SetTextRect
+(code)
+nil SetTextRect(Rect rect)
+(end)
+Note:
+
+This isn't implemented yet, has no effect!
+
+Parameters:
+
+rect - A <Rect> object containing a region to limit text to.  Text automatically wraps around it.
+*/
+
+
+.def("SetDefaultTalkColor", &MovingEntity::SetDefaultTextColor)
+
+/*
+func: SetDefaultTalkColor
+(code)
+nil SetDefaultTalkColor(Color color)
+(end)
+
+Let's you set the default color of the text when the <TextManager> is used with this entity.  Not related to <SetTextColor> or <SetBaseColor> at all.
+
+Parameters:
+
+color - a <Color> object containing the default color <TextManager> should use when writing text attached to this entity.
+*/
 
 		
 //Group: Data/Cloning Related
+
 .def("Data", &MovingEntity::GetData)
+
+/*
+func: Data
+(code)
+DataManager Data()
+(end)
+This should really be called GetDataManager, but in this one case I think a smaller name is worth it for convenience as commands can get very long with this.
+
+Any data is automatically saved and loaded with its entity.
+
+Data can be viewed/edited from the editor as well.
+
+Returns:
+
+A <DataManager> handle allowing you to store/retrieve persistent entity-specific custom data.
+
+*/
+
+
 .def("Clone", &MovingEntity::Clone)
+
+/*
+func: Clone
+(code)
+Entity Clone(Map map, Vector2 vPos)
+(end)
+
+Cloning is exactly like copying and pasting an entity in the editor.
+
+If you clone an entity with a name, such as "Gun", the new entity created may be called "GunA" or something like that, as two things may not have the exact same name.
+
+Parameters:
+
+map - The <Map> that the new entity should be created on.
+vPos - The position the new entity should be created on.
+
+Returns:
+
+A handle to the new <Entity> created.
+
+*/
+
+
 .def("CreateEntity", &MovingEntity::CreateEntity)
+
+/*
+func: CreateEntity
+(code)
+Entity CreateEntity(Map map, Vector2 vPos, string scriptName)
+(end)
+
+Exactly like using the global version of <.CreateEntity> except supporting entity-script file relative paths.
+
+Parameters:
+
+map - The <Map> that the new entity should be created on.
+vPos - The position the new entity should be created on.
+scriptName - The filename of the script to initialize the Entity with.
+
+Returns:
+
+A handle to the new <Entity> created.
+
+*/
+
 .def("SetPersistent", &MovingEntity::SetPersistent)
+
+/*
+func: SetPersistent
+(code)
+nil SetPersistent(boolean bPersistent)
+(end)
+
+Persistence in this case means "will be saved and loaded with the map".
+
+Note:
+
+If the <Map> this entity exists on is not persistent, nothing is going to be saved in any case.
+
+Parameters:
+
+bPersistent - Set to false and this Entity will not be saved with the map.  (Default is true)
+*/
+
 .def("GetPersistent", &MovingEntity::GetPersistent)
+
+/*
+func: GetPersistent
+(code)
+boolean GetPersistent()
+(end)
+
+Returns:
+
+True if this entity will be saved with the map.  If false, it won't exist after saving and reloading the map.
+*/
+
+
 .def("IsPlaced", &MovingEntity::IsPlaced)
 
-			.def("__tostring", &EntityToString)
+/*
+func: IsPlaced
+(code)
+boolean IsPlaced()
+(end)
+
+Internally, when entities are placed in a copy buffer, they will OnInit() but not OnPostInit().  This function is a way to see if an entity was actually placed on the map or not.  The OnKill() is run in either case.
+
+Returns:
+
+True if this entity has actually been placed on a map.
+*/
+
+
+.def("__tostring", &EntityToString)
 			
 		//Group: Zone/Scanning Related
 		
 	.def("InZoneByMaterialType", &MovingEntity::InZoneByMaterialType)
+	
+	/*
+	func: InZoneByMaterialType
+	(code)
+	boolean InZoneByMaterialType(number materialType)
+	(end)
+
+	Let's you check to see if you're standing on a certain type of collision/zone by material type, such as a ladder or warp.
+
+	This check is very fast because nearby zones are cached during the collision phase.
+
+	The method used to determine if you're making contact with any collision shape of the requested material is by checking to see if its rect and your collision rect overlap.
+	
+	An entity should have a collision shape to use this function.
+
+	Parameters:
+
+	materialType - One of the <C_MATERIAL_TYPE_CONSTANTS> or a custom material type that was created in script.
+	
+	Returns:
+
+	True if the entity is touching a collision shape with this material type.
+	*/
+
+	
 	.def("InNearbyZoneByMaterialType", &MovingEntity::InNearbyZoneByMaterialType)
+	
+	/*
+	func: InNearbyZoneByMaterialType
+	(code)
+	boolean InNearbyZoneByMaterialType(Vector2 vPos, number materialType)
+	(end)
+
+	Similar to <InZoneByMaterialType> but let's you enter an exact point to check.  Note, this is only checking nearby zones that were cached during the collision phase.
+	
+	It's useful for seeing if there is a ladder an inch below your entity's foot, for instance.
+
+	An entity should have a collision shape to use this function.
+
+	Parameters:
+
+	vPos - A <Vector2> position that is very close to the entity.
+	materialType - One of the <C_MATERIAL_TYPE_CONSTANTS> or a custom material type that was created in script.
+
+	Returns:
+
+	True if the entity is touching a collision shape with this material type.
+	*/
+	
 	.def("GetActiveZoneByMaterialType", &MovingEntity::GetNearbyZoneByCollisionRectAndType)
+	
+	/*
+	func: GetActiveZoneByMaterialType
+	(code)
+	Zone GetActiveZoneByMaterialType(number materialType)
+	(end)
+
+	Similar to <InZoneByMaterialType> but returns a <Zone> data object that describes the collision better. 
+
+	Usage:
+
+	(code)
+	local z = this:GetActiveZoneByMaterialType(C_MATERIAL_TYPE_WARP);
+
+	if (z.materialID != C_MATERIAL_TYPE_NONE) then
+		LogMsg("We collided with something of the material type we asked about!");
+
+		if (z.entityID != C_ENTITY_NONE) then
+			//It must be a simple tilepic, it isn't an entity.
+		else
+			LogMsg("We collided with entity # " .. z.entityID .. "!");
+		end
+	end
+	(end)
+
+	This check is very fast because nearby zones are cached during the collision phase.
+
+	The method used to determine if you're making contact with any collision shape of the requested material is by checking to see if its rect and your collision rect overlap.
+
+	An entity should have a collision shape to use this function.
+
+	Parameters:
+
+	materialType - One of the <C_MATERIAL_TYPE_CONSTANTS> or a custom material type that was created in script.
+
+	Returns:
+
+	A <Zone> object describing the results.  If the Zone's materialID variable is not <C_MATERIAL_TYPE_NONE>, the zone type was found and contains valid data.
+	*/
+	
 	.def("GetNearbyZoneByMaterialType", &MovingEntity::GetNearbyZoneByPointAndType)
-	.def("GetNearbyTileList", &GetNearbyTileListForScript)
-			
+	
+	/*
+	func: GetNearbyZoneByMaterialType
+	(code)
+	Zone GetNearbyZoneByMaterialType(Vector2 vPos, number materialType)
+	(end)
+
+	Similar to <InNearbyZoneByMaterialType> but returns a <Zone> data object that describes the collision better. 
+
+	This check is very fast because nearby zones are cached during the collision phase.
+
+	The method used to determine if you're making contact with any collision shape of the requested material is by checking to see if its rect and your collision rect overlap.
+
+	An entity should have a collision shape to use this function.
+
+	Parameters:
+
+	vPos - a position close to the entity.
+	materialType - One of the <C_MATERIAL_TYPE_CONSTANTS> or a custom material type that was created in script.
+
+	Returns:
+
+	A <Zone> object describing the results.  If the Zone's materialID variable is not <C_MATERIAL_TYPE_NONE>, the zone type was found and contains valid data.
+	*/
+	
+//	.def("GetNearbyTileList", &GetNearbyTileListForScript)
 			
 	];
 
@@ -1697,6 +2511,23 @@ A normal node, nothing special.
 constants: C_NODE_TYPE_WARP
 A warp or door.  Path-finding engine needs to track it in a special way.
 
+Group: C_TRIGGER_TYPE_CONSTANTS
+Use with <Entity::SetTrigger> to describe what activates the trigger.
+
+constants: C_TRIGGER_TYPE_NONE
+Disables the trigger. triggerParm is ignored.
+
+constants: C_TRIGGER_TYPE_REGION_IMAGE
+Trigger is enabled when active player overlaps this entity's image.  triggerParm is ignored.
+
+Group: C_TRIGGER_BEHAVIOR_CONSTANTS
+Use with <Entity::SetTrigger> to describe what happens when a trigger is activated.
+
+constants: C_TRIGGER_BEHAVIOR_NORMAL
+OnTriggerEnter(ent) and OnTriggerExit(ent) are called. behavior parm is ignored.
+
+constants: C_TRIGGER_BEHAVIOR_PULSE
+In addition to OnTriggerEnter(ent) and OnTriggerExit(ent) being called, OnTriggerInside(ent) is called at the interval set by behaviorParm.
 */
 
 

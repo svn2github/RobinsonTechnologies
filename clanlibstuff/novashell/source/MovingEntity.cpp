@@ -223,7 +223,7 @@ void MovingEntity::SetLayerID(int id)
 
 }
 
-World * MovingEntity::GetMap()
+Map * MovingEntity::GetMap()
 {
 	return m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 }
@@ -253,6 +253,7 @@ void MovingEntity::Kill()
 	if (m_pScriptObject && m_pScriptObject->FunctionExists("OnKill") && m_bHasRunPostInit)
 	{
 		m_pScriptObject->RunFunction("OnKill");
+		g_inputManager.RemoveBindingsByEntity(this);
 	}
 
 	if (m_bRequestsVisibilityNotifications)
@@ -276,9 +277,6 @@ void MovingEntity::Kill()
 	SAFE_DELETE(m_pSprite);
 	SAFE_DELETE(m_pScriptObject);
 	SAFE_DELETE(m_pFont);
-
-
-	
 
 	SetDefaults();
 }
@@ -506,7 +504,7 @@ CL_Vector2 MovingEntity::GetTextScale()
 
 
 
-MovingEntity * MovingEntity::CreateEntity(World *pMap, CL_Vector2 pos, const string &script)
+MovingEntity * MovingEntity::CreateEntity(Map *pMap, CL_Vector2 pos, const string &script)
 {
 	return ::CreateEntity(pMap, pos, ProcessPathNoScript(script));
 }
@@ -1156,16 +1154,24 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	return true;
 }
 
-luabind::object MovingEntity::RunFunction(const string &func)
+bool MovingEntity::ScriptNotReady(const string &func)
 {
-	luabind::object ret;
-	
+
 	if (!m_pScriptObject)
 	{
 		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
 			func.c_str(), ID(), GetName().c_str());
-		return ret;
+		return true; //signal error condition
 	}
+
+	return false; //no error
+}
+
+luabind::object MovingEntity::RunFunction(const string &func)
+{
+	luabind::object ret;
+	
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str());
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
@@ -1176,13 +1182,7 @@ luabind::object MovingEntity::RunFunction(const string &func)
 luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1)
 {
 	luabind::object ret;
-
-	if (!m_pScriptObject)
-	{
-		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
-			func.c_str(), ID(), GetName().c_str());
-		return ret;
-	}
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
@@ -1194,12 +1194,7 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 
 	luabind::object ret;
 
-	if (!m_pScriptObject)
-	{
-		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
-			func.c_str(), ID(), GetName().c_str());
-		return ret;
-	}
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
@@ -1210,14 +1205,176 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 {
 	luabind::object ret;
 
-	if (!m_pScriptObject)
-	{
-		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
-			func.c_str(), ID(), GetName().c_str());
-		return ret;
-	}
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7, luabind::object obj8)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str());
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1)
+{
+	luabind::object ret;
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2)
+{
+
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7);
+	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	return ret;
+}
+
+luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7, luabind::object obj8)
+{
+	luabind::object ret;
+
+	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
+
+	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
 	return ret;
 }
@@ -1229,7 +1386,7 @@ void MovingEntity::UpdateTilePosition()
 
 	if (m_bMovedFlag)
 	{
-		World *pWorldToMoveTo = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+		Map *pWorldToMoveTo = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 		
 		if (!m_strWorldToMoveTo.empty())
 		{
@@ -1808,7 +1965,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 	m_scanArea.right += padding;
 	m_scanArea.bottom += padding;
 
-	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	Map *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
 	pWorld->GetMyWorldCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
 	
@@ -1846,7 +2003,7 @@ void MovingEntity::RenderShadow(void *pTarget)
 {
 
 	static CL_Vector2 vecPos;
-	static World *pWorld;
+	static Map *pWorld;
 	static EntWorldCache *pWorldCache;
 
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
@@ -1969,7 +2126,7 @@ void MovingEntity::Render(void *pTarget)
 		
 		static bool bUseParallax;
 		static Layer *pLayer;
-		static World *pWorld;
+		static Map *pWorld;
 		pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 		static EntWorldCache *pWorldCache;
 		static CL_Vector2 vecPos;
@@ -2075,7 +2232,12 @@ void MovingEntity::Render(void *pTarget)
 		
 		float textScaleX, textScaleY;
 		m_pFont->get_scale(textScaleX, textScaleY);
-		
+
+		CL_Origin originTemp; 
+		int offsetX, offsetY;
+
+		m_pFont->get_alignment(originTemp, offsetX, offsetY);
+
 		if (m_bLockedScale)
 		{
 			m_pFont->set_scale(textScaleX , textScaleY);
@@ -2083,6 +2245,8 @@ void MovingEntity::Render(void *pTarget)
 		} else
 		{
 			m_pFont->set_scale(textScaleX * GetCamera->GetScale().x, textScaleY *GetCamera->GetScale().y);
+			m_pFont->set_alignment(originTemp, offsetX * GetCamera->GetScale().x, offsetY * GetCamera->GetScale().y);
+
 
 		}
 
@@ -2096,6 +2260,7 @@ void MovingEntity::Render(void *pTarget)
 		//put it back to how it was
 		m_pFont->set_scale(textScaleX, textScaleY);
 		m_pFont->set_alpha(oldAlpha);
+		m_pFont->set_alignment(originTemp, offsetX, offsetY);
 	}
 }
 
@@ -2453,7 +2618,7 @@ void MovingEntity::PostUpdate(float step)
 
 	if (m_customDampening != -1) groundDampening = m_customDampening;
 	
-	World *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	Map *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
 
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
@@ -2595,12 +2760,12 @@ bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 //similar to above. Returns true if the bot can move between the two
 //given positions without bumping into any walls
 //warning, only tests against edges
-bool MovingEntity::CanWalkBetween(World *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures)
+bool MovingEntity::CanWalkBetween(Map *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures)
 {
 	return !pMap->GetMyWorldCache()->IsPathObstructed(from, to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
 }
 
-bool MovingEntity::IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures)
+bool MovingEntity::IsValidPosition(Map *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures)
 {
 
 	if (!pMap) pMap = GetMap();
@@ -2608,7 +2773,7 @@ bool MovingEntity::IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgn
 }
 
 
-MovingEntity * MovingEntity::Clone(World *pMap, CL_Vector2 vecPos)
+MovingEntity * MovingEntity::Clone(Map *pMap, CL_Vector2 vecPos)
 {
 	Tile *pNew = m_pTile->CreateClone();
 	

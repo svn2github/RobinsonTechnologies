@@ -28,7 +28,7 @@ BaseGameEntity * CreateEntitySpecial(const string &EntName, const string &parms)
 	return 0;
 }
 
-MovingEntity * CreateEntity(World *pMap, CL_Vector2 vecPos, string scriptFileName)
+MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName)
 {
 	MovingEntity *pEnt = new MovingEntity;
 	TileEntity *pTile = new TileEntity;

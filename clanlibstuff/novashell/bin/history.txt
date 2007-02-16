@@ -160,3 +160,12 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 	problematic things.
 * random/Random assigned to math.random() in a smarter way (Ian)
 * Added Ian's "require" work around to misc_utils.lua
+
+* RunFunction now can accept up to 7 extra parms (old limit was 3)
+* Entity:OnDamage() removed.  Instead, you should use Entity:RunFunctionIfExists("OnDamage", parms..);
+	That's all the old function did internally anyway, it's no longer needed inside the Entity object itself.
+* Bugfix in InputManager:RemoveBinding, it was failing to remove a few keys
+* Console improved, page-up/page-down will scroll back into the buffer (to the last 200 lines, anyway)
+* SetDefaultTextColor renamed to SetDefaultTalkColor, was too similar to SetTextColor
+* Text alignments (used with SetTextAlignment) now correctly scale with camera scale
+* Added Entity:GetTextColor script function

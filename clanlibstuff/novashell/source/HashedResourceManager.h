@@ -14,7 +14,7 @@ class HashedResource;
 class TileEditOperation;
 class TilePic;
 class CollisionData;
-class World;
+class Map;
 
 typedef std::map<unsigned int, HashedResource*> HashedResourceMap;
 
@@ -38,7 +38,7 @@ public:
 	void PutGraphicIntoTileBuffer(int resourceID, TileEditOperation &op, CL_Vector2 gridSizeInPixels);
 	void PutSubGraphicIntoTileBuffer(TilePic *pTile, TileEditOperation &op, CL_Rect srcRect);
 	void PrintStatistics();
-	void SaveUsedResources(World *pWorld, string path);
+	void SaveUsedResources(Map *pWorld, string path);
 	
 protected:
 

@@ -238,7 +238,7 @@ void HashedResourceManager::PutGraphicIntoTileBuffer(int resourceID, TileEditOpe
 //you a whole lot about where to find it.  We'll save out the textures used, these will only be read and
 //checked if there is an error.  We can figure out filenames this way.
 
-void HashedResourceManager::SaveUsedResources(World *pWorld, string path)
+void HashedResourceManager::SaveUsedResources(Map *pWorld, string path)
 {
 
 	//save out our globals
@@ -265,7 +265,7 @@ void HashedResourceManager::ShowResourceNotFoundError(unsigned int resourceID)
 	//do a slow look up to find the resource.  It's not like this should be called much or speed matters.
 	//If it ever is, load the file into a hash-map and keep it cached after the first call.
 	
-	World *pWorld = GetWorld;
+	Map *pWorld = GetWorld;
 	string stExtraInfo = "extra info not available";
 	
 	if (pWorld)

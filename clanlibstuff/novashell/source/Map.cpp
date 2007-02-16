@@ -1,5 +1,5 @@
 #include "AppPrecomp.h"
-#include "World.h"
+#include "Map.h"
 #include "AppUtils.h"
 #include "GameLogic.h"
 #include "AI/NavGraphManager.h"
@@ -9,9 +9,9 @@
 #define C_DEFAULT_THUMBNAIL_HEIGHT 8
 
 
-const CL_Vector2 g_worldDefaultCenterPos(C_DEFAULT_SCREEN_ID*512, C_DEFAULT_SCREEN_ID*512);
+const CL_Vector2 g_mapDefaultCenterPos(C_DEFAULT_SCREEN_ID*512, C_DEFAULT_SCREEN_ID*512);
 
-World::World()
+Map::Map()
 {
 	m_pNavGraphManager = NULL;
 	m_bDataChanged = true;
@@ -72,7 +72,7 @@ World::World()
 
 }
 
-bool World::TestCoordPacker(int x, int y)
+bool Map::TestCoordPacker(int x, int y)
 {
 	CL_Point pt(x,y);
 	ScreenID id = GetScreenID(pt.x, pt.y);
@@ -87,7 +87,7 @@ bool World::TestCoordPacker(int x, int y)
 	return true;
 }
 
-void World::SaveAndKill()
+void Map::SaveAndKill()
 {
 	if (SaveRequested())
 	{
@@ -97,13 +97,13 @@ void World::SaveAndKill()
 	Kill();
 }
 
-World::~World()
+Map::~Map()
 {
 	//assert(!m_worldMap.empty() && "You need to call SaveAndKill manually!");
 	Kill();
 }
 
-void World::Kill()
+void Map::Kill()
 {
   
 //	m_pWorldCache = NULL; 
@@ -113,18 +113,18 @@ void World::Kill()
 		m_pWorldCache->ClearCache();
 	}
 
-	WorldMap::iterator ent = m_worldMap.begin();
-    for (; ent != m_worldMap.end(); ++ent)
+	map_chunk_map::iterator ent = m_chunkMap.begin();
+    for (; ent != m_chunkMap.end(); ++ent)
     {
         {
               delete (*ent).second;
          }
     }
-    m_worldMap.clear();
+    m_chunkMap.clear();
 	SAFE_DELETE(m_pNavGraphManager);
  }
 
-EntWorldCache * World::GetMyWorldCache()
+EntWorldCache * Map::GetMyWorldCache()
 {
 	
 	if (!m_pWorldCache)
@@ -138,7 +138,7 @@ EntWorldCache * World::GetMyWorldCache()
 	return m_pWorldCache;
 }
 
-NavGraphManager * World::GetNavGraph()
+NavGraphManager * Map::GetNavGraph()
 {
 	if (m_pNavGraphManager) return m_pNavGraphManager;
 
@@ -146,32 +146,32 @@ NavGraphManager * World::GetNavGraph()
 	return m_pNavGraphManager;
 }
 
-void World::SetDirPath(const string &str)
+void Map::SetDirPath(const string &str)
 {
 	m_strDirPath = str; //include trailing backslash
 	//also compute the map name from the dir path
 	m_strMapName = ExtractFinalDirName(m_strDirPath);
 }
 
-void World::SetDefaultTileSizeX(int size)
+void Map::SetDefaultTileSizeX(int size)
 {
   m_defaultTileSizeX = size;
   SetModified(true) ;
 }
 
 
-void World::SetDefaultTileSizeY(int size)
+void Map::SetDefaultTileSizeY(int size)
 {
 	m_uintArray[e_uintDefaultTileSizeY] = size;
 	SetModified(true) ;
 }
 
-const CL_Rect *World::GetWorldRect()
+const CL_Rect *Map::GetWorldRect()
 {
-    return &m_worldRect;
+    return &m_mapRect;
 }
 
-CL_Rect World::GetWorldRectInPixels()
+CL_Rect Map::GetWorldRectInPixels()
 {
 	CL_Rect rec = *GetWorldRect();
 	rec.left *= GetWorldChunkPixelSize();
@@ -181,7 +181,7 @@ CL_Rect World::GetWorldRectInPixels()
 	return rec;
 }
 
-bool World::IsValidCoordinate(CL_Vector2 vec)
+bool Map::IsValidCoordinate(CL_Vector2 vec)
 {
 	if (
 		(fabs(vec.x) > 200000000)
@@ -197,21 +197,21 @@ bool World::IsValidCoordinate(CL_Vector2 vec)
 	return true;
 }
 
-ScreenID World::GetScreenID(short x, short y)
+ScreenID Map::GetScreenID(short x, short y)
 {
  return CL_MAKELONG( *(unsigned short*) &x, *(unsigned short*) &y);
 // return MAKELPARAM( *(unsigned short*) &x, *(unsigned short*) &y);
 }
 
 
-int World::GetXFromScreenID(ScreenID screenID)
+int Map::GetXFromScreenID(ScreenID screenID)
 {
     static unsigned short val;
 	val =CL_LOWORD(screenID);
 	return *(short*)&val;
 }
 
-int World::GetYFromScreenID(ScreenID screenID)
+int Map::GetYFromScreenID(ScreenID screenID)
 {
 	static unsigned short val;
 	val =CL_HIWORD(screenID);
@@ -219,12 +219,12 @@ int World::GetYFromScreenID(ScreenID screenID)
 }
 
 
-void World::DeleteExistingMap()
+void Map::DeleteExistingMap()
 {
 	
 	//run through and tell everybody not to save, cheap but it works
-	WorldMap::const_iterator itor = m_worldMap.begin();
-	while (itor != m_worldMap.end())
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
 	{
 		itor->second->SetDataChanged(false);
 		itor->second->SetNeedsThumbnailRefresh(false);
@@ -236,10 +236,10 @@ void World::DeleteExistingMap()
 	Init();
 }
 
-void World::Init(CL_Rect worldRect)
+void Map::Init(CL_Rect worldRect)
 {
     Kill();
-	m_version = C_WORLD_FILE_VERSION;
+	m_version = C_MAP_FILE_VERSION;
 
 	if (m_defaultTileSizeX == 0)
 	{
@@ -254,16 +254,16 @@ void World::Init(CL_Rect worldRect)
 		SetGravity(0);
 	}
 
-	m_worldRect = worldRect;
+	m_mapRect = worldRect;
 }
 
 
-Screen * World::GetScreen(int x, int y) //screen #
+Screen * Map::GetScreen(int x, int y) //screen #
 {
     return GetScreen(GetScreenID(x,y));
 }
 
-Screen * World::GetScreen(const CL_Vector2 &vecWorld) //world coords
+Screen * Map::GetScreen(const CL_Vector2 &vecWorld) //world coords
 {
 	return GetScreen(GetScreenIDFromWorld(vecWorld));
 }
@@ -272,33 +272,33 @@ Screen * World::GetScreen(const CL_Vector2 &vecWorld) //world coords
 //get a stored worldchunk or dynamically create it if needed.  The screen member is left blank, as its possible
 //to say "this is part of the map, but it isn't loaded yet" for the streaming operations
 //If you absolutely need the screen to be initted, use GetScreen instead
-WorldChunk * World::GetWorldChunk(ScreenID screenID)
+MapChunk * Map::GetMapChunk(ScreenID screenID)
 {
-	WorldMap::iterator screen = m_worldMap.find(screenID);
+	map_chunk_map::iterator screen = m_chunkMap.find(screenID);
 
-	if (screen == m_worldMap.end())
+	if (screen == m_chunkMap.end())
 	{
 		//it didn't exist ,create it
 		//LogMsg("Creating screen %d.", screenID);
-		WorldChunk *pChunk = new WorldChunk(this);
+		MapChunk *pChunk = new MapChunk(this);
 		pChunk->SetScreenID(screenID);
-		m_worldMap.insert(std::make_pair(screenID, pChunk));
+		m_chunkMap.insert(std::make_pair(screenID, pChunk));
 
 		//modify our bounds to include it if required
 		int x = GetXFromScreenID(screenID);
 		int y = GetYFromScreenID(screenID);
 
-			if (m_worldMap.size() == 1)
+			if (m_chunkMap.size() == 1)
 			{
 				//our only screen, set the world map to this
-				m_worldRect = CL_Rect(x,y,x+1,y+1);
+				m_mapRect = CL_Rect(x,y,x+1,y+1);
 			}
 
-		if (x < m_worldRect.left) m_worldRect.left = x;
-		if (y < m_worldRect.top) m_worldRect.top = y;
+		if (x < m_mapRect.left) m_mapRect.left = x;
+		if (y < m_mapRect.top) m_mapRect.top = y;
 
-		if (x > m_worldRect.right) m_worldRect.right = x;
-		if (y > m_worldRect.bottom) m_worldRect.bottom = y;
+		if (x > m_mapRect.right) m_mapRect.right = x;
+		if (y > m_mapRect.bottom) m_mapRect.bottom = y;
 
 		return pChunk;
 	} 
@@ -306,25 +306,25 @@ WorldChunk * World::GetWorldChunk(ScreenID screenID)
 	return screen->second;
 }
 
-WorldChunk * World::GetWorldChunk(CL_Vector2 vecWorld)
+MapChunk * Map::GetMapChunk(CL_Vector2 vecWorld)
 {
-	return GetWorldChunk(GetScreenIDFromWorld(vecWorld));
+	return GetMapChunk(GetScreenIDFromWorld(vecWorld));
 }
 
-Screen * World::GetScreen(ScreenID screenID)
+Screen * Map::GetScreen(ScreenID screenID)
 {
-	return (GetWorldChunk(screenID)->GetScreen());
+	return (GetMapChunk(screenID)->GetScreen());
 }
 
 //returns NULL for false
-WorldChunk * World::DoesWorldChunkExist(ScreenID screenID)
+MapChunk * Map::DoesWorldChunkExist(ScreenID screenID)
 {
-	WorldMap::const_iterator itor = m_worldMap.find(screenID);
-	if (itor == m_worldMap.end()) return NULL;
+	map_chunk_map::const_iterator itor = m_chunkMap.find(screenID);
+	if (itor == m_chunkMap.end()) return NULL;
 	return itor->second;
 }
 
-CL_Vector2 World::ScreenIDToWorldPos(ScreenID screenID)
+CL_Vector2 Map::ScreenIDToWorldPos(ScreenID screenID)
 {
 	
 	CL_Vector2 vecPos = CL_Vector2(GetXFromScreenID(screenID), GetYFromScreenID(screenID));
@@ -332,7 +332,7 @@ CL_Vector2 World::ScreenIDToWorldPos(ScreenID screenID)
     return vecPos;
 }
 
-ScreenID World::GetScreenIDFromWorld(CL_Vector2 vecPos)
+ScreenID Map::GetScreenIDFromWorld(CL_Vector2 vecPos)
 {
 	if (vecPos.x < 0)
 	{
@@ -349,13 +349,13 @@ ScreenID World::GetScreenIDFromWorld(CL_Vector2 vecPos)
 	return GetScreenID(vecPos.x, vecPos.y);
 }
 
-void World::SetWorldChunkPixelSize(int widthAndHeight)
+void Map::SetWorldChunkPixelSize(int widthAndHeight)
 {
 	m_worldChunkPixelSize = widthAndHeight;
 	SetModified(true);
 }
 
-CL_Vector2 World::SnapWorldCoords(CL_Vector2 vecWorld, CL_Vector2 vecSnap)
+CL_Vector2 Map::SnapWorldCoords(CL_Vector2 vecWorld, CL_Vector2 vecSnap)
 {
 	
 	vecWorld.x -= altfmod(vecWorld.x+vecSnap.x, vecSnap.x);
@@ -364,11 +364,11 @@ CL_Vector2 World::SnapWorldCoords(CL_Vector2 vecWorld, CL_Vector2 vecSnap)
 	return vecWorld;
 }
 
-void World::InvalidateAllThumbnails()
+void Map::InvalidateAllThumbnails()
 {
-	WorldMap::const_iterator itor = m_worldMap.begin();
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
 
-	while (itor != m_worldMap.end())
+	while (itor != m_chunkMap.end())
 	{
 		itor->second->SetThumbNail(NULL);
 		itor->second->SetNeedsThumbnailRefresh(true);
@@ -377,14 +377,14 @@ void World::InvalidateAllThumbnails()
 }
 
 //sent a pointer, it handles deleting it!!
-void World::AddTile(Tile *pTile)
+void Map::AddTile(Tile *pTile)
 {
 	Screen *pScreen = GetScreen(pTile->GetPos());
 	pScreen->AddTile(pTile);
 }
 
 
-bool World::Load(string dirPath) 
+bool Map::Load(string dirPath) 
 {
 	Kill(); //this will save anything we have pending to save
 	
@@ -402,7 +402,7 @@ bool World::Load(string dirPath)
 	
 	GetGameLogic->ShowLoadingMessage();
 
-	CL_InputSource *pFile = g_VFManager.GetFile(m_strDirPath+C_WORLD_DAT_FILENAME);
+	CL_InputSource *pFile = g_VFManager.GetFile(m_strDirPath+C_MAP_DAT_FILENAME);
 	if (!pFile)
 	{
 		SAFE_DELETE(pFile);
@@ -439,21 +439,21 @@ bool World::Load(string dirPath)
 		helper.process_smart_array(m_floatArray, e_floatCount);
 
 		unsigned int chunkType;
-		WorldChunk *pWorldChunk = NULL;
+		MapChunk *pWorldChunk = NULL;
 		ScreenID screenID;
 
 		helper.process(chunkType);
 		//LogMsg("Loading worldchunks...");
-		while (chunkType != C_DATA_WORLD_END_OF_CHUNKS)
+		while (chunkType != C_DATA_MAP_END_OF_CHUNKS)
 		{
 			switch (chunkType)
 			{
-			case C_DATA_WORLD_CHUNK:
+			case C_DATA_MAP_CHUNK:
 				//LogMsg("Loading chunk..");
 				//It's a world chunk definition, let's load it		
 				helper.process(screenID); //get its screen id
 				//LogMsg("%d", screenID);
-				GetWorldChunk(screenID)->Serialize(pFile); //GetWorldChunk will init it for us, serialize will
+				GetMapChunk(screenID)->Serialize(pFile); //GetWorldChunk will init it for us, serialize will
 				//load it from the file
 				break;
 			default:
@@ -473,14 +473,14 @@ bool World::Load(string dirPath)
 		return false;
 	}
 
-	LogMsg("Loaded map %s.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), m_worldMap.size(), GetWorldX(), GetWorldY());
+	LogMsg("Loaded map %s.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), m_chunkMap.size(), GetWorldX(), GetWorldY());
 	SAFE_DELETE(pFile);
 
 	SetModified(false) ; //how could it be modified?  we just loaded it
 	return true; //actually loaded something
 }
 
-bool World::SaveRequested()
+bool Map::SaveRequested()
 {
 	if (!GetAutoSave()) return false; //we're told not save 
 	if (GetGameLogic->UserProfileActive())
@@ -493,10 +493,10 @@ bool World::SaveRequested()
 }
 
 
-void World::MarkAllMapPiecesAsNeedingToSave()
+void Map::MarkAllMapPiecesAsNeedingToSave()
 {
-	WorldMap::const_iterator itor = m_worldMap.begin();
-	while (itor != m_worldMap.end())
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
 	{
 		if (!itor->second->IsEmpty())
 		{
@@ -507,14 +507,14 @@ void World::MarkAllMapPiecesAsNeedingToSave()
 	}
 }
 
-void World::ForceSaveNow()
+void Map::ForceSaveNow()
 {
 	SetModified(true) ;
 	MarkAllMapPiecesAsNeedingToSave();
 	Save(true);
 
-	WorldMap::const_iterator itor = m_worldMap.begin();
-	while (itor != m_worldMap.end())
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
 	{
 		if (!itor->second->IsEmpty())
 		{
@@ -524,27 +524,27 @@ void World::ForceSaveNow()
 	}
 }
 
-void World::SetDataChanged(bool bChanged)
+void Map::SetDataChanged(bool bChanged)
 {
 	m_bDataChanged = bChanged;
 }
-void World::SetModified(bool bModified)
+void Map::SetModified(bool bModified)
 {
 	m_bDataChanged = bModified;
 }
 
-bool World::GetModified()
+bool Map::GetModified()
 {
 
 	if (m_bDataChanged) return true;
 
-	WorldMap::const_iterator itor;
+	map_chunk_map::const_iterator itor;
 
 		//if a worldchunk changed (like the thumbnail, or a worldchunk was added), we need to save everything anyway.  this is kind of bad design..
 
-		itor = m_worldMap.begin();
+		itor = m_chunkMap.begin();
 
-		while (itor != m_worldMap.end())
+		while (itor != m_chunkMap.end())
 		{
 			if (itor->second->GetChunkDataChanged())
 			{
@@ -563,7 +563,7 @@ bool World::GetModified()
 }
 
 
-bool World::Save(bool bSaveTagCacheAlso)
+bool Map::Save(bool bSaveTagCacheAlso)
 {
 	if (m_defaultTileSizeX == 0) return false; //don't actually save.. nothing was loaded
 
@@ -577,15 +577,15 @@ bool World::Save(bool bSaveTagCacheAlso)
 	//do we absolutely have to save?
 	bool bRequireSave = m_bDataChanged;
 
-	WorldMap::const_iterator itor;
+	map_chunk_map::const_iterator itor;
 
 	if (bRequireSave == false)
 	{
 		//if a worldchunk changed (like the thumbnail, or a worldchunk was added), we need to save everything anyway.  this is kind of bad design..
 
-		itor = m_worldMap.begin();
+		itor = m_chunkMap.begin();
 
-		while (itor != m_worldMap.end())
+		while (itor != m_chunkMap.end())
 		{
 				if (itor->second->GetChunkDataChanged())
 				{
@@ -603,7 +603,7 @@ bool World::Save(bool bSaveTagCacheAlso)
 		}
 	}
 
-	if ( (bScreenDataWasModified  || bRequireSave) && !ExistsInModPath(m_strDirPath+C_WORLD_DAT_FILENAME))
+	if ( (bScreenDataWasModified  || bRequireSave) && !ExistsInModPath(m_strDirPath+C_MAP_DAT_FILENAME))
 	{
 		//oh oh, we've modified a map we're modding.  To avoid nasty tagcache issues we'll need to
 		//copy the entire thing here.
@@ -626,17 +626,17 @@ bool World::Save(bool bSaveTagCacheAlso)
 		}
 	
 
-	LogMsg("Saving map header %s - (%d chunks to look at, map size %d by %d)", GetName().c_str(), m_worldMap.size(),
+	LogMsg("Saving map header %s - (%d chunks to look at, map size %d by %d)", GetName().c_str(), m_chunkMap.size(),
 		GetWorldX(), GetWorldY());
 
 	//first save our map.dat file
-	CL_OutputSource *pFile = g_VFManager.PutFile(m_strDirPath+C_WORLD_DAT_FILENAME);
+	CL_OutputSource *pFile = g_VFManager.PutFile(m_strDirPath+C_MAP_DAT_FILENAME);
 	
 	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
 	
-	m_version = C_WORLD_FILE_VERSION;
+	m_version = C_MAP_FILE_VERSION;
 	helper.process(m_version);
-	helper.process(m_worldRect);
+	helper.process(m_mapRect);
 	m_cameraSetting.Serialize(helper);
 	helper.process(m_worldChunkPixelSize);
 	helper.process(m_defaultTileSizeX);
@@ -648,13 +648,13 @@ bool World::Save(bool bSaveTagCacheAlso)
 
 	//run through every screen that is currently open and ask it to save itself if it hasn't been
 	
-	itor = m_worldMap.begin();
-	while (itor != m_worldMap.end())
+	itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
 	{
 		if (!itor->second->IsEmpty())
 		{
-			assert(sizeof(C_DATA_WORLD_CHUNK) == 4 && "This should be an unsigned int.. uh.. ");
-			helper.process_const(C_DATA_WORLD_CHUNK);
+			assert(sizeof(C_DATA_MAP_CHUNK) == 4 && "This should be an unsigned int.. uh.. ");
+			helper.process_const(C_DATA_MAP_CHUNK);
 			helper.process_const(itor->second->GetScreenID());
 
 			itor->second->Serialize(pFile);
@@ -662,18 +662,18 @@ bool World::Save(bool bSaveTagCacheAlso)
 		itor++;
 	}
 
-	helper.process_const(C_DATA_WORLD_END_OF_CHUNKS); //signal the end
+	helper.process_const(C_DATA_MAP_END_OF_CHUNKS); //signal the end
 	SAFE_DELETE(pFile);
 	return true;
 }
 
-void World::PreloadMap()
+void Map::PreloadMap()
 {
-	WorldMap::const_iterator itor = m_worldMap.begin();
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
 	
 	GetNavGraph()->SetPerformLinkOnAdd(false);
 
-	while (itor != m_worldMap.end())
+	while (itor != m_chunkMap.end())
 	{
 		if (!itor->second->IsEmpty())
 		{
@@ -686,7 +686,7 @@ void World::PreloadMap()
 	BuildNavGraph();
 }
 
-void World::BuildNavGraph()
+void Map::BuildNavGraph()
 {
 	if (!IsInitted()) return;
 
@@ -696,8 +696,8 @@ void World::BuildNavGraph()
 	tile_list::iterator tileItor;
 	
 	
-	WorldMap::const_iterator itor = m_worldMap.begin();
-	while (itor != m_worldMap.end())
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
 	{
 		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
 		{
@@ -707,14 +707,14 @@ void World::BuildNavGraph()
 	}	
 }
 
-void World::GetAllWorldChunksWithinThisRect(std::vector<WorldChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks)
+void Map::GetAllWorldChunksWithinThisRect(std::vector<MapChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks)
 {
 	assert(wcVector.size() == 0 && "Shouldn't this be cleared before you send it?");
 
 	int startingX = rec.left;
 
 	CL_Rect scanRec;
-	WorldChunk *pWorldChunk;
+	MapChunk *pWorldChunk;
 	CL_Rect screenRec;
 
 	bool bScanMoreOnTheRight, bScanMoreOnTheBottom;
@@ -724,7 +724,7 @@ void World::GetAllWorldChunksWithinThisRect(std::vector<WorldChunk*> &wcVector, 
 		scanRec = rec;
 
 		//get the screen the upper left is on
-		pWorldChunk = GetWorldChunk(CL_Vector2(scanRec.left, scanRec.top));
+		pWorldChunk = GetMapChunk(CL_Vector2(scanRec.left, scanRec.top));
 		if (!bIncludeBlanks && pWorldChunk->IsEmpty())
 		{
 			//don't add this one
@@ -778,7 +778,7 @@ void World::GetAllWorldChunksWithinThisRect(std::vector<WorldChunk*> &wcVector, 
 	}
 }
 
-void World::ReInitEntities()
+void Map::ReInitEntities()
 {
 	tile_list tileList;
 	tile_list::iterator tileItor;
@@ -787,8 +787,8 @@ void World::ReInitEntities()
 
 	if (!IsInitted()) return;
 
-	WorldMap::const_iterator itor = m_worldMap.begin();
-	while (itor != m_worldMap.end())
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
 	{
 		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
 		{
@@ -827,7 +827,7 @@ void World::ReInitEntities()
 	}	
 }
 
-void World::RemoveUnusedFileChunks()
+void Map::RemoveUnusedFileChunks()
 {
 	
 	vector<string> paths;
@@ -852,7 +852,7 @@ void World::RemoveUnusedFileChunks()
 	}
 }
 
-void World::ReInitCollisionOnTilePics()
+void Map::ReInitCollisionOnTilePics()
 {
 	tile_list tileList;
 	tile_list::iterator tileItor;
@@ -861,8 +861,8 @@ void World::ReInitCollisionOnTilePics()
 
 	if (!IsInitted()) return;
 
-	WorldMap::const_iterator itor = m_worldMap.begin();
-	while (itor != m_worldMap.end())
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
 	{
 		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
 		{
@@ -890,12 +890,12 @@ void World::ReInitCollisionOnTilePics()
 	}	
 }
 
-void World::AddWarpTagHashID(unsigned int hashID)
+void Map::AddWarpTagHashID(unsigned int hashID)
 {
 	m_warpTagHashIDList.push_back(hashID);
 }
 
-void World::RemoveWarpTagHashID(unsigned int hashID)
+void Map::RemoveWarpTagHashID(unsigned int hashID)
 {
 	list<unsigned int>::iterator itor = find(m_warpTagHashIDList.begin(), m_warpTagHashIDList.end(), hashID);
 
@@ -919,11 +919,207 @@ void RemoveWorldFiles(const string &path)
 	}
 
 	RemoveFile(path+C_TAGCACHE_FILENAME);
-	RemoveFile(path+C_WORLD_DAT_FILENAME);
+	RemoveFile(path+C_MAP_DAT_FILENAME);
 	RemoveFile(path+C_LAYER_FILENAME);
 }
 
-void World::SetMyWorldCache(EntWorldCache *pWorldCache)
+void Map::SetMyWorldCache(EntWorldCache *pWorldCache)
 {
 	 m_pWorldCache = pWorldCache;
 }
+
+
+
+//natural docs stuff
+/*
+Object: Map
+A Map is a single area that can be any size and contain any amount of tiles and entities.
+
+Most of these map settings are also available in the editor under Map Properties.
+
+If the map is saved (by defaults maps auto-save and are persistent), changes made are remembered.
+
+See also:
+
+<MapManager>
+
+Group: Member Functions
+
+func: SetPersistent
+(code)
+nil SetPersistent(boolean bPersistent)
+(end)
+By default, maps are persistent, meaning all changes are remembered and automatically saved in the player's profile. (the original is not changed, only the player's modified version of it)
+
+This only has meaning when a player profile is active.
+
+Parameters:
+
+bPersistant - True if the map should be persistent and changes remembered, false if not
+
+func: GetPersistent
+(code)
+boolean GetPersistent()
+(end)
+
+Returns:
+
+True if the map is persistent and changes will be remembered on a per-player-profile basis.
+
+func: SetAutoSave
+(code)
+nil SetAutoSave(boolean bAutoSave)
+(end)
+
+This only applies when a visual profile is not yet loaded.
+
+For title screens, auto-save is usually turned off because no player profile is loaded, yet we don't want to save after we mess up the screen.
+
+Parameters:
+
+bAutoSave - True if the map should automatically be saved without needing to choose "Save map now" from the editor.
+
+func: GetAutoSave
+(code)
+boolean GetAutoSave()
+(end)
+
+Returns:
+
+True if auto-save is currently enabled.
+
+func: GetName
+(code)
+string GetName()
+(end)
+
+Returns:
+
+The map name.  (the name of its directory)
+
+func: GetLayerManager
+(code)
+LayerManager GetLayerManager()
+(end)
+
+Returns:
+
+This map's <LayerManager>, containing all information about its layers and layer settings.
+
+func: BuildLocalNavGraph
+(code)
+nil BuildLocalNavGraph()
+(end)
+
+Rebuilds the navigational graph for this map.
+
+In general, this isn't needed, as navigational graphs are grown/destroyed fluidly on the fly as the map changes.
+
+func: GetCollisionByRay
+(code)
+Zone GetCollisionByRay(Vector2 vStartPos, Vector2 vDir, number rayRange, number raySpread, Entity entToIgnore, number mode, boolean bIgnoreCreatures)
+(end)
+
+Allows you to shoot a ray from any point in this map and see what it hits.
+
+The returned <Zone> object's *vPos* member will contain the exact position of the hit, its other values will contain additional information about the collision.
+
+Usage:
+(code)
+//let's shoot a ray in front of this entity and see if it detects any other entities)
+
+local rayRange = 80;
+local raySpread = 8; //causes 5 rays to be shot in a spread formation 8 units apart, easier to detect hits.  0 to use 1 ray only
+local entToIgnore = this;
+local hitZone = this:GetMap():GetCollisionByRay(this:GetPos(), this:GetVectorFacing(), rayRange, raySpread, entToIgnore, C_RAY_ENTITIES, false);
+
+if (hitZone.entityID != C_ENTITY_NONE) then
+	//we have an entity in front of us!
+	
+	local ent = GetEntityByID(hitZone.entityID);
+	LogMsg("Entity " .. tostring(ent) .. " is sitting in front of us.");
+
+end
+
+(end)
+
+Parameters:
+
+vStartPos - A <Vector2> object containing the start position of the ray.
+vDir - A unit vector containing the direction of the ray.
+rayRange - How far the ray can reach.
+raySpread - 0 for a single ray, otherwise will shoot five rays in a spread formation, this distance apart from each one.
+entToIgnore - An <Entity> we should ignore during the check, otherwise nil
+mode - One of the <C_RAY_CONSTANTS>.  Use <C_RAY_DEBUG_MODE> to visually see the rays being shot.
+bIgnoreCreature - If true, creatures are ignored during the check.
+
+Returns:
+
+A <Zone> object containing information on what was hit.  The Zone's materialID will be <C_MATERIAL_TYPE_NONE> if no collision occured.
+
+
+func: GetTilesByRect
+(code)
+TileList GetTilesByRect(Rect rect, LayerList layers, boolean bWithCollisionOnly)
+(end)
+This allows you to grab a list of all the entities and tiles in a rectangular area of the map.
+
+You can later cycle through the list examining each one, or move or copy the list to a new place. (well, the moving/pasting as a group isn't accessible yet in script, coming soon?)
+
+Usage:
+(code)
+
+//grab all tiles/entityes we're touching
+
+local layerList = this:GetMap():GetLayerManager():GetVisibleLayers(); //what layers we'll scan
+local tileList = this:GetMap():GetTilesByRect( Rect(this:GetWorldCollisionRect()), layerList, false); //grab them
+
+LogMsg("Found " .. tileList:GetCount() .. " tiles after scanning the " .. layerList:GetCount() .. " layers.");
+
+//ok, now we have our list and need to run through and look at each one
+
+local tile; 
+
+while true do
+
+tile = tileList:GetNext();
+	if (tile == nil) then break; end;
+
+	LogMsg("Found tile type " .. tile:GetType());
+
+	if (tile:GetType() == C_TILE_TYPE_ENTITY and tile:GetAsEntity():GetID() != this:GetID()) then
+		LogMsg("We are standing near an entity that isn't us! It's ID is " ..  tile:GetAsEntity():GetID());
+	end
+end
+(end)
+
+Parameters:
+
+rect - A <Rect> object containing the area we should grab tiles from.  Any tile/entity that overlays this area will be included.
+layers - A <LayerList> object containing which layers should be included for the search.
+bWidthCollisionOnly - If true, entities/tiles without collision information will be ignored.
+
+Returns:
+
+A <TileList> object containing handles to all the tiles/entities found. If <TileList::GetCount> is 0, nothing was found.
+
+Section: Related Constants
+
+Group: C_RAY_CONSTANTS
+Used with <Map::GetCollisionByRay>.
+
+constant: C_RAY_ENTITIES
+The ray will hit only entities.
+
+constant: C_RAY_TILE_PIC
+The ray will hit only tile pics.
+
+constant: C_RAY_EVERYTHING
+The ray will hit entities as well as tile pics.
+
+constant: C_RAY_DEBUG_MODE
+The rays will be visually drawn on the screen, helps to figure out problems.  Slow, so don't leave this on. Hits everything.
+
+*/
+
+

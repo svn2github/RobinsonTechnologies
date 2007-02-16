@@ -7,7 +7,7 @@
 #include "MessageManager.h"
 #include "TextManager.h"
 #include "TagManager.h"
-#include "ScriptKeyManager.h"
+#include "InputManager.h"
 #include "VisualProfileManager.h"
 #include "AI/Goal_Think.h"
 #include "AI/WatchManager.h"
@@ -87,7 +87,7 @@ int GetEntityIDByName(const string &name)
 	return 0;
 }
 
-Tile * GetTileByWorldPos(World *pWorld, CL_Vector2 v, vector<unsigned int> layerIDVec, bool bPixelAccurate)
+Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerIDVec, bool bPixelAccurate)
 {
 	if (!pWorld)
 	{
@@ -228,12 +228,12 @@ float LerpNumber(float src, float target, float amount)
 
 
 /*
-Section: Global Functions
+Title: Global Functions
 These functions are global and can be run from anywhere, they aren't attached to any specific object.
 */
 
 
-//Group: Misc
+//Section: Miscellaneous
 
 void luabindGlobalFunctions(lua_State *pState)
 {
@@ -588,7 +588,7 @@ void luabindGlobalFunctions(lua_State *pState)
 			def("Lerp", &LerpNumber),
 
 	
-			//Group: Conversion
+			//Section: Conversion
 			
 			def("ScreenToWorld", &ScreenToWorld),
 
@@ -794,7 +794,7 @@ void luabindGlobalFunctions(lua_State *pState)
 			*/
 
 
-			//Group: Constants
+			//Section: Related Constants
 
 			/*
 

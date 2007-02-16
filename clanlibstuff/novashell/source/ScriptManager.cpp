@@ -12,7 +12,7 @@
 
 using namespace luabind;
 
-ScriptKeyManager g_keyManager;
+InputManager g_inputManager;
 
 // lifted from the lua book, prints contents of the lua stack
 static void stackDump (lua_State *L) 
@@ -234,8 +234,6 @@ void ScriptObject::RunFunction(const char *pFuncName)
 		(luabind::error &e)
 	{
 		ShowLUAMessagesIfNeeded(e.state(), 1);
-		
-
 	
 		MovingEntity *pEnt = object_cast<MovingEntity*>(luabind::globals(m_pLuaState)["this"]);
 
@@ -352,7 +350,7 @@ void ScriptManager::RunString(const char *pString)
 void ScriptManager::Kill()
 {
 
-	g_keyManager.Init(); //clear out any hotkeys that have been associated with script
+	g_inputManager.Init(); //clear out any hotkeys that have been associated with script
 
 	if (m_pMainState)
 	{

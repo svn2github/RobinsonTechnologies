@@ -9,11 +9,11 @@
 #define EntWorldCache_HEADER_INCLUDED  // include guard
 
 #include "BaseGameEntity.h"
-#include "World.h"
+#include "Map.h"
 #include "Screen.h"
 #include "TileEditOperation.h"
 
-typedef std::vector<WorldChunk*> EntWorldChunkVector;
+typedef std::vector<MapChunk*> EntWorldChunkVector;
 typedef std::vector<Tile*> tile_vector;
 typedef std::vector<MovingEntity*> moving_entity_vector;
 
@@ -42,7 +42,7 @@ public:
 
 	void SetDrawCollision(bool bNew) {m_bDrawCollisionData = bNew;}
 	bool GetDrawCollision() {return m_bDrawCollisionData;}
-	void SetWorld(World *pWorld);
+	void SetWorld(Map *pWorld);
 	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect, bool bWithCollisionOnly = false, bool bAllowLoadOnDemand = true);
 	void CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail);
 	void RenderViewList(CL_GraphicContext *pGC);
@@ -70,7 +70,7 @@ protected:
 	void RenderGoalAI(CL_GraphicContext *pGC);
 	void RenderCollisionLists(CL_GraphicContext *pGC);
 
-	World *m_pWorld; 
+	Map *m_pWorld; 
 	
 	//these are rebuilt every frame
 	EntWorldChunkVector m_worldChunkVector; //what screens are currently viewable

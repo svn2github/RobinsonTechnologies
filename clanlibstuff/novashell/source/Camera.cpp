@@ -60,8 +60,8 @@ CL_Rectf Camera::GetViewRectWorld()
 void Camera::Reset()
 {
 	m_bInstantUpdateASAP = false;
-	m_vecPos = g_worldDefaultCenterPos;
-	m_vecTargetPos = g_worldDefaultCenterPos;
+	m_vecPos = g_mapDefaultCenterPos;
+	m_vecTargetPos = g_mapDefaultCenterPos;
 	m_vecScale.x = m_vecScale.y = 1;
 	m_vecScaleTarget = m_vecScale;
 	m_entTrackID = 0;

@@ -10,40 +10,38 @@
 This world class keeps track of the individual chunks that make up the world.  
 */
 
-#define C_DEFAULT_WORLD_X 1 //how many screens we start with by default
-#define C_DEFAULT_WORLD_Y 1
 #define C_DEFAULT_SCREEN_ID 0
-extern const CL_Vector2 g_worldDefaultCenterPos;
-#define C_WORLD_DAT_FILENAME "map.dat"
+extern const CL_Vector2 g_mapDefaultCenterPos;
+#define C_MAP_DAT_FILENAME "map.dat"
 
 #include "main.h"
 #include "Screen.h"
 #include "Tile.h"
-#include "WorldChunk.h"
+#include "MapChunk.h"
 #include "CameraSetting.h"
 #include "LayerManager.h"
 
 class EntWorldCache;
 class NavGraphManager;
 
-typedef std::map<ScreenID, WorldChunk*> WorldMap;
+typedef std::map<ScreenID, MapChunk*> map_chunk_map;
 
 typedef std::list<unsigned int> tag_hash_list;
-#define C_WORLD_FILE_VERSION 1
+#define C_MAP_FILE_VERSION 1
 
 enum
 {
 	C_DATA_UNKNOWN = 0,
-	C_DATA_WORLD_CHUNK,
-	C_DATA_WORLD_END_OF_CHUNKS
+	C_DATA_MAP_CHUNK,
+	C_DATA_MAP_END_OF_CHUNKS
 };
 
-class World
+class Map
 {
 public:
 
-    World();
-    ~World();
+    Map();
+    ~Map();
 
     void Kill();
     void Init(const CL_Rect worldRect = CL_Rect(C_DEFAULT_SCREEN_ID,C_DEFAULT_SCREEN_ID,C_DEFAULT_SCREEN_ID+1,C_DEFAULT_SCREEN_ID+1)); //you can send in a requested worldrect if you want,
@@ -51,27 +49,26 @@ public:
 
     const CL_Rect *GetWorldRect(); //rect in screenchunks
 	CL_Rect GetWorldRectInPixels(); //full world bounds in rect coordinates
-    int GetWorldX(){return m_worldRect.get_width();}
-    int GetWorldY(){return m_worldRect.get_height();}
+    int GetWorldX(){return m_mapRect.get_width();}
+    int GetWorldY(){return m_mapRect.get_height();}
     int GetXFromScreenID(ScreenID screenID);
     int GetYFromScreenID(ScreenID screenID);
-    WorldChunk * DoesWorldChunkExist(ScreenID screenID);
+    MapChunk * DoesWorldChunkExist(ScreenID screenID);
     ScreenID GetScreenID(short x, short y);
-	WorldChunk * GetWorldChunk(ScreenID screenID); //world chunk id
-	WorldChunk * GetWorldChunk(CL_Vector2 vecWorld); //world coordinates
-    Screen * GetScreen(ScreenID screenID); //a screen is a member of worldchunk, this inits it if needed
+	MapChunk * GetMapChunk(ScreenID screenID); //map chunk id
+	MapChunk * GetMapChunk(CL_Vector2 vecWorld); //in world coordinates
+    Screen * GetScreen(ScreenID screenID); //inits it if needed
     Screen * GetScreen(int x, int y); //like above but automatically converts x/y into a "screenID" for you
 	Screen * GetScreen(const CL_Vector2 &vecPos); //like above but from world coords
 	CL_Vector2 ScreenIDToWorldPos(ScreenID screenID);
     ScreenID GetScreenIDFromWorld(CL_Vector2 vecPos);
-	//tile_list * GetTileListByWorld(CL_Vector2 vecPos, int layer, Screen **ppScreenOut);
 	CL_Vector2 SnapWorldCoords(CL_Vector2 vecWorld, CL_Vector2 vecSnap);
 	const string &GetDirPath(){return m_strDirPath;};//it includes the trailing backslash
 	void SetDirPath(const string &str);
 	bool Load(string dirPath=""); //attempts to load, returns false if nothing was loaded. It also
-	//calls SetDirPath on what is sent in
+									//calls SetDirPath on what is sent in
 	bool Save(bool bSaveTagCacheAlso);
-	WorldMap * GetWorldMap() {return &m_worldMap;}
+	map_chunk_map * GetChunkMap() {return &m_chunkMap;}
 	int GetWorldChunkPixelSize() {return m_worldChunkPixelSize;}
 	int GetDefaultTileSizeX() {return m_defaultTileSizeX;}
 	int GetDefaultTileSizeY() {return m_uintArray[e_uintDefaultTileSizeY];}
@@ -93,7 +90,7 @@ public:
 	void SetCacheSensitivity(float sensitivity) {m_floatArray[e_floatCacheSensitivity] = sensitivity; m_bDataChanged = true;}
 	void InvalidateAllThumbnails();
 	void AddTile(Tile *pTile); //adds a tile automatically based on its pos/layer info
-	void GetAllWorldChunksWithinThisRect(std::vector<WorldChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks);
+	void GetAllWorldChunksWithinThisRect(std::vector<MapChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks);
 	void PreloadMap();
 	LayerManager & GetLayerManager() {return m_layerManager;}
 	bool IsValidCoordinate(CL_Vector2 vec);
@@ -177,11 +174,11 @@ private:
 	//stuff we actually save/load, don't change the save/load order, ok? Just add more
 	//at the end.
 	cl_uint8 m_version;
-	CL_Rect m_worldRect;
+	CL_Rect m_mapRect;
 	int m_worldChunkPixelSize;
 	int m_defaultTileSizeX; //default is 64
 	//stuff we don't
-	WorldMap m_worldMap;
+	map_chunk_map m_chunkMap;
 
 	string m_strDirPath; //where we're located, not saved, set upon loading, I mean, we'd know if we know where to load it, right?
 	string m_strMapName; //we get this by cutting off the last part of the dir name

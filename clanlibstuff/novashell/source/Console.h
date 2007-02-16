@@ -51,6 +51,8 @@ protected:
 	bool m_bOnScreen; //if true, we're displaying it
 
 	CL_SlotContainer m_slots;
+	int m_curViewIndexOffset;
+
 };
 
 extern Console g_Console;

@@ -49,7 +49,7 @@ class Zone
 public:
 	
 	CL_Rectf m_boundingRect;
-	CL_Vector2 m_vPos; //add this to the bounding rect to get the world coordinates
+	CL_Vector2 m_vPos; //add this to the bounding rect to get the rect in world coordinates
 	int m_materialID;
 	int m_entityID;
 
@@ -84,7 +84,7 @@ public:
 
   float GetBoundingCollisionRadius();
   
-  bool IsValidPosition(World *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures);
+  bool IsValidPosition(Map *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures);
   void Stop();
   void StopY();
   void StopX();
@@ -100,6 +100,30 @@ public:
   luabind::object RunFunction(const string &func, luabind::object obj1);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3);
+
+
+  luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4);
+  luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5);
+  luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6);
+  luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7);
+  luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7, luabind::object obj8);
+
+
+  luabind::object RunFunctionIfExists(const string &func);
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1);
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2);
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3);
+
+
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4);
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5);
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6);
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7);
+  luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7, luabind::object obj8);
+
+
+  bool ScriptNotReady(const string &func);
+
   void GetAlignment(CL_Origin &origin, int &x, int &y);
   void SetAlignment(int origin, CL_Vector2 v);
   void UpdateTilePosition();
@@ -157,7 +181,7 @@ public:
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
   float GetDistanceFromEntityByID(int id);
   float GetDistanceFromPosition(const CL_Vector2 &pos);
-  MovingEntity * CreateEntity(World *pMap, CL_Vector2 pos, const string &script);
+  MovingEntity * CreateEntity(Map *pMap, CL_Vector2 pos, const string &script);
 
   int GetLayerID();
   void SetLayerID(int id);
@@ -169,7 +193,7 @@ public:
   Zone GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType);
   Zone GetNearbyZoneByCollisionRectAndType(int matType);
 
-  bool InZoneByMaterialType(int matType) {return GetZoneWeAreOnByMaterialType(matType).m_materialID != CMaterial::C_MATERIAL_TYPE_NONE;}
+  bool InZoneByMaterialType(int matType) {return GetNearbyZoneByCollisionRectAndType(matType).m_materialID != CMaterial::C_MATERIAL_TYPE_NONE;}
   bool InNearbyZoneByMaterialType(const CL_Vector2 &vPos, int matType) {return GetNearbyZoneByPointAndType(vPos, matType).m_materialID != CMaterial::C_MATERIAL_TYPE_NONE;}
   bool GetOnLadder() {return m_bOnLadder;}
   void SetOnLadder(bool bOnLadder) {m_bOnLadder = bOnLadder;}
@@ -245,7 +269,7 @@ public:
   bool IsCloseToEntity(MovingEntity *pEnt, int dist);
 
   bool CanWalkTo(CL_Vector2 &pos, bool ignoreLivingCreatures);
-  bool CanWalkBetween(World *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures);
+  bool CanWalkBetween(Map *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures);
 
   CL_Vector2 GetVectorToEntityByID(int entID);
   CL_Vector2 GetVectorToEntity(MovingEntity *pEnt);
@@ -256,7 +280,7 @@ public:
   PathPlanner * GetPathPlanner();
   void SetRunStringASAP(const string &command);
   void ProcessPendingMoveAndDeletionOperations();
-  World * GetMap();
+  Map * GetMap();
   void RunPostInitIfNeeded();
   void RunOnMapInsertIfNeeded();
   void CheckVisibilityNotifications(unsigned int notificationID);
@@ -280,7 +304,7 @@ public:
   int GetAttachEntityID() {return m_attachEntID;}
   CL_Vector2 GetAttachOffset() {return m_attachOffset;}
   void SetAttachOffset(const CL_Vector2 &pos) {m_attachOffset = pos;}
-  MovingEntity * Clone(World *pMap, CL_Vector2 vecPos);
+  MovingEntity * Clone(Map *pMap, CL_Vector2 vecPos);
   void OnAttachedEntity(int entID);
   void SetRunUpdateEveryFrame(bool bNew) {m_bRunUpdateEveryFrame = bNew;}
   bool GetRunUpdateEveryFrame() {return m_bRunUpdateEveryFrame;}
@@ -425,7 +449,7 @@ protected:
 	int m_blendMode;
 };
 
-MovingEntity * CreateEntity(World *pMap, CL_Vector2 vecPos, string scriptFileName);
+MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName);
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile);
 

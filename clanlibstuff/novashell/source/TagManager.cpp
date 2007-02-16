@@ -1,6 +1,6 @@
 #include "AppPrecomp.h"
 #include "TagManager.h"
-#include "WorldManager.h"
+#include "MapManager.h"
 #include "MovingEntity.h"
 #include "AI/WorldNavManager.h"
 
@@ -42,7 +42,7 @@ void TagManager::RegisterAsWarp(MovingEntity *pEnt, const string &targetName)
 	g_worldNavManager.LinkNode(pTag);
 }
 
-void TagManager::Update(World *pWorld, MovingEntity *pEnt)
+void TagManager::Update(Map *pWorld, MovingEntity *pEnt)
 {
 	if (pEnt->GetName().empty()) return; //don't hash this
 
@@ -256,7 +256,7 @@ if (pEnt)
 	LogMsg("    %d tag names active.\n", m_tagMap.size());
 }
 
-void TagManager::Save(World *pWorld)
+void TagManager::Save(Map *pWorld)
 {
   //cycle through and save all tag data applicable
 	
@@ -352,10 +352,10 @@ void TagManager::AddCachedNameTag(unsigned int hashID, const TagObject &o)
 
 }
 
-void TagManager::Load(World *pWorld)
+void TagManager::Load(Map *pWorld)
 {
 	//LogMsg("Loading tag data..");
-	string fullPath = pWorld->GetDirPath()+C_WORLD_DAT_FILENAME;
+	string fullPath = pWorld->GetDirPath()+C_MAP_DAT_FILENAME;
 
 	//ok, let's make sure we load the tagcache from the dir that actually has a world in it
 	

@@ -2,7 +2,7 @@
 
 #include "GeneratorInterface.h"
 
-class World;
+class Map;
 class Screen;
 
 struct dink_map_info

@@ -6,14 +6,14 @@
 #include "Goal_Types.h"
 #include "WorldNavManager.h"
 
-class World;
+class Map;
 
 class Goal_MoveToMapAndPos : public Goal_Composite<MovingEntity>
 {
 
 public:
 
-	Goal_MoveToMapAndPos(MovingEntity* pBot, CL_Vector2 pos, World *pMap):
+	Goal_MoveToMapAndPos(MovingEntity* pBot, CL_Vector2 pos, Map *pMap):
 	Goal_Composite<MovingEntity>(pBot, goal_move_to_position),
 		m_vDestination(pos), m_pDestMap(pMap)
 	{
@@ -37,7 +37,7 @@ private:
 	void ProcessNextMapChunk();
 	//the position the bot wants to reach
 	CL_Vector2 m_vDestination;
-	World * m_pDestMap;
+	Map * m_pDestMap;
 	bool m_bTriedSimpleWay;
 	MacroPathInfo m_macroPath;
 	bool m_bRequestNextChunk;

@@ -161,7 +161,7 @@ bool exist(const char * name)
 }
 
 
-//this let's you apply a number to a number to make it closer to a target
+//this lets you apply a number to a number to make it closer to a target
 //it will not go pass the target number.
 void set_float_with_target(float *p_float, float f_target, float f_friction)
 {

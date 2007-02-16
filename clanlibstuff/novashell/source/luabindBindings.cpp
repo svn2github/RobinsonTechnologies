@@ -40,7 +40,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabind::globals(pLuaState)["GetGameLogic"] = GetGameLogic;
 	luabind::globals(pLuaState)["GetTagManager"] = &g_TagManager;
 	luabind::globals(pLuaState)["GetCamera"] = GetCamera;
-	luabind::globals(pLuaState)["GetInputManager"] = &g_keyManager;
+	luabind::globals(pLuaState)["GetInputManager"] = &g_inputManager;
 	luabind::globals(pLuaState)["GetWatchManager"] = &g_watchManager;
 
 	luabind::globals(pLuaState)["g_PlayerID"] = 0;	 //will be set later

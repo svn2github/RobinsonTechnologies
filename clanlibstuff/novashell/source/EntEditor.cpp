@@ -465,7 +465,7 @@ void EntEditor::OnDumpEngineStatistics()
 	LogMsg("**** Engine statistics ****");
 	GetTagManager->PrintStatistics();
 	GetHashedResourceManager->PrintStatistics();
-	g_keyManager.PrintStatistics();
+	g_inputManager.PrintStatistics();
 	LogMsg("");
 	LogMsg("*******");
 	LogMsg("Press ` (backtick/unshifted tilde) to close this window.");

@@ -112,7 +112,7 @@ private:
 class GameLogic;
 class HashedResourceManager;
 class Camera;
-class World;
+class Map;
 class ScriptManager;
 class VisualProfileManager;
 
