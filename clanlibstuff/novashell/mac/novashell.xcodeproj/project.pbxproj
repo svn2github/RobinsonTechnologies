@@ -77,6 +77,16 @@
 		5D66058C0ABFCECE00892168 /* EntWorldDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */; };
 		5D66058D0ABFCECE00892168 /* EntCreationUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */; };
 		5D66058E0ABFCECE00892168 /* EntWorldDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */; };
+		5D669E520B858BE2003EE62C /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E500B858BE2003EE62C /* InputManager.cpp */; };
+		5D669E530B858BE2003EE62C /* MapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E510B858BE2003EE62C /* MapManager.cpp */; };
+		5D669E540B858BE2003EE62C /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E500B858BE2003EE62C /* InputManager.cpp */; };
+		5D669E550B858BE2003EE62C /* MapManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E510B858BE2003EE62C /* MapManager.cpp */; };
+		5D669E570B858C18003EE62C /* EntMapCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E560B858C18003EE62C /* EntMapCache.cpp */; };
+		5D669E580B858C18003EE62C /* EntMapCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E560B858C18003EE62C /* EntMapCache.cpp */; };
+		5D669E5B0B858C3E003EE62C /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E590B858C3E003EE62C /* Map.cpp */; };
+		5D669E5C0B858C3E003EE62C /* MapChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E5A0B858C3E003EE62C /* MapChunk.cpp */; };
+		5D669E5D0B858C3E003EE62C /* Map.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E590B858C3E003EE62C /* Map.cpp */; };
+		5D669E5E0B858C3E003EE62C /* MapChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E5A0B858C3E003EE62C /* MapChunk.cpp */; };
 		5D67C47E0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
 		5D67C47F0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
 		5D7A78190B757D74003C896A /* ListBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78160B757D74003C896A /* ListBindings.cpp */; };
@@ -120,7 +130,6 @@
 		5D87774A0A15555400363BAA /* AppUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776D80A15555400363BAA /* AppUtils.cpp */; };
 		5D87774C0A15555400363BAA /* BaseGameEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */; };
 		5D87774E0A15555400363BAA /* Brain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DC0A15555400363BAA /* Brain.cpp */; };
-		5D8777500A15555400363BAA /* BrainPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DE0A15555400363BAA /* BrainPlayer.cpp */; };
 		5D8777520A15555400363BAA /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776E00A15555400363BAA /* Camera.cpp */; };
 		5D8777540A15555400363BAA /* CameraSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776E20A15555400363BAA /* CameraSetting.cpp */; };
 		5D8777560A15555400363BAA /* CollisionData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776E40A15555400363BAA /* CollisionData.cpp */; };
@@ -132,7 +141,6 @@
 		5D8777620A15555400363BAA /* EntEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F00A15555400363BAA /* EntEditor.cpp */; };
 		5D8777640A15555400363BAA /* EntityBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F20A15555400363BAA /* EntityBindings.cpp */; };
 		5D8777660A15555400363BAA /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F40A15555400363BAA /* EntityManager.cpp */; };
-		5D8777680A15555400363BAA /* EntWorldCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F60A15555400363BAA /* EntWorldCache.cpp */; };
 		5D87776A0A15555400363BAA /* GameLogic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F80A15555400363BAA /* GameLogic.cpp */; };
 		5D87776C0A15555400363BAA /* GeneratorDink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776FA0A15555400363BAA /* GeneratorDink.cpp */; };
 		5D87776F0A15555400363BAA /* GeneratorSimple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776FD0A15555400363BAA /* GeneratorSimple.cpp */; };
@@ -153,7 +161,6 @@
 		5D8777920A15555400363BAA /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777210A15555400363BAA /* Vector.cpp */; };
 		5D8777940A15555400363BAA /* PointList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777230A15555400363BAA /* PointList.cpp */; };
 		5D8777960A15555400363BAA /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777270A15555400363BAA /* Screen.cpp */; };
-		5D8777980A15555400363BAA /* ScriptKeyManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777290A15555400363BAA /* ScriptKeyManager.cpp */; };
 		5D87779A0A15555400363BAA /* ScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87772B0A15555400363BAA /* ScriptManager.cpp */; };
 		5D87779F0A15555400363BAA /* TagManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777300A15555400363BAA /* TagManager.cpp */; };
 		5D8777A10A15555400363BAA /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777320A15555400363BAA /* TextManager.cpp */; };
@@ -164,9 +171,6 @@
 		5D8777AB0A15555400363BAA /* VisualProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87773C0A15555400363BAA /* VisualProfile.cpp */; };
 		5D8777AD0A15555400363BAA /* VisualProfileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87773E0A15555400363BAA /* VisualProfileManager.cpp */; };
 		5D8777AF0A15555400363BAA /* VisualResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777400A15555400363BAA /* VisualResource.cpp */; };
-		5D8777B10A15555400363BAA /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777420A15555400363BAA /* World.cpp */; };
-		5D8777B30A15555400363BAA /* WorldChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777440A15555400363BAA /* WorldChunk.cpp */; };
-		5D8777B50A15555400363BAA /* WorldManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777460A15555400363BAA /* WorldManager.cpp */; };
 		5D87786D0A1555F600363BAA /* class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778040A1555F600363BAA /* class.cpp */; };
 		5D87786E0A1555F600363BAA /* class_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778050A1555F600363BAA /* class_info.cpp */; };
 		5D87786F0A1555F600363BAA /* class_registry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778060A1555F600363BAA /* class_registry.cpp */; };
@@ -232,7 +236,6 @@
 		5DCDB2100A19FEAA0043DCFA /* AppUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776D80A15555400363BAA /* AppUtils.cpp */; };
 		5DCDB2110A19FEAA0043DCFA /* BaseGameEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */; };
 		5DCDB2120A19FEAA0043DCFA /* Brain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DC0A15555400363BAA /* Brain.cpp */; };
-		5DCDB2130A19FEAA0043DCFA /* BrainPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DE0A15555400363BAA /* BrainPlayer.cpp */; };
 		5DCDB2140A19FEAA0043DCFA /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776E00A15555400363BAA /* Camera.cpp */; };
 		5DCDB2150A19FEAA0043DCFA /* CameraSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776E20A15555400363BAA /* CameraSetting.cpp */; };
 		5DCDB2160A19FEAA0043DCFA /* CollisionData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776E40A15555400363BAA /* CollisionData.cpp */; };
@@ -244,7 +247,6 @@
 		5DCDB21C0A19FEAA0043DCFA /* EntEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F00A15555400363BAA /* EntEditor.cpp */; };
 		5DCDB21D0A19FEAA0043DCFA /* EntityBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F20A15555400363BAA /* EntityBindings.cpp */; };
 		5DCDB21E0A19FEAA0043DCFA /* EntityManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F40A15555400363BAA /* EntityManager.cpp */; };
-		5DCDB21F0A19FEAA0043DCFA /* EntWorldCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F60A15555400363BAA /* EntWorldCache.cpp */; };
 		5DCDB2200A19FEAA0043DCFA /* GameLogic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776F80A15555400363BAA /* GameLogic.cpp */; };
 		5DCDB2210A19FEAA0043DCFA /* GeneratorDink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776FA0A15555400363BAA /* GeneratorDink.cpp */; };
 		5DCDB2220A19FEAA0043DCFA /* GeneratorSimple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776FD0A15555400363BAA /* GeneratorSimple.cpp */; };
@@ -265,7 +267,6 @@
 		5DCDB2310A19FEAA0043DCFA /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777210A15555400363BAA /* Vector.cpp */; };
 		5DCDB2320A19FEAA0043DCFA /* PointList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777230A15555400363BAA /* PointList.cpp */; };
 		5DCDB2330A19FEAA0043DCFA /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777270A15555400363BAA /* Screen.cpp */; };
-		5DCDB2340A19FEAA0043DCFA /* ScriptKeyManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777290A15555400363BAA /* ScriptKeyManager.cpp */; };
 		5DCDB2350A19FEAA0043DCFA /* ScriptManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87772B0A15555400363BAA /* ScriptManager.cpp */; };
 		5DCDB2360A19FEAA0043DCFA /* TagManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777300A15555400363BAA /* TagManager.cpp */; };
 		5DCDB2370A19FEAA0043DCFA /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777320A15555400363BAA /* TextManager.cpp */; };
@@ -276,9 +277,6 @@
 		5DCDB23C0A19FEAA0043DCFA /* VisualProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87773C0A15555400363BAA /* VisualProfile.cpp */; };
 		5DCDB23D0A19FEAA0043DCFA /* VisualProfileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87773E0A15555400363BAA /* VisualProfileManager.cpp */; };
 		5DCDB23E0A19FEAA0043DCFA /* VisualResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777400A15555400363BAA /* VisualResource.cpp */; };
-		5DCDB23F0A19FEAA0043DCFA /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777420A15555400363BAA /* World.cpp */; };
-		5DCDB2400A19FEAA0043DCFA /* WorldChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777440A15555400363BAA /* WorldChunk.cpp */; };
-		5DCDB2410A19FEAA0043DCFA /* WorldManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8777460A15555400363BAA /* WorldManager.cpp */; };
 		5DCDB2420A19FEAA0043DCFA /* class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778040A1555F600363BAA /* class.cpp */; };
 		5DCDB2430A19FEAA0043DCFA /* class_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778050A1555F600363BAA /* class_info.cpp */; };
 		5DCDB2440A19FEAA0043DCFA /* class_registry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778060A1555F600363BAA /* class_registry.cpp */; };
@@ -477,6 +475,11 @@
 		5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntVisualProfileEditor.cpp; sourceTree = "<group>"; };
 		5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntCreationUtils.cpp; sourceTree = "<group>"; };
 		5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntWorldDialog.cpp; sourceTree = "<group>"; };
+		5D669E500B858BE2003EE62C /* InputManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InputManager.cpp; sourceTree = "<group>"; };
+		5D669E510B858BE2003EE62C /* MapManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MapManager.cpp; sourceTree = "<group>"; };
+		5D669E560B858C18003EE62C /* EntMapCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntMapCache.cpp; sourceTree = "<group>"; };
+		5D669E590B858C3E003EE62C /* Map.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
+		5D669E5A0B858C3E003EE62C /* MapChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MapChunk.cpp; sourceTree = "<group>"; };
 		5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalScriptFunctionBindings.cpp; sourceTree = "<group>"; };
 		5D7A78160B757D74003C896A /* ListBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ListBindings.cpp; path = ../source/ListBindings.cpp; sourceTree = SOURCE_ROOT; };
 		5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopingSoundBindings.cpp; path = ../source/LoopingSoundBindings.cpp; sourceTree = SOURCE_ROOT; };
@@ -504,7 +507,6 @@
 		5D8776DB0A15555400363BAA /* BaseGameEntity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BaseGameEntity.h; sourceTree = "<group>"; };
 		5D8776DC0A15555400363BAA /* Brain.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Brain.cpp; sourceTree = "<group>"; };
 		5D8776DD0A15555400363BAA /* Brain.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Brain.h; sourceTree = "<group>"; };
-		5D8776DE0A15555400363BAA /* BrainPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainPlayer.cpp; sourceTree = "<group>"; };
 		5D8776E00A15555400363BAA /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		5D8776E20A15555400363BAA /* CameraSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CameraSetting.cpp; sourceTree = "<group>"; };
 		5D8776E40A15555400363BAA /* CollisionData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CollisionData.cpp; sourceTree = "<group>"; };
@@ -521,8 +523,6 @@
 		5D8776F20A15555400363BAA /* EntityBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntityBindings.cpp; sourceTree = "<group>"; };
 		5D8776F30A15555400363BAA /* EntityBindings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EntityBindings.h; sourceTree = "<group>"; };
 		5D8776F40A15555400363BAA /* EntityManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntityManager.cpp; sourceTree = "<group>"; };
-		5D8776F60A15555400363BAA /* EntWorldCache.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntWorldCache.cpp; sourceTree = "<group>"; };
-		5D8776F70A15555400363BAA /* EntWorldCache.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EntWorldCache.h; sourceTree = "<group>"; };
 		5D8776F80A15555400363BAA /* GameLogic.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GameLogic.cpp; sourceTree = "<group>"; };
 		5D8776FA0A15555400363BAA /* GeneratorDink.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorDink.cpp; sourceTree = "<group>"; };
 		5D8776FD0A15555400363BAA /* GeneratorSimple.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratorSimple.cpp; sourceTree = "<group>"; };
@@ -545,15 +545,12 @@
 		5D87771B0A15555400363BAA /* Contact.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Contact.cpp; sourceTree = "<group>"; };
 		5D87771C0A15555400363BAA /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 		5D87771D0A15555400363BAA /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
-		5D87771E0A15555400363BAA /* perlin.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = perlin.h; sourceTree = "<group>"; };
 		5D87771F0A15555400363BAA /* Polygon.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Polygon.cpp; sourceTree = "<group>"; };
 		5D8777200A15555400363BAA /* Polygon.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Polygon.h; sourceTree = "<group>"; };
 		5D8777210A15555400363BAA /* Vector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Vector.cpp; sourceTree = "<group>"; };
 		5D8777220A15555400363BAA /* vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
 		5D8777230A15555400363BAA /* PointList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PointList.cpp; sourceTree = "<group>"; };
 		5D8777270A15555400363BAA /* Screen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Screen.cpp; sourceTree = "<group>"; };
-		5D8777290A15555400363BAA /* ScriptKeyManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptKeyManager.cpp; sourceTree = "<group>"; };
-		5D87772A0A15555400363BAA /* ScriptKeyManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScriptKeyManager.h; sourceTree = "<group>"; };
 		5D87772B0A15555400363BAA /* ScriptManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptManager.cpp; sourceTree = "<group>"; };
 		5D87772C0A15555400363BAA /* ScriptManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScriptManager.h; sourceTree = "<group>"; };
 		5D8777300A15555400363BAA /* TagManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TagManager.cpp; sourceTree = "<group>"; };
@@ -565,9 +562,6 @@
 		5D87773C0A15555400363BAA /* VisualProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = VisualProfile.cpp; sourceTree = "<group>"; };
 		5D87773E0A15555400363BAA /* VisualProfileManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = VisualProfileManager.cpp; sourceTree = "<group>"; };
 		5D8777400A15555400363BAA /* VisualResource.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = VisualResource.cpp; sourceTree = "<group>"; };
-		5D8777420A15555400363BAA /* World.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
-		5D8777440A15555400363BAA /* WorldChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WorldChunk.cpp; sourceTree = "<group>"; };
-		5D8777460A15555400363BAA /* WorldManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WorldManager.cpp; sourceTree = "<group>"; };
 		5D8777B90A1555F600363BAA /* adopt_policy.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = adopt_policy.hpp; sourceTree = "<group>"; };
 		5D8777BA0A1555F600363BAA /* back_reference.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = back_reference.hpp; sourceTree = "<group>"; };
 		5D8777BB0A1555F600363BAA /* back_reference_fwd.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; path = back_reference_fwd.hpp; sourceTree = "<group>"; };
@@ -827,7 +821,6 @@
 				5D1A38510A382D48005FF1C0 /* BrainShake.h */,
 				5D8776DC0A15555400363BAA /* Brain.cpp */,
 				5D8776DD0A15555400363BAA /* Brain.h */,
-				5D8776DE0A15555400363BAA /* BrainPlayer.cpp */,
 			);
 			name = Brains;
 			sourceTree = "<group>";
@@ -907,7 +900,6 @@
 				5D87771B0A15555400363BAA /* Contact.cpp */,
 				5D87771C0A15555400363BAA /* Contact.h */,
 				5D87771D0A15555400363BAA /* Matrix.h */,
-				5D87771E0A15555400363BAA /* perlin.h */,
 				5D87771F0A15555400363BAA /* Polygon.cpp */,
 				5D8777200A15555400363BAA /* Polygon.h */,
 				5D8777210A15555400363BAA /* Vector.cpp */,
@@ -1162,6 +1154,7 @@
 		5DCDB01D0A19ADF70043DCFA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				5D669E560B858C18003EE62C /* EntMapCache.cpp */,
 				5D8105120AD620CA004605B8 /* EntChoiceDialog.cpp */,
 				5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */,
 				5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */,
@@ -1182,8 +1175,6 @@
 				5D8776EF0A15555400363BAA /* EntEditMode.h */,
 				5D8776F00A15555400363BAA /* EntEditor.cpp */,
 				5D8776F10A15555400363BAA /* EntEditor.h */,
-				5D8776F60A15555400363BAA /* EntWorldCache.cpp */,
-				5D8776F70A15555400363BAA /* EntWorldCache.h */,
 				5D8777120A15555400363BAA /* MovingEntity.cpp */,
 				5D8777130A15555400363BAA /* movingentity.h */,
 			);
@@ -1202,8 +1193,6 @@
 				5D8777070A15555400363BAA /* luabindBindings.h */,
 				5D8777100A15555400363BAA /* MiscClassBindings.cpp */,
 				5D8777110A15555400363BAA /* MiscClassBindings.h */,
-				5D8777290A15555400363BAA /* ScriptKeyManager.cpp */,
-				5D87772A0A15555400363BAA /* ScriptKeyManager.h */,
 				5D87772B0A15555400363BAA /* ScriptManager.cpp */,
 				5D87772C0A15555400363BAA /* ScriptManager.h */,
 			);
@@ -1229,6 +1218,8 @@
 		5DCDB81D0A1AE5080043DCFA /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				5D669E590B858C3E003EE62C /* Map.cpp */,
+				5D669E5A0B858C3E003EE62C /* MapChunk.cpp */,
 				5D8776E40A15555400363BAA /* CollisionData.cpp */,
 				5D8777000A15555400363BAA /* HashedResource.cpp */,
 				5D8777230A15555400363BAA /* PointList.cpp */,
@@ -1237,8 +1228,6 @@
 				5D8777380A15555400363BAA /* TileEntity.cpp */,
 				5D87773C0A15555400363BAA /* VisualProfile.cpp */,
 				5D8777400A15555400363BAA /* VisualResource.cpp */,
-				5D8777420A15555400363BAA /* World.cpp */,
-				5D8777440A15555400363BAA /* WorldChunk.cpp */,
 			);
 			name = Data;
 			sourceTree = "<group>";
@@ -1246,6 +1235,8 @@
 		5DCDB81E0A1AE5CA0043DCFA /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				5D669E500B858BE2003EE62C /* InputManager.cpp */,
+				5D669E510B858BE2003EE62C /* MapManager.cpp */,
 				5D8776E00A15555400363BAA /* Camera.cpp */,
 				5D8776E60A15555400363BAA /* Console.cpp */,
 				5D8776E80A15555400363BAA /* DataManager.cpp */,
@@ -1258,7 +1249,6 @@
 				5D8777300A15555400363BAA /* TagManager.cpp */,
 				5D8777320A15555400363BAA /* TextManager.cpp */,
 				5D87773E0A15555400363BAA /* VisualProfileManager.cpp */,
-				5D8777460A15555400363BAA /* WorldManager.cpp */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -1347,7 +1337,6 @@
 				5DCDB2100A19FEAA0043DCFA /* AppUtils.cpp in Sources */,
 				5DCDB2110A19FEAA0043DCFA /* BaseGameEntity.cpp in Sources */,
 				5DCDB2120A19FEAA0043DCFA /* Brain.cpp in Sources */,
-				5DCDB2130A19FEAA0043DCFA /* BrainPlayer.cpp in Sources */,
 				5DCDB2140A19FEAA0043DCFA /* Camera.cpp in Sources */,
 				5DCDB2150A19FEAA0043DCFA /* CameraSetting.cpp in Sources */,
 				5DCDB2160A19FEAA0043DCFA /* CollisionData.cpp in Sources */,
@@ -1359,7 +1348,6 @@
 				5DCDB21C0A19FEAA0043DCFA /* EntEditor.cpp in Sources */,
 				5DCDB21D0A19FEAA0043DCFA /* EntityBindings.cpp in Sources */,
 				5DCDB21E0A19FEAA0043DCFA /* EntityManager.cpp in Sources */,
-				5DCDB21F0A19FEAA0043DCFA /* EntWorldCache.cpp in Sources */,
 				5DCDB2200A19FEAA0043DCFA /* GameLogic.cpp in Sources */,
 				5DCDB2210A19FEAA0043DCFA /* GeneratorDink.cpp in Sources */,
 				5DCDB2220A19FEAA0043DCFA /* GeneratorSimple.cpp in Sources */,
@@ -1380,7 +1368,6 @@
 				5DCDB2310A19FEAA0043DCFA /* Vector.cpp in Sources */,
 				5DCDB2320A19FEAA0043DCFA /* PointList.cpp in Sources */,
 				5DCDB2330A19FEAA0043DCFA /* Screen.cpp in Sources */,
-				5DCDB2340A19FEAA0043DCFA /* ScriptKeyManager.cpp in Sources */,
 				5DCDB2350A19FEAA0043DCFA /* ScriptManager.cpp in Sources */,
 				5DCDB2360A19FEAA0043DCFA /* TagManager.cpp in Sources */,
 				5DCDB2370A19FEAA0043DCFA /* TextManager.cpp in Sources */,
@@ -1391,9 +1378,6 @@
 				5DCDB23C0A19FEAA0043DCFA /* VisualProfile.cpp in Sources */,
 				5DCDB23D0A19FEAA0043DCFA /* VisualProfileManager.cpp in Sources */,
 				5DCDB23E0A19FEAA0043DCFA /* VisualResource.cpp in Sources */,
-				5DCDB23F0A19FEAA0043DCFA /* World.cpp in Sources */,
-				5DCDB2400A19FEAA0043DCFA /* WorldChunk.cpp in Sources */,
-				5DCDB2410A19FEAA0043DCFA /* WorldManager.cpp in Sources */,
 				5DCDB2420A19FEAA0043DCFA /* class.cpp in Sources */,
 				5DCDB2430A19FEAA0043DCFA /* class_info.cpp in Sources */,
 				5DCDB2440A19FEAA0043DCFA /* class_registry.cpp in Sources */,
@@ -1498,6 +1482,11 @@
 				5D7A781B0B757D74003C896A /* TileBindings.cpp in Sources */,
 				5D7A78200B757D9B003C896A /* StatePain.cpp in Sources */,
 				5D7A78230B757DC0003C896A /* BrainForceVisual.cpp in Sources */,
+				5D669E520B858BE2003EE62C /* InputManager.cpp in Sources */,
+				5D669E530B858BE2003EE62C /* MapManager.cpp in Sources */,
+				5D669E570B858C18003EE62C /* EntMapCache.cpp in Sources */,
+				5D669E5B0B858C3E003EE62C /* Map.cpp in Sources */,
+				5D669E5C0B858C3E003EE62C /* MapChunk.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1508,7 +1497,6 @@
 				5D87774A0A15555400363BAA /* AppUtils.cpp in Sources */,
 				5D87774C0A15555400363BAA /* BaseGameEntity.cpp in Sources */,
 				5D87774E0A15555400363BAA /* Brain.cpp in Sources */,
-				5D8777500A15555400363BAA /* BrainPlayer.cpp in Sources */,
 				5D8777520A15555400363BAA /* Camera.cpp in Sources */,
 				5D8777540A15555400363BAA /* CameraSetting.cpp in Sources */,
 				5D8777560A15555400363BAA /* CollisionData.cpp in Sources */,
@@ -1520,7 +1508,6 @@
 				5D8777620A15555400363BAA /* EntEditor.cpp in Sources */,
 				5D8777640A15555400363BAA /* EntityBindings.cpp in Sources */,
 				5D8777660A15555400363BAA /* EntityManager.cpp in Sources */,
-				5D8777680A15555400363BAA /* EntWorldCache.cpp in Sources */,
 				5D87776A0A15555400363BAA /* GameLogic.cpp in Sources */,
 				5D87776C0A15555400363BAA /* GeneratorDink.cpp in Sources */,
 				5D87776F0A15555400363BAA /* GeneratorSimple.cpp in Sources */,
@@ -1541,7 +1528,6 @@
 				5D8777920A15555400363BAA /* Vector.cpp in Sources */,
 				5D8777940A15555400363BAA /* PointList.cpp in Sources */,
 				5D8777960A15555400363BAA /* Screen.cpp in Sources */,
-				5D8777980A15555400363BAA /* ScriptKeyManager.cpp in Sources */,
 				5D87779A0A15555400363BAA /* ScriptManager.cpp in Sources */,
 				5D87779F0A15555400363BAA /* TagManager.cpp in Sources */,
 				5D8777A10A15555400363BAA /* TextManager.cpp in Sources */,
@@ -1552,9 +1538,6 @@
 				5D8777AB0A15555400363BAA /* VisualProfile.cpp in Sources */,
 				5D8777AD0A15555400363BAA /* VisualProfileManager.cpp in Sources */,
 				5D8777AF0A15555400363BAA /* VisualResource.cpp in Sources */,
-				5D8777B10A15555400363BAA /* World.cpp in Sources */,
-				5D8777B30A15555400363BAA /* WorldChunk.cpp in Sources */,
-				5D8777B50A15555400363BAA /* WorldManager.cpp in Sources */,
 				5D87786D0A1555F600363BAA /* class.cpp in Sources */,
 				5D87786E0A1555F600363BAA /* class_info.cpp in Sources */,
 				5D87786F0A1555F600363BAA /* class_registry.cpp in Sources */,
@@ -1659,6 +1642,11 @@
 				5D7A781E0B757D74003C896A /* TileBindings.cpp in Sources */,
 				5D7A78210B757D9B003C896A /* StatePain.cpp in Sources */,
 				5D7A78240B757DC0003C896A /* BrainForceVisual.cpp in Sources */,
+				5D669E540B858BE2003EE62C /* InputManager.cpp in Sources */,
+				5D669E550B858BE2003EE62C /* MapManager.cpp in Sources */,
+				5D669E580B858C18003EE62C /* EntMapCache.cpp in Sources */,
+				5D669E5D0B858C3E003EE62C /* Map.cpp in Sources */,
+				5D669E5E0B858C3E003EE62C /* MapChunk.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
