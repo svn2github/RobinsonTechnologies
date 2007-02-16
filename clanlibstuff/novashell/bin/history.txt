@@ -169,3 +169,8 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * SetDefaultTextColor renamed to SetDefaultTalkColor, was too similar to SetTextColor
 * Text alignments (used with SetTextAlignment) now correctly scale with camera scale
 * Added Entity:GetTextColor script function
+
+2-16-2007
+
+* Small speed improvements
+* Work on docs...

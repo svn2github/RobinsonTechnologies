@@ -68,7 +68,7 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 			}
 			break;
 
-#ifdef _WIN32
+#ifndef __APPLE__ //we need to fix clanlib to not have different mappings for these...
 		case CL_KEY_PRIOR:
 #else
 	case CL_KEY_PAGE_UP:
