@@ -49,8 +49,8 @@ public:
 
     const CL_Rect *GetWorldRect(); //rect in screenchunks
 	CL_Rect GetWorldRectInPixels(); //full world bounds in rect coordinates
-    int GetWorldX(){return m_mapRect.get_width();}
-    int GetWorldY(){return m_mapRect.get_height();}
+    int GetSizeX(){return m_mapRect.get_width();}
+    int GetSizeY(){return m_mapRect.get_height();}
     int GetXFromScreenID(ScreenID screenID);
     int GetYFromScreenID(ScreenID screenID);
     MapChunk * DoesWorldChunkExist(ScreenID screenID);
@@ -69,14 +69,14 @@ public:
 									//calls SetDirPath on what is sent in
 	bool Save(bool bSaveTagCacheAlso);
 	map_chunk_map * GetChunkMap() {return &m_chunkMap;}
-	int GetWorldChunkPixelSize() {return m_worldChunkPixelSize;}
+	int GetMapChunkPixelSize() {return m_worldChunkPixelSize;}
 	int GetDefaultTileSizeX() {return m_defaultTileSizeX;}
 	int GetDefaultTileSizeY() {return m_uintArray[e_uintDefaultTileSizeY];}
 	void DeleteExistingMap();
 	bool IsInitted() {return m_defaultTileSizeX != 0;}
 	void SetDefaultTileSizeX(int size);
 	void SetDefaultTileSizeY(int size);
-	void SetWorldChunkPixelSize(int widthAndHeight);
+	void SetMapChunkPixelSize(int widthAndHeight);
 	CameraSetting * GetCameraSetting() {return &m_cameraSetting;}
 	CL_Color GetBGColor() {CL_Color color; color.color = m_uintArray[e_uintBGColor]; return color;}
 	void SetBGColor(CL_Color col){m_uintArray[e_uintBGColor] = col.color;}
@@ -90,7 +90,7 @@ public:
 	void SetCacheSensitivity(float sensitivity) {m_floatArray[e_floatCacheSensitivity] = sensitivity; m_bDataChanged = true;}
 	void InvalidateAllThumbnails();
 	void AddTile(Tile *pTile); //adds a tile automatically based on its pos/layer info
-	void GetAllWorldChunksWithinThisRect(std::vector<MapChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks);
+	void GetAllMapChunksWithinThisRect(std::vector<MapChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks);
 	void PreloadMap();
 	LayerManager & GetLayerManager() {return m_layerManager;}
 	bool IsValidCoordinate(CL_Vector2 vec);
@@ -98,7 +98,7 @@ public:
 	const string & GetName(){return m_strMapName;}
 	bool GetSnapEnabled() {return m_byteArray[e_byteSnapOn] != 0;}
 	void SetSnapEnabled(bool bNew) {m_byteArray[e_byteSnapOn] = bNew; m_bDataChanged = true;}
-	void SetMyWorldCache(EntMapCache *pWorldCache);
+	void SetMyMapCache(EntMapCache *pWorldCache);
 	bool GetPersistent() {return m_byteArray[e_byteNotPersistent] == 0;}
 	void SetPersistent(bool bNew) {m_byteArray[e_byteNotPersistent] = !bNew; m_bDataChanged = true;}
 	bool GetAutoSave() {return m_byteArray[e_byteAutoSave] == 0;}

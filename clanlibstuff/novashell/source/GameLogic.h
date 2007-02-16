@@ -173,10 +173,7 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle = true);
 extern TagManager g_TagManager;
 extern CL_VirtualFileManager g_VFManager;
 
-#define GetActiveMap GetApp()->GetMyGameLogic()->GetMyWorldManager()->GetActiveWorld()
-#define GetWorldCache GetApp()->GetMyGameLogic()->GetMyWorldManager()->GetActiveWorldCache()
 #define GetPlayer GetApp()->GetMyGameLogic()->GetMyPlayer()
-#define GetWorldManager GetApp()->GetMyGameLogic()->GetMyWorldManager()
 #define GetTagManager (&g_TagManager)
 
 extern MessageManager g_MessageManager; //I should make the class a singleton. uh.. 

@@ -62,10 +62,10 @@ void EntChooseScreenMode::onButtonDown(const CL_InputEvent &key)
 			int screenID = GetScreenClicked(key.mouse_pos.x, key.mouse_pos.y);
 			if (screenID != C_INVALID_SCREEN)
 			{
-				CL_Vector2 vecPos = GetActiveMap->ScreenIDToWorldPos(screenID);
+				CL_Vector2 vecPos = g_pMapManager->GetActiveWorld()->ScreenIDToWorldPos(screenID);
 				//offset it to the middle of the screen
-				vecPos.x += GetActiveMap->GetWorldChunkPixelSize()/2;
-				vecPos.y += GetActiveMap->GetWorldChunkPixelSize()/2;
+				vecPos.x += g_pMapManager->GetActiveWorld()->GetMapChunkPixelSize()/2;
+				vecPos.y += g_pMapManager->GetActiveWorld()->GetMapChunkPixelSize()/2;
 				GetCamera->SetTargetPosCentered(vecPos);
 				GetCamera->InstantUpdate();
 			}  else
@@ -112,13 +112,13 @@ void EntChooseScreenMode::Init()
 	pEditor->SetTipLabel("Map Info Mode - Click the map to move the camera there.\n"\
 		"\nMove the mouse over a square to see info about it.");
 	
-	if (GetActiveMap)
+	if (g_pMapManager->GetActiveWorld())
 	{
 
 	
-		if (GetActiveMap->GetThumbnailWidth() != 0)
+		if (g_pMapManager->GetActiveWorld()->GetThumbnailWidth() != 0)
 		{
-			CL_PixelBuffer pb(GetActiveMap->GetThumbnailWidth(), GetActiveMap->GetThumbnailHeight(), GetActiveMap->GetThumbnailWidth()*3, C_THUMBNAIL_FORMAT);
+			CL_PixelBuffer pb(g_pMapManager->GetActiveWorld()->GetThumbnailWidth(), g_pMapManager->GetActiveWorld()->GetThumbnailHeight(), g_pMapManager->GetActiveWorld()->GetThumbnailWidth()*3, C_THUMBNAIL_FORMAT);
 			m_pThumb = new CL_Surface(pb);
 			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 
@@ -149,7 +149,7 @@ void EntChooseScreenMode::QuickInit()
 
 void EntChooseScreenMode::OnClearThumbnails()
 {
-	GetActiveMap->InvalidateAllThumbnails();
+	g_pMapManager->GetActiveWorld()->InvalidateAllThumbnails();
 	GenerateThumbnailsIfNeeded();
 }
 
@@ -162,9 +162,9 @@ void EntChooseScreenMode::OnAutoResize()
 {
 	BlitMessage("Removing blank space and saving map...");
 	
-	GetActiveMap->ForceSaveNow();
-	GetActiveMap->Load();
-	GetActiveMap->RemoveUnusedFileChunks();
+	g_pMapManager->GetActiveWorld()->ForceSaveNow();
+	g_pMapManager->GetActiveWorld()->Load();
+	g_pMapManager->GetActiveWorld()->RemoveUnusedFileChunks();
 	QuickInit();
 
 }
@@ -178,12 +178,12 @@ void EntChooseScreenMode::GenerateThumbnailsIfNeeded()
 
 	m_thumbList.clear();
 
-    if (!GetActiveMap)
+    if (!g_pMapManager->GetActiveWorld())
 	{
 		//no active world
 		return;
 	}
-	map_chunk_map *pWorldMap = GetActiveMap->GetChunkMap();
+	map_chunk_map *pWorldMap = g_pMapManager->GetActiveWorld()->GetChunkMap();
 	map_chunk_map::const_iterator itor = pWorldMap->begin();
 
 	while (itor != pWorldMap->end())
@@ -200,24 +200,24 @@ void EntChooseScreenMode::CalculateMapSizes()
 {
 	m_blockSize = CL_Rect(0,0,128, 128);
 
-	if (GetActiveMap)
+	if (g_pMapManager->GetActiveWorld())
 	{
 
 	
 		//adjust the size if needed to fit more blocks on the screen
 
-		if ( m_blockSize.right*GetActiveMap->GetWorldX() > GetScreenX)
+		if ( m_blockSize.right*g_pMapManager->GetActiveWorld()->GetSizeX() > GetScreenX)
 		{
-			m_blockSize.right = GetScreenX/GetActiveMap->GetWorldX();
+			m_blockSize.right = GetScreenX/g_pMapManager->GetActiveWorld()->GetSizeX();
 		}
 
-		if (m_blockSize.bottom*GetActiveMap->GetWorldY() > (GetScreenY - C_OFFSET_FROM_TOP_OF_SCREEN))
+		if (m_blockSize.bottom*g_pMapManager->GetActiveWorld()->GetSizeY() > (GetScreenY - C_OFFSET_FROM_TOP_OF_SCREEN))
 		{
-			m_blockSize.bottom = (GetScreenY-C_OFFSET_FROM_TOP_OF_SCREEN) /GetActiveMap->GetWorldY();
+			m_blockSize.bottom = (GetScreenY-C_OFFSET_FROM_TOP_OF_SCREEN) /g_pMapManager->GetActiveWorld()->GetSizeY();
 		}
 	}
 
-	if (GetActiveMap)
+	if (g_pMapManager->GetActiveWorld())
 	{
 
 	
@@ -226,10 +226,10 @@ void EntChooseScreenMode::CalculateMapSizes()
 	m_blockSize.right = m_blockSize.bottom;
 
 
-	m_drawOffset.x = m_blockSize.right * GetActiveMap->GetWorldX();
+	m_drawOffset.x = m_blockSize.right * g_pMapManager->GetActiveWorld()->GetSizeX();
 	m_drawOffset.x = (GetScreenX-m_drawOffset.x)/2;
 
-	m_drawOffset.y = GetScreenY - (m_blockSize.bottom* GetActiveMap->GetWorldY());
+	m_drawOffset.y = GetScreenY - (m_blockSize.bottom* g_pMapManager->GetActiveWorld()->GetSizeY());
 	} else
 	{
 
@@ -251,13 +251,13 @@ int EntChooseScreenMode::GetScreenClicked(int x, int y)
     pt.x /= m_blockSize.right;
     pt.y /= m_blockSize.bottom;
 	
-    if (pt.x < 0 || pt.x >= GetActiveMap->GetWorldX()) return C_INVALID_SCREEN;
-    if (pt.y < 0 || pt.y >= GetActiveMap->GetWorldY()) return C_INVALID_SCREEN;
+    if (pt.x < 0 || pt.x >= g_pMapManager->GetActiveWorld()->GetSizeX()) return C_INVALID_SCREEN;
+    if (pt.y < 0 || pt.y >= g_pMapManager->GetActiveWorld()->GetSizeY()) return C_INVALID_SCREEN;
 	
-	pt.x += GetActiveMap->GetWorldRect()->left;
-	pt.y += GetActiveMap->GetWorldRect()->top;
+	pt.x += g_pMapManager->GetActiveWorld()->GetWorldRect()->left;
+	pt.y += g_pMapManager->GetActiveWorld()->GetWorldRect()->top;
 
-    return GetActiveMap->GetScreenID(pt.x, pt.y);
+    return g_pMapManager->GetActiveWorld()->GetScreenID(pt.x, pt.y);
 }
 
 
@@ -267,13 +267,13 @@ void EntChooseScreenMode::DrawBlock(int x, int y)
     drawRect += CL_Point( x*m_blockSize.right, y*m_blockSize.bottom);
     drawRect += m_drawOffset;
    
-	x += GetActiveMap->GetWorldRect()->left;
-	y += GetActiveMap->GetWorldRect()->top;
+	x += g_pMapManager->GetActiveWorld()->GetWorldRect()->left;
+	y += g_pMapManager->GetActiveWorld()->GetWorldRect()->top;
 
-	ScreenID screenID = GetActiveMap->GetScreenID(x,y);
+	ScreenID screenID = g_pMapManager->GetActiveWorld()->GetScreenID(x,y);
 	MapChunk *pWorldChunk;
 
-    if (pWorldChunk = GetActiveMap->DoesWorldChunkExist(screenID))
+    if (pWorldChunk = g_pMapManager->GetActiveWorld()->DoesWorldChunkExist(screenID))
     {
   		if (pWorldChunk->GetThumbnail() && m_pThumb)
         {
@@ -316,10 +316,10 @@ void EntChooseScreenMode::SetupInfoPanel(ScreenID screenID)
 	if (screenID != C_INVALID_SCREEN)
 	{
 		st = "Screen ID: " + CL_String::from_int(screenID) + " (X: "
-			+ CL_String::to(GetActiveMap->GetXFromScreenID(screenID)) + " Y: "
-			+ CL_String::to(GetActiveMap->GetYFromScreenID(screenID)) + ")\n";
+			+ CL_String::to(g_pMapManager->GetActiveWorld()->GetXFromScreenID(screenID)) + " Y: "
+			+ CL_String::to(g_pMapManager->GetActiveWorld()->GetYFromScreenID(screenID)) + ")\n";
 		
-		if (! (pChunk =GetActiveMap->DoesWorldChunkExist(screenID)))
+		if (! (pChunk =g_pMapManager->GetActiveWorld()->DoesWorldChunkExist(screenID)))
 		{
 			st += "Doesn't exist\n";
 		} else
@@ -335,9 +335,9 @@ void EntChooseScreenMode::SetupInfoPanel(ScreenID screenID)
 		}
 	} else
 	{
-		if (GetActiveMap)
+		if (g_pMapManager->GetActiveWorld())
 		{
-			st = CL_String::from_int(GetActiveMap->GetChunkMap()->size()) + " screens exist.";
+			st = CL_String::from_int(g_pMapManager->GetActiveWorld()->GetChunkMap()->size()) + " screens exist.";
 		}
 	}
 	
@@ -377,7 +377,7 @@ void EntChooseScreenMode::DrawViewScreenOverlay()
 CL_Vector2 EntChooseScreenMode::WorldToScreen(CL_Vector2 vecWorldPos)
 {
 
-	Map *pWorld = GetActiveMap;
+	Map *pWorld = g_pMapManager->GetActiveWorld();
 
 	ScreenID screenID = pWorld->GetScreenIDFromWorld(vecWorldPos);
 
@@ -393,8 +393,8 @@ CL_Vector2 EntChooseScreenMode::WorldToScreen(CL_Vector2 vecWorldPos)
 	vecFinal.y += m_drawOffset.y;
 
 	//now figure out the in-between block part, first a ratio between 0 and 1
-	float offsetX = float(altmod(vecWorldPos.x, pWorld->GetWorldChunkPixelSize())) / pWorld->GetWorldChunkPixelSize();  
-	float offsetY = float(altmod(vecWorldPos.y, pWorld->GetWorldChunkPixelSize())) / pWorld->GetWorldChunkPixelSize();  
+	float offsetX = float(altmod(vecWorldPos.x, pWorld->GetMapChunkPixelSize())) / pWorld->GetMapChunkPixelSize();  
+	float offsetY = float(altmod(vecWorldPos.y, pWorld->GetMapChunkPixelSize())) / pWorld->GetMapChunkPixelSize();  
 	//LogMsg("OffsetX: %.2f", offsetX);
 
 	vecFinal.x += float(m_blockSize.right)*offsetX;
@@ -413,10 +413,10 @@ void EntChooseScreenMode::ProcessNextThumb()
 	{
 		//keep generating thumbnails little by little
 		ScreenID screenID = m_thumbList.front();
-		if (GetActiveMap->DoesWorldChunkExist(screenID))
+		if (g_pMapManager->GetActiveWorld()->DoesWorldChunkExist(screenID))
 		{
 			//it still exists, yay
-			bGeneratedThumb = GetWorldCache->GenerateThumbnail(screenID);
+			bGeneratedThumb = g_pMapManager->GetActiveMapCache()->GenerateThumbnail(screenID);
 		}
 
 		m_thumbList.pop_front();
@@ -449,9 +449,9 @@ void EntChooseScreenMode::Render(void *pTarget)
 	CalculateMapSizes(); //should be moved later, it's so it resizes in realtime after blocks are added
     
 
-	for (int x=0; x < GetActiveMap->GetWorldX(); x++)
+	for (int x=0; x < g_pMapManager->GetActiveWorld()->GetSizeX(); x++)
     {
-        for (int y=0; y < GetActiveMap->GetWorldY(); y++)
+        for (int y=0; y < g_pMapManager->GetActiveWorld()->GetSizeY(); y++)
         {
              DrawBlock(x, y);
         }

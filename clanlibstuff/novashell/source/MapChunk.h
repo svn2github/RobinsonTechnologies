@@ -44,7 +44,7 @@ public:
 	bool IsScreenLoaded() {return m_pScreen != NULL;}
 	bool IsEmpty(); //if true, this map is totally empty, no need to load/save it
 	void UnloadScreen();
-	Map * GetParentWorld() {return m_pParent;}
+	Map * GetParentMap() {return m_pParent;}
 	void KillThumbnail();
 	const CL_Rect & GetRect();
 	bool GetChunkDataChanged() {return m_bChunkDataChanged;} //applies only to this class

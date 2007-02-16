@@ -68,7 +68,7 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 {
 	if (bInsideRegion)
 	{		
-		m_pParent->GetTile()->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyMapCache()->AddActiveTrigger(m_pParent->ID());
+		m_pParent->GetTile()->GetParentScreen()->GetParentMapChunk()->GetParentMap()->GetMyMapCache()->AddActiveTrigger(m_pParent->ID());
 		
 		//currently inside it
 			if (m_state == STATE_OUTSIDE)

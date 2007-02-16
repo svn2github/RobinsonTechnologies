@@ -8,10 +8,10 @@ GeneratorSimple::GeneratorSimple()
 
 void GeneratorSimple::GenerateInit()
 {
-    assert(GetActiveMap && "World must be initted before this is called");
-	m_genX = GetActiveMap->GetWorldRect()->left;
-	m_genY = GetActiveMap->GetWorldRect()->top;
-	m_worldRect = *GetActiveMap->GetWorldRect(); //cache our own copy, in case it changes in mid-generation
+    assert(g_pMapManager->GetActiveWorld() && "World must be initted before this is called");
+	m_genX = g_pMapManager->GetActiveWorld()->GetWorldRect()->left;
+	m_genY = g_pMapManager->GetActiveWorld()->GetWorldRect()->top;
+	m_worldRect = *g_pMapManager->GetActiveWorld()->GetWorldRect(); //cache our own copy, in case it changes in mid-generation
 }
 
 
@@ -20,7 +20,7 @@ void GeneratorSimple::GenerateInit()
 bool GeneratorSimple::GenerateStep()
 {
     //init and create the screen 
-    Screen *pScreen = GetActiveMap->GetScreen(m_genX, m_genY);
+    Screen *pScreen = g_pMapManager->GetActiveWorld()->GetScreen(m_genX, m_genY);
     if (!pScreen) throw CL_Error("Failing creating a screen");
 
     GenerateScreen(pScreen, m_genX, m_genY);
@@ -52,9 +52,9 @@ void GeneratorSimple::GenerateScreen(Screen *pScreen, int x, int y)
 	for (int i=0; i < 20; i++)
 	{
 		   pTile = new TilePic;
-		   CL_Vector2 vecPos = GetActiveMap->ScreenIDToWorldPos(pScreen->GetParentWorldChunk()->GetScreenID());
-   		   vecPos.x += random(GetActiveMap->GetWorldChunkPixelSize());
-		   vecPos.y += random(GetActiveMap->GetWorldChunkPixelSize());
+		   CL_Vector2 vecPos = g_pMapManager->GetActiveWorld()->ScreenIDToWorldPos(pScreen->GetParentMapChunk()->GetScreenID());
+   		   vecPos.x += random(g_pMapManager->GetActiveWorld()->GetMapChunkPixelSize());
+		   vecPos.y += random(g_pMapManager->GetActiveWorld()->GetMapChunkPixelSize());
 		   pTile->m_resourceID = FileNameToID("cosmo");
   		   CL_Surface *pSurf = GetHashedResourceManager->GetResourceByHashedID(pTile->m_resourceID);
 
@@ -76,7 +76,7 @@ void GeneratorSimple::GenerateScreen(Screen *pScreen, int x, int y)
 		   pTile->SetPos(vecPos);
 		   pTile->SetLayer(C_LAYER_MAIN);
 
-		   GetActiveMap->AddTile(pTile); //automatically puts it in the right place
+		   g_pMapManager->GetActiveWorld()->AddTile(pTile); //automatically puts it in the right place
 	}
     //LogMsg("There are %d shapes", pScreen->GetShapeCount());
 

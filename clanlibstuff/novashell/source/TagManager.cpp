@@ -109,7 +109,7 @@ void TagManager::Update(Map *pWorld, MovingEntity *pEnt)
 
 			//LogMsg("Conflict, tagname %s already in use.  Making unique name %s.", pEnt->GetName().c_str(),
 			//	newName.c_str());
-			pEnt->GetTile()->GetParentScreen()->GetParentWorldChunk()->SetDataChanged(true);
+			pEnt->GetTile()->GetParentScreen()->GetParentMapChunk()->SetDataChanged(true);
 			pEnt->SetNameEx(newName, false);
 			return;
 

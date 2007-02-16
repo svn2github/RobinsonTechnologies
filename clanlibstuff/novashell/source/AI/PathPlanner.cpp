@@ -18,7 +18,7 @@
 //---------------------------- ctor -------------------------------------------
 //-----------------------------------------------------------------------------
 PathPlanner::PathPlanner(MovingEntity* owner):m_pOwner(owner),
-			   m_pWorld(m_pOwner->GetTile()->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()),
+			   m_pWorld(m_pOwner->GetTile()->GetParentScreen()->GetParentMapChunk()->GetParentMap()),
                m_NavGraph(m_pWorld->GetNavGraph()->GetGraph()),
 			  
                m_pCurrentSearch(NULL)

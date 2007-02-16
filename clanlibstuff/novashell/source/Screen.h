@@ -42,7 +42,7 @@ public:
 	tile_list * GetTileList(unsigned int layer); //get tiles on this layer
 	layer_list * GetLayerList() {return &m_vecLayerList;}
 	bool IsEmpty(); //returns true if there is absolutely nothing in the screen
-	MapChunk * GetParentWorldChunk();
+	MapChunk * GetParentMapChunk();
 	bool Save();
 	bool Load();
 	std::string GetFileName(); //the filename of our datafile (if we've saved)
@@ -63,7 +63,7 @@ private:
   void DeleteTileData();
   void RemoveTileByItor(tile_list::iterator &itor, unsigned int layer); //the itor will contain the next valid itor after the erase
 
-  MapChunk *m_pParentWorldChunk; //the worldchunk that owns us, not saved, but set when  loaded
+  MapChunk *m_pParentMapChunk; //the worldchunk that owns us, not saved, but set when  loaded
   layer_list m_vecLayerList;
 
   bool m_bIsEmpty;

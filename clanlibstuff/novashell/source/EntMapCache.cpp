@@ -62,7 +62,7 @@ void EntMapCache::SetWorld( Map * pWorld)
 	//assert(!m_pWorld && "Um, I didn't plan on reinitting these..");
 
 	m_pWorld = pWorld;
-	pWorld->SetMyWorldCache(this);
+	pWorld->SetMyMapCache(this);
 
 	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntMapCache::OnMapChange);
 	} else
@@ -157,7 +157,7 @@ bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 		return false;
 	}
 
-	Map *pWorld = pWorldChunk->GetParentWorld();
+	Map *pWorld = pWorldChunk->GetParentMap();
 	short width = pWorld->GetThumbnailWidth();
 	short height = pWorld->GetThumbnailHeight();
 
@@ -183,12 +183,12 @@ bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 	//setup cam to render stuff in the perfect position
 	GetCamera->SetTargetPos(CL_Vector2(pWorldChunk->GetRect().left, pWorldChunk->GetRect().top));
 	GetCamera->InstantUpdate();
-	CL_Vector2 vecScale(float(GetScreenX)/float(pWorld->GetWorldChunkPixelSize()),
-		float(GetScreenY)/float(pWorld->GetWorldChunkPixelSize()));
+	CL_Vector2 vecScale(float(GetScreenX)/float(pWorld->GetMapChunkPixelSize()),
+		float(GetScreenY)/float(pWorld->GetMapChunkPixelSize()));
 
 	//hack it up to only draw to the upper left at the size we want
-	vecScale.x = float(rectSrc.right)/float(pWorld->GetWorldChunkPixelSize());
-	vecScale.y = float(rectSrc.bottom)/float(pWorld->GetWorldChunkPixelSize());
+	vecScale.x = float(rectSrc.right)/float(pWorld->GetMapChunkPixelSize());
+	vecScale.y = float(rectSrc.bottom)/float(pWorld->GetMapChunkPixelSize());
 	GetCamera->SetScaleRaw(vecScale);
 
 
@@ -220,7 +220,7 @@ bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 
 bool compareTileByLayer(const Tile *pA, const Tile *pB) 
 {
-	LayerManager *pLayerManager = &GetActiveMap->GetLayerManager();
+	LayerManager *pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
 
 	return pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort() <
 		pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
@@ -340,7 +340,7 @@ void EntMapCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vec
 	//get all screens that we'll be able to see
 
 	m_worldChunkVector.clear();
-	m_pWorld->GetAllWorldChunksWithinThisRect(m_worldChunkVector, viewRect, false);
+	m_pWorld->GetAllMapChunksWithinThisRect(m_worldChunkVector, viewRect, false);
 
 	tile_list *pTileList;
 	tile_list::iterator tileListItor;
@@ -568,14 +568,14 @@ void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThu
 	//LogMsg("Viewrect is %s.  Drawing %d tiles", PrintRect(viewRect).c_str(), m_tileLayerDrawList.size());
 	//sort the tiles/entities we're going to draw by layer
 	
-	g_pLayerManager = &GetActiveMap->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
 	
 	std::sort(m_tileLayerDrawList.begin(), m_tileLayerDrawList.end(), compareTileBySortLevelOptimized);
 
 	if (m_bDrawWorldChunkGrid)
 	{
 		m_worldChunkVector.clear();
-		m_pWorld->GetAllWorldChunksWithinThisRect(m_worldChunkVector, viewRect, false);
+		m_pWorld->GetAllMapChunksWithinThisRect(m_worldChunkVector, viewRect, false);
 	}
 
 }
@@ -746,7 +746,7 @@ void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 
 	int renderStart = 0;
 	int curSort = -99999;
-	LayerManager *pLayerManager = &GetActiveMap->GetLayerManager();
+	LayerManager *pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
 	int sort;
 
 	unsigned int i;
@@ -835,7 +835,7 @@ void EntMapCache::Update(float step)
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 	ClearTriggers();
 
-	if (m_pWorld != GetActiveMap)
+	if (m_pWorld != g_pMapManager->GetActiveWorld())
 	{
 		//we no longer have focus, don't bother doing our AI
 		return;

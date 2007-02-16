@@ -172,7 +172,7 @@ void MapChunk::SetScreenID(ScreenID screenID)
 	 CL_Vector2 vecUpLeft = m_pParent->ScreenIDToWorldPos(screenID);
 	 m_rect.left = vecUpLeft.x;
 	 m_rect.top = vecUpLeft.y;
-	 m_rect.set_size( CL_Size(m_pParent->GetWorldChunkPixelSize(),m_pParent->GetWorldChunkPixelSize()));
+	 m_rect.set_size( CL_Size(m_pParent->GetMapChunkPixelSize(),m_pParent->GetMapChunkPixelSize()));
 }
 const CL_Rect & MapChunk::GetRect()
 {

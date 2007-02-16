@@ -26,9 +26,9 @@ using namespace luabind;
 
 CL_Vector2 ScreenToWorld(CL_Vector2 v)
 {
-	if (GetActiveMap)
+	if (g_pMapManager->GetActiveWorld())
 	{
-		return GetWorldCache->ScreenToWorld(v);
+		return g_pMapManager->GetActiveMapCache()->ScreenToWorld(v);
 	}	
 
 	LogMsg("ScreenToWorld error: No world active");
@@ -38,9 +38,9 @@ CL_Vector2 ScreenToWorld(CL_Vector2 v)
 
 CL_Vector2 WorldToScreen(CL_Vector2 v)
 {
-	if (GetActiveMap)
+	if (g_pMapManager->GetActiveWorld())
 	{
-		return GetWorldCache->WorldToScreen(v);
+		return g_pMapManager->GetActiveMapCache()->WorldToScreen(v);
 	} 
 
 	LogMsg("WorldToScreen error: No world active");
@@ -55,18 +55,18 @@ MovingEntity * GetEntityByID(int ID)
 
 MovingEntity * GetEntityByName(const string &name)
 {
-	TagObject *t = GetTagManager->GetFromString(name);
+	TagObject *t = g_TagManager.GetFromString(name);
 	if (!t) return NULL; //can't find it?
 	if (t->m_entID == 0)
 	{
 		//let's load it right now
-		GetWorldManager->LoadMap(t->m_pWorld->GetDirPath(), false);
+		g_pMapManager->LoadMap(t->m_pWorld->GetDirPath(), false);
 		t->m_pWorld->PreloadMap();
 
 		if (t->m_entID == 0)
 		{
 			LogMsg("GetEntityByName: Entity %s couldn't be located.  Outdated tag? Removing it.", name.c_str());
-			GetTagManager->RemoveByHashID(t->m_hashID, 0);
+			g_TagManager.RemoveByHashID(t->m_hashID, 0);
 			return NULL; //not loaded yet
 		}
 	}
@@ -141,7 +141,7 @@ Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerID
 
 MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, bool bPixelAccurate)
 {
-	if (!GetActiveMap)
+	if (!g_pMapManager->GetActiveWorld())
 	{
 
 		LogMsg("GetEntityByWorldPos: Error, no map is active right now.");
@@ -155,10 +155,10 @@ MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, boo
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	GetWorldCache->AddTilesByRect(recArea, &tileList, GetActiveMap->GetLayerManager().GetDrawList());
+	g_pMapManager->GetActiveMapCache()->AddTilesByRect(recArea, &tileList, g_pMapManager->GetActiveWorld()->GetLayerManager().GetDrawList());
 
 	//now we need to sort them
-	g_pLayerManager = &GetActiveMap->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
 	tileList.sort(compareTileBySortLevelOptimized);
 
 	tile_list::reverse_iterator itor = tileList.rbegin();

@@ -6,15 +6,20 @@
 #include "AI/WorldNavManager.h"
 #include "AI/WatchManager.h"
 
+MapManager *g_pMapManager; //global pointer for speed
+
 MapManager::MapManager()
 {
 	m_pActiveMap = NULL;
 	m_pActiveMapCache = NULL;
+	g_pMapManager = this;
+
 }
 
 MapManager::~MapManager()
 {
 	Kill();
+	g_pMapManager = NULL;
 }
 
 void MapManager::ScanDirToAddMaps(const string &stPath, const string &stLocalPath)
@@ -35,7 +40,7 @@ void MapManager::ScanDirToAddMaps(const string &stPath, const string &stLocalPat
 
 					if (!IsMapScanned(scanner.get_name()))
 					{
-						AddWorld(stLocalPath+scanner.get_name());
+						AddMap(stLocalPath+scanner.get_name());
 					} else
 					{
 						//LogMsg("Ignoring additional %s", scanner.get_name().c_str());
@@ -87,11 +92,11 @@ void MapManager::Kill()
 	m_pActiveMap = NULL;
 	m_pActiveMapCache = NULL;
 
-	GetTagManager->Kill();
+	g_TagManager.Kill();
 }
 
 
-bool MapManager::AddWorld(string stPath)
+bool MapManager::AddMap(string stPath)
 {
 
 	//add the trailing backslash if required
@@ -117,7 +122,7 @@ bool MapManager::AddWorld(string stPath)
 		//2. We don't have a local copy of that world.  If we did, we wouldn't
 		//care what something we were modding has to say about it
 
-		GetTagManager->Load(&pWorldInfo->m_world);
+		g_TagManager.Load(&pWorldInfo->m_world);
 	}
 	
 	m_mapInfoList.push_back(pWorldInfo);
@@ -167,7 +172,7 @@ bool MapManager::LoadMap(string stPath, bool bSetActiveIfNoneIs)
 
 	if (!m_pActiveMap && bSetActiveIfNoneIs)
 	{
-		SetActiveWorldByPath(stPath);
+		SetActiveMapByPath(stPath);
 	}
  	return true;
 }
@@ -193,7 +198,7 @@ void MapManager::PreloadAllMaps()
 	map_info_list::iterator itor =m_mapInfoList.begin();
 	while (itor != m_mapInfoList.end())
 	{
-		SetActiveWorldByPath((*itor)->m_world.GetDirPath());
+		SetActiveMapByPath((*itor)->m_world.GetDirPath());
 		itor++;
 	}
 }
@@ -249,7 +254,7 @@ MapInfo * MapManager::GetMapInfoByName(const string &stName)
 	//failed
 	return NULL;
 }
-void MapManager::UnloadWorldByName(const string &stName)
+void MapManager::UnloadMapByName(const string &stName)
 {
 
 	map_info_list::iterator itor =m_mapInfoList.begin();
@@ -279,7 +284,7 @@ void MapManager::UnloadWorldByName(const string &stName)
 	if (!worldPath.empty())
 	{
 		//well, even though we deleted it, let's put it back without loading it so future things can find it by name
-		AddWorld(worldPath);
+		AddMap(worldPath);
 	}
 
 	if (bMapChanged)
@@ -302,7 +307,7 @@ bool MapManager::SetActiveMapByName(const string &stName)
 		return false;
 	}
 
-	SetActiveWorldByPath(pWorldInfo->m_world.GetDirPath());
+	SetActiveMapByPath(pWorldInfo->m_world.GetDirPath());
 	return true;
 }
 
@@ -310,7 +315,7 @@ bool MapManager::SetActiveMapByName(const string &stName)
 //if pCameraSettings isn't null, we just use it and don't allow maps to 'remember'.  If null,
 //it's probably the editor and we DO want to remember with that
 
-bool MapManager::SetActiveWorldByPath(const string &stPath, CameraSetting *pCameraSetting) 
+bool MapManager::SetActiveMapByPath(const string &stPath, CameraSetting *pCameraSetting) 
 {
 
 MapInfo *pWorldInfo = GetMapInfoByPath(stPath);
@@ -340,7 +345,7 @@ MapInfo *pWorldInfo = GetMapInfoByPath(stPath);
 		if (!m_pActiveMap->IsInitted())
 		{
 			LoadMap(stPath);
-			GetActiveMap->PreloadMap(); //later we might not want to do this...
+			g_pMapManager->GetActiveWorld()->PreloadMap(); //later we might not want to do this...
 		}
 
 		if (!pCameraSetting)
@@ -370,7 +375,7 @@ void MapManager::Render()
     if (m_pActiveMapCache) m_pActiveMapCache->Render(GetApp()->GetMainWindow()->get_gc());
 }
 
-EntMapCache * MapManager::GetActiveWorldCache()
+EntMapCache * MapManager::GetActiveMapCache()
 {
 //	assert(m_pActiveWorldCache && "Uh oh");
 	return m_pActiveMapCache;

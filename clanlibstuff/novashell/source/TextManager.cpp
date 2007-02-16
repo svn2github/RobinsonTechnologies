@@ -196,7 +196,7 @@ bool TextObject::UpdateCustom()
 	
 	if (GetMode() == CUSTOM)
 	{
-		entPos = GetWorldCache->WorldToScreen(m_worldPos);
+		entPos = g_pMapManager->GetActiveMapCache()->WorldToScreen(m_worldPos);
 	} else
 	{
 		entPos = m_worldPos;
@@ -216,7 +216,7 @@ bool TextObject::Update()
 
 	if (m_pEntity)
 	{
-		if (m_pEntity->GetTile()->GetParentScreen()->GetParentWorldChunk()->GetParentWorld() != GetActiveMap)
+		if (m_pEntity->GetTile()->GetParentScreen()->GetParentMapChunk()->GetParentMap() != g_pMapManager->GetActiveWorld())
 		{
 			m_bVisible = false;
 			return true;

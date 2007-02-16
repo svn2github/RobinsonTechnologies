@@ -82,7 +82,7 @@ void WorldNavManager::LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc)
 
 	if (!pTagSrc->m_pWorld->IsInitted())
 	{
-		GetWorldManager->LoadMap(pTagSrc->m_pWorld->GetDirPath(), false);
+		g_pMapManager->LoadMap(pTagSrc->m_pWorld->GetDirPath(), false);
 		pTagSrc->m_pWorld->PreloadMap();
 	}
 	for (itor = pTagSrc->m_pWorld->GetWarpTagHashList().begin(); itor != pTagSrc->m_pWorld->GetWarpTagHashList().end(); itor++)
@@ -201,7 +201,7 @@ int WorldNavManager::ConvertMapNodeToWorldNode(Map *pMap, int mapNode)
 	NavGraphNodeExtra &n = pMap->GetNavGraph()->GetGraph().GetNode( mapNode);
 	MovingEntity *pNodeOwnerEnt = (MovingEntity*)EntityMgr->GetEntityFromID(n.GetEntID());
 	assert(pNodeOwnerEnt && "didn't you know this should always exist?  Maybe the original node wasn't a named entity");
-	TagObject *pTag = GetTagManager->GetFromHash(pNodeOwnerEnt->GetNameHash());
+	TagObject *pTag = g_TagManager.GetFromHash(pNodeOwnerEnt->GetNameHash());
 	if (!pTag)
 	{
 			LogError("ConvertMapNodeToWorldNode: %s missing tagcache data.  It should be a named entity", pNodeOwnerEnt->GetName().c_str());
@@ -242,7 +242,7 @@ MovingEntity * WorldNavManager::ConvertWorldNodeToOwnerEntity(int nodeID, bool b
 		if (!pTag->m_pWorld->IsInitted())
 		{
 			//uh oh, we're probably going to need this
-			GetWorldManager->LoadMap(pTag->m_pWorld->GetDirPath(), false);
+			g_pMapManager->LoadMap(pTag->m_pWorld->GetDirPath(), false);
 			pTag->m_pWorld->PreloadMap();
 		}
 	}

@@ -225,7 +225,7 @@ void MovingEntity::SetLayerID(int id)
 
 Map * MovingEntity::GetMap()
 {
-	return m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	return m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 }
 
 CL_Vector2 MovingEntity::GetCollisionScale()
@@ -574,7 +574,7 @@ void MovingEntity::SetNameEx(const std::string &name, bool bRemoveOldTag)
 	if (IsPlaced())
 	{
 		if (bRemoveOldTag)
-		GetTagManager->Remove(this);
+		g_TagManager.Remove(this);
 		BaseGameEntity::SetName(name);
 
 		if (name.empty())
@@ -583,7 +583,7 @@ void MovingEntity::SetNameEx(const std::string &name, bool bRemoveOldTag)
 		} else
 		{
 			m_hashedName = HashString(name.c_str());
-			GetTagManager->Update(GetMap(), this);
+			g_TagManager.Update(GetMap(), this);
 		}
 	} else
 	{
@@ -779,7 +779,7 @@ string MovingEntity::ProcessPathNoScript(const string &st)
 
 int MovingEntity::PlaySoundPositioned(const string &fName)
 {
-	if (GetActiveMap != GetMap())
+	if (g_pMapManager->GetActiveWorld() != GetMap())
 	{
 		//we're not in the same map
 		return C_SOUND_NONE;
@@ -824,7 +824,7 @@ void MovingEntity::SetPos(const CL_Vector2 &new_pos)
 
 bool MovingEntity::SetPosAndMapByTagName(const string &name)
 {
-	TagObject *pO = GetTagManager->GetFromString(name);
+	TagObject *pO = g_TagManager.GetFromString(name);
 
 	if (!pO)
 	{
@@ -850,7 +850,7 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName)
 {
 
-	if (worldName != m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetName())
+	if (worldName != m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap()->GetName())
 	{
 //		LogMsg("Changing world to %s", worldName.c_str());
 		//we also need to move it to a new world
@@ -1386,11 +1386,11 @@ void MovingEntity::UpdateTilePosition()
 
 	if (m_bMovedFlag)
 	{
-		Map *pWorldToMoveTo = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+		Map *pWorldToMoveTo = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 		
 		if (!m_strWorldToMoveTo.empty())
 		{
-			 MapInfo *pInfo = GetWorldManager->GetMapInfoByName(m_strWorldToMoveTo);
+			 MapInfo *pInfo = g_pMapManager->GetMapInfoByName(m_strWorldToMoveTo);
 
 			 if (pInfo)
 			 {
@@ -1398,7 +1398,7 @@ void MovingEntity::UpdateTilePosition()
 				//load it if needed
 				 if (!pInfo->m_world.IsInitted())
 				 {
-					 GetWorldManager->LoadMap(pInfo->m_world.GetDirPath(), false);
+					 g_pMapManager->LoadMap(pInfo->m_world.GetDirPath(), false);
 					 pInfo->m_world.PreloadMap();
 
 				 }
@@ -1413,7 +1413,7 @@ void MovingEntity::UpdateTilePosition()
 				{
 					 //the camera should follow the entity
 					CameraSetting cs = GetCamera->GetCameraSettings();
-					GetWorldManager->SetActiveWorldByPath(pInfo->m_world.GetDirPath(),&cs);
+					g_pMapManager->SetActiveMapByPath(pInfo->m_world.GetDirPath(),&cs);
 				}
 			 } else
 			 {
@@ -1965,7 +1965,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 	m_scanArea.right += padding;
 	m_scanArea.bottom += padding;
 
-	Map *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	Map *pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 
 	pWorld->GetMyMapCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
 	
@@ -2009,7 +2009,7 @@ void MovingEntity::RenderShadow(void *pTarget)
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
 
-	pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 	pWorldCache = pWorld->GetMyMapCache();
 
 	vecPos = pWorldCache->WorldToScreen(vVisualPos);
@@ -2127,7 +2127,7 @@ void MovingEntity::Render(void *pTarget)
 		static bool bUseParallax;
 		static Layer *pLayer;
 		static Map *pWorld;
-		pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+		pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 		static EntMapCache *pWorldCache;
 		static CL_Vector2 vecPos;
 
@@ -2451,7 +2451,7 @@ void MovingEntity::ApplyPhysics(float step)
 	if (!GetBody()->IsUnmovable() && GetCollisionData())
 	{
 		//the draw ID let's other objects know that we've already processed
-		m_drawID = GetWorldCache->GetUniqueDrawID();
+		m_drawID = g_pMapManager->GetActiveMapCache()->GetUniqueDrawID();
 
 		ApplyGenericMovement(step);
 	}
@@ -2474,9 +2474,9 @@ void MovingEntity::ApplyPhysics(float step)
 			}
 
 
-			if (GetMap() != GetActiveMap)
+			if (GetMap() != g_pMapManager->GetActiveWorld())
 			{
-				SetPosAndMap(vPos, GetActiveMap->GetName());
+				SetPosAndMap(vPos, g_pMapManager->GetActiveWorld()->GetName());
 			} else
 			{
 				SetPos(vPos);
@@ -2618,7 +2618,7 @@ void MovingEntity::PostUpdate(float step)
 
 	if (m_customDampening != -1) groundDampening = m_customDampening;
 	
-	Map *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
+	Map *pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 
 
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
@@ -2753,7 +2753,7 @@ float MovingEntity::GetBoundingCollisionRadius()
 //warning, only tests against edges
 bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 {
-	EntMapCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyMapCache();	
+	EntMapCache *pWC = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap()->GetMyMapCache();	
 	return !pWC->IsPathObstructed(GetPos(), to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
 }
 

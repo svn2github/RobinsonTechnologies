@@ -63,7 +63,7 @@ void EntCollisionEditor::OnMouseMove(const CL_InputEvent &key)
 {
 	CL_Vector2 vecScreenOld = CL_Vector2(m_vecLastMousePos.x, m_vecLastMousePos.y);
 	CL_Vector2 vecScreenNew = CL_Vector2(key.mouse_pos.x, key.mouse_pos.y);
-	CL_Vector2 vecWorldDisp = GetWorldCache->ScreenToWorld(vecScreenNew) - GetWorldCache->ScreenToWorld(vecScreenOld);
+	CL_Vector2 vecWorldDisp = g_pMapManager->GetActiveMapCache()->ScreenToWorld(vecScreenNew) - g_pMapManager->GetActiveMapCache()->ScreenToWorld(vecScreenOld);
 	
 		if (m_mode == e_modeAdjust)
 	{
@@ -116,7 +116,7 @@ void EntCollisionEditor::OnButtonUp(const CL_InputEvent &key)
 			if (m_mode == e_modeAdjust)
 			{
 				//snap them
-				CL_Vector2 vecPos =GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
+				CL_Vector2 vecPos =g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
 				AdjustVert(vecPos);
 			}
 			break;
@@ -237,7 +237,7 @@ void EntCollisionEditor::OnButtonDown(const CL_InputEvent &key)
 	case CL_MOUSE_LEFT:
 		{
 	  	 
-			CL_Vector2 vecPos =GetWorldCache->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
+			CL_Vector2 vecPos =g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
 			switch (m_mode)
 			{
 			case e_modeAddCreate:
@@ -600,7 +600,7 @@ void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicCo
 	a += vecPos;
 	
 	
-	a = GetWorldCache->WorldToScreen(a);
+	a = g_pMapManager->GetActiveMapCache()->WorldToScreen(a);
     firstVert = a;
 
 	if (bRenderVertBoxes)
@@ -617,7 +617,7 @@ void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicCo
 		b += vecPos;
 
 
-		b = GetWorldCache->WorldToScreen(b);
+		b = g_pMapManager->GetActiveMapCache()->WorldToScreen(b);
 
 		if (bRenderVertBoxes)
 		{

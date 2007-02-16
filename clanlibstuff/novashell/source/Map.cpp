@@ -130,7 +130,7 @@ EntMapCache * Map::GetMyMapCache()
 	if (!m_pWorldCache)
 	{
 		LogMsg("Choosing to load world because someone wanted access to its world cache");
-		GetWorldManager->LoadMap(GetDirPath(), false);
+		g_pMapManager->LoadMap(GetDirPath(), false);
 		PreloadMap();
 	}
 	
@@ -174,10 +174,10 @@ const CL_Rect *Map::GetWorldRect()
 CL_Rect Map::GetWorldRectInPixels()
 {
 	CL_Rect rec = *GetWorldRect();
-	rec.left *= GetWorldChunkPixelSize();
-	rec.right *= GetWorldChunkPixelSize();
-	rec.top *= GetWorldChunkPixelSize();
-	rec.bottom *= GetWorldChunkPixelSize();
+	rec.left *= GetMapChunkPixelSize();
+	rec.right *= GetMapChunkPixelSize();
+	rec.top *= GetMapChunkPixelSize();
+	rec.bottom *= GetMapChunkPixelSize();
 	return rec;
 }
 
@@ -328,7 +328,7 @@ CL_Vector2 Map::ScreenIDToWorldPos(ScreenID screenID)
 {
 	
 	CL_Vector2 vecPos = CL_Vector2(GetXFromScreenID(screenID), GetYFromScreenID(screenID));
-	vecPos *= GetWorldChunkPixelSize();
+	vecPos *= GetMapChunkPixelSize();
     return vecPos;
 }
 
@@ -336,20 +336,20 @@ ScreenID Map::GetScreenIDFromWorld(CL_Vector2 vecPos)
 {
 	if (vecPos.x < 0)
 	{
-		vecPos.x -= GetWorldChunkPixelSize()-1;
+		vecPos.x -= GetMapChunkPixelSize()-1;
 	}
 
 	if (vecPos.y < 0)
 	{
-		vecPos.y -= GetWorldChunkPixelSize()-1;
+		vecPos.y -= GetMapChunkPixelSize()-1;
 	}
 
-	vecPos /= GetWorldChunkPixelSize();
+	vecPos /= GetMapChunkPixelSize();
 	
 	return GetScreenID(vecPos.x, vecPos.y);
 }
 
-void Map::SetWorldChunkPixelSize(int widthAndHeight)
+void Map::SetMapChunkPixelSize(int widthAndHeight)
 {
 	m_worldChunkPixelSize = widthAndHeight;
 	SetModified(true);
@@ -473,7 +473,7 @@ bool Map::Load(string dirPath)
 		return false;
 	}
 
-	LogMsg("Loaded map %s.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), m_chunkMap.size(), GetWorldX(), GetWorldY());
+	LogMsg("Loaded map %s.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), m_chunkMap.size(), GetSizeX(), GetSizeY());
 	SAFE_DELETE(pFile);
 
 	SetModified(false) ; //how could it be modified?  we just loaded it
@@ -612,7 +612,7 @@ bool Map::Save(bool bSaveTagCacheAlso)
 	}
 	if (bScreenDataWasModified || bRequireSave)
 	{
-		GetTagManager->Save(this);
+		g_TagManager.Save(this);
 	}
 
 	if (!bRequireSave && !bScreenDataWasModified ) return true; //abort the save, not needed
@@ -627,7 +627,7 @@ bool Map::Save(bool bSaveTagCacheAlso)
 	
 
 	LogMsg("Saving map header %s - (%d chunks to look at, map size %d by %d)", GetName().c_str(), m_chunkMap.size(),
-		GetWorldX(), GetWorldY());
+		GetSizeX(), GetSizeY());
 
 	//first save our map.dat file
 	CL_OutputSource *pFile = g_VFManager.PutFile(m_strDirPath+C_MAP_DAT_FILENAME);
@@ -707,7 +707,7 @@ void Map::BuildNavGraph()
 	}	
 }
 
-void Map::GetAllWorldChunksWithinThisRect(std::vector<MapChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks)
+void Map::GetAllMapChunksWithinThisRect(std::vector<MapChunk*> &wcVector, CL_Rect rec, bool bIncludeBlanks)
 {
 	assert(wcVector.size() == 0 && "Shouldn't this be cleared before you send it?");
 
@@ -923,7 +923,7 @@ void RemoveWorldFiles(const string &path)
 	RemoveFile(path+C_LAYER_FILENAME);
 }
 
-void Map::SetMyWorldCache(EntMapCache *pWorldCache)
+void Map::SetMyMapCache(EntMapCache *pWorldCache)
 {
 	 m_pWorldCache = pWorldCache;
 }

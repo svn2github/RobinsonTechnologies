@@ -15,7 +15,7 @@ GeneratorDink::GeneratorDink()
 
 void GeneratorDink::GenerateInit()
 {
-	assert(GetActiveMap && "World must be initted before this is called");
+	assert(g_pMapManager->GetActiveWorld() && "World must be initted before this is called");
 	string st = C_BASE_MAP_PATH +string("/_base_graphics/dink.dat");
 
 	//grab the map header
@@ -26,7 +26,7 @@ void GeneratorDink::GenerateInit()
 	fclose(fp);
 	m_mapIndex = 0;
 
-	m_vecMapUpperLeft = GetActiveMap->ScreenIDToWorldPos(GetActiveMap->GetScreenID(C_DEFAULT_SCREEN_ID,C_DEFAULT_SCREEN_ID));
+	m_vecMapUpperLeft = g_pMapManager->GetActiveWorld()->ScreenIDToWorldPos(g_pMapManager->GetActiveWorld()->GetScreenID(C_DEFAULT_SCREEN_ID,C_DEFAULT_SCREEN_ID));
 }
 
 
@@ -90,7 +90,7 @@ void GeneratorDink::ProcessDinkScreen(CL_Vector2 &vecOffset, dink_small_map &scr
 			}
 			//figure out where to put it
 
-			GetActiveMap->AddTile(pTile);
+			g_pMapManager->GetActiveWorld()->AddTile(pTile);
 		}
 	}
 	//LogMsg("This screen is %s", screenData.name);

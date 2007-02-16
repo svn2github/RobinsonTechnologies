@@ -38,13 +38,13 @@ public:
 	virtual ~MapManager();
 
 	void Kill();
-	bool AddWorld(string stPath); //add it to our list without actually loading anything
+	bool AddMap(string stPath); //add it to our list without actually loading anything
 	bool LoadMap(string stPath, bool bSetActiveIfNoneIs = true); //load main data file, with thumbnails
-	void UnloadWorldByName(const string &stName);
+	void UnloadMapByName(const string &stName);
 
 	Map * GetActiveWorld();
-	EntMapCache * GetActiveWorldCache();
-	bool SetActiveWorldByPath(const string &stPath, CameraSetting *pCameraSetting = NULL); //returns false if failed
+	EntMapCache * GetActiveMapCache();
+	bool SetActiveMapByPath(const string &stPath, CameraSetting *pCameraSetting = NULL); //returns false if failed
 	void Update(float step);
 	void Render();
 	MapInfo * GetMapInfoByPath(const string &stPath);
@@ -69,5 +69,7 @@ protected:
 };
 
 bool ExistsInModPath(const string fName);
+
+extern MapManager *g_pMapManager; //for speedy access
 
 #endif                  // include guard

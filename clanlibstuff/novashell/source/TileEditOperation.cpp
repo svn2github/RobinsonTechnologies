@@ -199,7 +199,7 @@ void TileEditOperation::AddWorldCoordToBoundsByTile(Tile *pTile)
 
 void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int operation, const vector<unsigned int> &layerIDVec)
 {
-	if (!GetWorldCache) return;
+	if (!g_pMapManager->GetActiveMapCache()) return;
 
 	Tile *pTile = NULL;
 	bool bPerformDupeCheck = false;
@@ -210,10 +210,10 @@ void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int opera
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	GetWorldCache->AddTilesByRect(recArea, &tileList, layerIDVec);
+	g_pMapManager->GetActiveMapCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
 
 	//now we need to sort them
-	g_pLayerManager = &GetActiveMap->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
 	tileList.sort(compareTileBySortLevelOptimized);
 
 	tile_list::reverse_iterator itor = tileList.rbegin();
@@ -239,7 +239,7 @@ void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int opera
 void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec)
 {
 	
-	if (!GetWorldCache) return;
+	if (!g_pMapManager->GetActiveMapCache()) return;
 	Tile *pTile = NULL;
 
 	bool bPerformDupeCheck = false;
@@ -250,7 +250,7 @@ void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, cons
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 	
-	GetWorldCache->AddTilesByRect(recArea, &tileList, layerIDVec);
+	g_pMapManager->GetActiveMapCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
 
 	tile_list::iterator itor = tileList.begin();
 	while (itor != tileList.end())
@@ -279,7 +279,7 @@ void TileEditOperation::AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragSt
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	GetWorldCache->AddTilesByRect(recArea, &tileList, layerIDVec);
+	g_pMapManager->GetActiveMapCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
 
 	tile_list::iterator itor = tileList.begin();
 	bool bSimilar;
@@ -314,7 +314,7 @@ Tile * TileEditOperation::GetTileAtPos(const CL_Vector2 & pos)
 	selectedTile_list::iterator itor = m_selectedTileList.begin();
 
 	Tile *pChosenTile = NULL;
-	g_pLayerManager = &GetActiveMap->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
 
 	while (itor != m_selectedTileList.end())
 	{
@@ -376,7 +376,7 @@ void TileEditOperation::AddWorldCoordToBounds(const CL_Vector2 &vecWorld)
 void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, TileEditOperation *pUndoOut)
 {
 	
-	LayerManager &layerMan = GetActiveMap->GetLayerManager();
+	LayerManager &layerMan = g_pMapManager->GetActiveWorld()->GetLayerManager();
 	if (layerMan.GetEditActiveList().size() == 0)	
 	{
 		CL_MessageBox::info("Warning", "Nothing will be pasted because no edit layer is active", GetApp()->GetGUI());
@@ -423,16 +423,16 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 		}
 		if (GetGameLogic->GetParallaxActive() && !m_bIgnoreParallaxOnNextPaste)
 		{
-			Layer &layer = GetActiveMap->GetLayerManager().GetLayerInfo(layerToUse);
+			Layer &layer = g_pMapManager->GetActiveWorld()->GetLayerManager().GetLayerInfo(layerToUse);
 			if (layer.GetScrollMod().x != 0 || layer.GetScrollMod().y != 0)
 			{
 				//as a help to the guy pasting, let's modify its coords to compensate for the parallax scroll display
-				vecDestTileWorld = GetWorldCache->ModifiedWorldToWorld(vecDestTileWorld, layer.GetScrollMod());
+				vecDestTileWorld = g_pMapManager->GetActiveMapCache()->ModifiedWorldToWorld(vecDestTileWorld, layer.GetScrollMod());
 			}
 		}
 
 		//kill whatever was here
-		Screen *pScreen = GetActiveMap->GetScreen(vecDestTileWorld);
+		Screen *pScreen = g_pMapManager->GetActiveWorld()->GetScreen(vecDestTileWorld);
 		Tile *pOldTile = pScreen->GetTileByPosition(vecDestTileWorld, originalLayer);
 
 		if (pOldTile)
@@ -444,8 +444,8 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 			if (pUndoOut) pUndoOut->AddTileToSelection(C_OPERATION_ADD, false, pClone);
 			SAFE_DELETE(pClone);
 			pScreen->RemoveTileByPosition(vecDestTileWorld, originalLayer);
-			pScreen->GetParentWorldChunk()->SetDataChanged(true);
-			pScreen->GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+			pScreen->GetParentMapChunk()->SetDataChanged(true);
+			pScreen->GetParentMapChunk()->SetNeedsThumbnailRefresh(true);
 
 		} else bOverWroteAnotherTile = false;
 	
@@ -469,7 +469,7 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 			pTile->SetLayer(layerToUse);
 			//move it to the new position and layer if required
 			pTile->SetPos(vecDestTileWorld);
-			GetActiveMap->AddTile(pTile);
+			g_pMapManager->GetActiveWorld()->AddTile(pTile);
 		}
 		itor++;
 	}
@@ -487,7 +487,7 @@ void TileEditOperation::FillSelection(Tile *pTile)
 
 	while (itor != m_selectedTileList.end())
 	{
-		pScreen = GetActiveMap->GetScreen((*itor)->m_pTile->GetPos());
+		pScreen = g_pMapManager->GetActiveWorld()->GetScreen((*itor)->m_pTile->GetPos());
 		pScreen->RemoveTileBySimilarType((*itor)->m_pTile);
 		
 		//add the new tile as long as it isn't a blank
@@ -498,8 +498,8 @@ void TileEditOperation::FillSelection(Tile *pTile)
 			pTileTmp->SetLayer((*itor)->m_pTile->GetLayer());
 		}
 
-		pScreen->GetParentWorldChunk()->SetDataChanged(true);
-		pScreen->GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+		pScreen->GetParentMapChunk()->SetDataChanged(true);
+		pScreen->GetParentMapChunk()->SetNeedsThumbnailRefresh(true);
 		
 		
 		itor++;
@@ -587,7 +587,7 @@ void TileEditOperation::UpdateSelectionFromWorld()
 	{
 		pTile = (*itor)->m_pTile;
 		
-		pScreen = GetActiveMap->GetScreen(pTile->GetPos());
+		pScreen = g_pMapManager->GetActiveWorld()->GetScreen(pTile->GetPos());
 		pWorldTile = pScreen->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
 
 		if (pWorldTile)

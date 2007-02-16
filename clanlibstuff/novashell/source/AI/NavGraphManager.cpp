@@ -163,7 +163,7 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 		!NodeItr.end();
 		pN=NodeItr.next())
 	{
-		CL_Vector2 a = GetWorldCache->WorldToScreen(pN->Pos());
+		CL_Vector2 a = g_pMapManager->GetActiveMapCache()->WorldToScreen(pN->Pos());
 	
 		DrawCenteredBoxWorld(pN->Pos(), 4, CL_Color::white, pGC);
 
@@ -185,7 +185,7 @@ void NavGraphManager::Render(bool bDrawNodeIDs, CL_GraphicContext *pGC)
 			pE && !EdgeItr.end();
 			pE=EdgeItr.next())
 		{
-				CL_Vector2 b = GetWorldCache->WorldToScreen( m_pNavGraph->GetNode(pE->To()).Pos() );
+				CL_Vector2 b = g_pMapManager->GetActiveMapCache()->WorldToScreen( m_pNavGraph->GetNode(pE->To()).Pos() );
 
 			pGC->draw_line(a.x, a.y, b.x, b.y, CL_Color(255,255,255,100));
 		}

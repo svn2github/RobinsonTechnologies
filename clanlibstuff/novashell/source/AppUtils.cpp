@@ -13,7 +13,7 @@ CL_Vector2 Vector2Perp(const CL_Vector2 &v)
 void DrawBullsEyeWorld(CL_Vector2 vecPos, CL_Color col, int size, CL_GraphicContext *pGC)
 {
 
-	CL_Vector2 pos = GetWorldCache->WorldToScreen(vecPos);
+	CL_Vector2 pos = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecPos);
 
 	int halfSize = size/2;
 
@@ -66,7 +66,7 @@ void DrawLineWithArrow(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &co
 
 void DrawLineWithArrowWorld(CL_Vector2 from, CL_Vector2 to, double size, CL_Color &col, CL_GraphicContext* pGC)
 {
-	DrawLineWithArrow(GetWorldCache->WorldToScreen(from), GetWorldCache->WorldToScreen(to), size, col, pGC);
+	DrawLineWithArrow(g_pMapManager->GetActiveMapCache()->WorldToScreen(from), g_pMapManager->GetActiveMapCache()->WorldToScreen(to), size, col, pGC);
 }
 
 
@@ -148,7 +148,7 @@ void StringReplace(const std::string& what, const std::string& with, std::string
 
 bool compareLayerBySort(unsigned int pA, unsigned int pB) 
 {
-	LayerManager *pLayerManager = &GetActiveMap->GetLayerManager();
+	LayerManager *pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
 
 	return pLayerManager->GetLayerInfo(pA).GetSort() <
 		pLayerManager->GetLayerInfo(pB).GetSort();
@@ -377,7 +377,7 @@ void DrawCenteredBox(const CL_Vector2 &a, int size, CL_Color col, CL_GraphicCont
 
 void DrawCenteredBoxWorld(const CL_Vector2 &a, int size, CL_Color col, CL_GraphicContext *pGC)
 {
-	DrawCenteredBox( GetWorldCache->WorldToScreen(a), size, col, pGC);
+	DrawCenteredBox( g_pMapManager->GetActiveMapCache()->WorldToScreen(a), size, col, pGC);
 }
 
 
@@ -388,13 +388,13 @@ void RenderVertexList(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCou
 	assert(vertCount > 0);
 
 	a = pos + pVertArray[0];
-	a = GetWorldCache->WorldToScreen(a);
+	a = g_pMapManager->GetActiveMapCache()->WorldToScreen(a);
 	first = a;
 
 	for (int i=1; i < vertCount; i++)
 	{
 		b = pos + pVertArray[i];
-		b = GetWorldCache->WorldToScreen(b);
+		b = g_pMapManager->GetActiveMapCache()->WorldToScreen(b);
 		pGC->draw_line(a.x, a.y, b.x, b.y, colr);
 		//get ready for next line
 		a = b;
@@ -409,17 +409,17 @@ void RenderVertexListRotated(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int 
 	CL_Vector2 a, b, first;
 
 	assert(vertCount > 0);
-    CL_Vector2 v = GetWorldCache->WorldToScreen(pos);
+    CL_Vector2 v = g_pMapManager->GetActiveMapCache()->WorldToScreen(pos);
 	CL_Pointf rotPt(v.x, v.y);
 	a = pos + pVertArray[0];
-	a = GetWorldCache->WorldToScreen(a);
+	a = g_pMapManager->GetActiveMapCache()->WorldToScreen(a);
 	first = a;
 
 	CL_Pointf ra, rb;
 	for (int i=1; i < vertCount; i++)
 	{
 		b = pos + pVertArray[i];
-		b = GetWorldCache->WorldToScreen(b);
+		b = g_pMapManager->GetActiveMapCache()->WorldToScreen(b);
 	
 		//create rotated version
 		ra = *(CL_Pointf*)&a;
@@ -446,8 +446,8 @@ void RenderVertexListRotated(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int 
 
 void DrawRectFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC)
 {
-	vecStart = GetWorldCache->WorldToScreen(vecStart);
-	vecStop = GetWorldCache->WorldToScreen(vecStop);
+	vecStart = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStart);
+	vecStop = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStop);
 
 	static CL_Rectf rec;
 	rec.left = vecStart.x;
@@ -459,8 +459,8 @@ void DrawRectFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Co
 
 void DrawRectFromWorldCoordinatesRotated(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC, float angleRad)
 {
-	vecStart = GetWorldCache->WorldToScreen(vecStart);
-	vecStop = GetWorldCache->WorldToScreen(vecStop);
+	vecStart = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStart);
+	vecStop = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStop);
 
 	static CL_Rectf rec;
 	rec.left = vecStart.x;

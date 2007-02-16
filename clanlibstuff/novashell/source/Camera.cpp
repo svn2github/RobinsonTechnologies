@@ -48,7 +48,7 @@ CL_Rectf Camera::GetViewRectWorld()
 {
 	CL_Rectf r;
 	CL_Vector2 v;
-	v = GetWorldCache->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
+	v = g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
 	r.right = v.x;
 	r.bottom = v.y;
 
@@ -83,7 +83,7 @@ void Camera::SetScaleRaw(CL_Vector2 vecScale)
 
 void Camera::SetScaleTarget(CL_Vector2 vecScale)
 {
-	if (!GetActiveMap) return;
+	if (!g_pMapManager->GetActiveWorld()) return;
 
 	m_vecScaleTarget = ClampScaleToRange(vecScale);
 }
@@ -107,11 +107,11 @@ CL_Vector2 Camera::ClampScaleToRange(CL_Vector2 vecScale)
 
 void Camera::SetScale(CL_Vector2 vecScale)
 {
-	if (!GetActiveMap) return;
+	if (!g_pMapManager->GetActiveWorld()) return;
 	CL_Vector2 vecPosBefore;
 	if (m_entTrackID == 0)
 	{
-		vecPosBefore = GetWorldCache->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
+		vecPosBefore = g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
 	}
 	
 	m_vecScale = ClampScaleToRange(vecScale);
@@ -119,7 +119,7 @@ void Camera::SetScale(CL_Vector2 vecScale)
 	m_vecScaleTarget = m_vecScale;
 	if (m_entTrackID == 0)
 	{
-		m_vecTargetPos +=  (vecPosBefore-GetWorldCache->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY)))/2;
+		m_vecTargetPos +=  (vecPosBefore-g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY)))/2;
 	}
 
 }

@@ -9,7 +9,7 @@
 
 Screen::Screen(MapChunk *pParent)
 {
-	m_pParentWorldChunk = pParent;
+	m_pParentMapChunk = pParent;
 	//LogMsg("initting screen");
 	m_vecLayerList.resize(1);
 	m_bReCheckIfEmpty = false;
@@ -41,7 +41,7 @@ Screen::~Screen()
 {
 	//LogMsg("Killing screen");
 	//this checks map settings like persistancy and skip next save
-	if (GetParentWorldChunk()->GetParentWorld()->SaveRequested())
+	if (GetParentMapChunk()->GetParentMap()->SaveRequested())
 	{
  		Save(); //if something changed, it will be written to disk
 	}
@@ -49,10 +49,10 @@ Screen::~Screen()
 }
 
 
-MapChunk * Screen::GetParentWorldChunk()
+MapChunk * Screen::GetParentMapChunk()
 {
-	assert(m_pParentWorldChunk && "Huh?!");
-	return (m_pParentWorldChunk);
+	assert(m_pParentMapChunk && "Huh?!");
+	return (m_pParentMapChunk);
 }
 
 
@@ -116,13 +116,13 @@ Tile * Screen::GetTileByPosition(const CL_Vector2 &vecPos, unsigned int layer)
 
 string Screen::GetFileName()
 {
-	return (GetParentWorldChunk()->GetParentWorld()->GetDirPath() + CL_String::from_int(GetParentWorldChunk()->GetScreenID())+".chunk");
+	return (GetParentMapChunk()->GetParentMap()->GetDirPath() + CL_String::from_int(GetParentMapChunk()->GetScreenID())+".chunk");
 }
 
 bool Screen::Save()
 {
 	//first see if saving is even applicable
-	if (!GetParentWorldChunk()->GetDataChanged()) return false; //nothing changed, we don't have to save
+	if (!GetParentMapChunk()->GetDataChanged()) return false; //nothing changed, we don't have to save
 
 	//LogMsg("Saving screen %d", GetParentWorldChunk()->GetScreenID());
 
@@ -138,7 +138,7 @@ bool Screen::Save()
 	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
 
 	//might be helpful to remember these later
-	helper.process_const(GetParentWorldChunk()->GetParentWorld()->GetWorldChunkPixelSize());
+	helper.process_const(GetParentMapChunk()->GetParentMap()->GetMapChunkPixelSize());
 	helper.process_const(cl_uint32(m_vecLayerList.size()));
 	m_version = C_MAP_FILE_VERSION;
 	helper.process(m_version);
@@ -170,7 +170,7 @@ bool Screen::Save()
 	}
 	
 	SAFE_DELETE(pFile);
-	GetParentWorldChunk()->SetDataChanged(false);
+	GetParentMapChunk()->SetDataChanged(false);
 	return true; //success
 }
 
@@ -180,7 +180,7 @@ bool Screen::Load()
 	SetRequestIsEmptyRefreshCheck(true);
 	
 	//where is the original?
-	string realLocation = GetParentWorldChunk()->GetParentWorld()->GetDirPath()+"/"+C_MAP_DAT_FILENAME;
+	string realLocation = GetParentMapChunk()->GetParentMap()->GetDirPath()+"/"+C_MAP_DAT_FILENAME;
 
 	CL_InputSource *pFile;
 	
@@ -189,7 +189,7 @@ bool Screen::Load()
 		//let's load from here
 		try
 		{
-			pFile = new CL_InputSource_File(CL_String::get_path(realLocation)+CL_String::from_int(GetParentWorldChunk()->GetScreenID())+".chunk");
+			pFile = new CL_InputSource_File(CL_String::get_path(realLocation)+CL_String::from_int(GetParentMapChunk()->GetScreenID())+".chunk");
 		} catch(...)
 		{
 			return true;
@@ -217,7 +217,7 @@ bool Screen::Load()
 		m_vecLayerList.resize(layerCount);
 		helper.process(m_version);
 
-		if (worldChunkPixelSize != GetParentWorldChunk()->GetParentWorld()->GetWorldChunkPixelSize())
+		if (worldChunkPixelSize != GetParentMapChunk()->GetParentMap()->GetMapChunkPixelSize())
 		{
 			SAFE_DELETE(pFile);
 			throw CL_Error("Corrupted map, or the chunk size doesn't match what we're loading");
@@ -250,7 +250,7 @@ bool Screen::Load()
 					pTile->SetParentScreen(this); //they may need this info during init
 
 					pTile->Serialize(helper);
-					if (!GetParentWorldChunk()->GetParentWorld()->IsValidCoordinate(pTile->GetPos()))
+					if (!GetParentMapChunk()->GetParentMap()->IsValidCoordinate(pTile->GetPos()))
 					{
 						LogMsg("Invalid coordinate in entity, erasing it");
 						SAFE_DELETE(pTile);
@@ -285,7 +285,7 @@ bool Screen::Load()
 
 	SAFE_DELETE(pFile);
 	//we just did a successful load, so we can't possibly need a save right now
-	GetParentWorldChunk()->SetDataChanged(false);
+	GetParentMapChunk()->SetDataChanged(false);
 	return true; //success
 }
 
@@ -451,7 +451,7 @@ bool Screen::RemoveTileByPointer(Tile *pSrcTile)
 		itor++;
 	}
 
-	LogError("Failed to remove tile by pointer on screen %d", GetParentWorldChunk()->GetScreenID());
+	LogError("Failed to remove tile by pointer on screen %d", GetParentMapChunk()->GetScreenID());
 	return false;
 }
 
@@ -460,7 +460,7 @@ void Screen::LinkNavGraph()
 	Tile *pTile;
 	tile_list::iterator itor;
 
-	NavGraphManager *pNav = GetParentWorldChunk()->GetParentWorld()->GetNavGraph();
+	NavGraphManager *pNav = GetParentMapChunk()->GetParentMap()->GetNavGraph();
 	
 	for (unsigned int i = 0; i < m_vecLayerList.size(); i++)
 	{
@@ -484,26 +484,26 @@ void Screen::LinkNavGraph()
 void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 {
 
-	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+	GetParentMapChunk()->SetNeedsThumbnailRefresh(true);
 
 	if ( (*itor)->GetType() != C_TILE_TYPE_REFERENCE )
 	{
 
-		GetParentWorldChunk()->SetDataChanged(true);
+		GetParentMapChunk()->SetDataChanged(true);
 		
 		if ((*itor)->GetType() == C_TILE_TYPE_ENTITY)
 		{
-			GetTagManager->Remove(((TileEntity*)(*itor))->GetEntity());
+			g_TagManager.Remove(((TileEntity*)(*itor))->GetEntity());
 		} 
 		
 
 		if ((*itor)->GetBit(Tile::e_pathNode))
 		{
-			GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->RemoveTileNode((*itor));
+			GetParentMapChunk()->GetParentMap()->GetNavGraph()->RemoveTileNode((*itor));
 		}
 
-		if (GetParentWorldChunk()->GetParentWorld()->IsWorldCacheInitted())
-		GetParentWorldChunk()->GetParentWorld()->GetMyMapCache()->RemoveTileFromList( (*itor) );
+		if (GetParentMapChunk()->GetParentMap()->IsWorldCacheInitted())
+		GetParentMapChunk()->GetParentMap()->GetMyMapCache()->RemoveTileFromList( (*itor) );
 		
 	} else
 	{
@@ -523,7 +523,7 @@ void Screen::AddTile(Tile *pTile)
 	pTile->SetParentScreen(this); //who knows when they'll need this data
 	GetTileList(pTile->GetLayer())->push_back(pTile);
 
-	GetParentWorldChunk()->SetNeedsThumbnailRefresh(true);
+	GetParentMapChunk()->SetNeedsThumbnailRefresh(true);
 	m_bIsEmpty = false; //can't be empty anymore
 
 	if (pTile->GetType() == C_TILE_TYPE_REFERENCE) 
@@ -531,7 +531,7 @@ void Screen::AddTile(Tile *pTile)
 				return; //references don't need the edge cases figured out
 	}
 
-	GetParentWorldChunk()->SetDataChanged(true);
+	GetParentMapChunk()->SetDataChanged(true);
 
 	//we may also need to index info about this sprite if it has a tag name
 
@@ -539,7 +539,7 @@ void Screen::AddTile(Tile *pTile)
 
 	if (pTile->GetBit(Tile::e_pathNode))
 	{
-		GetParentWorldChunk()->GetParentWorld()->GetNavGraph()->AddTileNode(pTile);
+		GetParentMapChunk()->GetParentMap()->GetNavGraph()->AddTileNode(pTile);
 		//LogMsg("Added graphid %d", pTile->GetGraphNodeID());
 	}
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
@@ -547,7 +547,7 @@ void Screen::AddTile(Tile *pTile)
 		//LogMsg("Adding tile %s. Layer %d now has %d tiles. Rect is %s", ((TileEntity*)pTile)->GetEntity()->GetName().c_str(),
 		//	pTile->GetLayer(), GetTileList(pTile->GetLayer())->size(), PrintRectInt(tileRect).c_str());
 
-		GetTagManager->Update(GetParentWorldChunk()->GetParentWorld(), ((TileEntity*)pTile)->GetEntity());
+		g_TagManager.Update(GetParentMapChunk()->GetParentMap(), ((TileEntity*)pTile)->GetEntity());
 	}
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
@@ -564,7 +564,7 @@ void Screen::AddTile(Tile *pTile)
 	tileRect = pTile->GetWorldCombinedRectInt();
 
 	
-	unionRect = tileRect.calc_union(m_pParentWorldChunk->GetRect());
+	unionRect = tileRect.calc_union(m_pParentMapChunk->GetRect());
 	if (unionRect == tileRect)
 	{
 		return;
@@ -574,7 +574,7 @@ void Screen::AddTile(Tile *pTile)
 	//points to this one, the only real instance. When references are deleted, this tile will be updated and vice-versa.
 
 	std::vector <MapChunk*> wcVector;
-	m_pParentWorldChunk->GetParentWorld()->GetAllWorldChunksWithinThisRect(wcVector, pTile->GetWorldCombinedRectInt(), true);
+	m_pParentMapChunk->GetParentMap()->GetAllMapChunksWithinThisRect(wcVector, pTile->GetWorldCombinedRectInt(), true);
 
 
 	//LogMsg("Got %d screens.", wcVector.size());
