@@ -3,7 +3,7 @@
 #include "Tile.h"
 #include "Screen.h"
 #include "GameLogic.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 #include "MovingEntity.h"
 #include "AppUtils.h"
 
@@ -83,7 +83,7 @@ void Camera::SetScaleRaw(CL_Vector2 vecScale)
 
 void Camera::SetScaleTarget(CL_Vector2 vecScale)
 {
-	if (!GetWorld) return;
+	if (!GetActiveMap) return;
 
 	m_vecScaleTarget = ClampScaleToRange(vecScale);
 }
@@ -107,7 +107,7 @@ CL_Vector2 Camera::ClampScaleToRange(CL_Vector2 vecScale)
 
 void Camera::SetScale(CL_Vector2 vecScale)
 {
-	if (!GetWorld) return;
+	if (!GetActiveMap) return;
 	CL_Vector2 vecPosBefore;
 	if (m_entTrackID == 0)
 	{

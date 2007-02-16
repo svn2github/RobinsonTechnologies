@@ -2,7 +2,7 @@
 #include "GameLogic.h"
 #include "main.h"
 #include "EntEditor.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 #include "EntChooseScreenMode.h"
 #include "AppUtils.h"
 #include "TileEntity.h"
@@ -224,9 +224,9 @@ void GameLogic::SetGameMode(int gameMode)
 
 void GameLogic::ClearScreen()
 {
-	if (GetWorld)
+	if (GetActiveMap)
 	{
-		CL_Display::clear(GetWorld->GetBGColor());
+		CL_Display::clear(GetActiveMap->GetBGColor());
 	} else
 	{
 		CL_Display::clear(CL_Color(0,0,0,255));
@@ -343,7 +343,7 @@ bool GameLogic::SetUserProfileName(const string &name)
 	
 	//set as new save/load path, with fallback still on the default path
 	g_VFManager.MountDirectoryPath(m_strUserProfilePathWithName);
-	m_worldManager.ScanWorlds(m_strBaseMapPath);
+	m_worldManager.ScanMaps(m_strBaseMapPath);
 
 	//load globals
 	LoadGlobals();	
@@ -382,7 +382,7 @@ void GameLogic::AddModPath(string s)
 bool GameLogic::Init()
 {
 
-	assert(!GetWorld);
+	assert(!GetActiveMap);
 	if (g_pSoundManager && !GetApp()->ParmExists("-nosound"))
 	{
 		g_pSoundManager->Init();
@@ -410,7 +410,7 @@ bool GameLogic::Init()
 
 	}
 	
-	m_worldManager.ScanWorlds(m_strBaseMapPath);
+	m_worldManager.ScanMaps(m_strBaseMapPath);
 	m_pPlayer = NULL;
 	//calculate our user profile base path, later, this could be in the windows user dir or whatever is correct
 	m_strBaseUserProfilePath = CL_Directory::get_current() + "/profiles";
@@ -492,11 +492,11 @@ bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the edi
 		if (m_modPaths.empty())
 		{
 			//assume they want to edit something in the base
-			if (!GetWorld)
+			if (!GetActiveMap)
 			{
 				BaseGameEntity *pEnt = EntityMgr->GetEntityByName("ChooseWorldDialog");
 				if (pEnt) pEnt->SetDeleteFlag(true);
-				GetMyWorldManager()->SetActiveWorldByName("Generic Palette");
+				GetMyWorldManager()->SetActiveMapByName("Generic Palette");
 
 			} else
 			{
@@ -506,7 +506,7 @@ bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the edi
 
 		}
 		
-		if (!GetWorld)
+		if (!GetActiveMap)
 		{
 			ShowMessage("Oops", "Can't open world editor, no map is loaded.");
 			return NULL;
@@ -637,7 +637,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		case CL_KEY_Q:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
-					if (GetWorld)
+					if (GetActiveMap)
 					{
 						GetWorldCache->SetDrawCollision(!GetWorldCache->GetDrawCollision());
 					}
@@ -694,10 +694,10 @@ void GameLogic::Kill()
 
 	SaveGlobals();
 
-	if (GetWorld)
+	if (GetActiveMap)
 	{
 		//the main world is active, let's save out the current player position I guess
-		*GetWorld->GetCameraSetting() = GetCamera->GetCameraSettings();
+		*GetActiveMap->GetCameraSetting() = GetCamera->GetCameraSettings();
 	}
 	
 	if (EntityMgr->GetEntityByName("coleditor"))
@@ -907,7 +907,7 @@ void SetCameraToTrackPlayer()
 
 	if (pEnt)
 	{
-		if (pEnt->GetTile()->GetParentScreen()->GetParentWorldChunk()->GetParentWorld() == GetWorld)
+		if (pEnt->GetTile()->GetParentScreen()->GetParentWorldChunk()->GetParentWorld() == GetActiveMap)
 		{
 			GetCamera->SetEntTracking(pEnt->ID());
 			GetCamera->InstantUpdate();

@@ -319,7 +319,7 @@ int PathPlanner::GetClosestNodeToPosition(Map * pMap, CL_Vector2 pos, bool bIgno
   //returns a list of tile pointers, we shouldn't free them!
   tile_list tileList;
 
-  pMap->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList());
+  pMap->GetMyMapCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList());
 
   NodeType* pN;
   int nodeID;

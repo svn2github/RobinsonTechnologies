@@ -124,7 +124,7 @@ void WatchManager::Update(float step, unsigned int drawID)
 
 void WatchManager::PostUpdate(float step)
 {
-	EntWorldCache *pWorldCache = GetWorldCache;
+	EntMapCache *pWorldCache = GetWorldCache;
 	assert(pWorldCache);
 	
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
@@ -136,7 +136,7 @@ void WatchManager::PostUpdate(float step)
 
 void WatchManager::ApplyPhysics(float step)
 {
-	EntWorldCache *pWorldCache = GetWorldCache;
+	EntMapCache *pWorldCache = GetWorldCache;
 	assert(pWorldCache);
 
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)

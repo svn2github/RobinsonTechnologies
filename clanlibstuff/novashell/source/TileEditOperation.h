@@ -9,7 +9,7 @@
 #ifndef TileEditOperation_HEADER_INCLUDED // include guard
 #define TileEditOperation_HEADER_INCLUDED  // include guard
 
-#include "World.h"
+#include "Map.h"
 
 
 class SelectedTile;

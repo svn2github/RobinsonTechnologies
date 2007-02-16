@@ -5,7 +5,7 @@
 */
 
 #pragma once
-#include "World.h"
+#include "Map.h"
 #include "BaseGameEntity.h"
 
 class EntChooseScreenMode: public BaseGameEntity

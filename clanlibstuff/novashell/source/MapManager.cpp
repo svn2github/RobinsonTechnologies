@@ -1,23 +1,23 @@
 #include "AppPrecomp.h"
 #include "Map.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 #include "MapManager.h"
 #include "GameLogic.h"
 #include "AI/WorldNavManager.h"
 #include "AI/WatchManager.h"
 
-WorldManager::WorldManager()
+MapManager::MapManager()
 {
-	m_pActiveWorld = NULL;
-	m_pActiveWorldCache = NULL;
+	m_pActiveMap = NULL;
+	m_pActiveMapCache = NULL;
 }
 
-WorldManager::~WorldManager()
+MapManager::~MapManager()
 {
 	Kill();
 }
 
-void WorldManager::ScanDirToAddWorlds(const string &stPath, const string &stLocalPath)
+void MapManager::ScanDirToAddMaps(const string &stPath, const string &stLocalPath)
 {
 	//scan map directory for available maps
 	CL_DirectoryScanner scanner;
@@ -33,7 +33,7 @@ void WorldManager::ScanDirToAddWorlds(const string &stPath, const string &stLoca
 				{
 					//no underscore at the start, let's show it
 
-					if (!IsWorldScanned(scanner.get_name()))
+					if (!IsMapScanned(scanner.get_name()))
 					{
 						AddWorld(stLocalPath+scanner.get_name());
 					} else
@@ -47,12 +47,12 @@ void WorldManager::ScanDirToAddWorlds(const string &stPath, const string &stLoca
 
 }
 
-bool WorldManager::IsWorldScanned(const string &stName)
+bool MapManager::IsMapScanned(const string &stName)
 {
-	return (GetWorldInfoByName(stName) != NULL);
+	return (GetMapInfoByName(stName) != NULL);
 }
 
-void WorldManager::ScanWorlds(const string &stPath)
+void MapManager::ScanMaps(const string &stPath)
 {
 	
 	Kill();
@@ -65,33 +65,33 @@ void WorldManager::ScanWorlds(const string &stPath)
 
 	for (;itor != vecPaths.rend(); itor++)
 	{
-		ScanDirToAddWorlds( (*itor) +"/"+stPath, stPath);
+		ScanDirToAddMaps( (*itor) +"/"+stPath, stPath);
 	}
 
 	g_worldNavManager.Load();
 
 }
 
-void WorldManager::Kill()
+void MapManager::Kill()
 {
 	//clear each
-	world_info_list::iterator itor =m_worldInfoList.begin();
-	while (itor != m_worldInfoList.end())
+	map_info_list::iterator itor =m_mapInfoList.begin();
+	while (itor != m_mapInfoList.end())
 	{
 		delete *itor;
 		itor++;
 	}
 
-	m_worldInfoList.clear();
+	m_mapInfoList.clear();
 	g_watchManager.Clear();
-	m_pActiveWorld = NULL;
-	m_pActiveWorldCache = NULL;
+	m_pActiveMap = NULL;
+	m_pActiveMapCache = NULL;
 
 	GetTagManager->Kill();
 }
 
 
-bool WorldManager::AddWorld(string stPath)
+bool MapManager::AddWorld(string stPath)
 {
 
 	//add the trailing backslash if required
@@ -101,9 +101,9 @@ bool WorldManager::AddWorld(string stPath)
 		stPath += "/";
 	}
 
-	if (GetWorldInfoByPath(stPath)) return false; //already existed
+	if (GetMapInfoByPath(stPath)) return false; //already existed
 	
-	WorldInfo *pWorldInfo = new WorldInfo;
+	MapInfo *pWorldInfo = new MapInfo;
 	pWorldInfo->m_world.SetDirPath(stPath);
 	
 	//precache its tagged entity info, but only if it's in the dir where the world is
@@ -120,23 +120,23 @@ bool WorldManager::AddWorld(string stPath)
 		GetTagManager->Load(&pWorldInfo->m_world);
 	}
 	
-	m_worldInfoList.push_back(pWorldInfo);
+	m_mapInfoList.push_back(pWorldInfo);
 
 	return true;
 }
 
-bool WorldManager::LoadWorldByName(const string &stName)
+bool MapManager::LoadMapByName(const string &stName)
 {
-	WorldInfo *pWorldInfo = GetWorldInfoByName(stName);
+	MapInfo *pWorldInfo = GetMapInfoByName(stName);
 
 	if (pWorldInfo) return false;
 
-	return LoadWorld(pWorldInfo->m_world.GetDirPath(), false);
+	return LoadMap(pWorldInfo->m_world.GetDirPath(), false);
 }
 
-bool WorldManager::LoadWorld(string stPath, bool bSetActiveIfNoneIs)
+bool MapManager::LoadMap(string stPath, bool bSetActiveIfNoneIs)
 {
-	WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
+	MapInfo *pWorldInfo = GetMapInfoByPath(stPath);
 
 	if (!pWorldInfo) 
 	{
@@ -144,19 +144,19 @@ bool WorldManager::LoadWorld(string stPath, bool bSetActiveIfNoneIs)
 		return false;
 	}
 
-	if (m_pActiveWorld == &pWorldInfo->m_world)
+	if (m_pActiveMap == &pWorldInfo->m_world)
 	{
-		if (m_pActiveWorld->IsInitted())
+		if (m_pActiveMap->IsInitted())
 		{
-			LogMsg("Why load %s, it's already initted!", m_pActiveWorld->GetName().c_str());
+			LogMsg("Why load %s, it's already initted!", m_pActiveMap->GetName().c_str());
 			return false;
 		}
 		
 		
 		//Um, we are reloading the world that is currently on the screen.  We better
 		//let people know so the cached data will be reset etc
-		m_pActiveWorld = NULL;
-		m_pActiveWorldCache = NULL;
+		m_pActiveMap = NULL;
+		m_pActiveMapCache = NULL;
 		sig_map_changed(); //broadcast this to anybody who is interested
 	}
 
@@ -165,17 +165,17 @@ bool WorldManager::LoadWorld(string stPath, bool bSetActiveIfNoneIs)
 
 
 
-	if (!m_pActiveWorld && bSetActiveIfNoneIs)
+	if (!m_pActiveMap && bSetActiveIfNoneIs)
 	{
 		SetActiveWorldByPath(stPath);
 	}
  	return true;
 }
 
-WorldInfo * WorldManager::GetWorldInfoByPath(const string &stPath)
+MapInfo * MapManager::GetMapInfoByPath(const string &stPath)
 {
-	world_info_list::iterator itor =m_worldInfoList.begin();
-	while (itor != m_worldInfoList.end())
+	map_info_list::iterator itor =m_mapInfoList.begin();
+	while (itor != m_mapInfoList.end())
 	{
 		if ( (*itor)->m_world.GetDirPath() == stPath)
 		{
@@ -188,10 +188,10 @@ WorldInfo * WorldManager::GetWorldInfoByPath(const string &stPath)
 	return NULL;
 }
 
-void WorldManager::PreloadAllMaps()
+void MapManager::PreloadAllMaps()
 {
-	world_info_list::iterator itor =m_worldInfoList.begin();
-	while (itor != m_worldInfoList.end())
+	map_info_list::iterator itor =m_mapInfoList.begin();
+	while (itor != m_mapInfoList.end())
 	{
 		SetActiveWorldByPath((*itor)->m_world.GetDirPath());
 		itor++;
@@ -215,10 +215,10 @@ bool ExistsInModPath(const string fName)
 	return false;
 }
 
-void WorldManager::SaveAllMaps()
+void MapManager::SaveAllMaps()
 {
-	world_info_list::iterator itor =m_worldInfoList.begin();
-	while (itor != m_worldInfoList.end())
+	map_info_list::iterator itor =m_mapInfoList.begin();
+	while (itor != m_mapInfoList.end())
 	{
 		if (ExistsInModPath((*itor)->m_world.GetDirPath() + C_MAP_DAT_FILENAME))
 		{
@@ -234,10 +234,10 @@ void WorldManager::SaveAllMaps()
 	}
 }
 
-WorldInfo * WorldManager::GetWorldInfoByName(const string &stName)
+MapInfo * MapManager::GetMapInfoByName(const string &stName)
 {
-	world_info_list::iterator itor =m_worldInfoList.begin();
-	while (itor != m_worldInfoList.end())
+	map_info_list::iterator itor =m_mapInfoList.begin();
+	while (itor != m_mapInfoList.end())
 	{
 		if ( (*itor)->m_world.GetName() == stName)
 		{
@@ -249,15 +249,15 @@ WorldInfo * WorldManager::GetWorldInfoByName(const string &stName)
 	//failed
 	return NULL;
 }
-void WorldManager::UnloadWorldByName(const string &stName)
+void MapManager::UnloadWorldByName(const string &stName)
 {
 
-	world_info_list::iterator itor =m_worldInfoList.begin();
+	map_info_list::iterator itor =m_mapInfoList.begin();
 	bool bMapChanged = false;
 	
 	string worldPath;
 
-	while (itor != m_worldInfoList.end())
+	while (itor != m_mapInfoList.end())
 	{
 		if ( (*itor)->m_world.GetName() == stName)
 		{
@@ -269,7 +269,7 @@ void WorldManager::UnloadWorldByName(const string &stName)
 			}
 			
 			delete *itor;
-			m_worldInfoList.erase(itor);
+			m_mapInfoList.erase(itor);
 			break;
 
 		}
@@ -284,8 +284,8 @@ void WorldManager::UnloadWorldByName(const string &stName)
 
 	if (bMapChanged)
 	{
-		m_pActiveWorld = NULL;
-		m_pActiveWorldCache = NULL;
+		m_pActiveMap = NULL;
+		m_pActiveMapCache = NULL;
 		sig_map_changed(); //broadcast this to anybody who is interested
 	}
 	
@@ -293,9 +293,9 @@ void WorldManager::UnloadWorldByName(const string &stName)
 
 }
 
-bool WorldManager::SetActiveWorldByName(const string &stName)
+bool MapManager::SetActiveMapByName(const string &stName)
 {
-	WorldInfo *pWorldInfo = GetWorldInfoByName(stName);
+	MapInfo *pWorldInfo = GetMapInfoByName(stName);
 	if (!pWorldInfo) 
 	{
 		LogMsg("Map %s not found", stName.c_str());
@@ -310,15 +310,15 @@ bool WorldManager::SetActiveWorldByName(const string &stName)
 //if pCameraSettings isn't null, we just use it and don't allow maps to 'remember'.  If null,
 //it's probably the editor and we DO want to remember with that
 
-bool WorldManager::SetActiveWorldByPath(const string &stPath, CameraSetting *pCameraSetting) 
+bool MapManager::SetActiveWorldByPath(const string &stPath, CameraSetting *pCameraSetting) 
 {
 
-WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
+MapInfo *pWorldInfo = GetMapInfoByPath(stPath);
 	
-	if (m_pActiveWorld)
+	if (m_pActiveMap)
 	{
 		
-		if (&pWorldInfo->m_world == m_pActiveWorld)
+		if (&pWorldInfo->m_world == m_pActiveMap)
 		{
 			//we're switching to the same world?
 			LogMsg("Switching world focus to ourself?");
@@ -327,25 +327,25 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 		if (!pCameraSetting)
 		{
 		//let the old focus remember what its camera settings are
-		*m_pActiveWorld->GetCameraSetting() = GetCamera->GetCameraSettings();
+		*m_pActiveMap->GetCameraSetting() = GetCamera->GetCameraSettings();
 		}
 	}
 
 	if (pWorldInfo)
 	{
 		//found it
-		m_pActiveWorld = &pWorldInfo->m_world;
-		m_pActiveWorldCache = &pWorldInfo->m_worldCache;
+		m_pActiveMap = &pWorldInfo->m_world;
+		m_pActiveMapCache = &pWorldInfo->m_worldCache;
 
-		if (!m_pActiveWorld->IsInitted())
+		if (!m_pActiveMap->IsInitted())
 		{
-			LoadWorld(stPath);
-			GetWorld->PreloadMap(); //later we might not want to do this...
+			LoadMap(stPath);
+			GetActiveMap->PreloadMap(); //later we might not want to do this...
 		}
 
 		if (!pCameraSetting)
 		{
-			GetCamera->SetCameraSettings(*m_pActiveWorld->GetCameraSetting());
+			GetCamera->SetCameraSettings(*m_pActiveMap->GetCameraSetting());
 		} else
 		{
 			GetCamera->SetCameraSettings(*pCameraSetting);
@@ -359,24 +359,24 @@ WorldInfo *pWorldInfo = GetWorldInfoByPath(stPath);
 	return false;
 }
 
-void WorldManager::Update(float step)
+void MapManager::Update(float step)
 {
-	if (m_pActiveWorldCache)
-	m_pActiveWorldCache->Update(step);
+	if (m_pActiveMapCache)
+	m_pActiveMapCache->Update(step);
 }
 
-void WorldManager::Render()
+void MapManager::Render()
 {
-    if (m_pActiveWorldCache) m_pActiveWorldCache->Render(GetApp()->GetMainWindow()->get_gc());
+    if (m_pActiveMapCache) m_pActiveMapCache->Render(GetApp()->GetMainWindow()->get_gc());
 }
 
-EntWorldCache * WorldManager::GetActiveWorldCache()
+EntMapCache * MapManager::GetActiveWorldCache()
 {
 //	assert(m_pActiveWorldCache && "Uh oh");
-	return m_pActiveWorldCache;
+	return m_pActiveMapCache;
 }
-Map* WorldManager::GetActiveWorld()
+Map* MapManager::GetActiveWorld()
 {
 	//assert(m_pActiveWorld && "Uh oh");
-  return m_pActiveWorld;
+  return m_pActiveMap;
 }

@@ -96,7 +96,7 @@ Zone GetCollisionByRay(Map * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int
 
 	//expand it to cover the other places we're going to scan
 
-	pMap->GetMyWorldCache()->AddTilesByRect(r, &tilelist,pMap->GetLayerManager().GetCollisionList(), true);
+	pMap->GetMyMapCache()->AddTilesByRect(r, &tilelist,pMap->GetLayerManager().GetCollisionList(), true);
 	GetTileLineIntersection(vStartPos, vEndPos, tilelist, &vColPos, pTile, pTileToIgnore, tileScanMode, bIgnoreCreatures );
 
 	if (bDebug)
@@ -212,7 +212,7 @@ Zone GetCollisionByRay(Map * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int
 TileList GetTileListByRect(Map *pMap, const CL_Rect &r, vector<unsigned int> &layerList, bool bWithCollisionOnly)
 {
 	tile_list tilelist;
-	pMap->GetMyWorldCache()->AddTilesByRect(r, &tilelist,layerList, bWithCollisionOnly);
+	pMap->GetMyMapCache()->AddTilesByRect(r, &tilelist,layerList, bWithCollisionOnly);
 
 	return (TileList(&tilelist));
 }
@@ -415,11 +415,11 @@ myColor = Color(255,255,255,255);
 		.def("GetTilesByRect", &GetTileListByRect)
 
 
-		,class_<WorldManager>("MapManager")
-		.def("SetActiveMapByName", &WorldManager::SetActiveWorldByName)
-		.def("GetActiveMap", &WorldManager::GetActiveWorld)
-		.def("UnloadMapByName", &WorldManager::UnloadWorldByName)
-		.def("LoadMapByName", &WorldManager::LoadWorldByName)
+		,class_<MapManager>("MapManager")
+		.def("SetActiveMapByName", &MapManager::SetActiveMapByName)
+		.def("GetActiveMap", &MapManager::GetActiveWorld)
+		.def("UnloadMapByName", &MapManager::UnloadWorldByName)
+		.def("LoadMapByName", &MapManager::LoadMapByName)
 		
 		,class_<TagManager>("TagManager")
 		.def("GetFromString", &TagManager::GetFromString)

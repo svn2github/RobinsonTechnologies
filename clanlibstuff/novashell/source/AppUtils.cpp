@@ -148,7 +148,7 @@ void StringReplace(const std::string& what, const std::string& with, std::string
 
 bool compareLayerBySort(unsigned int pA, unsigned int pB) 
 {
-	LayerManager *pLayerManager = &GetWorld->GetLayerManager();
+	LayerManager *pLayerManager = &GetActiveMap->GetLayerManager();
 
 	return pLayerManager->GetLayerInfo(pA).GetSort() <
 		pLayerManager->GetLayerInfo(pB).GetSort();

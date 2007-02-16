@@ -513,25 +513,8 @@
 					Name="Map"
 					>
 					<File
-						RelativePath=".\EntWorldCache.cpp"
+						RelativePath=".\EntMapCache.cpp"
 						>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="2"
-								PrecompiledHeaderThrough="AppPrecomp.h"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								PrecompiledHeaderThrough="AppPrecomp.h"
-							/>
-						</FileConfiguration>
 					</File>
 				</Filter>
 				<Filter
@@ -2254,7 +2237,7 @@
 					Name="MapH"
 					>
 					<File
-						RelativePath=".\EntWorldCache.h"
+						RelativePath=".\EntMapCache.h"
 						>
 					</File>
 					<File

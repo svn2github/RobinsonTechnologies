@@ -124,13 +124,13 @@ void Map::Kill()
 	SAFE_DELETE(m_pNavGraphManager);
  }
 
-EntWorldCache * Map::GetMyWorldCache()
+EntMapCache * Map::GetMyMapCache()
 {
 	
 	if (!m_pWorldCache)
 	{
 		LogMsg("Choosing to load world because someone wanted access to its world cache");
-		GetWorldManager->LoadWorld(GetDirPath(), false);
+		GetWorldManager->LoadMap(GetDirPath(), false);
 		PreloadMap();
 	}
 	
@@ -923,7 +923,7 @@ void RemoveWorldFiles(const string &path)
 	RemoveFile(path+C_LAYER_FILENAME);
 }
 
-void Map::SetMyWorldCache(EntWorldCache *pWorldCache)
+void Map::SetMyWorldCache(EntMapCache *pWorldCache)
 {
 	 m_pWorldCache = pWorldCache;
 }

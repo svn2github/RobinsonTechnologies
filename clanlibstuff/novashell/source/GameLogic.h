@@ -11,8 +11,8 @@
 
 #include "MyEntityManager.h"
 #include "EntityManager.h"
-#include "World.h"
-#include "WorldManager.h"
+#include "Map.h"
+#include "MapManager.h"
 #include "AppUtils.h"
 #include "ScriptManager.h"
 #include "Camera.h"
@@ -54,7 +54,7 @@ public:
 	  void SetMyPlayer(MovingEntity * pNew);
 	  MovingEntity * GetMyPlayer() {return m_pPlayer;}
 	  const string & GetBaseMapPath() {return m_strBaseMapPath;}
-	  WorldManager * GetMyWorldManager() {return &m_worldManager;}
+	  MapManager * GetMyWorldManager() {return &m_worldManager;}
 	  void ClearScreen();
 	  void SetShowEntityCollisionData(bool bNew) {m_bShowEntityCollisionData = bNew;}
 	  bool GetShowEntityCollisionData() {return m_bShowEntityCollisionData;}
@@ -138,7 +138,7 @@ private:
 	string m_strBaseMapPath; //contains something like "maps/" (includes trailing backslash)
 	string m_strUserProfileName; //blank if none (empty if none)
 	string m_strUserProfilePathWithName; //the path plus the name (empty if none)
-	WorldManager m_worldManager; //holds all our world data 
+	MapManager m_worldManager; //holds all our world data 
 	bool m_bShowEntityCollisionData;
 	int m_GamePaused; //0 if not paused, 3 if paused three layers deep
 	bool m_bEditorActive;
@@ -173,7 +173,7 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle = true);
 extern TagManager g_TagManager;
 extern CL_VirtualFileManager g_VFManager;
 
-#define GetWorld GetApp()->GetMyGameLogic()->GetMyWorldManager()->GetActiveWorld()
+#define GetActiveMap GetApp()->GetMyGameLogic()->GetMyWorldManager()->GetActiveWorld()
 #define GetWorldCache GetApp()->GetMyGameLogic()->GetMyWorldManager()->GetActiveWorldCache()
 #define GetPlayer GetApp()->GetMyGameLogic()->GetMyPlayer()
 #define GetWorldManager GetApp()->GetMyGameLogic()->GetMyWorldManager()

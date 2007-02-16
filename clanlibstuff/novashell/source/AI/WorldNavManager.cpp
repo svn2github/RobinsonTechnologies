@@ -82,7 +82,7 @@ void WorldNavManager::LinkToConnectedWarpsOnSameMap(TagObject *pTagSrc)
 
 	if (!pTagSrc->m_pWorld->IsInitted())
 	{
-		GetWorldManager->LoadWorld(pTagSrc->m_pWorld->GetDirPath(), false);
+		GetWorldManager->LoadMap(pTagSrc->m_pWorld->GetDirPath(), false);
 		pTagSrc->m_pWorld->PreloadMap();
 	}
 	for (itor = pTagSrc->m_pWorld->GetWarpTagHashList().begin(); itor != pTagSrc->m_pWorld->GetWarpTagHashList().end(); itor++)
@@ -180,8 +180,8 @@ void WorldNavManager::LinkEverything()
 {
 	//go through each map and link them all
 
-	world_info_list * pList = GetGameLogic->GetMyWorldManager()->GetWorldInfoList();
-	world_info_list::iterator itor = pList->begin();
+	map_info_list * pList = GetGameLogic->GetMyWorldManager()->GetWorldInfoList();
+	map_info_list::iterator itor = pList->begin();
 
 	while(itor != pList->end())
 	{
@@ -242,7 +242,7 @@ MovingEntity * WorldNavManager::ConvertWorldNodeToOwnerEntity(int nodeID, bool b
 		if (!pTag->m_pWorld->IsInitted())
 		{
 			//uh oh, we're probably going to need this
-			GetWorldManager->LoadWorld(pTag->m_pWorld->GetDirPath(), false);
+			GetWorldManager->LoadMap(pTag->m_pWorld->GetDirPath(), false);
 			pTag->m_pWorld->PreloadMap();
 		}
 	}

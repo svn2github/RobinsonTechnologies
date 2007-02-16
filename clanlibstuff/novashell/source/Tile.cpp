@@ -254,9 +254,9 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	static Layer *pLayer;
 	static Map *pWorld;
 	pWorld = pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
-	static EntWorldCache *pWorldCache;
+	static EntMapCache *pWorldCache;
 	
-	pWorldCache = pWorld->GetMyWorldCache();
+	pWorldCache = pWorld->GetMyMapCache();
 	
 	assert(pWorldCache && "Why render nothing?");
 
@@ -348,8 +348,8 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 	static Layer *pLayer;
 	static Map *pWorld;
 	pWorld = pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
-	static EntWorldCache *pWorldCache;
-	pWorldCache = pWorld->GetMyWorldCache();
+	static EntMapCache *pWorldCache;
+	pWorldCache = pWorld->GetMyMapCache();
 	
 	vecPos = pWorldCache->WorldToScreen(pTile->GetPos());
 	

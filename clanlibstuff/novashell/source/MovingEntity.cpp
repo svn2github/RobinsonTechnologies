@@ -2,7 +2,7 @@
 #include "MovingEntity.h"
 #include "GameLogic.h"
 #include "TileEntity.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 #include "EntCollisionEditor.h"
 #include "ScriptManager.h"
 #include "BrainShake.h"
@@ -779,7 +779,7 @@ string MovingEntity::ProcessPathNoScript(const string &st)
 
 int MovingEntity::PlaySoundPositioned(const string &fName)
 {
-	if (GetWorld != GetMap())
+	if (GetActiveMap != GetMap())
 	{
 		//we're not in the same map
 		return C_SOUND_NONE;
@@ -1390,7 +1390,7 @@ void MovingEntity::UpdateTilePosition()
 		
 		if (!m_strWorldToMoveTo.empty())
 		{
-			 WorldInfo *pInfo = GetWorldManager->GetWorldInfoByName(m_strWorldToMoveTo);
+			 MapInfo *pInfo = GetWorldManager->GetMapInfoByName(m_strWorldToMoveTo);
 
 			 if (pInfo)
 			 {
@@ -1398,7 +1398,7 @@ void MovingEntity::UpdateTilePosition()
 				//load it if needed
 				 if (!pInfo->m_world.IsInitted())
 				 {
-					 GetWorldManager->LoadWorld(pInfo->m_world.GetDirPath(), false);
+					 GetWorldManager->LoadMap(pInfo->m_world.GetDirPath(), false);
 					 pInfo->m_world.PreloadMap();
 
 				 }
@@ -1967,7 +1967,7 @@ void MovingEntity::ApplyGenericMovement(float step)
 
 	Map *pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
 
-	pWorld->GetMyWorldCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
+	pWorld->GetMyMapCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
 	
 	m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
 
@@ -2004,13 +2004,13 @@ void MovingEntity::RenderShadow(void *pTarget)
 
 	static CL_Vector2 vecPos;
 	static Map *pWorld;
-	static EntWorldCache *pWorldCache;
+	static EntMapCache *pWorldCache;
 
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
 
 	pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
-	pWorldCache = pWorld->GetMyWorldCache();
+	pWorldCache = pWorld->GetMyMapCache();
 
 	vecPos = pWorldCache->WorldToScreen(vVisualPos);
 
@@ -2128,10 +2128,10 @@ void MovingEntity::Render(void *pTarget)
 		static Layer *pLayer;
 		static Map *pWorld;
 		pWorld = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld();
-		static EntWorldCache *pWorldCache;
+		static EntMapCache *pWorldCache;
 		static CL_Vector2 vecPos;
 
-		pWorldCache = pWorld->GetMyWorldCache();
+		pWorldCache = pWorld->GetMyMapCache();
 
 		if (GetGameLogic->GetParallaxActive())
 		{
@@ -2228,7 +2228,7 @@ void MovingEntity::Render(void *pTarget)
 	if (!m_text.empty())
 	{
 		//draw some text too
-		CL_Vector2 vecPos = GetMap()->GetMyWorldCache()->WorldToScreen(vVisualPos);
+		CL_Vector2 vecPos = GetMap()->GetMyMapCache()->WorldToScreen(vVisualPos);
 		
 		float textScaleX, textScaleY;
 		m_pFont->get_scale(textScaleX, textScaleY);
@@ -2474,9 +2474,9 @@ void MovingEntity::ApplyPhysics(float step)
 			}
 
 
-			if (GetMap() != GetWorld)
+			if (GetMap() != GetActiveMap)
 			{
-				SetPosAndMap(vPos, GetWorld->GetName());
+				SetPosAndMap(vPos, GetActiveMap->GetName());
 			} else
 			{
 				SetPos(vPos);
@@ -2753,7 +2753,7 @@ float MovingEntity::GetBoundingCollisionRadius()
 //warning, only tests against edges
 bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 {
-	EntWorldCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache();	
+	EntMapCache *pWC = m_pTile->GetParentScreen()->GetParentWorldChunk()->GetParentWorld()->GetMyMapCache();	
 	return !pWC->IsPathObstructed(GetPos(), to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
 }
 
@@ -2762,14 +2762,14 @@ bool MovingEntity::CanWalkTo(CL_Vector2 & to, bool ignoreLivingCreatures)
 //warning, only tests against edges
 bool MovingEntity::CanWalkBetween(Map *pMap, CL_Vector2 from, CL_Vector2 to, bool ignoreLivingCreatures)
 {
-	return !pMap->GetMyWorldCache()->IsPathObstructed(from, to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
+	return !pMap->GetMyMapCache()->IsPathObstructed(from, to, GetBoundingCollisionRadius(), m_pTile, ignoreLivingCreatures);
 }
 
 bool MovingEntity::IsValidPosition(Map *pMap, const CL_Vector2 &pos, bool bIgnoreLivingCreatures)
 {
 
 	if (!pMap) pMap = GetMap();
-	return !pMap->GetMyWorldCache()->IsAreaObstructed(pos, GetBoundingCollisionRadius(), bIgnoreLivingCreatures, this);
+	return !pMap->GetMyMapCache()->IsAreaObstructed(pos, GetBoundingCollisionRadius(), bIgnoreLivingCreatures, this);
 }
 
 

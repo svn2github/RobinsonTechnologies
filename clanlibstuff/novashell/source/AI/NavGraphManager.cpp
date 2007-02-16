@@ -58,7 +58,7 @@ void NavGraphManager::ExamineNodesForLinking(Tile *pA, Tile *pB)
 
 	float dist = Vec2DDistanceSq(a, b);
 
-	if (!m_pWorld->GetMyWorldCache()->IsPathObstructed(a, b, 10, NULL, true))
+	if (!m_pWorld->GetMyMapCache()->IsPathObstructed(a, b, 10, NULL, true))
 	{
 		m_pNavGraph->AddEdge(NavGraph::EdgeType(pA->GetGraphNodeID(), pB->GetGraphNodeID(), dist));
 		//link the other way too
@@ -92,7 +92,7 @@ void NavGraphManager::AddNeighborLinks(Tile *pTile)
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	m_pWorld->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList(), false, false);
+	m_pWorld->GetMyMapCache()->AddTilesByRect(recArea, &tileList, m_pWorld->GetLayerManager().GetCollisionList(), false, false);
 
 	GraphNode* pN;
 	int nodeID;

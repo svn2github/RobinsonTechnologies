@@ -1,5 +1,5 @@
 #include "AppPrecomp.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 #include "GameLogic.h"
 #include "EntCollisionEditor.h"
 #include "TileEntity.h"
@@ -12,9 +12,9 @@
 #define C_TILE_EDIT_UNDO_LEVEL 20
 
 
-EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
+EntMapCache::EntMapCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
-	 SetName("worldcache");
+	 SetName("mapcache");
      m_pWorld = NULL;
 	 m_cacheCheckTimer = 0;
 	 SetDrawWorldChunkGrid(false);
@@ -27,7 +27,7 @@ EntWorldCache::EntWorldCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	 
 }
 
-void EntWorldCache::PushUndoOperation(const operation_deque &op)
+void EntMapCache::PushUndoOperation(const operation_deque &op)
 {
 	if (m_undoDeque.size() >= C_TILE_EDIT_UNDO_LEVEL)
 	{
@@ -36,7 +36,7 @@ void EntWorldCache::PushUndoOperation(const operation_deque &op)
 	m_undoDeque.push_front(op);
 }
 
-void EntWorldCache::PopUndoOperation()
+void EntMapCache::PopUndoOperation()
 {
 	if (m_undoDeque.size() == 0) return;
 	
@@ -54,7 +54,7 @@ void EntWorldCache::PopUndoOperation()
 
 
 
-void EntWorldCache::SetWorld( Map * pWorld)
+void EntMapCache::SetWorld( Map * pWorld)
 {
 	if (!m_pWorld)
 	{
@@ -64,7 +64,7 @@ void EntWorldCache::SetWorld( Map * pWorld)
 	m_pWorld = pWorld;
 	pWorld->SetMyWorldCache(this);
 
-	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntWorldCache::OnMapChange);
+	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntMapCache::OnMapChange);
 	} else
 	{
 		assert(pWorld == m_pWorld);
@@ -72,12 +72,12 @@ void EntWorldCache::SetWorld( Map * pWorld)
 	}
 
 }
-EntWorldCache::~EntWorldCache()
+EntMapCache::~EntMapCache()
 {
     ClearCache();
 }
 
-void EntWorldCache::ClearCache()
+void EntMapCache::ClearCache()
 {
 
 	m_worldChunkVector.clear();
@@ -91,29 +91,29 @@ void EntWorldCache::ClearCache()
 }
 
 //TODO: these should be rewritten for speed later
-CL_Vector2 EntWorldCache::WorldToScreen(float x, float y)
+CL_Vector2 EntMapCache::WorldToScreen(float x, float y)
 {
 	return WorldToScreen(CL_Vector2(x,y));
 }
 
-CL_Vector2 EntWorldCache::WorldToScreen(const CL_Vector2 &vecWorld)
+CL_Vector2 EntMapCache::WorldToScreen(const CL_Vector2 &vecWorld)
 {
 	return CL_Vector2( (vecWorld.x-GetCamera->GetPos().x)*GetCamera->GetScale().x , (vecWorld.y-GetCamera->GetPos().y)*GetCamera->GetScale().y);
 }
 
-CL_Vector2 EntWorldCache::WorldToModifiedWorld(const CL_Vector2 &vecWorld, const CL_Vector2 &vecMod)
+CL_Vector2 EntMapCache::WorldToModifiedWorld(const CL_Vector2 &vecWorld, const CL_Vector2 &vecMod)
 {
 	CL_Vector2 vCam = GetCamera->GetPosCentered();
 	return CL_Vector2(vecWorld.x + vCam.x * vecMod.x, vecWorld.y + vCam.y * vecMod.y);
 }
 
-CL_Vector2 EntWorldCache::ModifiedWorldToWorld(const CL_Vector2 &vecWorld, const CL_Vector2 &vecMod)
+CL_Vector2 EntMapCache::ModifiedWorldToWorld(const CL_Vector2 &vecWorld, const CL_Vector2 &vecMod)
 {
 	CL_Vector2 vCam = GetCamera->GetPosCentered();
 	return CL_Vector2(vecWorld.x - vCam.x * vecMod.x, vecWorld.y - vCam.y * vecMod.y);
 }
 
-CL_Vector2 EntWorldCache::ScreenToWorld(const CL_Vector2 &vecScreen)
+CL_Vector2 EntMapCache::ScreenToWorld(const CL_Vector2 &vecScreen)
 {
 
 /*
@@ -135,7 +135,7 @@ CL_Vector2 EntWorldCache::ScreenToWorld(const CL_Vector2 &vecScreen)
 }
 
 //returns true if actually generated a new thumb nail, false if the screen was blank
-bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
+bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 {
 	assert(m_pWorld);
 	MapChunk *pWorldChunk = m_pWorld->GetMapChunk(screenID);
@@ -220,13 +220,13 @@ bool EntWorldCache::GenerateThumbnail(ScreenID screenID)
 
 bool compareTileByLayer(const Tile *pA, const Tile *pB) 
 {
-	LayerManager *pLayerManager = &GetWorld->GetLayerManager();
+	LayerManager *pLayerManager = &GetActiveMap->GetLayerManager();
 
 	return pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort() <
 		pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
 }
 
-void EntWorldCache::RemoveTileFromList(Tile *pTile)
+void EntMapCache::RemoveTileFromList(Tile *pTile)
 {
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
@@ -286,7 +286,7 @@ void EntWorldCache::RemoveTileFromList(Tile *pTile)
 	}
 }
 
-void EntWorldCache::ProcessPendingEntityMovementAndDeletions()
+void EntMapCache::ProcessPendingEntityMovementAndDeletions()
 {
 	//process pending movement/deletions
   //	LogMsg("Processing %d ents", m_entityList.size());
@@ -301,12 +301,12 @@ void EntWorldCache::ProcessPendingEntityMovementAndDeletions()
 
 }
 
-void EntWorldCache::ResetPendingEntityMovementAndDeletions()
+void EntMapCache::ResetPendingEntityMovementAndDeletions()
 {
 	m_entityList.clear();
 }
 
-void EntWorldCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec, bool bDontAddToDrawList )
+void EntMapCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vector<unsigned int>  & layerIDVec, bool bDontAddToDrawList )
 {
 	
 	/*
@@ -465,7 +465,7 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 }
 
 
-void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail)
+void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail)
 {
 
 	//viewable area in world coords
@@ -568,7 +568,7 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 	//LogMsg("Viewrect is %s.  Drawing %d tiles", PrintRect(viewRect).c_str(), m_tileLayerDrawList.size());
 	//sort the tiles/entities we're going to draw by layer
 	
-	g_pLayerManager = &GetWorld->GetLayerManager();
+	g_pLayerManager = &GetActiveMap->GetLayerManager();
 	
 	std::sort(m_tileLayerDrawList.begin(), m_tileLayerDrawList.end(), compareTileBySortLevelOptimized);
 
@@ -580,13 +580,13 @@ void EntWorldCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingT
 
 }
 
-void EntWorldCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
+void EntMapCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 {
 	
 }
 
 //break this rect down into chunks to feed into the screens to get tile info
-void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/, bool bAllowLoadOnDemand /* = false*/)
+void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/, bool bAllowLoadOnDemand /* = false*/)
 {
 	
 	
@@ -653,7 +653,7 @@ void EntWorldCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList,
 	}
 }
 
-void EntWorldCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
+void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 {
 	Tile *pTile;
 
@@ -694,7 +694,7 @@ void EntWorldCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 	}
 }
 
-void EntWorldCache::RenderGoalAI(CL_GraphicContext *pGC)
+void EntMapCache::RenderGoalAI(CL_GraphicContext *pGC)
 {
 	Tile *pTile;
 
@@ -720,7 +720,7 @@ void EntWorldCache::RenderGoalAI(CL_GraphicContext *pGC)
 	}
 }
 
-void EntWorldCache::RenderCollisionLists(CL_GraphicContext *pGC)
+void EntMapCache::RenderCollisionLists(CL_GraphicContext *pGC)
 {
 	Tile *pTile;
 
@@ -738,7 +738,7 @@ void EntWorldCache::RenderCollisionLists(CL_GraphicContext *pGC)
 	}
 }
 
-void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
+void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 {
 	Tile *pTile;
 
@@ -746,7 +746,7 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 
 	int renderStart = 0;
 	int curSort = -99999;
-	LayerManager *pLayerManager = &GetWorld->GetLayerManager();
+	LayerManager *pLayerManager = &GetActiveMap->GetLayerManager();
 	int sort;
 
 	unsigned int i;
@@ -805,18 +805,18 @@ void EntWorldCache::RenderViewList(CL_GraphicContext *pGC)
 	}
 }
 
-void EntWorldCache::ClearTriggers()
+void EntMapCache::ClearTriggers()
 {
 	m_activeTriggers.clear();
 
 }
 
-void EntWorldCache::AddActiveTrigger(int entID)
+void EntMapCache::AddActiveTrigger(int entID)
 {
 	m_activeTriggers.push_back(entID);
 }
 
-void EntWorldCache::Update(float step)
+void EntMapCache::Update(float step)
 {
 
 	m_uniqueDrawID = GetApp()->GetUniqueNumber();
@@ -835,7 +835,7 @@ void EntWorldCache::Update(float step)
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 	ClearTriggers();
 
-	if (m_pWorld != GetWorld)
+	if (m_pWorld != GetActiveMap)
 	{
 		//we no longer have focus, don't bother doing our AI
 		return;
@@ -872,7 +872,7 @@ void EntWorldCache::Update(float step)
 
 }
 
-bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity)
+bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity)
 {
 	tile_list tilelist;
 	CL_Rect r(pos.x - radius/2, pos.y - radius/2, pos.x + radius/2, pos.y + radius/2);
@@ -982,7 +982,7 @@ bool EntWorldCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreM
 	return false;
 }
 
-bool EntWorldCache::IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, Tile *pTileToIgnore, bool bIgnoreMovingCreatures)
+bool EntMapCache::IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, Tile *pTileToIgnore, bool bIgnoreMovingCreatures)
 {
 
 	//LogMsg("Checking path with %.2f bounds", radius);
@@ -1028,7 +1028,7 @@ bool EntWorldCache::IsPathObstructed(CL_Vector2 a, CL_Vector2 b, float radius, T
 	return false;
 }
 
-void EntWorldCache::OnMapChange()
+void EntMapCache::OnMapChange()
 {
 	//let any triggers register that the player has left the map
 	MovingEntity *pEnt = NULL;
@@ -1048,7 +1048,7 @@ void EntWorldCache::OnMapChange()
 	ClearCache();
 }
 
-void EntWorldCache::Render(void *pTarget)
+void EntMapCache::Render(void *pTarget)
 {
 	
 	CL_GraphicContext* pGC = (CL_GraphicContext*)pTarget;

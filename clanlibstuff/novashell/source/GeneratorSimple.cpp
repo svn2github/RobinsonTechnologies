@@ -8,10 +8,10 @@ GeneratorSimple::GeneratorSimple()
 
 void GeneratorSimple::GenerateInit()
 {
-    assert(GetWorld && "World must be initted before this is called");
-	m_genX = GetWorld->GetWorldRect()->left;
-	m_genY = GetWorld->GetWorldRect()->top;
-	m_worldRect = *GetWorld->GetWorldRect(); //cache our own copy, in case it changes in mid-generation
+    assert(GetActiveMap && "World must be initted before this is called");
+	m_genX = GetActiveMap->GetWorldRect()->left;
+	m_genY = GetActiveMap->GetWorldRect()->top;
+	m_worldRect = *GetActiveMap->GetWorldRect(); //cache our own copy, in case it changes in mid-generation
 }
 
 
@@ -20,7 +20,7 @@ void GeneratorSimple::GenerateInit()
 bool GeneratorSimple::GenerateStep()
 {
     //init and create the screen 
-    Screen *pScreen = GetWorld->GetScreen(m_genX, m_genY);
+    Screen *pScreen = GetActiveMap->GetScreen(m_genX, m_genY);
     if (!pScreen) throw CL_Error("Failing creating a screen");
 
     GenerateScreen(pScreen, m_genX, m_genY);
@@ -52,9 +52,9 @@ void GeneratorSimple::GenerateScreen(Screen *pScreen, int x, int y)
 	for (int i=0; i < 20; i++)
 	{
 		   pTile = new TilePic;
-		   CL_Vector2 vecPos = GetWorld->ScreenIDToWorldPos(pScreen->GetParentWorldChunk()->GetScreenID());
-   		   vecPos.x += random(GetWorld->GetWorldChunkPixelSize());
-		   vecPos.y += random(GetWorld->GetWorldChunkPixelSize());
+		   CL_Vector2 vecPos = GetActiveMap->ScreenIDToWorldPos(pScreen->GetParentWorldChunk()->GetScreenID());
+   		   vecPos.x += random(GetActiveMap->GetWorldChunkPixelSize());
+		   vecPos.y += random(GetActiveMap->GetWorldChunkPixelSize());
 		   pTile->m_resourceID = FileNameToID("cosmo");
   		   CL_Surface *pSurf = GetHashedResourceManager->GetResourceByHashedID(pTile->m_resourceID);
 
@@ -76,7 +76,7 @@ void GeneratorSimple::GenerateScreen(Screen *pScreen, int x, int y)
 		   pTile->SetPos(vecPos);
 		   pTile->SetLayer(C_LAYER_MAIN);
 
-		   GetWorld->AddTile(pTile); //automatically puts it in the right place
+		   GetActiveMap->AddTile(pTile); //automatically puts it in the right place
 	}
     //LogMsg("There are %d shapes", pScreen->GetShapeCount());
 

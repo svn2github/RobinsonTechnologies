@@ -26,7 +26,7 @@ using namespace luabind;
 
 CL_Vector2 ScreenToWorld(CL_Vector2 v)
 {
-	if (GetWorld)
+	if (GetActiveMap)
 	{
 		return GetWorldCache->ScreenToWorld(v);
 	}	
@@ -38,7 +38,7 @@ CL_Vector2 ScreenToWorld(CL_Vector2 v)
 
 CL_Vector2 WorldToScreen(CL_Vector2 v)
 {
-	if (GetWorld)
+	if (GetActiveMap)
 	{
 		return GetWorldCache->WorldToScreen(v);
 	} 
@@ -60,7 +60,7 @@ MovingEntity * GetEntityByName(const string &name)
 	if (t->m_entID == 0)
 	{
 		//let's load it right now
-		GetWorldManager->LoadWorld(t->m_pWorld->GetDirPath(), false);
+		GetWorldManager->LoadMap(t->m_pWorld->GetDirPath(), false);
 		t->m_pWorld->PreloadMap();
 
 		if (t->m_entID == 0)
@@ -103,7 +103,7 @@ Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerID
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	pWorld->GetMyWorldCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
+	pWorld->GetMyMapCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
 
 	//now we need to sort them
 	g_pLayerManager = &pWorld->GetLayerManager();
@@ -141,7 +141,7 @@ Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerID
 
 MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, bool bPixelAccurate)
 {
-	if (!GetWorld)
+	if (!GetActiveMap)
 	{
 
 		LogMsg("GetEntityByWorldPos: Error, no map is active right now.");
@@ -155,10 +155,10 @@ MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, boo
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	GetWorldCache->AddTilesByRect(recArea, &tileList, GetWorld->GetLayerManager().GetDrawList());
+	GetWorldCache->AddTilesByRect(recArea, &tileList, GetActiveMap->GetLayerManager().GetDrawList());
 
 	//now we need to sort them
-	g_pLayerManager = &GetWorld->GetLayerManager();
+	g_pLayerManager = &GetActiveMap->GetLayerManager();
 	tileList.sort(compareTileBySortLevelOptimized);
 
 	tile_list::reverse_iterator itor = tileList.rbegin();

@@ -503,7 +503,7 @@ void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 		}
 
 		if (GetParentWorldChunk()->GetParentWorld()->IsWorldCacheInitted())
-		GetParentWorldChunk()->GetParentWorld()->GetMyWorldCache()->RemoveTileFromList( (*itor) );
+		GetParentWorldChunk()->GetParentWorld()->GetMyMapCache()->RemoveTileFromList( (*itor) );
 		
 	} else
 	{

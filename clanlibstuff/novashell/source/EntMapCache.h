@@ -17,12 +17,12 @@ typedef std::vector<MapChunk*> EntWorldChunkVector;
 typedef std::vector<Tile*> tile_vector;
 typedef std::vector<MovingEntity*> moving_entity_vector;
 
-class EntWorldCache: public BaseGameEntity
+class EntMapCache: public BaseGameEntity
 {
 public:
 
-    EntWorldCache();
-    virtual ~EntWorldCache();
+    EntMapCache();
+    virtual ~EntMapCache();
 
 	virtual void Render(void *pTarget);
 	virtual void Update(float step);

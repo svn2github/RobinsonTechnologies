@@ -10,7 +10,7 @@
 #ifndef EntWorldDialog_h__
 #define EntWorldDialog_h__
 
-#include "World.h"
+#include "Map.h"
 #include "BaseGameEntity.h"
 
 

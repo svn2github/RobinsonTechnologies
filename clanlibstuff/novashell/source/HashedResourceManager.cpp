@@ -265,7 +265,7 @@ void HashedResourceManager::ShowResourceNotFoundError(unsigned int resourceID)
 	//do a slow look up to find the resource.  It's not like this should be called much or speed matters.
 	//If it ever is, load the file into a hash-map and keep it cached after the first call.
 	
-	Map *pWorld = GetWorld;
+	Map *pWorld = GetActiveMap;
 	string stExtraInfo = "extra info not available";
 	
 	if (pWorld)

@@ -4,7 +4,7 @@
 #include "GameLogic.h"
 #include "EntChooseScreenMode.h"
 #include "GeneratorSimple.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 #include "EntEditMode.h"
 #include "GeneratorDink.h"
 #include "Console.h"
@@ -281,14 +281,14 @@ void EntEditor::MapOptionsDialog()
 	CL_InputDialog dlg("Map Properties", "Ok", "Cancel","", GetApp()->GetGUI());
 	dlg.set_event_passing(false);
 	// Save pointers to input_boxes to connect signals for character validating
-	CL_InputBox *pGrid = dlg.add_input_box("Map Chunk Size In Pixels:", CL_String::from_int(GetWorld->GetWorldChunkPixelSize()));
-	CL_InputBox *pCache = dlg.add_input_box("Cache Sensitivity (0 for none, 1 for double the viewable area):", CL_String::from_float(GetWorld->GetCacheSensitivity()));
-	CL_InputBox *pThumb = dlg.add_input_box("Auto Thumbnail Size: (0 for none):", CL_String::from_int(GetWorld->GetThumbnailWidth()));
-	CL_InputBox *pBGColor = dlg.add_input_box("BG Color: (in the format of r g b a)", ColorToString(GetWorld->GetBGColor()));
-	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", CL_String::from_float(GetWorld->GetGravity()));
+	CL_InputBox *pGrid = dlg.add_input_box("Map Chunk Size In Pixels:", CL_String::from_int(GetActiveMap->GetWorldChunkPixelSize()));
+	CL_InputBox *pCache = dlg.add_input_box("Cache Sensitivity (0 for none, 1 for double the viewable area):", CL_String::from_float(GetActiveMap->GetCacheSensitivity()));
+	CL_InputBox *pThumb = dlg.add_input_box("Auto Thumbnail Size: (0 for none):", CL_String::from_int(GetActiveMap->GetThumbnailWidth()));
+	CL_InputBox *pBGColor = dlg.add_input_box("BG Color: (in the format of r g b a)", ColorToString(GetActiveMap->GetBGColor()));
+	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", CL_String::from_float(GetActiveMap->GetGravity()));
 	CL_InputBox *pZoom = dlg.add_input_box("Current Camera Zoom (1 1 for normal):", VectorToString(&GetCamera->GetScale()));
-	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (changes saved for each player profile)", GetWorld->GetPersistent(), 270);
-	CL_CheckBox *pAutoSave = dlg.add_check_box("Auto Save (if false, must use File->Save)", GetWorld->GetAutoSave(), 200);
+	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (changes saved for each player profile)", GetActiveMap->GetPersistent(), 270);
+	CL_CheckBox *pAutoSave = dlg.add_check_box("Auto Save (if false, must use File->Save)", GetActiveMap->GetAutoSave(), 200);
 
 	CL_SlotContainer slots;
 
@@ -325,7 +325,7 @@ void EntEditor::MapOptionsDialog()
 
 		int grid = CL_String::to_int(pGrid->get_text());
 		int thumbSize = CL_String::to_int(pThumb->get_text());
-		if (grid != GetWorld->GetWorldChunkPixelSize()) requireClear = true;
+		if (grid != GetActiveMap->GetWorldChunkPixelSize()) requireClear = true;
 	
 		if (requireClear)
 		{
@@ -333,9 +333,9 @@ void EntEditor::MapOptionsDialog()
 			if (!ConfirmMessage("Warning!", "These changes might take a while to convert the map.\nAre you sure?")) return;
 		BlitMessage("Converting map...");
 		if (
-			(GetWorld->GetWorldRectInPixels().right / grid > SHRT_MAX)
+			(GetActiveMap->GetWorldRectInPixels().right / grid > SHRT_MAX)
 			||
-			(GetWorld->GetWorldRectInPixels().bottom / grid > SHRT_MAX)
+			(GetActiveMap->GetWorldRectInPixels().bottom / grid > SHRT_MAX)
 			)
 		{
 			if (!ConfirmMessage("Warning!", "This would create out of range chunks.  If you continue, we're going to clear the map.\n\n(Try a larger number to avoid this error)."))
@@ -344,33 +344,33 @@ void EntEditor::MapOptionsDialog()
 			}
 
 			//we're going to have to actually clear everything
-			GetWorld->DeleteExistingMap();
-			GetWorld->SetWorldChunkPixelSize(grid);
+			GetActiveMap->DeleteExistingMap();
+			GetActiveMap->SetWorldChunkPixelSize(grid);
 			GetCamera->Reset();
 			GetCamera->InstantUpdate();
 		}
 
 		vector<unsigned int> layerIDVec;
-		GetWorld->GetLayerManager().PopulateIDVectorWithAllLayers(layerIDVec);
-		GetWorldCache->AddTilesByRect(GetWorld->GetWorldRectInPixels(), &tileListOfPointersOnly, layerIDVec);
+		GetActiveMap->GetLayerManager().PopulateIDVectorWithAllLayers(layerIDVec);
+		GetWorldCache->AddTilesByRect(GetActiveMap->GetWorldRectInPixels(), &tileListOfPointersOnly, layerIDVec);
 		//make a copy of each tile
 		CloneTileList(tileListOfPointersOnly, tileList);
 		}
 
 		//set all the defaults
-		GetWorld->SetWorldChunkPixelSize(grid);
-		GetWorld->SetCacheSensitivity(CL_String::to_float(pCache->get_text()));
-		GetWorld->SetBGColor(StringToColor(pBGColor->get_text()));
-		GetWorld->SetGravity(CL_String::to_float(pGravity->get_text()));
-		GetWorld->SetPersistent(pPersistent->is_checked());
-		GetWorld->SetAutoSave(pAutoSave->is_checked());
+		GetActiveMap->SetWorldChunkPixelSize(grid);
+		GetActiveMap->SetCacheSensitivity(CL_String::to_float(pCache->get_text()));
+		GetActiveMap->SetBGColor(StringToColor(pBGColor->get_text()));
+		GetActiveMap->SetGravity(CL_String::to_float(pGravity->get_text()));
+		GetActiveMap->SetPersistent(pPersistent->is_checked());
+		GetActiveMap->SetAutoSave(pAutoSave->is_checked());
 		GetCamera->SetScale(StringToVector(pZoom->get_text()));
 
 		if (requireClear)
 		{
 			//reinit the world		
-			GetWorld->DeleteExistingMap();
-			GetWorld->Init();
+			GetActiveMap->DeleteExistingMap();
+			GetActiveMap->Init();
 			GetWorldCache->ClearCache();
 
 			//re-add all the tiles we had deleted
@@ -378,17 +378,17 @@ void EntEditor::MapOptionsDialog()
 			
 			while(itor != tileList.end())
 			{
-				GetWorld->AddTile(*itor);
+				GetActiveMap->AddTile(*itor);
 				itor++;
 			}
 
 		} else
 		{
-			if (thumbSize != GetWorld->GetThumbnailWidth())
+			if (thumbSize != GetActiveMap->GetThumbnailWidth())
 			{
-				GetWorld->SetThumbnailWidth(thumbSize);
-				GetWorld->SetThumbnailHeight(thumbSize);
-				GetWorld->InvalidateAllThumbnails();
+				GetActiveMap->SetThumbnailWidth(thumbSize);
+				GetActiveMap->SetThumbnailHeight(thumbSize);
+				GetActiveMap->InvalidateAllThumbnails();
 
 			}
 		}
@@ -421,7 +421,7 @@ void EntEditor::SetDefaultTipLabel()
 void EntEditor::OnSaveMap()
 {
 	BlitMessage("Saving map...");
-	GetWorld->ForceSaveNow();
+	GetActiveMap->ForceSaveNow();
 }
 
 void EntEditor::OnExit()
@@ -882,7 +882,7 @@ void EntEditor::OnShowHidePalettes()
 
 void EntEditor::OnSelectMap()
 {
-	if (!GetGameLogic->GetMyWorldManager()->GetWorldInfoByPath(m_pListBoxWorld->get_current_text())->m_world.IsInitted())
+	if (!GetGameLogic->GetMyWorldManager()->GetMapInfoByPath(m_pListBoxWorld->get_current_text())->m_world.IsInitted())
 	{
 		BlitMessage("Loading map...");
 	}
@@ -916,18 +916,18 @@ void EntEditor::BuildWorldListBox()
 
 	//add all maps
 	
-	world_info_list * pList = GetGameLogic->GetMyWorldManager()->GetWorldInfoList();
-	world_info_list::iterator itor = pList->begin();
+	map_info_list * pList = GetGameLogic->GetMyWorldManager()->GetWorldInfoList();
+	map_info_list::iterator itor = pList->begin();
 
 	while(itor != pList->end())
 	{
 		bool showIt = true;
 		if ( (*itor)->m_world.GetDirPath().find("hidden_") == string::npos
-			|| GetWorld->GetDirPath() == (*itor)->m_world.GetDirPath())
+			|| GetActiveMap->GetDirPath() == (*itor)->m_world.GetDirPath())
 		{
 			int id = m_pListBoxWorld->insert_item((*itor)->m_world.GetDirPath());
 
-			if (GetWorld->GetDirPath() == (*itor)->m_world.GetDirPath())	
+			if (GetActiveMap->GetDirPath() == (*itor)->m_world.GetDirPath())	
 			{
 				//this should be highlighted now
 				m_pListBoxWorld->set_current_item(id);
@@ -946,7 +946,7 @@ void EntEditor::PopulateLayerListMenu()
 {
 	if (!m_pListLayerDisplay) return;
 
-	LayerManager &layerMan = GetWorld->GetLayerManager();
+	LayerManager &layerMan = GetActiveMap->GetLayerManager();
 	
 	m_pListLayerDisplay->clear();
 	m_pListLayerActive->clear();
@@ -976,7 +976,7 @@ void EntEditor::PopulateLayerListMenu()
 
 void EntEditor::PopUpLayerPropertiesDialog(int layerID)
 {
-	LayerManager &layerMan = GetWorld->GetLayerManager();
+	LayerManager &layerMan = GetActiveMap->GetLayerManager();
 
 	Layer *pLayer = &layerMan.GetLayerInfo(layerID);
 	m_bDialogOpen = true;
@@ -1079,7 +1079,7 @@ void EntEditor::OnLayerAdd()
 {
 	Layer l;
 	l.SetName("New Layer");
-	GetWorld->GetLayerManager().Add(l);
+	GetActiveMap->GetLayerManager().Add(l);
 	PopulateLayerListMenu();
 }
 
@@ -1087,7 +1087,7 @@ void EntEditor::OnLayerHighlight()
 {
 	if (EntityMgr->GetEntityByName("edit mode"))
 	{
-		LayerManager &layerMan = GetWorld->GetLayerManager();
+		LayerManager &layerMan = GetActiveMap->GetLayerManager();
 		EntEditMode *pEdit = dynamic_cast<EntEditMode*>(EntityMgr->GetEntityByName("edit mode"));
 		const vector<unsigned int> &layerVec = layerMan.GetEditActiveList();
 		pEdit->SelectByLayer(layerVec);
@@ -1099,7 +1099,7 @@ void EntEditor::OnLayerHighlight()
 
 void EntEditor::SetAllLayersActive(bool bNew)
 {
-	LayerManager &layerMan = GetWorld->GetLayerManager();
+	LayerManager &layerMan = GetActiveMap->GetLayerManager();
 
 	for (unsigned int i=0; i < layerMan.GetLayerCount(); i++)
 	{
@@ -1184,7 +1184,7 @@ void EntEditor::BuildLayerControlBox()
 void EntEditor::OnLayerChange()
 {
 	
-	LayerManager &layerMan = GetWorld->GetLayerManager();
+	LayerManager &layerMan = GetActiveMap->GetLayerManager();
 
 	//copy all settings to the real world
 	for (int i=0; i < m_pListLayerActive->get_count();i++)
@@ -1217,8 +1217,8 @@ void EntEditor::OnGenerateSmall()
 	int startY = C_DEFAULT_SCREEN_ID;
 
 	BlitMessage("Deleting old map...");
-	GetWorld->DeleteExistingMap();
-	GetWorld->Init(CL_Rect(startX,startY,startX+8,startY+8));
+	GetActiveMap->DeleteExistingMap();
+	GetActiveMap->Init(CL_Rect(startX,startY,startX+8,startY+8));
   	
 	UpdateAll();
     SimpleGenerateInit();
@@ -1233,8 +1233,8 @@ void EntEditor::SimpleGenerateInit()
     m_pGenerator = new GeneratorSimple;
    
     int divider = 128;
-    divider = min(GetWorld->GetWorldX()*GetWorld->GetWorldY()-1, divider);
-    m_generateStepSize = (GetWorld->GetWorldX()*GetWorld->GetWorldY()) /divider;
+    divider = min(GetActiveMap->GetWorldX()*GetActiveMap->GetWorldY()-1, divider);
+    m_generateStepSize = (GetActiveMap->GetWorldX()*GetActiveMap->GetWorldY()) /divider;
     m_bGenerateActive = true;
     m_pGenerator->GenerateInit();
 	ForceChooseScreenMode(true); //switch to view screen mode if it isn't already active
@@ -1258,8 +1258,8 @@ void EntEditor::OnGenerateLarge()
 	int startY = C_DEFAULT_SCREEN_ID;
 
 	BlitMessage("Deleting old map...");
-	GetWorld->DeleteExistingMap();
-	GetWorld->Init(CL_Rect(startX,startY,startX+32,startY+32));
+	GetActiveMap->DeleteExistingMap();
+	GetActiveMap->Init(CL_Rect(startX,startY,startX+32,startY+32));
 	UpdateAll();
     SimpleGenerateInit();
  }
@@ -1270,11 +1270,11 @@ void EntEditor::OnGenerateDink()
 	
 	SAFE_DELETE(m_pGenerator);
 	BlitMessage("Deleting old map...");
-	GetWorld->DeleteExistingMap();
-	GetWorld->SetDefaultTileSizeX(50);
-	GetWorld->SetDefaultTileSizeY(50);
-	GetWorld->SetWorldChunkPixelSize(50*12); //match how dink screens where
-	GetWorld->Init();
+	GetActiveMap->DeleteExistingMap();
+	GetActiveMap->SetDefaultTileSizeX(50);
+	GetActiveMap->SetDefaultTileSizeY(50);
+	GetActiveMap->SetWorldChunkPixelSize(50*12); //match how dink screens where
+	GetActiveMap->Init();
 	GetCamera->Reset();
 	GetCamera->InstantUpdate();
 
@@ -1298,8 +1298,8 @@ void EntEditor::OnClearMap()
 	int startY = C_DEFAULT_SCREEN_ID;
     m_bGenerateActive = false;
 	BlitMessage("Deleting old map...");
-	GetWorld->DeleteExistingMap();
-	GetWorld->Init(CL_Rect(startX,startY,startX+1,startY+1));
+	GetActiveMap->DeleteExistingMap();
+	GetActiveMap->Init(CL_Rect(startX,startY,startX+1,startY+1));
 	GetCamera->Reset();
 	GetCamera->InstantUpdate();
 	GetWorldCache->ClearCache();

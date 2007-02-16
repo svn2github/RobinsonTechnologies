@@ -21,7 +21,7 @@ extern const CL_Vector2 g_mapDefaultCenterPos;
 #include "CameraSetting.h"
 #include "LayerManager.h"
 
-class EntWorldCache;
+class EntMapCache;
 class NavGraphManager;
 
 typedef std::map<ScreenID, MapChunk*> map_chunk_map;
@@ -98,7 +98,7 @@ public:
 	const string & GetName(){return m_strMapName;}
 	bool GetSnapEnabled() {return m_byteArray[e_byteSnapOn] != 0;}
 	void SetSnapEnabled(bool bNew) {m_byteArray[e_byteSnapOn] = bNew; m_bDataChanged = true;}
-	void SetMyWorldCache(EntWorldCache *pWorldCache);
+	void SetMyWorldCache(EntMapCache *pWorldCache);
 	bool GetPersistent() {return m_byteArray[e_byteNotPersistent] == 0;}
 	void SetPersistent(bool bNew) {m_byteArray[e_byteNotPersistent] = !bNew; m_bDataChanged = true;}
 	bool GetAutoSave() {return m_byteArray[e_byteAutoSave] == 0;}
@@ -107,7 +107,7 @@ public:
 	void ForceSaveNow();
 	void RemoveUnusedFileChunks();
 
-	EntWorldCache * GetMyWorldCache();
+	EntMapCache * GetMyMapCache();
 	void ReInitEntities(); //reinits all cached entities in this world, useful after 
 	//changing a script
 	void ReInitCollisionOnTilePics(); 
@@ -184,7 +184,7 @@ private:
 	string m_strMapName; //we get this by cutting off the last part of the dir name
 	CameraSetting m_cameraSetting; //to remember out last camera position
 	LayerManager m_layerManager;
-	EntWorldCache *m_pWorldCache; //cached here for speed
+	EntMapCache *m_pWorldCache; //cached here for speed
 
 	bool m_bDataChanged; //only applicable to what is in this file
 	NavGraphManager *m_pNavGraphManager;

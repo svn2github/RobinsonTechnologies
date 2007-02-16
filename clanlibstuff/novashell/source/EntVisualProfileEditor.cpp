@@ -59,7 +59,7 @@ void EntVisualProfileEditor::OnClose()
 	//now, we don't really have to do this, and we shouldn't if it's slow, but it's less confusing if we reinit all possible sprites that could
 	//have been affected.
 
-	GetWorld->ReInitEntities();
+	GetActiveMap->ReInitEntities();
 		
 
 }

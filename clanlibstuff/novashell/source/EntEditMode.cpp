@@ -2,7 +2,7 @@
 #include "GameLogic.h"
 #include "EntEditMode.h"
 #include "EntEditor.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 #include "EntCollisionEditor.h"
 #include "HashedResource.h"
 #include "TileEntity.h"
@@ -159,7 +159,7 @@ void EntEditMode::OnSelectSimilar()
 
 		m_bHideSelection = false;
 		int operation = TileEditOperation::C_OPERATION_ADD;
-		m_selectedTileList.AddTilesByWorldRectIfSimilar(CL_Vector2(r.left,r.top), CL_Vector2(r.right,r.bottom), operation, GetWorld->GetLayerManager().GetEditActiveList(), (*itor)->m_pTile);
+		m_selectedTileList.AddTilesByWorldRectIfSimilar(CL_Vector2(r.left,r.top), CL_Vector2(r.right,r.bottom), operation, GetActiveMap->GetLayerManager().GetEditActiveList(), (*itor)->m_pTile);
 
 			itor++;
 	}
@@ -173,7 +173,7 @@ void EntEditMode::OnDeleteBadTiles()
 	BlitMessage("Checking for tiles with resource errors...");
 	
 	CL_Rectf r = GetCamera->GetViewRectWorld();
-	GetWorldCache->AddTilesByRect(CL_Rect(r.left, r.top, r.right, r.bottom), &tlist, GetWorld->GetLayerManager().GetAllList());
+	GetWorldCache->AddTilesByRect(CL_Rect(r.left, r.top, r.right, r.bottom), &tlist, GetActiveMap->GetLayerManager().GetAllList());
 
 	LogMsg("Found %d tiles to look through.", tlist.size());
 
@@ -433,10 +433,10 @@ void EntEditMode::Init()
 	CL_Point tmp = offset+CL_Point(m_pCheckBoxSnap->get_width(), -2);
 	CL_Rect recSize(tmp, CL_Size(30,16));
 	
-	if (GetWorld)
+	if (GetActiveMap)
 	{
-		m_vecSnapSize.x = GetWorld->GetDefaultTileSizeX();
-		m_vecSnapSize.y = GetWorld->GetDefaultTileSizeY();
+		m_vecSnapSize.x = GetActiveMap->GetDefaultTileSizeX();
+		m_vecSnapSize.y = GetActiveMap->GetDefaultTileSizeY();
 	}
 
 	
@@ -508,7 +508,7 @@ void EntEditMode::OnEditVisualProfile()
 	//sure, we have the copy in the selection buffer, but this is only a copy.  Let's go grab a pointer
 	//to the real instance to use directly.
 	
-	pTile = GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
+	pTile = GetActiveMap->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
 
 	if (!pTile)
 	{
@@ -561,7 +561,7 @@ void EntEditMode::SnapSizeChanged()
 		{
 			snapX = max(1, snapX);
 			snapX = min(snapX, 4048);
-			GetWorld->SetDefaultTileSizeX(snapX);
+			GetActiveMap->SetDefaultTileSizeX(snapX);
 			m_pInputBoxSnapSizeX->set_text(CL_String::from_int(snapX));
 		}
 
@@ -569,21 +569,21 @@ void EntEditMode::SnapSizeChanged()
 		{
 			snapY = max(1, snapY);
 			snapY = min(snapY, 4048);
-			GetWorld->SetDefaultTileSizeY(snapY);
+			GetActiveMap->SetDefaultTileSizeY(snapY);
 			m_pInputBoxSnapSizeY->set_text(CL_String::from_int(snapY));
 		}
 
 
-		GetWorld->SetSnapEnabled(true);
+		GetActiveMap->SetSnapEnabled(true);
 	} else
 	{
 		m_pInputBoxSnapSizeX->enable(false);
 		m_pInputBoxSnapSizeY->enable(false);
-		GetWorld->SetSnapEnabled(false);
+		GetActiveMap->SetSnapEnabled(false);
 	}
 
-	m_vecSnapSize.x = GetWorld->GetDefaultTileSizeX();
-	m_vecSnapSize.y = GetWorld->GetDefaultTileSizeY();
+	m_vecSnapSize.x = GetActiveMap->GetDefaultTileSizeX();
+	m_vecSnapSize.y = GetActiveMap->GetDefaultTileSizeY();
 
 	if (m_pWindowBaseTile && m_pWindowBaseTile->is_enabled(false))
 	{
@@ -832,7 +832,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 					//they clicked one thing, without really dragging.  Treat it special
 					ClearSelection();
 					m_bHideSelection = false;			
-					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
+					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetActiveMap->GetLayerManager().GetEditActiveList());
 				} else
 				{
 					SetOperation(C_OP_NOTHING); //this handles the paste and undo buffer for us
@@ -880,7 +880,7 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 			{
 				m_bHideSelection = false;			
 				//they clicked one thing, without really dragging.  Treat it special
-				m_selectedTileList.AddTileByPoint(m_vecDragStart, operation, GetWorld->GetLayerManager().GetEditActiveList());
+				m_selectedTileList.AddTileByPoint(m_vecDragStart, operation, GetActiveMap->GetLayerManager().GetEditActiveList());
 		
 			
 
@@ -895,12 +895,12 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 					if (m_vecScreenDragStop.y > m_vecDragStart.y) m_vecScreenDragStop.y += m_vecSnapSize.y; else m_vecDragStart.y += m_vecSnapSize.y;
 
 					
-					m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);
-					m_vecScreenDragStop = GetWorld->SnapWorldCoords(m_vecScreenDragStop, m_vecSnapSize);
+					m_vecDragStart = GetActiveMap->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);
+					m_vecScreenDragStop = GetActiveMap->SnapWorldCoords(m_vecScreenDragStop, m_vecSnapSize);
 				}
 
 				m_bHideSelection = false;			
-				m_selectedTileList.AddTilesByWorldRect(m_vecDragStart, m_vecScreenDragStop, operation, GetWorld->GetLayerManager().GetEditActiveList());
+				m_selectedTileList.AddTilesByWorldRect(m_vecDragStart, m_vecScreenDragStop, operation, GetActiveMap->GetLayerManager().GetEditActiveList());
 
 		
 			}
@@ -1015,7 +1015,7 @@ void EntEditMode::CutSubTile(CL_Rect recCut)
 
 	//which bitmap are we trying to cut from?
 	tile_list tList;
-	GetWorldCache->AddTilesByRect(recCut, &tList, GetWorld->GetLayerManager().GetEditActiveList());
+	GetWorldCache->AddTilesByRect(recCut, &tList, GetActiveMap->GetLayerManager().GetEditActiveList());
 	if (tList.size() == 0)
 	{
 		CL_MessageBox::info("SubTile Create failed, you need to do it over an existing tile on this layer.", GetApp()->GetGUI());
@@ -1025,7 +1025,7 @@ void EntEditMode::CutSubTile(CL_Rect recCut)
 	//guess at the most suitable one
 	tile_list::iterator itor = tList.begin();
 	Tile *pTile = *tList.begin(); //default
-	LayerManager &layerMan = GetWorld->GetLayerManager();
+	LayerManager &layerMan = GetActiveMap->GetLayerManager();
 
 	while (itor != tList.end())
 	{
@@ -1146,7 +1146,7 @@ bool EntEditMode::MouseIsOverSelection(CL_Point ptMouse)
 	if (pSelTile = m_selectedTileList.GetTileAtPos(mousePos))
 	{
 		//the mouse cursor is over a selected tile	
-		Tile *pWorldSelTile = GetTileByWorldPos(GetWorld,mousePos, GetWorld->GetLayerManager().GetEditActiveList(), false);
+		Tile *pWorldSelTile = GetTileByWorldPos(GetActiveMap,mousePos, GetActiveMap->GetLayerManager().GetEditActiveList(), false);
 
 	
 		if (pWorldSelTile)
@@ -1176,17 +1176,17 @@ void EntEditMode::SetOperation(int op)
 		CL_Vector2 vecStart(worldDragStop.x -m_vecDragStart.x, worldDragStop.y - m_vecDragStart.y);
 		vecStart += m_selectedTileList.GetUpperLeftPos();
 
-		if (GetWorld->GetSnapEnabled())
+		if (GetActiveMap->GetSnapEnabled())
 		{
 			
 			if (m_selectedTileList.m_selectedTileList.size() == 1)
 				vecStart = worldDragStop; //special case when in snap mode
 			
-			vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecSnapSize);
+			vecStart = GetActiveMap->SnapWorldCoords(vecStart, m_vecSnapSize);
 
 		} else
 		{
-			vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecDragSnap);
+			vecStart = GetActiveMap->SnapWorldCoords(vecStart, m_vecDragSnap);
 		}
 
 		TileEditOperation undo;
@@ -1285,7 +1285,7 @@ void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 	if (m_selectedTileList.IsEmpty())
 	{
 		//why not just select whatever is here?
-		m_selectedTileList.AddTileByPoint(m_lastContextWorldPos, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
+		m_selectedTileList.AddTileByPoint(m_lastContextWorldPos, TileEditOperation::C_OPERATION_ADD, GetActiveMap->GetLayerManager().GetEditActiveList());
 	}
 
 	m_pContextMenu = new CL_Menu(r, GetApp()->GetGUI());
@@ -1470,12 +1470,12 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	case CL_KEY_F:
 		if (m_dragInProgress)
 		{
-				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
+				CL_Vector2 worldVecDragStop = GetActiveMap->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
 			
 				if (m_pCheckBoxSnap->is_checked())
 				{
-					worldVecDragStop = GetWorld->SnapWorldCoords(worldVecDragStop, m_vecSnapSize);
-					m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);;
+					worldVecDragStop = GetActiveMap->SnapWorldCoords(worldVecDragStop, m_vecSnapSize);
+					m_vecDragStart = GetActiveMap->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);;
 				}
 
 				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
@@ -1507,7 +1507,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	case CL_MOUSE_LEFT:
 
 		
-		if (!GetWorld) 
+		if (!GetActiveMap) 
 		{
 			LogMsg("Error, no map is active?!");
 			return;
@@ -1546,12 +1546,12 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 					//initiate a tile move operation
 					SetOperation(C_OP_MOVE);
 					return;
-				} else if (GetTileByWorldPos(GetWorld,m_vecDragStart, GetWorld->GetLayerManager().GetEditActiveList(), true))
+				} else if (GetTileByWorldPos(GetActiveMap,m_vecDragStart, GetActiveMap->GetLayerManager().GetEditActiveList(), true))
 					{
 					//well, heck, why not let them just drag whatever tile they are over?
 
 					ClearSelection();
-					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetWorld->GetLayerManager().GetEditActiveList());
+					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, GetActiveMap->GetLayerManager().GetEditActiveList());
 					SetOperation(C_OP_MOVE);
 					return;
 				}
@@ -1576,8 +1576,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			//two modes of copy, one to cut out subtiles..
 			if (m_dragInProgress)
 			{
-				m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecDragSnap);
-				CL_Vector2 worldVecDragStop = GetWorld->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
+				m_vecDragStart = GetActiveMap->SnapWorldCoords(m_vecDragStart, m_vecDragSnap);
+				CL_Vector2 worldVecDragStop = GetActiveMap->SnapWorldCoords(GetWorldCache->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
 				
 				if (m_pCheckBoxSnap->is_checked())
 				{
@@ -1586,8 +1586,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 					if (worldVecDragStop.x > m_vecDragStart.x) worldVecDragStop.x += m_vecSnapSize.x; else m_vecDragStart.x += m_vecSnapSize.x;
 					if (worldVecDragStop.y > m_vecDragStart.y) worldVecDragStop.y += m_vecSnapSize.y; else m_vecDragStart.y += m_vecSnapSize.y;
 
-					m_vecDragStart = GetWorld->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);
-					worldVecDragStop = GetWorld->SnapWorldCoords(worldVecDragStop, m_vecSnapSize);
+					m_vecDragStart = GetActiveMap->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);
+					worldVecDragStop = GetActiveMap->SnapWorldCoords(worldVecDragStop, m_vecSnapSize);
 				}
 		
 				CL_Rect rec( int(m_vecDragStart.x), int(m_vecDragStart.y), int(worldVecDragStop.x), int(worldVecDragStop.y));
@@ -1693,7 +1693,7 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 	if (g_EntEditModeCopyBuffer.IsEmpty())
 	{
 		//this is no selection, so let's just convert to what they are highlighting
-		return GetWorld->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
+		return GetActiveMap->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
 		return vecMouse;
 	}
 
@@ -1709,12 +1709,12 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 			vecMouse += m_vecSnapSize/2;
 		}
 
-		vecMouse = GetWorld->SnapWorldCoords(vecMouse, m_vecSnapSize);
+		vecMouse = GetActiveMap->SnapWorldCoords(vecMouse, m_vecSnapSize);
 
 
 	} else
 	{
-		vecMouse = GetWorld->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
+		vecMouse = GetActiveMap->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
 		vecMouse -= g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()/2;
 
 	}
@@ -1746,16 +1746,16 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 	vecStart += m_selectedTileList.GetUpperLeftPos();
 	
 	
-	if (GetWorld->GetSnapEnabled())
+	if (GetActiveMap->GetSnapEnabled())
 	{
 		if (m_selectedTileList.m_selectedTileList.size() == 1)
 		vecStart = GetWorldCache->ScreenToWorld(m_vecScreenDragStop);
 		
-		vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecSnapSize);
+		vecStart = GetActiveMap->SnapWorldCoords(vecStart, m_vecSnapSize);
 
 	} else
 	{
-		vecStart = GetWorld->SnapWorldCoords(vecStart, m_vecDragSnap);
+		vecStart = GetActiveMap->SnapWorldCoords(vecStart, m_vecDragSnap);
 	
 	}
 	
@@ -1782,16 +1782,16 @@ void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
 		//these tweaks allow the snapped grid to be inclusive of the tile we're half on
 		if (worldStop.x > worldStart.x) worldStop.x += m_vecSnapSize.x; else worldStart.x += m_vecSnapSize.x;
 		if (worldStop.y > worldStart.y) worldStop.y += m_vecSnapSize.y; else worldStart.y += m_vecSnapSize.y;
-		worldStart = GetWorld->SnapWorldCoords(worldStart, m_vecSnapSize);
+		worldStart = GetActiveMap->SnapWorldCoords(worldStart, m_vecSnapSize);
 #ifdef _DEBUG
 		LogMsg("Converted to %s", PrintVector(worldStart).c_str());
 #endif
-		worldStop = GetWorld->SnapWorldCoords(worldStop, m_vecSnapSize);
+		worldStop = GetActiveMap->SnapWorldCoords(worldStop, m_vecSnapSize);
 	}
 
 
-	m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).x - GetWorld->SnapWorldCoords(worldStart, m_vecDragSnap).x),
-		int(GetWorld->SnapWorldCoords(worldStop, m_vecDragSnap).y - GetWorld->SnapWorldCoords(worldStart, m_vecDragSnap).y)));
+	m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(GetActiveMap->SnapWorldCoords(worldStop, m_vecDragSnap).x - GetActiveMap->SnapWorldCoords(worldStart, m_vecDragSnap).x),
+		int(GetActiveMap->SnapWorldCoords(worldStop, m_vecDragSnap).y - GetActiveMap->SnapWorldCoords(worldStart, m_vecDragSnap).y)));
 	//draw a rect on the screen
 	DrawRectFromWorldCoordinates(worldStart, worldStop, CL_Color(255,255,0,200), pGC);
 
@@ -1849,7 +1849,7 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 
 				pEnt->GetEntity()->Kill(); //force it to save out its collision info to disk, so when
 				//we reinit all similar tiles, they will use the changed version
-				GetWorld->ReInitEntities();
+				GetActiveMap->ReInitEntities();
 			} else
 			{
 				assert(!"Huh?");
@@ -1861,7 +1861,7 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 			TilePic *pTilePic = (TilePic*)m_pTileWeAreEdittingCollisionOn;
 
 			pTilePic->SaveToMasterCollision();
-			GetWorld->ReInitCollisionOnTilePics();
+			GetActiveMap->ReInitCollisionOnTilePics();
 
 
 		}
@@ -1890,7 +1890,7 @@ void EntEditMode::OnDefaultTileHardness()
 	}
 
 	Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile;
-	pTile  =  GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
+	pTile  =  GetActiveMap->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
 	
 	if (!pTile)
 	{
@@ -1983,7 +1983,7 @@ void EntEditMode::Render(void *pTarget)
 		if (m_selectedTileList.m_selectedTileList.size() == 1)
 		{
 			unsigned int tileLayer = m_selectedTileList.m_selectedTileList.back()->m_pTile->GetLayer();
-			LayerManager &layerMan = GetWorld->GetLayerManager();
+			LayerManager &layerMan = GetActiveMap->GetLayerManager();
 
 			Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile;
 			
@@ -1998,7 +1998,7 @@ void EntEditMode::Render(void *pTarget)
 			if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 			{
 				//it's pointless to show the entity ID unless we are working from the real source tile instead of the copy
-				Tile *pSrcTile  =  GetWorld->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
+				Tile *pSrcTile  =  GetActiveMap->GetScreen(pTile->GetPos())->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
 
 				if (pSrcTile && pSrcTile->GetType() == C_TILE_TYPE_ENTITY)
 				{
@@ -2377,7 +2377,7 @@ if (m_bDialogIsOpen) return;
 	rPos.apply_alignment(origin_top_left, -ptOffset.x, -ptOffset.y);
 
 	CL_ListBox layerList(rPos, window.get_client_area());
-	LayerManager &layerMan = GetWorld->GetLayerManager();
+	LayerManager &layerMan = GetActiveMap->GetLayerManager();
 
 	vector<unsigned int> layerVec;
 	layerMan.PopulateIDVectorWithAllLayers(layerVec);
@@ -2602,7 +2602,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			pTileList->SetLayerOfSelection(selectedLayer);
 		}
 
-		GetWorld->ReInitEntities();
+		GetActiveMap->ReInitEntities();
 
 		//update our current selection
 		pTileList->UpdateSelectionFromWorld();
@@ -2687,7 +2687,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 		OnPaste(m_selectedTileList, m_selectedTileList.GetUpperLeftPos());
 		PushUndosIntoUndoOperation();
 
-		GetWorld->ReInitCollisionOnTilePics();
+		GetActiveMap->ReInitCollisionOnTilePics();
 
 	}
 
@@ -2700,11 +2700,11 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 void EntEditMode::GetSettingsFromWorld()
 {
 		
-	if (GetWorld)	
+	if (GetActiveMap)	
 	{
-		m_pCheckBoxSnap->set_checked(GetWorld->GetSnapEnabled());
-		m_vecSnapSize.x = GetWorld->GetDefaultTileSizeX();
-		m_vecSnapSize.y = GetWorld->GetDefaultTileSizeY();
+		m_pCheckBoxSnap->set_checked(GetActiveMap->GetSnapEnabled());
+		m_vecSnapSize.x = GetActiveMap->GetDefaultTileSizeX();
+		m_vecSnapSize.y = GetActiveMap->GetDefaultTileSizeY();
 		m_pInputBoxSnapSizeX->set_text(CL_String::from_int(m_vecSnapSize.x));
 		m_pInputBoxSnapSizeY->set_text(CL_String::from_int(m_vecSnapSize.y));
 	}

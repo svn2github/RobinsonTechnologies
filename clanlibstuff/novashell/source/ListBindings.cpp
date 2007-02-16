@@ -8,7 +8,7 @@
 #include "MessageManager.h"
 #include "TextManager.h"
 #include "TagManager.h"
-#include "ScriptKeyManager.h"
+#include "InputManager.h"
 #include "VisualProfileManager.h"
 #include "AI/Goal_Think.h"
 #include "AI/WatchManager.h"

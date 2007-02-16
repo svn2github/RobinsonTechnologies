@@ -11,61 +11,61 @@
 
 #include "AppPrecomp.h"
 #include "Map.h"
-#include "EntWorldCache.h"
+#include "EntMapCache.h"
 
 //things needed for each world map
 
-class WorldInfo
+class MapInfo
 {
 public:
 	
-	~WorldInfo()
+	~MapInfo()
 	{
 		m_worldCache.ClearCache();
 		m_world.SaveAndKill();
 	}
 	Map m_world;
-	EntWorldCache m_worldCache;
+	EntMapCache m_worldCache;
 };
 
-typedef std::list<WorldInfo*> world_info_list;
+typedef std::list<MapInfo*> map_info_list;
 
-class WorldManager
+class MapManager
 {
 public:
 
-	WorldManager();
-	virtual ~WorldManager();
+	MapManager();
+	virtual ~MapManager();
 
 	void Kill();
 	bool AddWorld(string stPath); //add it to our list without actually loading anything
-	bool LoadWorld(string stPath, bool bSetActiveIfNoneIs = true); //load main data file, with thumbnails
+	bool LoadMap(string stPath, bool bSetActiveIfNoneIs = true); //load main data file, with thumbnails
 	void UnloadWorldByName(const string &stName);
 
 	Map * GetActiveWorld();
-	EntWorldCache * GetActiveWorldCache();
+	EntMapCache * GetActiveWorldCache();
 	bool SetActiveWorldByPath(const string &stPath, CameraSetting *pCameraSetting = NULL); //returns false if failed
 	void Update(float step);
 	void Render();
-	WorldInfo * GetWorldInfoByPath(const string &stPath);
-	WorldInfo * GetWorldInfoByName(const string &stName);
-	world_info_list * GetWorldInfoList() {return &m_worldInfoList;}
-	void ScanWorlds(const string &stPath);
-	bool SetActiveWorldByName(const string &stName);
+	MapInfo * GetMapInfoByPath(const string &stPath);
+	MapInfo * GetMapInfoByName(const string &stName);
+	map_info_list * GetWorldInfoList() {return &m_mapInfoList;}
+	void ScanMaps(const string &stPath);
+	bool SetActiveMapByName(const string &stName);
 	void PreloadAllMaps();
 	void SaveAllMaps();
-	bool LoadWorldByName(const string &stName);
+	bool LoadMapByName(const string &stName);
 
 	CL_Signal_v0 sig_map_changed;
 
 protected:
 
-	bool IsWorldScanned(const string &stName);
-	void ScanDirToAddWorlds(const string &stPath, const string &stLocalPath);
+	bool IsMapScanned(const string &stName);
+	void ScanDirToAddMaps(const string &stPath, const string &stLocalPath);
 
-	world_info_list m_worldInfoList;
-	Map *m_pActiveWorld;
-	EntWorldCache *m_pActiveWorldCache;
+	map_info_list m_mapInfoList;
+	Map *m_pActiveMap;
+	EntMapCache *m_pActiveMapCache;
 };
 
 bool ExistsInModPath(const string fName);

@@ -3,7 +3,7 @@
 #include "Goal_SeekToPosition.h"
 #include "PathPlanner.h"
 #include "Goal_FollowPath.h"
-#include "World.h"
+#include "Map.h"
 #include "Goal_MoveToPosition.h"
 #include "message_types.h"
 #include "MovingEntity.h"
