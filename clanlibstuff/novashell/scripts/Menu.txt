@@ -1,4 +1,4 @@
-Format: Development Release 11-19-2006 (1.35 base)
+Format: Development Release 02-10-2007 (1.35 base)
 
 
 Title: Novashell Scripting Reference
@@ -42,16 +42,47 @@ Timestamp: Last updated mon day
 
 File: Overview  (main.h)
 
-Group: Objects  {
+Group: System Objects  {
 
    File: App  (main.cpp)
-   File: GameLogic  (GameLogic.h)
-   File: Entity  (EntityBindings.cpp)
+   File: MapManager  (MapManager.cpp)
+   File: SoundManager  (VisualResource.h)
+   File: TextManager  (TextManager.cpp)
+   File: Camera  (Camera.cpp)
+   File: InputManager  (InputManager.cpp)
+   File: TagManager  (TagManager.cpp)
+   File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
+   File: GameLogic  (GameLogic.cpp)
+   }  # Group: System Objects
+
+Group: Game Objects  {
+
+   File: Map  (Map.h)
+   File: LayerManager  (LayerManager.cpp)
+   File: Tile  (TileBindings.cpp)
+   File: TilePic  (Tile.cpp)
+   File: Entity  (EntityBindings.cpp)
+
+   Group: Entity Related Objects  {
+
+      File: BrainManager  (BrainManager.cpp)
+      File: GoalManager  (AI\Goal_Think.cpp)
+      File: DataManager  (DataManager.cpp)
+      }  # Group: Entity Related Objects
+
+   File: SpecialEntity  (BaseGameEntity.cpp)
+   }  # Group: Game Objects
+
+Group: Simple Objects  {
+
    File: Material  (physics\Contact.h)
-   File: Math Related Objects  (VectorBindings.cpp)
-   File: Misc Objects  (MiscClassBindings.cpp)
-   }  # Group: Objects
+   File: Math Objects  (no auto-title, VectorBindings.cpp)
+   File: Color  (MiscClassBindings.cpp)
+   File: CameraSetting  (CameraSetting.cpp)
+   File: TileList  (ListBindings.cpp)
+   File: Zone  (MovingEntity.h)
+   }  # Group: Simple Objects
 
 File: Global Functions  (GlobalScriptFunctionBindings.cpp)
 
