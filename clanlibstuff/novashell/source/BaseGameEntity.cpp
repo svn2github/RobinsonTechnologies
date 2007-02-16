@@ -58,3 +58,17 @@ void BaseGameEntity::SetID(int val)
   m_ID = val;
   m_iNextValidID = m_ID + 1;
 }
+
+/*
+Object: SpecialEntity
+Special entities are not associated with a tile and have a limited API that is much simpler than a normal <Entity>.  These are used for things like dialogs or miscellaneous utilities that don't really exist inside a map and don't need to be saved/loaded with it.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

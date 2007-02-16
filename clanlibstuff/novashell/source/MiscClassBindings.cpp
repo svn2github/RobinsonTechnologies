@@ -223,11 +223,6 @@ void luabindMisc(lua_State *pState)
 {
 	module(pState)
 		[
-/*
-Section: Misc Objects
-A hodge podge of objects to be sorted into separate areas later I guess.
-*/
-
 
 /*
 Object: Color
@@ -359,6 +354,7 @@ myColor = Color(255,255,255,255);
 		.def("Quit", &GameLogic::Quit)
 		.def("ClearModPaths", &GameLogic::ClearModPaths)
 		.def("AddModPath", &GameLogic::AddModPath)
+		.def("Data", &GameLogic::Data)
 		.def("InitGameGUI", &GameLogic::InitGameGUI)
 
 		,class_<App>("App")
@@ -378,13 +374,13 @@ myColor = Color(255,255,255,255);
 		.def("GetPlatform", &App::GetPlatform)
 
 		,class_<ISoundManager>("SoundManager")
-		.def("PlayMusic", &ISoundManager::PlayMusic)
-		.def("Play", &ISoundManager::Play)
-		.def("PlayMixed", &ISoundManager::PlayMixed)
+	//	.def("PlayMusic", &ISoundManager::PlayMusic)
+		.def("Play", &ISoundManager::PlayMixed)
+		//.def("PlayMixed", &ISoundManager::PlayMixed)
 		.def("PlayLooping", &ISoundManager::PlayLooping)
 		.def("MuteAll", &ISoundManager::MuteAll)
-		.def("KillMusic", &ISoundManager::KillMusic)
-		.def("KillChannel", &ISoundManager::KillChannel)
+		//.def("KillMusic", &ISoundManager::KillMusic)
+		.def("Kill", &ISoundManager::KillChannel)
 		.def("AddEffect", &ISoundManager::AddEffect)
 		.def("SetVolume", &ISoundManager::SetVolume)
 		.def("RemoveAllEffects", &ISoundManager::RemoveAllEffects)

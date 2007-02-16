@@ -456,3 +456,17 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile);
 extern Zone g_ZoneEmpty; //to save time this is preinitted
 
 #endif
+
+/*
+Object: Zone
+A simple object that contains information about a collision.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

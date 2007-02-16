@@ -201,3 +201,20 @@ void DataManager::Serialize(CL_FileHelper &helper)
 
 	
 }
+
+/*
+Object: DataManager
+An object designed to flexibly store and retrieve numbers and strings.
+
+In addition to any <Entity> having its own unique <DataManager> via <Entity::Data> a global one is always available through 
+
+
+Group: Member Functions
+
+func: Clear
+(code)
+nil Clear()
+(end)
+Deletes all data in the object.
+
+*/

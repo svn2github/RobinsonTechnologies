@@ -257,3 +257,17 @@ void LayerManager::Save(const string &fileName)
 	SAFE_DELETE(pFile);
 		
 }
+
+/*
+Object: LayerManager
+Information about the layers in its map.
+
+Group: Member Functions
+
+func: PlaceHolder
+	  (code)
+	  nil PlaceHolder()
+	  (end)
+	  Stuff coming later.
+
+ */

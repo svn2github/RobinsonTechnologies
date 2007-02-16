@@ -89,7 +89,19 @@ void luabindList(lua_State *pState)
 {
 	module(pState)
 		[
+			/*
+			Object: TileList
+			Contains a list of tiles.
 
+			Group: Member Functions
+
+			func: PlaceHolder
+			(code)
+			nil PlaceHolder()
+			(end)
+			Stuff coming later.
+
+			*/
 			class_<TileList>("TileList")
 			.def(constructor<>())
 			.def("GetNext", &TileList::GetNext)

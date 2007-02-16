@@ -32,6 +32,21 @@ void luabindTile(lua_State *pState)
 		[
 
 			class_<Tile>("Tile")
+		
+			/*
+			Object: Tile
+			Anything placeable on the map is technically a <Tile>.  A Tile can hold a <TilePic> or an <Entity> inside of it.
+
+			Group: Member Functions
+
+			func: PlaceHolder
+			(code)
+			nil PlaceHolder()
+			(end)
+			Stuff coming later.
+
+			*/
+			
 			.def("GetType", &Tile::GetType)
 			.def("GetPos", &Tile::GetPosSafe)
 			.def("SetPos", &Tile::SetPos)

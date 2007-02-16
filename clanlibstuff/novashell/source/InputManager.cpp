@@ -413,3 +413,16 @@ void InputManager::Init()
 }
 
 
+/*
+Object: InputManager
+Handling of keybinding and all user input from keyboard, mouse and joysticks.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

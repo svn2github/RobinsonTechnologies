@@ -19,7 +19,7 @@
 
 using namespace std;
 
-#define C_SOUND_NONE 0
+#define C_SOUND_NONE -1
 
 class ISoundManager
 {
@@ -65,3 +65,5 @@ private:
 
 
 #endif // ISoundManager_h__
+
+

@@ -1005,3 +1005,194 @@ bool RunGlobalScriptFromTopMountedDir(const char *pName)
 	GetScriptManager->LoadMainScript( fileName.c_str());
 	return true;
 }
+
+
+//lua doc info for natural docs processor.  Be careful how you move it, it will break..
+/*
+
+Object: GameLogic
+
+Contains a lot of general game-related functions.
+
+About:
+This is automatically created by the engine and always available.  You can access it this way:
+
+(code)
+GetGameLogic:RunSomeCoolFunctionInIt()
+(end)
+
+Group: Member Functions
+
+*/
+
+
+/*
+func: ToggleEditMode
+
+(code)
+boolean ToggleEditMode()
+(end)
+
+Returns:
+True if the it just turned ON the editor, false if it was just turned off
+*/
+
+
+/*
+func: SetUserProfileName
+(code)
+boolean SetUserProfileName(string name)
+(end)
+
+Re-initializes everything and attempts to load the profile sent in.  Think of this as loading a saved game.  If no profile exists, it is created.
+
+Dangerous and illegal characters are stripped automatically, so the profile name may be slightly different than the one you sent in.
+
+Parameters:
+
+name - the name of the profile.  If you say, "Player", it will create/load/save profiles/Player/(active world name).
+
+Returns:
+False on error (for instance, the name passed in is not a valid path, or tries to access somewhere illegal), true on success
+*/
+
+/*
+func: GetUserProfileName
+(code)
+string GetUserProfileName()
+(end)
+
+Returns:
+The active user profile name. Will return a blank string if empty. (ie, "", not nil)
+*/
+
+/*
+func: ResetUserProfile
+(code)
+nil ResetUserProfile(string name)
+(end)
+
+This completely deletes a profile, if it existed.
+
+Input is stripped of dangerous/illegal characters.
+
+Parameters:
+
+name - The profile name you want to delete.
+
+Note:
+
+Novashell never uses a dangerous deltree type way to delete things, it carefully verifies and scans the directory deletes only valid novashell data.
+
+*/
+
+/*
+func: UserProfileExists
+(code)
+boolean UserProfileExists(string name)
+(end)
+
+Parameters:
+
+name - The profile name you want to check for.  Is stripped for dangerous/illegal characters.
+
+Returns:
+
+True if the profile exists.
+*/
+
+/*
+func: UserProfileActive
+(code)
+boolean UserProfileActive()
+(end)
+
+Returns:
+
+True if a user profile is currently loaded/active.
+*/
+
+
+/*
+func: SetRestartEngineFlag
+(code)
+nil SetRestartEngineFlage(boolean bRestart)
+(end)
+
+Set this to true and the engine will save all modified data and restart as soon as cybernetic ally possible.
+*/
+
+/*
+func: ClearModPaths
+(code)
+nil ClearModPaths()
+(end)
+
+Removes all overlaid paths.  This should be done right before doing a SetRestartEngineFlag() call.  Allows you to re-mount directories or go back to the world selection dialog. (that's default if no mods are mounted)
+*/
+
+/*
+func: AddModPath
+(code)
+nil AddModPath(string pathName)
+(end)
+
+This lets you mount a world path.  Scripts, images, and resources are loaded in reverse order of mounting, ie, the last thing you mounted gets checked first.
+
+Note:
+"Base" is always mounted first automatically.
+
+Worlds are also automatically mounted if specified in its .novashell configuration file.
+
+Parameters:
+
+pathName - A name of a world to mount.  Example: "Test World".  
+*/
+
+/*
+func: InitGameGUI
+(code)
+nil InitGameGUI(string xmlFileName)
+(end)
+
+This xml file contains data about fonts, sizes, and colors that should be used for game dialogs and menus.
+
+By editing this, you can use your own custom bitmap fonts.
+
+Check the default one in base/game_gui/standard.xml for an example.
+
+Note:
+
+A world can only initialize this once.
+
+Parameters:
+
+xmlFileName - A path and filename to an xml file.
+*/
+
+/*
+func: Data
+(code)
+DataManager Data()
+(end)
+
+This let's you access a global <DataManager> that is automatically saved and loaded with the game.
+
+Note:
+
+Never use Data::Clear() on this, the save-load game system uses it to store certain things as well, such as the game time.
+
+Returns:
+
+A global <DataManager> object to store/retrieve anything you wish.
+*/
+
+
+/*
+func: Quit
+(code)
+nil Quit()
+(end)
+
+Immediately closes the application.  Changed game data is auto-saved.
+*/

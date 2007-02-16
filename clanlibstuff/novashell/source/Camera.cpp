@@ -211,3 +211,17 @@ void Camera::Update(float step)
 	}
 
 }
+
+/*
+Object: Camera
+Control what the screen shows and zooming and such.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

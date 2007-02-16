@@ -62,7 +62,7 @@ void luabindEntity(lua_State *pState)
 			,class_<Brain>("Brain")
 			.def("GetName", &State::GetName)
 
-			,class_<BaseGameEntity>("BaseEntity")
+			,class_<BaseGameEntity>("SpecialEntity")
 			.def("GetID", &BaseGameEntity::ID)
 			.def("GetName", &BaseGameEntity::GetName)
 			.def("SetName", &BaseGameEntity::SetName)
@@ -151,6 +151,48 @@ Group: General
 			.def(constructor<>())
 			
 			/*
+			func: GetID
+			(code)
+			number GetID()
+			(end)
+
+			Returns:
+
+			This entities unique ID.  These are NOT persistent across load/save sessions, only for the life of that entity instance.
+			*/
+
+			/*
+			func: SetName
+			(code)
+			nil SetName(string name)
+			(end)
+
+			By setting a name, you are requesting that the <TagManager> track this entity.  Only do this with entities you need locatable by name.
+			
+			This means at any time you can instantly locate this entity's map and position by name only, even without loading its map.
+			
+			Important Rule:
+			
+			No two entities can have the same name.  The engine will enforce this rule by adding random letters to a name until it is unique.
+
+			Parameters:
+
+			name - The new name you want associated with this entity.
+			*/
+
+			/*
+			func: GetName
+			(code)
+			string GetName()
+			(end)
+
+			Returns:
+
+			This entity's tag cache tracking name, or a blank string if none has been set.
+			*/
+
+
+			/*
 			func: GetPos
 			(code)
 			Vector2 GetPos()
@@ -175,6 +217,9 @@ Group: General
 			*/
 
 			.def("SetPos", &MovingEntity::SetPos)
+		
+			
+			
 			.def("SetPosAndMap", &MovingEntity::SetPosAndMap)
 		
 			/*
@@ -401,6 +446,21 @@ Group: General
 			Returns:
 
 			A <Rectf> object containing the entity's collision box in local coordinates.
+			*/
+
+			/*
+			func: SetDeleteFlag
+			(code)
+			void SetDeleteFlag(boolean bRequestDelete)
+			(end)
+
+			This is the how you delete an entity.  Instead of happening instantly, it actually happens at the end of that logic cycle.
+
+			As always, the entities *OnKill()* script function will be run right before it's destroyed.	(well, if the entity has a script running)
+
+			Parameters:
+
+			bRequestDelete - If true, this entity will be deleted ASAP.
 			*/
 
 

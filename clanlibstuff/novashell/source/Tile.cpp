@@ -489,6 +489,7 @@ Tile * TilePic::CreateClone()
 	//LogMsg("Copying resource %u", m_resourceID);
 	return pNew;
 }
+
 void TilePic::Serialize(CL_FileHelper &helper)
 {
 	//base class saves
@@ -501,3 +502,18 @@ void TilePic::Serialize(CL_FileHelper &helper)
 }
 
 
+
+
+/*
+Object: TilePic
+TilePics are the simplest form of visual.  Low overheard but can only display a single image and must share collision data with other tiles of the same image and dimensions.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

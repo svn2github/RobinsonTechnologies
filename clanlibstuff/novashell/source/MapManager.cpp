@@ -385,3 +385,17 @@ Map* MapManager::GetActiveWorld()
 	//assert(m_pActiveWorld && "Uh oh");
   return m_pActiveMap;
 }
+
+/*
+Object: MapManager
+Handles loading and unloading maps.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

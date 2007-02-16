@@ -368,3 +368,17 @@ void BrainManager::PostUpdate(float step)
 	}
 
 }
+
+/*
+Object: BrainManager
+All <Entity> objects can use their <BrainManager> to add brains to control behavior and functions.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

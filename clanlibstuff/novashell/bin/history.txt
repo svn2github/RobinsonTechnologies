@@ -174,3 +174,7 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 
 * Small speed improvements
 * Work on docs...
+
+* Renamed SoundManager::KillChannel to SoundManager::Kill
+* Removed SoundManager::PlayMixed, there is only SoundManager::Play, it's simpler this way
+* More doc work...

@@ -193,3 +193,17 @@ void WatchManager::ProcessPendingEntityMovementAndDeletions()
 		}
 	}
 }
+
+/*
+Object: WatchManager
+Allows entities to function off-screen.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

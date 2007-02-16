@@ -417,3 +417,18 @@ void TagManager::Load(Map *pWorld)
 	
 
 }
+
+
+/*
+Object: TagManager
+When an entity is "named", it's instantly locatable throughout the world at all times through the tag manager.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

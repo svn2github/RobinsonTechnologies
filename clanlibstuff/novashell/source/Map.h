@@ -201,15 +201,21 @@ void RemoveWorldFiles(const string &path); //util for deleting stuff
 //natural docs stuff
 /*
 Object: Map
-A Map is a single area that can be any size and contain any amount of tiles and entities.
+A map is a single area that can be any size and contain any amount of tiles, including <Entities> and <TilePic>'s.
 
 Most of these map settings are also available in the editor under Map Properties.
 
 If the map is saved (by defaults maps auto-save and are persistent), changes made are remembered.
 
+A game may have an unlimited number of maps.
+
+Each map contains its own <LayerManager> which can be accessed to see what kind of layers it has.
+
 See also:
 
 <MapManager>
+
+<LayerManager>
 
 Group: Member Functions
 

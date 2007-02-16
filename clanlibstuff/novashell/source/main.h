@@ -28,6 +28,17 @@ Novashell specific Lua additions/changes:
 * dofile, load, and other things deemed "dangerous" are missing. dofile was replaced with "RunScript".
 * Many new object types, as detailed in these docs
 
+How this API is organized:
+
+System Objects - These are global single-instance objects that always exist that you can access at any time.
+Game Objects - A game can have an unlimited number of these types of things. (maps, entities, etc)
+Simple Objects - Smaller data structures that can be used anywhere.
+Global Functions - These are functions not associated with an object that can be used from anywhere.
+
+
+(*Click the section name on the sidebar to open/close the section*)
+
+
 Links:
 
 Seth A. Robinson (seth@rtsoft.com)

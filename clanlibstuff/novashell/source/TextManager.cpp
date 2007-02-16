@@ -408,3 +408,18 @@ void TextManager::Render()
 	}
 }
 
+
+/*
+Object: TextManager
+Intelligently draws text and captions.
+
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/

@@ -268,4 +268,17 @@ void Goal_Think::Render()
 }
 
 
-   
+/*
+Object: GoalManager
+All <Entity> objects can use their <GoalManager> to allow high-level AI features.
+
+Group: Member Functions
+
+func: PlaceHolder
+(code)
+nil PlaceHolder()
+(end)
+Stuff coming later.
+
+*/   
+
