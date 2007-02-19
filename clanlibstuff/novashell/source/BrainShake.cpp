@@ -32,3 +32,26 @@ void BrainShake::Update(float step)
 	m_pParent->SetPos(pos);
 }
 
+/*
+Object: Shake
+A brain for use with the <BrainManager> that causes its owner <Entity> to rapidly change position randomly.
+
+It's not that useful right now, more a test of concept.
+
+Parameters it understands:
+
+None
+
+Usage:
+(code)
+//let's set this entity to invisible, and then have it fade in over one second.
+this:GetBrainManager():Add("Shake","");
+
+//let's stop shaking in two seconds
+
+Schedule(2000, this:GetID(), "this:GetBrainManager():Remove("Shake")");
+
+(end)
+
+*/
+

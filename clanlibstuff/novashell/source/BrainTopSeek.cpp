@@ -80,3 +80,4 @@ void BrainTopSeek::HandleMsg(const string &msg)
 	}
 
 }
+

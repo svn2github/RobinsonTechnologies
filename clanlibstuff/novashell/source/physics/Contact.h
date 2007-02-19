@@ -93,7 +93,7 @@ number GetType()
 
 Returns:
 
-The material type.
+One ofthe <C_MATERIAL_TYPE_CONSTANTS>.
 */
 
 /*
@@ -117,7 +117,7 @@ number GetSpecial()
 
 Returns:
 
-The special property.  Because it's just special like that.
+One of the <C_MATERIAL_SPECIAL_CONSTANTS>.
 */
 
 
@@ -213,6 +213,7 @@ For tweaking sorting and smart shadows.  The engine ignores it for collision but
 
 	constant: C_MATERIAL_SPECIAL_NONE
 	Default, no special properties.
+
 
 	*/
 	enum

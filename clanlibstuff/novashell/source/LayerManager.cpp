@@ -260,14 +260,57 @@ void LayerManager::Save(const string &fileName)
 
 /*
 Object: LayerManager
-Information about the layers in its map.
+Every <Map> contains its own <LayerManager> which contains information about its layers.
 
 Group: Member Functions
 
-func: PlaceHolder
+func: GetLayerIDByName
 	  (code)
-	  nil PlaceHolder()
+	  number GetLayerIDByName(string layerName)
 	  (end)
-	  Stuff coming later.
+	  
+	  Parameters:
 
+	  layerName - A name of a layer, such as "GUI 1" or "Entity".
+
+	  Returns:
+
+	  The layerID of this layer, or <C_LAYER_NONE> if no layer of that name is found in the map.
+
+ func: GetCollisionLayers
+ (code)
+ LayerList GetCollisionLayers()
+ (end)
+
+ Returns:
+
+ A <LayerList> containing all layers that have "Uses collision" enabled for them.
+
+ func: GetVisibleLayers
+ (code)
+ LayerList GetVisibleLayers()
+ (end)
+
+ Returns:
+
+ A <LayerList> containing all layers that are currently being drawn.
+
+ func: GetAllLayers
+ (code)
+ LayerList GetAllLayers()
+ (end)
+
+ Returns:
+
+ A <LayerList> containing all layers.
+
+ Section: Layer Related Constants
+
+
+ Group: C_LAYER_CONSTANST
+ Used with <LayerManager::GetLayerIDByName>.
+
+ constants: C_LAYER_NONE
+ This means an invalid layer.
+ 
  */

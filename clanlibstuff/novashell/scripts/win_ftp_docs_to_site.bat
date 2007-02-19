@@ -1,6 +1,6 @@
 REM FTP our API reference files to the server, create dirs if need be
 
-
+call win_make_docs.bat
 REM get our ftp logon info
 call ../../../SetFTPLogonInfo.bat
 

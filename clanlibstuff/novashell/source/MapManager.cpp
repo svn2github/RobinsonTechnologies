@@ -390,12 +390,74 @@ Map* MapManager::GetActiveWorld()
 Object: MapManager
 Handles loading and unloading maps.
 
+About:
+
+This is a global object that can always be accessed.
+
+Usage:
+
+(code)
+GetMapManager:SetActiveMapByName("Main");
+(end)
+
 Group: Member Functions
 
-func: PlaceHolder
+func: LoadMapByName
 (code)
-nil PlaceHolder()
-(end)
-Stuff coming later.
 
+boolean LoadMapByName(string mapName)
+(end)
+
+Loading a <Map> causes the entire thing to be preloaded into memory.
+
+In the future, you will be able to also enable map-streaming. (load as you go)
+
+Note:
+
+There is no "Save Map" command because <Map>'s are automatically saved when changes are made, unless the map has requested otherwise. See <Map::SetAutoSave>.
+
+Parameters:
+
+mapName - The name of the map directory you want to load.
+
+Returns:
+
+True if the map was found and loaded successfully.
+
+
+func: UnloadMapByName
+(code)
+nil UnloadMapByName(string mapName)
+(end)
+
+Unload a <Map> causes all resources associated with it to be freed.
+
+Parameters:
+
+mapName - The name of the map directory you want to unload.
+
+
+func: SetActiveMapByName
+(code)
+boolean SetActiveMapByName(string mapName)
+(end)
+
+Causes a <Map> to receive "focus" and be shown on the screen.
+
+Parameters:
+
+mapName - The name of the map you want the <Camera> to focus on.
+
+Returns:
+
+True if the <Map> was made active successfully.
+
+func: GetActiveMap
+(code)
+Map GetActiveMap()
+(end)
+
+Returns:
+
+A <Map> object interface of the <Map> currently being displayed.
 */

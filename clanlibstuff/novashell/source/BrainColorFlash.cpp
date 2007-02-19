@@ -100,3 +100,27 @@ void BrainColorFlash::Update(float step)
 	}
 
 }
+
+
+/*
+Object: ColorFlash
+A brain for use with the <BrainManager> that causes its <Entity>'s to flash different colors/alpha values.
+
+The coloring temporarily overrides the <Entity>'s base color without really changing it.  To permenently change it, use <ColorFade> or <Entity::SetBaseColor>.
+Parameters it understands:
+
+pulse_rate - How fast each flash lasts.
+remove_brain_by_pulses - If set, after this number of pulses occur, the brain will be removed automatically.
+r - The pulse red color, 0 to 255.
+g - The pulse green color, 0 to 255.
+b - The pulse blue color, 0 to 255.
+a - The pulse alpha color, 0 to 255.
+
+Usage:
+(code)
+//let's set this entity to invisible, and then have it fade in over one second.
+this:SetBaseColor(Color(255,255,255,0)); //start as invisible, 0 alpha
+this:GetBrainManager():Add("ColorFade","fade_speed_ms=1000;remove_brain_when_done=true;a=255");
+(end)
+
+*/

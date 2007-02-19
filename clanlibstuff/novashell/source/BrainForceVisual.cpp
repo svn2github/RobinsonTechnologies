@@ -48,3 +48,29 @@ void BrainForceVisual::Update(float step)
 		m_pParent->GetBrainManager()->SendToBrainBaseSimple(C_BRAIN_MESSAGE_DONT_SET_VISUAL,0,0);
 	
 }
+
+/*
+Object: ForceVisual
+A brain for use with the <BrainManager> that overrides its owner <Entity>'s visual settings.
+
+About:
+
+Usually an entity plays the animation associated with its state, if available.  For instance, while in the <Walk> state, the walk animation in the <Entity>'s visual profile would be played.
+
+What this does:
+
+This Brain allows you to force a specific animation to be played, regardless of what is going on with the AI.
+
+Currently this only supports setting a single animation by name, but later it should allow you to set animation "sets" (to handle different directions) and animations from different visual profiles.
+
+Parameters it understands:
+
+force_anim - Forces this animation to be played and causes the AI system to stop changing it.
+
+Usage:
+(code)
+this:GetBrainManager():Add("ForceVisual", "force_anim=climb"); //look like we're climbing
+(end)
+
+*/
+

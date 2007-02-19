@@ -245,7 +245,7 @@ func: SetAutoSave
 nil SetAutoSave(boolean bAutoSave)
 (end)
 
-This only applies when a visual profile is not yet loaded.
+This only applies when a user profile is not yet loaded.
 
 For title screens, auto-save is usually turned off because no player profile is loaded, yet we don't want to save after we mess up the screen.
 
@@ -291,7 +291,8 @@ In general, this isn't needed, as navigational graphs are grown/destroyed fluidl
 
 func: GetCollisionByRay
 (code)
-Zone GetCollisionByRay(Vector2 vStartPos, Vector2 vDir, number rayRange, number raySpread, Entity entToIgnore, number mode, boolean bIgnoreCreatures)
+Zone GetCollisionByRay(Vector2 vStartPos, Vector2 vDir, number rayRange, number raySpread,
+		Entity entToIgnore, number mode, boolean bIgnoreCreatures)
 (end)
 
 Allows you to shoot a ray from any point in this map and see what it hits.
@@ -303,9 +304,11 @@ Usage:
 //let's shoot a ray in front of this entity and see if it detects any other entities)
 
 local rayRange = 80;
-local raySpread = 8; //causes 5 rays to be shot in a spread formation 8 units apart, easier to detect hits.  0 to use 1 ray only
+local raySpread = 8; //causes 5 rays to be shot in a spread formation 8 units apart, easier to detect hits.  0 to use
+					 //1 ray only
 local entToIgnore = this;
-local hitZone = this:GetMap():GetCollisionByRay(this:GetPos(), this:GetVectorFacing(), rayRange, raySpread, entToIgnore, C_RAY_ENTITIES, false);
+local hitZone = this:GetMap():GetCollisionByRay(this:GetPos(), this:GetVectorFacing(), rayRange, raySpread,
+				entToIgnore, C_RAY_ENTITIES, false);
 
 if (hitZone.entityID != C_ENTITY_NONE) then
 //we have an entity in front of us!
@@ -356,14 +359,14 @@ local tile;
 
 while true do
 
-tile = tileList:GetNext();
-if (tile == nil) then break; end;
+	tile = tileList:GetNext();
+	if (tile == nil) then break; end;
 
-LogMsg("Found tile type " .. tile:GetType());
+	LogMsg("Found tile type " .. tile:GetType());
 
-if (tile:GetType() == C_TILE_TYPE_ENTITY and tile:GetAsEntity():GetID() != this:GetID()) then
-LogMsg("We are standing near an entity that isn't us! It's ID is " ..  tile:GetAsEntity():GetID());
-end
+	if (tile:GetType() == C_TILE_TYPE_ENTITY and tile:GetAsEntity():GetID() != this:GetID()) then
+		LogMsg("We are standing near an entity that isn't us! Its ID is " ..  tile:GetAsEntity():GetID());
+	end
 end
 (end)
 

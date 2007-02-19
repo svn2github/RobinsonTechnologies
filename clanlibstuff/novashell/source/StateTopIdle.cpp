@@ -43,3 +43,18 @@ void StateTopIdle::PostUpdate(float step)
 		m_pParent->RunFunction("OnIdleLoop");
 	}
 }
+
+/*
+Object: Idle
+A state that causes an entity to stop and play his idle animation.
+
+
+An idle animation is detected from the visual profile .xml when anim states named *idle_left*, *idle_down_left*, and so on are found.  The best match for the <Entity>'s current direction is used.
+
+If you want only one animation for all directions, only set an animation for *idle_left*.
+
+Script functions it calls:
+
+If the script function *"OnIdleLoop"* exists in the entity's script, it will call it every time the animation loops.
+
+*/

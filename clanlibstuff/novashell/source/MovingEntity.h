@@ -461,12 +461,18 @@ extern Zone g_ZoneEmpty; //to save time this is preinitted
 Object: Zone
 A simple object that contains information about a collision.
 
-Group: Member Functions
+Group: Member Variables
 
-func: PlaceHolder
-(code)
-nil PlaceHolder()
-(end)
-Stuff coming later.
+Variable: materialID
+One of the <C_MATERIAL_TYPE_CONSTANTS> describing what the collision was with, or <C_MATERIAL_TYPE_NONE> if no collision was made.
+
+Variable: entityID
+If an <Entity> was hit, this his ID, otherwise will be <C_ENTITY_NONE>.
+
+Variable: vPos
+When using <Map::GetCollisionByRay> it is the exact point of collision, in other cases it may be the <Entity>/<TilePic>'s position.
+
+Variable: boundingRect
+Usually is the local rectangle of the collision box of the thing we hit.
 
 */

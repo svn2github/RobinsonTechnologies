@@ -415,14 +415,141 @@ void InputManager::Init()
 
 /*
 Object: InputManager
-Handling of keybinding and all user input from keyboard, mouse and joysticks.
+Handles user input such as keyboard, mouse and joystick.
 
-Group: Member Functions
+About:
 
-func: PlaceHolder
+This is a global object that can always be accessed.
+
+By "binding" input to functions, it causes the function to be run when the key/button is pressed and again when it is released.
+
+If the same key is bound more than one, more than one function will be called, in the opposite order that they were bound in.
+
+Usage:
 (code)
-nil PlaceHolder()
+//move the mouse to the center of the screen
+GetInputManager:SetMousePos(Vector2(C_SCREEN_X/2, C_SCREEN_Y/2));
 (end)
-Stuff coming later.
+
+Group: Binding Related
+
+func: AddBinding
+(code)
+nil AddBinding(string inputName, string callbackName, number entityID)
+(end)
+Adding a binding causes the engine to call the specified function every time the key is pressed or released.
+
+How to build the inputName string:
+
+This can be a single key, joystick button (uh, not implemented yet), or mouse button.
+
+Valid input name examples: *a*, *b*, *c*, *3*, *4*, *f1*, *control*, *mouse_middle*, *mouse_left*, *space*, *mouse_wheel_up*, *tab*, *escape*, *subtract*, *equals*, *numpad_subtract*, *numpad_add*, *left*, *right*, *up*, *down* and so forth.
+
+In addition, the following can be appended to the inputName:
+
+control - The control key must be held down also.  "control,r" means Ctrl-R must be pressed.
+shift - The shift key must be held down also. "shift,r" means Shift-R must be pressed.
+alt - The alt/option key must be held down also. "shift,r" means Shift-R must be pressed.
+always - This means the key will always trigger, even if shift/alt/control is also down.  Without "left,always", you couldn't fire with control and press left at the same time.
+editor_only - Means these keybindings will only trigger when the editor is open.
+game_and_editor - Means these keybindings will always trigger.  Default is only while the editor is not open.
+
+Usage:
+(code)
+//binding with a global callback
+GetInputManager:AddBinding("f1,always", "OnHitF1Key", C_ENTITY_NONE);
+
+//Let's also bind something to a specific entity, by providing a valid entityID
+GetInputManager:AddBinding("mouse_left", "OnMouseLeft", someEntityID);
+(end)
+
+Now if you press f1 or click the left mouse button you will see an error about functions not being found.  You need to handle them, add this somewhere to a globally loaded script:
+(code)
+function OnHitF1Key(bKeyDown)
+
+	if (bKeyDown) then
+		LogMsg("You pressed F1 down.");
+	else
+		LogMsg("You released F1.");
+	end
+
+	return true; //keep processing additional callbacks for F1 if applicable
+end
+(end)
+
+That's one down.  Now, we need to add a function to the entity's script (whoever someEntityID came from):
+(code)
+function OnMouseLeft(bKeyDown)
+
+	if (bKeyDown) then
+		LogMsg("You pressed the left mouse button down.");
+	else
+		LogMsg("You released the left mouse button.");
+	end
+
+	return true; //keep processing additional callbacks for the left mouse button if applicable
+end
+(end)
+
+Parameters:
+
+inputName - A string defining some forum of input.  Use comma to separate words.  The order doesn't matter.
+callbackName - A string containing the name of a properly setup function that should be called. (it must accept one parm and return true or false)
+entityID - If not <C_ENTITY_NONE> this means the function is located in this <Entity>'s namespace.
+
+Note:
+
+When an <Entity> is deleted, any associated bindings to it are also automatically deleted for you.
+
+
+func: RemoveBinding
+(code)
+boolean RemoveBinding(string inputName, string callbackName, int entityID)
+(end)
+This allows you to remove any previously setup binding.  Because there may be many bindings to the same key, you must enter all the information so it knows which binding to remove.
+
+Parameters:
+
+inputName - A string defining the input, the same one used to make the binding.
+string callBackName - The name of the callback function that was used to create the binding we're after.
+entityID - If the original binding was to an <Entity> function, you'll need to enter its ID here.  Otherwise, <C_ENTITY_NONE>.
+
+Returns:
+
+True if a binding was actually removed.
+
+func: RemoveBindingByEntity
+(code)
+nil RemoveBindingByEntity(Entity ent)
+(end)
+Allows you to easily remove all bindings from a specified <Entity>.
+
+Note:
+
+When <Entity>'s are deleted, they automatically call this function.
+
+Parameters:
+
+ent - The <Entity> we need to remove all bindings from. *Note that this wants the Entity, not the ID*.
+
+Group: Direct Device Access
+
+func: GetMousePos
+(code)
+Vector2 GetMousePos()
+(end)
+
+Returns:
+
+A <Vector2> object containing the location of the mouse in screen coordinates.  Use <ScreenToWorld> to convert to a position on the active <Map>.
+
+func: SetMousePos
+(code)
+nil SetMousePos(Vector2 vPos)
+(end)
+
+Parameters:
+
+vPos - A <Vector2> object containing the new mouse position in screen coordinates.
 
 */

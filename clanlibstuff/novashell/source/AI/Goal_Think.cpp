@@ -272,13 +272,269 @@ void Goal_Think::Render()
 Object: GoalManager
 All <Entity> objects can use their <GoalManager> to allow high-level AI features.
 
-Group: Member Functions
+Movement related features in the <GoalManager> require that the <Entity> has a <StandadBase> brain added.
 
-func: PlaceHolder
+Adding and pushing, what's the difference?:
+
+For each goal that starts with *Add*, there is also a version starting with *Push*.
+
+
 (code)
-nil PlaceHolder()
-(end)
-Stuff coming later.
+this:GetGoalManager():AddSay("Happy birthday...", C_FACING_NONE);
+this:GetGoalManager():AddSay("..to you.", C_FACING_NONE);
 
-*/   
+//if we stopped now, it would sing these.
+
+//Let's use Push to move something to the top of the stack, to happen before everything that is already there.
+
+this:GetGoalManager():PushSay("I will now sing a song for you.", C_FACING_NONE); 
+(end)
+
+In this example, the character would first say "I will sing a song for you", and then would sing the song.  
+
+Why use <AddNewGoal> to add more goals to the <GoalManager>?:
+
+Internally, every sub goal added is actually a <GoalManager> that allows more goals to be added 'under' it.
+
+A hierarchical tree of goals can be created.
+
+Complex sub goals like <AddApproach> may create their own sub-goals to complete what is required.
+
+In many cases it makes sense to add, track, and remove goals as a named group of actions, <AddNewGoal> (or PushNewGoal) allows you to do this by adding a custom named dummy goal designed to hold others.
+
+Debugging Goals:
+
+Activate "Display->Show Entity Goal And AI Data" from the main editor menu to see the Goal hierarchy in real-time as the game is played.
+
+The goal in yellow text "has focus".
+
+Group: Sub Goals
+
+
+func: AddDelay
+(code)
+nil AddDelay(number delayMS)
+(end)
+Waits the specified amount of time before continuing to the next action/goal.
+
+If this action is interrupted, the amount of time waited is saved, and continued when it is resumed.
+
+Parameters:
+
+delayMS - How long we should wait, in millseconds. (1000 = one second)
+
+func: AddMoveToPosition
+(code)
+nil AddMoveToPosition(Vector2 vPos)
+(end)
+Causes the <Entity> to move to the specified position using the pathfinding system.
+
+Parameters:
+
+vPos - A <Vector2> object containing the location to move to.  Must be on the same <Map> as the <Entity>.
+
+func: AddApproach
+(code)
+nil AddApproach(number entityID, number distance)
+(end)
+Causes the owner <Entity> to move to (or near) the position of the entity ID sent using the pathfinding system.
+
+Will go through doors, around obstacles as needed.
+
+When a distance is set, the <Entity> will locate a position with a line-of-sight to the target the requested distance away, perfect for getting ready to talk to things/characters.
+
+Parameters:
+
+entityID - an ID of an existing entity anywhere in the world.
+distance - How far we want to stand from the target.  Use a number, or one of the <C_DISTANCE_CONSTANTS>.
+
+func: AddApproachAndSay
+(code)
+nil AddApproachAndSay(string msg, number entityID, number distance)
+(end)
+Like <AddApproach> but also says a line of text, while facing the entityID sent.
+
+Usage:
+(code)
+//walk through doors, through mazes, wherever the entity named Tad is, face him and say hi.
+this:GetGoalManager():AddApproachAndSay("Hi Tad.", GetEntityIDByName("Tad"), C_DISTANCE_TALK); 
+(end)
+
+Parameters:
+
+msg - What the <Entity> should say.  (internally, the <TextManager> is used to say it)
+entityID - An ID of an existing entity anywhere in the world.
+distance - How far we want to stand from the target.  Use a number, or one of the <C_DISTANCE_CONSTANTS>.
+
+
+func: AddSay
+(code)
+nil AddSay(string msg, number entToFaceID, (optional) number delayMS)
+(end)
+
+Causes the owner <Entity> to say something, while looking a certain direction.
+
+Usage:
+(code)
+//Say "Where is Jim" without changing our direction
+this:GetGoalManager():AndSay("Where is Jim?", C_FACING_NONE);
+
+//Look to the north
+this:GetGoalManager():AndSay("Hello, north", C_FACING_UP);
+
+//Look to the south
+this:GetGoalManager():AndSay("Hello, south", C_FACING_DOWN);
+
+//Look at wherever Jim is, and make the text stay on screen for 10 seconds with
+//the optional delayMS parm
+this:GetGoalManager():AndSay("Hello, Jiiiiim!", entityIDForJim, 10000);
+(end)
+
+Parameters:
+
+msg - What the <Entity> should say.  (internally, the <TextManager> is used to say it)
+entToFaceID - an entityID, or one of the <C_FACING_CONSTANTS>.
+delayMS - (optional) If specified, this sets how long the text should stay on the screen.  (normally, the TextManager decides, based on length)
+
+func: AddSayByID
+(code)
+nil AddSayByID(string msg, number entityIDToTalk, number entToFaceID, (optional) number delayMS)
+(end)
+Like <AddSay> but lets you specify which <Entity> talks instead of assuming it's the owner entity.
+This is useful to orchestrate complex conversations with only one <GoalManager> controlling everything.
+
+Usage:
+(code)
+//make a conversation with three people happen using only one guy's GoalManager
+
+local gandolfID =  GetEntityIDByName("Gandolf")
+local frodoID =  GetEntityIDByName("Frodo")
+local legolasID =  this:GetID(); //let's assume this entity is Legolas, although it could be any other
+
+//make gandolf speak to Legolas
+this:GetGoalManager():AndSayByID("NEVER do that again.", gandolfID, legolasID);
+
+//legolas replies to gandalf
+this:GetGoalManager():AndSayByID("What are you talking about? Do what?!", legolasID, gandolfID);
+
+//make frodo speak to Legolas
+this:GetGoalManager():AndSayByID(
+	"He's talking about using that shield as a damn surfboard!  Ruined the movie!", frodoID, legolasID);
+(end)
+
+Parameters:
+
+msg - What the <Entity> should say.  (internally, the <TextManager> is used to say it)
+entToFaceID - an entityID, or one of the <C_FACING_CONSTANTS>.
+delayMS - (optional) If specified, this sets how long the text should stay on the screen.  (normally, the TextManager decides, based on length)
+
+func: AddRunScriptString
+(code)
+nil AddRunScriptString(string msg)
+(end)
+
+This lets you run any piece of lua code in owner <Entity>'s namespace.
+
+You can use it to call a function, change a variable, or anything else.
+
+The string is not compiled until the time of execution.
+
+Usage:
+
+(code)
+
+//run this Entity's function called "WonderAround()"
+this:GetGoalManager():AddRunScriptString("WonderAround()");
+
+
+//Change our name, notice to use quotes inside the quotes, we have to use \".
+local someText = "this:SetName(\"Dillweed\");";
+//let's change our color too
+someText = someText + "this:SetBaseColor(Color(255,0,0,255));";
+//actually send the string to the goal manager
+this:GetGoalManager():AddRunScriptString(someText);
+(end)
+
+msg - The lua string you want to run.  As always, no size limits.
+
+Group: Miscellaneous Functions
+
+func: AddNewGoal
+(code)
+GoalManager AddNewGoal(string goalName)
+(end)
+Adds a new subgoal with the desired name and returns a handle to the created goal, allowing you to populate it.
+Think of goal as an empty folder that is ready to handle more commands/goals.
+
+When a goal has "focus" it will run all items in it sequentially until empty, then delete itself, unless it is the "root".
+
+Usage:
+(code)
+//create a new goal. If we wanted to interrupts what they are doing now, we should
+//use PushNewGoal instead of AddNewGoal.
+
+local goal = this:GetGoalManager():AddNewGoal("CleanPlayerBed"); 
+
+//look at the player while telling him we'll do it
+goal:AddSay("Fine, I'll go clean the bad.", g_playerID); 
+
+//figure out the entity ID of the bed we want to clean
+local bedID = GetEntityIDByName("Hol_Inn_BedPlayer"); 
+
+//walk up to the bed, and say we're cleaning
+goal:AddApproachAndSay("<cleaning>",bedID , C_DISTANCE_CLOSE);  
+(end)
+
+Parameters:
+
+goalName - The name you'd like the new goal to have, can be anything.  "Kill Tad" or "GetFoodAndEat" for instance.  This name will show up in the game when "Show goal info" is activated.
+
+Returns:
+
+A <GoalManager> connected to the new goal.
+
+func: RemoveAllSubgoals
+(code)
+nil RemoveAllSubgoals()
+(end)
+Deletes all goals and subgoals under this <GoalManager>.
+
+This will cause it to delete itself, unless it is the "Root" <GoalManager> of this entity.
+
+func: IsGoalActiveByName
+(code)
+boolean IsGoalActiveByName(string goalName)
+(end)
+
+goalName - The name of the goal you probably added with <AddNewGoal> or PushNewGoal.
+
+Returns:
+
+True if a goal by this name exists somewhere in the hierarchy of this <GoalManager>.
+
+func: GetGoalCount
+(code)
+number GetGoalCount()
+(end)
+
+Returns:
+
+The number of Sub Goals/Goals under this <GoalManager>. 0 if empty.
+
+
+func: GetGoalCountByName
+(code)
+number GetGoalCountByName()
+(end)
+
+goalName - The name of a goal(s) you probably added with <AddNewGoal> or PushNewGoal.
+
+Returns:
+
+The number of Goals with this name under this <GoalManager>.
+*/
+
+
+
+
 

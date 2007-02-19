@@ -214,14 +214,177 @@ void Camera::Update(float step)
 
 /*
 Object: Camera
-Control what the screen shows and zooming and such.
+Controls what part of the world is currently on the screen, and at what zoom level.
 
-Group: Member Functions
+About:
+This is a global object that can always be accessed.
 
-func: PlaceHolder
+Usage:
 (code)
-nil PlaceHolder()
+GetCamera:Reset();
 (end)
-Stuff coming later.
 
+Changing Map:
+
+Use <MapManager::SetActiveMapByName> to change which map the <Camera> is showing.
+
+Group: Position And Scale
+
+func: SetPos
+(code)
+nil SetPos(Vector2 vPos)
+(end)
+
+Parameters:
+
+vPos - A <Vector2> object containing the new position of the <Camera> in world coordinates.  This point will be the upper-left of the screen.
+
+func: GetPos
+(code)
+Vector2 SetPos()
+(end)
+
+Returns:
+
+A <Vector2> with the world coordinates of where the upper-left of the screen is located.
+
+func: SetPosCentered
+(code)
+nil SetPosCentered(Vector2 vPos)
+(end)
+Like <SetPos> but automatically centers the camera on it, taking into account the current screen size.
+
+Parameters:
+
+vPos - A <Vector2> object containing the new position that the <Camera> should center on in world coordinates.
+
+func: GetPosCentered
+(code)
+Vector2 GetPosCentered()
+(end)
+
+Returns:
+
+The world coordinates of the exact middle of the screen.
+
+func: SetScale
+(code)
+nil SetScale(Vector2 vPos)
+(end)
+
+Scale determines how "zoomed in/zoomed out" the <Camera> is.  A scale of 1,1 means exactly the size of the pixels. (normally what you want)
+
+Note:
+
+If the X/Y scale that are sent are not the same, this creates a "stretched" effect on the whole screen, could be a useful effect for something.
+
+Parameters:
+
+vPos - A <Vector2> object containing the new magnification.  Will be clipped to the valid range of 40,40 (zoomed waaay in) to 0.01,0.01 (zoomed waaay out).
+
+func: GetScale
+(code)
+Vector2 GetScale()
+(end)
+
+Returns:
+
+The current scale magnification level.
+
+Group: Tracking And Control
+
+func: SetEntityTrackingByID
+(code)
+nil SetEntityTrackingByID(number entityID)
+(end)
+
+This tells the camera to follow around an <Entity>.  It attempts to keep the <Entity> in the middle of the screen, by lerping to its position.
+
+Use <SetMoveLerp> to make the camera more or less snappy/responsive.
+
+This always overrides <SetPosTarget>.
+
+Note:
+
+The <Camera> is smart enough to follow entities through doors/warps even if they move to a new <Map>.
+
+Parameters:
+
+entityID - The ID of an <Entity> you'd like the <Camera> to follow around.  Send <C_ENTITY_NONE> to disable entity tracking.
+
+func: GetEntityTrackingByID
+(code)
+number GetEntityTrackingByID()
+(end)
+
+Returns:
+
+The entityID of the <Entity> we're tracking or <C_ENTITY_NONE> if none.
+
+
+func: SetPosTarget
+(code)
+nil SetPosTarget(Vector2 vPos)
+(end)
+
+This is like <SetPos> except instead of being instantaneous, the <Camera> smoothly moves to the new position.
+
+Parameters:
+
+vPos - A <Vector2> object containing the target position.
+
+func: SetPosCenteredTarget
+(code)
+nil GetPosCenteredTarget(Vector2 vPos)
+(end)
+
+This is like <SetPosCentered> except instead of being instantaneous, the <Camera> smoothly moves to the new position.
+
+Parameters:
+
+vPos - A <Vector2> object containing the target position.
+
+func: SetScaleTarget
+(code)
+nil SetScaleTarget(Vector2 vPos)
+(end)
+
+This is like <SetScale> except instead of being instantaneous, the <Camera> smoothly scales up/down to the new scale.
+
+Parameters:
+
+vPos - A <Vector2> object containing the new X and Y scale.
+
+Group: Interpolation Settings
+
+func: SetMoveLerp
+(code)
+nil SetMoveLerp(number lerpSpeed)
+(end)
+
+This controls how fast the <Camera> moves when <SetPosTarget> or <SetEntityTrackingByID> is used.
+
+Parameters:
+
+lerpSpeed - 1 for instant, 0.01 for slow.  Default is 0.3.
+
+func: SetScaleLerp
+(code)
+nil SetScaleLerp(number lerpSpeed)
+(end)
+
+This controls how fast the <Camera> scales in and out when <SetScaleTarget> is used.
+
+Parameters:
+
+lerpSpeed - 1 for instant, 0.01 for slow.  Default is 0.3.
+
+Group: Miscellaneous
+
+func: Reset
+(code)
+nil Reset()
+(end)
+
+Resets everything to the default <Camera> settings and moves the position to 0,0.
 */

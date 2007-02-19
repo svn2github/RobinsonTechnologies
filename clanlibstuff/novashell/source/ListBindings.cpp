@@ -93,22 +93,66 @@ void luabindList(lua_State *pState)
 			Object: TileList
 			Contains a list of tiles.
 
+			Internally, this contains only pointers to tiles.  So if you copy the list, no tiles are copied, only the pointers.
+
 			Group: Member Functions
 
-			func: PlaceHolder
+			func: GetNext
 			(code)
-			nil PlaceHolder()
+			Tile GetNext()
 			(end)
-			Stuff coming later.
 
+			Allows you to run through the list and look at each tile in it.
+
+			When no more tiles are available, nil is returned and <ResetNext> is automatically called internally.
+
+			Usage:
+			(code)
+			local tile; 
+
+			while true do
+				tile = tileList:GetNext();
+				if (tile == nil) then break; end;
+				LogMsg("Found tile type " .. tile:GetType());
+			end
+			
+			(end)
+			
+			Returns:
+
+			The next <Tile> in  the list, or nil if the end has been reached.
 			*/
 			class_<TileList>("TileList")
 			.def(constructor<>())
 			.def("GetNext", &TileList::GetNext)
 			.def("ResetNext", &TileList::ResetNext)
+			
+/*
+func: ResetNext
+(code)
+nil ResetNext()
+(end)
+
+Causes the next call to <GetNext> to start on the first tile.
+
+*/
+
+			
 			.def("GetCount", &TileList::GetCount)
 			,
-			
+		
+			/*
+			func: GetCount
+			(code)
+			number GetCount()
+			(end)
+
+			Returns:
+
+			The number of tiles currently in the list.
+
+			*/
+
 			class_< vector<unsigned int> >("LayerList")
 			.def(constructor<>())
 			.def("Add", &vector<unsigned int>::push_back)

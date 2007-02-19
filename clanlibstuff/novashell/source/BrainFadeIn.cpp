@@ -72,3 +72,23 @@ void BrainFadeIn::Update(float step)
 	}
 
 }
+
+/*
+Object: FadeIn
+A brain for use with the <BrainManager> that causes its owner <Entity> to become visible over time and then *removes itself* from the brain stack.
+
+It does not actually modify the <Entity>'s "base color" as <ColorFade> does, it temporarily overrides it.
+
+Also works on the <Entity>'s text if it has any setup.
+
+Parameters it understands:
+
+fade_speed_ms - How many milliseconds the fade should take.  Default is 1000. (one second)
+
+Usage:
+(code)
+//fade in very quickly
+this:GetBrainManager():Add("FadeIn", "fade_speed_ms=300");
+(end)
+
+*/

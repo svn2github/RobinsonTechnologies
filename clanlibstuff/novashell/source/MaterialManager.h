@@ -20,17 +20,18 @@ This object stores all the information about materials in the game.
 
 About:
 
+This is a global object that can always be accessed.
+
 What's a material?  Well, it's the properties that collision shapes have. For instance, if the shape should be bouncy, a ladder, or a warp.
 
 You can add your own custom materials, then later, during a collision query to see what kind of material you hit.
 
 setup_constants.lua adds material definitions when the engine is started.
 
-Note:
-This is automatically created by the engine and always available.  You can access it this way:
+Usage:
 
 (code)
-GetMaterialManager:RunSomeCoolFunctionInIt()
+C_MATERIAL_CRAZY = GetMaterialManager:AddMaterial(0.5,0.3, 0.5, 0.3, Color(255,200,50,255), "Crazy");
 (end)
 
 */

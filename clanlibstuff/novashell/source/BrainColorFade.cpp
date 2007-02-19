@@ -120,3 +120,30 @@ void BrainColorFade::Update(float step)
 	}
 
 }
+
+
+/*
+Object: ColorFade
+A brain for use with the <BrainManager> that causes its <Entity>'s base color values to change over time.
+
+It's important to realize that you can't really colorize something with this, only remove color.
+
+255,255,255,255 means "all colors shown normally, with no translucency" whereas "255,0,0,255" means "show only the red in the image, at full translucency".
+
+Parameters it understands:
+
+fade_speed_ms - How many milliseconds it should take to finish fading to the target colors.
+remove_brain_when_done - if true, this brain will be removed from the brain stack when the fade is complete.
+r - The target red color, 0 to 255.
+g - The target green color, 0 to 255.
+b - The target blue color, 0 to 255.
+a - The target alpha color, 0 to 255.
+
+Usage:
+(code)
+//let's set this entity to invisible, and then have it fade in over one second.
+this:SetBaseColor(Color(255,255,255,0)); //start as invisible, 0 alpha
+this:GetBrainManager():Add("ColorFade","fade_speed_ms=1000;remove_brain_when_done=true;a=255");
+(end)
+
+*/

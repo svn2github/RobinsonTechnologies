@@ -315,7 +315,7 @@ myColor = Color(255,255,255,255);
 		.def("SetBlue", &CL_Color::set_blue)
 		//func: SetAlpha
 		//(code)
-		//nil SetAlpha
+		//nil SetAlpha(number alpha)
 		//(end)
 		.def("SetAlpha", &CL_Color::set_alpha)
 
@@ -424,21 +424,29 @@ myColor = Color(255,255,255,255);
 		.def("RegisterAsWarp", &TagManager::RegisterAsWarp)
 
 		,class_<Camera>("Camera")
+		
+		//Position And Scale
 		.def("SetPos", &Camera::SetPos)
 		.def("GetPos", &Camera::GetPos)
 		.def("GetPosCentered", &Camera::GetPosCentered)
 		.def("SetPosCentered", &Camera::SetPosCentered)
-		.def("SetTargetPos", &Camera::SetTargetPos)
-		.def("SetTargetPosCentered", &Camera::SetTargetPosCentered)
+		.def("SetScale", &Camera::SetScale)
+		.def("GetScale", &Camera::GetScale)
+		
+		//Tracking and control
 		.def("SetEntityTrackingByID", &Camera::SetEntTracking)
 		.def("GetEntityTrackingByID", &Camera::GetEntTracking)
-		.def("InstantUpdate", &Camera::InstantUpdate)
-		.def("SetScale", &Camera::SetScale)
+		.def("SetPosTarget", &Camera::SetTargetPos)
+		.def("SetPosCenteredTarget", &Camera::SetTargetPosCentered)
 		.def("SetScaleTarget", &Camera::SetScaleTarget)
+
+		//Interpolation Settings
 		.def("SetMoveLerp", &Camera::SetMoveLerp)
 		.def("SetScaleLerp", &Camera::SetScaleLerp)
+
+		//Miscellaneous
 		.def("Reset", &Camera::Reset)
-		.def("GetScale", &Camera::GetScale)
+		.def("InstantUpdate", &Camera::InstantUpdate)
 		.def("GetCameraSettings", &Camera::GetCameraSettings)
 		.def("SetCameraSettings", &Camera::SetCameraSettings)
 
@@ -463,39 +471,36 @@ myColor = Color(255,255,255,255);
 		.def("SetMousePos", &InputManager::SetMousePos)
 
 		,class_<Goal_Think>("GoalManager")
-		.def("PushMoveToPosition", &Goal_Think::PushMoveToPosition)
-		.def("AddMoveToPosition", &Goal_Think::AddMoveToPosition)
-		.def("RemoveAllSubgoals", &Goal_Think::RemoveAllSubgoals)
-		.def("PushDelay", &Goal_Think::PushDelay)
+
+		.def("AddNewGoal", &Goal_Think::AddNewGoal)
 		.def("AddDelay", &Goal_Think::AddDelay)
+		.def("AddMoveToPosition", &Goal_Think::AddMoveToPosition)
+		//.def("AddMoveToTag", &Goal_Think::AddMoveToTag)
 		.def("AddApproach", &Goal_Think::AddApproach)
 		.def("AddApproachAndSay", &Goal_Think::AddApproachAndSay)
-		.def("PushApproach", &Goal_Think::PushApproach)
-		.def("PushApproachAndSay", &Goal_Think::PushApproachAndSay)
-
 		.def("AddSay", ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::AddSay)
 		.def("AddSay", ( void(Goal_Think::*)(const string&, int)) &Goal_Think::AddSay)
+		.def("AddSayByID",  ( void(Goal_Think::*)(const string&, int,int,int)) &Goal_Think::AddSayByID)
+		.def("AddSayByID",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::AddSayByID)
+		.def("AddRunScriptString", &Goal_Think::AddRunScriptString)
+
 
 		.def("PushSay",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::PushSay)
 		.def("PushSay",  ( void(Goal_Think::*)(const string&, int)) &Goal_Think::PushSay)
-		
-		.def("AddSayByID",  ( void(Goal_Think::*)(const string&, int,int,int)) &Goal_Think::AddSayByID)
-		.def("AddSayByID",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::AddSayByID)
 
+		.def("PushApproach", &Goal_Think::PushApproach)
+		.def("PushApproachAndSay", &Goal_Think::PushApproachAndSay)
+		.def("PushDelay", &Goal_Think::PushDelay)
+
+		.def("PushMoveToPosition", &Goal_Think::PushMoveToPosition)
 		.def("PushSayByID",  ( void(Goal_Think::*)(const string&, int,int,int)) &Goal_Think::PushSayByID)
 		.def("PushSayByID",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::PushSayByID)
-
 		.def("PushRunScriptString", &Goal_Think::PushRunScriptString)
-		.def("AddRunScriptString", &Goal_Think::AddRunScriptString)
-
 		.def("PushMoveToTag", &Goal_Think::PushMoveToTag)
-		.def("AddMoveToTag", &Goal_Think::AddMoveToTag)
-
 		.def("PushNewGoal", &Goal_Think::PushNewGoal)
-		.def("AddNewGoal", &Goal_Think::AddNewGoal)
 
+		.def("RemoveAllSubgoals", &Goal_Think::RemoveAllSubgoals)
 		.def("IsGoalActiveByName", &Goal_Think::IsGoalActiveByName)
-
 		.def("GetGoalCountByName", &Goal_Think::GetGoalCountByName)
 		.def("GetGoalCount", &Goal_Think::GetGoalCount)
 

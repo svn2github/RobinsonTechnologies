@@ -157,3 +157,58 @@ protected:
 
 
 #endif                  // include guard
+
+/*
+Object: LayerList
+Contains a list of layerID's.
+
+Group: Member Functions
+
+func: Add
+(code)
+nil Add(number layerID)
+(end)
+
+Some functions require a list of layers to operate on.  Besides grabbing pre-built lists from the <LayerManager>, you can contruct your own.
+
+Usage:
+(code)
+myLayerList = LayerList(); //create a new object
+
+myLayerList.Add(someMap:GetLayerManager:GetLayerIDByName("Overlay 1"));
+myLayerList.Add(someMap:GetLayerManager:GetLayerIDByName("GUI 2"));
+(end)
+
+Now we can use myLayerList with <Map::GetTilesByRect> to scan only these two layers.
+
+Parameters:
+
+The layerID to add.  LayerID's are just numbers.
+*/
+
+
+/*
+func: Get
+(code)
+number Get(number index)
+(end)
+
+Parameters:
+
+index - The <LayerList> slot you want the number from.  (Starts at 0, must be less than <GetCount>.)
+
+Returns:
+
+The layerID at this slot.
+*/
+
+/*
+func: GetCount
+(code)
+number GetCount()
+(end)
+
+Returns:
+
+How many layerID's are in this list.
+*/

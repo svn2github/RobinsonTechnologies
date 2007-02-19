@@ -30,12 +30,6 @@ bool CameraSetting::Serialize(CL_FileHelper &helper)
 Object: CameraSetting
 A simple data object that contains state information for the camera.
 
-Group: Member Functions
-
-func: PlaceHolder
-(code)
-nil PlaceHolder()
-(end)
-Stuff coming later.
+None of its functions are publicly accessable at this time, although it can be used with <Camera::GetCameraSettings> and <Camera::SetCameraSettings>.
 
 */

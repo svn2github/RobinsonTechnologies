@@ -40,3 +40,17 @@ void StateTopAttack::PostUpdate(float step)
 		m_pParent->RunFunction("OnAttackLoop");
 	}
 }
+
+/*
+Object: Attack
+A state that causes an entity to stop moving and play his attack animation.
+
+
+An attack animation is detected from the visual profile .xml when anim states named *attack_left*, *attack_down_left*, and so on are found.  The best match for the <Entity>'s current direction is used.
+
+If you want only one animation for all directions, only set an animation for *attack_left*.
+
+Script functions it calls:
+
+If the script function *"OnAttackLoop"* exists in the entity's script, it will call it every time the animation loops.
+*/

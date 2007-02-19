@@ -173,8 +173,10 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 2-16-2007
 
 * Small speed improvements
-* Work on docs...
-
 * Renamed SoundManager::KillChannel to SoundManager::Kill
 * Removed SoundManager::PlayMixed, there is only SoundManager::Play, it's simpler this way
 * More doc work...
+
+2-19-2007
+
+* Scripting docs finished (well, they'll never be finished, but everything currently in the engine is documented)

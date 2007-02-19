@@ -1012,33 +1012,20 @@ bool RunGlobalScriptFromTopMountedDir(const char *pName)
 
 Object: GameLogic
 
-Contains a lot of general game-related functions.
+Contains general game-related functions.
 
 About:
-This is automatically created by the engine and always available.  You can access it this way:
+
+This is a global object that can always be accessed.
+
+Usage:
 
 (code)
-GetGameLogic:RunSomeCoolFunctionInIt()
+GetGameLogic:Quit(); //quits the game
 (end)
 
-Group: Member Functions
+Group: Profile Related
 
-*/
-
-
-/*
-func: ToggleEditMode
-
-(code)
-boolean ToggleEditMode()
-(end)
-
-Returns:
-True if the it just turned ON the editor, false if it was just turned off
-*/
-
-
-/*
 func: SetUserProfileName
 (code)
 boolean SetUserProfileName(string name)
@@ -1110,6 +1097,19 @@ boolean UserProfileActive()
 Returns:
 
 True if a user profile is currently loaded/active.
+
+
+Group: Miscellaneous Functions
+
+func: ToggleEditMode
+
+(code)
+boolean ToggleEditMode()
+(end)
+Enable/Disable the in-game editor.
+
+Returns:
+True if the it just turned ON the editor, false if it was just turned off
 */
 
 
@@ -1119,7 +1119,9 @@ func: SetRestartEngineFlag
 nil SetRestartEngineFlage(boolean bRestart)
 (end)
 
-Set this to true and the engine will save all modified data and restart as soon as cybernetic ally possible.
+Parameters:
+
+bRestart - If true, the engine will save all modified data and restart as soon as cybernetic ally possible.
 */
 
 /*
@@ -1180,7 +1182,7 @@ This let's you access a global <DataManager> that is automatically saved and loa
 
 Note:
 
-Never use Data::Clear() on this, the save-load game system uses it to store certain things as well, such as the game time.
+Never use <DataManager::Clear> on this, the save-load game system uses it to store certain things as well, such as the game time.
 
 Returns:
 

@@ -506,14 +506,10 @@ void TilePic::Serialize(CL_FileHelper &helper)
 
 /*
 Object: TilePic
-TilePics are the simplest form of visual.  Low overheard but can only display a single image and must share collision data with other tiles of the same image and dimensions.
+TilePics are the simplest form of visual.
 
-Group: Member Functions
+Low overheard but can only display a single image and must share collision data with other tiles of the same image and dimensions.
 
-func: PlaceHolder
-(code)
-nil PlaceHolder()
-(end)
-Stuff coming later.
+Not publicly accessible at this time.
 
 */

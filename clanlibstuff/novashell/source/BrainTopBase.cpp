@@ -126,3 +126,22 @@ void BrainTopBase::PostUpdate(float step)
 {
 	ResetForNextFrame();
 }
+
+/*
+Object: StandardBase
+A brain for use with the <BrainManager> that performs many generic functions such as movement and path-finding.
+
+About:
+
+This brain installs itself as a "base brain".  An <Entity> can only have one base brain active.
+
+Parameters:
+
+control_filterx - a number from 0 to 1 showing how much influence it should have for movement on this axis.  Default is 1, full influence.
+control_filtery - a number from 0 to 1 showing how much influence it should have for movement on this axis.  Default is 1, full influence.
+
+Usage:
+(code)
+this:GetBrainManager():Add("StandardBase", "");
+(end)
+

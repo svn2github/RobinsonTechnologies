@@ -855,10 +855,14 @@ Object: App
 General functions related to the whole application.
 
 About:
-This is automatically created by the engine and always available.  You can access it this way:
+
+This is a global object that can always be accessed.
+
+Usage:
 
 (code)
-GetApp:RunSomeCoolFunctionInIt()
+local gameTicks = GetApp:GetGameTick();
+LogMsg("The game's age is: " .. gameTicks);
 (end)
 
 Group: Member Functions

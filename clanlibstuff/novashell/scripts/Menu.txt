@@ -45,15 +45,15 @@ File: Overview  (main.h)
 Group: System Objects  {
 
    File: App  (main.cpp)
+   File: GameLogic  (GameLogic.cpp)
    File: MapManager  (MapManager.cpp)
+   File: InputManager  (InputManager.cpp)
+   File: Camera  (Camera.cpp)
    File: SoundManager  (VisualResource.h)
    File: TextManager  (TextManager.cpp)
-   File: Camera  (Camera.cpp)
-   File: InputManager  (InputManager.cpp)
    File: TagManager  (TagManager.cpp)
    File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
-   File: GameLogic  (GameLogic.cpp)
    }  # Group: System Objects
 
 Group: Game Objects  {
@@ -76,13 +76,35 @@ Group: Game Objects  {
 
 Group: Simple Objects  {
 
-   File: Material  (physics\Contact.h)
    File: Math Objects  (no auto-title, VectorBindings.cpp)
    File: Color  (MiscClassBindings.cpp)
    File: CameraSetting  (CameraSetting.cpp)
    File: TileList  (ListBindings.cpp)
+   File: LayerList  (LayerManager.h)
    File: Zone  (MovingEntity.h)
+   File: Material  (physics\Contact.h)
    }  # Group: Simple Objects
+
+Group: Brains  {
+
+   File: StandardBase  (BrainTopBase.cpp)
+   File: Bob  (BrainBob.cpp)
+   File: ColorFade  (BrainColorFade.cpp)
+   File: ColorFlash  (BrainColorFlash.cpp)
+   File: FadeIn  (BrainFadeIn.cpp)
+   File: FadeOutAndDelete  (BrainFadeOutAndDelete.cpp)
+   File: Shake  (BrainShake.cpp)
+   File: ForceVisual  (BrainForceVisual.cpp)
+   }  # Group: Brains
+
+Group: States  {
+
+   File: Idle  (StateTopIdle.cpp)
+   File: Attack  (StateTopAttack.cpp)
+   File: Die  (StateDie.cpp)
+   File: Frozen  (StateFrozen.cpp)
+   File: Walk  (StateTopWalk.cpp)
+   }  # Group: States
 
 File: Global Functions  (GlobalScriptFunctionBindings.cpp)
 

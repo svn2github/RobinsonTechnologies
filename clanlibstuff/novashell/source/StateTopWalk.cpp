@@ -51,3 +51,17 @@ void StateTopWalk::PostUpdate(float step)
 		m_pParent->RunFunction("OnWalkLoop");
 	}
 }
+
+
+/*
+Object: Walk
+A state that causes an entity to play his walk animation and move in the direction he's current facing at the speed set in <Entity::SetDesiredSpeed>.
+
+An Walk animation is detected from the visual profile .xml when anim states named *walk_left*, *walk_down_left*, and so on are found.  The best match for the <Entity>'s current direction is used.
+
+If you want only one animation for all directions, only set an animation for *walk_left*.
+
+Script functions it calls:
+
+If the script function *"OnWalkLoop"* exists in the entity's script, it will call it every time the animation loops.
+*/

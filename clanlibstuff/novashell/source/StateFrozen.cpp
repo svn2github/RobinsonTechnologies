@@ -39,3 +39,17 @@ void StateFrozen::PostUpdate(float step)
 		//this resets the animation, just play forever
 	}
 }
+
+/*
+Object: Frozen
+A state that causes an entity to stop moving.  Does not change animation from whatever it was.
+
+Usage:
+
+(code)
+if (GameIsActive() == false) then
+	//no profile is active, so we must be in the editor.  Let's not have them running around
+	this:GetBrainManager():SetStateByName("Frozen");
+end
+(end)
+*/

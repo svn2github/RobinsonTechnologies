@@ -64,3 +64,24 @@ void BrainFadeOutAndDelete::Update(float step)
 		m_pParent->SetDeleteFlag(true);
 	}
 }
+
+
+/*
+Object: FadeOutAndDelete
+A brain for use with the <BrainManager> that causes its owner <Entity> to become invisible over time and then deletes the <Entity> completely.
+
+Note:
+
+This deletes the entire <Entity> after fading out, not just the brain.
+
+Parameters it understands:
+
+fade_speed_ms - How many milliseconds the fade should take.  Default is 1000. (one second)
+
+Usage:
+(code)
+//this entity died, fade out quickly then remove us (the whole entity)
+this:GetBrainManager():Add("FadeOutAndDelete", "fade_speed_ms=50");
+(end)
+
+*/

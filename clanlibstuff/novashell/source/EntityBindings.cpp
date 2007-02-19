@@ -34,33 +34,36 @@ void luabindEntity(lua_State *pState)
 		[
 
 			class_<DataManager>("DataManager")
-			.def("Delete", &DataManager::Delete)
-			.def("Exists", &DataManager::Exists)
-			.def("Get", &DataManager::Get)
 			.def("Set", &DataManager::Set)
 			.def("SetNum", &DataManager::SetNum)
-			.def("GetNum", &DataManager::GetNum)
-			.def("ModNum", &DataManager::ModNum)
-			.def("Clear", &DataManager::Clear)
 			.def("SetIfNull", &DataManager::SetIfNull)
+
+			.def("Get", &DataManager::Get)
+			.def("GetNum", &DataManager::GetNum)
+
+			.def("Exists", &DataManager::Exists)
+			.def("ModNum", &DataManager::ModNum)
+			.def("Delete", &DataManager::Delete)
+			.def("Clear", &DataManager::Clear)
 
 			,class_<State>("State")
 			.def("GetName", &State::GetName)
 
 			,class_<BrainManager>("BrainManager")
 			.def("Add", &BrainManager::Add)
-			.def("SendToBrainByName", &BrainManager::SendToBrainByName)
 			.def("Remove", &BrainManager::Remove)
+			.def("SendToBrainByName", &BrainManager::SendToBrainByName)
 			.def("AskBrainByName", &BrainManager::AskBrainByName)
+			.def("SendToBrainBase", &BrainManager::SendToBrainBase)
+
 			.def("SetStateByName", &BrainManager::SetStateByName)
 			.def("GetStateByName", &BrainManager::GetStateByName)
 			.def("LastStateWas", &BrainManager::LastStateWas)
 			.def("InState", &BrainManager::InState)
-			.def("SendToBrainBase", &BrainManager::SendToBrainBase)
-			
+
 
 			,class_<Brain>("Brain")
-			.def("GetName", &State::GetName)
+			.def("GetName", &Brain::GetName)
 
 			,class_<BaseGameEntity>("SpecialEntity")
 			.def("GetID", &BaseGameEntity::ID)
@@ -2228,7 +2231,7 @@ func: SetDefaultTalkColor
 nil SetDefaultTalkColor(Color color)
 (end)
 
-Let's you set the default color of the text when the <TextManager> is used with this entity.  Not related to <SetTextColor> or <SetBaseColor> at all.
+Lets you set the default color of the text when the <TextManager> is used with this entity.  Not related to <SetTextColor> or <SetBaseColor> at all.
 
 Parameters:
 
@@ -2391,7 +2394,7 @@ True if this entity has actually been placed on a map.
 	boolean InNearbyZoneByMaterialType(Vector2 vPos, number materialType)
 	(end)
 
-	Similar to <InZoneByMaterialType> but let's you enter an exact point to check.  Note, this is only checking nearby zones that were cached during the collision phase.
+	Similar to <InZoneByMaterialType> but lets you enter an exact point to check.  Note, this is only checking nearby zones that were cached during the collision phase.
 	
 	It's useful for seeing if there is a ladder an inch below your entity's foot, for instance.
 

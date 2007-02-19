@@ -87,3 +87,24 @@ void BrainBob::Update(float step)
 		}
 	}
 }
+
+
+/*
+Object: Bob
+A brain for use with the <BrainManager> that causes its <Entity>'s visuals to "bob" up and down, without really moving the <Entity>.
+
+Parameters it understands:
+
+distance - The total offset of the bobbing movement.
+speed - How fast the bobbing is.
+visual_interval_ms - How jerky/smooth the bobbing movement is.
+
+Usage:
+(code)
+this:GetBrainManager():Add("Bob","distance=5;speed=2;visual_interval_ms=10");
+
+//if later, we wanted to change functionality as it's running, we could do...
+this:GetBrainManager():SendToBrainByName("Bob", "speed=2.5");
+(end)
+
+*/

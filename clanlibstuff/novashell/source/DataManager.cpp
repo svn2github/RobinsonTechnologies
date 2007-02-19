@@ -204,17 +204,139 @@ void DataManager::Serialize(CL_FileHelper &helper)
 
 /*
 Object: DataManager
-An object designed to flexibly store and retrieve numbers and strings.
+An object designed to flexibly store and retrieve numbers and strings very quickly use key/value pairs.
 
-In addition to any <Entity> having its own unique <DataManager> via <Entity::Data> a global one is always available through 
+In addition to any <Entity> having its own unique <DataManager> via <Entity::Data> a global one is always available through <GameLogic::Data> as well.
 
+Using the Entity Properties Editor, you can also add/remove/modify data from the editor.
 
-Group: Member Functions
+Group: Storing Data
+
+func: Set
+(code)
+boolean Set(string keyName, string value)
+(end)
+Store a string as a named piece of data to be retrieved later.
+Replaces data by this key name if it already exists.
+
+keyName - Any name you wish.
+value - A string of any length with the text/data that you wish to store.
+
+Returns:
+
+True if a new piece of data was created, false if existing data was replaced.
+
+func: SetNum
+(code)
+boolean SetNum(string keyName, number num)
+(end)
+Similar to <Set> but saves the data as a number which saves space and is faster to access internally.
+
+When <Get>is used with a number (instead of <GetNum>) it is automatically converted into a string.
+
+Decimal points are ok to use.  The accuracy maintained is that of a C "float".
+
+keyName - Any name you wish.
+num - The number you wish to store.
+
+Returns:
+
+True if a new piece of data was created, false if existing data was replaced.
+
+func: SetIfNull
+(code)
+boolean SetIfNull(string keyName, string value)
+(end)
+Similar to <Set> but stores the data only if the key didn't already exist.
+
+When <Get>is used with a number (instead of <GetNum>) it is automatically converted into a string.
+
+keyName - Any name you wish.
+value - The string data you wish to store.
+
+Returns:
+
+True if the key didn't exist and the value was stored.  False if it already existed and nothing was changed.
+
+Group: Retrieving Data
+
+func: Get
+(code)
+string Get(string keyName)
+(end)
+Retrieve a previously stored value by its key name.
+
+keyName - The key-name used when it was stored.
+
+Returns:
+
+The data in string form or a blank string if the key wasn't found.  Use <Exists> to verify if a key exists or not.
+
+func: GetNum
+(code)
+number Get(string keyName)
+(end)
+Like <Get> but returns the data as a number.  If the data was stored as a number, this is the fastest way to access it.
+
+If the data was stored as a string, an attempt to convert it to a number is made.
+
+keyName - The key-name used when it was stored.
+
+Returns:
+
+The number that was stored.
+
+Group: Miscellaneous
+
+func: Exists
+(code)
+boolean Exists(string keyName)
+(end)
+
+keyName - The key name used when it was stored.
+
+Returns:
+
+True if data with this key name exists.
+
+func: ModNum
+(code)
+number Exists(string keyName, number modAmount)
+(end)
+Modifies an existing key by a number.  Creates the key if it didn't exist.
+
+Usage:
+(code)
+
+//set hitpoints to 100
+this:Data():SetAsNum("life", 100);
+
+//remove 5
+local curHitpoints = this:Data():ModNum("life", -5);
+
+LogMsg("I only have " .. curHitpoints .. " hitpoints!");
+(end)
+
+keyName - The key name used when it was stored.
+modAmount - How much the number should be changed by.
+
+Returns:
+
+The new number that was stored.
+
+func: Delete
+(code)
+nil Delete(string keyName)
+(end)
+Completely removes a key/value pair from the database.
+
+keyName - The key name used when it was stored.
 
 func: Clear
 (code)
 nil Clear()
 (end)
-Deletes all data in the object.
-
+Completely removes all stored data from this database.
 */
+
+

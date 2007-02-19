@@ -373,12 +373,139 @@ void BrainManager::PostUpdate(float step)
 Object: BrainManager
 All <Entity> objects can use their <BrainManager> to add brains to control behavior and functions.
 
-Group: Member Functions
+Group: Brain Related
 
-func: PlaceHolder
+func: Add
 (code)
-nil PlaceHolder()
+nil Add(string brainName, string initMsg)
 (end)
-Stuff coming later.
+
+Adds a new brain.
+
+An entity can use many brains at once, most can play nicely and intelligently with eachother.
+
+Some brains perform complex duties, like path-finding and movement, others very simple things, like shaking, bobbing, or fading out and deleting themselves.
+
+Parameters:
+
+brainName - A string containing the name of a valid brain that can be constructed, for example, <Bob>.
+initMsg - A string with any special information you want to send this brain. (can be a blank string)
+
+
+func: Remove
+(code)
+number Remove(string brainName)
+(end)
+
+Parameters:
+
+brainName - The name of the brain you'd like to remove.
+
+Returns:
+
+How many brains were actually removed.
+
+func: SendToBrainByName
+(code)
+nil SendToBrainByName(string brainName, string msg)
+(end)
+
+Allows you to send a command to a brain.
+
+Parameters:
+
+brainName - The name of the brain you'd like to communicate with.
+msg - The string of text you'd like to send.  Different brains respond to different commands.
+
+
+func: SendToBrainBase
+(code)
+nil SendToBrainBase(string msg)
+(end)
+
+Allows you to send a command to the "base" brain if one has been added.
+
+Certain complex brains may register themselves as the "base brain".  Right now only one, the <StandardBase> does this.
+
+By registering as the "Base", it's letting the world and other brain's know it can handle certain commands and services.
+
+Parameters:
+
+msg - The string of text you'd like to send.
+
+func: AskBrainByName
+(code)
+string AskBrainByName(string brainName, string msg)
+(end)
+
+Allows you to send a message to a brain *and* receive its reply.
+
+Parameters:
+
+brainName - The name of the brain you'd like to communicate with.
+msg - The string of text you'd like to send.  Different brains respond to different commands.
+
+Returns:
+
+The brain returns a string of data in response to the request made.
+
+Group: State Related
+
+func: SetStateByName
+(code)
+nil SetStateByName(string stateName)
+(end)
+
+Unlike brains, there can only be *one* state active at any time.
+
+States such as walking, attacking, and idling allow visuals and AI related functions to all stay on the same page and an easy way to control entities.
+
+Example of setting the state to <Idle> to stop an entity from moving, and to play the idle animation if it exists in his visual profile:
+
+(code)
+this:GetBrainManager():SetStateByName("Idle");
+(end)
+
+Parameters:
+
+stateName - A string containing the name of a valid state that can be activated, for example, <Idle>.
+
+func: GetStateByName
+(code)
+string GetStateByName()
+(end)
+
+Returns:
+
+The name of the active state.
+
+func: InState
+(code)
+boolean InState(string stateName)
+(end)
+
+Parameters:
+
+stateName - The name of the state you'd like to see if the entity is currently in.
+
+Returns:
+
+True if active state matches the state name sent.
+
+func: LastStateWas
+(code)
+boolean LastStateWas(string stateName)
+(end)
+
+Parameters:
+
+stateName - The name of the state you'd like to see if the entity was last in, before the currently active state was set.
+
+Returns:
+
+True if the last state that was active (before the current one was activated) matches the name sent.
+
 
 */
+
+
