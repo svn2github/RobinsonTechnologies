@@ -198,12 +198,70 @@ void WatchManager::ProcessPendingEntityMovementAndDeletions()
 Object: WatchManager
 Allows entities to function off-screen.
 
+About:
+
+This is a global object that can always be accessed.
+
+Sometimes you want <Entities> to continue to function even when off screen or on a different <Map>.  
+
+For instance, if an NPC needs to walk to his bed and sleep, he needs to be added to the watch manager so he can function offscreen.
+
+When toggling the FPS display (Ctrl-F) the number after the W indicates how many entities are currently being "watched".
+
+Usage:
+
+(code)
+//insure this entity will function for the next 5 seconds no matter where it is
+GetWatchManager:Add(this, 1000*5); (5000 milliseconds)
+
+(end)
+
 Group: Member Functions
 
-func: PlaceHolder
+func: Add
 (code)
-nil PlaceHolder()
+nil Add(Entity ent, number timeToWatchMS)
 (end)
-Stuff coming later.
+If a function called "OnWatchTimeout" exists in the <Entity>'s namespace, it will be called when the watch times-out (finishes).
+The function must accept a parameter that will be a boolean set to TRUE if the <Entity> is currently on the screen.
+If an <Entity> is deleted who was on the watch list, it is automatically removed.
+
+Usage:
+(code)
+
+//we want to know when the watch is over
+OnWatchTimeout(bIsOnScreen)
+	LogMsg("Watch complete, no longer letting this entity run on its own!");
+	
+	if (bIsOnScreen) then
+		LogMsg("Entity is currently on the screen!");
+	else
+		LogMsg("Entity is off screen.");
+	end
+end
+(end)
+
+Parameters:
+
+ent - The <Entity> that should remain active regardless of where it is.
+timeToWatchMS - How long before this <Entity> returns to a normal state. (ie, unwatched)
+
+func: Remove
+(code)
+nil Remove(Entity ent)
+(end)
+Removes this <Entity> from the watch list.
+
+Parameters:
+
+The <Entity> that shouldn't be watched (run off-screen) anymore.
+
+func: GetWatchCount
+(code)
+number GetWatchCount()
+(end)
+Returns:
+
+How many entities are currently being watched.  (Allowed to function off-screen)
 
 */

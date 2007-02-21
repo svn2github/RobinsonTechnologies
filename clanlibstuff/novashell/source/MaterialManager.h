@@ -31,7 +31,7 @@ setup_constants.lua adds material definitions when the engine is started.
 Usage:
 
 (code)
-C_MATERIAL_CRAZY = GetMaterialManager:AddMaterial(0.5,0.3, 0.5, 0.3, Color(255,200,50,255), "Crazy");
+C_MATERIAL_ICE = GetMaterialManager:AddMaterial(0.5,0.3, 0.5, 0.3, Color(255,200,50,255), "Ice");
 (end)
 
 */

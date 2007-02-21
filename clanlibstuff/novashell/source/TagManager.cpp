@@ -421,14 +421,77 @@ void TagManager::Load(Map *pWorld)
 
 /*
 Object: TagManager
-When an entity is "named", it's instantly locatable throughout the world at all times through the tag manager.
+When an <Entity> is "named", it's instantly locatable throughout the world at all times through the tag manager.
+
+About:
+
+In most cases usage of the <TagManager> happens behind the scenes, for instance, when you use <GetEntityByName>.
+
+If you need to be able to locate entities without actually loading them or their <Map>, using the <TagManager> directly is useful.
+
+Usage:
+
+(code)
+local tag = GetTagManager:GetFromString("Gary");
+(end)
 
 Group: Member Functions
 
-func: PlaceHolder
+func: GetFromString
 (code)
-nil PlaceHolder()
+Tag GetFromString(string name)
 (end)
-Stuff coming later.
+Returns information about a named <Entity>.  Very fast.
 
+Parameters:
+
+name - the name of an <Entity>.
+
+Usage:
+(code)
+local tag = GetTagManager:GetFromString("Gary");
+
+if (tag == nil) then
+		LogMsg("Gary doesn't exist!");
+	else
+		LogMsg("Gary is located on the map called " .. tag:GetMapName());
+		LogMsg("Gary's xy location is " .. tostring(tag:GetPos());
+
+		if (tag:GetID() == C_ENTITY_NONE) then
+				LogMsg("Gary exists, but he hasn't actually been loaded yet.");
+			else
+				LogMsg("Gary exists and has been loaded, his entityID is " .. tag:GetID());
+			end
+	end
+	
+(end)
+
+Returns:
+A <Tag> object containing inforamtion about the <Entity> or nil if the name doesn't exist.
+
+func: GetPosFromName
+(code)
+Vector2 GetPosFromName(string name)
+(end)
+Allows you to quickly get the position of a named <Entity> that may or may not be loaded.
+
+Returns:
+A <Vector2> object containing the position.  If not found, will return 0,0 and an error will pop  up.
+
+func: RegisterAsWarp
+(code)
+nil RegisterAsWarp(Entity ent, string targetName)
+(end)
+Connects two entities together in the nagivational graph.  This is so the path-finding engine can understand warps, even those that lead to other <Map>s.
+For a two-way warp, the other side must also register as a warp.
+
+
+Note:
+
+You probably shouldn't play with this directly.  But if you do, you must put it in the function "OnMapInsert" in the script of an <Entity>.
+
+Parameters:
+
+ent - The source <Entity> connection.
+targetName - The destination <Entity> name. (Doesn't have to actually be loaded)
 */

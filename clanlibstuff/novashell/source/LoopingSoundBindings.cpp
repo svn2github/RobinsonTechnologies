@@ -13,21 +13,19 @@ using namespace luabind;
 
 LoopingSound::LoopingSound()
 {	
-	m_handle = 0;
+	m_handle = C_SOUND_NONE;
 }
 
 LoopingSound::LoopingSound(const string &file)
 {	
-	m_handle = 0;
+	m_handle = C_SOUND_NONE;
 	m_file = file;
-	LogMsg("Initting sound");
 }
 
 LoopingSound::~LoopingSound()
 {
 	
 	Play(false);
-	LogMsg("Killing sound");
 }
 
 
@@ -41,16 +39,17 @@ void LoopingSound::Init(const string &file)
 void LoopingSound::Play(bool bOn)
 {
 	if (m_file.empty()) return;
+	
 	if (bOn)
 	{
-		if (m_handle == 0)
+		if (m_handle == C_SOUND_NONE)
 		{
 			if (g_pSoundManager)
 				m_handle = g_pSoundManager->PlayLooping(m_file.c_str());
 		}
 	} else
 	{
-		if (m_handle != 0)
+		if (m_handle != C_SOUND_NONE)
 		{
 			//let's shut it off
 			if (g_pSoundManager)

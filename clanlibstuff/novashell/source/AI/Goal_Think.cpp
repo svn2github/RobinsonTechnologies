@@ -272,7 +272,7 @@ void Goal_Think::Render()
 Object: GoalManager
 All <Entity> objects can use their <GoalManager> to allow high-level AI features.
 
-Movement related features in the <GoalManager> require that the <Entity> has a <StandadBase> brain added.
+Movement related features in the <GoalManager> require that the <Entity> has a <StandardBase> brain added.
 
 Adding and pushing, what's the difference?:
 

@@ -387,4 +387,35 @@ nil Reset()
 (end)
 
 Resets everything to the default <Camera> settings and moves the position to 0,0.
+
+
+func: InstantUpdate
+(code)
+nil InstantUpdate()
+(end)
+
+Makes the camera "catch up" with any tracking/targeting that is active, without waiting for the lerping to happen.
+
+func: SetCameraSettings
+(code)
+nil SetCameraSettings(CameraSettings camSettings)
+(end)
+
+Set's the <Camera> to specific state, that was previously remembered with <GetCameraSettings>.
+
+Parameters:
+
+camSettings - A <CameraSettings> object.
+
+func: GetCameraSettings
+(code)
+CameraSettings GetCameraSettings()
+(end)
+
+If you'd like to save the state information about the camera so you can quickly return to that view, this is an easy way to do it.
+
+Returns:
+
+A <CameraSettings> object.
+
 */

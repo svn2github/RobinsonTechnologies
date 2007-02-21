@@ -74,5 +74,39 @@ private:
 	TagResourceMap m_tagMap;
 };
 
+/*
+Object: Tag
+Contains information about a named <Entity>.
+
+About:
+
+The function <TagManager::GetTagFromName> returns this.
+
+Group: Member Functions
+
+func: GetMapName
+(code)
+string GetMapName()
+(end)
+Returns:
+
+The <Map> name that this <Entity> exists in.  The <Map> may or may not be loaded.
+
+func: GetPos
+(code)
+Vector2 GetPos()
+(end)
+Returns:
+
+A <Vector2> object containing the <Entity>'s position.
+
+func: GetID
+(code)
+number GetID()
+(end)
+Returns:
+
+The <Entity>'s ID or <C_ENTITY_NONE> if the <Entity> has not been loaded yet.
+*/
 
 #endif

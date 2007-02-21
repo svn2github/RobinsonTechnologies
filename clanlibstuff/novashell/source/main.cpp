@@ -954,7 +954,7 @@ The current system time. Generally, you want to use <GetGameTick> instead.
 
 Returns:
 
-The current system time in milleseconds.
+The current system time in milliseconds.
 
 func: GetGameTick
 (code)
@@ -969,7 +969,7 @@ This is what you use to time things.
 
 Returns:
 
-The current game time in milleseconds.
+The current game time in milliseconds.
 
 func: SetSimulationSpeedMod
 (code)

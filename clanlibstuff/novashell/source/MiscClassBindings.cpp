@@ -374,18 +374,20 @@ myColor = Color(255,255,255,255);
 		.def("GetPlatform", &App::GetPlatform)
 
 		,class_<ISoundManager>("SoundManager")
-	//	.def("PlayMusic", &ISoundManager::PlayMusic)
-		.def("Play", &ISoundManager::PlayMixed)
-		//.def("PlayMixed", &ISoundManager::PlayMixed)
-		.def("PlayLooping", &ISoundManager::PlayLooping)
-		.def("MuteAll", &ISoundManager::MuteAll)
+		//.def("PlayMusic", &ISoundManager::PlayMusic)
 		//.def("KillMusic", &ISoundManager::KillMusic)
-		.def("Kill", &ISoundManager::KillChannel)
-		.def("AddEffect", &ISoundManager::AddEffect)
-		.def("SetVolume", &ISoundManager::SetVolume)
-		.def("RemoveAllEffects", &ISoundManager::RemoveAllEffects)
+		//.def("PlayMixed", &ISoundManager::PlayMixed)
+
+		.def("Play", &ISoundManager::PlayMixed)
+		.def("PlayLooping", &ISoundManager::PlayLooping)
 		.def("SetSpeedFactor", &ISoundManager::SetSpeedFactor)
 		.def("SetVolume", &ISoundManager::SetVolume)
+		.def("SetPan", &ISoundManager::SetPan)
+		.def("AddEffect", &ISoundManager::AddEffect)
+		.def("RemoveAllEffects", &ISoundManager::RemoveAllEffects)
+		.def("Kill", &ISoundManager::KillChannel)
+
+		.def("MuteAll", &ISoundManager::MuteAll)
 
 		,class_<TextManager>("TextManager")
 		.def("Add", &TextManager::Add)
@@ -450,7 +452,7 @@ myColor = Color(255,255,255,255);
 		.def("GetCameraSettings", &Camera::GetCameraSettings)
 		.def("SetCameraSettings", &Camera::SetCameraSettings)
 
-		,class_<TagObject>("TagObject")
+		,class_<TagObject>("Tag")
 		.def("GetMapName", &TagObject::GetMapName)
 		.def("GetID", &TagObject::GetID)
 		.def("GetPos", &TagObject::GetPos)

@@ -413,13 +413,102 @@ void TextManager::Render()
 Object: TextManager
 Intelligently draws text and captions.
 
+About:
+
+This is a global object that can always be accessed.
+
+Text is always drawn over all tiles/entities. (will not be obscured)
+
+Usage:
+
+(code)
+GetTextManager:Add("Hmm?", this);
+(end)
+
 
 Group: Member Functions
 
-func: PlaceHolder
+func: Add
 (code)
-nil PlaceHolder()
+number Add(string msg, Entity ent)
 (end)
-Stuff coming later.
+This function causes text to pop up over an entity, wait an appropriate amount of time (depends on text length) and then fade out.
+
+Text is vertically stacked (newest on the bottom) if an <Entity> has multiple lines showing.
+
+Text is depth sorted by age. (newer text is readable over older text)
+
+If an <Entity> is deleted, any associated text is automatically deleted as well.
+
+The color of text can be adjusted with <Entity::SetDefaultTalkColor>.
+
+Parameters:
+
+msg - The line of text this <Entity> should say.  Automatically text wrapped if needed.
+ent - The <Entity> object that should "say" this line of text.
+
+Returns:
+
+How many milliseconds the text will be displayed, sometimes useful to know when timing things.
+
+func: AddCustom
+(code)
+nil AddCustom(string msg, Entity ent, Vector2 vPos, Vector2 vMovement, Color color,
+		number timeToShowMS, number fontID)
+(end)
+This is like a turbo-powered version of <Add> that gives you many more options.
+
+An important difference is the text doesn't follow around the <Entity> like with <Add>, it stays in the position sent and optionally applies movement to it.
+
+If an <Entity> is deleted, any associated text is automatically deleted as well.
+
+Usage:
+(code)
+//pretend we got hit for 5 damage.  Let's make a red 5 appear and float up, a common RPG damage effect.
+GetTextManager:AddCustom("5", this, this:GetPos(), Vector2(0, -0.3), Color(200,0,0,255), 2000, C_FONT_DEFAULT);
+(end)
+
+Parameters:
+
+msg - The line of text that should be displayed.  Automatically text wrapped if needed.
+ent - The <Entity> object that should "say" this line of text.
+vPos - A <Vector2> object containing the world coordinates of where the text should be displayed. (will be centered around it)
+vMovement - A <Vector2> describing a direction and amount of movement to apply to the text.  Send 0,0 for no movement.
+Color - A <Color> object describing the color of the text.
+timeToShowMS - How many milliseconds this text should remain.
+fontID - A valid fontID or one of the <C_FONT_CONSTANTS>.
+
+func: AddCustomScreen
+(code)
+nil AddCustomScreen(string msg, Vector2 vPos, Vector2 vMovement, Color color,
+number timeToShowMS, number fontID)
+(end)
+This is similar to <AddCustom> with some important differences:
+
+* vPos is set in screen coordinates. (0,0 would be the upper left)  The text stays on the screen at all times and is not affected by camera movement or changing <Map>s.
+* It is not associated with an <Entity>
+
+This function is used to show tips and help in the examples.
+
+Parameters:
+
+msg - The line of text that should be displayed.  Automatically text wrapped if needed.
+vPos - A <Vector2> object containing the screen coordinates of where the text should be displayed. (will be centered around it)
+vMovement - A <Vector2> describing a direction and amount of movement to apply to the text.  Send 0,0 for no movement.
+Color - A <Color> object describing the color of the text.
+timeToShowMS - How many milliseconds this text should remain.
+fontID - A valid fontID or one of the <C_FONT_CONSTANTS>.
+
+Section: Related Constants
+
+Group: C_FONT_CONSTANTS
+Can be used as fontID's with functions such as <TextManager::AddCustom>.
+
+constant: C_FONT_SMALL
+A very small font.
+
+constant: C_FONT_DEFAULT
+A medium sized font.
+
 
 */

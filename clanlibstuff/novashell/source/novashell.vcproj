@@ -677,10 +677,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\AI\WatchManager.cpp"
-						>
-					</File>
-					<File
 						RelativePath=".\AI\WorldNavManager.cpp"
 						>
 					</File>
@@ -694,15 +690,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\DataManager.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\HashedResource.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\LayerManager.cpp"
 					>
 				</File>
 				<File
@@ -821,6 +809,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\DataManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath="GameLogic.cpp"
 					>
 					<FileConfiguration
@@ -869,6 +861,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\LayerManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\MapManager.cpp"
 					>
 				</File>
@@ -904,6 +900,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\ScriptManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\TagManager.cpp"
 					>
 				</File>
@@ -913,6 +913,10 @@
 				</File>
 				<File
 					RelativePath=".\VisualProfileManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\AI\WatchManager.cpp"
 					>
 				</File>
 			</Filter>
@@ -939,10 +943,6 @@
 			<Filter
 				Name="Script"
 				>
-				<File
-					RelativePath=".\ScriptManager.cpp"
-					>
-				</File>
 				<Filter
 					Name="Lua"
 					>
