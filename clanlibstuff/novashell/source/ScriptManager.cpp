@@ -160,14 +160,14 @@ ScriptObject::ScriptObject()
     //lua_pop(GetScriptManager->GetMainState(), lua_gettop(GetScriptManager->GetMainState())); //pop the thread off
 }	
 
+static int luaB_collectgarbage (lua_State *L);
 
 ScriptObject::~ScriptObject()
 {
 	//clear the only reference needed for garbage collection to occur
 	luaL_unref (GetScriptManager->GetMainState(),LUA_GLOBALSINDEX, m_threadReference);
+	lua_gc(m_pLuaState, LUA_GCCOLLECT, 0);
 
-	//and force garbage collect to happen now
-	//luaB_collectgarbage(GetScriptManager->GetMainState());
 }
 
 void ScriptObject::SetGlobal(const string& key, int value)
@@ -287,7 +287,7 @@ bool ScriptManager::Init()
 	lua_register(m_pMainState, "print", luaPrint);
 	lua_register(m_pMainState, "LogMsg", luaPrint);
 	lua_register(m_pMainState, "DumpInfo", DumpInfo);
-   
+	 
 	open(m_pMainState);
 	
 	

@@ -28,6 +28,41 @@ TileList GetNearbyTileListForScript(MovingEntity *pEnt)
 	return TileList(&pEnt->GetNearbyTileList());
 }
 
+
+string DataManagerToString(DataManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A DataManager with %d entries.", pObj->GetCount());
+	return string(stTemp);
+}
+
+string BrainManagerToString(BrainManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A BrainManager.");
+	return string(stTemp);
+}
+
+string BrainToString(Brain * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A %s Brain.", pObj->GetName());
+	return string(stTemp);
+}
+
+string StateToString(Brain * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A State called %s.", pObj->GetName());
+	return string(stTemp);
+}
+string SpecialEntityToString(BaseGameEntity * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A special entity called %s.", pObj->GetName());
+	return string(stTemp);
+}
+
 void luabindEntity(lua_State *pState)
 {
 	module(pState)
@@ -45,9 +80,11 @@ void luabindEntity(lua_State *pState)
 			.def("ModNum", &DataManager::ModNum)
 			.def("Delete", &DataManager::Delete)
 			.def("Clear", &DataManager::Clear)
+			.def("__tostring", &DataManagerToString)
 
 			,class_<State>("State")
 			.def("GetName", &State::GetName)
+			.def("__tostring", &StateToString)
 
 			,class_<BrainManager>("BrainManager")
 			.def("Add", &BrainManager::Add)
@@ -60,10 +97,12 @@ void luabindEntity(lua_State *pState)
 			.def("GetStateByName", &BrainManager::GetStateByName)
 			.def("LastStateWas", &BrainManager::LastStateWas)
 			.def("InState", &BrainManager::InState)
+			.def("__tostring", &BrainManagerToString)
 
 
 			,class_<Brain>("Brain")
 			.def("GetName", &Brain::GetName)
+			.def("__tostring", &BrainToString)
 
 			,class_<BaseGameEntity>("SpecialEntity")
 			.def("GetID", &BaseGameEntity::ID)
@@ -72,6 +111,7 @@ void luabindEntity(lua_State *pState)
 			.def("__tostring", &EntityToString)
 			.def("SetDeleteFlag", &BaseGameEntity::SetDeleteFlag)
 			.def("Send", &BaseGameEntity::HandleMessageString)
+			.def("__tostring", &SpecialEntityToString)
 
 
 /*
@@ -2018,9 +2058,9 @@ func: DumpScriptInfo
 nil DumpScriptInfo()
 (end)
 
-This is a diagnostic function that will send all functions and variables in this entity's scripting namespace to the debug console.
+This is a diagnostic function that will send all functions and variables in this entity's scripting namespace to the System Console.
 
-You'll need to bring up the debug console to see the output, or check the log.txt file when you're done.
+You'll need to bring up the System Console to see the output, or check the log.txt file when you're done.
 */
 
 

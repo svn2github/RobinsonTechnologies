@@ -823,7 +823,7 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnDumpWorldNavStatistics);
 
 	pItem = m_pMenu->create_item("Display/ ");
-	pItem = m_pMenu->create_item("Display/(Grave aka backtick aka Unshifted-Tilde to toggle the debug console");
+	pItem = m_pMenu->create_item("Display/(Grave aka backtick aka Unshifted-Tilde to toggle the System Console");
 	pItem->enable(false);
 
 

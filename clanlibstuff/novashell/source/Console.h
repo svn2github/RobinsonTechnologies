@@ -34,24 +34,33 @@ public:
 	void Add(const string line);
 	void AddError(const string line);
 
-	bool GetOnScreen() {return m_bOnScreen;}
-	void SetOnScreen(bool bNew) {m_bOnScreen = bNew;}
+	bool IsActive() {return m_bOnScreen;}
+	void SetOnScreen(bool bNew);
 	void Render();
 	void OnKeyDown(const CL_InputEvent &key);
 	void Init();
-
+	void KillGUI(); //should be called before the main GUI is shutdown for good
+	
 protected:
 
 	void AddGeneric(ConsoleItem &item);
 	void CopyToTextBuffer();
 	void RenderGUIOverlay();
-
+	void PressedEnter();
+	string GetBackBufferLine(int idx);
+	void InputValidator(char &character, bool &accept);
+	void ProcessString(string s);
 
 	console_cont m_lineVec;
 	bool m_bOnScreen; //if true, we're displaying it
 
 	CL_SlotContainer m_slots;
 	int m_curViewIndexOffset;
+
+	CL_InputBox *m_pInputBox; //console input
+
+	deque< string > m_backBuffer; //so up arrow will show previously entered commands
+	int m_curBackBufferIndex;
 
 };
 

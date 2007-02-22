@@ -58,6 +58,7 @@ public:
 	CL_Vector2 GetPosFromName(const string &name);
 
 	void RegisterAsWarp(MovingEntity *pEnt, const string &targetName);
+	int GetCount() {return m_tagMap.size();}
 
 protected:
 

@@ -81,6 +81,7 @@ Group: Simple Objects  {
    File: CameraSetting  (CameraSetting.cpp)
    File: TileList  (ListBindings.cpp)
    File: LayerList  (LayerManager.h)
+   File: Tag  (TagManager.h)
    File: Zone  (MovingEntity.h)
    File: Material  (physics\Contact.h)
    }  # Group: Simple Objects

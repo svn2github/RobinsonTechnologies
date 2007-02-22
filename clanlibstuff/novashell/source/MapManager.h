@@ -55,6 +55,7 @@ public:
 	void PreloadAllMaps();
 	void SaveAllMaps();
 	bool LoadMapByName(const string &stName);
+	int GetTotalMapsAvailable() {return m_mapInfoList.size();}
 
 	CL_Signal_v0 sig_map_changed;
 

@@ -26,6 +26,13 @@ MovingEntity * GetTileAsEntity(Tile *pTile)
 	return ((TileEntity*)pTile)->GetEntity();
 }
 
+string TileToString(Tile * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A Tile.");
+	return string(stTemp);
+}
+
 void luabindTile(lua_State *pState)
 {
 	module(pState)
@@ -177,6 +184,7 @@ The reason we use a Tile interface at times is that it lets us perform operation
 			*/
 			
 			.def("GetAsEntity", &GetTileAsEntity)
+			.def("__tostring", &TileToString)
 
 			/*
 			func: GetAsEntity

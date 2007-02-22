@@ -61,6 +61,7 @@ public:
 	float ModNum(const string &keyName, float mod);
 	bool HasData() {return !m_data.empty();}
 	void Serialize(CL_FileHelper &helper);
+	int GetCount() {return m_data.size();}
 
 	dataList * GetList() {return &m_data;} //so we can work with the raw container outside the class
 

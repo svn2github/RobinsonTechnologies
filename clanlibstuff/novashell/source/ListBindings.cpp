@@ -85,6 +85,21 @@ int NumberGet(vector<unsigned int> *pVec, unsigned int index)
 
 using namespace luabind;
 
+
+string TileListToString(TileList * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A TileList with %d tiles.", pObj->GetCount());
+	return string(stTemp);
+}
+
+string LayerListToString( vector<unsigned int> * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A LayerList with %d tiles.", pObj->size());
+	return string(stTemp);
+}
+
 void luabindList(lua_State *pState)
 {
 	module(pState)
@@ -126,6 +141,8 @@ void luabindList(lua_State *pState)
 			.def(constructor<>())
 			.def("GetNext", &TileList::GetNext)
 			.def("ResetNext", &TileList::ResetNext)
+			.def("__tostring", &TileListToString)
+
 			
 /*
 func: ResetNext
@@ -158,6 +175,8 @@ Causes the next call to <GetNext> to start on the first tile.
 			.def("Add", &vector<unsigned int>::push_back)
 			.def("GetCount", &vector<unsigned int>::size)
 			.def("Get",  &NumberGet)
+			.def("__tostring", &LayerListToString)
+
 
 
 		];

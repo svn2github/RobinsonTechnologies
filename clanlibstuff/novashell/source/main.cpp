@@ -163,6 +163,8 @@ void App::OneTimeDeinit()
    
 	SAFE_DELETE(m_pVisualProfileManager);
 	SAFE_DELETE(m_pHashedResourceManager);
+	g_Console.KillGUI();
+
 	SAFE_DELETE(m_pGui);
     SAFE_DELETE(m_pStyle);
 

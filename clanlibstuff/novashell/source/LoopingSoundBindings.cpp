@@ -24,7 +24,6 @@ LoopingSound::LoopingSound(const string &file)
 
 LoopingSound::~LoopingSound()
 {
-	
 	Play(false);
 }
 
@@ -60,6 +59,13 @@ void LoopingSound::Play(bool bOn)
 }
 
 
+string LoopingSoundToString( LoopingSound * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A LoopingSound.");
+	return string(stTemp);
+}
+
 void luabindLoopingSound(lua_State *pState)
 {
 	module(pState)
@@ -70,6 +76,7 @@ void luabindLoopingSound(lua_State *pState)
 			.def(constructor<const string &>())
 			.def("Init", &LoopingSound::Init)
 			.def("Play", &LoopingSound::Play)
+			.def("__tostring", &LoopingSoundToString)
 	
 		];
 }

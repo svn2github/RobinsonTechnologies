@@ -179,5 +179,25 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 
 2-21-2007
 
-* Scripting docs finished (well, they'll never be finished, but everything currently in the engine is documented)
+* Scripting docs finished (well, they'll never be finished, but everything currently in the engine is more or less documented)
 * Added SoundManager::SetPan script command
+* Added Ian's "lua class" system and converted the intro_menu and sound class to use them.  
+	There is a slight difference in how new objects are created so
+		
+		activeMenu = IntroMenu:new{};
+		activeMenu:Init();
+		
+		now only needs to be:
+		
+		activeMenu = IntroMenu(); //its __init() function (if it exists) will be run automatically at construction
+		
+	Much better!
+* Console now has an input control to interact directly with lua
+* All objects now handle tostring(). so you can LogMsg(GetCamera); and it will say something about the camera for instance
+* Enabled "loadstring" - this isn't dangerous, is it?  I think we'll need this for table serialization...
+* gSmartSound renamed to g_SmartSound
+* Any script objects embedded in intro maps for music were moved to the game_start.lua instead.  
+	Otherwise it's confusing to realize where the sound is coming from	
+* Added "always" keyboard to the default f1 keybind for the editor, now you can press it while holding down other keys and the editor
+	will still open	
+* BUGFIX: when an entity is destroyed, his specific namespace is garbage collect right away, I think this fixed a related crash bug as well

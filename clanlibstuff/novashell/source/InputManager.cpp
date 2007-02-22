@@ -2,6 +2,7 @@
 #include "InputManager.h"
 #include "GameLogic.h"
 #include "ScriptManager.h"
+#include "Console.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -354,7 +355,7 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 		switch (pKeyInfo->m_inputMode)
 		{
 		case C_INPUT_GAME_ONLY:
-			if (bEditorOpen) continue;
+			if (bEditorOpen || g_Console.IsActive()) continue;
 			break;
 		case C_INPUT_EDITOR_ONLY:
 			if (!bEditorOpen) continue;

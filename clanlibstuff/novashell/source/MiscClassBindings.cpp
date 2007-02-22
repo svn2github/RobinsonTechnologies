@@ -217,6 +217,125 @@ TileList GetTileListByRect(Map *pMap, const CL_Rect &r, vector<unsigned int> &la
 	return (TileList(&tilelist));
 }
 
+string CameraToString(Camera * pCam)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A Camera at %s", PrintVector(pCam->GetPos()).c_str());
+	return string(stTemp);
+}
+
+string MapToString(Map * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A Map named %s.", pObj->GetName().c_str());
+	return string(stTemp);
+}
+
+string MapManagerToString(MapManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A MapManager. %d maps located.", pObj->GetTotalMapsAvailable());
+	return string(stTemp);
+}
+
+string LayerManagerToString(LayerManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A LayerManager with %d layers.", pObj->GetLayerCount());
+	return string(stTemp);
+}
+
+string SoundManagerToString(ISoundManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A SoundManager.");
+	return string(stTemp);
+}
+
+string WatchManagerToString(WatchManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A WatchManager with %d entities being watched.", pObj->GetWatchCount());
+	return string(stTemp);
+}
+
+string TagManagerToString(TagManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A TagManager with %d entries.", pObj->GetCount());
+	return string(stTemp);
+}
+
+string TagToString(TagObject * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A Tag at %s on %s. (ID# %d)", PrintVector(pObj->GetPos()).c_str(), pObj->GetMapName().c_str(), pObj->GetID());
+	return string(stTemp);
+}
+
+string ZoneToString(Zone * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "Zone");
+	return string(stTemp);
+}
+
+string CameraSettingsToString(CameraSetting * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "CameraSettings");
+	return string(stTemp);
+}
+
+string InputManagerToString(InputManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "InputManager");
+	return string(stTemp);
+}
+
+
+string GoalManagerToString(Goal_Think * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "GoalManager with %d goals.", pObj->GetGoalCount());
+	return string(stTemp);
+}
+
+string MaterialManagerToString(MaterialManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A MaterialManager with %d materials.", pObj->GetCount());
+	return string(stTemp);
+}
+string MaterialToString(MaterialManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "A Material.", pObj->GetCount());
+	return string(stTemp);
+}
+
+string GameLogicToString(GameLogic * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "GameLogic");
+	return string(stTemp);
+}
+
+string AppToString(App * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "App");
+	return string(stTemp);
+}
+
+string TextManagerToString(TextManager * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "TextManager");
+	return string(stTemp);
+}
+
 
 //more class definitions
 void luabindMisc(lua_State *pState)
@@ -328,12 +447,15 @@ myColor = Color(255,255,255,255);
 		*/
 		
 		.def("Set", &CL_Color::set_color)
+		.def("__tostring", &ColorToString)
+
 		//Group: -=-=-=-=-=-
 	
 		,class_<MaterialManager>("MaterialManager")
 		
 		.def("AddMaterial", &MaterialManager::AddMaterial)
 		.def("GetMaterial", &MaterialManager::GetMaterial)
+		.def("__tostring", &MaterialManagerToString)
 
 
 		,class_<CMaterial>("Material")
@@ -341,6 +463,7 @@ myColor = Color(255,255,255,255);
 		.def("GetType", &CMaterial::GetType)
 		.def("SetSpecial", &CMaterial::SetSpecial)
 		.def("GetSpecial", &CMaterial::GetSpecial)
+		.def("__tostring", &MaterialToString)
 
 		,class_<GameLogic>("GameLogic")
 		.def("ToggleEditMode", &GameLogic::ToggleEditMode)
@@ -356,6 +479,7 @@ myColor = Color(255,255,255,255);
 		.def("AddModPath", &GameLogic::AddModPath)
 		.def("Data", &GameLogic::Data)
 		.def("InitGameGUI", &GameLogic::InitGameGUI)
+		.def("__tostring", &GameLogicToString)
 
 		,class_<App>("App")
 //		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)
@@ -372,11 +496,13 @@ myColor = Color(255,255,255,255);
 		.def("SetCursorVisible", &App::SetCursorVisible)
 		.def("GetCursorVisible", &App::GetCursorVisible)
 		.def("GetPlatform", &App::GetPlatform)
+		.def("__tostring", &AppToString)
 
 		,class_<ISoundManager>("SoundManager")
 		//.def("PlayMusic", &ISoundManager::PlayMusic)
 		//.def("KillMusic", &ISoundManager::KillMusic)
 		//.def("PlayMixed", &ISoundManager::PlayMixed)
+		.def("__tostring", &SoundManagerToString)
 
 		.def("Play", &ISoundManager::PlayMixed)
 		.def("PlayLooping", &ISoundManager::PlayLooping)
@@ -390,18 +516,22 @@ myColor = Color(255,255,255,255);
 		.def("MuteAll", &ISoundManager::MuteAll)
 
 		,class_<TextManager>("TextManager")
+		.def("__tostring", &TextManagerToString)
 		.def("Add", &TextManager::Add)
 		.def("AddCustom", &TextManager::AddCustom)
 		.def("AddCustomScreen", &TextManager::AddCustomScreen)
 
 
 		,class_<LayerManager>("LayerManager")
+		.def("__tostring", &LayerManagerToString)
 		.def("GetLayerIDByName", &LayerManager::GetLayerIDByName)
 		.def("GetCollisionLayers", &LayerManager::GetCollisionListNoConst)
 		.def("GetVisibleLayers", &LayerManager::GetDrawListNoConst)
 		.def("GetAllLayers", &LayerManager::GetAllListNoConst)
 		
 		,class_<Map>("Map")
+		.def("__tostring", &MapToString)
+	
 		.def("SetPersistent", &Map::SetPersistent)
 		.def("GetPersistent", &Map::GetPersistent)
 		.def("SetAutoSave", &Map::SetAutoSave)
@@ -414,6 +544,8 @@ myColor = Color(255,255,255,255);
 
 
 		,class_<MapManager>("MapManager")
+		.def("__tostring", &MapManagerToString)
+
 		.def("SetActiveMapByName", &MapManager::SetActiveMapByName)
 		.def("GetActiveMap", &MapManager::GetActiveWorld)
 		.def("UnloadMapByName", &MapManager::UnloadMapByName)
@@ -427,6 +559,8 @@ myColor = Color(255,255,255,255);
 
 		,class_<Camera>("Camera")
 		
+		.def("__tostring", &CameraToString)
+
 		//Position And Scale
 		.def("SetPos", &Camera::SetPos)
 		.def("GetPos", &Camera::GetPos)
@@ -453,19 +587,23 @@ myColor = Color(255,255,255,255);
 		.def("SetCameraSettings", &Camera::SetCameraSettings)
 
 		,class_<TagObject>("Tag")
+		.def("__tostring", &TagToString)
 		.def("GetMapName", &TagObject::GetMapName)
 		.def("GetID", &TagObject::GetID)
 		.def("GetPos", &TagObject::GetPos)
 
 		,class_<Zone>("Zone")
+		.def("__tostring", &ZoneToString)
 		.def_readwrite("boundingRect", &Zone::m_boundingRect)
 		.def_readwrite("entityID", &Zone::m_entityID)
 		.def_readwrite("materialID", &Zone::m_materialID)
 		.def_readwrite("vPos", &Zone::m_vPos)
 
 		,class_<CameraSetting>("CameraSettings")
+		.def("__tostring", &CameraSettingsToString)
 
 		,class_<InputManager>("InputManager")
+		.def("__tostring", &InputManagerToString)
 		.def("AddBinding", &InputManager::AddBinding)
 		.def("RemoveBinding", &InputManager::RemoveBinding)
 		.def("RemoveBindingsByEntity", &InputManager::RemoveBindingsByEntity)
@@ -474,6 +612,7 @@ myColor = Color(255,255,255,255);
 
 		,class_<Goal_Think>("GoalManager")
 
+		.def("__tostring", &GoalManagerToString)
 		.def("AddNewGoal", &Goal_Think::AddNewGoal)
 		.def("AddDelay", &Goal_Think::AddDelay)
 		.def("AddMoveToPosition", &Goal_Think::AddMoveToPosition)
@@ -507,6 +646,7 @@ myColor = Color(255,255,255,255);
 		.def("GetGoalCount", &Goal_Think::GetGoalCount)
 
 		,class_<WatchManager>("WatchManager")
+		.def("__tostring", &WatchManagerToString)
 		.def("Add", &WatchManager::Add)
 		.def("Remove", &WatchManager::Remove)
 		.def("GetWatchCount", &WatchManager::GetWatchCount)
