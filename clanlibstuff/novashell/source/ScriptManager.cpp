@@ -177,6 +177,8 @@ void ScriptObject::SetGlobal(const string& key, int value)
 	lua_settable(m_pLuaState, LUA_GLOBALSINDEX);
 }
 
+
+
 bool ScriptObject::Load(const char *pFileName)
 {
 	
@@ -218,9 +220,9 @@ void ScriptObject::RunString(const char *pString)
 bool ScriptObject::FunctionExists(const char *pFuncName)
 {
 	
-	GetScriptManager->SetGlobal("g_allowStrict", 0);
+	GetScriptManager->SetGlobalBool("g_allowStrict", false);
 	bool bTemp = luabind::type(luabind::globals(m_pLuaState)[pFuncName]) == LUA_TFUNCTION;
-	GetScriptManager->SetGlobal("g_allowStrict", 1);
+	GetScriptManager->SetGlobalBool("g_allowStrict", true);
 	return bTemp;
 }
 
@@ -300,6 +302,13 @@ void ScriptManager::SetGlobal(const char * pGlobalName, int value)
 	lua_pushnumber(m_pMainState, (lua_Integer)value);
 	lua_settable(m_pMainState, LUA_GLOBALSINDEX);
 
+}
+
+void ScriptManager::SetGlobalBool(const char * pGlobalName, bool value)
+{
+	lua_pushstring(m_pMainState, pGlobalName);
+	lua_pushboolean(m_pMainState, value);
+	lua_settable(m_pMainState, LUA_GLOBALSINDEX);
 }
 
 void ScriptManager::LoadMainScript(const char *pScriptName)

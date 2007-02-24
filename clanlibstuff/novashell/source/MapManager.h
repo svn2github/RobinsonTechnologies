@@ -42,14 +42,14 @@ public:
 	bool LoadMap(string stPath, bool bSetActiveIfNoneIs = true); //load main data file, with thumbnails
 	void UnloadMapByName(const string &stName);
 
-	Map * GetActiveWorld();
+	Map * GetActiveMap();
 	EntMapCache * GetActiveMapCache();
 	bool SetActiveMapByPath(const string &stPath, CameraSetting *pCameraSetting = NULL); //returns false if failed
 	void Update(float step);
 	void Render();
 	MapInfo * GetMapInfoByPath(const string &stPath);
 	MapInfo * GetMapInfoByName(const string &stName);
-	map_info_list * GetWorldInfoList() {return &m_mapInfoList;}
+	map_info_list * GetMapInfoList() {return &m_mapInfoList;}
 	void ScanMaps(const string &stPath);
 	bool SetActiveMapByName(const string &stName);
 	void PreloadAllMaps();

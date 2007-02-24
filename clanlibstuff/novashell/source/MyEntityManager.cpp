@@ -47,11 +47,14 @@ void MyEntityManager::Kill()
 
 void MyEntityManager::Render()
 {
-    std::list<BaseGameEntity*>::const_iterator ent = m_Entities.begin();
+   
+	CL_GraphicContext *pGC = GetApp()->GetMainWindow()->get_gc();
+
+	std::list<BaseGameEntity*>::const_iterator ent = m_Entities.begin();
     for (ent; ent != m_Entities.end(); ++ent)
     {
         {
-            (*ent)->Render(GetApp()->GetMainWindow()->get_gc());
+            (*ent)->Render(pGC);
         }
     }
     

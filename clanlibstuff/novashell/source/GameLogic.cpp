@@ -224,9 +224,9 @@ void GameLogic::SetGameMode(int gameMode)
 
 void GameLogic::ClearScreen()
 {
-	if (g_pMapManager->GetActiveWorld())
+	if (g_pMapManager->GetActiveMap())
 	{
-		CL_Display::clear(g_pMapManager->GetActiveWorld()->GetBGColor());
+		CL_Display::clear(g_pMapManager->GetActiveMap()->GetBGColor());
 	} else
 	{
 		CL_Display::clear(CL_Color(0,0,0,255));
@@ -382,7 +382,7 @@ void GameLogic::AddModPath(string s)
 bool GameLogic::Init()
 {
 
-	assert(!g_pMapManager->GetActiveWorld());
+	assert(!g_pMapManager->GetActiveMap());
 	if (g_pSoundManager && !GetApp()->ParmExists("-nosound"))
 	{
 		g_pSoundManager->Init();
@@ -492,7 +492,7 @@ bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the edi
 		if (m_modPaths.empty())
 		{
 			//assume they want to edit something in the base
-			if (!g_pMapManager->GetActiveWorld())
+			if (!g_pMapManager->GetActiveMap())
 			{
 				BaseGameEntity *pEnt = EntityMgr->GetEntityByName("ChooseWorldDialog");
 				if (pEnt) pEnt->SetDeleteFlag(true);
@@ -506,7 +506,7 @@ bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the edi
 
 		}
 		
-		if (!g_pMapManager->GetActiveWorld())
+		if (!g_pMapManager->GetActiveMap())
 		{
 			ShowMessage("Oops", "Can't open world editor, no map is loaded.");
 			return NULL;
@@ -637,7 +637,7 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		case CL_KEY_Q:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
-					if (g_pMapManager->GetActiveWorld())
+					if (g_pMapManager->GetActiveMap())
 					{
 						g_pMapManager->GetActiveMapCache()->SetDrawCollision(!g_pMapManager->GetActiveMapCache()->GetDrawCollision());
 					}
@@ -694,10 +694,10 @@ void GameLogic::Kill()
 
 	SaveGlobals();
 
-	if (g_pMapManager->GetActiveWorld())
+	if (g_pMapManager->GetActiveMap())
 	{
 		//the main world is active, let's save out the current player position I guess
-		*g_pMapManager->GetActiveWorld()->GetCameraSetting() = GetCamera->GetCameraSettings();
+		*g_pMapManager->GetActiveMap()->GetCameraSetting() = GetCamera->GetCameraSettings();
 	}
 	
 	if (EntityMgr->GetEntityByName("coleditor"))
@@ -847,6 +847,8 @@ void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
 			GetApp()->GetGUI()->show(); //this will trigger its OnRender() which happens right before
 		}
 
+		g_Console.RenderPostGUI();
+
 		if (GetShowFPS()) 
 		{
 			ResetFont(GetApp()->GetFont(C_FONT_NORMAL));
@@ -907,7 +909,7 @@ void SetCameraToTrackPlayer()
 
 	if (pEnt)
 	{
-		if (pEnt->GetTile()->GetParentScreen()->GetParentMapChunk()->GetParentMap() == g_pMapManager->GetActiveWorld())
+		if (pEnt->GetTile()->GetParentScreen()->GetParentMapChunk()->GetParentMap() == g_pMapManager->GetActiveMap())
 		{
 			GetCamera->SetEntTracking(pEnt->ID());
 			GetCamera->InstantUpdate();

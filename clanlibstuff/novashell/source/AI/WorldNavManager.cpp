@@ -180,7 +180,7 @@ void WorldNavManager::LinkEverything()
 {
 	//go through each map and link them all
 
-	map_info_list * pList = GetGameLogic->GetMyWorldManager()->GetWorldInfoList();
+	map_info_list * pList = GetGameLogic->GetMyWorldManager()->GetMapInfoList();
 	map_info_list::iterator itor = pList->begin();
 
 	while(itor != pList->end())

@@ -10,6 +10,7 @@
 #ifndef Console_h__
 #define Console_h__
 
+class MovingEntity;
 
 class ConsoleItem
 {
@@ -31,7 +32,7 @@ public:
 	Console();
 	virtual ~Console();
 
-	void Add(const string line);
+	void Add(const string line, CL_Color c = CL_Color(255,255,255,255));
 	void AddError(const string line);
 
 	bool IsActive() {return m_bOnScreen;}
@@ -40,9 +41,12 @@ public:
 	void OnKeyDown(const CL_InputEvent &key);
 	void Init();
 	void KillGUI(); //should be called before the main GUI is shutdown for good
-	
+
+	void RenderPostGUI();
+
 protected:
 
+	MovingEntity * GetSelectedEntityFromEditor();
 	void AddGeneric(ConsoleItem &item);
 	void CopyToTextBuffer();
 	void RenderGUIOverlay();

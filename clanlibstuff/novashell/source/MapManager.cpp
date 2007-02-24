@@ -267,7 +267,7 @@ void MapManager::UnloadMapByName(const string &stName)
 		if ( (*itor)->m_world.GetName() == stName)
 		{
 			worldPath = (*itor)->m_world.GetDirPath();
-			if (GetActiveWorld() == &(*itor)->m_world)
+			if (GetActiveMap() == &(*itor)->m_world)
 			{
 				//we're about to delete something currently active, let the rest of the world know
 				bMapChanged = true;
@@ -345,7 +345,7 @@ MapInfo *pWorldInfo = GetMapInfoByPath(stPath);
 		if (!m_pActiveMap->IsInitted())
 		{
 			LoadMap(stPath);
-			g_pMapManager->GetActiveWorld()->PreloadMap(); //later we might not want to do this...
+			g_pMapManager->GetActiveMap()->PreloadMap(); //later we might not want to do this...
 		}
 
 		if (!pCameraSetting)
@@ -377,12 +377,10 @@ void MapManager::Render()
 
 EntMapCache * MapManager::GetActiveMapCache()
 {
-//	assert(m_pActiveWorldCache && "Uh oh");
 	return m_pActiveMapCache;
 }
-Map* MapManager::GetActiveWorld()
+Map* MapManager::GetActiveMap()
 {
-	//assert(m_pActiveWorld && "Uh oh");
   return m_pActiveMap;
 }
 

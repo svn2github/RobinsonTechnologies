@@ -213,7 +213,7 @@ void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int opera
 	g_pMapManager->GetActiveMapCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
 
 	//now we need to sort them
-	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveMap()->GetLayerManager();
 	tileList.sort(compareTileBySortLevelOptimized);
 
 	tile_list::reverse_iterator itor = tileList.rbegin();
@@ -314,7 +314,7 @@ Tile * TileEditOperation::GetTileAtPos(const CL_Vector2 & pos)
 	selectedTile_list::iterator itor = m_selectedTileList.begin();
 
 	Tile *pChosenTile = NULL;
-	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveMap()->GetLayerManager();
 
 	while (itor != m_selectedTileList.end())
 	{
@@ -376,7 +376,7 @@ void TileEditOperation::AddWorldCoordToBounds(const CL_Vector2 &vecWorld)
 void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, TileEditOperation *pUndoOut)
 {
 	
-	LayerManager &layerMan = g_pMapManager->GetActiveWorld()->GetLayerManager();
+	LayerManager &layerMan = g_pMapManager->GetActiveMap()->GetLayerManager();
 	if (layerMan.GetEditActiveList().size() == 0)	
 	{
 		CL_MessageBox::info("Warning", "Nothing will be pasted because no edit layer is active", GetApp()->GetGUI());
@@ -423,7 +423,7 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 		}
 		if (GetGameLogic->GetParallaxActive() && !m_bIgnoreParallaxOnNextPaste)
 		{
-			Layer &layer = g_pMapManager->GetActiveWorld()->GetLayerManager().GetLayerInfo(layerToUse);
+			Layer &layer = g_pMapManager->GetActiveMap()->GetLayerManager().GetLayerInfo(layerToUse);
 			if (layer.GetScrollMod().x != 0 || layer.GetScrollMod().y != 0)
 			{
 				//as a help to the guy pasting, let's modify its coords to compensate for the parallax scroll display
@@ -432,7 +432,7 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 		}
 
 		//kill whatever was here
-		Screen *pScreen = g_pMapManager->GetActiveWorld()->GetScreen(vecDestTileWorld);
+		Screen *pScreen = g_pMapManager->GetActiveMap()->GetScreen(vecDestTileWorld);
 		Tile *pOldTile = pScreen->GetTileByPosition(vecDestTileWorld, originalLayer);
 
 		if (pOldTile)
@@ -469,7 +469,7 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 			pTile->SetLayer(layerToUse);
 			//move it to the new position and layer if required
 			pTile->SetPos(vecDestTileWorld);
-			g_pMapManager->GetActiveWorld()->AddTile(pTile);
+			g_pMapManager->GetActiveMap()->AddTile(pTile);
 		}
 		itor++;
 	}
@@ -487,7 +487,7 @@ void TileEditOperation::FillSelection(Tile *pTile)
 
 	while (itor != m_selectedTileList.end())
 	{
-		pScreen = g_pMapManager->GetActiveWorld()->GetScreen((*itor)->m_pTile->GetPos());
+		pScreen = g_pMapManager->GetActiveMap()->GetScreen((*itor)->m_pTile->GetPos());
 		pScreen->RemoveTileBySimilarType((*itor)->m_pTile);
 		
 		//add the new tile as long as it isn't a blank
@@ -587,7 +587,7 @@ void TileEditOperation::UpdateSelectionFromWorld()
 	{
 		pTile = (*itor)->m_pTile;
 		
-		pScreen = g_pMapManager->GetActiveWorld()->GetScreen(pTile->GetPos());
+		pScreen = g_pMapManager->GetActiveMap()->GetScreen(pTile->GetPos());
 		pWorldTile = pScreen->GetTileByPosition(pTile->GetPos(), pTile->GetLayer());
 
 		if (pWorldTile)

@@ -216,7 +216,7 @@ bool TextObject::Update()
 
 	if (m_pEntity)
 	{
-		if (m_pEntity->GetTile()->GetParentScreen()->GetParentMapChunk()->GetParentMap() != g_pMapManager->GetActiveWorld())
+		if (m_pEntity->GetTile()->GetParentScreen()->GetParentMapChunk()->GetParentMap() != g_pMapManager->GetActiveMap())
 		{
 			m_bVisible = false;
 			return true;

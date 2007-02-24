@@ -201,3 +201,21 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Added "always" keyboard to the default f1 keybind for the editor, now you can press it while holding down other keys and the editor
 	will still open	
 * BUGFIX: when an entity is destroyed, his specific namespace is garbage collect right away, I think this fixed a related crash bug as well
+
+2-24
+
+* the quote character was added to the console window output font
+* Slight tweaks to the how the default escape handler works
+* Added "File->Revert Changes On Active Map" option for those times when you absolutely don't want to save what you did
+* Fixed problem with the game starting in the background on multimonitor systems (windows)
+* Convert to entity works better
+* Console improved - while open, most editor functions are disabled (so you can type without deleting things etc), if a single entity is selected, the
+	console input is run in its namespace.
+* g_consoleActive is now a script global to know when the console is open
+* disabled some keyboard keys while the interactive console is up so you can type things without commands happening
+* BUGFIX: Entity:DumpScriptInfo() now shows the script file name instead of random characters
+* g_AllowStrict became boolean instead of a number
+* BUGFIX: strict var checking works again, had a dumb bug in safety.lua
+* How can I check to see if a function/var exists without causing a strict error?  Uh, I did a work around by putting an Exists("VarName") function
+	in, but I'd like to do it a better way... Note to self, ask Ian
+* making progress on new tutorials...

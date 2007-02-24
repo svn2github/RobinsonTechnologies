@@ -12,6 +12,7 @@
 #include "main.h"
 #include "Screen.h"
 #include "TileEditOperation.h"
+#include "BaseGameEntity.h"
 
 
 class EntCollisionEditor;
@@ -30,6 +31,7 @@ public:
 	EntEditMode();
     virtual ~EntEditMode();
 	bool IsDialogOpen(bool bCheckModelessDialogToo, bool bIsZoomOrMovement = false);
+	Tile * GetSingleSelectedTile(); //returns the single tile selected, or NULL if none or multiple are selected
 
 protected:
 	

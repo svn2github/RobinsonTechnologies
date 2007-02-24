@@ -481,6 +481,10 @@
 						Name="Generators"
 						>
 						<File
+							RelativePath=".\Console.cpp"
+							>
+						</File>
+						<File
 							RelativePath=".\GeneratorDink.cpp"
 							>
 						</File>
@@ -802,10 +806,6 @@
 				</File>
 				<File
 					RelativePath=".\CameraSetting.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Console.cpp"
 					>
 				</File>
 				<File

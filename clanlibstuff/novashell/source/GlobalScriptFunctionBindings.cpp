@@ -26,7 +26,7 @@ using namespace luabind;
 
 CL_Vector2 ScreenToWorld(CL_Vector2 v)
 {
-	if (g_pMapManager->GetActiveWorld())
+	if (g_pMapManager->GetActiveMap())
 	{
 		return g_pMapManager->GetActiveMapCache()->ScreenToWorld(v);
 	}	
@@ -38,7 +38,7 @@ CL_Vector2 ScreenToWorld(CL_Vector2 v)
 
 CL_Vector2 WorldToScreen(CL_Vector2 v)
 {
-	if (g_pMapManager->GetActiveWorld())
+	if (g_pMapManager->GetActiveMap())
 	{
 		return g_pMapManager->GetActiveMapCache()->WorldToScreen(v);
 	} 
@@ -141,7 +141,7 @@ Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerID
 
 MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, bool bPixelAccurate)
 {
-	if (!g_pMapManager->GetActiveWorld())
+	if (!g_pMapManager->GetActiveMap())
 	{
 
 		LogMsg("GetEntityByWorldPos: Error, no map is active right now.");
@@ -155,10 +155,10 @@ MovingEntity * GetEntityByWorldPos(CL_Vector2 v, MovingEntity *pEntToIgnore, boo
 	//returns a list of tile pointers, we shouldn't free them!
 	tile_list tileList;
 
-	g_pMapManager->GetActiveMapCache()->AddTilesByRect(recArea, &tileList, g_pMapManager->GetActiveWorld()->GetLayerManager().GetDrawList());
+	g_pMapManager->GetActiveMapCache()->AddTilesByRect(recArea, &tileList, g_pMapManager->GetActiveMap()->GetLayerManager().GetDrawList());
 
 	//now we need to sort them
-	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveMap()->GetLayerManager();
 	tileList.sort(compareTileBySortLevelOptimized);
 
 	tile_list::reverse_iterator itor = tileList.rbegin();
@@ -232,6 +232,16 @@ Title: Global Functions
 These functions are global and can be run from anywhere, they aren't attached to any specific object.
 */
 
+bool LUAExists(const string & name)
+{
+	GetScriptManager->SetGlobalBool("g_allowStrict", false);
+	bool bTemp = luabind::type(luabind::globals(GetScriptManager->GetMainState())[name]) != LUA_TNIL;
+	GetScriptManager->SetGlobalBool("g_allowStrict", true);
+
+	return bTemp; //doesn't exist
+
+}
+
 
 //Section: Miscellaneous
 
@@ -255,6 +265,7 @@ void luabindGlobalFunctions(lua_State *pState)
 			message - Any text you want to display or log.
 			*/
 
+			def("Exists", &LUAExists),
 
 			def("LogError", &LogErrorLUA),
 

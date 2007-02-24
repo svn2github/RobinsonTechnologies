@@ -40,6 +40,7 @@ public:
 
 private:
     
+	void OnRevertChanges();
 	void DisableAllModes();
 	void OnMouseMove(const CL_InputEvent &key);
 	void SetDefaultTipLabel();

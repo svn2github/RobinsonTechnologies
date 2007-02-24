@@ -37,7 +37,7 @@ MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName)
 	pEnt->SetPos(vecPos);
 	pEnt->Init();
 	
-	if (!pMap) pMap = g_pMapManager->GetActiveWorld();
+	if (!pMap) pMap = g_pMapManager->GetActiveMap();
 	pMap->AddTile(pTile);
 
 	return pEnt;

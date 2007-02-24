@@ -60,6 +60,7 @@ public:
 	void RunFunction(const char *pFuncName, BaseGameEntity *pBaseGameEntity);
 	void RunString(const char *pString);
 	void SetGlobal(const char * pGlobalName, int value);
+	void SetGlobalBool(const char * pGlobalName, bool value);
 
 	lua_State * GetMainState() {return m_pMainState;}
 

@@ -83,7 +83,7 @@ void Camera::SetScaleRaw(CL_Vector2 vecScale)
 
 void Camera::SetScaleTarget(CL_Vector2 vecScale)
 {
-	if (!g_pMapManager->GetActiveWorld()) return;
+	if (!g_pMapManager->GetActiveMap()) return;
 
 	m_vecScaleTarget = ClampScaleToRange(vecScale);
 }
@@ -107,7 +107,7 @@ CL_Vector2 Camera::ClampScaleToRange(CL_Vector2 vecScale)
 
 void Camera::SetScale(CL_Vector2 vecScale)
 {
-	if (!g_pMapManager->GetActiveWorld()) return;
+	if (!g_pMapManager->GetActiveMap()) return;
 	CL_Vector2 vecPosBefore;
 	if (m_entTrackID == 0)
 	{

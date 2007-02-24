@@ -281,6 +281,12 @@ void App::OneTimeInit()
 
 	m_pScriptManager = new ScriptManager;
 	m_pGameLogic = new GameLogic();
+
+#ifdef _WIN32
+	//hack for multimonitor problem and the game starting and then alt-tabbing back for some reason
+	SetActiveWindow(m_Hwnd);
+#endif
+
 }
        
 bool App::SetScreenSize(int x, int y)

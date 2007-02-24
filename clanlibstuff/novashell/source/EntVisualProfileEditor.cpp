@@ -25,7 +25,7 @@ EntVisualProfileEditor::~EntVisualProfileEditor()
 
 bool EntVisualProfileEditor::IsDialogOpen()
 {
-	//if yes, keyboard and mouse editting controls will be killed so we don't zoom or do things while editing text
+	//if yes, keyboard and mouse editing controls will be killed so we don't zoom or do things while editing text
 	return false;
 }
 
@@ -59,7 +59,7 @@ void EntVisualProfileEditor::OnClose()
 	//now, we don't really have to do this, and we shouldn't if it's slow, but it's less confusing if we reinit all possible sprites that could
 	//have been affected.
 
-	g_pMapManager->GetActiveWorld()->ReInitEntities();
+	g_pMapManager->GetActiveMap()->ReInitEntities();
 		
 
 }

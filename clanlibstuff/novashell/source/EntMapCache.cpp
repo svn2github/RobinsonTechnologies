@@ -220,7 +220,7 @@ bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 
 bool compareTileByLayer(const Tile *pA, const Tile *pB) 
 {
-	LayerManager *pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
+	LayerManager *pLayerManager = &g_pMapManager->GetActiveMap()->GetLayerManager();
 
 	return pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort() <
 		pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
@@ -568,7 +568,7 @@ void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThu
 	//LogMsg("Viewrect is %s.  Drawing %d tiles", PrintRect(viewRect).c_str(), m_tileLayerDrawList.size());
 	//sort the tiles/entities we're going to draw by layer
 	
-	g_pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
+	g_pLayerManager = &g_pMapManager->GetActiveMap()->GetLayerManager();
 	
 	std::sort(m_tileLayerDrawList.begin(), m_tileLayerDrawList.end(), compareTileBySortLevelOptimized);
 
@@ -746,7 +746,7 @@ void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 
 	int renderStart = 0;
 	int curSort = -99999;
-	LayerManager *pLayerManager = &g_pMapManager->GetActiveWorld()->GetLayerManager();
+	LayerManager *pLayerManager = &g_pMapManager->GetActiveMap()->GetLayerManager();
 	int sort;
 
 	unsigned int i;
@@ -835,7 +835,7 @@ void EntMapCache::Update(float step)
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 	ClearTriggers();
 
-	if (m_pWorld != g_pMapManager->GetActiveWorld())
+	if (m_pWorld != g_pMapManager->GetActiveMap())
 	{
 		//we no longer have focus, don't bother doing our AI
 		return;

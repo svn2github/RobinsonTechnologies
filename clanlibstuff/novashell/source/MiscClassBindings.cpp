@@ -547,7 +547,7 @@ myColor = Color(255,255,255,255);
 		.def("__tostring", &MapManagerToString)
 
 		.def("SetActiveMapByName", &MapManager::SetActiveMapByName)
-		.def("GetActiveMap", &MapManager::GetActiveWorld)
+		.def("GetActiveMap", &MapManager::GetActiveMap)
 		.def("UnloadMapByName", &MapManager::UnloadMapByName)
 		.def("LoadMapByName", &MapManager::LoadMapByName)
 		

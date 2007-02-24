@@ -779,7 +779,7 @@ string MovingEntity::ProcessPathNoScript(const string &st)
 
 int MovingEntity::PlaySoundPositioned(const string &fName)
 {
-	if (g_pMapManager->GetActiveWorld() != GetMap())
+	if (g_pMapManager->GetActiveMap() != GetMap())
 	{
 		//we're not in the same map
 		return C_SOUND_NONE;
@@ -2285,7 +2285,7 @@ void MovingEntity::DumpScriptInfo()
 {
 	if (m_pScriptObject)
 	{
-		LogMsg("Script %s loaded in entity %d (%s).", m_pScriptObject, ID(), GetName().c_str());
+		LogMsg("Script %s loaded in entity %d (%s).", m_mainScript.c_str(), ID(), GetName().c_str());
 		DumpTable(m_pScriptObject->GetState());
 	} else
 	{
@@ -2474,9 +2474,9 @@ void MovingEntity::ApplyPhysics(float step)
 			}
 
 
-			if (GetMap() != g_pMapManager->GetActiveWorld())
+			if (GetMap() != g_pMapManager->GetActiveMap())
 			{
-				SetPosAndMap(vPos, g_pMapManager->GetActiveWorld()->GetName());
+				SetPosAndMap(vPos, g_pMapManager->GetActiveMap()->GetName());
 			} else
 			{
 				SetPos(vPos);
