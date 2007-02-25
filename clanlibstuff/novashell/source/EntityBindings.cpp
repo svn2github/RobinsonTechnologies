@@ -2315,7 +2315,7 @@ If you clone an entity with a name, such as "Gun", the new entity created may be
 
 Parameters:
 
-map - The <Map> that the new entity should be created on.
+map - The <Map> that the new entity should be created on or nil to use the Entity's <Map>.
 vPos - The position the new entity should be created on.
 
 Returns:
@@ -2333,11 +2333,11 @@ func: CreateEntity
 Entity CreateEntity(Map map, Vector2 vPos, string scriptName)
 (end)
 
-Exactly like using the global version of <.CreateEntity> except supporting entity-script file relative paths.
+Exactly like using the global version of CreateEntity except supporting entity-script file relative paths.
 
 Parameters:
 
-map - The <Map> that the new entity should be created on.
+map - The <Map> that the new entity should be created on or nil to use the Entity's <Map>.
 vPos - The position the new entity should be created on.
 scriptName - The filename of the script to initialize the Entity with.
 

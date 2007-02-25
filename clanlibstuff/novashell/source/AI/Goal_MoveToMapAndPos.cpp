@@ -208,6 +208,11 @@ bool Goal_MoveToMapAndPos::HandleMessage(const Message& msg)
 		switch(msg.GetMsgType())
 		{
 
+		case C_MSG_PATH_NODES_MISSING:
+			m_bTriedSimpleWay = false;
+			return true; //signal that we handled it
+			break;
+
 		case C_MSG_TARGET_NOT_FOUND:
 			//LogMsg("Target wasn't found, restarting");
 			return true; //signal that we handled it

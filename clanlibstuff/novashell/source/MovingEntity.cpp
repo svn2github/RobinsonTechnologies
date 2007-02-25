@@ -506,6 +506,12 @@ CL_Vector2 MovingEntity::GetTextScale()
 
 MovingEntity * MovingEntity::CreateEntity(Map *pMap, CL_Vector2 pos, const string &script)
 {
+	if (!pMap)
+	{
+		//use our own active map, none was specific
+		pMap = GetMap();
+	}
+
 	return ::CreateEntity(pMap, pos, ProcessPathNoScript(script));
 }
 

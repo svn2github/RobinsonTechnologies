@@ -70,13 +70,17 @@ void Goal_MoveToPosition::Activate()
 	  } else
 	  {
 		  
-		  if (m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK)))
+					
+		  //let our parent goal know the situation ...
+		  if (m_pOwner->HandleMessage(Message(C_MSG_PATH_NODES_MISSING)))
 		  {
 			  //parent signaled that they want to handle it
-			  m_iStatus = failed;
-			  return;
+			  //m_iStatus = failed;
+			  //return;
 		  }
-		  LogMsg("Ent %d (%s) was unable to compute a path to destination.", m_pOwner->ID(), m_pOwner->GetName().c_str());
+		  
+
+		  //LogMsg("Ent %d (%s) was unable to compute a path to destination.", m_pOwner->ID(), m_pOwner->GetName().c_str());
 		  bUsePath = false;
 	  }
 
@@ -109,17 +113,7 @@ void Goal_MoveToPosition::Activate()
 	  }
 	  //process the subgoals
 	  m_iStatus = ProcessSubgoals();
-
-		 
-	  /*
-	  if (m_iStatus == failed)
-	  {
-		  if (m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK)))
-		  {
-			  return m_iStatus;
-		  }
-	  }
-	  */
+	
 	  //if any of the subgoals have failed then this goal re-plans
 	  ReactivateIfFailed();
 
@@ -178,17 +172,5 @@ void Goal_MoveToPosition::Render()
 	//forward the request to the subgoals
   Goal_Composite<MovingEntity>::Render();
 
-  /*
-  //draw a bullseye
-  gdi->BlackPen();
-  gdi->BlueBrush();
-  gdi->Circle(m_vDestination, 6);
-  gdi->RedBrush();
-  gdi->RedPen();
-  gdi->Circle(m_vDestination, 4);
-  gdi->YellowBrush();
-  gdi->YellowPen();
-  gdi->Circle(m_vDestination, 2);
-  */
 }
 

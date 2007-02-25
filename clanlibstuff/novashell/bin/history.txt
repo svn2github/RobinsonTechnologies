@@ -219,3 +219,8 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * How can I check to see if a function/var exists without causing a strict error?  Uh, I did a work around by putting an Exists("VarName") function
 	in, but I'd like to do it a better way... Note to self, ask Ian
 * making progress on new tutorials...
+
+2-25
+
+* Updated Ian's class code
+* BUGFIX: Fixed some problems with trying to use brains without a visual profile

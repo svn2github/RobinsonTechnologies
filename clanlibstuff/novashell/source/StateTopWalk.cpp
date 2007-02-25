@@ -21,15 +21,18 @@ StateTopWalk::~StateTopWalk()
 
 void StateTopWalk::OnAdd()
 {
-	if (m_pParent->GetVisualProfile()->IsActive(VisualProfile::WALK_LEFT))
+	if (m_pParent->GetVisualProfile())
 	{
-		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_WALK);
-	} else
-	{
-		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
+		if (m_pParent->GetVisualProfile()->IsActive(VisualProfile::WALK_LEFT))
+		{
+			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_WALK);
+		} else
+		{
+			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
+		}
 	}
-	m_bCallbackActive = m_pParent->GetScriptObject()->FunctionExists("OnWalkLoop");
 
+	m_bCallbackActive = m_pParent->GetScriptObject()->FunctionExists("OnWalkLoop");
 }
 
 void StateTopWalk::OnRemove()
