@@ -224,3 +224,5 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 
 * Updated Ian's class code
 * BUGFIX: Fixed some problems with trying to use brains without a visual profile
+* Flood fill better matches the rect that is dragged out
+* Tutorial 4 updated, about half rewritten, a lot more scripting info. 5 coming soon...

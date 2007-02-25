@@ -1556,10 +1556,17 @@ if (g_Console.IsActive()) return;
 	case CL_KEY_F:
 		if (m_dragInProgress)
 		{
-				CL_Vector2 worldVecDragStop = g_pMapManager->GetActiveMap()->SnapWorldCoords(g_pMapManager->GetActiveMapCache()->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
+				
+			CL_Vector2 dragStart = m_vecDragStart; //remember this so we can put it back after doing weird snaps on it
+			CL_Vector2 worldVecDragStop = g_pMapManager->GetActiveMap()->SnapWorldCoords(g_pMapManager->GetActiveMapCache()->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
 			
 				if (m_pCheckBoxSnap->is_checked())
 				{
+				
+					//these tweaks allow the snapped grid to be inclusive of the tile we're half on
+					if (worldVecDragStop.x > m_vecDragStart.x) worldVecDragStop.x += m_vecSnapSize.x; else m_vecDragStart.x += m_vecSnapSize.x;
+					if (worldVecDragStop.y > m_vecDragStart.y) worldVecDragStop.y += m_vecSnapSize.y; else m_vecDragStart.y += m_vecSnapSize.y;
+					
 					worldVecDragStop = g_pMapManager->GetActiveMap()->SnapWorldCoords(worldVecDragStop, m_vecSnapSize);
 					m_vecDragStart = g_pMapManager->GetActiveMap()->SnapWorldCoords(m_vecDragStart, m_vecSnapSize);;
 				}
@@ -1568,6 +1575,7 @@ if (g_Console.IsActive()) return;
 			rec.normalize();
 
 			FloodFill(rec);
+			m_vecDragStart = dragStart;
 		}
 
 
