@@ -490,6 +490,7 @@ void ResetFont(CL_Font *pFont)
 	pFont->set_alignment(origin_top_left);
 }
 
+
 //given a start and end point it will tell you the closest tile and where the collision point is.
 
 bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, tile_list &tList, CL_Vector2 *pvColPos, Tile* &pTileOut, const Tile * const pTileToIgnore /* = NULL*/, int limitSearchToThisTileType, bool bIgnoreMovingCreatures)
@@ -536,7 +537,7 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 			//the player or monster was sitting in the way.  Somehow we have to figure out a way to ignore
 			//those kinds of things.  For now, assume if it has a visual profile assigned it should be ignored
 
-			if (  ((TileEntity*)(*listItor))->GetEntity()->GetVisualProfile())
+			if (  ((TileEntity*)(*listItor))->GetEntity()->GetIsCreature())
 			{
 				continue;
 			}

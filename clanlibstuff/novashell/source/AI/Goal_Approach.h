@@ -20,6 +20,7 @@ public:
 		  SetName("Approach");
 		  m_bTriedSimpleWay = false;
 		  m_bTriedComplexWay = false;
+		  m_targetNotFoundCount = 0;
 	  }
 
 	  //the usual suspects
@@ -50,6 +51,7 @@ private:
 	bool m_bWaitingForTurn;
 	unsigned int m_locationUpdateTimer;
 	bool m_bTriedComplexWay;
+	int m_targetNotFoundCount; //how many times we've been notified that there is an invalid path.  It's to cope with partial paths, so not every part of a level has to be pathed out.
 };
 
 #endif

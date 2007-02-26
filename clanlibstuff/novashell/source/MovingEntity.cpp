@@ -68,7 +68,8 @@ MovingEntity::~MovingEntity()
 
 unsigned int MovingEntity::CalculateTimeToReachPosition(const CL_Vector2 &pos)
 {
-	return (Vec2DDistance(GetPos(), pos) *10) / m_desiredSpeed;
+	
+	return (Vec2DDistance(GetPos(), pos) *15) / m_desiredSpeed;
 }
 
 
@@ -350,6 +351,7 @@ void MovingEntity::SetDefaults()
 	m_customDampening = -1;
 	m_gravityOverride = C_GRAVITY_OVERRIDE_DISABLED;
 	m_blendMode = C_BLEND_MODE_NORMAL;
+	SetIsCreature(true);
 }
 
 void MovingEntity::SetNavNodeType(int n)
@@ -812,6 +814,8 @@ bool MovingEntity::SetVisualProfile(const string &resourceFileName, const string
 
 	//now we need to get the actual profile
 	m_pVisualProfile = pResource->GetProfile(profileName);
+	
+	SetIsCreature(true); //a guess here
 	return true; //success
 }
 

@@ -1802,7 +1802,7 @@ void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
 	if (m_pCheckBoxSnap->is_checked())
 	{
 #ifdef _DEBUG
-		LogMsg("DragStart is %s", PrintVector(m_vecDragStart).c_str());
+		//LogMsg("DragStart is %s", PrintVector(m_vecDragStart).c_str());
 #endif	
 
 		//these tweaks allow the snapped grid to be inclusive of the tile we're half on
@@ -1810,7 +1810,7 @@ void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
 		if (worldStop.y > worldStart.y) worldStop.y += m_vecSnapSize.y; else worldStart.y += m_vecSnapSize.y;
 		worldStart = g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStart, m_vecSnapSize);
 #ifdef _DEBUG
-		LogMsg("Converted to %s", PrintVector(worldStart).c_str());
+		//LogMsg("Converted to %s", PrintVector(worldStart).c_str());
 #endif
 		worldStop = g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStop, m_vecSnapSize);
 	}

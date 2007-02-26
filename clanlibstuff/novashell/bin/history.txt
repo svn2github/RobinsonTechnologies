@@ -202,7 +202,7 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 	will still open	
 * BUGFIX: when an entity is destroyed, his specific namespace is garbage collect right away, I think this fixed a related crash bug as well
 
-2-24
+2-24 2007
 
 * the quote character was added to the console window output font
 * Slight tweaks to the how the default escape handler works
@@ -220,9 +220,15 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 	in, but I'd like to do it a better way... Note to self, ask Ian
 * making progress on new tutorials...
 
-2-25
+2-25 2007
 
 * Updated Ian's class code
 * BUGFIX: Fixed some problems with trying to use brains without a visual profile
 * Flood fill better matches the rect that is dragged out
 * Tutorial 4 updated, about half rewritten, a lot more scripting info. 5 coming soon...
+
+2-26 2007
+
+* Added "Entity:SetIsCreature" and "Entity:GetIsCreature" script commands
+* Path-finding system can now better cope with a 'partially pathnoded' map
+* GoalManager:SetApproach command works better with entities without collision and handles C_DISTANCE_NONE cases faster

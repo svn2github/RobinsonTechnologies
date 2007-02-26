@@ -1759,6 +1759,8 @@ Returns:
 True if the entity can walk to the position in question without bumping into anything.
 */
 
+
+
 .def("CanWalkBetween", &MovingEntity::CanWalkBetween)
 
 /*
@@ -1825,6 +1827,43 @@ bIgnoreLivingCreatures - If true, creatures will be ignored during the check.
 Returns:
 
 True if the entity can be moved here without overlapping any walls or other collidable things.
+*/
+
+.def("SetIsCreature", &MovingEntity::SetIsCreature)
+
+/*
+func: SetIsCreature
+(code)
+nil SetIsCreature(boolean bIsLivingCreature)
+(end)
+
+You may have noticed some path-finding related functions such as <CanWalkBetween> have options to ignore "creatures".
+
+This means, even if the path is blocked with 50 barrels or skeletons, the path-finding engine will still assume it's a valid path.  (after all, he can
+break the barrels and kill the skeletons, right?)
+
+So what is a creature?:
+
+The engine guesses at what is and isn't a creature.  It's very simple, if you call SetVisualProfile() on an object, it assumes it's a creature.
+
+However, if this is wrong, or you have a single frame creature with no visual profile, you may want want to manually set it with this command.
+
+Parameters:
+
+bIsLivingCreature - If true, this <Entity> will be considered a "living creature" during times that it matters.
+*/
+
+.def("GetIsCreature", &MovingEntity::GetIsCreature)
+
+/*
+func: GetIsCreature
+(code)
+boolean GetIsCreature()
+(end)
+
+Returns:
+
+True if this <Entity> is currently considered a living creature.
 */
 
 

@@ -901,11 +901,11 @@ bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMov
 
 			if (bIgnoreMovingCreatures && pTile->GetType() == C_TILE_TYPE_ENTITY)
 			{
-				//the pathfinding may be building nodes, we don't want it to build an incorrect base path because
+				//the path-finding may be building nodes, we don't want it to build an incorrect base path because
 				//the player or monster was sitting in the way.  Somehow we have to figure out a way to ignore
 				//those kinds of things.  For now, assume if it has a visual profile assigned it should be ignored
 
-				if (  ((TileEntity*)(*listItor))->GetEntity()->GetVisualProfile())
+				if (  ((TileEntity*)(*listItor))->GetEntity()->GetIsCreature())
 				{
 					continue; //skip this
 				}

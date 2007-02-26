@@ -316,6 +316,8 @@ public:
   float GetGravityOverride() {return m_gravityOverride;}
   void SetBlendMode(int blendMode) {m_blendMode = blendMode;}
   int GetBlendMode() {return m_blendMode;}
+  bool GetIsCreature() {return m_bIsCreature;}
+  void SetIsCreature(bool bIsCreture) {m_bIsCreature = bIsCreture;}
 
   enum ListenCollision
 {
@@ -447,6 +449,7 @@ protected:
 	bool m_bRanApplyPhysics;
 	float m_gravityOverride;
 	int m_blendMode;
+	bool m_bIsCreature;
 };
 
 MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName);

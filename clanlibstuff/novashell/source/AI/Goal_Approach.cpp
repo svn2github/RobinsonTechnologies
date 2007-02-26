@@ -143,7 +143,8 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 	//bad idea to sit directly on top of  the entity, let's move off it
 	CL_Rectf c;
 	
-	
+	m_locationUpdateTimer = GetApp()->GetGameTick()+C_MAX_UPDATE_SPEED_MS;
+
 	if (pEnt->GetCollisionData())
 	{
 		c = pEnt->GetTile()->GetWorldColRect()- *(CL_Pointf*)&pEnt->GetPos();
@@ -151,6 +152,15 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 	{
 		//well, let's get the direction we want another way
 		CL_Vector2 pos = pEnt->GetPos();
+		
+		if (m_distanceRequired == 0)
+		{
+			//they want to stand directly on top, we don't need to calculate anything fancy
+			m_vDestination = pos;
+			return true;
+
+		}
+
 		c = CL_Rectf(pos.x - 5, pos.y - 5, pos.x+5, pos.y + 5);
 	}
 
@@ -213,7 +223,6 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 		
 	}
 
-	m_locationUpdateTimer = GetApp()->GetGameTick()+C_MAX_UPDATE_SPEED_MS;
 	return true; //everything seems ok
 }
 
@@ -410,7 +419,17 @@ bool Goal_Approach::HandleMessage(const Message& msg)
 
 		case C_MSG_TARGET_NOT_FOUND:
 			//LogMsg("Target wasn't found, restarting");
-			return true; //signal that we handled it
+			
+			//if this is the first time the target wasn't found, let's let it keep going, because who knows, it might
+			//find it by luck, just by walking in that direction.
+			m_targetNotFoundCount++;
+
+				if (m_targetNotFoundCount <= 2 && m_pOwner->GetMap() == m_pDestMap) //if it's on a different map, this will never work
+			{
+				return false; //let them know we want them to make do, and still walk around
+			}
+
+			return true; //signal that we handled it, this will cause us to just give up.
 			break;
 
 		case C_MSG_GOT_STUCK:
@@ -419,6 +438,11 @@ bool Goal_Approach::HandleMessage(const Message& msg)
 			return true; //signal that we handled it
 			break;
 
+		case C_MSG_PATH_NODES_MISSING:
+			m_bTriedSimpleWay = false;
+			//LogMsg("Got stuck..");
+			return true; //signal that we handled it
+			break;
 
 		default: return false;
 		}
