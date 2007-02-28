@@ -232,3 +232,8 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Added "Entity:SetIsCreature" and "Entity:GetIsCreature" script commands
 * Path-finding system can now better cope with a 'partially pathnoded' map
 * GoalManager:SetApproach command works better with entities without collision and handles C_DISTANCE_NONE cases faster
+
+2-28 2007
+
+* intro_menu.lua fixed to not give errors when you try to continue a game that doesn't exist
+* InputManager::RemoveBinding() no longer does a LogMsg when a binding isn't found.  If you really care, check the return value

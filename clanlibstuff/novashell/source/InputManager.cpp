@@ -161,7 +161,7 @@ bool InputManager::RemoveBinding(const string &keyName, const string &callbackFu
 
 	if (m_map.end() == itor)
 	{
-		LogMsg("GetInputManager:RemovingBinding failed to find binding %s, %s.", keyName.c_str(), callbackFunction.c_str());
+		//LogMsg("GetInputManager:RemovingBinding failed to find binding %s, %s.", keyName.c_str(), callbackFunction.c_str());
 		return false;
 	}
 

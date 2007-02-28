@@ -10,7 +10,7 @@
 #ifndef ISoundManager_h__
 #define ISoundManager_h__
 
-#ifndef _OLD_LIBRARY
+#ifndef _OLDLIBRARY
 	#include "MiscUtils.h"
 #else
 	#include "all.h" //my old basecode for dungeon scroll
