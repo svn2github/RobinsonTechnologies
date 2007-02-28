@@ -1525,16 +1525,13 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 
 if (g_Console.IsActive()) return;
 
-	#define VK_CLOSE_BRACKET 0xDD
-	#define VK_OPEN_BRACKET 0xDB
-
 	switch(key.id)
 	{
-	case VK_OPEN_BRACKET:
+	case CL_KEY_LEFT_BRACKET:
 		ScaleDownSelected();
 		break;
 	
-	case VK_CLOSE_BRACKET:
+	case CL_KEY_RIGHT_BRACKET:
 		ScaleUpSelected();
 		break;
 
