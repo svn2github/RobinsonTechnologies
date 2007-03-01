@@ -1363,6 +1363,37 @@ maxMoveSpeed - The fastest this entity can move from its own power.
 */
 
 
+.def("SetAcceleration", &MovingEntity::SetAccel)
+
+/*
+func: SetAcceleration
+(code)
+nil SetAcceleration(number accelSpeed)
+(end)
+
+Controls how fast an entity can accelerate, when a brain/walk state asks it to.
+
+Default speed is 0.37.
+
+Parameters:
+
+accelSpeed - A higher number means an <Entity> will get up to its desired speed faster.
+*/
+
+.def("GetAcceleration", &MovingEntity::SetAccel)
+
+/*
+func: GetAcceleration
+(code)
+float GetAcceleration()
+(end)
+
+Returns:
+
+The current acceleration speed.
+*/
+
+
 .def("SetTurnSpeed", &MovingEntity::SetTurnSpeed)
 
 /*

@@ -193,10 +193,12 @@ bool ScriptObject::Load(const char *pFileName)
 	case LUA_ERRSYNTAX: 
 		LogMsg("Syntax error in script %s", pFileName);
 		ShowLUAMessagesIfNeeded(m_pLuaState, result);
+		return false;
 		break;
 	case LUA_ERRMEM:
 		LogMsg("Memory error loading script %s", pFileName);
 		ShowLUAMessagesIfNeeded(m_pLuaState, result);
+		return false;
 		break;
 
 	default:

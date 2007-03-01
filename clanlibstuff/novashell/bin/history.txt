@@ -244,3 +244,6 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 3-1 2007
 
 * BUGFIX: Called AddApproach while the game time is 0 won't crash
+* BUGFIX: A malformed script will no longer crash the game
+* Added Entity::SetAcceleration and Entity::GetAcceleration script command
+* Key ups are now still processed with the console open, but not keydowns.

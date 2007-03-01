@@ -318,6 +318,8 @@ public:
   int GetBlendMode() {return m_blendMode;}
   bool GetIsCreature() {return m_bIsCreature;}
   void SetIsCreature(bool bIsCreture) {m_bIsCreature = bIsCreture;}
+  void SetAccel(float fNew) {m_accel = fNew;}
+  float GetAccel() {return m_accel;}
 
   enum ListenCollision
 {
@@ -450,6 +452,7 @@ protected:
 	float m_gravityOverride;
 	int m_blendMode;
 	bool m_bIsCreature;
+	float m_accel; //how fast we can acellerate
 };
 
 MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName);

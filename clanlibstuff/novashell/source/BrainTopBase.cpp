@@ -72,10 +72,9 @@ void BrainTopBase::Update(float step)
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity(); //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
 
-	
-#define C_TOP_ACCEL_POWER 0.37f
-	Clamp(m_force.x, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
-	Clamp(m_force.y, -C_TOP_ACCEL_POWER, C_TOP_ACCEL_POWER); //limit force to accel power
+	float accel = m_pParent->GetAccel();
+	Clamp(m_force.x, -accel, accel); //limit force to accel power
+	Clamp(m_force.y, -accel, accel); //limit force to accel power
 
 	
 	m_force.x *= m_controlFilter.x;

@@ -21,6 +21,8 @@
 //provides a work around
 #define C_TICKS_ON_GROUND_NEEDED_TO_TRIGGER_GROUND 1
 
+#define C_DEFAULT_ENTITY_ACCELERATION 0.37f
+
 #define C_DEFAULT_TURN_SPEED 0.1f
 
 #define C_DEFAULT_DENSITY 0.4f
@@ -307,6 +309,7 @@ void MovingEntity::HandleMessageString(const string &msg)
 void MovingEntity::SetDefaults()
 {
 	m_bRunUpdateEveryFrame = false;
+	m_accel = C_DEFAULT_ENTITY_ACCELERATION;
 	m_bLockedScale = false;
 	m_attachEntID = C_ENTITY_NONE;
 	m_text.clear();
@@ -1055,7 +1058,7 @@ bool MovingEntity::Init()
 	if (!m_mainScript.empty())
 	if (!LoadScript(m_mainScript.c_str()))
 	{
-		stEmergencyMessage = "Ent "+CL_String::from_int(ID()) + " ("+GetName()+") can't find lua script " + m_mainScript +".";
+		stEmergencyMessage = "Ent "+CL_String::from_int(ID()) + " ("+GetName()+") error while loading lua script " + m_mainScript +".";
 		LogError(stEmergencyMessage.c_str());
 		LoadScript(C_DEFAULT_SCRIPT);
 	}

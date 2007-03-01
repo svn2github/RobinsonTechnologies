@@ -22,7 +22,11 @@ void WatchManager::Clear()
 
 void WatchManager::Add(MovingEntity *pEnt, int timeToWatchMS)
 {
-	
+	if (!pEnt->IsPlaced())
+	{
+		LogError("WatchManager::Add cannot add an entity to the watch list until it's actually placed on the map.  Do it in function OnMapInsert() instead?");
+		return;
+	}
 	//is it already on the list?
 
 	watch_list::iterator itor;
@@ -241,10 +245,14 @@ OnWatchTimeout(bIsOnScreen)
 end
 (end)
 
+Notes:
+
+If you would like an entity to become as its map is loaded, you can call this function in an entity's *OnMapInsert()* script function.
+
 Parameters:
 
 ent - The <Entity> that should remain active regardless of where it is.
-timeToWatchMS - How long before this <Entity> returns to a normal state. (ie, unwatched)
+timeToWatchMS - How long before this <Entity> returns to a normal state. (ie, unwatched) Use <C_TIME_FOREVER> to stay watched forever.
 
 func: Remove
 (code)
@@ -264,4 +272,11 @@ Returns:
 
 How many entities are currently being watched.  (Allowed to function off-screen)
 
+Section: Related Constants
+
+Group: C_TIME_CONSTANTS
+Used with <WatchManager::Add>.
+
+constant: C_TIME_FOREVER
+A very large number, as close to "forever" as we can get with milliseconds of time.
 */
