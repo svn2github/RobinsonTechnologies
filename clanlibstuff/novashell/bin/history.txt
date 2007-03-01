@@ -247,3 +247,6 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * BUGFIX: A malformed script will no longer crash the game
 * Added Entity::SetAcceleration and Entity::GetAcceleration script command
 * Key ups are now still processed with the console open, but not keydowns.
+
+* BUGFIX: Calling non-existent functions no longer crashes.  Luabind doesn't like the strict var checking that was
+	recently added, did work around for it.

@@ -386,9 +386,12 @@ void EntChoiceDialog::FinalSelectionProcessing()
 
 		if (m_pParent)
 		{
+			GetScriptManager->SetStrict(false);
 			try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), 
 				m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result, (BaseGameEntity*)this);
 			} LUABIND_ENT_BRAIN_CATCH( ("Error while calling" + m_callbackFunctionName).c_str());
+			GetScriptManager->SetStrict(true);
+
 		} else
 		{
 			LogMsg("ChoiceDialog: Can't send result %s, entity no longer exists", m_choices[m_chosenID].m_result.c_str());

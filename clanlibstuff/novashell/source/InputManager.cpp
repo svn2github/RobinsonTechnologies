@@ -379,10 +379,14 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 			if (pKeyInfo->m_entityID == C_ENTITY_NONE)
 			{
 				//global kind of thing
+				GetScriptManager->SetStrict(false);
 
 				try {bKeepPassingItOn = luabind::call_function<bool>(GetScriptManager->GetMainState(), 
 					pKeyInfo->m_callback.c_str(), bKeyDown);
 				}  LUABIND_CATCH(pKeyInfo->m_callback);
+			
+				GetScriptManager->SetStrict(true);
+
 			} else
 			{
 				MovingEntity *m_pParent = (MovingEntity*) EntityMgr->GetEntityFromID(pKeyInfo->m_entityID);
@@ -392,9 +396,11 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 				} else
 				{
 					//let's actually run this function in this entities namespace
+					GetScriptManager->SetStrict(false);
 
 					try {bKeepPassingItOn = luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), pKeyInfo->m_callback.c_str(),bKeyDown);
 					} LUABIND_ENT_BRAIN_CATCH(pKeyInfo->m_callback.c_str());
+					GetScriptManager->SetStrict(true);
 
 				}
 

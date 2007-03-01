@@ -61,7 +61,7 @@ public:
 	void RunString(const char *pString);
 	void SetGlobal(const char * pGlobalName, int value);
 	void SetGlobalBool(const char * pGlobalName, bool value);
-
+	void SetStrict(bool bStrict);
 	lua_State * GetMainState() {return m_pMainState;}
 
 protected:

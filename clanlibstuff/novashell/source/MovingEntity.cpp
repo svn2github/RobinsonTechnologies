@@ -1186,8 +1186,11 @@ luabind::object MovingEntity::RunFunction(const string &func)
 	
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
 
+	GetScriptManager->SetStrict(false);
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str());
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
+	GetScriptManager->SetStrict(true);
+
 	return ret;
 }
 
@@ -1196,10 +1199,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 {
 	luabind::object ret;
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2)
@@ -1208,10 +1213,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 	luabind::object ret;
 
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3)
@@ -1219,10 +1226,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 	luabind::object ret;
 
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4)
@@ -1230,10 +1239,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 	luabind::object ret;
 
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5)
@@ -1241,10 +1252,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 	luabind::object ret;
 
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 
@@ -1253,10 +1266,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 	luabind::object ret;
 
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7)
@@ -1264,10 +1279,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 	luabind::object ret;
 
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 luabind::object MovingEntity::RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7, luabind::object obj8)
@@ -1275,10 +1292,12 @@ luabind::object MovingEntity::RunFunction(const string &func, luabind::object ob
 	luabind::object ret;
 
 	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	GetScriptManager->SetStrict(false);
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8);
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
-	return ret;
+	GetScriptManager->SetStrict(true);
+return ret;
 }
 
 
@@ -1564,14 +1583,19 @@ void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bo
 			
 			if ( pOtherBody->GetParentEntity() == GetPlayer)
 			{
+				GetScriptManager->SetStrict(false);
 				try {	*pBoolAllowCollision = luabind::call_function<bool>(m_pScriptObject->GetState(), "OnCollision", CL_Vector2(N.x, N.y), t,  pOtherBody->GetMaterial()->GetID(),  pOtherBody->GetParentEntity());
 				} LUABIND_ENT_CATCH("Error while calling OnCollision(Vector2, float, materialID, Entity)");
 			}
+			GetScriptManager->SetStrict(true);
+
 			break;
 
 		case LISTEN_COLLISION_ALL_ENTITIES:
+			GetScriptManager->SetStrict(false);
 			try {	*pBoolAllowCollision = luabind::call_function<bool>(m_pScriptObject->GetState(), "OnCollision", CL_Vector2(N.x, N.y), t,  pOtherBody->GetMaterial()->GetID(), pOtherBody->GetParentEntity());
 			} LUABIND_ENT_CATCH("Error while calling OnCollision(Vector2, float, materialID, Entity)");
+			GetScriptManager->SetStrict(true);
 
 			break;
 		default:
@@ -1586,8 +1610,10 @@ void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bo
 			break;
 
 		case LISTEN_COLLISION_STATIC_ALL:
+			GetScriptManager->SetStrict(false);
 			try {	*pBoolAllowCollision = luabind::call_function<bool>(m_pScriptObject->GetState(), "OnCollisionStatic", CL_Vector2(N.x, N.y), t, pOtherBody->GetMaterial()->GetID());
 			} LUABIND_ENT_CATCH("Error while calling OnCollisionStatic(Vector2, float, materialID)");
+			GetScriptManager->SetStrict(true);
 
 			break;
 		
@@ -2404,8 +2430,10 @@ if (GetGameLogic->GetGamePaused()) return;
 
 	if (m_bRunUpdateEveryFrame)
 	{
+		GetScriptManager->SetStrict(false);
 		try {luabind::call_function<void>(m_pScriptObject->GetState(), "Update", step);
 		} LUABIND_ENT_CATCH("Error while calling function Update");
+		GetScriptManager->SetStrict(true);
 
 	}
 	

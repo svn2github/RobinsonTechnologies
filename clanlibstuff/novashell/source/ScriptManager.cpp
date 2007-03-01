@@ -219,19 +219,21 @@ void ScriptObject::RunString(const char *pString)
 	int result = luaL_dostring(m_pLuaState, pString);
 	ShowLUAMessagesIfNeeded(m_pLuaState, result);
 }
+
+
 bool ScriptObject::FunctionExists(const char *pFuncName)
 {
-	
-	GetScriptManager->SetGlobalBool("g_allowStrict", false);
+	GetScriptManager->SetStrict(false);
 	bool bTemp = luabind::type(luabind::globals(m_pLuaState)[pFuncName]) == LUA_TFUNCTION;
-	GetScriptManager->SetGlobalBool("g_allowStrict", true);
+	GetScriptManager->SetStrict(true);
 	return bTemp;
 }
 
 void ScriptObject::RunFunction(const char *pFuncName)
 {
 //	DumpTable(m_pLuaState, NULL, LUA_REGISTRYINDEX);
-	
+	GetScriptManager->SetStrict(false);
+
 	try { 
 		luabind::call_function<void>(m_pLuaState, pFuncName);
 	} catch 
@@ -247,6 +249,9 @@ void ScriptObject::RunFunction(const char *pFuncName)
 		}
 		
 	}
+
+	GetScriptManager->SetStrict(true);
+
 }
 
 ScriptManager::ScriptManager()
@@ -276,9 +281,7 @@ int DumpInfo(lua_State *L)
 
 bool ScriptManager::Init()
 {
-
 	Kill();
-
 	
 	m_pMainState = luaL_newstate();
 	if (!m_pMainState)
@@ -296,6 +299,19 @@ bool ScriptManager::Init()
 	
 	
 	return true; //success
+}
+
+
+void ScriptManager::SetStrict(bool bStrict)
+{
+	if (bStrict)
+	{
+		SetGlobalBool("g_allowStrict", true);
+
+	} else
+	{
+		SetGlobalBool("g_allowStrict", false);
+	}
 }
 
 void ScriptManager::SetGlobal(const char * pGlobalName, int value)
@@ -320,6 +336,7 @@ void ScriptManager::LoadMainScript(const char *pScriptName)
 }
 void ScriptManager::RunFunction(const char *pFuncName)
 {
+	GetScriptManager->SetStrict(false);
 	try { 
 		luabind::call_function<void>(m_pMainState, pFuncName);
 	} catch 
@@ -327,11 +344,13 @@ void ScriptManager::RunFunction(const char *pFuncName)
 	{
 		ShowLUAMessagesIfNeeded(e.state(), 1);
 	}
+	GetScriptManager->SetStrict(true);
 
 }
 
 void ScriptManager::RunFunction(const char *pFuncName, bool bBool)
 {
+	GetScriptManager->SetStrict(false);
 	try { 
 		luabind::call_function<void>(m_pMainState, pFuncName, bBool);
 	} catch 
@@ -339,10 +358,12 @@ void ScriptManager::RunFunction(const char *pFuncName, bool bBool)
 	{
 		ShowLUAMessagesIfNeeded(e.state(), 1);
 	}
+	GetScriptManager->SetStrict(true);
 }
 
 void ScriptManager::RunFunction(const char *pFuncName, BaseGameEntity *pBaseGameEntity)
 {
+	GetScriptManager->SetStrict(false);
 	try { 
 		luabind::call_function<void>(m_pMainState, pFuncName, pBaseGameEntity);
 	} catch 
@@ -350,6 +371,7 @@ void ScriptManager::RunFunction(const char *pFuncName, BaseGameEntity *pBaseGame
 	{
 		ShowLUAMessagesIfNeeded(e.state(), 1);
 	}
+	GetScriptManager->SetStrict(true);
 }
 
 void ScriptManager::RunString(const char *pString)
