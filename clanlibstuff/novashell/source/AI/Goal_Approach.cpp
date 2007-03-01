@@ -135,7 +135,8 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 		return false;
 	}
 
-	if (m_locationUpdateTimer >= GetApp()->GetGameTick()) return true; //don't update again so fast, it's too costly
+	//don't change this to >= because gametick could be 0 in some cases
+	if (m_locationUpdateTimer > GetApp()->GetGameTick()) return true; //don't update again so fast, it's too costly
 
 	m_pDestMap = pEnt->GetMap();
 

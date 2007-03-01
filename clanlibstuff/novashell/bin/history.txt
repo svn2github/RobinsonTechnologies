@@ -240,3 +240,7 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * intro_menu.lua fixed to not give errors when you try to continue a game that doesn't exist (ZombieJesus)
 * InputManager::RemoveBinding() no longer does a LogMsg when a binding isn't found.  If you really care, check the return value
 * [ ] scale keys now work in linux/osx and can be bound with "lbracket" and "rbracket" in script (ZombieJesus)
+
+3-1 2007
+
+* BUGFIX: Called AddApproach while the game time is 0 won't crash
