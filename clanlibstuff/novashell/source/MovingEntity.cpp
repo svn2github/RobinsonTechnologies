@@ -318,8 +318,8 @@ void MovingEntity::SetDefaults()
 	ClearColorMods();
 	m_requestNewLayerID = C_LAYER_NONE;
 	m_bCanRotate = false;
-	SetMaxWalkSpeed(2.4f);
-	SetDesiredSpeed(GetMaxWalkSpeed());
+	SetMaxWalkSpeed(6);
+	SetDesiredSpeed(2.4);
 	m_nearbyTileList.clear();
 	m_floorMaterialID = -1;
 	m_bUsingSimpleSprite = false;
