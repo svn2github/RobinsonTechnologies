@@ -569,6 +569,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\BrainScale.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\BrainScale.h"
+						>
+					</File>
+					<File
 						RelativePath=".\BrainShake.cpp"
 						>
 					</File>

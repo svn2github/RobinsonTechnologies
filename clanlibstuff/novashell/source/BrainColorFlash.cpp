@@ -118,9 +118,8 @@ a - The pulse alpha color, 0 to 255.
 
 Usage:
 (code)
-//let's set this entity to invisible, and then have it fade in over one second.
-this:SetBaseColor(Color(255,255,255,0)); //start as invisible, 0 alpha
-this:GetBrainManager():Add("ColorFade","fade_speed_ms=1000;remove_brain_when_done=true;a=255");
+//flash red for 10 pulses
+this:GetBrainManager():Add("ColorFlash", "pulse_rate=50;g=-200;b=-200;remove_brain_by_pulses=10");
 (end)
 
 */

@@ -229,6 +229,14 @@ bool ScriptObject::FunctionExists(const char *pFuncName)
 	return bTemp;
 }
 
+bool ScriptObject::VariableExists(const char *pFuncName)
+{
+	GetScriptManager->SetStrict(false);
+	bool bTemp = luabind::type(luabind::globals(m_pLuaState)[pFuncName]) != LUA_TNIL;
+	GetScriptManager->SetStrict(true);
+	return bTemp;
+}
+
 void ScriptObject::RunFunction(const char *pFuncName)
 {
 //	DumpTable(m_pLuaState, NULL, LUA_REGISTRYINDEX);

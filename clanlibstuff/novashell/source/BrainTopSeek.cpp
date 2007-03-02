@@ -6,6 +6,8 @@
 
 BrainTopSeek registryInstanceBrainTopSeek(NULL); //self register ourselves in the brain registry
 
+#define C_DEFAULT_ARRIVE_PADDING 10; //in pixels
+
 BrainTopSeek::BrainTopSeek(MovingEntity * pParent):Brain(pParent)
 {
 	if (!pParent)
@@ -17,6 +19,7 @@ BrainTopSeek::BrainTopSeek(MovingEntity * pParent):Brain(pParent)
 
 	m_vecTarget = CL_Vector2::ZERO;
 	m_bUsingTarget = false;
+	m_padding = C_DEFAULT_ARRIVE_PADDING;
 	//LogMsg("Top seek added");
 }
 
@@ -43,10 +46,7 @@ void BrainTopSeek::Update(float step)
 
 		m_pParent->SetVectorFacingTarget(v);
 
-
-		dist = dist / 10;
-
-		if (dist < 1)
+		if (dist < m_padding)
 		{
 			//close enough
 			m_pParent->HandleMessage(Message(C_MSG_SEEK_ARRIVED));
@@ -74,7 +74,11 @@ void BrainTopSeek::HandleMsg(const string &msg)
 			m_vecTarget = StringToVector(words[1]);
 			m_bUsingTarget = true;
 		} else
-		{
+			if (words[0] == "padding")
+			{
+				m_padding = CL_String::to_float(words[1]);
+			} else
+			{
 			LogMsg("Brain %s doesn't understand keyword %s", GetName(), words[0].c_str());
 		}
 	}

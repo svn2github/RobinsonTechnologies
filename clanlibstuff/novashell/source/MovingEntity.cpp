@@ -125,9 +125,16 @@ CL_Vector2 MovingEntity::GetVectorToEntityByID(int entID)
 bool MovingEntity::FunctionExists(const char * pFunctionName)
 {
 	if (!m_pScriptObject) return false;
-
 	return m_pScriptObject->FunctionExists(pFunctionName);
 }
+
+bool MovingEntity::VariableExists(const char * pVarName)
+{
+	if (!m_pScriptObject) return false;
+	return m_pScriptObject->VariableExists(pVarName);
+}
+
+
 
 CL_Vector2 MovingEntity::GetVectorToEntity(MovingEntity *pEnt)
 {
@@ -319,7 +326,7 @@ void MovingEntity::SetDefaults()
 	m_requestNewLayerID = C_LAYER_NONE;
 	m_bCanRotate = false;
 	SetMaxWalkSpeed(6);
-	SetDesiredSpeed(2.4);
+	SetDesiredSpeed(2.4f);
 	m_nearbyTileList.clear();
 	m_floorMaterialID = -1;
 	m_bUsingSimpleSprite = false;

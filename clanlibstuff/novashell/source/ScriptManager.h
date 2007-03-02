@@ -35,6 +35,7 @@ public:
 	void SetGlobal(const string& key, int value);
 	void RunString(const char *pString);
 	bool FunctionExists(const char *pFuncName);
+	bool VariableExists(const char *pVarName);
 
 	lua_State * GetState() {return m_pLuaState;}
 

@@ -250,3 +250,12 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 
 * BUGFIX: Calling non-existent functions no longer crashes.  Luabind doesn't like the strict var checking that was
 	recently added, did work around for it.
+	
+3-2 2007
+
+* Default max speed for an entity was changed to 6.
+* Added GoalManager::AddMoveToMapAndPosition and GoalManager::PushMoveToMapAndPosition
+* Added C_DISTANCE_INSIDE define, useful for AddApproach when you want to go "inside" of an entity instead of stand
+	next to him
+* Added Entity::VariableExists()
+* Added "Scale" brain

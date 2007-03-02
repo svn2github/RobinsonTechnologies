@@ -146,7 +146,7 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 	
 	m_locationUpdateTimer = GetApp()->GetGameTick()+C_MAX_UPDATE_SPEED_MS;
 
-	if (pEnt->GetCollisionData())
+	if (pEnt->GetCollisionData() && m_distanceRequired >= 0) //a -1 means they want to be "inside"
 	{
 		c = pEnt->GetTile()->GetWorldColRect()- *(CL_Pointf*)&pEnt->GetPos();
 	} else
@@ -154,12 +154,11 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 		//well, let's get the direction we want another way
 		CL_Vector2 pos = pEnt->GetPos();
 		
-		if (m_distanceRequired == 0)
+		if (m_distanceRequired <= 0)
 		{
 			//they want to stand directly on top, we don't need to calculate anything fancy
 			m_vDestination = pos;
 			return true;
-
 		}
 
 		c = CL_Rectf(pos.x - 5, pos.y - 5, pos.x+5, pos.y + 5);
@@ -231,6 +230,9 @@ bool Goal_Approach::CloseEnoughAndFacingTheRightWay()
 {
 	
 	float padding = 10;
+	
+	//if (m_distanceRequired < 0) padding = 1;
+
 	if (m_pDestMap != m_pOwner->GetMap()) return false;
 
 	if (!m_bWaitingForTurn && m_pOwner->GetDistanceFromPosition(m_vDestination) > m_distanceRequired+padding)

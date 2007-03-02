@@ -310,6 +310,8 @@ public:
   bool GetRunUpdateEveryFrame() {return m_bRunUpdateEveryFrame;}
   void SetDampening(float f) {m_customDampening = f;}
   bool FunctionExists(const char * pFunctionName);
+  bool VariableExists(const char * pVarName);
+
   void SetTurnSpeed(float fNew) {m_turnSpeed = fNew;}
   float GetTurnSpeed() {return m_turnSpeed;}
   void SetGravityOverride(float g) {m_gravityOverride = g;}

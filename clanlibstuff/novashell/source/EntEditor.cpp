@@ -516,7 +516,7 @@ void OpenScriptForEditing(string scriptName)
 		string text;
 		
 		text = "\nfunction OnInit() //run upon initialization\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());
-		text = "function OnPostInit() ////run during the entity's first logic update\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());
+		text = "function OnPostInit() //run during the entity's first logic update\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());
 		text = "function OnKill() //run when removed\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());
 		SAFE_DELETE(pFile);
 		

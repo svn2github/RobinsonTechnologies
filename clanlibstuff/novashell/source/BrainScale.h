@@ -1,7 +1,7 @@
 //  ***************************************************************
-//  BrainTopSeek - Creation date: 08/29/2006
+//  BrainScale - Creation date: 03/02/2007
 //  -------------------------------------------------------------
-//  Robinson Technologies Copyright (C) 2006 - All Rights Reserved
+//  Robinson Technologies Copyright (C) 2007 - All Rights Reserved
 //
 //  ***************************************************************
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)
@@ -11,29 +11,29 @@
 //it will automatically register itself and be available
 //from lua script as a brain behavior.
 
-#ifndef BrainTopSeek_h__
-#define BrainTopSeek_h__
+#ifndef BrainScale_h__
+#define BrainScale_h__
 
 #include "Brain.h"
 
-class BrainTopSeek: public Brain
+class BrainScale: public Brain
 {
 public:
-	BrainTopSeek(MovingEntity *pParent);
-	virtual ~BrainTopSeek();
+	BrainScale(MovingEntity *pParent);
+	virtual ~BrainScale();
 	virtual void Update(float step);
-	virtual const char * GetName() {return "TopSeek";};
-	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainTopSeek(pParent);}
+	virtual const char * GetName() {return "Scale";};
+	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainScale(pParent);}
 	virtual void HandleMsg(const string &msg);
-	virtual void OnRemove();
 
 protected:
 
-	CL_Vector2 m_vecTarget;
-	bool m_bUsingTarget;
-	float m_padding;
+	int m_scaleSpeedMS;
+	int m_timeCreated;
+	CL_Vector2 m_vStartScale, m_vScaleTarget;
+	bool m_deleteEntity;
 
 private:
 };
 
-#endif // BrainTopSeek_h__
+#endif // BrainScale_h__

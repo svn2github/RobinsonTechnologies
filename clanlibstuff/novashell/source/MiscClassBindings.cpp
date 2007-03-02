@@ -616,6 +616,9 @@ myColor = Color(255,255,255,255);
 		.def("AddNewGoal", &Goal_Think::AddNewGoal)
 		.def("AddDelay", &Goal_Think::AddDelay)
 		.def("AddMoveToPosition", &Goal_Think::AddMoveToPosition)
+		
+		.def("AddMoveToMapAndPosition", &Goal_Think::AddMoveToMapAndPosition)
+
 		//.def("AddMoveToTag", &Goal_Think::AddMoveToTag)
 		.def("AddApproach", &Goal_Think::AddApproach)
 		.def("AddApproachAndSay", &Goal_Think::AddApproachAndSay)
@@ -634,6 +637,7 @@ myColor = Color(255,255,255,255);
 		.def("PushDelay", &Goal_Think::PushDelay)
 
 		.def("PushMoveToPosition", &Goal_Think::PushMoveToPosition)
+		.def("PushMoveToMapAndPosition", &Goal_Think::PushMoveToMapAndPosition)
 		.def("PushSayByID",  ( void(Goal_Think::*)(const string&, int,int,int)) &Goal_Think::PushSayByID)
 		.def("PushSayByID",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::PushSayByID)
 		.def("PushRunScriptString", &Goal_Think::PushRunScriptString)

@@ -60,6 +60,9 @@ public:
 
   //this adds the MoveToPosition goal to the *back* of the subgoal list.
   void AddMoveToPosition(CL_Vector2 pos);
+  void AddMoveToMapAndPosition(Map * pMap, CL_Vector2 pos);
+  void PushMoveToMapAndPosition(Map *pMap, CL_Vector2 pos);
+
   void PushMoveToTag(TagObject *pTag);
   void AddMoveToTag(TagObject *pTag);
 

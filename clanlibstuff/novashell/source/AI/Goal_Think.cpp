@@ -217,6 +217,12 @@ void Goal_Think::PushMoveToPosition(CL_Vector2 pos)
 	AddSubgoal( new Goal_MoveToMapAndPos(m_pOwner, pos, m_pOwner->GetMap()));
 }
 
+
+void Goal_Think::PushMoveToMapAndPosition(Map *pMap, CL_Vector2 pos)
+{
+	AddSubgoal(new Goal_MoveToMapAndPos(m_pOwner, pos, pMap));
+}
+
 //-------------------------- Queue Goals --------------------------------------
 //-----------------------------------------------------------------------------
 void Goal_Think::AddMoveToPosition(CL_Vector2 pos)
@@ -224,6 +230,10 @@ void Goal_Think::AddMoveToPosition(CL_Vector2 pos)
 	AddBackSubgoal(new Goal_MoveToMapAndPos(m_pOwner, pos, m_pOwner->GetMap()));
 }
 
+void Goal_Think::AddMoveToMapAndPosition(Map *pMap, CL_Vector2 pos)
+{
+	AddBackSubgoal(new Goal_MoveToMapAndPos(m_pOwner, pos, pMap));
+}
 
 //----------------------- RenderEvaluations -----------------------------------
 //-----------------------------------------------------------------------------
@@ -321,7 +331,7 @@ If this action is interrupted, the amount of time waited is saved, and continued
 
 Parameters:
 
-delayMS - How long we should wait, in millseconds. (1000 = one second)
+delayMS - How long we should wait, in milliseconds. (1000 = one second)
 
 func: AddMoveToPosition
 (code)
@@ -332,6 +342,19 @@ Causes the <Entity> to move to the specified position using the pathfinding syst
 Parameters:
 
 vPos - A <Vector2> object containing the location to move to.  Must be on the same <Map> as the <Entity>.
+
+func: AddMoveToMapAndPosition
+(code)
+nil AddMoveToPosition(Map map, Vector2 vPos)
+(end)
+Causes the <Entity> to move to the specified map and position using the pathfinding system.
+
+If there is no door/warp to get to the specified <Map>, this will fail.
+
+Parameters:
+
+map - a <Map> object of the map we want to be on.
+vPos - A <Vector2> object containing the location to move to.
 
 func: AddApproach
 (code)

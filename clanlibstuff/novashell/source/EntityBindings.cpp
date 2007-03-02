@@ -1342,6 +1342,8 @@ Brain states such as Walk will use this speed to move.
 
 Will be limited by whatever <SetMaxMovementSpeed> is set to.
 
+Default is 2.4.
+
 Parameters:
 
 desiredSpeed - How fast the entity wants to move.
@@ -1356,6 +1358,8 @@ nil SetMaxMovementSpeed(number maxMoveSpeed)
 (end)
 
 Limits the internal move force of the entity to this speed.  For instance, even if a walking entity suddenly chose to dodge a bullet, it may move faster than his walk speed, but will still be limited by this speed.
+
+Default is 6.
 
 Parameters:
 
@@ -2115,6 +2119,22 @@ Returns:
 True if the function exists.
 */
 
+.def("VariableExists", &MovingEntity::VariableExists)
+
+/*
+func: VariableExists
+(code)
+boolean VariableExists(string variableName)
+(end)
+
+Parameters:
+
+variableName - the name of a variable or table that you want to see exists in this namespace.
+
+Returns:
+
+True if the variable/table/etc exists in this namespace, or in the global namespace.
+*/
 
 //.def("OnDamage", &MovingEntity::OnDamage)
 
@@ -2670,10 +2690,14 @@ constants: C_DISTANCE_TALK
 How close someone should be to talk.
 
 constants: C_DISTANCE_CLOSE
-The closest you can get to someone/something.
+The closest you can get to someone/something without trying to go inside him.
+
+constants: C_DISTANCE_INSIDE
+Means actually try to go inside the target when used with GoalManager::AddApproach.  Good for monsters that need to cause touch damage.
 
 constants: C_DISTANCE_NOT_ON_SAME_MAP
 If <Entity::GetDistanceFromEntityByID> returns this, you know the entity in question has left the map.
+
 
 Group: C_NODE_TYPE_CONSTANTS
 Use with <Entity::SetNavNodeType> to describes special properties related to path-finding.
