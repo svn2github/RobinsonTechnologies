@@ -79,8 +79,8 @@ int VectorToFacing(const CL_Vector2 &v)
 	angle = angle/ (PI*2); //get the ratio of the angle
 	
 	//LogMsg("Facing %.2f, which maps to angle %d", angle, int(angle * VisualProfile::FACING_COUNT)); 
-	
-	// OTE:  This is a hack that assumes our direction enums are in the correct order (0 to num dirs -1)
+
+	//NOTE:  This is a hack that assumes our direction enums are in the correct order (0 to num dirs -1)
 	return int(angle * VisualProfile::FACING_COUNT);
 }
 

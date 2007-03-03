@@ -146,13 +146,37 @@ CL_Vector2 MovingEntity::GetVectorToEntity(MovingEntity *pEnt)
 		return m_vecFacing;
 	}
 	v.unitize();
+
+	//check for NAN, it happens under gcc
+	if (v.x != v.x || v.y != v.y)
+		{
+			//well, returning 0,0 can cause havok in the path planner, so
+			//let's guess
+			return m_vecFacing;
+		}
+			
 	return v;
 }
 
 CL_Vector2 MovingEntity::GetVectorToPosition(const CL_Vector2 &pos)
 {
 	CL_Vector2 v = pos-GetPos();
+	//avoid NAN on osx/gcc
+	if (v.x != v.x || v.y != v.y)
+	{
+		//well, returning 0,0 can cause havok in the path planner, so
+		//let's guess
+		return m_vecFacing;
+	}
+	
 	v.unitize();
+	//check for NAN, it happens under gcc
+	if (v.x != v.x || v.y != v.y)
+	{
+		//well, returning 0,0 can cause havok in the path planner, so
+		//let's guess
+		return m_vecFacing;
+	}
 	return v;
 }
 
