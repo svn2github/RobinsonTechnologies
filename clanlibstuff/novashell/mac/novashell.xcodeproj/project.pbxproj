@@ -13,6 +13,8 @@
 		5D1A38540A382D48005FF1C0 /* BrainShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A38500A382D48005FF1C0 /* BrainShake.cpp */; };
 		5D1A38560A382D48005FF1C0 /* BrainManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */; };
 		5D1A38580A382D48005FF1C0 /* BrainShake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A38500A382D48005FF1C0 /* BrainShake.cpp */; };
+		5D253BE70B97FA420005D295 /* BrainScale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D253BE60B97FA420005D295 /* BrainScale.cpp */; };
+		5D253BE80B97FA420005D295 /* BrainScale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D253BE60B97FA420005D295 /* BrainScale.cpp */; };
 		5D2F67170A86F4D800419CA6 /* StateTopAttack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */; };
 		5D2F67180A86F4D800419CA6 /* StateTopIdle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */; };
 		5D2F671C0A86F4D800419CA6 /* StateTopWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */; };
@@ -409,6 +411,7 @@
 		5D1A384F0A382D48005FF1C0 /* BrainManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainManager.h; sourceTree = "<group>"; };
 		5D1A38500A382D48005FF1C0 /* BrainShake.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainShake.cpp; sourceTree = "<group>"; };
 		5D1A38510A382D48005FF1C0 /* BrainShake.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainShake.h; sourceTree = "<group>"; };
+		5D253BE60B97FA420005D295 /* BrainScale.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainScale.cpp; sourceTree = "<group>"; };
 		5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopAttack.cpp; sourceTree = "<group>"; };
 		5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopIdle.cpp; sourceTree = "<group>"; };
 		5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTopWalk.cpp; sourceTree = "<group>"; };
@@ -806,6 +809,7 @@
 		5D1A384D0A382D17005FF1C0 /* Brains */ = {
 			isa = PBXGroup;
 			children = (
+				5D253BE60B97FA420005D295 /* BrainScale.cpp */,
 				5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */,
 				5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */,
 				5DEB6E200B168AEF00D74729 /* BrainBob.cpp */,
@@ -1487,6 +1491,7 @@
 				5D669E570B858C18003EE62C /* EntMapCache.cpp in Sources */,
 				5D669E5B0B858C3E003EE62C /* Map.cpp in Sources */,
 				5D669E5C0B858C3E003EE62C /* MapChunk.cpp in Sources */,
+				5D253BE70B97FA420005D295 /* BrainScale.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1647,6 +1652,7 @@
 				5D669E580B858C18003EE62C /* EntMapCache.cpp in Sources */,
 				5D669E5D0B858C3E003EE62C /* Map.cpp in Sources */,
 				5D669E5E0B858C3E003EE62C /* MapChunk.cpp in Sources */,
+				5D253BE80B97FA420005D295 /* BrainScale.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
