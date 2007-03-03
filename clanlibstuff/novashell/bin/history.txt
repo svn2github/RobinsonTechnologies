@@ -259,3 +259,7 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 	next to him
 * Added Entity::VariableExists()
 * Added "Scale" brain
+
+3-3 2007
+
+* BUGFIX:  Delete key is now functional in OSX

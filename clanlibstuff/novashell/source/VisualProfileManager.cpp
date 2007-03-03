@@ -117,7 +117,7 @@ CL_Vector2 FacingToVector(int facing)
 
 	default:
 
-		throw CL_Error("Unknown facing");
+		throw CL_Error("Unknown facing: " + CL_String::from_int(facing));
 		break;
 	}
 
