@@ -160,11 +160,9 @@ void HashedResource::SaveDefaults()
 	CollisionDataMap::iterator ent;
 	std::vector<CollisionData*> *pColVec;
 	unsigned int i;
-
 	
 	if (!bNeedsToSave)
 	{
-
 		for (ent = m_collisionMap.begin(); ent != m_collisionMap.end(); ++ent)
 		{
 			pColVec = &ent->second;
@@ -207,7 +205,6 @@ void HashedResource::SaveDefaults()
 			}
 		}
 	}
-	
 
 	if (m_bColorKeyActive)
 	{
@@ -305,4 +302,30 @@ bool HashedResource::Init()
 		LoadImage();
 	}
 	return true;
+}
+
+void HashedResource::PopulateListBoxWithCollisionData(CL_ListBox *pList)
+{
+	CollisionDataMap::iterator ent;
+	std::vector<CollisionData*> *pColVec;
+	unsigned int i;
+
+		for (ent = m_collisionMap.begin(); ent != m_collisionMap.end(); ++ent)
+		{
+			pColVec = &ent->second;
+
+			for (i=0; i < pColVec->size(); i++)
+			{
+				if (pColVec->at(i)->HasData() )
+				{
+					//add data from here
+					int index = pList->insert_item("ImageRect: " + RectToString(pColVec->at(i)->GetRect())
+						+ " has " + CL_String::from_int(pColVec->at(i)->GetLineList()->size())+ " shape(s), (" +
+						CL_String::from_int(pColVec->at(i)->GetVertCount())+" verts");
+					//pList->get_item(index)->user_data = 
+				}
+			}
+
+		}
+
 }

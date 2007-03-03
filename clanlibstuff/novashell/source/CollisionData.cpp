@@ -115,6 +115,20 @@ const CL_Vector2 & CollisionData::GetCombinedOffsets()
 	
 	return m_vecCombinedOffset;
 }
+int CollisionData::GetVertCount()
+{
+	line_list::iterator listItor = m_lineList.begin();
+
+	int count = 0;
+
+	while (listItor != m_lineList.end())
+	{
+		count += listItor->GetPointList()->size();
+		listItor++;
+	}
+
+	return count;
+}
 
 void CollisionData::RecalculateCombinedOffsets()
 {

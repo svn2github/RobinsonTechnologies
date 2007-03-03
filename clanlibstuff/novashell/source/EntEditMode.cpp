@@ -626,9 +626,9 @@ void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned in
 	CL_Color col = pRes->GetColorKey();
 	m_bDialogIsOpen = true;
 	// Creating InputDialog
-	string stTitle(CL_String::format("%1 Properties", fileName));
+	string stTitle(CL_String::format("%1 (hashID: " + CL_String::from_int(resourceID) +") Properties", fileName));
 
-	CL_Rect dialogRect = CL_Rect(0,0,300,120);
+	CL_Rect dialogRect = CL_Rect(0,0,300,340);
 	CL_Point dialogPos = CL_Point((GetScreenX/2)-dialogRect.get_width()/2, 310);
 	CL_Window *pWindow = new CL_Window(dialogRect+dialogPos, stTitle, GetApp()->GetGUI());
 	pWindow->set_event_passing(false);
@@ -648,15 +648,31 @@ void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned in
 
 	CL_InputBox *pColorInput = new CL_InputBox(inputRect, ColorToString(pRes->GetColorKey()), pWindow->get_client_area());
 
-	pos.y += 40;
+	pos.y +=25;
+
+	//label
+
+	CL_Label &listLabel = *new CL_Label(pos+ CL_Point(0,0), "Shared collision data in image's .dat file",pWindow->get_client_area());
+
+	pos.y += 25;
+	int listHeight = 200;
+	
+	CL_Rect r(5, pos.y, dialogRect.right-10, pos.y+listHeight);
+
+	CL_ListBox *pList = new CL_ListBox (r, pWindow->get_client_area());
+
+	pos.y += listHeight+10; //spacer too
+
 	pos.x += 120;
 	CL_Button *pButtonOk = new CL_Button (CL_Rect(pos.x, pos.y, pos.x + 50, pos.y + 16), "Ok", pWindow->get_client_area());
-	
+
 	slots.connect(pButtonOk->sig_clicked(), (CL_Component*)pWindow, &CL_Component::quit);
 
 	// Connecting signals, to allow only numbers
 	//slots.connect(pScrollX->sig_validate_character(), this, &EntEditor::validator_numbers);
 	
+	pRes->PopulateListBoxWithCollisionData(pList);
+
 	// Run dialog
 	pWindow->run();
 	m_bDialogIsOpen = false;
@@ -664,6 +680,7 @@ void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned in
 
 	delete pButtonOk;
 	delete pColorInput;
+	delete pList;
 	delete pWindow;
 
 }

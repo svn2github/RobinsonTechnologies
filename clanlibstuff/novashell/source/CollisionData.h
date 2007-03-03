@@ -25,6 +25,7 @@ public:
 	CollisionData(const CL_Rect &rec);
     ~CollisionData();
 	void Clear();
+	int GetVertCount(); //total verts of all shapes
 	const CL_Rect & GetRect() {return m_rect;} //resources use this, don't touch it
 	const CL_Rectf & GetCombinedCollisionRect();
 	line_list * GetLineList() {return &m_lineList;}

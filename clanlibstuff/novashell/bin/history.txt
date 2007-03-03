@@ -262,4 +262,7 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 
 3-3 2007
 
-* BUGFIX:  Delete key is now functional in OSX
+* BUGFIX:  Delete key is now functional in OSX (ZombieJesus)
+* Image import's image properties (when you double click a filename) now shows the hashID and the list of
+	shared collision data in its .dat file, sort of needed this to debug a problem
+* BUGFIX: Crash bug fixed involving GetDirectionToEntity under OSX (ZombieJesus)
