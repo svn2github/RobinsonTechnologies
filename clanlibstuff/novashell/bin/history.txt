@@ -1,27 +1,226 @@
-Stuff that's been changed or added.  I don't have a strict version system right now, stuff is
-just listed in the order it was added and the dates are very rough.
+Changelog
 
-(starts with oldest, scroll down to the bottom to see the newest changes/additions)
+3-6 2007
 
-1-11-2007
+* Renamed "script/system/startup.lua" to "script/system_start.lua"
+* intro_menu.lua fixed to not kill input input if you click a non-button that has a name
+* BUGFIX: SetScreenSize() now works fine on OS X.
 
-* BUGFIX: Rect:IsOverlapped now works (Ian)
-* Color:Setalpha changed to Color:SetAlpha (Ian)
-* Added Rect:CalculateUnion script command
-* Good chunk of the API is now documented at www.rtsoft.com/novashell/docs/api
-* lua's "io" lib and the dangerous parts of "os" lib are disabled in lua for security reasons, I had actually thought I did this before, whups.. (Ian)
-* history.txt file is now included with the windows version, will always be accurate, even between forum release notes (shair)
-* Added license.txt, credits.txt (sparse, will add as I go), and readme.txt.  Windows installer text now just loads the readme.txt
-* Commented out a LogMsg command in the beer invaders example (it was for debugging..)
-* This history.txt file can be viewed from the main novashell page (automatically updated during installer builds)
+3-5 2007
 
-1-17-2007
+* Optimized graphics display, up to 50% speed improvement, depending on the scene
+* 'stuttering sound in windows' should be fixed (switched to FMOD for the windows build)
+	  However, you can use the -clansound parm to force the old sound system also.
 
-* Fixed visual glitch with candles in the inn in the top view rpg example
-* Fixed problem where the installer didn't remember where you last installed when installing a new version (win)
-* Redid timing, removed SetGameSpeed and SetGameLogicSpeed, it's all handled internally for you and adjusted on the fly when needed for a smoother experience.  Well, hopefully.  Let me know if there are any jerkiness problems.
-* Lua "package" library disabled for security reasons (Ian)
-* LogMsg/printf and LogError now can display up to 12,288 bytes and will properly truncate if sent a message larger instead of crashing (Ian)
+3-3 2007
+
+* BUGFIX:  Delete key is now functional in OSX (ZombieJesus)
+* Image import's image properties (when you double click a filename) now shows the hashID and the list of
+	shared collision data in its .dat file, sort of needed this to debug a problem
+* BUGFIX: Crash bug fixed involving GetDirectionToEntity under OSX (ZombieJesus)
+	
+3-2 2007
+
+* Default max speed for an entity was changed to 6.
+* Added GoalManager::AddMoveToMapAndPosition and GoalManager::PushMoveToMapAndPosition
+* Added C_DISTANCE_INSIDE define, useful for AddApproach when you want to go "inside" of an entity instead of stand
+	next to him
+* Added Entity::VariableExists()
+* Added "Scale" brain
+
+3-1 2007
+
+* BUGFIX: Called AddApproach while the game time is 0 won't crash
+* BUGFIX: A malformed script will no longer crash the game
+* Added Entity::SetAcceleration and Entity::GetAcceleration script command
+* Key ups are now still processed with the console open, but not keydowns.
+
+* BUGFIX: Calling non-existent functions no longer crashes.  Luabind doesn't like the strict var checking that was
+	recently added, did work around for it.
+
+2-28 2007
+
+* intro_menu.lua fixed to not give errors when you try to continue a game that doesn't exist (ZombieJesus)
+* InputManager::RemoveBinding() no longer does a LogMsg when a binding isn't found.  If you really care, check the return value
+* [ ] scale keys now work in linux/osx and can be bound with "lbracket" and "rbracket" in script (ZombieJesus)
+
+2-26 2007
+
+* Added "Entity:SetIsCreature" and "Entity:GetIsCreature" script commands
+* Path-finding system can now better cope with a 'partially pathnoded' map
+* GoalManager:SetApproach command works better with entities without collision and handles C_DISTANCE_NONE cases faster
+
+2-25 2007
+
+* Updated Ian's class code
+* BUGFIX: Fixed some problems with trying to use brains without a visual profile
+* Flood fill better matches the rect that is dragged out
+* Tutorial 4 updated, about half rewritten, a lot more scripting info. 5 coming soon...
+
+2-24 2007
+
+* the quote character was added to the console window output font
+* Slight tweaks to the how the default escape handler works
+* Added "File->Revert Changes On Active Map" option for those times when you absolutely don't want to save what you did
+* Fixed problem with the game starting in the background on multimonitor systems (windows)
+* Convert to entity works better
+* Console improved - while open, most editor functions are disabled (so you can type without deleting things etc), if a single entity is selected, the
+	console input is run in its namespace.
+* g_consoleActive is now a script global to know when the console is open
+* disabled some keyboard keys while the interactive console is up so you can type things without commands happening
+* BUGFIX: Entity:DumpScriptInfo() now shows the script file name instead of random characters
+* g_AllowStrict became boolean instead of a number
+* BUGFIX: strict var checking works again, had a dumb bug in safety.lua
+* How can I check to see if a function/var exists without causing a strict error?  Uh, I did a work around by putting an Exists("VarName") function
+	in, but I'd like to do it a better way... Note to self, ask Ian
+* making progress on new tutorials...
+
+2-21-2007
+
+* Scripting docs finished (well, they'll never be finished, but everything currently in the engine is more or less documented)
+* Added SoundManager::SetPan script command
+* Added Ian's "lua class" system and converted the intro_menu and sound class to use them.  
+	There is a slight difference in how new objects are created so
+		
+		activeMenu = IntroMenu:new{};
+		activeMenu:Init();
+		
+		now only needs to be:
+		
+		activeMenu = IntroMenu(); //its __init() function (if it exists) will be run automatically at construction
+		
+	Much better!
+* Console now has an input control to interact directly with lua
+* All objects now handle tostring(). so you can LogMsg(GetCamera); and it will say something about the camera for instance
+* Enabled "loadstring" - this isn't dangerous, is it?  I think we'll need this for table serialization...
+* gSmartSound renamed to g_SmartSound
+* Any script objects embedded in intro maps for music were moved to the game_start.lua instead.  
+	Otherwise it's confusing to realize where the sound is coming from	
+* Added "always" keyboard to the default f1 keybind for the editor, now you can press it while holding down other keys and the editor
+	will still open	
+* BUGFIX: when an entity is destroyed, his specific namespace is garbage collect right away, I think this fixed a related crash bug as well
+
+2-16-2007
+
+* Small speed improvements
+* Renamed SoundManager::KillChannel to SoundManager::Kill
+* Removed SoundManager::PlayMixed, there is only SoundManager::Play, it's simpler this way
+* More doc work...
+
+2-14-2007
+
+* Script errors in entities now also show the main script file name
+* Added Ian's explicit variable/function name code - it can be disabled by commenting out the "safety.lua" RunScript command.
+	I also added g_allowStrict global to allow temporarily disabling it, the engine needed to do this for a few
+	problematic things.
+* random/Random assigned to math.random() in a smarter way (Ian)
+* Added Ian's "require" work around to misc_utils.lua
+
+* RunFunction now can accept up to 7 extra parms (old limit was 3)
+* Entity:OnDamage() removed.  Instead, you should use Entity:RunFunctionIfExists("OnDamage", parms..);
+	That's all the old function did internally anyway, it's no longer needed inside the Entity object itself.
+* Bugfix in InputManager:RemoveBinding, it was failing to remove a few keys
+* Console improved, page-up/page-down will scroll back into the buffer (to the last 200 lines, anyway)
+* SetDefaultTextColor renamed to SetDefaultTalkColor, was too similar to SetTextColor
+* Text alignments (used with SetTextAlignment) now correctly scale with camera scale
+* Added Entity:GetTextColor script function
+
+2-10-2007
+
+* BUGFIX: Dragging multiple selection works right with snap mode (whups!)
+* RunScript no longer requires "script/" in the path, this is assumed.  Change your scripts! (Ian)
+* dofile() re-added as an alias for RunScript (Ian)
+* System console improved:  now shows overlay of "` to close or Ctrl-C to place text in system clipboard"
+* "dofile", "load" and "loadstring" removed.  For real this time?! (Ian)
+
+2-9-2007
+
+* BUGFIX: Fixed issue with Ctrl-Left selection toggle not working with grid snap enabled
+* Dragging selections and moving in general was improved, especially when in snap mode (nmceri)
+* BUGFIX: Visual profile editor works better
+* I got Akiko to do a new style sheet for the novashell webpages.. it's uh.. very brown now.. hrm.
+
+2-8-2007
+
+* CreateEntity(vPos, scriptFileName) was changed to CreateEntity(Map, vPos, scriptFileName)
+* Snap mode is now active during drag selection - makes it a lot easier to cut out tiles with Ctrl-C at a specific size
+* Some progress made on the Scripting API.. uh.. 30% done maybe
+
+* SetCanRotate renamed SetEnableRotationPhysics (less confusing)
+
+2-7-2007
+
+* Cleaned up the visual profile system, removed unneeded data from most of the example .xml's (support is still there, but things like base_angle and rotation offsets don't need to clutter everything, it makes it look more confusing then it is)
+* Visual Profile's now store the x/y offset per Anim, so mirrored animations can have different offsets.  The editor's visual profile editor now uses it automatically, don't need to hand edit or worry about it
+* Mouse wheel zoom now works while using the visual profile editor
+* After editing a visual profile, entities are reinitted so changes are visible everywhere in the active world instantly without restarting
+* After a script edit/visual profile change entities attached to the camera are ignored during the re-init phase.  Those items are generally GUI and just got screwed up by reinitting them, forcing you to quit/continue to have them look right again
+* Erased some unused scripts from treeworld
+* BUGFIX: Invisible walls/solid blocks problem fixed (system palette had gotten color key mode turned on somehow, whups)
+
+* Fixed Detail 2 layer in top view rpg example (outside) to sort with the entity layers, dunno why that wasn't
+	set before
+* Trying to add an invalid brain type now is an error rather than normal log message
+
+2-6-2007
+
+* Added Entity:SetBlendMode(), added C_BLENDING_MODE_ADDITIVE to setup_constants.lua.  It's hard finding interesting
+	blending modes that work right with alpha.. hrm.  Made the TreeWorld player weapon use it, should try it for lighting effects later I guess.
+
+2-5-2007
+
+* Selecting/deselecting a display layer causes the edit layer to also change, as rarely would you want to not see a layer and still select it
+* Added flood fill function - drag out a rect and tap F.  If grid snap is set, it uses it for spacing.
+* Moved show hardness/collision from Ctrl-H to Ctrl-Q
+* Moved edit collision from Ctrl-D to Ctrl-W
+* Ctrl-H now hides the selection box, good for when lining up tiles (like photoshop)
+* Ctrl-D now performs deselect (like photoshop)
+
+2-4-2007
+
+* Added LoopingSound object to script
+* Added climb/walk sounds to the tree world player brain script
+
+2-2-2007
+
+* Vector:Normalize() script command added (and the standalone global NormalizeVector2() was removed
+* GetCollisionByRay is no longer a global, but Map:GetCollisionByRay  (it used to take a map as the first parm, now it doesn't)
+* Added TileList and LayerList script objects
+* Added GetVisibleLayers, GetAllLayers, GetCollisionLayers to LayerManager
+* Added Map:GetTilesByRect
+* Added Tile object to script
+* Treeworld's gui is initted in game_start.lua's OnIntroMenuStart() instead of in the player script, now you can cut and paste 100 players without 100 GUI's
+* Entity:SetMaxWalkSpeed renamed to Entity:SetMaxMovementSpeed
+* The new and improved Treeworld player brain is pretty functional now, just need to add a system for the walk/ladder sounds.  This will be handled in script too
+
+
+1-31-2007
+
+* Added Entity:GetBrainManager():Remove() script command
+1-30-2007
+
+* "lost_player_focus" warning no longer appears on the log (left over from when there was a player-specific brain)
+* -nosound parm works better
+* side view example making progress but still can't climb ladders.. uh.. working on that
+
+
+1-29-2007
+
+* BrainBase now respects the "SetCanRotate()" command
+* Added brain "ForceVisual", built to be used alongside any base brain, for overriding visuals, more controls for it to  be added later, such as specifying a custom 8 way directional sprite mapping on the fly if needed, from the same or multiple visual profiles.  Currently it knows "force_anim" to set a single animation
+
+
+1-28-2007
+
+* Script command "IsFacingTarget(tolerance)" added
+* Fixed script bug where a troll would run his OnAttack too many times (whisperstorm)
+* Updated the top view troll AI a little bit, now only swings if he's facing the player
+* Added "Rectf" type to script, a floating point version of Rect
+* Added Entity:GetCollisionRect and Entity:GetWorldCollisionRect to script (returns Rectf)
+* BugFix: local v = this:GetPos(); v.x = 400; no longer moves the player
+* Fixed problem with zone cache being empty, might have only affected new func
+* Added Entity:GetNearbyZoneByMaterialType, Entity:GetWorldCollisionRect, and Entity:GetCollisionRect script commands
+* Tweaked gravity math, things don't fall so fast on treetest
 
 1-25-2007
 
@@ -60,217 +259,45 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Game time is paused during loading delays (I think more than a 500 MS pause counts as a loading delay, that's when it showing the loading message), made more sense then having it "catch up"
 * Added GetCollisionByRay script command.  It's a bit of a monster in that it takes a lot of parms, but it allows very flexible ray picking (single and spread types), and a special debug mode to visually see the rays
 
-1-28-2007
+1-17-2007
 
-* Script command "IsFacingTarget(tolerance)" added
-* Fixed script bug where a troll would run his OnAttack too many times (whisperstorm)
-* Updated the top view troll AI a little bit, now only swings if he's facing the player
-* Added "Rectf" type to script, a floating point version of Rect
-* Added Entity:GetCollisionRect and Entity:GetWorldCollisionRect to script (returns Rectf)
-* BugFix: local v = this:GetPos(); v.x = 400; no longer moves the player
-* Fixed problem with zone cache being empty, might have only affected new func
-* Added Entity:GetNearbyZoneByMaterialType, Entity:GetWorldCollisionRect, and Entity:GetCollisionRect script commands
-* Tweaked gravity math, things don't fall so fast on treetest
+* Fixed visual glitch with candles in the inn in the top view rpg example
+* Fixed problem where the installer didn't remember where you last installed when installing a new version (win)
+* Redid timing, removed SetGameSpeed and SetGameLogicSpeed, it's all handled internally for you and adjusted on the fly when needed for a smoother experience.  Well, hopefully.  Let me know if there are any jerkiness problems.
+* Lua "package" library disabled for security reasons (Ian)
+* LogMsg/printf and LogError now can display up to 12,288 bytes and will properly truncate if sent a message larger instead of crashing (Ian)
 
-1-29-2007
-* BrainBase now respects the "SetCanRotate()" command
-* Added brain "ForceVisual", built to be used alongside any base brain, for overriding visuals, more controls for it to  be added later, such as specifying a custom 8 way directional sprite mapping on the fly if needed, from the same or multiple visual profiles.  Currently it knows "force_anim" to set a single animation
+1-11-2007
 
-1-30-2007
+* BUGFIX: Rect:IsOverlapped now works (Ian)
+* Color:Setalpha changed to Color:SetAlpha (Ian)
+* Added Rect:CalculateUnion script command
+* Good chunk of the API is now documented at www.rtsoft.com/novashell/docs/api
+* lua's "io" lib and the dangerous parts of "os" lib are disabled in lua for security reasons, I had actually thought I did this before, whups.. (Ian)
+* history.txt file is now included with the windows version, will always be accurate, even between forum release notes (shair)
+* Added license.txt, credits.txt (sparse, will add as I go), and readme.txt.  Windows installer text now just loads the readme.txt
+* Commented out a LogMsg command in the beer invaders example (it was for debugging..)
+* This history.txt file can be viewed from the main novashell page (automatically updated during installer builds)
 
-* "lost_player_focus" warning no longer appears on the log (left over from when there was a player-specific brain)
-* -nosound parm works better
-* side view example making progress but still can't climb ladders.. uh.. working on that
+Changes on 1-3-2007:
 
-1-31-2007
+* Added brain "FadeIn"
+* "Smart loading message" system added, that annoying "loading" message will only pop-on after 500 MS of loading has taken place. Will add a way to set an animation to be displayed instead at some point.
+* Tapping R while in the editor will reset the camera scale to 1,1 (moved to editor.lua) (loken)
+* Tapping Shift-R will reset the camera scale as well as position to 1,1 (moved to editor.lua) (loken)
+* File->Restart Engine now calls OnRestartEngine from script instead of using its own version
+* BUGFIX: Mouse wheel can be bound from script, didn't actually work before
+* GetInputManager():AddBinding has optional keywords: "game_only", "editor_only" and "game_and_editor". Defaults to "game_only". These specify when the input will be active, so we don't have to check if the editor is open in script so much
+* Many editor input controls moved to editor.lua, like mouse wheel zooming
+* You can no longer zoom with mouse wheel when not in edit mode (if you needed this for a game, you can easily enable it by script of course)
+* Keyboard shortcuts for zooming in/out were reverse, now they are more like photoshop (whisperstorm)
+* Non-numpad -/+ as well as numpad -/+ now work to zoom too, hopefully on all platforms
+* Linux distribution is now tar.gz'ed in its own directory, more 'linux friendly' (GBGames)
+* Fixed problem where hitting an unsupported key in linux could freeze the editor (numpad = did this with my macmini keyboard attached)
+* Calling SetLayerByName from an entity's OnInit() no longer cause a crash
+* Random() or random() can now be used instead of math.random (I added them to misc_utils.lua in base)
+* BUGFIX: LoadMapByName() script command no longer will lose all tagcache data if the map was already loaded (it will correctly ignore the command instead)
+* Beer Invader example improved, cans have some physics, added music, cans shoot back, level progression and player death handling
 
-* Added Entity:GetBrainManager():Remove() script command
+10-27 - First public test version posted
 
-2-2-2007
-
-* Vector:Normalize() script command added (and the standalone global NormalizeVector2() was removed
-* GetCollisionByRay is no longer a global, but Map:GetCollisionByRay  (it used to take a map as the first parm, now it doesn't)
-* Added TileList and LayerList script objects
-* Added GetVisibleLayers, GetAllLayers, GetCollisionLayers to LayerManager
-* Added Map:GetTilesByRect
-* Added Tile object to script
-* Treeworld's gui is initted in game_start.lua's OnIntroMenuStart() instead of in the player script, now you can cut and paste 100 players without 100 GUI's
-* Entity:SetMaxWalkSpeed renamed to Entity:SetMaxMovementSpeed
-* The new and improved Treeworld player brain is pretty functional now, just need to add a system for the walk/ladder sounds.  This will be handled in script too
-
-2-4-2007
-
-* Added LoopingSound object to script
-* Added climb/walk sounds to the tree world player brain script
-
-2-5-2007
-
-* Selecting/deselecting a display layer causes the edit layer to also change, as rarely would you want to not see a layer and still select it
-* Added flood fill function - drag out a rect and tap F.  If grid snap is set, it uses it for spacing.
-* Moved show hardness/collision from Ctrl-H to Ctrl-Q
-* Moved edit collision from Ctrl-D to Ctrl-W
-* Ctrl-H now hides the selection box, good for when lining up tiles (like photoshop)
-* Ctrl-D now performs deselect (like photoshop)
-
-2-6-2007
-
-* Added Entity:SetBlendMode(), added C_BLENDING_MODE_ADDITIVE to setup_constants.lua.  It's hard finding interesting
-	blending modes that work right with alpha.. hrm.  Made the TreeWorld player weapon use it, should try it for lighting effects later I guess.
-
-2-7-2007
-
-* Cleaned up the visual profile system, removed unneeded data from most of the example .xml's (support is still there, but things like base_angle and rotation offsets don't need to clutter everything, it makes it look more confusing then it is)
-* Visual Profile's now store the x/y offset per Anim, so mirrored animations can have different offsets.  The editor's visual profile editor now uses it automatically, don't need to hand edit or worry about it
-* Mouse wheel zoom now works while using the visual profile editor
-* After editing a visual profile, entities are reinitted so changes are visible everywhere in the active world instantly without restarting
-* After a script edit/visual profile change entities attached to the camera are ignored during the re-init phase.  Those items are generally GUI and just got screwed up by reinitting them, forcing you to quit/continue to have them look right again
-* Erased some unused scripts from treeworld
-* BUGFIX: Invisible walls/solid blocks problem fixed (system palette had gotten color key mode turned on somehow, whups)
-
-* Fixed Detail 2 layer in top view rpg example (outside) to sort with the entity layers, dunno why that wasn't
-	set before
-* Trying to add an invalid brain type now is an error rather than normal log message
-
-2-8-2007
-
-* CreateEntity(vPos, scriptFileName) was changed to CreateEntity(Map, vPos, scriptFileName)
-* Snap mode is now active during drag selection - makes it a lot easier to cut out tiles with Ctrl-C at a specific size
-* Some progress made on the Scripting API.. uh.. 30% done maybe
-
-* SetCanRotate renamed SetEnableRotationPhysics (less confusing)
-
-2-9-2007
-
-* BUGFIX: Fixed issue with Ctrl-Left selection toggle not working with grid snap enabled
-* Dragging selections and moving in general was improved, especially when in snap mode (nmceri)
-* BUGFIX: Visual profile editor works better
-* I got Akiko to do a new style sheet for the novashell webpages.. it's uh.. very brown now.. hrm.
-
-2-10-2007
-
-* BUGFIX: Dragging multiple selection works right with snap mode (whups!)
-* RunScript no longer requires "script/" in the path, this is assumed.  Change your scripts! (Ian)
-* dofile() re-added as an alias for RunScript (Ian)
-* System console improved:  now shows overlay of "` to close or Ctrl-C to place text in system clipboard"
-* "dofile", "load" and "loadstring" removed.  For real this time?! (Ian)
-
-2-14-2007
-
-* Script errors in entities now also show the main script file name
-* Added Ian's explicit variable/function name code - it can be disabled by commenting out the "safety.lua" RunScript command.
-	I also added g_allowStrict global to allow temporarily disabling it, the engine needed to do this for a few
-	problematic things.
-* random/Random assigned to math.random() in a smarter way (Ian)
-* Added Ian's "require" work around to misc_utils.lua
-
-* RunFunction now can accept up to 7 extra parms (old limit was 3)
-* Entity:OnDamage() removed.  Instead, you should use Entity:RunFunctionIfExists("OnDamage", parms..);
-	That's all the old function did internally anyway, it's no longer needed inside the Entity object itself.
-* Bugfix in InputManager:RemoveBinding, it was failing to remove a few keys
-* Console improved, page-up/page-down will scroll back into the buffer (to the last 200 lines, anyway)
-* SetDefaultTextColor renamed to SetDefaultTalkColor, was too similar to SetTextColor
-* Text alignments (used with SetTextAlignment) now correctly scale with camera scale
-* Added Entity:GetTextColor script function
-
-2-16-2007
-
-* Small speed improvements
-* Renamed SoundManager::KillChannel to SoundManager::Kill
-* Removed SoundManager::PlayMixed, there is only SoundManager::Play, it's simpler this way
-* More doc work...
-
-2-21-2007
-
-* Scripting docs finished (well, they'll never be finished, but everything currently in the engine is more or less documented)
-* Added SoundManager::SetPan script command
-* Added Ian's "lua class" system and converted the intro_menu and sound class to use them.  
-	There is a slight difference in how new objects are created so
-		
-		activeMenu = IntroMenu:new{};
-		activeMenu:Init();
-		
-		now only needs to be:
-		
-		activeMenu = IntroMenu(); //its __init() function (if it exists) will be run automatically at construction
-		
-	Much better!
-* Console now has an input control to interact directly with lua
-* All objects now handle tostring(). so you can LogMsg(GetCamera); and it will say something about the camera for instance
-* Enabled "loadstring" - this isn't dangerous, is it?  I think we'll need this for table serialization...
-* gSmartSound renamed to g_SmartSound
-* Any script objects embedded in intro maps for music were moved to the game_start.lua instead.  
-	Otherwise it's confusing to realize where the sound is coming from	
-* Added "always" keyboard to the default f1 keybind for the editor, now you can press it while holding down other keys and the editor
-	will still open	
-* BUGFIX: when an entity is destroyed, his specific namespace is garbage collect right away, I think this fixed a related crash bug as well
-
-2-24 2007
-
-* the quote character was added to the console window output font
-* Slight tweaks to the how the default escape handler works
-* Added "File->Revert Changes On Active Map" option for those times when you absolutely don't want to save what you did
-* Fixed problem with the game starting in the background on multimonitor systems (windows)
-* Convert to entity works better
-* Console improved - while open, most editor functions are disabled (so you can type without deleting things etc), if a single entity is selected, the
-	console input is run in its namespace.
-* g_consoleActive is now a script global to know when the console is open
-* disabled some keyboard keys while the interactive console is up so you can type things without commands happening
-* BUGFIX: Entity:DumpScriptInfo() now shows the script file name instead of random characters
-* g_AllowStrict became boolean instead of a number
-* BUGFIX: strict var checking works again, had a dumb bug in safety.lua
-* How can I check to see if a function/var exists without causing a strict error?  Uh, I did a work around by putting an Exists("VarName") function
-	in, but I'd like to do it a better way... Note to self, ask Ian
-* making progress on new tutorials...
-
-2-25 2007
-
-* Updated Ian's class code
-* BUGFIX: Fixed some problems with trying to use brains without a visual profile
-* Flood fill better matches the rect that is dragged out
-* Tutorial 4 updated, about half rewritten, a lot more scripting info. 5 coming soon...
-
-2-26 2007
-
-* Added "Entity:SetIsCreature" and "Entity:GetIsCreature" script commands
-* Path-finding system can now better cope with a 'partially pathnoded' map
-* GoalManager:SetApproach command works better with entities without collision and handles C_DISTANCE_NONE cases faster
-
-2-28 2007
-
-* intro_menu.lua fixed to not give errors when you try to continue a game that doesn't exist (ZombieJesus)
-* InputManager::RemoveBinding() no longer does a LogMsg when a binding isn't found.  If you really care, check the return value
-* [ ] scale keys now work in linux/osx and can be bound with "lbracket" and "rbracket" in script (ZombieJesus)
-
-3-1 2007
-
-* BUGFIX: Called AddApproach while the game time is 0 won't crash
-* BUGFIX: A malformed script will no longer crash the game
-* Added Entity::SetAcceleration and Entity::GetAcceleration script command
-* Key ups are now still processed with the console open, but not keydowns.
-
-* BUGFIX: Calling non-existent functions no longer crashes.  Luabind doesn't like the strict var checking that was
-	recently added, did work around for it.
-	
-3-2 2007
-
-* Default max speed for an entity was changed to 6.
-* Added GoalManager::AddMoveToMapAndPosition and GoalManager::PushMoveToMapAndPosition
-* Added C_DISTANCE_INSIDE define, useful for AddApproach when you want to go "inside" of an entity instead of stand
-	next to him
-* Added Entity::VariableExists()
-* Added "Scale" brain
-
-3-3 2007
-
-* BUGFIX:  Delete key is now functional in OSX (ZombieJesus)
-* Image import's image properties (when you double click a filename) now shows the hashID and the list of
-	shared collision data in its .dat file, sort of needed this to debug a problem
-* BUGFIX: Crash bug fixed involving GetDirectionToEntity under OSX (ZombieJesus)
-
-3-5 2007
-
-* Optimized graphics display, up to 50% speed improvement, depending on the scene
-* 'stuttering sound in windows' should be fixed (switched to FMOD for the windows build)
-	  However, you can use the -clansound parm to force the old sound system also.
-* Renamed "script/system/startup.lua" to "script/system_start.lua"
-* intro_menu.lua fixed to not kill input input if you click a non-button that has a name

@@ -941,7 +941,7 @@ func: SetScreenSize
 boolean SetScreenSize(number x, number y);
 (end)
 
-Allows on-the-fly screensize changes by script.  Up to you to specify valid resolutions if you're currently fullscreen.
+Allows on-the-fly screen size changes by script.  Up to you to specify valid resolutions if you're currently fullscreen.
 
 Parameters:
 
@@ -954,7 +954,7 @@ True on success.  Except it doesn't detect errors yet, so I guess always true.
 
 Warning:
 
-This only works right under Windows at the moment.  Not sure what's up with that yet, gotta dig in to Clanlib I guess.
+Doesn't work under linux builds at the moment.  OSX and Windows are ok.  Use the -resolution parm with the .exe works on all systems.
 
 func: ParmExists
 (code)
