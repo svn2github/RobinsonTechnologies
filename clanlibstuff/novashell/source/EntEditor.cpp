@@ -680,7 +680,7 @@ void EntEditor::OnAddNewMap()
 void EntEditor::OnEditStartupLua()
 {
 	string file = GetGameLogic->GetScriptRootDir();
-	file += "/system/startup.lua";
+	file += "/system_start.lua";
 	g_VFManager.LocateFile(file);
 	OpenScriptForEditing(file);
 }
@@ -749,7 +749,7 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnOpenScript);
 
 	
-	pItem = m_pMenu->create_item("File/Open Script/startup.lua");
+	pItem = m_pMenu->create_item("File/Open Script/system_start.lua");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnEditStartupLua);
 
 	pItem = m_pMenu->create_item("File/Open Script/game_start.lua");

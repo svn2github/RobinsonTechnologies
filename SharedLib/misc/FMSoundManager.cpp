@@ -1,6 +1,55 @@
 #include "FMSoundManager.h"
 #include <fmod_errors.h> 
 
+#ifndef _NO_CLANLIB
+	#include "CL_VirtualFileManager.h"
+	//well, there are many betters way to get access to the virtual file manager but this will do
+	extern CL_VirtualFileManager g_VFManager;
+#endif
+
+void SoundEffect::FadeToVolume(float targetVol, int durationMS)
+{
+	assert(m_eventType == ISoundManager::C_EFFECT_NONE && "You can't use more than one effect on the same class, make a new effect");
+
+	
+	m_target = targetVol;
+	m_durationMS = durationMS;
+	m_original = float(FSOUND_GetVolume(m_channelID))/255;
+	m_eventType = ISoundManager::C_EFFECT_FADE;
+	
+#ifndef _NO_CLANLIB
+	m_startTimeMS = CL_System::get_time();
+#else
+	assert(!"This isn't supported without clanlib");
+#endif
+}
+
+bool SoundEffect::Update(unsigned int timeMS)
+{
+	switch (m_eventType)
+	{
+	case ISoundManager::C_EFFECT_FADE:
+		//process the fading here
+		if (timeMS > m_startTimeMS+m_durationMS)
+		{
+			//we're done
+			return false; //you can erase us now
+		} else
+		{
+			//still fading.  
+			float lerpAmount = (float(timeMS-m_startTimeMS))/float(m_durationMS);
+			FSOUND_SetVolume(m_channelID, int(Lerp(m_original, m_target, lerpAmount)*255));
+		}
+		break;
+
+	default:
+
+		LogError("Unknown effect type: %d", m_eventType);
+	}
+
+	return true; //keep processing this, don't delete it
+}
+
 CFMSoundManager::CFMSoundManager()
 {
     m_b_ready = false;
@@ -15,7 +64,7 @@ void CFMSoundManager::MuteAll(bool b_new)
 
 bool CFMSoundManager::Init()
 {
-
+	bool bFirstTime = !m_b_ready;
     Kill();
 
   if (FSOUND_GetVersion() < FMOD_VERSION)
@@ -35,7 +84,10 @@ bool CFMSoundManager::Init()
         LogError("%s\n", FMOD_ErrorString(FSOUND_GetError()));
         return false;
     }
-
+	if (bFirstTime)
+	{
+	   LogMsg("FMOD V%.2f Sound System Initialized", FSOUND_GetVersion());
+	}
     
     return m_b_ready = true;
 }
@@ -46,12 +98,10 @@ CFMSoundManager::~CFMSoundManager()
    Kill(); //deallocate everything we had going
 }
 
-
 int CFMSoundManager::Play(const char *p_fname)
 {
   return PlayMixed(p_fname);
 }
-
 
 //case sensitive!  Always use lower case.
 FSOUND_SAMPLE * CFMSoundManager::GetSoundSampleByName(const char *p_fname)
@@ -72,12 +122,30 @@ FSOUND_SAMPLE * CFMSoundManager::GetSoundSampleByName(const char *p_fname)
 
 CFMSound * CFMSoundManager::PreloadSound(const char *p_fname)
 {
-   m_a_sounds.push_back(CFMSound());
+
+#ifndef _NO_CLANLIB
+
+	string fname = p_fname;
+
+if (!g_VFManager.LocateFile(fname))
+	{
+		LogError("Unable to locate audio file %s.", p_fname);
+		return NULL;
+	}
+#endif	
+
+	m_a_sounds.push_back(CFMSound());
 
    int i_index = m_a_sounds.size()-1; //only works with push back, later we'll add insert where
    //LogMsg("Sound array is now %d.", i_index);
    //a vector has a null sound or something like that
+#ifndef _NO_CLANLIB
+
+   m_a_sounds[i_index].p_sample = FSOUND_Sample_Load(FSOUND_FREE, fname.c_str(), 0,0, 0);
+#else
    m_a_sounds[i_index].p_sample = FSOUND_Sample_Load(FSOUND_FREE, p_fname, 0,0, 0);
+#endif
+
    m_a_sounds[i_index].st_fname = p_fname; //remember this for later
    return &m_a_sounds[i_index]; //do NOT save this and use it later, the vector could be resized which may
    //invalidate this pointer!
@@ -123,6 +191,78 @@ int CFMSoundManager::PlayLooping(const char *p_fname)
 void CFMSoundManager::KillChannel(int i_channel)
 {
    FSOUND_StopSound(i_channel);
+}
+
+void CFMSoundManager::SetSpeedFactor(int soundID, float mod)
+{
+	if (!IsInitted()) return;
+	FSOUND_SetFrequency(soundID, int((22050*2)*mod));
+}
+
+void CFMSoundManager::SetPan(int soundID, float pan)
+{
+	if (!IsInitted()) return;
+	FSOUND_SetPan(soundID, int((pan+1)*128));
+}
+
+ChannelSession * CFMSoundManager::GetEffectsDataForChannel(int channelID)
+{
+	channelMap::iterator itor = m_channelMap.find(channelID);
+	if (itor != m_channelMap.end())
+	{
+		return &(itor->second);
+	}
+	return NULL;
+}
+
+void CFMSoundManager::AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC)
+{
+//	LogMsg("FMod Sound System on Windows doesn't support AddEffect yet");
+
+	//get a handle to its effect stuff
+	if (!FSOUND_IsPlaying(soundID))
+	{
+		LogMsg("SoundID %d isn't playing, won't add effect.", soundID);
+		return;
+	}
+
+	ChannelSession *pChanSession = GetEffectsDataForChannel(soundID);
+
+	//else, we need to create it
+
+	if (!pChanSession)
+	{
+		pChanSession = &m_channelMap[soundID]; //this will create it
+	}
+	
+	switch (effectID)
+	{
+	case C_EFFECT_FADE:
+
+		{
+			SoundEffect e(soundID);
+			SetVolume(soundID, parmA*255);
+			e.FadeToVolume(parmB, int(parmC));
+			pChanSession->m_effects.push_back(e);
+			break;
+		}
+
+	default:
+		LogError("Unknown sound effect: %d", effectID);
+		return;
+	}
+
+}
+
+void CFMSoundManager::RemoveAllEffects(int soundID)
+{
+	LogMsg("FMod Sound System on Windows doesn't support RemoveAllEffects yet");
+}
+
+void CFMSoundManager::SetVolume(int soundID, float volume)
+{
+	if (!IsInitted()) return;
+	FSOUND_SetVolume(soundID, int(volume*255));
 }
 
 
@@ -181,11 +321,52 @@ void CFMSoundManager::KillMusic()
 
 void CFMSoundManager::Kill()
 {
-    if (IsInitted())
+   m_channelMap.clear();
+	
+	if (IsInitted())
     {
         KillMusic();
         FSOUND_Close();
     }
     m_b_ready = false;
     m_a_sounds.clear();
+}
+
+void CFMSoundManager::UpdateSounds()
+{
+	if (!m_b_ready) return;
+
+#ifndef _NO_CLANLIB
+	channelMap::iterator itor;
+
+	unsigned int curTime = CL_System::get_time();
+	bool bDelete;
+
+	for (itor = m_channelMap.begin(); itor != m_channelMap.end();)
+	{
+
+		if (FSOUND_IsPlaying(itor->first))
+		{
+			//LogMsg("Updating soundID %d", itor->first);
+
+			//process its filters
+			for (unsigned int i=0; i < itor->second.m_effects.size(); i++)
+			{
+				bDelete = !itor->second.m_effects[i].Update(curTime);
+			}
+			//the sound is still playing
+		} else
+		{
+			//sound is dead, might as well kill it, right?
+			//delete it I guess
+			channelMap::iterator itorSave = itor;
+			itorSave++;
+			m_channelMap.erase(itor);
+			itor = itorSave;
+			continue;
+		}
+		
+		itor++;
+	}
+#endif
 }

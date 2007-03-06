@@ -66,6 +66,8 @@ public:
 	void SetSort(int sort) { m_intArray[e_intSort] = sort;}
 	int GetSort() {return m_intArray[e_intSort];}
 	CL_Vector2 GetScrollMod() { return CL_Vector2(m_floatArray[e_floatScrollModX], m_floatArray[e_floatScrollModY]);}
+	bool RequiresParallax() {return (m_floatArray[e_floatScrollModX] != 0 || m_floatArray[e_floatScrollModY] != 0);}
+
 	void SetScrollMod(const CL_Vector2 &scrollMod);
 	void Serialize(CL_FileHelper &helper); //handles loading and saving to a stream
 	
@@ -130,7 +132,6 @@ public:
 	unsigned int GetLayerCount() {return m_layerVec.size();}
 	Layer & GetLayerInfo(unsigned int layerID) {return m_layerVec[layerID];}
 	int GetLayerIDByName(const string &name);
-	
 	const vector<unsigned int> & GetDrawList() {return m_drawList;}
 	const vector<unsigned int> & GetEditActiveList() {return m_editActiveList;}
 	const vector<unsigned int> & GetAllList() {return m_allList;} //indexes of all layers

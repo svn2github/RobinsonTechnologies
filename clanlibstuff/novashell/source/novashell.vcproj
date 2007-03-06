@@ -50,7 +50,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc;..\..\..\SharedLib\include\ClanLib"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CLANLIB"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
@@ -78,6 +78,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
+				AdditionalDependencies="fmodvc.lib"
 				OutputFile="../bin/game.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -150,7 +151,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc"
-				PreprocessorDefinitions="WIN32;_DEBUG;__STL_DEBUG;_WINDOWS;_ENABLE_MEMORY_DEBUGGING_"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CLANLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -179,12 +180,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies=" fmodvc.lib"
 				OutputFile="../bin/game_debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\SharedLib\lib;..\..\..\SharedLib\lib\clanlib;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\FMOD\lib"
 				GenerateManifest="true"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames="libcmt.lib "
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/test_debug.pdb"
 				SubSystem="2"
@@ -319,6 +321,26 @@
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\misc\CL_VirtualFileManager.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\SharedLib\misc\FMSoundManager.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

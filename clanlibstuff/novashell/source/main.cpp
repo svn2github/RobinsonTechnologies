@@ -8,20 +8,16 @@
 #include "Console.h"
 #include "AI/WatchManager.h"
 
-#ifdef WIN32
-  //#define C_USE_FMOD
-#endif
-
 
 ISoundManager *g_pSoundManager;
 
-#ifdef C_USE_FMOD
+#ifdef _WIN32
 #include "misc/FMSoundManager.h"
-#else
+#endif
+
 #include <ClanLib/vorbis.h>
 #include <ClanLib/sound.h>
 #include "misc/CL_SoundManager.h"
-#endif
 
 App MyApp; //declare the main app global
 App * GetApp(){return &MyApp;}
@@ -95,6 +91,10 @@ App::App()
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
 	m_engineVersion = 0.21f;
 	m_engineVersionString = "0.21";
+
+	m_pSetup_sound = NULL;
+	m_pSetup_vorbis = NULL;
+	m_pSound_output = NULL;
 
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
@@ -173,6 +173,11 @@ void App::OneTimeDeinit()
   
     SAFE_DELETE(m_pWindow);
 	SAFE_DELETE(m_pFrameRate);
+
+	SAFE_DELETE(m_pSound_output);
+	SAFE_DELETE(m_pSetup_vorbis);
+	SAFE_DELETE(m_pSetup_sound);
+
 }
 
         
@@ -227,7 +232,6 @@ void App::OneTimeInit()
 			}
 		}
 
-
 	}
 
 	m_WindowDescription.set_fullscreen(bFullscreen);
@@ -264,26 +268,26 @@ void App::OneTimeInit()
 	m_pHashedResourceManager = new HashedResourceManager;
 	m_pVisualProfileManager = new VisualProfileManager;
 
-#ifdef C_USE_FMOD
+switch (m_soundSystem)
+{
+case C_SOUNDSYSTEM_CLANLIB:
+	g_pSoundManager = new CL_SoundManager;
+	break;
+
+case C_SOUNDSYSTEM_FMOD:
+
+#ifdef _WIN32
 	g_pSoundManager = new CFMSoundManager;
 #else
-
-	g_pSoundManager = new CL_SoundManager;
+	LogError("FMOD sound system not supported on this platform yet.");
 #endif
-
-//now to init it
-
-	if (g_pSoundManager && !ParmExists("-nosound"))
-	{
-		g_pSoundManager->Init();
-	}
-	
-
+	break;
+}
 	m_pScriptManager = new ScriptManager;
 	m_pGameLogic = new GameLogic();
 
 #ifdef _WIN32
-	//hack for multimonitor problem and the game starting and then alt-tabbing back for some reason
+	//hack for multi monitor problem and the game starting and then alt-tabbing back for some reason
 	SetActiveWindow(m_Hwnd);
 #endif
 
@@ -453,12 +457,7 @@ void App::ToggleWindowedMode()
 
 void App::OnKeyUp(const CL_InputEvent &key)
 {
- /*
-	if (key.id == CL_KEY_ESCAPE)
-	{
-		OnWindowClose();
-	}
-*/
+
 	if(CL_Keyboard::get_keycode(CL_KEY_MENU))
     {
         //system message?  We should really process these somewhere else
@@ -581,8 +580,6 @@ void App::Update()
 			//our CPU can't keep up, skip the rest for now so we can get a visual update
 			m_thinkTicksToUse = 0;
 			break;
-
-
 		}
 	}
 
@@ -634,6 +631,8 @@ int App::main(int argc, char **argv)
 		"	-window\n" \
 		"	-nosound\n" \
 		"	-nomusic\n" \
+		"	-clansound (windows only, forces Clanlib sound system instead of FMOD)\n" \
+	//	"	-fmodsound (windows only, forces fmod sound system)"
 		"";
 
 
@@ -668,15 +667,33 @@ int App::main(int argc, char **argv)
 		
 		CL_SetupGL setup_gl;
 
-#ifndef C_USE_FMOD
+		
+	SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
 
-		
-		CL_SetupSound setup_sound;
-		CL_SetupVorbis setup_vorbis;
-		CL_SoundOutput sound_output(44100);
-		
+#ifdef _WIN32
+
+	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
+	if ( ParmExists("-clansound"))
+	{
+		SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
+	}
+
+	if ( ParmExists("-fmodsound"))
+	{
+		SetSoundSystem(C_SOUNDSYSTEM_FMOD);
+	}
+
 
 #endif
+			
+
+if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
+{
+		m_pSetup_sound = new CL_SetupSound();
+		m_pSetup_vorbis = new CL_SetupVorbis();
+		m_pSound_output = new CL_SoundOutput(44100);
+}
+	
 
    
     // Create a console window for text-output if in debug mode

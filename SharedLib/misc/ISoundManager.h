@@ -51,6 +51,7 @@ public:
 
 	enum
 	{
+		C_EFFECT_NONE = -1,
 		C_EFFECT_FADE = 0,
 
 		//add more above here

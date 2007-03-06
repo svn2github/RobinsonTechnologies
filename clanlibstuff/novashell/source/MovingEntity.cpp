@@ -2207,13 +2207,20 @@ void MovingEntity::Render(void *pTarget)
 		{
 			bUseParallax = true;
 			pLayer = &pWorld->GetLayerManager().GetLayerInfo(m_pTile->GetLayer());
-			
+			if (pLayer->RequiresParallax())
+			{
+				LogMsg("Needs paralax");
+
 			if (GetGameLogic->GetMakingThumbnail())
 			{
 				if (!pLayer->GetUseParallaxInThumbnail())
 				{
 					bUseParallax = false;
 				}
+			}
+			} else
+			{
+				bUseParallax = false;
 			}
 		} else
 		{

@@ -89,7 +89,8 @@ Parameters it understands:
 
 scale_speed_ms - How many milliseconds the scale should take.  Default is 1000. (one second)
 scalex - the desired final x scale.
-scaley - the desried final y scale.
+scaley - the desired final y scale.
+delete_entity - if true, the entire entity will be deleted when the scale is complete.
 
 Usage:
 (code)

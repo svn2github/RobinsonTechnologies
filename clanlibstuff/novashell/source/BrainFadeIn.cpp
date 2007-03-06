@@ -65,9 +65,6 @@ void BrainFadeIn::Update(float step)
 
 	if (alpha <= 0)
 	{
-#ifdef _DEBUG
-		LogMsg("Removing brain %s!!", GetName());
-#endif
 		this->SetDeleteFlag(true);
 	}
 

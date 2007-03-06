@@ -266,3 +266,11 @@ character are more complicated now, as they handle key bindings etc, so you'll p
 * Image import's image properties (when you double click a filename) now shows the hashID and the list of
 	shared collision data in its .dat file, sort of needed this to debug a problem
 * BUGFIX: Crash bug fixed involving GetDirectionToEntity under OSX (ZombieJesus)
+
+3-5 2007
+
+* Optimized graphics display, up to 50% speed improvement, depending on the scene
+* 'stuttering sound in windows' should be fixed (switched to FMOD for the windows build)
+	  However, you can use the -clansound parm to force the old sound system also.
+* Renamed "script/system/startup.lua" to "script/system_start.lua"
+* intro_menu.lua fixed to not kill input input if you click a non-button that has a name

@@ -71,6 +71,12 @@ extern ISoundManager *g_pSoundManager;
 
 enum
 {
+	C_SOUNDSYSTEM_CLANLIB,
+	C_SOUNDSYSTEM_FMOD
+
+};
+enum
+{
 	C_PLATFORM_WINDOWS = 0,
 	C_PLATFORM_OSX,
 	C_PLATFORM_LINUX
@@ -117,6 +123,9 @@ class Camera;
 class Map;
 class ScriptManager;
 class VisualProfileManager;
+class CL_SetupSound;
+class CL_SetupVorbis;
+class CL_SoundOutput;
 
 class App : public CL_ClanApplication
 {
@@ -187,10 +196,13 @@ public:
 	void SetCursorVisible(bool bNew);
 	bool GetCursorVisible();
 	int GetPlatform();
+	int GetSoundSystem() {return m_soundSystem;}
+
 
 private:
     
-    void OneTimeDeinit();
+	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
+	void OneTimeDeinit();
     void OneTimeInit();
     void ToggleWindowedMode();
 	void OnRender();
@@ -243,6 +255,13 @@ private:
 	bool m_bRenderedGameGUI; //used for some complicated GUI trickery to work with model dialog boxes
 	CL_FramerateCounter *m_pFrameRate;
 	bool m_bCursorVisible;
+	int m_soundSystem;
+
+	
+	CL_SetupSound *m_pSetup_sound;
+	CL_SetupVorbis *m_pSetup_vorbis;
+	CL_SoundOutput *m_pSound_output;
+	
 	
 };
 

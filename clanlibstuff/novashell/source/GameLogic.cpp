@@ -383,6 +383,7 @@ bool GameLogic::Init()
 {
 
 	assert(!g_pMapManager->GetActiveMap());
+	
 	if (g_pSoundManager && !GetApp()->ParmExists("-nosound"))
 	{
 		g_pSoundManager->Init();
@@ -416,31 +417,26 @@ bool GameLogic::Init()
 	m_strBaseUserProfilePath = CL_Directory::get_current() + "/profiles";
 	GetGameLogic->ShowLoadingMessage();
 
-
 	if (IsOnReadOnlyDisk())
 	{
 		ShowMessage("Hold on!", "You must drag this out of the DMG before running it.\n\n(all prefs and saves are contained inside for easy deletion for now)");
 		return false;
 	}
 
-	//GetMyEntityManager()->Init();
-
 	g_textManager.Reset();
 
 	if (!GetHashedResourceManager->Init()) throw CL_Error("Error initting hashed resource manager");
-
 
 	GetScriptManager->Init();
 	//bind app specific functions at the global level
 	RegisterLuabindBindings(GetScriptManager->GetMainState());
 	
-	if (! RunGlobalScriptFromTopMountedDir("system/startup.lua"))
+	if (! RunGlobalScriptFromTopMountedDir("system_start.lua"))
 	{
-		LogError("Unable to locate script file system/startup.lua");
+		LogError("Unable to locate script file system_start.lua");
 		return false;
 	}
 	
-
 	if (m_bRebuildCacheData)
 	{
 		m_bRebuildCacheData = false;
@@ -503,7 +499,6 @@ bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the edi
 				BaseGameEntity *pEnt = EntityMgr->GetEntityByName("ChooseWorldDialog");
 				if (pEnt) pEnt->SetDeleteFlag(true);
 			}
-
 		}
 		
 		if (!g_pMapManager->GetActiveMap())

@@ -20,11 +20,6 @@ EntMapCache::EntMapCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	 SetDrawWorldChunkGrid(false);
 	 SetDrawCollision(false);
 
-	
-#ifdef _DEBUG
-	 //SetDrawCollision(true);
-#endif
-	 
 }
 
 void EntMapCache::PushUndoOperation(const operation_deque &op)

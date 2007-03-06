@@ -13,8 +13,6 @@
 #include "ISoundManager.h"
 #include <ClanLib/sound.h>
 
-
-
 //these are saved and cached out
 class SoundResource
 {
@@ -43,7 +41,6 @@ class CL_SoundManager:public ISoundManager
 public:
 	CL_SoundManager();
 	virtual ~CL_SoundManager();
-
 
 	virtual int PlayMixed(const char *p_fname);
 	virtual int Play(const char *p_fname);

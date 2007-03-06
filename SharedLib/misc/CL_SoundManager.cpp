@@ -1,7 +1,6 @@
 #include "CL_SoundManager.h"
+
 #include "CL_VirtualFileManager.h"
-
-
 //well, there are many betters way to get access to the virtual file manager but this will do
 extern CL_VirtualFileManager g_VFManager;
 
@@ -17,8 +16,16 @@ void CL_SoundManager::MuteAll(bool b_new)
 
 bool CL_SoundManager::Init()
 {
+	bool bFirstTime = !m_bInitted;
+
 	Kill();
 	m_bInitted = true;
+	
+	if (bFirstTime)
+	{
+		LogMsg("Clanlib Sound System Initialized");
+	}
+
 	return true;
 }
 
@@ -71,7 +78,6 @@ SoundResource * CL_SoundManager::LocateSound(const char *pFname)
 	m_soundResources[pFname] = s;
 	
 	return &m_soundResources[pFname];
-
 }
 
 int CL_SoundManager::PlayMixed(const char *p_fname)
@@ -118,7 +124,6 @@ SoundSession * CL_SoundManager::GetSessionFromID(int id)
 
 void CL_SoundManager::RemoveAllEffects(int soundID)
 {
-	
 	if (!m_bInitted) return;
 
 	SoundSession *pSession = GetSessionFromID(soundID);
@@ -161,8 +166,6 @@ void CL_SoundManager::AddEffect(int soundID, int effectID, float parmA, float pa
 			LogError("Unknown sound effect: %d", effectID);
 			return;
 	}
-	
-
 	
 }
 

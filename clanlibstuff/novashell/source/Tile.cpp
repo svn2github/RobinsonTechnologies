@@ -259,11 +259,15 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	pWorldCache = pWorld->GetMyMapCache();
 	
 	assert(pWorldCache && "Why render nothing?");
-
+	
 	if (GetGameLogic->GetParallaxActive())
 	{
 		bUseParallax = true;
 		pLayer = &pWorld->GetLayerManager().GetLayerInfo(pTile->GetLayer());
+		
+		if (pLayer->RequiresParallax())
+		{
+		LogMsg("Needs paralax");
 		if (GetGameLogic->GetMakingThumbnail())
 		{
 			if (!pLayer->GetUseParallaxInThumbnail())
@@ -271,11 +275,15 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 				bUseParallax = false;
 			}
 		}
+		} else
+		{
+			bUseParallax = false;
+		}
 	} else
 	{
 		bUseParallax = false;
 	}
-
+	
 	if (bUseParallax)
 	{
 		vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(pTile->GetPos(), 
@@ -284,13 +292,13 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	{
 		vecPos = pWorldCache->WorldToScreen(pTile->GetPos());
 	}
-
+	
 	static CL_Rectf rectDest;
 	rectDest.left = vecPos.x;
 	rectDest.top = vecPos.y;
 	rectDest.right = vecPos.x+ ( float(pTile->m_rectSrc.get_width()) * vecScale.x * pTile->GetScale().x);
 	rectDest.bottom = vecPos.y+ float(pTile->m_rectSrc.get_height()) * vecScale.y* pTile->GetScale().y;
-
+	
 	if (pTile->GetBit(Tile::e_flippedX))
 	{
 		pSurf->set_angle_yaw(-180);
@@ -318,16 +326,18 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 */
 
 	//this fixes glitches with tiling when the scale isn't exactly 1.0
-
+	
 	rectDest.bottom = RoundNearest(rectDest.bottom, 1.0f);
 	rectDest.right = RoundNearest(rectDest.right, 1.0f);
 	rectDest.top = RoundNearest(rectDest.top, 1.0f);
 	rectDest.left = RoundNearest(rectDest.left, 1.0f);
-
+	
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
 	pSurf->set_color(pTile->GetColor());
+
+	
 	pSurf->draw_subpixel(pTile->m_rectSrc, rectDest, pGC);
 }
 
