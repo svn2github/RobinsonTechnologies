@@ -95,6 +95,7 @@ Group: Brains  {
    File: FadeIn  (BrainFadeIn.cpp)
    File: FadeOutAndDelete  (BrainFadeOutAndDelete.cpp)
    File: Shake  (BrainShake.cpp)
+   File: Scale  (BrainScale.cpp)
    File: ForceVisual  (BrainForceVisual.cpp)
    }  # Group: Brains
 

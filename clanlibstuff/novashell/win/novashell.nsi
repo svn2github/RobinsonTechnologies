@@ -95,6 +95,7 @@ SectionIn RO
   File "..\bin\libjpeg.dll"
   File "..\bin\libpng13.dll"
   File "..\bin\zlib1.dll"
+  File "..\bin\fmod.dll"
  
   SetOutPath "$INSTDIR"
   File /r "..\bin\base"
@@ -191,6 +192,7 @@ Section "Uninstall"
   Delete "$INSTDIR\libpng13.dll"
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\zlib1.dll"
+  Delete "$INSTDIR\fmod.dll"
   Delete "$INSTDIR\log.txt"
   RMDir /r "$INSTDIR\base"
   
