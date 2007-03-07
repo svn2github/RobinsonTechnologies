@@ -1278,7 +1278,13 @@ void EntEditMode::OnMouseDoubleClick(const CL_InputEvent &key)
 
 					if (MouseIsOverSelection(key.mouse_pos))
 					{
-						//control right click opens a special menu instead of pasting
+						
+						if (m_pEntCollisionEditor)
+						{
+							//now is a bad time..
+							LogMsg("Close collision editor first.");
+							return;
+						}
 						BuildTilePropertiesMenu(&m_selectedTileList);
 						return;
 					}
