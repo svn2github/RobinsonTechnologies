@@ -25,6 +25,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_bScrollingMap = false;
    m_pButtonToggleEditMode = NULL;
  
+   m_pResListBox = NULL;
    m_bGenerateActive = false;
    m_pGenerator = NULL;
    m_pListBoxWorld = NULL;
@@ -717,6 +718,52 @@ void EntEditor::OnRebuildNavigationMaps()
 	
 }
 
+void EntEditor::OnSetScreenSize()
+{
+	int index = m_pResListBox->get_current_item();
+	CL_ListItem *pItem = m_pResListBox->get_item(index);
+	
+	//let's extract the res and change to it
+	vector<string> word =  CL_String::tokenize(pItem->str.c_str()," ", true);
+	GetApp()->SetScreenSize(CL_String::to_int(word[0]), CL_String::to_int(word[2]));
+}
+
+void EntEditor::PopulateResolutionList()
+{
+	m_pResListBox->clear();
+	std::vector<CL_DisplayMode> modes = CL_DisplayMode::get_display_modes();
+
+	for(unsigned int i=0; i < modes.size(); ++i)
+	{
+		if (modes[i].get_bpp() == 32)
+		{
+			//if this was essentially the same as the last mode, skip it
+			if (i > 0 && modes[i-1].get_bpp() == modes[i].get_bpp())
+			{
+				if (modes[i-1].get_resolution() == modes[i].get_resolution())
+				{
+					continue;
+				}
+			}
+
+			m_pResListBox->insert_item(CL_String::from_int(modes[i].get_resolution().width) + " by " + CL_String::from_int(
+				modes[i].get_resolution().height) + " pixels");
+		}
+	}
+
+	if (m_pResListBox->get_count() == 0)
+	{
+		//well, OSX doesn't enumerate video modes yet.  Let's do a hack..
+		m_pResListBox->insert_item("640 by 480 pixels");
+		m_pResListBox->insert_item("800 by 600 pixels");
+		m_pResListBox->insert_item("1024 by 768 pixels");
+		m_pResListBox->insert_item("1440 by 900 pixels");
+		m_pResListBox->insert_item("1600 by 1200 pixels");
+		m_pResListBox->insert_item("1680 by 1050 pixels");
+		m_pResListBox->insert_item("1920 by 1200 pixels");
+
+	}
+}
 
 bool EntEditor::Init()
 {
@@ -798,6 +845,18 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_pMenuLockAtRefreshCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuLockAtRefreshCheckbox->set_selected(GetApp()->GetRefreshType() == App::FPS_AT_REFRESH);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleLockAtRefresh);
+
+
+	// Create a listbox within menu
+	CL_MenuNode *list_node = m_pMenu->create_node("Display/Video Options/Set Screen Size/Resolutions");
+	list_node->set_close_on_click(false);
+	m_pResListBox = new CL_ListBox(CL_Rect(17,0,140,400), list_node );
+	
+	PopulateResolutionList();
+
+	//slots.connect( menu_list->sig_mouse_dblclk(), this, &App::OnListDoubleClick);
+	
+	m_slot.connect( m_pResListBox->sig_selection_changed(), this, &EntEditor::OnSetScreenSize);
 
 	pItem = m_pMenu->create_toggle_item("Display/Video Options/Toggle FPS Display (Ctrl+F)");
 	m_pMenuShowFPSCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());

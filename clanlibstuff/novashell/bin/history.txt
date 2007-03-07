@@ -1,5 +1,13 @@
 Changelog
 
+3-7 2007
+
+* Slightly more multi-mon friendly on windows
+* Added Set Screen Size option to Display->Video Settings.  It enumerates the available screen sizes, except on OSX
+	where I just guess.  Clanlib doesn't support video size enumeration on OSX yet.. don't feel like adding it right now.
+* BUGFIX: OnKill() wasn't being run on entities that were placed, but never had a chance to run their OnInit(). This
+	was causing the egg count to be off in the dragon egg tutorial.
+
 3-6 2007
 
 * Renamed "script/system/startup.lua" to "script/system_start.lua"

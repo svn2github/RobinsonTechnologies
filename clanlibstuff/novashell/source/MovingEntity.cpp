@@ -284,7 +284,7 @@ void MovingEntity::ClearColorMods()
 void MovingEntity::Kill()
 {
 
-	if (m_pScriptObject && m_pScriptObject->FunctionExists("OnKill") && m_bHasRunPostInit)
+	if (m_pScriptObject && IsPlaced() && m_pScriptObject->FunctionExists("OnKill"))
 	{
 		m_pScriptObject->RunFunction("OnKill");
 		g_inputManager.RemoveBindingsByEntity(this);

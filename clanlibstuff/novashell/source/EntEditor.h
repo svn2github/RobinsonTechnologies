@@ -115,7 +115,10 @@ private:
 	void OnLayerAll();
 	void OnLayerNone();
 	void SetAllLayersActive(bool bNew);
-	
+	void OnSetScreenSize();
+	void PopulateResolutionList();
+
+
 	CL_Label *m_pLabel;
     CL_Menu *m_pMenu;
     CL_Button *m_pButton;
@@ -130,6 +133,8 @@ private:
 	CL_MenuItem *m_pMenuLockAtRefreshCheckbox;
 	CL_MenuItem *m_pMenuParallaxCheckbox;
 	CL_MenuItem *m_pMenuShowFPSCheckbox;
+
+	CL_ListBox *m_pResListBox;
 
 	CL_Slot m_slotClose;
 	CL_SlotContainer m_slot; //generic one, easier

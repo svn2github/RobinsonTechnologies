@@ -317,19 +317,20 @@ bool App::ActivateVideoRefresh(bool bFullscreen)
 		m_pWindow->set_windowed();
 
 #ifdef WIN32
-		
 		m_pWindow->set_position( (GetSystemMetrics(SM_CXSCREEN)-GetScreenX)/2, (GetSystemMetrics(SM_CYSCREEN)-GetScreenY)/2);
-
 #endif
-	
-
 	}   else
 	{
 		m_pWindow->set_fullscreen(m_WindowDescription.get_size().width, m_WindowDescription.get_size().height, m_WindowDescription.get_bpp(), m_WindowDescription.get_refresh_rate());
 		//surfaces are now invalid.  Rebuild them ?
 		SetupBackground(GetApp()->GetMainWindow()->get_width(), GetApp()->GetMainWindow()->get_height());
-
 	}
+
+
+#ifdef _WIN32
+	//hack for multi monitor problem and the game starting and then alt-tabbing back for some reason
+	SetActiveWindow(m_Hwnd);
+#endif
 
 return true;
 }
