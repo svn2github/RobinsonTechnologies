@@ -47,7 +47,7 @@ public:
 	virtual void AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC) { assert(!"Not implemented with this driver yet");};
 	virtual	void RemoveAllEffects(int soundID) { assert(!"Not implemented with this driver yet");};
 	virtual void SetPan(int soundID, float pan) { assert(!"Not implemented with this driver yet");};//-1 to 1
-
+	virtual bool IsSoundPlaying(int soundID) {assert(!"Not implemented with this driver yet"); return false;}
 
 	enum
 	{

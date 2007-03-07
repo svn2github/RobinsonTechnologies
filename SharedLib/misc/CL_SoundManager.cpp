@@ -278,3 +278,16 @@ void CL_SoundManager::UpdateSounds()
 	}
 
 }
+
+bool CL_SoundManager::IsSoundPlaying(int soundID)
+{
+	if (!m_bInitted) return false;
+
+	SoundSession *pSession = GetSessionFromID(soundID);
+	if (pSession)
+	{
+		return pSession->m_session.is_playing();
+	} 
+
+	return false; //guess we didn't find it
+}

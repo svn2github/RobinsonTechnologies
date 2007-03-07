@@ -131,7 +131,7 @@ Advanced abilities such as:
  * The BrainManager
  * The GoalManager
  * Collision information
- * Pathfinding system
+ * Path-finding system
  * Triggers
  
 are initialized on demand, only wasting memory if they are actually used.
@@ -143,14 +143,20 @@ If a script is assigned to an entity, its <Entity> object can always be reached 
 Add the following functions in your script and they will automatically be called at the correct time:
 
 (code)
-function OnInit() //run upon initialization
+function OnInit() //run upon initialization, before being inserted on the map.
+	//note: this is also run on entities that placed in the copy buffer or undo buffer.
+	//this is where you should specify its visuals, so the engine knows how big it is.
 	LogMsg("Hey, I'm entity # " .. this:GetID() .. " and I've been initialized.");
 end
 
-function OnPostInit() //run after being placed on a map
+function OnMapInsert() //run right after they are inserted on the map.
+	LogMsg("I was just inserted in the map named " .. this:GetMap():GetName());
 end
 
-function OnKill() //run right before being destroyed/removed
+function OnPostInit() //run once when their first logic cycle happens (for instance, when they come on screen)
+end
+
+function OnKill() //run right before being destroyed/removed from the map 
 end
 
 (end)
@@ -2478,7 +2484,7 @@ func: IsPlaced
 boolean IsPlaced()
 (end)
 
-Internally, when entities are placed in a copy buffer, they will OnInit() but not OnPostInit().  This function is a way to see if an entity was actually placed on the map or not.  The OnKill() is run in either case.
+Internally, when entities are placed in a copy buffer, they will run *OnInit()* and but not *OnMapInsert()*, *OnPostInit()*, or *OnKill()*.  This function is a way to see if an entity was actually placed on the map or not.
 
 Returns:
 

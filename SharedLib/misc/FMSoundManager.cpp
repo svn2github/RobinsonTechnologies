@@ -103,6 +103,11 @@ int CFMSoundManager::Play(const char *p_fname)
   return PlayMixed(p_fname);
 }
 
+bool CFMSoundManager::IsSoundPlaying(int soundID)
+{
+	return FSOUND_IsPlaying(soundID) != 0;
+}
+
 //case sensitive!  Always use lower case.
 FSOUND_SAMPLE * CFMSoundManager::GetSoundSampleByName(const char *p_fname)
 {

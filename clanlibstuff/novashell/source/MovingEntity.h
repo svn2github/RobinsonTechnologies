@@ -128,7 +128,7 @@ public:
   void SetAlignment(int origin, CL_Vector2 v);
   void UpdateTilePosition();
   CollisionData * GetCollisionData() {return m_pCollisionData;}
-  bool SetVisualProfile(const string &resourceFileName, const string &profileName);
+  bool SetVisualProfile(string resourceFileName, const string &profileName);
   virtual void  Update(float step);
   virtual void  Render(void *pTarget);
   void ApplyPhysics(float step);

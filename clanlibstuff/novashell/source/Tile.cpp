@@ -267,7 +267,6 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 		
 		if (pLayer->RequiresParallax())
 		{
-		LogMsg("Needs paralax");
 		if (GetGameLogic->GetMakingThumbnail())
 		{
 			if (!pLayer->GetUseParallaxInThumbnail())

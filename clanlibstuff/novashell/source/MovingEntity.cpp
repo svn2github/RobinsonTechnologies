@@ -841,9 +841,10 @@ int MovingEntity::PlaySound(const string &fName)
 	return hHandle;
 }
 
-bool MovingEntity::SetVisualProfile(const string &resourceFileName, const string &profileName)
+bool MovingEntity::SetVisualProfile(string resourceFileName, const string &profileName)
 {
-	VisualResource *pResource = GetVisualProfileManager->GetVisualResource(ProcessPath(resourceFileName));
+	resourceFileName = C_DEFAULT_SCRIPT_PATH + ProcessPathNoScript(resourceFileName);
+	VisualResource *pResource = GetVisualProfileManager->GetVisualResource(resourceFileName);
 	if (!pResource) return false; //failed that big time
 
 	//now we need to get the actual profile
@@ -1108,7 +1109,7 @@ bool MovingEntity::Init()
 				LogError("No visual profile was set in script %s's init!  Maybe it had a syntax error, go check the log. (trying to load default)", m_mainScript.c_str());
 			}
 			
-			string sFile = GetGameLogic->GetScriptRootDir()+"/system/system.xml";
+			string sFile = "system/system.xml";
 			g_VFManager.LocateFile(sFile);
 			SetVisualProfile(sFile,"ent_default");
 		}
@@ -2209,7 +2210,6 @@ void MovingEntity::Render(void *pTarget)
 			pLayer = &pWorld->GetLayerManager().GetLayerInfo(m_pTile->GetLayer());
 			if (pLayer->RequiresParallax())
 			{
-				LogMsg("Needs paralax");
 
 			if (GetGameLogic->GetMakingThumbnail())
 			{

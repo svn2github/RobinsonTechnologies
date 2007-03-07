@@ -63,6 +63,7 @@ public:
 	void SetVolume(int soundID, float volume);
 	void RemoveAllEffects(int soundID);
 	virtual void SetPan(int soundID, float pan); //-1 to 1
+	virtual bool IsSoundPlaying(int soundID);
 
 protected:
 

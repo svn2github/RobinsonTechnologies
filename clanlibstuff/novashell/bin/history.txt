@@ -8,6 +8,13 @@ Changelog
 * BUGFIX: OnKill() wasn't being run on entities that were placed, but never had a chance to run their OnInit(). This
 	was causing the egg count to be off in the dragon egg tutorial.
 
+* Entity:SetVisualProfile no longer wants "script/" prepended, for consistancy.  You'll need to remove "script/" from
+	any SetVisualProfile commands you've made. The logic here is a visual profile .xml should really only be in the
+	scripts directory, right?
+* Added SoundManager:IsPlaying() (ZombieJesus)
+* removed "Needs parallax" debug message that shouldn't have been in there..
+
+
 3-6 2007
 
 * Renamed "script/system/startup.lua" to "script/system_start.lua"

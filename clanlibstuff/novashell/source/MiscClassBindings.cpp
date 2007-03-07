@@ -509,6 +509,7 @@ myColor = Color(255,255,255,255);
 		.def("SetSpeedFactor", &ISoundManager::SetSpeedFactor)
 		.def("SetVolume", &ISoundManager::SetVolume)
 		.def("SetPan", &ISoundManager::SetPan)
+		.def("IsPlaying", &ISoundManager::IsSoundPlaying)
 		.def("AddEffect", &ISoundManager::AddEffect)
 		.def("RemoveAllEffects", &ISoundManager::RemoveAllEffects)
 		.def("Kill", &ISoundManager::KillChannel)

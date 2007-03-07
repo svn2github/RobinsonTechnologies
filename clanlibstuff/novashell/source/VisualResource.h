@@ -122,6 +122,19 @@ Parameters:
 soundID - A valid sound handle.
 pan - A range between -1 and 1.  (0 would be normal stereo with neither speaker getting favored)
 
+func: IsPlaying
+(code)
+boolean IsPlaying(number soundID)
+(end)
+
+Parameters:
+
+soundID - A valid sound handle.
+
+Returns:
+
+True if the specified sound is currently playing.
+
 func: Kill
 (code)
 nil Kill(number soundID)

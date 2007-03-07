@@ -296,30 +296,6 @@
 				Name="Misc"
 				>
 				<File
-					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\SharedLib\misc\CL_VirtualFileManager.cpp"
 					>
 					<FileConfiguration
@@ -338,30 +314,6 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\SharedLib\misc\FMSoundManager.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\SharedLib\misc\ISoundManager.h"
-					>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\misc\MiscUtils.cpp"
@@ -2218,6 +2170,58 @@
 						</FileConfiguration>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="Sound"
+				>
+				<File
+					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\SharedLib\misc\FMSoundManager.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\SharedLib\misc\ISoundManager.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
