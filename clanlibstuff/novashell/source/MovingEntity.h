@@ -455,6 +455,7 @@ protected:
 	int m_blendMode;
 	bool m_bIsCreature;
 	float m_accel; //how fast we can acellerate
+	bool m_bUsingTilePicCollision;
 };
 
 MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName);

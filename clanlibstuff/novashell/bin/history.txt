@@ -13,7 +13,13 @@ Changelog
 	scripts directory, right?
 * Added SoundManager:IsPlaying() (ZombieJesus)
 * removed "Needs parallax" debug message that shouldn't have been in there..
-
+* Entities with shared tilepic now have their collision automatically scaled with them, was sort of weird that they
+	didn't before
+* Entities will now not display tilepic data if its overriden with a visual profile, it could be confusing before because
+	you'd see the tilepic until you unpaused the game
+* BUGFIX: Issue with adding new collision to a scaled tilepic fixed
+* You can now delete tilepic collision data through Image Import's image properties screen
+* Made the beer invaders title screen slightly less repulsive
 
 3-6 2007
 

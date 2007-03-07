@@ -18,6 +18,7 @@
 class EntCollisionEditor;
 class DataObject;
 class DataManager;
+class HashedResource;
 
 class EntEditMode: public BaseGameEntity
 {
@@ -138,6 +139,7 @@ protected:
 	void FloodFill(CL_Rect r);
 	void RefreshActiveBrush(CL_Point mousePos);
 	void DrawDragRect(CL_GraphicContext *pGC);
+	void onButtonDownTilePicInfo(const CL_InputEvent &key);
 
 
 	enum
@@ -161,6 +163,8 @@ protected:
 	CL_Vector2 m_lastContextWorldPos;
 	CL_Menu *m_pContextMenu;
 	bool m_bHideSelection;
+	CL_ListBox * m_pTilePicColList;
+	HashedResource * m_pResInfo; 
 };
 
 

@@ -307,6 +307,7 @@ void CollisionData::Clear()
 {
 	m_lineList.clear();
 	SetRequestRectRecalculation();
+	SetDataChanged(true);
 }
 
 

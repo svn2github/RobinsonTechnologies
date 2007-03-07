@@ -430,6 +430,20 @@ void TilePic::SetScale(const CL_Vector2 &v)
 	m_vecScale = v;
 }
 
+void TilePic::ForceUsingCustomCollisionData()
+{
+	if (!m_bUsingCustomCollision)	
+	{
+		m_pCollisionData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(m_resourceID, m_rectSrc);
+
+		//well, this has real data most likely, so let's create our own copy and apply scale to it
+		CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
+		m_pCollisionData = pNewCol;
+		m_bUsingCustomCollision = true;
+		m_pCollisionData->SetScale(m_vecScale);
+	}
+
+}
 
 void TilePic::SaveToMasterCollision()
 {
@@ -458,7 +472,7 @@ CollisionData * TilePic::GetCollisionData()
 	if (m_pCollisionData) return m_pCollisionData;
 
 	m_pCollisionData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(m_resourceID, m_rectSrc);
-
+	
 	if (m_vecScale.x != 1 || m_vecScale.y != 1)
 	{
 		//we may have to do something custom here

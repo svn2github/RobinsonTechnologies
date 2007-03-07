@@ -928,6 +928,9 @@ If you enable this, your script must include a function with the following name 
 (code)
 function OnCollision(normal, depth, materialID, ent) //return true/false to allow/disallow the collision
 
+	//normal is a Vector2 object showing the direction of the impact in a unit vector.
+	//depth is how much penetration there is, how much the two entities overlap
+
 	LogMsg("Touched Entity # " .. ent:GetID() .. " Depth: " .. tostring(depth) .. " normal: " .. tostring(normal));
 
 	if (normal.y < -0.1 and depth > 0) then
@@ -979,6 +982,9 @@ If you enable this, your script must include a function with the following name 
 (code)
 function OnCollisionStatic(normal, depth, materialID)
 
+	//normal is a Vector2 object showing the direction of the impact in a unit vector.
+	//depth is how much penetration there is, how much overlap there is
+
 	LogMsg("Hit Static: Depth: " .. tostring(depth) .. " normal: " .. tostring(normal));
 
 	if (materialID == C_MATERIAL_VERTICAL_LADDER) then
@@ -1008,8 +1014,6 @@ Returns:
 
 One of the <C_LISTEN_COLLISION_STATIC_CONSTANTS> to indicate the current static (meaning tiles that aren't entities) collision listen mode.
 */
-
-
 
 .def("SetDensity", &MovingEntity::SetDensity)
 

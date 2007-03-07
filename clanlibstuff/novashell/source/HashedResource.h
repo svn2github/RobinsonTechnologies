@@ -32,6 +32,7 @@ public:
 	void SetHasColorKey(bool bActive, CL_Color col);
 	CL_Color GetColorKey() {assert(sizeof(CL_Color) == 4); return *(CL_Color*)&m_colorKey;}
 	void PopulateListBoxWithCollisionData(CL_ListBox *pList);
+	void DeleteCollisionDataByRect(CL_Rect r);
 
 	string m_strFilename; //good to remember the original filename
 

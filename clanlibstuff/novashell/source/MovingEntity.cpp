@@ -209,8 +209,22 @@ void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
 		return;
 	}
 
+	if (m_bUsingTilePicCollision && vScale != CL_Vector2(1,1))
+	{
+		if (!m_bUsingCustomCollisionData)
+		{
+			//switch to custom collision from a copy of the shared tilepic stuff
+			CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
+			m_pCollisionData = pNewCol;
+			m_bUsingCustomCollisionData = true;
+			m_pCollisionData->SetDataChanged(false);
+		}
+	}
+
 	if (m_bUsingCustomCollisionData)
-	m_pCollisionData->SetScale(vScale);
+	{
+		m_pCollisionData->SetScale(vScale);
+	}
 }
 
 void MovingEntity::SetListenCollision(int eListen)
@@ -304,8 +318,31 @@ void MovingEntity::Kill()
 	
 	if (m_bUsingCustomCollisionData)
 	{
+		//there is a special case we need to check, if we're using a shared tilepic yet scaled it our own way..
+		if (m_bUsingTilePicCollision)
+		{
+			if (m_pCollisionData && m_pCollisionData->GetDataChanged())
+			{
+				m_pCollisionData->SetDataChanged(false);
+				//yes, we need to copy this to the real tilepics stuff..
+				CollisionData *pColData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(GetImageID(), GetImageClipRect());
+				if (pColData)
+				{
+					*pColData = *m_pCollisionData; //copy it over
+					pColData->SetScale(CL_Vector2(1,1));
+					pColData->SetDataChanged(true);
+					
+					} else
+				{
+					assert(!"that was weird");
+				}
+			}
+		}
+
+		
 		SAFE_DELETE(m_pCollisionData);
 		m_bUsingCustomCollisionData = false;
+		m_bUsingTilePicCollision = false;
 	}
 	
 	SAFE_DELETE(m_pSprite);
@@ -341,6 +378,7 @@ void MovingEntity::SetDefaults()
 {
 	m_bRunUpdateEveryFrame = false;
 	m_accel = C_DEFAULT_ENTITY_ACCELERATION;
+	m_bUsingTilePicCollision = false;
 	m_bLockedScale = false;
 	m_attachEntID = C_ENTITY_NONE;
 	m_text.clear();
@@ -1004,7 +1042,6 @@ tile_list & MovingEntity::GetNearbyTileList()
 CL_Rect MovingEntity::GetImageClipRect()
 {
 	return StringToRect(m_dataManager.Get(C_ENT_TILE_RECT_KEY));
-
 }
 
 unsigned int MovingEntity::GetImageID()
@@ -1095,7 +1132,7 @@ bool MovingEntity::Init()
 		LoadScript(C_DEFAULT_SCRIPT);
 	}
 
-	if (m_pSprite->is_null())
+	if (m_pSprite->is_null() || m_pVisualProfile)
 	{
 		//avoid a crash
 		if (!m_pVisualProfile)
@@ -1702,6 +1739,9 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 	{
   		SAFE_DELETE(m_pCollisionData);
 	}
+	
+	m_bUsingTilePicCollision = false;
+
 	if (fileName == "")	
 	{
 		//guess they really don't want collision
@@ -1751,10 +1791,27 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 		SAFE_DELETE(m_pCollisionData);
 	}
 
+	m_bUsingTilePicCollision = true;
 	m_bUsingCustomCollisionData = false;
 	
 	//copy it
 	m_pCollisionData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(picID, recPic);
+	
+	if (m_pTile->GetScale().x != 1 || m_pTile->GetScale().y != 1)
+	{
+		//we need to keep our own transformed version
+
+		if (m_pCollisionData->GetLineList()->size() > 0)
+		{
+			//well, this has real data most likely, so let's create our own copy and apply scale to it
+			CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
+			m_pCollisionData = pNewCol;
+			m_pCollisionData->SetDataChanged(false);
+			m_bUsingCustomCollisionData = true;
+			m_pCollisionData->SetScale(GetScale());
+		}
+	}
+
 
 	PointList pl;
 	PointList *pActiveLine = NULL;

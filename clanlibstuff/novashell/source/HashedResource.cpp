@@ -304,6 +304,16 @@ bool HashedResource::Init()
 	return true;
 }
 
+void HashedResource::DeleteCollisionDataByRect(CL_Rect r)
+{
+	CollisionData *pData = GetCollisionDataByRect(r);
+	if (pData)
+	{
+		pData->Clear();
+		m_bSaveRequested = true;
+	}
+}
+
 void HashedResource::PopulateListBoxWithCollisionData(CL_ListBox *pList)
 {
 	CollisionDataMap::iterator ent;
@@ -319,10 +329,10 @@ void HashedResource::PopulateListBoxWithCollisionData(CL_ListBox *pList)
 				if (pColVec->at(i)->HasData() )
 				{
 					//add data from here
-					int index = pList->insert_item("ImageRect: " + RectToString(pColVec->at(i)->GetRect())
+					int index = pList->insert_item(RectToString(pColVec->at(i)->GetRect())
 						+ " has " + CL_String::from_int(pColVec->at(i)->GetLineList()->size())+ " shape(s), (" +
-						CL_String::from_int(pColVec->at(i)->GetVertCount())+" verts");
-					//pList->get_item(index)->user_data = 
+						CL_String::from_int(pColVec->at(i)->GetVertCount())+" verts)");
+					pList->get_item(index)->user_data = i;
 				}
 			}
 

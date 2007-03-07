@@ -122,11 +122,12 @@ public:
 	
 	virtual Tile * CreateClone();
 	virtual void Serialize(CL_FileHelper &helper);
-	//TODO optimize these to be precached
 	void SaveToMasterCollision(); 
+	void ForceUsingCustomCollisionData();
 
 	void ReinitCollision();
 	virtual const CL_Rect & GetBoundsRect();
+	//TODO optimize these to be precached?
 
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);}
 	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, 

@@ -42,6 +42,7 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_pCheckBoxSnap = NULL;
 	m_pInputBoxSnapSizeX = NULL;
 	m_pInputBoxSnapSizeY = NULL;
+	m_pTilePicColList = NULL;
 	
 	m_pWindowBaseTile = NULL;
 	m_pListBaseTile = NULL;
@@ -620,10 +621,36 @@ void EntEditMode::Kill()
 	SAFE_DELETE(m_pWindow);
 }
 
+void EntEditMode::onButtonDownTilePicInfo(const CL_InputEvent &key)
+{
+	switch (key.id)
+	{
+		case CL_KEY_DELETE:
+			
+			int item = m_pTilePicColList->get_current_item();
+
+			if (item == -1)
+			{
+				LogMsg("Select a collision data piece first.");
+			} else
+			{
+				CL_ListItem *pItem = m_pTilePicColList->get_item(item);
+				CL_Rect r = StringToRect(pItem->str);
+				
+				m_pResInfo->DeleteCollisionDataByRect(r);
+				m_pTilePicColList->remove_item(item);
+			}
+			
+			break;
+	}
+}
+
+
 void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned int resourceID)
 {
-	HashedResource*pRes = GetHashedResourceManager->GetResourceClassByHashedID(resourceID);
+	HashedResource *pRes = GetHashedResourceManager->GetResourceClassByHashedID(resourceID);
 	CL_Color col = pRes->GetColorKey();
+	m_pResInfo = pRes;
 	m_bDialogIsOpen = true;
 	// Creating InputDialog
 	string stTitle(CL_String::format("%1 (hashID: " + CL_String::from_int(resourceID) +") Properties", fileName));
@@ -659,7 +686,7 @@ void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned in
 	
 	CL_Rect r(5, pos.y, dialogRect.right-10, pos.y+listHeight);
 
-	CL_ListBox *pList = new CL_ListBox (r, pWindow->get_client_area());
+	m_pTilePicColList = new CL_ListBox (r, pWindow->get_client_area());
 
 	pos.y += listHeight+10; //spacer too
 
@@ -668,10 +695,12 @@ void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned in
 
 	slots.connect(pButtonOk->sig_clicked(), (CL_Component*)pWindow, &CL_Component::quit);
 
+	slots.connect (CL_Keyboard::sig_key_down(), this, &EntEditMode::onButtonDownTilePicInfo);
+
 	// Connecting signals, to allow only numbers
 	//slots.connect(pScrollX->sig_validate_character(), this, &EntEditor::validator_numbers);
 	
-	pRes->PopulateListBoxWithCollisionData(pList);
+	pRes->PopulateListBoxWithCollisionData(m_pTilePicColList);
 
 	// Run dialog
 	pWindow->run();
@@ -680,7 +709,7 @@ void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned in
 
 	delete pButtonOk;
 	delete pColorInput;
-	delete pList;
+	SAFE_DELETE(m_pTilePicColList);
 	delete pWindow;
 
 }
@@ -1977,6 +2006,10 @@ void EntEditMode::OnDefaultTileHardness()
 	} else
 	{
 
+		//if it's a tile and scaled, let's make sure it's using custom collision data
+		assert(pTile->GetType() == C_TILE_TYPE_PIC);
+
+		((TilePic*)pTile)->ForceUsingCustomCollisionData();
 	}
 
 	rec.apply_alignment(origin_top_left, vEditPos.x, vEditPos.y);

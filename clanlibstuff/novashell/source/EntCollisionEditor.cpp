@@ -133,22 +133,13 @@ void EntCollisionEditor::AddCreateVert(CL_Vector2 vecPos)
 
 	if (m_pCheckBoxClipToImage->is_checked())
 	{
-
 		localPos.x = max(localPos.x, m_rectArea.left);
 		localPos.x = min(localPos.x, m_rectArea.right);
 
 		localPos.y = max(localPos.y, m_rectArea.top);
 		localPos.y = min(localPos.y, m_rectArea.bottom);
 
-		
 	}
-
-	/*
-	if (!m_rectArea.is_inside(CL_Pointf(localPos.x, localPos.y)))
-	{
-
-	}
-	*/
 
 	//it's a click in a valid position
 	if (m_pActiveLine)
@@ -156,7 +147,6 @@ void EntCollisionEditor::AddCreateVert(CL_Vector2 vecPos)
 		//line is available to add this plot point to
 		m_pActiveLine->GetPointList()->push_back(localPos);
 	}
-
 }
 
 void EntCollisionEditor::ClearSelection()
@@ -187,14 +177,12 @@ void EntCollisionEditor::DeleteVert(CL_Vector2 vecPos)
 
 bool EntCollisionEditor::GetIndexOfVertAtThisPos(point_list &pList, CL_Vector2 &vLocalPos, CL_Vector2 ** ppVertOut, unsigned int &vertIDOut, float fPadding)
 {
-
 	CL_Rectf r(vLocalPos.x-fPadding, vLocalPos.y-fPadding, vLocalPos.x+fPadding, vLocalPos.y+fPadding );
 
 	vertIDOut = C_INVALID_VERT;
 	*ppVertOut = NULL;
 	for (unsigned int i=0; i < pList.size(); i++)
 	{
-
 		if (r.is_inside(*(CL_Pointf*)&pList[i]))
 		{
 			//found it
@@ -553,7 +541,6 @@ void EntCollisionEditor::Render(void *pTarget)
 void EntCollisionEditor::Update(float step)
 {
 }
-
 
 
 void EntCollisionEditor::OnPrevLine()
