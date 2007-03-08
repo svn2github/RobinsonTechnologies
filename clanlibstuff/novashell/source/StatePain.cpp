@@ -2,7 +2,7 @@
 #include "StatePain.h"
 #include "MovingEntity.h"
 
-StatePain registryInstanceStatePain(NULL); //self register ourselves i nthe brain registry
+StatePain registryInstanceStatePain(NULL); //self register ourselves in the brain registry
 
 StatePain::StatePain(MovingEntity * pParent):State(pParent)
 {
@@ -38,3 +38,15 @@ void StatePain::PostUpdate(float step)
 {
 
 }
+
+/*
+Object: Pain
+A state that causes an entity to stop moving and play his attack animation.
+
+
+An attack animation is detected from the visual profile .xml when anim states named <pain_left>, <pain_down_left>, and so on are found.  The best match for the <Entity>'s current direction is used.
+
+If you want only one animation for all directions, only set an animation for <pain_left>.
+
+*/
+

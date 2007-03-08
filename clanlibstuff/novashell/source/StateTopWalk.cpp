@@ -60,9 +60,9 @@ void StateTopWalk::PostUpdate(float step)
 Object: Walk
 A state that causes an entity to play his walk animation and move in the direction he's current facing at the speed set in <Entity::SetDesiredSpeed>.
 
-An Walk animation is detected from the visual profile .xml when anim states named *walk_left*, *walk_down_left*, and so on are found.  The best match for the <Entity>'s current direction is used.
+An Walk animation is detected from the visual profile .xml when anim states named <walk_left>, <walk_down_left>, and so on are found.  The best match for the <Entity>'s current direction is used.
 
-If you want only one animation for all directions, only set an animation for *walk_left*.
+If you want only one animation for all directions, only set an animation for <walk_left>.
 
 Script functions it calls:
 

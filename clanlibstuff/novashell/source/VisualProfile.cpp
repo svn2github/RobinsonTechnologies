@@ -651,3 +651,188 @@ bool VisualProfile::Init(VisualResource *pVisualResource, const string &profileN
 	}
 	return true; //success
 }
+
+//stuff for the lua docs
+
+/*
+Section: About Visual Profiles
+
+About Visual Profiles:
+
+A visual profile is an .xml text file that contains data explaining what an <Entity> should look like.
+
+In general, it does not affect the actual game logic at all, you can switch out visual profiles later after prototyping your game with simple tilepic style images or other visual profiles.
+
+(the only exception to the above is when *OnIdleLoop()* or *OnWalkLoop()* script functions are used to detect when an animation is looping and base game logic on that.)
+
+Here is a very small but valid .xml visual profile called car.xml::
+
+(code)
+<resources>
+	
+	//first define the visual profile
+	<profile name="car">
+		<anim state="idle_left" spritename="red_car" mirrorx="no"/>
+	</profile>
+
+	//now define any animations the visual profile uses, in this case, red_car
+
+	<sprite name="red_car">
+		<image fileseq="myRedCar_.png" leading_zeroes="3"/>
+		<translation origin="center"/>
+		<animation pingpong="no" loop="yes" speed="150"/>
+	</sprite>
+</resources>
+(end)
+
+Now, in an <Entity>'s script, you would add this to its OnInit()::
+
+(code)
+function OnInit() //run upon initialization
+	this:SetVisualProfile("car.xml", "red_car");
+end
+(end)
+
+Easy, huh?  This would play a single animation of the 'car' for the <Entity>'s visual at all times.
+
+The file it would try to load is *myRedCar_0000.png*,  *myRedCar_0001.png* and so on until it fails to find the next file in the sequence.
+
+Note about loading a file sequence::
+
+If myRedCar_0000.png isn' found, it will also try to start at myRedCar_0001.png.
+
+Instead of loading a file sequence, you can also individually specify each frame you want like this::
+
+(code)
+<sprite name="red_car">
+	<image file="carCrap.png"/>
+	<image file="carCrapPart2.tga"/>
+	<image file="AnotherFrame.jpg"/>
+	<image file="TheLastFrame.bmp"/>
+
+	<translation origin="center"/>
+	<animation pingpong="no" loop="yes" speed="150"/>
+</sprite>
+(end)
+
+Note about colorkey::
+
+If we want an image or file sequence to automatically treat a specific color as transparent, you can add the "transparent_color" parameter.
+(code)
+//make white transparent
+<image fileseq="myRedCar_.bmp" leading_zeroes="3" transparent_color="255,255,255" />
+(end)
+
+Alternatively, you may just use images that already have alpha information in them.
+
+Visual State Hinting:
+
+In the above example, *idle_left* is not a random animation name chosen, it is one of many pre-defined names that the engine will utilitize when deciding what image to display in the proper context.
+
+So if your player is dying while facing right, the engine will check for *die_right*.  If that isn't found, it will check for *die_left*, if that fails, it will probably choose to use *idle_right*, and so on.
+
+You can override and use additional custom named animations as well, for instance, the crayon.xml in the TreeWorld example uses a custom animation called *climb*.
+
+A myriad of options for loading your sprite:
+
+You can get info on most of the other settings as well as a lot of optional settings we haven't covered yet such as loading from a grid, setting animation timing of a specific frame, initial scale and alpha, rotational orientation and offset and more by checking out <http://www.clanlib.org/docs/clanlib-0.8.0/Overview/sprites_resources.html>.
+
+Section: Related Constants
+
+Group: Idle State Anims
+Anim's with these names are preferred by the engine when in the <Idle> state.
+
+constant: idle_left
+If you want a single frame only for your entity, use only this state.  It's the final fallback if everything else fails.
+
+constant: idle_right
+
+constant: idle_up
+
+constant: idle_down
+
+constant: idle_up_left
+
+constant: idle_down_left
+
+constant: idle_up_right
+
+constant: idle_down_right
+
+Group: Walk State Anims
+Anim's with these names are preferred by the engine when in the <Walk> state.
+
+constant: walk_left
+
+constant: walk_right
+
+constant: walk_up
+
+constant: walk_down
+
+constant: walk_up_left
+
+constant: walk_down_left
+
+constant: walk_up_right
+
+constant: walk_down_right
+
+Group: Pain State Anims
+Anim's with these names are preferred by the engine when in the <Pain> state.
+
+constant: pain_left
+
+constant: pain_right
+
+constant: pain_up
+
+constant: pain_down
+
+constant: pain_up_left
+
+constant: pain_down_left
+
+constant: pain_up_right
+
+constant: pain_down_right
+
+Group: Attack State Anims
+Anim's with these names are preferred by the engine when in the <Attack> state.
+
+constant: attack_left
+
+constant: attack_right
+
+constant: attack_up
+
+constant: attack_down
+
+constant: attack_up_left
+
+constant: attack_down_left
+
+constant: attack_up_right
+
+constant: attack_down_right
+
+Group: Die State Anims
+Anim's with these names are preferred by the engine when in the <Die> state.
+
+constant: die_left
+
+constant: die_right
+
+constant: die_up
+
+constant: die_down
+
+constant: die_up_left
+
+constant: die_down_left
+
+constant: die_up_right
+
+constant: die_down_right
+*/
+

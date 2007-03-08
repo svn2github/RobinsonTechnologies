@@ -41,6 +41,7 @@ Timestamp: Last updated mon day
 
 
 File: Overview  (main.h)
+File: About Visual Profiles  (VisualProfile.cpp)
 
 Group: System Objects  {
 
@@ -102,10 +103,11 @@ Group: Brains  {
 Group: States  {
 
    File: Idle  (StateTopIdle.cpp)
-   File: Attack  (StateTopAttack.cpp)
-   File: Die  (StateDie.cpp)
-   File: Frozen  (StateFrozen.cpp)
    File: Walk  (StateTopWalk.cpp)
+   File: Attack  (StateTopAttack.cpp)
+   File: Pain  (StatePain.cpp)
+   File: Frozen  (StateFrozen.cpp)
+   File: Die  (StateDie.cpp)
    }  # Group: States
 
 File: Global Functions  (GlobalScriptFunctionBindings.cpp)

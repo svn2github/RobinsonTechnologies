@@ -43,9 +43,9 @@ Object: Die
 A state that causes an entity to stop moving and play his die animation.
 
 
-The die animation is detected from the visual profile .xml when anim states named *die_left*, *die_down_left*, and so on are found.  The best match for the <Entity>'s current direction is used.
+The die animation is detected from the visual profile .xml when anim states named <die_left>, <die_down_left>, and so on are found.  The best match for the <Entity>'s current direction is used.
 
-If you want only one animation for all directions, only set an animation for *die_left*.
+If you want only one animation for all directions, only set an animation for <die_left>.
 
 Note:
 

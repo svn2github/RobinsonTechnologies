@@ -1752,8 +1752,7 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 	m_pCollisionData = new CollisionData;
     m_bUsingCustomCollisionData = true;
 	
-	
-	m_pCollisionData->Load(ProcessPath(fileName)); //it will init a default if the file is not found, and automatically handle
+	m_pCollisionData->Load(C_DEFAULT_SCRIPT_PATH + ProcessPathNoScript(fileName)); //it will init a default if the file is not found, and automatically handle
 
 	PointList pl;
 	PointList *pActiveLine;

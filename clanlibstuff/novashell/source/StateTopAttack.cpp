@@ -46,9 +46,9 @@ Object: Attack
 A state that causes an entity to stop moving and play his attack animation.
 
 
-An attack animation is detected from the visual profile .xml when anim states named *attack_left*, *attack_down_left*, and so on are found.  The best match for the <Entity>'s current direction is used.
+An attack animation is detected from the visual profile .xml when anim states named <attack1_left>, <attack1_down_left>, and so on are found.  The best match for the <Entity>'s current direction is used.
 
-If you want only one animation for all directions, only set an animation for *attack_left*.
+If you want only one animation for all directions, only set an animation for <attack1_left>.
 
 Script functions it calls:
 

@@ -48,10 +48,9 @@ void StateTopIdle::PostUpdate(float step)
 Object: Idle
 A state that causes an entity to stop and play his idle animation.
 
+An idle animation is detected from the visual profile .xml when anim states named <idle_left>, <idle_down_left>, and so on are found.  The best match for the <Entity>'s current direction is used.
 
-An idle animation is detected from the visual profile .xml when anim states named *idle_left*, *idle_down_left*, and so on are found.  The best match for the <Entity>'s current direction is used.
-
-If you want only one animation for all directions, only set an animation for *idle_left*.
+If you want only one animation for all directions, only set an animation for <idle_left>.
 
 Script functions it calls:
 

@@ -1,5 +1,13 @@
 Changelog
 
+3-8 2007
+
+* Added "About visual profiles" section to the scripting docs
+* LoadCollisionInfo() now pre-appends "script/" internally for consistancy.  Didn't 
+	affect any of my scripts, because they use ~/ for "same directory as this script" anyway
+* Editor drag rectangle is now easier to see (Uhfgood)
+* Finished tutorial 7 (visual profiles)
+
 3-7 2007
 
 * Slightly more multi-mon friendly on windows

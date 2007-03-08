@@ -1275,10 +1275,8 @@ void EntEditMode::OnMouseDoubleClick(const CL_InputEvent &key)
 			{
 				if (!m_selectedTileList.IsEmpty())
 				{
-
 					if (MouseIsOverSelection(key.mouse_pos))
 					{
-						
 						if (m_pEntCollisionEditor)
 						{
 							//now is a bad time..
@@ -1288,26 +1286,18 @@ void EntEditMode::OnMouseDoubleClick(const CL_InputEvent &key)
 						BuildTilePropertiesMenu(&m_selectedTileList);
 						return;
 					}
-
 				}
-
-				
 			}
 			break;
-			
-
 	}
-
 }
 
 void EntEditMode::OnPasteContext()
 {
-
 	CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(m_vecScreenDragStop);
 	OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 	PushUndosIntoUndoOperation();
 	KillContextMenu();
-
 }
 
 void EntEditMode::KillContextMenu()
@@ -1318,21 +1308,15 @@ void EntEditMode::KillContextMenu()
 
 void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 {
-	
 	CL_Size rsize = CL_Size(50,20);
 	CL_Rect r = CL_Rect(clickPos.x, clickPos.y, clickPos.x + rsize.width, clickPos.y + rsize.height);
-	
 
 	//we might need to adjust this so it's actually on the screen
 
 	CL_Rect screenRect = CL_Rect(0,0,GetScreenX, GetScreenY);
 
-
-
 	SAFE_DELETE(m_pContextMenu);
-
 	m_lastContextWorldPos = g_pMapManager->GetActiveMapCache()->ScreenToWorld(clickPos);
-
 
 	//check to see if we can "grab" the current selection and move it
 	if (m_selectedTileList.IsEmpty())
@@ -1362,14 +1346,9 @@ void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 	pItem->set_close_on_click(true);
 
 	pItem->enable(!g_EntEditModeCopyBuffer.IsEmpty());
-
 	pItem = m_pContextMenu->create_item("Properties (Ctrl-E)");
-	
 	pItem->enable(!m_selectedTileList.IsEmpty());
-	
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnProperties);
-
-
 	
 	m_pContextMenu->set_click_to_open(false);
 	//m_pContextMenu->set_root_collapsing(true);
@@ -1387,26 +1366,18 @@ void EntEditMode::OpenContextMenu(CL_Vector2 clickPos)
 
 		int offsetx = r.get_width() - rectUnion.get_width();
 		int offsety = r.get_height() - rectUnion.get_height();
-
-		
-		
 		r.apply_alignment(origin_top_left, offsetx, 0);
-
 
 		if (offsety != 0)
 		{
 			//we're low on the screen, let's move the whole menu above us
 			r.top = clickPos.y - (r.get_height() + 2);
-
 		}
 
 		m_pContextMenu->set_position(r.left, r.top);
-
-	
 	}
-
-	
 }
+
 void EntEditMode::OnDeselect()
 {
 	m_selectedTileList.ClearSelection();
@@ -1414,7 +1385,6 @@ void EntEditMode::OnDeselect()
 
 void EntEditMode::OnHideSelection()
 {
-	
 	m_bHideSelection = !m_bHideSelection;
 
 	if (m_bHideSelection)
@@ -1444,14 +1414,12 @@ void EntEditMode::FloodFill(CL_Rect r)
 	{
 		//use the whole size..
 		vOffset = g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits();
-	
 	}
 
 	if (vOffset.x == 0 || vOffset.y == 0)
 	{
 		CL_MessageBox::info("Can't flood fill - invalid spacing.  If grid snap is on, make sure one isn't set to 0.", GetApp()->GetGUI());
 		return;
-
 	}
 
 	if (g_EntEditModeCopyBuffer.m_selectedTileList.size() > 10)
@@ -1460,7 +1428,6 @@ void EntEditMode::FloodFill(CL_Rect r)
 	}
 
 	LogMsg("Flood filling %s using spacing of %s.",PrintRectInt(r).c_str(), PrintVector(vOffset).c_str());
-
 
 	CL_Vector2 vPos = CL_Vector2(r.left, r.top);
 
@@ -1476,7 +1443,6 @@ void EntEditMode::FloodFill(CL_Rect r)
 
 		vPos.x = r.left;
 		vPos.y += vOffset.y;
-
 	}
 
 	PushUndosIntoUndoOperation();
@@ -1492,12 +1458,10 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		return;
 	}
 	
-
 	switch(key.id)
 	{
 
 	case CL_MOUSE_LEFT:
-
 
 		if (!g_pMapManager->GetActiveMap()) 
 		{
@@ -1546,7 +1510,6 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 				}
 			}
 
-
 			m_dragInProgress = true;
 		}
 		break;
@@ -1566,14 +1529,10 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 			OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 			PushUndosIntoUndoOperation();
 			*/
-
 		}
 
 		break;
 	}
-
-
-
 
 if (g_Console.IsActive()) return;
 
@@ -1598,14 +1557,12 @@ if (g_Console.IsActive()) return;
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 		{
 			OnHideSelection();
-
 		}
 		break;
 
 	case CL_KEY_F:
 		if (m_dragInProgress)
 		{
-				
 			CL_Vector2 dragStart = m_vecDragStart; //remember this so we can put it back after doing weird snaps on it
 			CL_Vector2 worldVecDragStop = g_pMapManager->GetActiveMap()->SnapWorldCoords(g_pMapManager->GetActiveMapCache()->ScreenToWorld(m_vecScreenDragStop), m_vecDragSnap);
 			
@@ -1627,12 +1584,10 @@ if (g_Console.IsActive()) return;
 			m_vecDragStart = dragStart;
 		}
 
-
 		break;
 
 	//nudging
 	case CL_KEY_RIGHT:
-		
 		
 		ScheduleSystem(1, ID(), ("offset_selected|1|0|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
@@ -1648,7 +1603,6 @@ if (g_Console.IsActive()) return;
 	case CL_KEY_DOWN:
 		ScheduleSystem(1, ID(), ("offset_selected|0|1|" + CL_String::from_int(CL_Keyboard::get_keycode(CL_KEY_SHIFT))).c_str());
 		break;
-	
 	
 	case CL_KEY_R:
 
@@ -1742,19 +1696,11 @@ if (g_Console.IsActive()) return;
 		OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 		PushUndosIntoUndoOperation();
 		SAFE_DELETE(m_pContextMenu);
-
 	}
 
 	break;
-	
-	
-
 	default: ;
 	}
-
-
-//mouse stuff
-
 }
 
 void EntEditMode::Update(float step)
@@ -1799,14 +1745,12 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 
 void EntEditMode::DrawActiveBrush(CL_GraphicContext *pGC)
 {
-  if (g_EntEditModeCopyBuffer.IsEmpty()) return;
-  CL_Vector2 vecMouse = ConvertMouseToCenteredSelectionUpLeft(m_vecScreenDragStop);
-  CL_Vector2 vecBottomRight = (vecMouse + (g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()));
+	if (g_EntEditModeCopyBuffer.IsEmpty()) return;
+	CL_Vector2 vecMouse = ConvertMouseToCenteredSelectionUpLeft(m_vecScreenDragStop);
+	CL_Vector2 vecBottomRight = (vecMouse + (g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()));
+	SelectedTile *pSelTile = (*g_EntEditModeCopyBuffer.m_selectedTileList.begin());
 
-  SelectedTile *pSelTile = (*g_EntEditModeCopyBuffer.m_selectedTileList.begin());
-  
-   DrawRectFromWorldCoordinates(vecMouse, vecBottomRight, CL_Color(255,0,0,150), pGC);
- 
+	DrawRectFromWorldCoordinates(vecMouse, vecBottomRight, CL_Color(255,0,0,150), pGC);
 }
 
 
@@ -1820,18 +1764,14 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 	
 	vecStart += m_selectedTileList.GetUpperLeftPos();
 	
-	
 	if (g_pMapManager->GetActiveMap()->GetSnapEnabled())
 	{
 		if (m_selectedTileList.m_selectedTileList.size() == 1)
 		vecStart = g_pMapManager->GetActiveMapCache()->ScreenToWorld(m_vecScreenDragStop);
-		
 		vecStart = g_pMapManager->GetActiveMap()->SnapWorldCoords(vecStart, m_vecSnapSize);
-
 	} else
 	{
 		vecStart = g_pMapManager->GetActiveMap()->SnapWorldCoords(vecStart, m_vecDragSnap);
-	
 	}
 	
 	CL_Vector2 vecStop(vecStart.x + m_selectedTileList.GetSelectionSizeInWorldUnits().x, vecStart.y + m_selectedTileList.GetSelectionSizeInWorldUnits().y);
@@ -1839,8 +1779,7 @@ void EntEditMode::DrawSelection(CL_GraphicContext *pGC)
 	vecStart = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStart);
 	vecStop = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStop);
 
-		pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(50,255,50,180));
-	
+	pGC->draw_rect(CL_Rectf(vecStart.x, vecStart.y, vecStop.x, vecStop.y), CL_Color(50,255,50,180));
 }
 
 void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
@@ -1864,11 +1803,14 @@ void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
 		worldStop = g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStop, m_vecSnapSize);
 	}
 
-
 	m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStop, m_vecDragSnap).x - g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStart, m_vecDragSnap).x),
 		int(g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStop, m_vecDragSnap).y - g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStart, m_vecDragSnap).y)));
 	//draw a rect on the screen
 	DrawRectFromWorldCoordinates(worldStart, worldStop, CL_Color(255,255,0,200), pGC);
+
+	worldStart -= CL_Vector2(1,1);
+	worldStop -= CL_Vector2(1,1);
+	DrawRectFromWorldCoordinates(worldStart, worldStop, CL_Color(140,140,0,200), pGC);
 
 	//draw a little help bar text thing
 	CL_Rect r(0,GetScreenY-15,GetScreenX, GetScreenY);
@@ -1878,7 +1820,6 @@ void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
 	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
 	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
 	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,GetScreenY-7,"Selection Drag - Press F to flood fill with current tile, Ctrl-C to cut tile from a tile");
-
 }
 
 void EntEditMode::OnProperties()
@@ -1915,7 +1856,6 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 
 	if (bDataChanged)
 	{
-
 		if (m_pTileWeAreEdittingCollisionOn->GetType() == C_TILE_TYPE_ENTITY)
 		{
 			TileEntity *pEnt = (TileEntity*)m_pTileWeAreEdittingCollisionOn;
@@ -1937,8 +1877,6 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 
 			pTilePic->SaveToMasterCollision();
 			g_pMapManager->GetActiveMap()->ReInitCollisionOnTilePics();
-
-
 		}
 	}
 }
@@ -2108,7 +2046,6 @@ void EntEditMode::Render(void *pTarget)
 			
 		}
 		m_pLabelSelection->set_text(s);
-
 	}
 	
 	if (!m_bHideSelection)
@@ -2131,8 +2068,6 @@ void EntEditMode::Render(void *pTarget)
 	if (m_dragInProgress && m_vecDragStart != g_pMapManager->GetActiveMapCache()->ScreenToWorld(m_vecScreenDragStop))
 	{
 		DrawDragRect(pGC);
-	
-
 	} else
 	{
 		//draw the brush, if available
@@ -2179,9 +2114,7 @@ void EntEditMode::OnPropertiesEditScript()
 void EntEditMode::OnPropertiesOpenScript()
 {
 	//this is awfully messy, because I'm calculating paths in a strange way to get relative versions
-	
 	assert(m_pPropertiesInputScript);
-
 	
 	string fname = m_pPropertiesInputScript->get_text();
 	string original_dir = CL_Directory::get_current();
@@ -2224,7 +2157,6 @@ void EntEditMode::OnPropertiesOpenScript()
 		index += GetGameLogic->GetScriptRootDir().size();
 		fname = fname.substr(index, fname.size()-index);
 	}
-
 	
 	//remove slash at the front if applicable
 	if (fname[0] == '/')
@@ -2385,7 +2317,7 @@ if (m_bDialogIsOpen) return;
 		assert(pEnt);
 	}
 
-//make GUI here
+	//make GUI here
 	m_bDialogIsOpen = true; //don't let other operations happen until we're done with this
 	
 	CL_Point ptSize(370,450);
@@ -2508,21 +2440,18 @@ if (m_bDialogIsOpen) return;
 	 string originalScale =  CL_String::from_float(pTile->GetScale().x) + " " + CL_String::from_float(pTile->GetScale().y);
 	 CL_InputBox inputScale(rPos, originalScale, window.get_client_area());
 
+	if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
+	{
+		buttonConvert.enable(true);
+	} else
+	{
+		buttonConvert.enable(false);
+	}
 
-
-if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
-{
-	buttonConvert.enable(true);
-} else
-{
-	buttonConvert.enable(false);
-}
-
-const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
+	const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 
 	if (pEnt)
 	{
-	
 		if (tilesSelected > 1)
 		{
 			inputName.set_text(C_MULTIPLE_SELECT_TEXT);
@@ -2532,8 +2461,7 @@ const char C_MULTIPLE_SELECT_TEXT[] = "<multiple selected>";
 			listData.enable(false);
 			buttonAddData.enable(false);
 			buttonRemoveData.enable(false);
-
-		
+	
 		} else
 		{
 			inputEntity.set_text(pEnt->GetMainScriptFileName());

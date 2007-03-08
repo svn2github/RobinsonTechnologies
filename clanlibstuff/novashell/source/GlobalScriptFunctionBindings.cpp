@@ -833,6 +833,20 @@ void luabindGlobalFunctions(lua_State *pState)
 			constant: C_FACING_COUNT
 
 			How many directions we support, this will be 8.
+			
+			
+			group: C_ORIGIN_CONSTANTS
+
+			constant: C_ORIGIN_TOP_LEFT
+
+			constant: C_ORIGIN_CENTER_LEFT
+
+			constant: C_ORIGIN_CENTER
+
+			constant: C_ORIGIN_CENTER_RIGHT
+			
+			constant: C_ORIGIN_BOTTOM_CENTER
+			
 			*/
 	];
 }
