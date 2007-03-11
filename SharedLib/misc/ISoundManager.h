@@ -48,6 +48,8 @@ public:
 	virtual	void RemoveAllEffects(int soundID) { assert(!"Not implemented with this driver yet");};
 	virtual void SetPan(int soundID, float pan) { assert(!"Not implemented with this driver yet");};//-1 to 1
 	virtual bool IsSoundPlaying(int soundID) {assert(!"Not implemented with this driver yet"); return false;}
+	virtual void SetPaused(int soundID, bool bPaused) {assert(!"Not implemented with this driver yet"); return;}
+	virtual void SetPriority(int soundID, int priority){}; //between 0 and 255
 
 	enum
 	{

@@ -1,5 +1,19 @@
 Changelog
 
+3-11 2007
+
+* the LoopSound object now "continues" a sound when pausing instead of restarting it.  It also has much better performance under clansound then before.
+* GameManager:Data() is now saved after maps are shutdown, so if values are modified in an
+	entity's OnKill() as the game is shutton down, that data will be saved too
+* Warning now given if you try to switch profiles before restarting the engine
+* Added SoundManager:SetPaused and SoundManager:SetPriority script commands
+* LoopingSounds now automatically have higher priority then other sounds, needed for FMOD's 3.75's channel stealing problem
+* Fixed problem where sprites could glitch on the bottom edge
+
+3-9 2007
+
+* BrainManager::GetStateByName() renamed BrainManager::GetActiveStateName()
+
 3-8 2007
 
 * Added "About visual profiles" section to the scripting docs

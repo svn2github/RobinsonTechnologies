@@ -277,7 +277,6 @@ State * BrainManager::SetState(State *pState)
 		LogError("Must add a base brain before state %s can be set.", pState->GetName());
 		return NULL;
 	}
-	
 
 	if (!pState)
 	{
@@ -297,10 +296,15 @@ State * BrainManager::SetState(State *pState)
 
 State * BrainManager::SetStateByName(const string &stateName)
 {
-	
 	if (InState(stateName)) return m_pActiveState;
-
 	return SetState(StateRegistry::GetInstance()->CreateStateByName(stateName, m_pParent));
+}
+
+bool BrainManager::SetStateByNameNoReturn(const string &stateName)
+{
+	if (InState(stateName)) return false;
+	SetState(StateRegistry::GetInstance()->CreateStateByName(stateName, m_pParent));
+	return true; //state was changed
 }
 
 const char * BrainManager::GetStateByName()
@@ -466,13 +470,17 @@ Example of setting the state to <Idle> to stop an entity from moving, and to pla
 this:GetBrainManager():SetStateByName("Idle");
 (end)
 
+Note:
+
+If the <Entity> is already in the desired state, the command is ignored.
+
 Parameters:
 
 stateName - A string containing the name of a valid state that can be activated, for example, <Idle>.
 
-func: GetStateByName
+func: GetActiveStateName
 (code)
-string GetStateByName()
+string GetActiveStateName()
 (end)
 
 Returns:

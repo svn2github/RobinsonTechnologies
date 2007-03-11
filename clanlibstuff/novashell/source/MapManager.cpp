@@ -79,6 +79,7 @@ void MapManager::ScanMaps(const string &stPath)
 
 void MapManager::Kill()
 {
+
 	//clear each
 	map_info_list::iterator itor =m_mapInfoList.begin();
 	while (itor != m_mapInfoList.end())

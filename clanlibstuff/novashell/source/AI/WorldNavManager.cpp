@@ -582,7 +582,6 @@ void WorldNavManager::Serialize(CL_FileHelper &helper)
 
 void WorldNavManager::Save()
 {
-
 	CL_OutputSource *pFile =g_VFManager.PutFile(C_WORLD_NAV_FILENAME);
 	
 	if (pFile)

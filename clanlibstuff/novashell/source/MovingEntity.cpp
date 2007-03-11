@@ -2289,8 +2289,6 @@ void MovingEntity::Render(void *pTarget)
 		} else
 		{
 
-		
-
 		if (bUseParallax)
 		{
 			vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
@@ -2300,7 +2298,6 @@ void MovingEntity::Render(void *pTarget)
  			vecPos = pWorldCache->WorldToScreen(vVisualPos);
 		}
 		}
-
 
 		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
 		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
@@ -2326,13 +2323,13 @@ void MovingEntity::Render(void *pTarget)
 				LogError("Unknown blend mode: %d", m_blendMode);
 			}
 
-			m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
+			m_pSprite->draw_subpixel( int(vecPos.x), int(vecPos.y), pGC);
 
 			m_pSprite->set_blend_func(src, dest); //put it back how it was
 
 		} else
 		{
-			m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
+			m_pSprite->draw_subpixel( int(vecPos.x), int(vecPos.y), pGC);
 		}
 
 

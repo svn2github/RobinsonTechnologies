@@ -85,6 +85,8 @@ public:
 	bool InState(const string &stateName);
 	State * SetState(State *pState);
 	State * SetStateByName(const string &stateName);
+	bool SetStateByNameNoReturn(const string &stateName);
+
 	const char * GetStateByName();
 	Brain * GetBrainBase(){return m_pBrainBase;}
 	void SetBrainBase(Brain *pBrain);

@@ -122,7 +122,6 @@ void GameLogic::OneTimeModSetup()
 			m_strWorldsDirPath = CL_String::get_path(p1);
 			SetupModPathsFromWorldInfo(p1);
 		}
-
 	}
 
 }
@@ -316,6 +315,11 @@ void GameLogic::ResetUserProfile(string name)
 bool GameLogic::SetUserProfileName(const string &name)
 {
 
+	if (UserProfileActive())
+	{
+		LogError("Cannot change user profiles on the fly - you must use SetRestartEngineFlag() first and load it after the initialization.");
+		return false;
+	}
 	ClearAllMapsFromMemory();
 
 	//first check security stuff
@@ -687,7 +691,6 @@ void GameLogic::Kill()
 {
 	BlitMessage("Saving data...");
 
-	SaveGlobals();
 
 	if (g_pMapManager->GetActiveMap())
 	{
@@ -697,7 +700,7 @@ void GameLogic::Kill()
 	
 	if (EntityMgr->GetEntityByName("coleditor"))
 	{
-		//we were editting collision data, let's kill it without saving
+		//we were editing collision data, let's kill it without saving
 		EntityMgr->GetEntityByName("coleditor")->SetDeleteFlag(true);
 	}
 
@@ -705,8 +708,11 @@ void GameLogic::Kill()
 	
 	//save out warp cache
 	g_worldNavManager.Save();
-	m_worldManager.Kill();
+
 	
+	m_worldManager.Kill();
+	SaveGlobals();
+
 	m_myEntityManager.Kill();
 
 	SAFE_DELETE(m_pGUIStyle);
@@ -794,6 +800,11 @@ void GameLogic::DeleteAllCacheFiles()
 		ClearCacheDataFromWorldPath(g_VFManager.GetLastMountedDirectory());
 }
 
+bool GameLogic::IsShuttingDown()
+{
+	return m_bRestartEngineFlag;
+}
+
 void GameLogic::Update(float step)
 {
 
@@ -801,7 +812,6 @@ void GameLogic::Update(float step)
 
 	if (m_bRestartEngineFlag)
 	{
-		m_bRestartEngineFlag = false;
 		LogMsg("Restarting engine...");
 		g_Console.SetOnScreen(false);
 		Kill();
@@ -810,7 +820,8 @@ void GameLogic::Update(float step)
 		{
 			DeleteAllCacheFiles();
 		}
-		
+		m_bRestartEngineFlag = false;
+
 		Init();
 	}
 	
@@ -1119,6 +1130,20 @@ nil SetRestartEngineFlage(boolean bRestart)
 Parameters:
 
 bRestart - If true, the engine will save all modified data and restart as soon as cybernetic ally possible.
+*/
+
+
+/*
+func: IsShuttingDown
+(code)
+boolean IsShuttingDown()
+(end)
+
+When a game is closing or restarting all maps are 'shutdown'.  During this time, each entity has its OnKill() run, during times like this is may be useful to know if the engine is currently shutting down or not, to avoid trying to access things that might already be deleted.
+
+Returns:
+
+True if the engine is currently shutting down.  (Either to exit, or to restart, both have the same shutdown process)
 */
 
 /*

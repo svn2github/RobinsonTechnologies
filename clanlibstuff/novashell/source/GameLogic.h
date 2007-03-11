@@ -84,6 +84,7 @@ public:
 	  void ToggleShowFPS() {m_bShowFPS = !m_bShowFPS;}
 	  void SetRestartEngineFlag(bool bNew) { 			m_bRestartEngineFlag = bNew;}
 	  void Quit() {GetApp()->OnWindowClose();}
+	  bool IsShuttingDown();
 	  void OnPlayerDeleted(int id);
 	  bool GetShowPathfinding() {return m_bShowPathfinding;}
 	  void SetShowPathfinding(bool bNew) {m_bShowPathfinding = bNew;}

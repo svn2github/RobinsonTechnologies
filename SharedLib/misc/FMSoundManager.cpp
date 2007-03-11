@@ -10,7 +10,6 @@
 void SoundEffect::FadeToVolume(float targetVol, int durationMS)
 {
 	assert(m_eventType == ISoundManager::C_EFFECT_NONE && "You can't use more than one effect on the same class, make a new effect");
-
 	
 	m_target = targetVol;
 	m_durationMS = durationMS;
@@ -181,6 +180,7 @@ int CFMSoundManager::PlayMixed(const char *p_fname)
      
  int i_channel = FSOUND_PlaySound(FSOUND_FREE, p_sample);
  FSOUND_SetLoopMode(i_channel, FSOUND_LOOP_OFF);
+ FSOUND_SetPriority(i_channel, 0);
  return i_channel;
 }
 
@@ -190,12 +190,15 @@ int CFMSoundManager::PlayLooping(const char *p_fname)
  if (!IsInitted()) return -1;
  int i_channel = PlayMixed(p_fname);
  FSOUND_SetLoopMode(i_channel, FSOUND_LOOP_NORMAL);
+ FSOUND_SetPriority(i_channel, 100);
  return i_channel;
 }
 
 void CFMSoundManager::KillChannel(int i_channel)
 {
-   FSOUND_StopSound(i_channel);
+	FSOUND_SetReserved(i_channel, false); //just in case it was reserved
+
+	FSOUND_StopSound(i_channel);
 }
 
 void CFMSoundManager::SetSpeedFactor(int soundID, float mod)
@@ -210,6 +213,12 @@ void CFMSoundManager::SetPan(int soundID, float pan)
 	FSOUND_SetPan(soundID, int((pan+1)*128));
 }
 
+void CFMSoundManager::SetPriority(int soundID, int priority)
+{
+	if (!IsInitted()) return;
+    FSOUND_SetPriority(soundID, priority);
+}
+
 ChannelSession * CFMSoundManager::GetEffectsDataForChannel(int channelID)
 {
 	channelMap::iterator itor = m_channelMap.find(channelID);
@@ -222,8 +231,6 @@ ChannelSession * CFMSoundManager::GetEffectsDataForChannel(int channelID)
 
 void CFMSoundManager::AddEffect(int soundID, int effectID, float parmA, float parmB, float parmC)
 {
-//	LogMsg("FMod Sound System on Windows doesn't support AddEffect yet");
-
 	//get a handle to its effect stuff
 	if (!FSOUND_IsPlaying(soundID))
 	{
@@ -270,6 +277,17 @@ void CFMSoundManager::SetVolume(int soundID, float volume)
 	FSOUND_SetVolume(soundID, int(volume*255));
 }
 
+void CFMSoundManager::SetPaused(int soundID, bool bPause)
+{
+	if (!IsInitted()) return;
+
+	FSOUND_SetPaused(soundID, bPause);
+
+	if (bPause)
+	{
+		FSOUND_SetReserved(soundID, true);
+	}
+}
 
 int CFMSoundManager::PlayMusic( const char *p_fname, int i_loop_count)
 {

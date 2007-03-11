@@ -180,7 +180,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=" fmodvc.lib"
+				AdditionalDependencies="fmodvc.lib"
 				OutputFile="../bin/game_debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -1937,14 +1937,6 @@
 						>
 					</File>
 					<File
-						RelativePath=".\LoopingSoundBindings.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\LoopingSoundBindings.h"
-						>
-					</File>
-					<File
 						RelativePath=".\luabindBindings.cpp"
 						>
 						<FileConfiguration
@@ -2220,6 +2212,14 @@
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\misc\ISoundManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\LoopingSoundBindings.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\LoopingSoundBindings.h"
 					>
 				</File>
 			</Filter>

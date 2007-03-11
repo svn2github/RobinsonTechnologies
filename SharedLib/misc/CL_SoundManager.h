@@ -24,12 +24,16 @@ public:
 class SoundSession
 {
 public:
-
+	SoundSession()
+	{
+		m_bIsPaused = false;
+	}
 	~SoundSession()
 	{
 		m_session.stop();
 	}
 	CL_SoundBuffer_Session m_session;
+	bool m_bIsPaused;
 };
 
 typedef std::map<string, SoundResource> soundResourceMap;
@@ -52,6 +56,7 @@ public:
 
 	virtual void Kill(); //kills everything, unloads all sounds and main driver
 	virtual void KillMusic(); //unloads just the music
+	void SetPaused(int soundID, bool bPaused);
 
 	virtual int PlayLooping(const char *p_fname);
 	virtual void KillChannel(int i_channel);
@@ -64,6 +69,7 @@ public:
 	void RemoveAllEffects(int soundID);
 	virtual void SetPan(int soundID, float pan); //-1 to 1
 	virtual bool IsSoundPlaying(int soundID);
+	virtual void SetPriority(int soundID, int priority);
 
 protected:
 

@@ -472,6 +472,7 @@ myColor = Color(255,255,255,255);
 		.def("ResetUserProfile", &GameLogic::ResetUserProfile)
 		.def("UserProfileExists", &GameLogic::UserProfileExists)
 		.def("SetRestartEngineFlag", &GameLogic::SetRestartEngineFlag)
+		.def("IsShuttingDown", &GameLogic::IsShuttingDown)
 		.def("UserProfileActive", &GameLogic::UserProfileActive)
 		.def("SetPlayer", &GameLogic::SetMyPlayer)
 		.def("Quit", &GameLogic::Quit)
@@ -509,6 +510,8 @@ myColor = Color(255,255,255,255);
 		.def("SetSpeedFactor", &ISoundManager::SetSpeedFactor)
 		.def("SetVolume", &ISoundManager::SetVolume)
 		.def("SetPan", &ISoundManager::SetPan)
+		.def("SetPaused", &ISoundManager::SetPaused)
+		.def("SetPriority", &ISoundManager::SetPriority)
 		.def("IsPlaying", &ISoundManager::IsSoundPlaying)
 		.def("AddEffect", &ISoundManager::AddEffect)
 		.def("RemoveAllEffects", &ISoundManager::RemoveAllEffects)
@@ -521,7 +524,6 @@ myColor = Color(255,255,255,255);
 		.def("Add", &TextManager::Add)
 		.def("AddCustom", &TextManager::AddCustom)
 		.def("AddCustomScreen", &TextManager::AddCustomScreen)
-
 
 		,class_<LayerManager>("LayerManager")
 		.def("__tostring", &LayerManagerToString)

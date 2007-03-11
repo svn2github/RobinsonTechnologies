@@ -214,7 +214,7 @@ public:
   bool GetUsingImageFromTilePic() {return m_bUsingSimpleSprite;}
   bool UsingCustomCollisionData() {return m_bUsingCustomCollisionData;}
   int GetFloorMaterialID() {return m_floorMaterialID;}
-  BrainManager * GetBrainManager() {return &m_brainManager;}
+  BrainManager * GetBrainManager() {return (BrainManager*)&m_brainManager;}
   string ProcessPath(const string &st); //replaces ~ with current script path
   string ProcessPathNoScript(const string &st); //doesn't add the "script" part
 

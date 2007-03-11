@@ -22,8 +22,7 @@ StateTopIdle::~StateTopIdle()
 void StateTopIdle::OnAdd()
 {
 	m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_IDLE);
-	m_bCallbackActive	 = m_pParent->GetScriptObject()->FunctionExists("OnIdleLoop");
-
+	m_bCallbackActive = m_pParent->GetScriptObject()->FunctionExists("OnIdleLoop");
 }
 
 void StateTopIdle::OnRemove()

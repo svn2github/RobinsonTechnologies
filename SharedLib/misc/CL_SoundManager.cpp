@@ -52,6 +52,54 @@ int CL_SoundManager::Play(const char *p_fname)
 	return id;
 }
 
+void CL_SoundManager::SetPriority(int soundID, int priority)
+{
+	if (!m_bInitted) return;
+
+	SoundSession *pSession = GetSessionFromID(soundID);
+
+	if (!pSession)
+	{
+		LogMsg("SetPriority: SoundID %d invalid", soundID);
+		return;
+	}
+
+	if (priority == 0)
+	{
+		pSession->m_bIsPaused = false;
+	}
+}
+
+void CL_SoundManager::SetPaused(int soundID, bool bPaused)
+{
+	if (!m_bInitted) return;
+
+	SoundSession *pSession = GetSessionFromID(soundID);
+
+	if (!pSession)
+	{
+		LogMsg("SetPaused: SoundID %d invalid", soundID);
+		return;
+	}
+	if (bPaused)
+	{
+		if (pSession->m_bIsPaused == false)
+		{
+			pSession->m_session.stop();
+			pSession->m_bIsPaused = true;
+		}
+	} else
+	{
+		if (pSession->m_bIsPaused)
+		{
+			//start playing again
+			pSession->m_session.play();
+			pSession->m_bIsPaused = false;
+		}
+	}
+	
+}
+
 SoundResource * CL_SoundManager::LocateSound(const char *pFname)
 {
 	if (!m_bInitted) return NULL;
@@ -72,7 +120,7 @@ SoundResource * CL_SoundManager::LocateSound(const char *pFname)
 	}
 
 	//else, we need to create it
-
+	//LogMsg("Loading %s", fileName.c_str());
 	SoundResource s;
 	s.m_buffer = CL_SoundBuffer(fileName);
 	m_soundResources[pFname] = s;
@@ -102,7 +150,7 @@ int CL_SoundManager::PlayLooping(const char *p_fname)
 	if (!pBuff) return 0;
 	int id = GetUniqueID();
 	SoundSession s;
-
+	
 	m_soundSessions[id] = s;
 	m_soundSessions[id].m_session = pBuff->m_buffer.play(true);
 	return id;
@@ -263,7 +311,7 @@ void CL_SoundManager::UpdateSounds()
 	soundSessionMap::iterator itor;
 	for (itor = m_soundSessions.begin(); itor != m_soundSessions.end();)
 	{
-		if (!itor->second.m_session.is_playing())
+		if (!itor->second.m_session.is_playing() && !itor->second.m_bIsPaused)
 		{
 			//delete it I guess
 			soundSessionMap::iterator itorSave = itor;
@@ -291,3 +339,5 @@ bool CL_SoundManager::IsSoundPlaying(int soundID)
 
 	return false; //guess we didn't find it
 }
+
+

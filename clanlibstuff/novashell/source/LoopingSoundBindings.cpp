@@ -24,7 +24,8 @@ LoopingSound::LoopingSound(const string &file)
 
 LoopingSound::~LoopingSound()
 {
-	Play(false);
+	if (m_handle != C_SOUND_NONE)
+	g_pSoundManager->KillChannel(m_handle);
 }
 
 
@@ -45,15 +46,23 @@ void LoopingSound::Play(bool bOn)
 		{
 			if (g_pSoundManager)
 				m_handle = g_pSoundManager->PlayLooping(m_file.c_str());
+		} else
+		{
+			g_pSoundManager->SetPaused(m_handle, !bOn);
 		}
 	} else
 	{
 		if (m_handle != C_SOUND_NONE)
 		{
+			
+			g_pSoundManager->SetPaused(m_handle, !bOn);
+
+			/*
 			//let's shut it off
 			if (g_pSoundManager)
 				g_pSoundManager->KillChannel(m_handle);
 			m_handle = C_SOUND_NONE;
+			*/
 		}
 	}
 }

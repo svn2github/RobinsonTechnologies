@@ -632,9 +632,10 @@ int App::main(int argc, char **argv)
 		"	-window\n" \
 		"	-nosound\n" \
 		"	-nomusic\n" \
-		"	-clansound (windows only, forces Clanlib sound system instead of FMOD)\n" \
-	//	"	-fmodsound (windows only, forces fmod sound system)"
+		"	-fmodsound (windows only, forces fmod sound system)"
+		"	-clansound (forces Clanlib sound system)\n" \
 		"";
+
 
 
 #ifdef WIN32
@@ -669,11 +670,11 @@ int App::main(int argc, char **argv)
 		CL_SetupGL setup_gl;
 
 		
-	SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
+	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
 
 #ifdef _WIN32
 
-	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
+//	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
 	if ( ParmExists("-clansound"))
 	{
 		SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
