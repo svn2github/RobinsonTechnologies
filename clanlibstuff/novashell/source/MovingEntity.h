@@ -11,7 +11,7 @@
 #include "BrainManager.h"
 #include "Trigger.h"
 #include "physics/Contact.h"
-
+#include "linearparticle/sources/L_EffectManager.h"
 class Goal_Think;
 class PathPlanner;
 //#include "AI/Goal_Think.h"
@@ -456,6 +456,7 @@ protected:
 	bool m_bIsCreature;
 	float m_accel; //how fast we can acellerate
 	bool m_bUsingTilePicCollision;
+	L_EffectManager m_effectManager;
 };
 
 MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName);

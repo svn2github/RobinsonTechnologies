@@ -343,7 +343,7 @@ void luabindGlobalFunctions(lua_State *pState)
 
 			If an entity ID is specified, the script is run from its namespace.
 
-			Internally, <GetGameTick> is used, so messages are paused/modified by the current game speed.
+			Internally, <App::GetGameTick> is used, so messages are paused/modified by the current game speed.
 
 			You can use backslashes to escape quotes or apostrophes if needed.
 
@@ -362,7 +362,7 @@ void luabindGlobalFunctions(lua_State *pState)
 
 			Parameters:
 			deliveryMS - How long to wait before delivering in milliseconds.  500 would mean half a second later.
-			targetID - Entity ID of who should run the script, or C_ENTITY_NONE for none.
+			targetID - Entity ID of who should run the script, or C_ENTITY_NONE for the global namespace.
 			message - The line of lua code that should be executed.
 			*/
 	

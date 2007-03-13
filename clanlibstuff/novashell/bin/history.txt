@@ -1,5 +1,8 @@
 Changelog
 
+3-13 2007
+
+
 3-11 2007
 
 * the LoopSound object now "continues" a sound when pausing instead of restarting it.  It also has much better performance under clansound then before.

@@ -108,16 +108,30 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 
 	}
 
-
 	density = cl_max(0.1, density);
 	density = cl_min(1, density);
 
 	//LogMsg("Density is %.3f", density);
 
+	
 	float fWidthOffset = (params1.destY[3] - params1.destY[0])*density;
-
 	float fHeightChange = (params1.destY[3] - params1.destY[0]) * density;
 
+	/*
+	static float angle = 0;
+	angle+= GetApp()->GetDelta()/10;
+
+	angle = fmod(double(angle), double(PI*2));
+
+	float projectionWidth = fabs(params1.destX[0]- params1.destX[2]);
+	float projectionHeight = fabs(params1.destY[0]- params1.destY[2]);
+LogMsg("Projection Width: %.2f", projectionWidth);
+	
+	fWidthOffset = params1.destX[0] + (projectionWidth * cos(angle));
+	fHeightChange = params1.destY[0] + (projectionHeight * sin(angle));
+	//fHeightChange = cos(angle);
+*/
+	
 	//skew top left
 	params1.destX[0] -= fWidthOffset;
 	params1.destX[1] -= fWidthOffset;
@@ -132,8 +146,9 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 		params1.destY[2] -= fHeightChange * 0.3f;
 		params1.destY[3] -= fHeightChange * 0.3f;
 	}
-
+	
 	//squish things down a bit
 	params1.destY[0] += fHeightChange;
 	params1.destY[1] += fHeightChange;
+	
 }

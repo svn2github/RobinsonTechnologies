@@ -1198,6 +1198,36 @@ void MovingEntity::RunPostInitIfNeeded()
 		}
 
 		m_bHasRunPostInit = true;
+
+		if (GetName() == "Player")
+		{
+			//particle test
+			L_MotionController *pMotion = new L_MotionController();
+
+			pMotion->set_speed_limit(0.1); // set max speed of particle
+			pMotion->set_1d_acceleration(-0.0003); // set deceleration
+
+			
+			CL_Surface *pSurf = new CL_Surface("media/small.png");
+			pSurf->set_alignment(origin_center);
+			L_Particle *pParticle = new L_Particle(pSurf,5000);
+			pParticle->set_color(L_Color(255,110,60,255));
+			pParticle->coloring2(L_Color(255,110,60,255),L_Color(0,200,100,255),0.6);
+			pParticle->set_motion_controller(pMotion); // assign motion cotroller
+
+			// create dropping effect with period of 16
+			L_ExplosionEffect *pEffect = new L_ExplosionEffect(320,240,16,10,12,0.1);
+
+			//dropper->set_position(GetPos().x, GetPos().y);
+			// add the particle to dropper effect
+			pEffect->add(pParticle);
+			pEffect->set_life_distortion(700);
+			// initialize particle effect
+			//pEffect->trigger();
+			pEffect->initialize();
+			
+			m_effectManager.add(pEffect);
+		}
 	}
 }
 
@@ -2128,7 +2158,6 @@ CL_Vector2 MovingEntity::GetVisualOffset()
 
 void MovingEntity::RenderShadow(void *pTarget)
 {
-
 	static CL_Vector2 vecPos;
 	static Map *pWorld;
 	static EntMapCache *pWorldCache;
@@ -2144,11 +2173,9 @@ void MovingEntity::RenderShadow(void *pTarget)
 	if (m_bLockedScale)
 	{
 		m_pSprite->set_scale( m_pTile->GetScale().x, m_pTile->GetScale().y);
-
 	} else
 	{
 		m_pSprite->set_scale(GetCamera->GetScale().x * m_pTile->GetScale().x, GetCamera->GetScale().y * m_pTile->GetScale().y);
-
 	}
 
 	short a = min(50, 255 + m_colorModAlpha);
@@ -2185,7 +2212,6 @@ void MovingEntity::StopX()
 
 void MovingEntity::Render(void *pTarget)
 {
-	
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	static float yawHold, pitchHold;
 
@@ -2246,18 +2272,18 @@ void MovingEntity::Render(void *pTarget)
 	g = cl_min(g, 255); g = cl_max(0, g);
 	b = cl_min(b, 255); b = cl_max(0, b);
 	a = cl_min(a, 255); a = cl_max(0, a);
-		
+	
+	static CL_Vector2 vecPos;
+
 	if (a > 0)
 	{
-
-		
+	
 		static bool bUseParallax;
 		static Layer *pLayer;
 		static Map *pWorld;
 		pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 		static EntMapCache *pWorldCache;
-		static CL_Vector2 vecPos;
-
+	
 		pWorldCache = pWorld->GetMyMapCache();
 
 		if (GetGameLogic->GetParallaxActive())
@@ -2332,11 +2358,15 @@ void MovingEntity::Render(void *pTarget)
 			m_pSprite->draw_subpixel( int(vecPos.x), int(vecPos.y), pGC);
 		}
 
-
-		
 		//return things back to normal
 		m_pSprite->set_angle_yaw(yawHold);
 		m_pSprite->set_angle_pitch(pitchHold);
+	
+		if (m_effectManager.effect_list.size() > 0)
+		{
+			(*m_effectManager.effect_list.begin())->set_position(GetPos().x, GetPos().y);
+			(*m_effectManager.effect_list.begin())->draw(0,0,vFinalScale.x, vFinalScale.y);
+		}
 	}
 
 	/*
@@ -2358,7 +2388,7 @@ void MovingEntity::Render(void *pTarget)
 	if (!m_text.empty())
 	{
 		//draw some text too
-		CL_Vector2 vecPos = GetMap()->GetMyMapCache()->WorldToScreen(vVisualPos);
+		vecPos = GetMap()->GetMyMapCache()->WorldToScreen(vVisualPos);
 		
 		float textScaleX, textScaleY;
 		m_pFont->get_scale(textScaleX, textScaleY);
@@ -2392,6 +2422,9 @@ void MovingEntity::Render(void *pTarget)
 		m_pFont->set_alpha(oldAlpha);
 		m_pFont->set_alignment(originTemp, offsetX, offsetY);
 	}
+
+	
+	
 }
 
 void MovingEntity::RenderCollisionLists(CL_GraphicContext *pGC)
@@ -2543,7 +2576,18 @@ if (GetGameLogic->GetGamePaused()) return;
 	m_brainManager.Update(step);
 
 	if (!m_bAnimPaused)
-	m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
+	{
+		m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
+	}
+
+
+	if (m_effectManager.effect_list.size() > 0)
+	{
+		(*m_effectManager.effect_list.begin())->trigger();
+		(*m_effectManager.effect_list.begin())->set_velocity(L_Vector(0.02,0));
+
+	}
+	m_effectManager.run(GetApp()->GetGameLogicSpeed(), false);
 
 	if (!m_attachedEntities.empty())
 	{
@@ -2686,7 +2730,6 @@ void MovingEntity::AddForceAndTorqueBurst(CL_Vector2 force, CL_Vector2 torque)
 	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass()) / GetApp()->GetDelta(),  ((*(Vector*)&torque)*m_body.GetMass()) / GetApp()->GetDelta());
 }
 
-
 void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
 {
 	if (!bIsOnScreen)
@@ -2706,7 +2749,6 @@ void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
 
 	}
 }
-
 
 void MovingEntity::SetIsOnScreen(bool bNew)
 {
@@ -2730,28 +2772,20 @@ void MovingEntity::PostUpdate(float step)
 {
 	
 	if (GetGameLogic->GetGamePaused()) return;
-
 	if (m_bRanPostUpdate) return; else m_bRanPostUpdate = true;
-
 	if (m_bRequestsVisibilityNotifications)
 	{
-
 		if (m_lastVisibilityNotificationID != g_watchManager.GetVisibilityID())
 		{
 			SetIsOnScreen(true);
 		}
-
 		g_watchManager.AddEntityToVisibilityList(this);
 	}
 	
 	m_brainManager.PostUpdate(step);
-
 	float groundDampening = 0.05f;
-
 	if (m_customDampening != -1) groundDampening = m_customDampening;
-	
 	Map *pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
-
 
 	if (!GetBody()->IsUnmovable() &&  GetCollisionData())
 	{
@@ -2770,8 +2804,6 @@ void MovingEntity::PostUpdate(float step)
 			//change to allow gravity in any direction!
 			if ( (m_body.GetLinVelocity().y) < C_MAX_FALLING_DOWN_SPEED)
 			{
-
-			
 				AddForce(CL_Vector2(0, (gravity)) );
 			
 				if (!IsOnGroundAccurate())
@@ -2779,15 +2811,11 @@ void MovingEntity::PostUpdate(float step)
 					//LogMsg(" %s In the air", GetName().c_str());
 					//additional gravity
 					AddForce(CL_Vector2(0, (gravity*3)) );
-
 				}
-			
-
 			}
 
 			if (IsOnGround() && m_body.GetLinVelocity().Length() < 0.4)
 			{
-				//LogMsg(" %s dampening", GetName().c_str());
 				//apply dampening
 				set_float_with_target(&m_body.GetLinVelocity().x, 0, (groundDampening) * step);
 				set_float_with_target(&m_body.GetLinVelocity().y, 0, (groundDampening) * step);
@@ -2805,12 +2833,8 @@ void MovingEntity::PostUpdate(float step)
 				set_float_with_target(&m_body.GetAngVelocity(), 0, (groundDampening/3) *step);
 
 		}
-
 		GetBody()->Update(step);
-
-		
 	}
-
 
 	if (!m_attachedEntities.empty())
 	{
@@ -2819,7 +2843,6 @@ void MovingEntity::PostUpdate(float step)
 
 		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
 		{
-
 			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
 			if (pEnt)
 			{
@@ -2830,16 +2853,12 @@ void MovingEntity::PostUpdate(float step)
 				continue;
 			}
 			itor++;
-
 		}
 	}
 
 	m_nearbyTileList.clear();
 	
-	
 }
-
-
 
 void MovingEntity::SetImageFromTilePic(TilePic *pTilePic)
 {
@@ -2928,10 +2947,8 @@ void MovingEntity::OnAttachedEntity(int entID)
 
 void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 {
-
 	m_attachEntID = entityID;
 	m_attachOffset = vOffset;
-	
 
 	if (entityID == C_ENTITY_CAMERA)
 	{
@@ -2939,7 +2956,6 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 		m_bLockedScale = true;
 	} else
 	{
-	
 		//we're stuck to a common entity
 		MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
 		if (!pEnt)
@@ -2958,8 +2974,6 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 			
 			pEnt->OnAttachedEntity(ID());
 		}
-
-	
 	}
 }
 

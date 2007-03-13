@@ -384,8 +384,6 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 		pSurf->set_angle_pitch(0);
 	}
 
-
-
 	//this fixes glitches with tiling when the scale isn't exactly 1.0
 
 	rectDest.bottom = RoundNearest(rectDest.bottom, 1.0f);
