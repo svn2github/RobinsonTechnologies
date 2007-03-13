@@ -87,6 +87,9 @@ public:
 	virtual	void RemoveAllEffects(int soundID);
 	virtual void SetPan(int soundID, float pan);
 	virtual bool IsSoundPlaying(int soundID);
+	virtual void SetPaused(int soundID, bool bPause);
+	virtual void SetPriority(int soundID, int priority);
+
 
 private:
 

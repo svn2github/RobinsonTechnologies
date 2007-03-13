@@ -1,0 +1,8 @@
+Feel free to steal any bits and pieces of this source, but keep in mind this is not open
+source and permission to re-distribute it is not granted.  After I have some time I will
+setup a decent license...
+
+This applies to only the source I wrote...
+
+-Seth A. Robinson
+www.rtsoft.com

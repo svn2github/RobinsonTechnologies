@@ -50,7 +50,7 @@ Group: System Objects  {
    File: MapManager  (MapManager.cpp)
    File: InputManager  (InputManager.cpp)
    File: Camera  (Camera.cpp)
-   File: SoundManager  (VisualResource.h)
+   File: SoundManager  (VisualResource.cpp)
    File: TextManager  (TextManager.cpp)
    File: TagManager  (TagManager.cpp)
    File: WatchManager  (AI\WatchManager.cpp)
