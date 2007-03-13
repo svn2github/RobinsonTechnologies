@@ -20,6 +20,8 @@ using namespace luabind;
 #include "ListBindings.h"
 #include "TileBindings.h"
 #include "LoopingSoundBindings.h"
+#include "EffectManagerBindings.h"
+#include "EffectManager.h"
 
 void RegisterLuabindBindings(lua_State *pLuaState)
 {
@@ -30,6 +32,8 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabindGlobalFunctions(pLuaState);
 	luabindList(pLuaState);
 	luabindLoopingSound(pLuaState);
+	luabindEffectManager(pLuaState);
+
 	//add some global functions
 	luabind::globals(pLuaState)["GetMaterialManager"] = &g_materialManager;
 	luabind::globals(pLuaState)["GetApp"] = GetApp();
@@ -42,6 +46,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabind::globals(pLuaState)["GetCamera"] = GetCamera;
 	luabind::globals(pLuaState)["GetInputManager"] = &g_inputManager;
 	luabind::globals(pLuaState)["GetWatchManager"] = &g_watchManager;
+	luabind::globals(pLuaState)["GetEffectManager"] = &g_EffectManager;
 
 	luabind::globals(pLuaState)["g_PlayerID"] = 0;	 //will be set later
 #ifdef _DEBUG

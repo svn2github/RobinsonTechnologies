@@ -24,6 +24,7 @@
 
 
 #include "L_Particle.h"
+#include "AppPrecomp.h"
 #include "MapManager.h"
 
 L_Particle::L_Particle()

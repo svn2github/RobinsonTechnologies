@@ -795,6 +795,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\EffectManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath="GameLogic.cpp"
 					>
 					<FileConfiguration
@@ -1917,6 +1921,10 @@
 					Name="LauBindBindings"
 					>
 					<File
+						RelativePath=".\EffectManagerBindings.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\EntityBindings.cpp"
 						>
 					</File>
@@ -1925,15 +1933,7 @@
 						>
 					</File>
 					<File
-						RelativePath=".\GlobalScriptFunctionBindings.h"
-						>
-					</File>
-					<File
 						RelativePath=".\ListBindings.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\ListBindings.h"
 						>
 					</File>
 					<File
@@ -1950,10 +1950,6 @@
 					</File>
 					<File
 						RelativePath=".\MiscClassBindings.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\TileBindings.cpp"
 						>
 					</File>
 					<File
@@ -2732,6 +2728,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\EffectManager.h"
+					>
+				</File>
+				<File
 					RelativePath="GameLogic.h"
 					>
 				</File>
@@ -3055,7 +3055,19 @@
 					Name="LuaBindings"
 					>
 					<File
+						RelativePath=".\EffectManagerBindings.h"
+						>
+					</File>
+					<File
 						RelativePath=".\EntityBindings.h"
+						>
+					</File>
+					<File
+						RelativePath=".\GlobalScriptFunctionBindings.h"
+						>
+					</File>
+					<File
+						RelativePath=".\ListBindings.h"
 						>
 					</File>
 					<File
@@ -3064,6 +3076,10 @@
 					</File>
 					<File
 						RelativePath=".\MiscClassBindings.h"
+						>
+					</File>
+					<File
+						RelativePath=".\TileBindings.cpp"
 						>
 					</File>
 					<File

@@ -1201,13 +1201,13 @@ void MovingEntity::RunPostInitIfNeeded()
 
 		if (GetName() == "Player")
 		{
+/*		
 			//particle test
 			L_MotionController *pMotion = new L_MotionController();
 
 			pMotion->set_speed_limit(0.1); // set max speed of particle
 			pMotion->set_1d_acceleration(-0.0003); // set deceleration
-
-			
+		
 			CL_Surface *pSurf = new CL_Surface("media/small.png");
 			pSurf->set_alignment(origin_center);
 			L_Particle *pParticle = new L_Particle(pSurf,5000);
@@ -1227,6 +1227,7 @@ void MovingEntity::RunPostInitIfNeeded()
 			pEffect->initialize();
 			
 			m_effectManager.add(pEffect);
+			*/
 		}
 	}
 }
@@ -2210,6 +2211,12 @@ void MovingEntity::StopX()
 	GetBody()->GetAngVelocity() = 0;
 }
 
+void MovingEntity::AddEffect(L_ParticleEffect *pEffect)
+{
+	pEffect->initialize();
+	m_effectManager.add(pEffect);
+}
+
 void MovingEntity::Render(void *pTarget)
 {
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
@@ -2364,8 +2371,16 @@ void MovingEntity::Render(void *pTarget)
 	
 		if (m_effectManager.effect_list.size() > 0)
 		{
-			(*m_effectManager.effect_list.begin())->set_position(GetPos().x, GetPos().y);
-			(*m_effectManager.effect_list.begin())->draw(0,0,vFinalScale.x, vFinalScale.y);
+			
+			std::list<L_ParticleEffect*>::iterator effectItor = m_effectManager.effect_list.begin();
+
+			for (; effectItor != m_effectManager.effect_list.end(); effectItor++)
+			{
+				(*effectItor)->set_position(GetPos().x, GetPos().y);
+				(*effectItor)->draw(0,0,vFinalScale.x, vFinalScale.y);
+
+			}
+
 		}
 	}
 
@@ -2580,14 +2595,17 @@ if (GetGameLogic->GetGamePaused()) return;
 		m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
 	}
 
-
+/*
 	if (m_effectManager.effect_list.size() > 0)
 	{
-		(*m_effectManager.effect_list.begin())->trigger();
-		(*m_effectManager.effect_list.begin())->set_velocity(L_Vector(0.02,0));
+		//std::list<L_ParticleEffect*>
+		//(*m_effectManager.effect_list.begin())->trigger();
+		//(*m_effectManager.effect_list.begin())->set_velocity(L_Vector(0.02,0));
 
 	}
-	m_effectManager.run(GetApp()->GetGameLogicSpeed(), false);
+	*/
+
+	m_effectManager.run(GetApp()->GetGameLogicSpeed(), true);
 
 	if (!m_attachedEntities.empty())
 	{

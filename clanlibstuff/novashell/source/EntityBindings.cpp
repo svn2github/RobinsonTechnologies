@@ -108,7 +108,6 @@ void luabindEntity(lua_State *pState)
 			.def("GetID", &BaseGameEntity::ID)
 			.def("GetName", &BaseGameEntity::GetName)
 			.def("SetName", &BaseGameEntity::SetName)
-			.def("__tostring", &EntityToString)
 			.def("SetDeleteFlag", &BaseGameEntity::SetDeleteFlag)
 			.def("Send", &BaseGameEntity::HandleMessageString)
 			.def("__tostring", &SpecialEntityToString)
@@ -2494,6 +2493,9 @@ Returns:
 
 True if this entity has actually been placed on a map.
 */
+
+.def("AddEffect", &MovingEntity::AddEffect)
+
 
 
 .def("__tostring", &EntityToString)

@@ -102,7 +102,7 @@ public:
 	virtual ~L_ParticleEffect();
 
 	/** Add a particle type for the effect and probability for the particle to be chosen for every emission. \n
-	Note : If no probabily is specified, the particle will get the remaining probability to 1 ( if more than 1 probability non-specified particle,
+	Note : If no probability is specified, the particle will get the remaining probability to 1 ( if more than 1 probability non-specified particle,
 	remaining probability to 1 will be equally divided for each. Maximum number of particle types is limited to 10. */
 	int add(L_Particle* fl_p, L_REAL prob=-1);
 

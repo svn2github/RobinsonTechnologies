@@ -7,7 +7,6 @@
 #include "VisualProfileManager.h"
 #include "Console.h"
 #include "AI/WatchManager.h"
-#include "linearparticle/sources/L_ParticleSystem.h"
 
 ISoundManager *g_pSoundManager;
 
@@ -95,8 +94,7 @@ App::App()
 	m_pSetup_sound = NULL;
 	m_pSetup_vorbis = NULL;
 	m_pSound_output = NULL;
-	L_ParticleSystem::init();
-
+	
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
     for (int i=0; i < C_FONT_COUNT; i++)
@@ -178,7 +176,6 @@ void App::OneTimeDeinit()
 	SAFE_DELETE(m_pSound_output);
 	SAFE_DELETE(m_pSetup_vorbis);
 	SAFE_DELETE(m_pSetup_sound);
-	L_ParticleSystem::deinit();
 	
 
 }

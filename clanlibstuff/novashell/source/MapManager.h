@@ -9,7 +9,6 @@
 #ifndef WorldManager_HEADER_INCLUDED // include guard
 #define WorldManager_HEADER_INCLUDED  // include guard
 
-#include "AppPrecomp.h"
 #include "Map.h"
 #include "EntMapCache.h"
 

@@ -80,7 +80,6 @@ float DataManager::ModNum(const string &keyName, float value)
 
 DataObject * DataManager::FindDataByKey(const string &keyName)
 {
-	
 	dataList::iterator itor = m_data.find(keyName);
 
 	if (itor != m_data.end())

@@ -101,19 +101,16 @@ public:
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3);
 
-
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7);
   luabind::object RunFunction(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7, luabind::object obj8);
 
-
   luabind::object RunFunctionIfExists(const string &func);
   luabind::object RunFunctionIfExists(const string &func, luabind::object obj1);
   luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2);
   luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3);
-
 
   luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4);
   luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5);
@@ -231,7 +228,6 @@ public:
  
   unsigned int CalculateTimeToReachPosition(const CL_Vector2 &pos);
 
-
   int GetVisualState() {return m_visualState;}
   void SetVisualState(int visualState);
   void SetSpriteByVisualStateAndFacing();
@@ -322,6 +318,7 @@ public:
   void SetIsCreature(bool bIsCreture) {m_bIsCreature = bIsCreture;}
   void SetAccel(float fNew) {m_accel = fNew;}
   float GetAccel() {return m_accel;}
+  void AddEffect(L_ParticleEffect *pEffect);
 
   enum ListenCollision
 {
@@ -370,7 +367,7 @@ protected:
 	void OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollide); 
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
-
+	
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
     CL_Slot m_collisionSlot;
