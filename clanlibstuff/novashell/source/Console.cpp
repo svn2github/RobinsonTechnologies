@@ -235,11 +235,13 @@ void Console::SetOnScreen(bool bNew)
 
 			m_slots.connect(m_pInputBox->sig_return_pressed(), this, &Console::PressedEnter);
 			m_slots.connect(m_pInputBox->sig_validate_character(), this, &Console::InputValidator);
+			if (GetScriptManager)
 			GetScriptManager->SetGlobalBool("g_consoleActive", true);
 
 		} else
 		{
 			//turn it off
+			if (GetScriptManager)
 			GetScriptManager->SetGlobalBool("g_consoleActive", false);
 		}
 	}

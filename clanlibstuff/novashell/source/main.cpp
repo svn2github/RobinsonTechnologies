@@ -279,6 +279,7 @@ case C_SOUNDSYSTEM_CLANLIB:
 case C_SOUNDSYSTEM_FMOD:
 
 #ifdef _WIN32
+LogError("FMOD sound system not supported on this platform yet.");
 	g_pSoundManager = new CFMSoundManager;
 #else
 	LogError("FMOD sound system not supported on this platform yet.");
@@ -672,11 +673,11 @@ int App::main(int argc, char **argv)
 		CL_SetupGL setup_gl;
 
 		
-	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
+	SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
 
 #ifdef _WIN32
 
-//	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
+	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
 	if ( ParmExists("-clansound"))
 	{
 		SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
