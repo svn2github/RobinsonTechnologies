@@ -1,3 +1,3 @@
 
 METASOURCES = AUTO
-SUBDIRS = lua misc luabind
+SUBDIRS = lua misc luabind linearparticle
