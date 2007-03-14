@@ -11,9 +11,9 @@ cd ..
 
 unlink $packedfilenames
 
-cd bin
-tar cvfz ../$packedfilename novashell worlds base
-cd ..
+mv bin novashell
+tar cvfz $packedfilename novashell/novashell novashell/worlds novashell/base
+mv novashell bin
 
 if [ -f $packedfilename ] 
 then

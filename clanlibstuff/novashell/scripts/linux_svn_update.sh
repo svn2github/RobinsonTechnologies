@@ -1,4 +1,4 @@
-#first update clanlib
+#update both pieces that we check out
 cd ../
 echo Updating project from SVN
 svn update

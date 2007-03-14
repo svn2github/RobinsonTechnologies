@@ -13,5 +13,7 @@ echo "If I want to test something locally before committing to the real CL respo
 echo "my windows box.  Doesn't really belong here but hey."
 
 
-svn export --force /media/clanlib ~/dev/ClanLib-0.8
+sudo svn export --force /media/clanlib ~/dev/ClanLib-0.8
+
+Pause;
 
