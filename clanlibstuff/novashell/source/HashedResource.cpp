@@ -61,7 +61,7 @@ bool HashedResource::HasDataToSave()
 		pColVec = &ent->second;	
 		for (i=0; i < pColVec->size(); i++)
 		{
-			if (pColVec->at(i)->HasData())	
+			if (pColVec->at(i)->HasData() || pColVec->at(i)->GetDataChanged())	
 			{
 				//has data to save
 				return true;
@@ -169,7 +169,7 @@ void HashedResource::SaveDefaults()
 		
 			for (i=0; i < pColVec->size(); i++)
 			{
-				if (pColVec->at(i)->HasData() && pColVec->at(i)->GetDataChanged())
+				if (pColVec->at(i)->GetDataChanged())
 				{
 					bNeedsToSave = true;
 					break;

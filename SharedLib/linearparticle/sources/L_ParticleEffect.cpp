@@ -87,13 +87,21 @@ L_ParticleEffect::L_ParticleEffect(const L_ParticleEffect& cpy)
 
 L_ParticleEffect::~L_ParticleEffect()
 {
+/*
 	std::list<L_Particle*>::iterator iter = particle_list.begin();
 	while( iter != particle_list.end() )
 	{
 		iter = particle_list.erase(iter);
 	}
+*/
+
+	clear();
 }
 
+void L_ParticleEffect::clear()
+{
+	particle_list.clear(); //SETH optimization?
+}
 
 int L_ParticleEffect::add(L_Particle* fl_p, L_REAL prob)
 {
@@ -337,13 +345,11 @@ void L_ParticleEffect::creating_process(void)
 				howto_emit_particle();
 				counter -= period;
 			}
-
 		}
 
-		istriggered = false;
+		//istriggered = false; //SETH I changed his to be a vairable you can turn on and off instead of called every frame
 		addit_vector_enabled = false;
 	}
-
 
 	else
 	{
@@ -429,9 +435,9 @@ void L_ParticleEffect::activate_particle(int time_elapesed_t)
 }
 
 
-void L_ParticleEffect::trigger(void)
+void L_ParticleEffect::trigger(bool bActive)
 {
-	istriggered = true;
+	istriggered = bActive;
 }
 
 

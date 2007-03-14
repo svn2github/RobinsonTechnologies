@@ -906,7 +906,40 @@ boolean GetEnableRotationPhysics()
 
 Returns:
 
-True if rotation physics are enabled for this entity.
+True if rotational physics are enabled for this entity.
+*/
+
+
+.def("SetRotation", &MovingEntity::SetRotation)
+
+/*
+func: SetRotation
+(code)
+nil SetRotation(number angle)
+(end)
+
+Parameters:
+
+angle - The new angle of rotation you want the entity to instantly move to.
+
+Note:
+
+Rotation like this also rotates your collision box, so watch yourself.  You may prefer to use <AddForceAndTorque> if you want to rotate smoothly.
+
+*/
+
+
+.def("GetRotation", &MovingEntity::GetRotation)
+
+/*
+func: GetRotation
+(code)
+number GetRotation()
+(end)
+
+Returns:
+
+The angle of rotation in radians.
 */
 
 

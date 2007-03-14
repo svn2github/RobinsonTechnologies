@@ -18,6 +18,7 @@
 #include "AI/WatchManager.h"
 #include "GUIStyleBitmap/NS_MessageBox.h"
 #include "EntWorldDialog.h"
+#include "EffectManager.h"
 
 
 #ifndef WIN32
@@ -712,7 +713,7 @@ void GameLogic::Kill()
 	
 	m_worldManager.Kill();
 	SaveGlobals();
-
+	g_EffectManager.Reset();
 	m_myEntityManager.Kill();
 
 	SAFE_DELETE(m_pGUIStyle);

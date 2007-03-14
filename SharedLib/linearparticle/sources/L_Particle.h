@@ -127,7 +127,8 @@ private:
 	L_REAL sizing_starting_f;
 	L_REAL rotating_starting_f;
 	//==========================
-
+	bool delete_surface; //SETH
+	bool delete_motion_controller; //SETH
 	char coloring_switch;
 
 	L_PRERUN_USERFUNC* prerun_user_func;
@@ -157,6 +158,8 @@ public:
 	life_t : pass L_INFINITE_LIFE to have infinite life particle*/
 	L_Particle(CL_Surface* surface_t, int life_t);
 
+
+	~L_Particle();
 
 	void copy_from(const L_Particle& par);
 
@@ -195,6 +198,17 @@ public:
 	<small>L_PRERUN_USERFUNC : \n
 	&nbsp;&nbsp; void callback_function(L_Particle& particle, const void* user_data)</small> */
 	void set_prerun_callback(L_PRERUN_USERFUNC* user_func, void* user_data);
+
+	
+	void set_delete_surface(bool bDelete) //SETH
+	{
+		delete_surface = bDelete;
+	}
+
+	void set_delete_motion_controller(bool bDelete) //SETH
+	{
+		delete_motion_controller = bDelete;
+	}
 
 	/** This particle will be removed in run(int) after this function has been called. */
 	void remove(void);
@@ -264,8 +278,14 @@ public:
 	int get_remaininig_life(void);
 
 	bool is_alive(void);
-	//=================================== End ========================================
+	
+	//SETH
+	L_MotionController * get_motion_controller()
+	{
+		return motion_controller;
+	}
 
+	//=================================== End ========================================
 
 
 	// initialization before running, called by particle effect in the creation process

@@ -679,7 +679,7 @@ void EntEditMode::PopUpImagePropertiesDialog(const string &fileName, unsigned in
 
 	//label
 
-	CL_Label &listLabel = *new CL_Label(pos+ CL_Point(0,0), "Shared collision data in image's .dat file",pWindow->get_client_area());
+	CL_Label &listLabel = *new CL_Label(pos+ CL_Point(0,0), "Shared collision data in image's .dat file (Del to delete)",pWindow->get_client_area());
 
 	pos.y += 25;
 	int listHeight = 200;
@@ -1806,12 +1806,22 @@ void EntEditMode::DrawDragRect(CL_GraphicContext *pGC)
 	m_pLabelSelection->set_text(CL_String::format("Size: %1, %2", int(g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStop, m_vecDragSnap).x - g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStart, m_vecDragSnap).x),
 		int(g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStop, m_vecDragSnap).y - g_pMapManager->GetActiveMap()->SnapWorldCoords(worldStart, m_vecDragSnap).y)));
 	//draw a rect on the screen
-	DrawRectFromWorldCoordinates(worldStart, worldStop, CL_Color(255,255,0,200), pGC);
+	
+	CL_Rectf rec;
 
+	worldStart = g_pMapManager->GetActiveMapCache()->WorldToScreen(worldStart);
+	worldStop = g_pMapManager->GetActiveMapCache()->WorldToScreen(worldStop);
+
+	rec.left = worldStart.x;
+	rec.top = worldStart.y;
+	rec.right = worldStop.x;
+	rec.bottom = worldStop.y;
+	pGC->draw_rect(rec, CL_Color(255,255,0,200));
+	
 	worldStart -= CL_Vector2(1,1);
 	worldStop -= CL_Vector2(1,1);
-	DrawRectFromWorldCoordinates(worldStart, worldStop, CL_Color(140,140,0,200), pGC);
-
+	pGC->draw_rect(rec, CL_Color(140,140,0,200));
+	
 	//draw a little help bar text thing
 	CL_Rect r(0,GetScreenY-15,GetScreenX, GetScreenY);
 	CL_Display::fill_rect(r, CL_Color(0,0,0,80));

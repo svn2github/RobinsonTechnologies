@@ -28,7 +28,11 @@
 #include "MapManager.h"
 
 L_Particle::L_Particle()
-{}
+{
+	delete_surface = false;
+	delete_motion_controller = false;
+
+}
 
 
 L_Particle::L_Particle(const L_Particle& par)
@@ -78,12 +82,18 @@ L_Particle::L_Particle(const L_Particle& par)
 
 	prerun_user_func = par.prerun_user_func;
 	prerun_user_data = par.prerun_user_data;
+	delete_surface = false;
+	delete_motion_controller = false;
+
 }
 
 
 L_Particle::L_Particle(CL_Surface* surf, int life_t)
 {
 	surface = surf;
+	delete_surface = false;
+	delete_motion_controller = false;
+
 	L_SET_ADDITIVE_BLENDING(*surface);
 
 	life = life_t;
@@ -119,9 +129,19 @@ L_Particle::L_Particle(CL_Surface* surf, int life_t)
 	prerun_user_data = NULL;
 }
 
+L_Particle::~L_Particle()
+{
+	if (delete_surface)
+	{
+		delete surface;
+	}
+}
 
 void L_Particle::copy_from(const L_Particle& par)
 {
+	delete_surface = false;
+	delete_motion_controller = false;
+
 	surface = par.surface;
 	vec.set(par.vec);
 
@@ -251,7 +271,6 @@ void L_Particle::set_motion_controller(L_MotionController* motion_ctr)
 {
 	motion_controller = motion_ctr;
 }
-
 
 void L_Particle::set_blending_mode(int mode)
 {
@@ -614,6 +633,7 @@ void L_Particle::motion_process(void)
 void L_Particle::initialize(void)
 {
 	time_elapesed = 0;
+	if (coloring_starting_time == 0) coloring_starting_time = 1; //SETH avoid division by zero later...
 	coloring_process();
 	sizing_process();
 	rotating_process();

@@ -631,7 +631,6 @@ myColor = Color(255,255,255,255);
 		.def("AddSayByID",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::AddSayByID)
 		.def("AddRunScriptString", &Goal_Think::AddRunScriptString)
 
-
 		.def("PushSay",  ( void(Goal_Think::*)(const string&, int,int)) &Goal_Think::PushSay)
 		.def("PushSay",  ( void(Goal_Think::*)(const string&, int)) &Goal_Think::PushSay)
 
@@ -657,7 +656,6 @@ myColor = Color(255,255,255,255);
 		.def("Add", &WatchManager::Add)
 		.def("Remove", &WatchManager::Remove)
 		.def("GetWatchCount", &WatchManager::GetWatchCount)
-		
 		
 		];
 }

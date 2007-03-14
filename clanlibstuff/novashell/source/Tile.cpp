@@ -451,6 +451,7 @@ void TilePic::SaveToMasterCollision()
 
 		*pMaster = *m_pCollisionData;
 		pMaster->SetScale(CL_Vector2(1,1));
+		pMaster->SetDataChanged(true);
 	}
 }
 

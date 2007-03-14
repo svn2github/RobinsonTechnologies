@@ -155,6 +155,8 @@ public:
   void SetAnimByName(const string &name);
   void EnableRotation(bool bRotate);
   bool GetEnableRotation();
+  void SetRotation(float angle);
+  float GetRotation();
   unsigned int GetDrawID() {return m_drawID;}
   float GetMass() {return m_body.GetMass();}
   void SetMass(float mass){m_body.SetMass(mass);}
@@ -367,7 +369,8 @@ protected:
 	void OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollide); 
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
-	
+	void ResetEffects();
+
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
     CL_Slot m_collisionSlot;

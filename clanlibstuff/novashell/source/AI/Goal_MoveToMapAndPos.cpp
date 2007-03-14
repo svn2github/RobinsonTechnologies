@@ -7,7 +7,6 @@
 #include "Goal_MoveToPosition.h"
 #include "message_types.h"
 
-
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
 void Goal_MoveToMapAndPos::Activate()
@@ -56,7 +55,6 @@ void Goal_MoveToMapAndPos::Activate()
 		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
 		m_bTriedSimpleWay = false;
 		return;
-
 	}
 	
 	//we have data on which way to go

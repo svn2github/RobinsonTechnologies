@@ -11,6 +11,11 @@ EffectManager::EffectManager()
 	L_ParticleSystem::init();
 }
 
+void EffectManager::Reset()
+{
+	m_particleMap.clear();
+}
+
 EffectManager::~EffectManager()
 {
 	L_ParticleSystem::deinit();
@@ -43,9 +48,12 @@ L_Particle * EffectManager::CreateParticle(const string &name, const string &fil
 	g_VFManager.LocateFile(fname);
 
 	CL_Surface *pSurf = new CL_Surface(fname);
+	pSurf->set_alignment(origin_center);
 	m_particleMap[name] = L_Particle(pSurf, lifeMS);
+	L_Particle *pParticle = &m_particleMap[name];;
 
-	return &m_particleMap[name];
+	pParticle->set_delete_surface(true);
+	return pParticle;
 }
 
 L_ExplosionEffect * EffectManager::CreateEffectExplosion(int x, int y, int period_t, int min_particles_t, int max_particles_t, float explosion_level_t)

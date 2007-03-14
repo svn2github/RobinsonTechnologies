@@ -157,10 +157,12 @@ public:
 	//================================================================================
 
 	/** Trigger particle emission. */
-	void trigger(void);
+	void trigger(bool bActive = true);
 
 	/** Initialization, must be called (once) before calling run(int). */
 	void initialize(void);
+
+	void clear(); //SETH, remove all particles
 
 	void run(int time_elapesed_t);
 

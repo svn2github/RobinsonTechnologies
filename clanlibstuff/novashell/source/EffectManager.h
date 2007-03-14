@@ -21,6 +21,8 @@ public:
 	EffectManager();
 	~EffectManager();
 	
+	void Reset();
+
 	L_Particle *GetParticleByName(const string &name);
 	L_Particle *CreateParticle(const string &name, const string &filename, int lifeMS);
 

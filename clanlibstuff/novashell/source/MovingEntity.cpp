@@ -1186,6 +1186,30 @@ bool MovingEntity::Init()
 	return true;
 }
 
+void MovingEntity::AddEffect(L_ParticleEffect *pEffect)
+{
+	pEffect->trigger();
+	pEffect->initialize();
+	m_effectManager.add(pEffect);
+}
+
+void MovingEntity::ResetEffects()
+{
+	if (m_effectManager.effect_list.size() > 0)
+	{
+
+		std::list<L_ParticleEffect*>::iterator effectItor = m_effectManager.effect_list.begin();
+
+		for (; effectItor != m_effectManager.effect_list.end(); effectItor++)
+		{
+			(*effectItor)->clear();
+
+		}
+
+	}
+}
+
+
 void MovingEntity::RunPostInitIfNeeded()
 {
 	if (!m_bHasRunPostInit)
@@ -1199,36 +1223,6 @@ void MovingEntity::RunPostInitIfNeeded()
 
 		m_bHasRunPostInit = true;
 
-		if (GetName() == "Player")
-		{
-/*		
-			//particle test
-			L_MotionController *pMotion = new L_MotionController();
-
-			pMotion->set_speed_limit(0.1); // set max speed of particle
-			pMotion->set_1d_acceleration(-0.0003); // set deceleration
-		
-			CL_Surface *pSurf = new CL_Surface("media/small.png");
-			pSurf->set_alignment(origin_center);
-			L_Particle *pParticle = new L_Particle(pSurf,5000);
-			pParticle->set_color(L_Color(255,110,60,255));
-			pParticle->coloring2(L_Color(255,110,60,255),L_Color(0,200,100,255),0.6);
-			pParticle->set_motion_controller(pMotion); // assign motion cotroller
-
-			// create dropping effect with period of 16
-			L_ExplosionEffect *pEffect = new L_ExplosionEffect(320,240,16,10,12,0.1);
-
-			//dropper->set_position(GetPos().x, GetPos().y);
-			// add the particle to dropper effect
-			pEffect->add(pParticle);
-			pEffect->set_life_distortion(700);
-			// initialize particle effect
-			//pEffect->trigger();
-			pEffect->initialize();
-			
-			m_effectManager.add(pEffect);
-			*/
-		}
 	}
 }
 
@@ -1547,6 +1541,8 @@ void MovingEntity::UpdateTilePosition()
 					CameraSetting cs = GetCamera->GetCameraSettings();
 					g_pMapManager->SetActiveMapByPath(pInfo->m_world.GetDirPath(),&cs);
 				}
+				ResetEffects();
+
 			 } else
 			 {
 
@@ -2211,10 +2207,14 @@ void MovingEntity::StopX()
 	GetBody()->GetAngVelocity() = 0;
 }
 
-void MovingEntity::AddEffect(L_ParticleEffect *pEffect)
+
+void MovingEntity::SetRotation(float angle)
 {
-	pEffect->initialize();
-	m_effectManager.add(pEffect);
+	m_body.SetOrientation(angle);
+}
+float MovingEntity::GetRotation()
+{
+	return m_body.GetOrientation();
 }
 
 void MovingEntity::Render(void *pTarget)
@@ -2322,14 +2322,14 @@ void MovingEntity::Render(void *pTarget)
 		} else
 		{
 
-		if (bUseParallax)
-		{
-			vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
-				pLayer->GetScrollMod()));
-		} else
-		{
- 			vecPos = pWorldCache->WorldToScreen(vVisualPos);
-		}
+			if (bUseParallax)
+			{
+				vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
+					pLayer->GetScrollMod()));
+			} else
+			{
+ 				vecPos = pWorldCache->WorldToScreen(vVisualPos);
+			}
 		}
 
 		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
@@ -2357,12 +2357,13 @@ void MovingEntity::Render(void *pTarget)
 			}
 
 			m_pSprite->draw_subpixel( int(vecPos.x), int(vecPos.y), pGC);
-
+			//m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 			m_pSprite->set_blend_func(src, dest); //put it back how it was
 
 		} else
 		{
 			m_pSprite->draw_subpixel( int(vecPos.x), int(vecPos.y), pGC);
+			//m_pSprite->draw_subpixel( vecPos.x, vecPos.y, pGC);
 		}
 
 		//return things back to normal
@@ -2371,16 +2372,13 @@ void MovingEntity::Render(void *pTarget)
 	
 		if (m_effectManager.effect_list.size() > 0)
 		{
-			
 			std::list<L_ParticleEffect*>::iterator effectItor = m_effectManager.effect_list.begin();
 
 			for (; effectItor != m_effectManager.effect_list.end(); effectItor++)
 			{
-				(*effectItor)->set_position(GetPos().x, GetPos().y);
 				(*effectItor)->draw(0,0,vFinalScale.x, vFinalScale.y);
 
 			}
-
 		}
 	}
 
@@ -2438,8 +2436,6 @@ void MovingEntity::Render(void *pTarget)
 		m_pFont->set_alignment(originTemp, offsetX, offsetY);
 	}
 
-	
-	
 }
 
 void MovingEntity::RenderCollisionLists(CL_GraphicContext *pGC)
@@ -2595,17 +2591,18 @@ if (GetGameLogic->GetGamePaused()) return;
 		m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
 	}
 
-/*
 	if (m_effectManager.effect_list.size() > 0)
-	{
-		//std::list<L_ParticleEffect*>
-		//(*m_effectManager.effect_list.begin())->trigger();
-		//(*m_effectManager.effect_list.begin())->set_velocity(L_Vector(0.02,0));
+		{
+			std::list<L_ParticleEffect*>::iterator effectItor = m_effectManager.effect_list.begin();
 
-	}
-	*/
-
-	m_effectManager.run(GetApp()->GetGameLogicSpeed(), true);
+			for (; effectItor != m_effectManager.effect_list.end(); effectItor++)
+			{
+				(*effectItor)->set_position(GetPos().x, GetPos().y);
+				(*effectItor)->set_velocity(L_Vector(GetLinearVelocity()/3));
+			}
+		}
+	
+	m_effectManager.run( (GetApp()->GetGameLogicSpeed()), false);
 
 	if (!m_attachedEntities.empty())
 	{
@@ -2614,7 +2611,6 @@ if (GetGameLogic->GetGamePaused()) return;
 
 		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
 		{
-
 			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
 			if (pEnt)
 			{
@@ -2625,14 +2621,11 @@ if (GetGameLogic->GetGamePaused()) return;
 				continue;
 			}
 			itor++;
-
 		}
 	}
 
 	//get ready for next frame
 	m_bTouchedAGroundThisFrame = false;
-
-
 }
 
 void MovingEntity::ApplyPhysics(float step)
@@ -2695,8 +2688,6 @@ void MovingEntity::ApplyPhysics(float step)
 				}
 
 			}
-
-
 		}
 	} 
 
@@ -2710,7 +2701,6 @@ void MovingEntity::ApplyPhysics(float step)
 
 		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
 		{
-
 			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
 			if (pEnt)
 			{
@@ -2721,7 +2711,6 @@ void MovingEntity::ApplyPhysics(float step)
 				continue;
 			}
 			itor++;
-
 		}
 	}
 }
@@ -2752,7 +2741,6 @@ void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
 {
 	if (!bIsOnScreen)
 	{
-		
 		if (GetVisibilityNotifications())
 		{
 			//hack so the onlosescreen won't run again
@@ -2764,7 +2752,6 @@ void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)
 			try {luabind::call_function<void>(GetScriptObject()->GetState(), "OnWatchTimeout", bIsOnScreen);
 			} LUABIND_ENT_CATCH( "Error while calling function OnWatchTimeout(bool bIsOnScreen)");
 		}
-
 	}
 }
 
