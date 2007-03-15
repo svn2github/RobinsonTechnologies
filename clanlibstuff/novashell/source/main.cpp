@@ -279,7 +279,6 @@ case C_SOUNDSYSTEM_CLANLIB:
 case C_SOUNDSYSTEM_FMOD:
 
 #ifdef _WIN32
-LogError("FMOD sound system not supported on this platform yet.");
 	g_pSoundManager = new CFMSoundManager;
 #else
 	LogError("FMOD sound system not supported on this platform yet.");
