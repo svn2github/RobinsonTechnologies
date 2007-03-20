@@ -24,7 +24,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_pButton = NULL;
    m_bScrollingMap = false;
    m_pButtonToggleEditMode = NULL;
- 
+   m_pShowGridCheckBox = NULL;
    m_pResListBox = NULL;
    m_bGenerateActive = false;
    m_pGenerator = NULL;
@@ -88,6 +88,7 @@ EntEditor::~EntEditor()
     SAFE_DELETE(m_pWindow);
 	GetGameLogic->SetGamePaused(false); //unpause the game if it was
 	GetGameLogic->SetEditorActive(false);
+	GetGameLogic->SetShowGrid(false);
 	//GetApp()->GetGUI()->close();
 	GetScriptManager->RunFunction("OnCloseEditor");
 
@@ -143,9 +144,15 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 		break;
 
 	case CL_KEY_G:
-		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL) && CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 		{
 			OnToggleWorldChunkGrid();
+			return;
+		}
+		
+		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		{
+			OnToggleGrid();
 		}
 		break;
 
@@ -239,10 +246,17 @@ void EntEditor::validator_numbers(char &character, bool &accept)
 	if (character != '.' && character != '-' && (character < '0' || character > '9') && character != ' ')
 		accept = false;
 }
+
 void EntEditor::OnToggleWorldChunkGrid()
 {
 	m_bShowWorldChunkGridLines = !m_bShowWorldChunkGridLines;
 	g_pMapManager->GetActiveMapCache()->SetDrawWorldChunkGrid(m_bShowWorldChunkGridLines);
+}
+
+void EntEditor::OnToggleGrid()
+{
+	GetGameLogic->SetShowGrid(!GetGameLogic->GetShowGrid());
+	m_pShowGridCheckBox->set_selected(GetGameLogic->GetShowGrid());
 }
 
 void EntEditor::OnToggleGamePaused()
@@ -888,10 +902,17 @@ if (GetGameLogic->GetUserProfileName().empty())
 	m_pMenuShowEntityCollisionCheckbox->set_selected(GetGameLogic->GetShowEntityCollisionData());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowEntityCollision);
 
-	pItem = m_pMenu->create_toggle_item("Display/Show WorldChunk Grid Lines (Ctrl+G)");
+	pItem = m_pMenu->create_toggle_item("Display/Show Grid Lines (Ctrl+G)");
+	m_pShowGridCheckBox = static_cast<CL_MenuItem*>(pItem->get_data());
+	m_pShowGridCheckBox->set_selected(GetGameLogic->GetShowGrid());
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleGrid);
+
+	pItem = m_pMenu->create_toggle_item("Display/Show Map Chunk Grid Lines (Ctrl+Shift+G)");
 	m_pMenuWorldChunkCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuWorldChunkCheckbox->set_selected(m_bShowWorldChunkGridLines);
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleWorldChunkGrid);
+
+
 
 	pItem = m_pMenu->create_item("Display/Show\\Hide Editor Palettes (Tab)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnShowHidePalettes);
@@ -1020,6 +1041,8 @@ void EntEditor::BuildWorldListBox()
 	
 	m_pListBoxWorld->sort();
 	m_slot.connect( m_pListBoxWorld->sig_selection_changed(), this, &EntEditor::OnSelectMap);
+	m_slot.connect( m_pListBoxWorld->sig_mouse_dblclk(), this, &EntEditor::OnWorldDoubleClick);
+
 }
 
 
@@ -1528,3 +1551,14 @@ void EntEditor::OnMapChange()
 
 }
 
+void EntEditor::OnWorldDoubleClick( const CL_InputEvent &input )
+{
+	int index = m_pListBoxWorld->get_item(input.mouse_pos);
+	if (index == -1) return;
+
+	//LogMsg("Double click!");
+	//m_pListLayerActive->	
+	//m_pWorldListWindow->release_mouse();
+
+	MapOptionsDialog();
+}

@@ -17,6 +17,7 @@ typedef std::vector<MapChunk*> EntWorldChunkVector;
 typedef std::vector<Tile*> tile_vector;
 typedef std::vector<MovingEntity*> moving_entity_vector;
 
+	
 class EntMapCache: public BaseGameEntity
 {
 public:
@@ -69,6 +70,7 @@ protected:
 	void OnMapChange();
 	void RenderGoalAI(CL_GraphicContext *pGC);
 	void RenderCollisionLists(CL_GraphicContext *pGC);
+	void RenderGrid(CL_GraphicContext *pTarget);
 
 	Map *m_pWorld; 
 	

@@ -268,7 +268,14 @@ void CFMSoundManager::AddEffect(int soundID, int effectID, float parmA, float pa
 
 void CFMSoundManager::RemoveAllEffects(int soundID)
 {
-	LogMsg("FMod Sound System on Windows doesn't support RemoveAllEffects yet");
+	
+	ChannelSession *pSession = GetEffectsDataForChannel(soundID);
+
+	if (pSession)
+	{
+		pSession->m_effects.clear();
+	}
+	
 }
 
 void CFMSoundManager::SetVolume(int soundID, float volume)

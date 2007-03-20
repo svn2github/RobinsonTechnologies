@@ -4,6 +4,9 @@ Seth A. Robinson (www.rtsoft.com)
 Physics code based on source by:
 Olivier Renault
 
+Particle system based on source by:
+Wong Chin Foo (LinearParticle)
+
 Pixel art used in the Top View RPG example created by:
 Daniel Cook (www.lostgarden.com)
 
@@ -21,4 +24,6 @@ Ian
 Sphair
 nmerci
 Magnus Norddahl
+ZombieJesus
+harrio
 

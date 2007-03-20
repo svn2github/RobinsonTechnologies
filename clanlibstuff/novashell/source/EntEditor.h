@@ -35,6 +35,7 @@ public:
 	virtual void HandleMessageString(const string &msg);
 	void SetHideMode(bool bHide);
 	bool GetHideMode();
+	void OnToggleGrid();
 
 	CL_Signal_v1<bool> sig_hide_mode_changed;
 
@@ -80,6 +81,7 @@ private:
 	void OnToggleLockAtRefresh();
 	void OnToggleGamePaused();
 	void OnLayerDoubleClick(const CL_InputEvent &input);
+	void OnWorldDoubleClick(const CL_InputEvent &input);
 	void PopUpLayerPropertiesDialog(int layerID);
 	void OnResetCamera();
 	void OnDumpEngineStatistics();
@@ -104,7 +106,7 @@ private:
 	CL_Window *m_pWorldListWindow;
 	
 	CL_Window *m_pLayerListWindow;
-	CL_ListBox *m_pListLayerDisplay; //control which worls are drawn
+	CL_ListBox *m_pListLayerDisplay; //control which maps are drawn
 	CL_ListBox *m_pListLayerActive; //which layer has active focus
 	CL_Label *m_pLayerLabel;
 
@@ -117,8 +119,7 @@ private:
 	void SetAllLayersActive(bool bNew);
 	void OnSetScreenSize();
 	void PopulateResolutionList();
-
-
+	
 	CL_Label *m_pLabel;
     CL_Menu *m_pMenu;
     CL_Button *m_pButton;
@@ -133,6 +134,7 @@ private:
 	CL_MenuItem *m_pMenuLockAtRefreshCheckbox;
 	CL_MenuItem *m_pMenuParallaxCheckbox;
 	CL_MenuItem *m_pMenuShowFPSCheckbox;
+	CL_MenuItem *m_pShowGridCheckBox;
 
 	CL_ListBox *m_pResListBox;
 

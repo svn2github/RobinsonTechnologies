@@ -38,12 +38,13 @@ public:
 	bool VariableExists(const char *pVarName);
 
 	lua_State * GetState() {return m_pLuaState;}
+	void SetGarbageCollectOnKill(bool bGarbageCollectOnKill){m_bGarbageCollectOnKill = bGarbageCollectOnKill;}
 
 protected:
 
 	lua_State* m_pLuaState;
 	int m_threadReference;
-
+	bool m_bGarbageCollectOnKill;
 };
 
 class ScriptManager

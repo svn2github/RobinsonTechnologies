@@ -23,6 +23,7 @@ public:
 	bool Init(const string &fileName);
 	VisualProfile * GetProfile(const string &profileName);
 	void Save();
+	string GetFileName() {return m_fileName;}
 
 protected:
 

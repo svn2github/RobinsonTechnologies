@@ -49,6 +49,7 @@ Group: System Objects  {
    File: GameLogic  (GameLogic.cpp)
    File: MapManager  (MapManager.cpp)
    File: InputManager  (InputManager.cpp)
+   File: EffectManager  (EffectManager.cpp)
    File: Camera  (Camera.cpp)
    File: SoundManager  (VisualResource.cpp)
    File: TextManager  (TextManager.cpp)
@@ -87,6 +88,16 @@ Group: Simple Objects  {
    File: Material  (physics\Contact.h)
    }  # Group: Simple Objects
 
+Group: Effect Objects  {
+
+   File: Particle  (Particle.cpp)
+   File: MotionController  (MotionController.cpp)
+   File: EffectBase  (EffectBase.cpp)
+   File: EffectExplosion  (EffectExplosion.cpp)
+   }  # Group: Effect Objects
+
+File: Global Functions  (GlobalScriptFunctionBindings.cpp)
+
 Group: Brains  {
 
    File: StandardBase  (BrainTopBase.cpp)
@@ -109,8 +120,6 @@ Group: States  {
    File: Frozen  (StateFrozen.cpp)
    File: Die  (StateDie.cpp)
    }  # Group: States
-
-File: Global Functions  (GlobalScriptFunctionBindings.cpp)
 
 Group: Index  {
 

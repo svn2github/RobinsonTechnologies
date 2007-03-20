@@ -14,6 +14,14 @@
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
 
+void Goal_Approach::ReinitializeCompletely()
+{
+	//reset everything
+	m_bTriedSimpleWay = false;
+	m_bTriedComplexWay = false;
+	m_targetNotFoundCount = 0;
+}
+
 void Goal_Approach::Activate()
 {
 	m_bRequestNextChunk = false;
@@ -47,8 +55,17 @@ void Goal_Approach::Activate()
 
 	if (!m_macroPath.IsValid())
 	{
-		m_iStatus = failed;
 		LogMsg("Ent %d (%s) failed to find valid path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+		
+		//try anyway, even though it's probably a waste of time
+		if (m_pDestMap == m_pOwner->GetMap())
+		{
+			//dumb seek method
+			AddSubgoal(new Goal_SeekToPosition(m_pOwner, m_vDestination));
+			return;
+		}
+		m_iStatus = failed;
+
 		return;
 	}
 
@@ -110,10 +127,8 @@ CL_Vector2 GetPointOutsideOfRectFromInside(const CL_Rectf &r, const CL_Vector2 v
 {
 	//i'm sure there is a much better mathy way of doing this, but this will do.  we need to throw a ray
 	//from the center of this rect until we hit the edge
-	
 	CL_Vector2 pos = CL_Vector2::ZERO;
 	
-
 	while (r.is_inside( *(CL_Pointf*)&pos))
 	{
       pos += v*2;
@@ -296,7 +311,6 @@ int Goal_Approach::Process()
 	{
 		return m_iStatus;
 	}
-	
 
 	if (m_bRequestNextChunk)
 	{
@@ -311,15 +325,14 @@ int Goal_Approach::Process()
 	{
 		if (m_bTriedSimpleWay && m_bTriedComplexWay)
 		{
-		LogMsg("Entity %d (%s) cannot find a path to approach entity %d, aborting",
-			m_pOwner->ID(), m_pOwner->GetName().c_str(), m_targetID);
-		return m_iStatus;
+			LogMsg("Entity %d (%s) cannot find a path to approach entity %d, aborting",
+				m_pOwner->ID(), m_pOwner->GetName().c_str(), m_targetID);
+			return m_iStatus;
 		} else
 		{
 			m_iStatus = inactive;
 			//this will cause it to reactivate on  the next frame using the macro search which
 			//is more powerful
-
 			return m_iStatus;
 
 		}
@@ -416,34 +429,44 @@ bool Goal_Approach::HandleMessage(const Message& msg)
 	//if the msg was not handled, test to see if this goal can handle it
 	if (bHandled == false)
 	{
-
 		switch(msg.GetMsgType())
 		{
 
 		case C_MSG_TARGET_NOT_FOUND:
-			//LogMsg("Target wasn't found, restarting");
+
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+			LogMsg("Target wasn't found, restarting");
+#endif
 			
 			//if this is the first time the target wasn't found, let's let it keep going, because who knows, it might
 			//find it by luck, just by walking in that direction.
 			m_targetNotFoundCount++;
 
-				if (m_targetNotFoundCount <= 2 && m_pOwner->GetMap() == m_pDestMap) //if it's on a different map, this will never work
+			
+			//note, this causes problems when the goal is on the same map but not directly connected with path nodes
+			/*
+			if (m_targetNotFoundCount <= 2 && m_pOwner->GetMap() == m_pDestMap) //if it's on a different map, this will never work
 			{
 				return false; //let them know we want them to make do, and still walk around
 			}
+			*/
 
 			return true; //signal that we handled it, this will cause us to just give up.
 			break;
 
 		case C_MSG_GOT_STUCK:
 			m_bTriedSimpleWay = false;
-			//LogMsg("Got stuck..");
+	#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+				LogMsg("Got C_MSG_GOT_STUCK");
+	#endif
 			return true; //signal that we handled it
 			break;
 
 		case C_MSG_PATH_NODES_MISSING:
 			m_bTriedSimpleWay = false;
-			//LogMsg("Got stuck..");
+		#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+					LogMsg("Got C_MSG_PATH_NODES_MISSING");
+		#endif
 			return true; //signal that we handled it
 			break;
 
@@ -457,16 +480,20 @@ bool Goal_Approach::HandleMessage(const Message& msg)
 
 void Goal_Approach::Terminate()
 {
-
+	//we were terminated
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+	LogMsg("Approach of %s to %s (id %d): terminated", m_pOwner->GetName().c_str(),
+		PrintVector(m_vDestination).c_str(), m_targetID);
+#endif
 }
 
 void Goal_Approach::LostFocus()
 {
 	m_iStatus = inactive;
 #ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-	LogMsg("Approach of %s: Aboarting goal_Approach..", m_pOwner->GetName().c_str());
+	LogMsg("Approach of %s: LostFocus..", m_pOwner->GetName().c_str());
 #endif
-	m_bTriedSimpleWay = false;
+	ReinitializeCompletely();
 	RemoveAllSubgoals();
 }
 

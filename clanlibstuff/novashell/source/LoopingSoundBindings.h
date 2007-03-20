@@ -10,7 +10,7 @@ public:
 	LoopingSound();
 	LoopingSound(const string &file);
 
-	~LoopingSound();
+	virtual ~LoopingSound();
 
 	void Init(const string &file);
 	void Finalize();

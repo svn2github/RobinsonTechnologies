@@ -31,6 +31,8 @@ L_ParticleEffect::L_ParticleEffect(int period_t, int x, int y)
 {
 	x_pos = x;
 	y_pos = y;
+	x_pos_offset = 0; //SETH
+	y_pos_offset = 0; //SETH
 
 	par_randrot_on = false;
 	size_distortion = 0;
@@ -155,9 +157,25 @@ void L_ParticleEffect::set_velocity(const L_Vector& v_t)
 
 void L_ParticleEffect::set_position(L_REAL x, L_REAL y)
 {
-	x_pos = x;
-	y_pos = y;
+	x_pos = x+x_pos_offset;
+	y_pos = y+y_pos_offset;
 }
+void L_ParticleEffect::set_offset(L_REAL x, L_REAL y)
+{
+	
+	//remove any applied offset
+	x_pos -= x_pos_offset;
+	y_pos -= y_pos_offset;
+
+	x_pos_offset = x;
+	y_pos_offset = y;
+
+	//add the new offset
+	x_pos += x_pos_offset;
+	y_pos += y_pos_offset;
+
+}
+
 
 
 void L_ParticleEffect::set_velocity(L_REAL x_length, L_REAL y_length)
@@ -348,7 +366,7 @@ void L_ParticleEffect::creating_process(void)
 		}
 
 		//istriggered = false; //SETH I changed his to be a vairable you can turn on and off instead of called every frame
-		addit_vector_enabled = false;
+		//addit_vector_enabled = false;
 	}
 
 	else

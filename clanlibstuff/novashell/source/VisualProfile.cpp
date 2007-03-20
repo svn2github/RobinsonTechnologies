@@ -631,7 +631,7 @@ bool VisualProfile::Init(VisualResource *pVisualResource, const string &profileN
 	CL_Resource resource = m_pParent->m_pResourceManager->get_resource(profileName);
 
 	CL_DomNode cur_node;
-
+	bool bFoundAnim = false;
 	for (
 		cur_node = resource.get_element().get_first_child();
 		!cur_node.is_null();
@@ -643,12 +643,20 @@ bool VisualProfile::Init(VisualResource *pVisualResource, const string &profileN
 
 		if (type == "anim")
 		{
+			bFoundAnim = true;
 			AddAnimInfo(cur_element);
 		} else
 		{
 			LogMsg("Warning: Don't know what %s is in the %s profile xml", type.c_str(), profileName.c_str());
 		}
 	}
+
+if (!bFoundAnim)
+{
+	LogError("Error in %s - You can't have a 'profile' and 'sprite' with the same name of %s.  Rename one of them.",
+		m_pParent->GetFileName().c_str(),  m_name.c_str());
+}
+
 	return true; //success
 }
 

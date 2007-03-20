@@ -844,7 +844,7 @@ void Map::RemoveUnusedFileChunks()
 			int worldchunk = CL_String::to_int(scanner.get_name());
 			if (!DoesWorldChunkExist(worldchunk))
 			{
-				LogMsg("Deleting unused worldchunk file %s. (screenID %d)", scanner.get_name().c_str(),
+				LogMsg("Deleting unused map chunk file %s. (screenID %d)", scanner.get_name().c_str(),
 					worldchunk);
 				g_VFManager.RemoveFile(m_strDirPath+scanner.get_name());
 			}

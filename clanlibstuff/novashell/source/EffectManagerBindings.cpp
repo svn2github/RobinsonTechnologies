@@ -59,6 +59,16 @@ void ParticleSetColoring2(L_Particle * pParticle, const CL_Color &col, const CL_
 	pParticle->coloring2(L_Color(col), L_Color(col2), num);
 }
 
+void ParticleEffectSetOffset(L_ParticleEffect * pParticleEffect, const CL_Vector2 &v)
+{
+	pParticleEffect->set_offset(v.x, v.y);
+}
+
+void ParticleEffectSetAdditionalVector(L_ParticleEffect * pParticleEffect, const CL_Vector2 &v)
+{
+	pParticleEffect->set_addit_vector(L_Vector(v.x, v.y));
+}
+
 L_MotionController * ParticleGetMotionController(L_Particle * pParticle)
 {
 	if (!pParticle->get_motion_controller())
@@ -75,7 +85,6 @@ void MotionController2DAcceleration(L_MotionController * pMotion, const CL_Vecto
 {
 	pMotion->set_2d_acceleration(L_Vector(vec));
 }
-
 
 void luabindEffectManager(lua_State *pState)
 {
@@ -95,9 +104,11 @@ void luabindEffectManager(lua_State *pState)
 			.def("GetMotionController", &ParticleGetMotionController)
 			.def("SetSizing2", &L_Particle::sizing2)
 
-			,class_<L_ParticleEffect>("ParticleEffect")
+			,class_<L_ParticleEffect>("EffectBase")
 			.def("__tostring", &ParticleEffectToString)
 			.def("AddParticle", &L_ParticleEffect::add)
+			.def("SetOffset", &ParticleEffectSetOffset)
+			.def("SetAdditionalVector", &ParticleEffectSetAdditionalVector)
 			.def("SetLife", &L_ParticleEffect::set_life)
 			.def("SetSizeDistortion", &L_ParticleEffect::set_size_distortion)
 			.def("SetLifeDistortion", &L_ParticleEffect::set_life_distortion)

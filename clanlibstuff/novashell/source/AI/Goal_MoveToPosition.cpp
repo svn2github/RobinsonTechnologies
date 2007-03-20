@@ -19,23 +19,20 @@ void Goal_MoveToPosition::Activate()
 
   if (bUsePath)
   {
-		#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-
-			LogMsg("Ent %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
-#endif
+	#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+		LogMsg("Ent %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+	#endif
 
 
 	  //compute path
 	  if (m_pOwner->GetPathPlanner()->RequestPathToPosition(m_vDestination))
 	  {
 		  //we can do it?
-
 		  int result;
 
 		  //this is setup to do searches over time, but for now, let's just do the whole search now
 		  //and not mess with getting messages later about it
-
-		  
+	  
 		  do 
 		  {
 			  result = m_pOwner->GetPathPlanner()->CycleOnce();
@@ -47,8 +44,10 @@ void Goal_MoveToPosition::Activate()
 		  {
 
 		  case target_not_found:
-			 
-			  //LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
+		  
+	#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+			  LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
+	#endif
 			  if (m_pOwner->HandleMessage(Message(C_MSG_TARGET_NOT_FOUND)))
 			  {
 				  //parent signaled that they want to handle it
@@ -60,7 +59,9 @@ void Goal_MoveToPosition::Activate()
 			  break;
 
 		  case target_found:
-//			  LogMsg("Found it");
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+			  LogMsg("Found it");
+#endif
 			  break;
 
 		  default:

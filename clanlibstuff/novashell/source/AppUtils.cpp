@@ -81,7 +81,6 @@ double GetAngleBetweenVectorFacings(CL_Vector2 v1, CL_Vector2 v2)
 	return acos(dot);
 }
 
-
 bool ConfirmMessage(string title, string msg)
 {
 	CL_MessageBox message(title, msg, "Continue", "Abort", "", GetApp()->GetGUI());
@@ -443,6 +442,12 @@ void RenderVertexListRotated(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int 
 	pGC->draw_line(ra.x, ra.y, rb.x, rb.y, colr);
 }
 
+void DrawLineFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC)
+{
+	vecStart = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStart);
+	vecStop = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStop);
+	pGC->draw_line(vecStart.x, vecStart.y, vecStop.x, vecStop.y, borderColor);
+}
 
 void DrawRectFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC)
 {

@@ -26,7 +26,7 @@ public:
 	L_Particle *GetParticleByName(const string &name);
 	L_Particle *CreateParticle(const string &name, const string &filename, int lifeMS);
 
-	L_ExplosionEffect * CreateEffectExplosion(int x, int y, int period_t, int min_particles_t, int max_particles_t, float explosion_level_t);
+	L_ExplosionEffect * EffectManager::CreateEffectExplosion(int period_t, int min_particles_t, int max_particles_t, float explosion_level_t);
 
 private:
 

@@ -1674,9 +1674,7 @@ Returns:
 A <Vector2> object containing a unit vector describing which way to the position in question.
 */
 
-
 .def("GetDistanceFromEntityByID", &MovingEntity::GetDistanceFromEntityByID)
-
 
 /*
 func: GetDistanceFromEntityByID
@@ -2194,6 +2192,8 @@ This is a diagnostic function that will send all functions and variables in this
 
 You'll need to bring up the System Console to see the output, or check the log.txt file when you're done.
 */
+
+//.def("SetGarbageCollectionOnKill", &MovingEntity::SetGarbageCollectionOnKill)
 
 
 //Group: Audio Related

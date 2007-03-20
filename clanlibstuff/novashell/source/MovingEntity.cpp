@@ -350,6 +350,8 @@ void MovingEntity::Kill()
 	SAFE_DELETE(m_pFont);
 
 	SetDefaults();
+	
+	
 }
 
 bool MovingEntity::HandleMessage(const Message &msg)
@@ -423,7 +425,7 @@ void MovingEntity::SetDefaults()
 	m_customDampening = -1;
 	m_gravityOverride = C_GRAVITY_OVERRIDE_DISABLED;
 	m_blendMode = C_BLEND_MODE_NORMAL;
-	SetIsCreature(true);
+	SetIsCreature(false);
 }
 
 void MovingEntity::SetNavNodeType(int n)
@@ -914,19 +916,9 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 		LogMsg("SetPosAndMapByName: Unable to locate entity by name: %s", name.c_str());
 		return false;
 	} 
-	
-	float offsetY = 0;
-	
 
-	if (GetGameLogic->GetGameMode() == GameLogic::C_GAME_MODE_SIDE_VIEW)
-	{
-		//we have to deduct half the height because this is written to move our FEET to the point
-		//to warp to. (only applicable to sideview mode)
 
-		offsetY = m_pTile->GetWorldColRect().get_height()/2;
-	}
-
-	SetPosAndMap(pO->m_pos - CL_Vector2(0, offsetY), pO->m_pWorld->GetName());
+	SetPosAndMap(pO->m_pos, pO->m_pWorld->GetName());
 	return true; 
 }
 
@@ -1244,6 +1236,8 @@ void MovingEntity::RunOnMapInsertIfNeeded()
 bool MovingEntity::LoadScript(const char *pFileName)
 {
 	SAFE_DELETE(m_pScriptObject);
+	
+	
 	m_pScriptObject = new ScriptObject();
 	string s = C_DEFAULT_SCRIPT_PATH;
 	s += pFileName;
@@ -1258,6 +1252,8 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	//set this script objects "this" variable to point to an instance of this class
 	luabind::globals(m_pScriptObject->GetState())["this"] = this;
 	m_pScriptObject->RunFunction("OnInit");
+	
+	
 	return true;
 }
 
@@ -2598,7 +2594,7 @@ if (GetGameLogic->GetGamePaused()) return;
 			for (; effectItor != m_effectManager.effect_list.end(); effectItor++)
 			{
 				(*effectItor)->set_position(GetPos().x, GetPos().y);
-				(*effectItor)->set_velocity(L_Vector(GetLinearVelocity()/3));
+				(*effectItor)->set_velocity(L_Vector(GetLinearVelocity()/4));
 			}
 		}
 	

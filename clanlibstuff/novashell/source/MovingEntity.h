@@ -317,10 +317,11 @@ public:
   void SetBlendMode(int blendMode) {m_blendMode = blendMode;}
   int GetBlendMode() {return m_blendMode;}
   bool GetIsCreature() {return m_bIsCreature;}
-  void SetIsCreature(bool bIsCreture) {m_bIsCreature = bIsCreture;}
+  void SetIsCreature(bool bIsCreature) {m_bIsCreature = bIsCreature;}
   void SetAccel(float fNew) {m_accel = fNew;}
   float GetAccel() {return m_accel;}
   void AddEffect(L_ParticleEffect *pEffect);
+  void SetGarbageCollectionOnKill(bool bGarbageCollectOnKill) {m_pScriptObject->SetGarbageCollectOnKill(bGarbageCollectOnKill);}
 
   enum ListenCollision
 {
@@ -457,6 +458,7 @@ protected:
 	float m_accel; //how fast we can acellerate
 	bool m_bUsingTilePicCollision;
 	L_EffectManager m_effectManager;
+	
 };
 
 MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName);

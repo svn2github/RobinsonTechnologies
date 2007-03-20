@@ -550,10 +550,16 @@ void EntEditMode::OnEditVisualProfile()
 	m_slots.connect(pEditor->sig_delete, this, &EntEditMode::OnExternalDialogClose);
 }
 
+
+
 void EntEditMode::SnapSizeChanged()
 {
+	EntEditor * pEnt = (EntEditor *)EntityMgr->GetEntityByName("editor");
+	
 	if (m_pCheckBoxSnap->is_checked())
 	{
+		if (pEnt && !GetGameLogic->GetShowGrid()) pEnt->OnToggleGrid();
+
 		m_pInputBoxSnapSizeX->enable(true);
 		m_pInputBoxSnapSizeY->enable(true);
 		int snapX = CL_String::to_int(m_pInputBoxSnapSizeX->get_text());
@@ -575,10 +581,12 @@ void EntEditMode::SnapSizeChanged()
 			m_pInputBoxSnapSizeY->set_text(CL_String::from_int(snapY));
 		}
 
-
 		g_pMapManager->GetActiveMap()->SetSnapEnabled(true);
 	} else
 	{
+	
+		if (pEnt && GetGameLogic->GetShowGrid()) pEnt->OnToggleGrid();
+		
 		m_pInputBoxSnapSizeX->enable(false);
 		m_pInputBoxSnapSizeY->enable(false);
 		g_pMapManager->GetActiveMap()->SetSnapEnabled(false);
@@ -978,7 +986,7 @@ void EntEditMode::OnCopy()
 void EntEditMode::OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld, bool bSelectPasted )
 {
    //OPTIMIZE can avoid a copy operation of the undo buffer
-
+	
 	if (editOperation.IsEmpty()) return;
 	TileEditOperation undo;
 	editOperation.PasteToWorld(vecWorld, TileEditOperation::PASTE_UPPER_LEFT, &undo);
@@ -992,6 +1000,7 @@ void EntEditMode::OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld,
 	}
 	
 	AddToUndo(&undo);
+
 }
 
 void EntEditMode::UpdateMenuStatus()
@@ -1446,6 +1455,8 @@ void EntEditMode::FloodFill(CL_Rect r)
 	}
 
 	PushUndosIntoUndoOperation();
+
+	
 }
 
 void EntEditMode::onButtonDown(const CL_InputEvent &key)

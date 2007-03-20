@@ -168,10 +168,9 @@ void WorldNavManager::LinkMap(Map *pMap)
 	for (itor = pMap->GetWarpTagHashList().begin(); itor != pMap->GetWarpTagHashList().end(); itor++)
 	{
 		pTag = g_TagManager.GetFromHash(*itor);
-		if (pTag) //empty warptarget means it's on the receiving end of a one way warp
+		if (pTag) //empty warp target means it's on the receiving end of a one way warp
 		{
 			LinkNode(pTag);//link to the map hub
-
 		} 
 	}
 }

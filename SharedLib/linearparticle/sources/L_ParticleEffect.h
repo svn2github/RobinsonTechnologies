@@ -89,6 +89,9 @@ public:
 	L_REAL x_pos;
 	L_REAL y_pos;
 
+	L_REAL x_pos_offset; //SETH
+	L_REAL y_pos_offset; //SETH
+
 	/**
 	period : time(milisec) interval between two emissions, 1 <= period < infinity \n
 	v_t : velocity for this effect */
@@ -118,6 +121,10 @@ public:
 	/** Set position. */
 	void set_position(L_REAL x, L_REAL y);
 
+	/** Set offset. */
+	void set_offset(L_REAL x, L_REAL y); //SETH added this
+
+
 	/** Apply randomization for particles' initial rotation. */
 	void set_par_random_rotation(bool par_rand_rot=true);
 
@@ -137,7 +144,7 @@ public:
 	its velocity direction even after the emission, please use L_Particle::rotating4();*/
 	void set_follow_shooting(bool flag=true);
 
-	/** Add additional vector for emitted particle, can be used for interia effect */
+	/** Add additional vector for emitted particle, can be used for inertia effect */
 	void set_addit_vector(const L_Vector& v_t);
 
 	/** Set period for emission in milli second. */
@@ -148,7 +155,7 @@ public:
 	L_REAL get_x_pos(void);
 
 	L_REAL get_y_pos(void);
-
+	
 	int get_particle_num(void);
 
 	int get_life(void);

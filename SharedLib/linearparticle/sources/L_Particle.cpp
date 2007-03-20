@@ -665,6 +665,6 @@ void L_Particle::draw(int x_shift, int y_shift, float x_size_mod, float y_size_m
 	
 	CL_Vector2 pVec = g_pMapManager->GetActiveMapCache()->WorldToScreen(CL_Vector2(x_pos+x_shift, y_pos+y_shift) );
 	
-//	surface->draw( x_pos+x_shift, y_pos+y_shift);
+	//surface->draw( x_pos+x_shift, y_pos+y_shift);
 	surface->draw( pVec.x, pVec.y);
 }

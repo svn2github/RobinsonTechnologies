@@ -14,7 +14,6 @@ NavGraphManager::NavGraphManager(Map *pParent)
 	Clear();
 }
 
-
 NavGraphManager::~NavGraphManager()
 {
 	Kill();
@@ -70,7 +69,7 @@ void NavGraphManager::ExamineNodesForLinking(Tile *pA, Tile *pB)
 void NavGraphManager::AddNeighborLinks(Tile *pTile)
 {
 
-	//first get all surounding nodes that we might want to connect to
+	//first get all surrounding nodes that we might want to connect to
 	CL_Vector2 pos; 
 
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)

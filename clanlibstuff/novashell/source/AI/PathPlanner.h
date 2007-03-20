@@ -17,6 +17,8 @@
 #define C_SHOW_PATHFINDING_DEBUG_INFO
 #endif
 
+//#define C_SHOW_PATHFINDING_DEBUG_INFO
+
 
 /*
 #include "SparseGraph.h"

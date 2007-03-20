@@ -35,6 +35,7 @@ How this API is organized:
 System Objects - These are global single-instance objects that always exist that you can access at any time.
 Game Objects - A game can have an unlimited number of these types of things. (maps, entities, etc)
 Simple Objects - Smaller data structures that can be used anywhere.
+Effect Objects - Objects related to the <EffectManager>.  Particle systems and such.
 Global Functions - These are functions not associated with any object.  Can be used from anywhere.
 Brains - Behaviors that can be layered together with an <Entity>'s <BrainManager>.
 States - States that can be set through an <Entity>'s <BrainManager>.

@@ -7,6 +7,9 @@
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)
 //  ***************************************************************
 
+//Each map has its own NavGraphManager to keep track of its local pathfinding system.
+//the WorldNavManager keeps track of the connection between maps.
+
 #ifndef NavGraphManager_h__
 #define NavGraphManager_h__
 

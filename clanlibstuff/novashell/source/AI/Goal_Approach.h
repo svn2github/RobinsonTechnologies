@@ -18,9 +18,9 @@ public:
 		  m_targetID(targetID), m_distanceRequired(distanceRequired)
 	  {
 		  SetName("Approach");
-		  m_bTriedSimpleWay = false;
-		  m_bTriedComplexWay = false;
-		  m_targetNotFoundCount = 0;
+		  
+		  ReinitializeCompletely();
+		  
 	  }
 
 	  //the usual suspects
@@ -39,7 +39,7 @@ private:
 	bool UpdatePositionFromEntityID();
 	void ProcessNextMapChunk();
 	bool CloseEnoughAndFacingTheRightWay();
-
+	void ReinitializeCompletely();
 	//the position the bot wants to reach
 	CL_Vector2 m_vDestination, m_vLookPosition;
 	Map * m_pDestMap;

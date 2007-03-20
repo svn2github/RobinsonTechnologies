@@ -20,7 +20,6 @@
 #include "EntWorldDialog.h"
 #include "EffectManager.h"
 
-
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
@@ -67,8 +66,8 @@ GameLogic::GameLogic()
 	SetShowFPS(false);
 	SetShowPathfinding(false);
 	SetShowAI(false);
-	SetGameMode(C_GAME_MODE_TOP_VIEW); //default.  Also is automatically changed when player brains are initted.
 	m_activeWorldName = "base";
+	m_bShowGrid = false;
 }
 
 bool GameLogic::IsEditorDialogOpen()
@@ -208,18 +207,6 @@ void GameLogic::LoadGlobals()
 	
 	m_data.Set("gameTick", "0");
 	GetApp()->SetGameTick(0);
-
-}
-
-void GameLogic::SetGameMode(int gameMode)
-{
-	if (gameMode < 0 || gameMode > C_GAME_MODE_COUNT)
-	{
-		LogError("Illegal game mode");
-		return;
-	}
-
-	m_gameMode = gameMode;
 }
 
 void GameLogic::ClearScreen()
@@ -462,7 +449,7 @@ bool GameLogic::Init()
 		//then rebuild node data
 		g_worldNavManager.LinkEverything();
 		CL_Display::clear(CL_Color(0,0,0));
-		BlitMessage("... saving out navgraph and tagcashe data ...", (GetScreenY/2) -30);
+		BlitMessage("... saving out navgraph and tagcache data ...", (GetScreenY/2) -30);
 
 		//now save everything, nothing will have changes except tagcache data
 		m_worldManager.SaveAllMaps();

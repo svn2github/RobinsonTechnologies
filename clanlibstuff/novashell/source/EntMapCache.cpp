@@ -11,7 +11,6 @@
 
 #define C_TILE_EDIT_UNDO_LEVEL 20
 
-
 EntMapCache::EntMapCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
 	 SetName("mapcache");
@@ -19,7 +18,6 @@ EntMapCache::EntMapCache(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	 m_cacheCheckTimer = 0;
 	 SetDrawWorldChunkGrid(false);
 	 SetDrawCollision(false);
-
 }
 
 void EntMapCache::PushUndoOperation(const operation_deque &op)
@@ -47,8 +45,6 @@ void EntMapCache::PopUndoOperation()
 	m_undoDeque.pop_front();
 }
 
-
-
 void EntMapCache::SetWorld( Map * pWorld)
 {
 	if (!m_pWorld)
@@ -67,6 +63,7 @@ void EntMapCache::SetWorld( Map * pWorld)
 	}
 
 }
+
 EntMapCache::~EntMapCache()
 {
     ClearCache();
@@ -74,7 +71,6 @@ EntMapCache::~EntMapCache()
 
 void EntMapCache::ClearCache()
 {
-
 	m_worldChunkVector.clear();
 	//insure that this isn't run again
 	ClearTriggers();
@@ -82,7 +78,6 @@ void EntMapCache::ClearCache()
 	//don't want to cache old data either
 	m_tileLayerDrawList.clear();
 	m_entityList.clear();
-
 }
 
 //TODO: these should be rewritten for speed later
@@ -142,7 +137,6 @@ bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 	}
 
 	pWorldChunk->SetThumbNail(NULL);
-
 	pWorldChunk->SetNeedsThumbnailRefresh(false);
 
 	if (pWorldChunk->IsEmpty()) 
@@ -348,21 +342,17 @@ void EntMapCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vec
 		for (unsigned int i=0; i < layerIDVec.size(); i++)
 		{
 			pTileList =  (*itor)->GetScreen()->GetTileList(layerIDVec[i]);
-
 			pLayer = &m_pWorld->GetLayerManager().GetLayerInfo(layerIDVec[i]);
-
 			tileListItor = pTileList->begin();
 
 			while (tileListItor != pTileList->end())
 			{
-
 				//add our tiles?
 				pTile = *tileListItor;
 				if (pTile->GetType() == C_TILE_TYPE_REFERENCE)
 				{
 					pTile = pTile->GetTileWereAReferenceFrom();
 				}
-
 				
 				if (pTile->GetLastScanID() != renderID)
 				{
@@ -396,7 +386,6 @@ void EntMapCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vec
 
 				tileListItor++;
 			}
-
 		}
 	}
 }
@@ -424,7 +413,6 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 
 		if (pCol && pCol->GetLineList()->size() > 0)
 		{
-			
 			if (pA->GetType() == C_TILE_TYPE_ENTITY)
 			{
 				aBottom = pA->GetPos().y + (pCol->GetLineList()->begin()->GetRect().get_height()/2);
@@ -476,7 +464,6 @@ void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThu
 	//hack so we don't get shadow popping
 
 	viewRect.right += 100;
-	//viewRect.bottom += ;
 
 	m_tileLayerDrawList.clear();
 	ResetPendingEntityMovementAndDeletions();
@@ -493,7 +480,6 @@ void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThu
 
 	static bool bNoParallax;
 	static bool bDontAddToDrawList;
-
 	
 	for (unsigned int i=0; i < layerMan.GetLayerCount(); i++)
 	{
@@ -541,7 +527,6 @@ void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThu
 			layerIdVecStandard.push_back(i);
 		} else
 		{
-			
 			//requires special handling
 			layerIdVecSpecial.clear();
 			layerIdVecSpecial.push_back(i);
@@ -583,8 +568,6 @@ void EntMapCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 //break this rect down into chunks to feed into the screens to get tile info
 void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/, bool bAllowLoadOnDemand /* = false*/)
 {
-	
-	
 	CL_Rect rec(recArea);
 	rec.normalize();
     static int startingX;
@@ -695,7 +678,6 @@ void EntMapCache::RenderGoalAI(CL_GraphicContext *pGC)
 
 	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
 	{
-
 		pTile = m_tileLayerDrawList.at(i);
 		if (!pTile) continue;
 
@@ -803,7 +785,6 @@ void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 void EntMapCache::ClearTriggers()
 {
 	m_activeTriggers.clear();
-
 }
 
 void EntMapCache::AddActiveTrigger(int entID)
@@ -813,8 +794,9 @@ void EntMapCache::AddActiveTrigger(int entID)
 
 void EntMapCache::Update(float step)
 {
-
 	m_uniqueDrawID = GetApp()->GetUniqueNumber();
+	
+	/*
 	unsigned int gameTick = GetApp()->GetGameTick();
 	if (gameTick > m_cacheCheckTimer)
 	{
@@ -825,6 +807,8 @@ void EntMapCache::Update(float step)
 		//CullScreensNotUsedRecently(gameTick - cacheCheckSpeed);
 		m_cacheCheckTimer = gameTick+cacheCheckSpeed;
 	}
+	*/
+
 
 	ProcessPendingEntityMovementAndDeletions();
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
@@ -891,8 +875,7 @@ bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMov
 		pCol = pTile->GetCollisionData();
 		if (pCol && pCol->HasData())
 		{
-				if (pTile == pIgnoreEntity->GetTile()) continue; //skip this
-
+			if (pTile == pIgnoreEntity->GetTile()) continue; //skip this
 
 			if (bIgnoreMovingCreatures && pTile->GetType() == C_TILE_TYPE_ENTITY)
 			{
@@ -971,7 +954,6 @@ bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMov
 			}
 
 		}
-		
 	}
 
 	return false;
@@ -1039,9 +1021,42 @@ void EntMapCache::OnMapChange()
 			pEnt->UpdateTriggers(0);
 		}
 	}
-
+	
+	
 	ClearCache();
 }
+
+void EntMapCache::RenderGrid(CL_GraphicContext *pTarget)
+{
+
+	CL_Color col = CL_Color::gray;
+	CL_Vector2 vSnap = CL_Vector2(m_pWorld->GetDefaultTileSizeX(), m_pWorld->GetDefaultTileSizeY());
+	
+	if (vSnap.x <= 1 || vSnap.y <= 1)
+	{
+		//grid is too small to draw..
+		return;
+	}
+
+	CL_Rectf rWorld = GetCamera->GetViewRectWorld();
+	
+	CL_Vector2 vPos = m_pWorld->SnapWorldCoords(GetCamera->GetPos(), vSnap);
+
+	for (; vPos.x < rWorld.right+vSnap.x; vPos.x += vSnap.x)
+	{
+		DrawLineFromWorldCoordinates(vPos, vPos + CL_Vector2(0,rWorld.get_height() + vSnap.y), col, pTarget);
+	}
+
+	
+	vPos.x = rWorld.left; //reset this to do another pass for the horizontal lines
+
+	for (; vPos.y < rWorld.bottom+vSnap.y; vPos.y += vSnap.y)
+	{
+		DrawLineFromWorldCoordinates(vPos, vPos + CL_Vector2(rWorld.get_width() + vSnap.x, 0), col, pTarget);
+	}
+
+}
+
 
 void EntMapCache::Render(void *pTarget)
 {
@@ -1082,6 +1097,12 @@ void EntMapCache::Render(void *pTarget)
 				CL_Vector2(recScreen.right, recScreen.bottom), CL_Color(0,255,255,255), pGC);
 		}
 	}
+
+	if (GetGameLogic->GetShowGrid())
+	{
+		RenderGrid(pGC);
+	}
+
 }
 
 

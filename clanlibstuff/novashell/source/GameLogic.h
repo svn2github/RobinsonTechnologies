@@ -6,9 +6,6 @@
 
 #pragma once
 
-
-
-
 #include "MyEntityManager.h"
 #include "EntityManager.h"
 #include "Map.h"
@@ -49,7 +46,8 @@ public:
       MyEntityManager * GetMyEntityManager() {return &m_myEntityManager;}
 	  void SaveGlobals();
 	  void LoadGlobals();
-
+	  void SetShowGrid(bool bNew){m_bShowGrid = bNew;}
+	  bool GetShowGrid() {return m_bShowGrid;}
       void Kill();
 	  void SetMyPlayer(MovingEntity * pNew);
 	  MovingEntity * GetMyPlayer() {return m_pPlayer;}
@@ -95,7 +93,7 @@ public:
 	  const string & GetWorldsDirPath() {return m_strWorldsDirPath;}
 	  const string & GetActiveWorldName();
 	  void InitGameGUI(string xmlFile); //don't make this const, we modify it in place
-		void OneTimeModSetup();
+	  void OneTimeModSetup();
 	  CL_StyleManager_Bitmap * GetGUIStyle() {return m_pGUIStyle;}
 	  CL_GUIManager * GetGameGUI() {return m_pGUIManager;}
 	  void RequestRebuildCacheData();
@@ -104,25 +102,10 @@ public:
 	  unsigned int GetTimeSinceLastUpdateMS() {return CL_System::get_time()-m_lastUpdateTime;}  //how many MS we've been stuck in a function
 	  bool IsEditorDialogOpen();
 
-	  //setting the game mode right helps the game guess more accurately how gravity, physics and dynamic shadows should work.
-	  //But its reliance on this var should be as minimum as possible.
-	  
-	  int GetGameMode() {return m_gameMode;}
-	  void SetGameMode(int gameMode);
-
-	  enum
-	  {
-		  C_GAME_MODE_SIDE_VIEW,
-		  C_GAME_MODE_TOP_VIEW,
-
-		  C_GAME_MODE_COUNT
-	  };
-
 private:
 
 	void OnMouseUp(const CL_InputEvent &key);
 	void OnMouseDown(const CL_InputEvent &key);
-
 	void Zoom(bool zoomCloser);
 	void OnRender();
     void OnKeyDown(const CL_InputEvent &key);
@@ -149,6 +132,7 @@ private:
 	DataManager m_data; //to store global variables controlled by Lua
 	bool m_bShowingMessageWindow;
 	bool m_bShowFPS;
+	bool m_bShowGrid;
 	bool m_bRestartEngineFlag;
 	int m_gameMode;
 	CL_Slot m_playerDestroyedSlot;

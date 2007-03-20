@@ -131,6 +131,7 @@ void DumpTable( lua_State *L, const char *pTableName, int tableIndex) //null def
 
 ScriptObject::ScriptObject()
 {
+	m_bGarbageCollectOnKill = false;
 	m_pLuaState = NULL;
 	m_threadReference = LUA_NOREF;
 	assert(GetScriptManager && "Threads can't be created before the script manager!");
@@ -166,8 +167,10 @@ ScriptObject::~ScriptObject()
 {
 	//clear the only reference needed for garbage collection to occur
 	luaL_unref (GetScriptManager->GetMainState(),LUA_GLOBALSINDEX, m_threadReference);
-	lua_gc(m_pLuaState, LUA_GCCOLLECT, 0);
-
+	if (m_bGarbageCollectOnKill)
+	{
+		lua_gc(m_pLuaState, LUA_GCCOLLECT, 0);
+	}
 }
 
 void ScriptObject::SetGlobal(const string& key, int value)
@@ -181,7 +184,6 @@ void ScriptObject::SetGlobal(const string& key, int value)
 
 bool ScriptObject::Load(const char *pFileName)
 {
-	
 	int result = luaL_loadfile(m_pLuaState, pFileName);
 	if (result == 0) result = lua_pcall(m_pLuaState, 0,0,0);
 
@@ -209,7 +211,10 @@ bool ScriptObject::Load(const char *pFileName)
 		
 	#ifdef _DEBUG
 	//lua_gc(GetScriptManager->GetMainState(), LUA_GCCOLLECT, NULL);
+	
+
 	#endif
+	
 	return true; //success
 }
 

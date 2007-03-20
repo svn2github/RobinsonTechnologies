@@ -1,5 +1,26 @@
 Changelog
 
+3-20 2007
+
+* BUGFIX: Fixed problem where the pathfinding-node connecter decided to route through all entities
+* Fixed performance problems that was introduced when I had the bright idea of doing garbage collection at
+	every entity deletion. Because things may linger a bit now, I had to change the treeworld player script to
+	kill its looping sounds in its OnKill(). (so we don't keep hearing them for a while afterward..)
+* Added "Display->Show Grid Lines (Ctrl-G)" option.
+* Double clicking a map in the map switcher window now opens its properties.  I'd like to do right click and have
+	pop-up options instead but I just don't feel like fighting with clanlib's GUI right now
+* Upped max particles from 5,000 to 20,000 at once
+* Removed the first two parameters of EffectManager:CreateEffectExplosion, they aren't needed..
+* Improved error checking in visual profile .xml's
+* Separated "warp tag" and "waypoint" icons in the system palette, it's a waste to use warp tags when you only need waypoints
+* Some improvements to the path-finding
+* Added a few more particle system features, put fire in the braziers in the RPG test
+* Partially documented the particle system.. 15% maybe
+
+3-15 2007
+
+* Fixed "FMOD not supported yet" bogus error message on windows build (whisperstorm)
+
 3-14 2007
 
 * Log output is now flushed to disk after every line, so your log.txt should actually have info in the advent of a crash
