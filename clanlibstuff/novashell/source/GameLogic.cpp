@@ -83,7 +83,9 @@ bool GameLogic::IsEditorDialogOpen()
 	EntEditor *pEditor = (EntEditor*)EntityMgr->GetEntityFromID(m_editorID);
 	if (pEditor) return pEditor->IsDialogOpen();
 	
-	LogError("EditorHasDialogOpen can't find it?");
+	
+	//if we got here, the map manager or something else is probably onscreen
+	//LogError("EditorHasDialogOpen can't find it?");
 	return false;
 
 }
@@ -852,8 +854,12 @@ void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
 			{
 				tiles = g_pMapManager->GetActiveMapCache()->GetTilesRenderedLastFrameCount();
 			}
-			GetApp()->GetFont(C_FONT_NORMAL)->draw(GetScreenX-220,0, "FPS:" + CL_String::from_int(GetApp()->GetFPS())
-				+" T:"+CL_String::from_int(tiles) + " W:"+CL_String::from_int(g_watchManager.GetWatchCount()));
+			static char buff[256];
+			sprintf(buff, "FPS:%d T:%d: W:%d D:%.2f", GetApp()->GetFPS(), tiles, g_watchManager.GetWatchCount(),
+				GetApp()->GetDelta());
+			GetApp()->GetFont(C_FONT_NORMAL)->draw(GetScreenX-240,0, buff);
+			
+			
 		}
 	}
 

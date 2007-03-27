@@ -1,5 +1,13 @@
 Changelog
 
+3-27 2007
+
+* Fixed jerkiness problem at certain refresh rates
+
+3-21 2007
+
+* RunFunctionIfExists no longer displays an error if the entity you try to run a script on doesn't have a script loaded
+
 3-20 2007
 
 * BUGFIX: Fixed problem where the pathfinding-node connecter decided to route through all entities

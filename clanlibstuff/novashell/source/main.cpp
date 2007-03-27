@@ -40,7 +40,8 @@ void LogMsg(const char *lpFormat, ...)
 	#ifdef WIN32
 		OutputDebugString(stTemp);
 	#endif
-#endif    
+#endif   
+
 	std::cout << stTemp;
 	std::cout.flush();
 
@@ -531,8 +532,7 @@ void App::SetGameLogicSpeed(float fNew)
 }
 void App::ComputeSpeed()
 {
-	
-	m_delta = GetGameLogicSpeed()/(1000/60); 
+	m_delta = GetGameLogicSpeed()/(1000/60);
 }
 
 void App::SetGameSpeed(float fNew)
@@ -567,7 +567,6 @@ void App::Update()
 	//LogMsg("Delta: %.2f", m_delta);
 
 #define C_MAX_TIME_PER_LOGIC_UPDATE_MS 200 //avoid mega slow down
-
 	while (m_thinkTicksToUse >= GetGameLogicSpeed())
 	{
 		if (!m_pGameLogic->GetGamePaused())
@@ -578,6 +577,21 @@ void App::Update()
 		m_pGameLogic->Update(m_delta);
 		m_bJustRenderedFrame = false;
 		m_thinkTicksToUse -= GetGameLogicSpeed();
+	
+		if (m_thinkTicksToUse < 5)
+		{
+			//don't allow slow accumulation...
+			m_thinkTicksToUse = 0;
+
+		}
+/*
+		if (m_thinkTicksToUse < GetGameLogicSpeed()*1.5)
+		{
+			//this stops jerkiness at 60 hz when it 'barely' needs to do a second
+			//update cycle...
+			break;
+		}
+		*/
 		if ( frameTime + C_MAX_TIME_PER_LOGIC_UPDATE_MS < CL_System::get_time())
 		{
 			//our CPU can't keep up, skip the rest for now so we can get a visual update
@@ -585,7 +599,6 @@ void App::Update()
 			break;
 		}
 	}
-
 }
 
 void log_to_cout(const std::string &channel, int level, const std::string &message)

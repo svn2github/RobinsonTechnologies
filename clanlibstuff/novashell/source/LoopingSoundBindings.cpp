@@ -45,7 +45,11 @@ void LoopingSound::Play(bool bOn)
 		if (m_handle == C_SOUND_NONE)
 		{
 			if (g_pSoundManager)
+			{
 				m_handle = g_pSoundManager->PlayLooping(m_file.c_str());
+			    g_pSoundManager->SetPriority(m_handle, 20); //bit less than standard
+
+			}
 		} else
 		{
 			g_pSoundManager->SetPaused(m_handle, !bOn);

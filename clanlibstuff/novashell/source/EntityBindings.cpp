@@ -2128,7 +2128,7 @@ func: RunFunctionIfExists
 variable RunFunctionIfExists(string functionName, parms, ...)
 (end)
 
-Identical to <RunFunction> except it silently fails if the function doesn't exist instead of throwing a hissy fit error.
+Identical to <RunFunction> except it silently fails if the function doesn't exist (or the entity doesn't have a script loaded) instead of throwing a hissy fit error.
 
 Parameters:
 

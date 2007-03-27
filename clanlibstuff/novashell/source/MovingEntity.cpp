@@ -1257,13 +1257,17 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	return true;
 }
 
-bool MovingEntity::ScriptNotReady(const string &func)
+bool MovingEntity::ScriptNotReady(const string &func, bool bShowError)
 {
 
 	if (!m_pScriptObject)
 	{
-		LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
-			func.c_str(), ID(), GetName().c_str());
+		if (bShowError)
+		{
+			LogError("Can't RunFunction %s on entity %d (%s), no script is attached.",
+				func.c_str(), ID(), GetName().c_str());
+		}
+
 		return true; //signal error condition
 	}
 
@@ -1396,7 +1400,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func)
 {
 	luabind::object ret;
 
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str());
 	} LUABIND_ENT_CATCH( ("Error while calling function " + func).c_str());
@@ -1407,7 +1411,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func)
 luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1)
 {
 	luabind::object ret;
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1);
@@ -1420,7 +1424,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::o
 
 	luabind::object ret;
 
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2);
@@ -1432,7 +1436,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::o
 {
 	luabind::object ret;
 
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3);
@@ -1444,7 +1448,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::o
 {
 	luabind::object ret;
 
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4);
@@ -1456,7 +1460,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::o
 {
 	luabind::object ret;
 
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5);
@@ -1468,8 +1472,8 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::o
 luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6)
 {
 	luabind::object ret;
-
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6);
@@ -1481,7 +1485,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::o
 {
 	luabind::object ret;
 
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7);
@@ -1493,7 +1497,7 @@ luabind::object MovingEntity::RunFunctionIfExists(const string &func, luabind::o
 {
 	luabind::object ret;
 
-	if (ScriptNotReady(func)) return ret; //also shows an error for us
+	if (ScriptNotReady(func, false)) return ret; //also shows an error for us
 	if (!GetScriptObject()->FunctionExists(func.c_str())) return ret; //silent error
 
 	try {ret = luabind::call_function<luabind::object>(m_pScriptObject->GetState(), func.c_str(), obj1, obj2, obj3, obj4, obj5, obj6, obj7, obj8);

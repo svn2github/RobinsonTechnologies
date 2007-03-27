@@ -119,7 +119,7 @@ public:
   luabind::object RunFunctionIfExists(const string &func, luabind::object obj1, luabind::object obj2, luabind::object obj3, luabind::object obj4, luabind::object obj5, luabind::object obj6, luabind::object obj7, luabind::object obj8);
 
 
-  bool ScriptNotReady(const string &func);
+  bool ScriptNotReady(const string &func, bool bShowError = true);
 
   void GetAlignment(CL_Origin &origin, int &x, int &y);
   void SetAlignment(int origin, CL_Vector2 v);
