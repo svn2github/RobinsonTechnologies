@@ -347,7 +347,7 @@ int Goal_Approach::Process()
 
 			if (!m_macroPath.IsValid())
 			{
-				LogError("Path cut off early?");
+				LogMsg("Goal_Approach::Process - Path cut off early?");
 				m_iStatus = inactive;
 			} else
 			{

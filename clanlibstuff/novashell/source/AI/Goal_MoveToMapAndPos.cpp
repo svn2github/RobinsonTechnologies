@@ -126,7 +126,7 @@ int Goal_MoveToMapAndPos::Process()
 
 			if (!m_macroPath.IsValid())
 			{
-				LogError("Path cut off early?");
+				LogMsg("Goal_MoveToMapAndPos::Process - Path cut off early?");
 				m_iStatus = inactive;
 			} else
 			{
