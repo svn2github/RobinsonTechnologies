@@ -378,6 +378,11 @@ bool compareTextObjectsBackwards(const TextObject &A, const TextObject &B)
 
 void TextManager::Update(float step)
 {
+	
+	if (GetGameLogic->GetGamePaused()) return;
+
+	
+	
 	//sort them based on time created
 	m_textList.sort(compareTextObjectsBackwards);
 

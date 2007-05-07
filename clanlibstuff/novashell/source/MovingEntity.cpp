@@ -298,6 +298,23 @@ void MovingEntity::ClearColorMods()
 void MovingEntity::Kill()
 {
 
+	//tell any entities that were attached to us that we're dying and to also kill themselves
+	if (!m_attachedEntities.empty())
+	{
+		list<int>::iterator itor;
+		MovingEntity *pEnt;
+
+		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
+		{
+			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
+			if (pEnt)
+			{
+				pEnt->SetDeleteFlag(true);
+			} 
+			itor++;
+		}
+	}
+
 	if (m_pScriptObject && IsPlaced() && m_pScriptObject->FunctionExists("OnKill"))
 	{
 		m_pScriptObject->RunFunction("OnKill");
@@ -1236,8 +1253,7 @@ void MovingEntity::RunOnMapInsertIfNeeded()
 bool MovingEntity::LoadScript(const char *pFileName)
 {
 	SAFE_DELETE(m_pScriptObject);
-	
-	
+		
 	m_pScriptObject = new ScriptObject();
 	string s = C_DEFAULT_SCRIPT_PATH;
 	s += pFileName;
@@ -2676,6 +2692,7 @@ void MovingEntity::ApplyPhysics(float step)
 			MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
 			if (!pEnt)
 			{
+				//the entity we were attached to no longer exists, so let's just kill ourself
 				SetDeleteFlag(true);
 			} else
 			{
@@ -2691,7 +2708,7 @@ void MovingEntity::ApplyPhysics(float step)
 		}
 	} 
 
-	//while we're at it, if any entities are attached, make sure they "update".  Don't worry, it's smart enough
+	//while we're at it, if any entities are attached *to* us, make sure they "update".  Don't worry, it's smart enough
 	//not to allow something to update twice if it's already done it
 
 	if (!m_attachedEntities.empty())

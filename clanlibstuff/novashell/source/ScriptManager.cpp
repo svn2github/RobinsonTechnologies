@@ -204,7 +204,7 @@ bool ScriptObject::Load(const char *pFileName)
 		break;
 
 	default:
-		LogMsg("Unknown error in script %s", pFileName);
+		LogMsg("Error trying to load script %s", pFileName);
 		ShowLUAMessagesIfNeeded(m_pLuaState, result);
 		return false;
 	}

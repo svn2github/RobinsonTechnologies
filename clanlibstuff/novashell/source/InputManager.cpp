@@ -355,7 +355,7 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 		switch (pKeyInfo->m_inputMode)
 		{
 		case C_INPUT_GAME_ONLY:
-			if (bEditorOpen || (g_Console.IsActive() && bKeyDown) )  continue;
+			if (bEditorOpen || (g_Console.IsActive() && bKeyDown) && !CL_Keyboard::get_keycode(CL_KEY_CONTROL) )  continue;
 			break;
 		case C_INPUT_EDITOR_ONLY:
 			if (!bEditorOpen) continue;

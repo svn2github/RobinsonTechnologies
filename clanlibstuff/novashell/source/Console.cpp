@@ -73,7 +73,7 @@ string Console::GetBackBufferLine(int idx)
 void Console::OnKeyDown(const CL_InputEvent &key)
 {
 	
-	if (!IsActive() && key.id != CL_KEY_TILDE)
+	if ( (!IsActive() && key.id != CL_KEY_TILDE) || CL_Keyboard::get_keycode(CL_KEY_CONTROL) && key.id != CL_KEY_C )
 	{
 		return;
 	}
@@ -238,6 +238,11 @@ void Console::SetOnScreen(bool bNew)
 			if (GetScriptManager)
 			GetScriptManager->SetGlobalBool("g_consoleActive", true);
 
+			if (m_pInputBox)
+			{
+				m_pInputBox->set_focus();
+			}
+
 		} else
 		{
 			//turn it off
@@ -329,17 +334,14 @@ void Console::RenderPostGUI()
 	//draw the text over it
 	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
 	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
-	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, "System Console - Press ` (backtick) to close, Ctrl-C into system clipboard, Page-Up/Page-Down to scroll");
+	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, "System Console - Press ` (backtick) to close, Ctrl-C to copy into system clipboard, Page-Up/Page-Down to scroll");
 
 }
 void Console::Render()
 {
 	if (!m_bOnScreen) return;
 	
-	if (m_pInputBox)
-	{
-		m_pInputBox->set_focus();
-	}
+	
 	//figure out overall size
 	CL_Rect r(0,15, GetScreenX, GetScreenY);
 	CL_Display::fill_rect(r, CL_Color(0,0,0,140));

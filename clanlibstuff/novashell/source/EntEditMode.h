@@ -140,7 +140,7 @@ protected:
 	void RefreshActiveBrush(CL_Point mousePos);
 	void DrawDragRect(CL_GraphicContext *pGC);
 	void onButtonDownTilePicInfo(const CL_InputEvent &key);
-
+	void TurnOffFocus();
 
 	enum
 	{

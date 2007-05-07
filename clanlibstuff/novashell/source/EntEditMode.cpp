@@ -1459,6 +1459,14 @@ void EntEditMode::FloodFill(CL_Rect r)
 	
 }
 
+void EntEditMode::TurnOffFocus()
+{
+	if (m_pInputBoxSnapSizeX->has_focus() || m_pInputBoxSnapSizeY->has_focus())
+	{
+		GetApp()->GetGUI()->set_focus(GetApp()->GetGUI());
+	}
+}
+
 void EntEditMode::onButtonDown(const CL_InputEvent &key)
 {
 	if (m_pEntCollisionEditor) return; //now is a bad time
@@ -1489,7 +1497,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		if (!m_dragInProgress)
 		{
 			//do want to to drag out a selection box or move something?
-			GetApp()->GetGUI()->set_focus(GetApp()->GetGUI());
+			TurnOffFocus();
 
 
 			m_vecDragStart = g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
@@ -1545,7 +1553,8 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		break;
 	}
 
-if (g_Console.IsActive()) return;
+
+	if (g_Console.IsActive() && !CL_Keyboard::get_keycode(CL_KEY_CONTROL)) return;
 
 	switch(key.id)
 	{

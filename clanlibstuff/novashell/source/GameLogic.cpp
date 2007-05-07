@@ -855,8 +855,7 @@ void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
 				tiles = g_pMapManager->GetActiveMapCache()->GetTilesRenderedLastFrameCount();
 			}
 			static char buff[256];
-			sprintf(buff, "FPS:%d T:%d: W:%d D:%.2f", GetApp()->GetFPS(), tiles, g_watchManager.GetWatchCount(),
-				GetApp()->GetDelta());
+			sprintf(buff, "FPS:%d T:%d: W:%d", GetApp()->GetFPS(), tiles, g_watchManager.GetWatchCount());
 			GetApp()->GetFont(C_FONT_NORMAL)->draw(GetScreenX-240,0, buff);
 			
 			
