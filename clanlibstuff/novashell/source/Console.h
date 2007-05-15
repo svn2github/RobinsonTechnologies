@@ -1,7 +1,7 @@
 //  ***************************************************************
 //  Console - Creation date: 05/09/2006
 //  -------------------------------------------------------------
-//  Robinson Technologies Copyright (C) 2006 - All Rights Reserved
+//  Copyright 2007: Robinson Technologies - Check license.txt for license info.
 //
 //  ***************************************************************
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)

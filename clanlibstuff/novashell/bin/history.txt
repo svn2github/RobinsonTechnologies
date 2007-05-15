@@ -1,5 +1,20 @@
 Changelog
 
+5-7 2007
+
+* Added very basic tanks example
+
+4-26 2007
+
+* If an entity is deleted, any entities that were attached to it using SetAttach() are also deleted
+* Text movement no longer updates when the game is paused
+* Debug console plays better with other windows now, focusing/etc
+* Clanlib tree control selection bug fixed (was noticable when opening files in a dir with lots of files)
+
+4-2 2007
+
+* Improvements to Clanlib by Hans de Goede have sped up the linux rendering by 30%
+
 3-27 2007
 
 * Fixed jerkiness problem at certain refresh rates

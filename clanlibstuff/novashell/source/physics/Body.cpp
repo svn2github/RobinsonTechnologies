@@ -164,9 +164,15 @@ void CBody::AddForce(const Vector& F)
 
 void CBody::AddForce(const Vector& F, const Vector& P)
 {
-	if (IsUnmovable()) return;
-
+	if (IsUnmovable())
+	{
+		LogError("AddForceAndTorque can't be called on Entity %d (%s), it's not movable.  Give it collision data and call SetDensity to make it movable.",
+			GetParentEntity()->ID(), GetParentEntity()->GetName().c_str());
+		return;
+	}
 	m_xNetForce += F;
+	//m_fNetTorque -= P.x;
+	//m_fAngVelocity -= P.x;
 	m_fNetTorque -= (P - m_xPosition) ^ F; // SIGN IS WRONG?!?
 }
 

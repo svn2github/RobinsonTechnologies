@@ -2746,12 +2746,12 @@ void MovingEntity::AddForceBurst(CL_Vector2 force)
 
 void MovingEntity::AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque)
 {
-	m_body.AddForce( (*(Vector*)&force)*m_body.GetMass(), (*(Vector*)&torque)*m_body.GetMass());
+	m_body.AddForce( (*(Vector*)&force)*m_body.GetMass(), (*(Vector*)&torque));
 }
 
 void MovingEntity::AddForceAndTorqueBurst(CL_Vector2 force, CL_Vector2 torque)
 {
-	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass()) / GetApp()->GetDelta(),  ((*(Vector*)&torque)*m_body.GetMass()) / GetApp()->GetDelta());
+	m_body.AddForce( ((*(Vector*)&force)*m_body.GetMass()) / GetApp()->GetDelta(),  ((*(Vector*)&torque)) / GetApp()->GetDelta());
 }
 
 void MovingEntity::OnWatchListTimeout(bool bIsOnScreen)

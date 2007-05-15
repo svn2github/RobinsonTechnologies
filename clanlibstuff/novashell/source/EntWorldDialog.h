@@ -1,7 +1,7 @@
 //  ***************************************************************
 //  EntWorldDialog - Creation date: 09/15/2006
 //  -------------------------------------------------------------
-//  Robinson Technologies Copyright (C) 2006 - All Rights Reserved
+//  Copyright 2007: Robinson Technologies - Check license.txt for license info.
 //
 //  ***************************************************************
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)

@@ -1,8 +1,41 @@
-Feel free to steal any bits and pieces of this source, but keep in mind this is not open
-source and permission to re-distribute it is not granted.  After I have some time I will
-setup a decent license...
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
 
-This applies to only the source I wrote...
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
 
--Seth A. Robinson
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+Note: Some of the libraries Novashell may link to may have additional
+requirements or restrictions, the above license only pertains to Seth's code.
+
+FMOD sound library support is included by default but can be disabled. (ClanSound is also supported)
+More info on FMOD and its licensing: http://www.fmod.org  
+
+
+"Novashell Game Creation System" is copyrighted by Seth A. Robinson, please don't make
+anything that could be confused as being my product or being made by me.
+
+Special thanks to:
+
+Olivier Renault for his great physics tutorials ( http://uk.geocities.com/olivier_rebellion ) and 
+giving me permission to include his code under this license.
+
+Woo Chin Foo for writing LinearParticle:  http://www.galaxist.net/linearparticle.html
+
+Matt Buckland for writing Programming Game AI by Example, the BEST AI book out there - some code is based on his
+examples from the book.
+
+If you make any bugfixes or additions please send/post the SVN universal diffs so I can
+apply the patches.
+
+Seth A. Robinson
 www.rtsoft.com

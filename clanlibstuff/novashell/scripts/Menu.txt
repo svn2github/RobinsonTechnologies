@@ -56,6 +56,7 @@ Group: System Objects  {
    File: TagManager  (TagManager.cpp)
    File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
+   File: Known Issues  (KnownIssues.cpp)
    }  # Group: System Objects
 
 Group: Game Objects  {

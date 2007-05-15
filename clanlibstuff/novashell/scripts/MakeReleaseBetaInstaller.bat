@@ -51,11 +51,6 @@ if not exist %C_FILENAME% beeper.exe /p
 cd scripts
 call FTPToSite.bat
 
-REM Let's also put the history.txt on the website so it can be easily viewed before download
-
-call ../../../SetFTPLogonInfo.bat
-ncftpput -u %_FTP_USER_% -p %_FTP_PASS_% -R %_FTP_SITE_% /www/novashell ../bin/history.txt
-call ../../../KillFTPLogonInfo.bat
 
 REM Let's update the documentation too
 call win_make_docs.bat

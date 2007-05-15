@@ -2,7 +2,7 @@ Programming and design:
 Seth A. Robinson (www.rtsoft.com)
 
 Physics code based on source by:
-Olivier Renault
+Olivier Renault ( http://uk.geocities.com/olivier_rebellion )
 
 Particle system based on source by:
 Wong Chin Foo (LinearParticle)
@@ -12,10 +12,14 @@ Daniel Cook (www.lostgarden.com)
 
 Additional Art:
 Akiko Robinson
+Erin McCLellan
 
 Novashell is powered by the Clanlib Game SDK (www.clanlib.org)
 
 Special thanks:
+
+Matt Buckland - For writing Programming Game AI by Example, the BEST AI book out there - some code is based on his
+examples from the book.
 
 whisperstorm
 Loken
@@ -26,4 +30,3 @@ nmerci
 Magnus Norddahl
 ZombieJesus
 harrio
-
