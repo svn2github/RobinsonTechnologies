@@ -214,7 +214,8 @@ private:
     void OnKeyUp(const CL_InputEvent &key);
 	void Update();
 	void ComputeSpeed();
- 
+	bool VidModeIsSupported(CL_Size vidMode, int bit);
+
 	CL_ResourceManager * m_pResourceManager;
     CL_ResourceManager * m_pGUIResourceManager;
     CL_DisplayWindow * m_pWindow;

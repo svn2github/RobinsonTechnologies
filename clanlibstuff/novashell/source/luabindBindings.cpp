@@ -1,4 +1,5 @@
 #include "AppPrecomp.h"
+#include "luabindBindings.h"
 #include "main.h"
 
 #ifndef WIN32
@@ -55,8 +56,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabind::globals(pLuaState)["g_isDebug"] = false;	 //will be set later
 #endif
 
-	luabind::globals(pLuaState)["C_SCREEN_X"] = GetScreenX;
-	luabind::globals(pLuaState)["C_SCREEN_Y"] = GetScreenY;
-	
 
 }
+
+

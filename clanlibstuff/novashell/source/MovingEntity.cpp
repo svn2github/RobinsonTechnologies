@@ -276,6 +276,11 @@ Map * MovingEntity::GetMap()
 	return m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 }
 
+const string & MovingEntity::GetRequestedMapName()
+{
+	return m_strWorldToMoveTo;
+}
+
 CL_Vector2 MovingEntity::GetCollisionScale()
 {
 	if (!m_pCollisionData)
@@ -1030,7 +1035,7 @@ void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
 void MovingEntity::SetAlignment(int origin, CL_Vector2 v)
 {
 
-	if (m_pSprite)
+	if (m_pSprite && m_pSprite->get_frame_count() != 0)
 	{
 		m_pSprite->set_alignment(CL_Origin(origin), v.x, v.y);
 	} else
@@ -1057,10 +1062,67 @@ unsigned int MovingEntity::GetImageID()
 {
 	return CL_String::to_int(m_dataManager.Get(C_ENT_TILE_PIC_ID_KEY));
 }
+
 void MovingEntity::SetImage(const string &fileName, CL_Rect *pSrcRect)
 {
-	SetImageByID(FileNameToID(fileName.c_str()), pSrcRect);
+	unsigned int imageID = FileNameToID(fileName.c_str());
+
+
+	if (!GetHashedResourceManager->HashedIDExists(imageID))
+	{
+		//The image doesn't exist in our resource manager.  But let's try to add it...
+	
+		string fullFileName = ProcessPath(fileName);
+		if (g_VFManager.LocateFile(fullFileName))
+		{
+			//LogMsg("Located file %s", fullFileName.c_str()); 
+			GetHashedResourceManager->AddGraphic(fullFileName);
+		}
+	}
+
+	SetImageByID(imageID, pSrcRect);
+
 }
+
+
+void MovingEntity::AddImageToMapCache(const string &fileName)
+{
+	unsigned int imageID = FileNameToID(fileName.c_str());
+
+
+	if (!GetHashedResourceManager->HashedIDExists(imageID))
+	{
+		//The image doesn't exist in our resource manager.  But let's try to add it...
+
+		string fullFileName = ProcessPath(fileName);
+		if (g_VFManager.LocateFile(fullFileName))
+		{
+			//LogMsg("Located file %s", fullFileName.c_str()); 
+			GetHashedResourceManager->AddGraphic(fullFileName);
+		}
+	}
+}
+
+/*
+void MovingEntity::SetClipRect(CL_Rect *pSrcRect)
+{
+	if (!m_pSprite || m_pSprite->get_frame_count() == 0)
+	{
+		LogError("Entity:SetClipRect requires that an image be loaded before using.  Like with SetImage or something.");
+		return;
+
+	}
+	
+	if (!m_bUsingSimpleSprite)
+	{
+		LogError("Entity:SetClipRect can currently only be used with simple tilepic images, such as those set with SetImage.");
+		return;
+	}
+
+	m_pSprite->get
+
+}
+*/
 
 bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 {
@@ -1068,13 +1130,13 @@ bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 	CL_Surface *pSurf = GetHashedResourceManager->GetResourceByHashedID(picID);
 	if (!pSurf)
 	{
-		LogError("Error, entity %d (%s) is unable to find image with hash %d to use.", ID(), GetName().c_str(), picID);
+		LogError("Error, entity %d (%s) is unable to find image with hash %u to use.", ID(), GetName().c_str(), picID);
 		return false;
 	} 
 
 	int x = 0;
 	int y = 0;
-	CL_Origin align = origin_top_left; //default
+	CL_Origin align = origin_center; //default
 
 	if (m_pSprite && m_pSprite->get_frame_count() != 0)
 	{
@@ -1106,6 +1168,7 @@ bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 	m_dataManager.Set(C_ENT_TILE_PIC_ID_KEY, CL_String::from_int(picID));
 	m_dataManager.Set(C_ENT_TILE_RECT_KEY, RectToString(*pSrcRect));
 
+	
 	return true;
 }
 
@@ -1869,7 +1932,7 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 		}
 	}
 
-	m_pSprite->set_alignment(origin_center);
+	//m_pSprite->set_alignment(origin_center);
 
 	//get notified of collisions
 	m_collisionSlot = m_body.sig_collision.connect(this, &MovingEntity::OnCollision);
@@ -2233,11 +2296,30 @@ float MovingEntity::GetRotation()
 	return m_body.GetOrientation();
 }
 
+
+CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
+{
+
+	bRootIsCam = false;
+	assert(m_bLockedScale && m_attachEntID != 0);
+
+	
+	if (m_attachEntID == C_ENTITY_CAMERA)
+	{
+		bRootIsCam = true;
+		return m_attachOffset;
+	}
+
+	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(m_attachEntID);
+	return pEnt->GetRawScreenPosition(bRootIsCam)+m_attachOffset;
+	
+}
 void MovingEntity::Render(void *pTarget)
 {
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	static float yawHold, pitchHold;
 
+	
 	CL_Vector2 vVisualPos = GetPos() + GetVisualOffset();
 	CL_Vector2 vFinalScale = m_pTile->GetScale();
 
@@ -2332,19 +2414,25 @@ void MovingEntity::Render(void *pTarget)
 			bUseParallax = false;
 		}
 
-		if (m_bLockedScale)
+		if (bUseParallax)
 		{
-			vecPos = m_attachOffset;
+			vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
+				pLayer->GetScrollMod()));
 		} else
 		{
+			vecPos = pWorldCache->WorldToScreen(vVisualPos);
+		}
 
-			if (bUseParallax)
+		if (m_bLockedScale && m_attachEntID != 0)
+		{
+			
+			
+			bool bRootIsCam;
+			
+			CL_Vector2 vTemp = GetRawScreenPosition(bRootIsCam);
+			if (bRootIsCam)
 			{
-				vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vVisualPos, 
-					pLayer->GetScrollMod()));
-			} else
-			{
- 				vecPos = pWorldCache->WorldToScreen(vVisualPos);
+				vecPos = vTemp;
 			}
 		}
 
@@ -2354,7 +2442,7 @@ void MovingEntity::Render(void *pTarget)
 		m_pSprite->set_scale(vFinalScale.x, vFinalScale.y);
 		//do the real blit
 		m_pSprite->set_color(CL_Color(r,g,b,a));
-		
+
 		if (m_blendMode != C_BLEND_MODE_NORMAL)
 		{
 			CL_BlendFunc src,dest;
@@ -2570,6 +2658,9 @@ if (GetGameLogic->GetGamePaused()) return;
 		//we've already run our update
 		return;
 	}
+
+
+
 	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 	m_bRanPostUpdate = false;
 	m_bRanApplyPhysics = false;
@@ -2646,6 +2737,23 @@ if (GetGameLogic->GetGamePaused()) return;
 
 void MovingEntity::ApplyPhysics(float step)
 {
+	
+	
+	
+	if (m_attachEntID != C_ENTITY_NONE)
+	{
+		if (m_attachEntID != C_ENTITY_CAMERA)
+		{
+			//we are attached to another entity.  It makes sense to not update us until AFTER it updates
+			MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
+			if (!pEnt->HasRunPhysics())
+			{
+				return; //don't update yet
+			}
+		}
+	}
+
+	
 	//apply gravity and things
 	m_zoneVec.clear();
 
@@ -2661,51 +2769,7 @@ void MovingEntity::ApplyPhysics(float step)
 
 	if (m_attachEntID != C_ENTITY_NONE)
 	{
-		if (m_attachEntID == C_ENTITY_CAMERA)
-		{
-
-			CL_Vector2 vPos = GetCamera->GetPos();
-
-			if (m_bLockedScale)
-			{
-				vPos.x += (m_attachOffset.x / GetCamera->GetScale().x);
-				vPos.y += (m_attachOffset.y / GetCamera->GetScale().y);
-
-			} else
-			{
-				vPos += m_attachOffset;
-			}
-
-
-			if (GetMap() != g_pMapManager->GetActiveMap())
-			{
-				SetPosAndMap(vPos, g_pMapManager->GetActiveMap()->GetName());
-			} else
-			{
-				SetPos(vPos);
-			}
-
-		}else
-
-		{
-			//we're stuck to a common entity
-			MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
-			if (!pEnt)
-			{
-				//the entity we were attached to no longer exists, so let's just kill ourself
-				SetDeleteFlag(true);
-			} else
-			{
-				if (GetMap() != pEnt->GetMap())
-				{
-					SetPosAndMap(pEnt->GetPos()+m_attachOffset, pEnt->GetMap()->GetName());
-				} else
-				{
-					SetPos(pEnt->GetPos()+m_attachOffset);
-				}
-
-			}
-		}
+		UpdatePositionFromParent();
 	} 
 
 	//while we're at it, if any entities are attached *to* us, make sure they "update".  Don't worry, it's smart enough
@@ -2967,6 +3031,110 @@ void MovingEntity::OnAttachedEntity(int entID)
 	m_attachedEntities.push_back(entID);
 }
 
+
+
+
+void MovingEntity::UpdatePositionFromParent()
+{
+	CL_Vector2 vScaleMod(1,1);
+	string mapName;
+	CL_Vector2 vPos;
+
+	if (m_bLockedScale)
+	{
+		vScaleMod = GetCamera->GetScale();
+		//LogMsg("Ent %d got cam scale %s.  visualoffset is %s", ID(), PrintVector(vScaleMod).c_str(), PrintVector(GetVisualOffset()).c_str());
+	}
+
+	if (m_attachEntID == C_ENTITY_CAMERA)
+	{
+
+		vPos = GetCamera->GetPos() + m_attachOffset;
+
+		if (GetMap() != g_pMapManager->GetActiveMap())
+		{
+			mapName = g_pMapManager->GetActiveMap()->GetName();
+		}
+
+	}else
+
+	{
+		//we're stuck to a common entity
+		MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
+		if (!pEnt)
+		{
+			//the entity we were attached to no longer exists, so let's just kill ourself
+			SetDeleteFlag(true);
+		} else
+		{
+
+			vPos = pEnt->GetPos() + m_attachOffset;
+
+			if (GetMap() != pEnt->GetMap() || !pEnt->GetRequestedMapName().empty())
+			{
+				if (!pEnt->GetRequestedMapName().empty())
+				{
+					mapName = pEnt->GetRequestedMapName();
+				} else
+				{
+					mapName = pEnt->GetMap()->GetName();
+				}
+				vPos = pEnt->GetRequestPosition() + m_attachOffset;
+			} 
+
+		}
+	}
+
+	if (!mapName.empty())
+	{
+		SetPosAndMap(vPos, mapName);
+		//LogMsg(" Ent %d changing to map %s at %u.", ID(),  mapName.c_str(), GetApp()->GetGameTick());
+
+	} else
+	{
+		SetPos(vPos);
+
+	}
+
+
+}
+
+void MovingEntity::OnMapChange( const string &mapName )
+{
+
+	
+	if (m_attachEntID == C_ENTITY_NONE)
+	{
+		//don't care	
+		return;
+	}
+
+
+
+	UpdatePositionFromParent();
+
+	//force children to do the same
+	if (!m_attachedEntities.empty())
+	{
+		list<int>::iterator itor;
+		MovingEntity *pEnt;
+
+		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
+		{
+			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
+			if (pEnt)
+			{
+				pEnt->UpdatePositionFromParent();
+			} 
+			itor++;
+		}
+	}
+
+
+	
+
+}
+
 void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 {
 	m_attachEntID = entityID;
@@ -2976,6 +3144,7 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 	{
 		g_watchManager.Add(this, INT_MAX);
 		m_bLockedScale = true;
+
 	} else
 	{
 		//we're stuck to a common entity

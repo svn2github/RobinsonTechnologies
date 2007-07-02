@@ -91,8 +91,8 @@ App::App()
 	m_baseGameSpeed = 10;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-	m_engineVersion = 0.22f;
-	m_engineVersionString = "0.22";
+	m_engineVersion = 0.23f;
+	m_engineVersionString = "0.23";
 
 	m_pSetup_sound = NULL;
 	m_pSetup_vorbis = NULL;
@@ -189,18 +189,40 @@ string App::GetDefaultTitle()
 	return "Novashell Game Creation System " + App::GetEngineVersionAsString();
 }
 
+bool App::VidModeIsSupported(CL_Size vidMode, int bit)
+{
+	std::vector<CL_DisplayMode> modes = CL_DisplayMode::get_display_modes();
+
+	for(unsigned int i=0; i < modes.size(); ++i)
+	{
+		if (modes[i].get_bpp() == bit)
+		{
+			if (modes[i].get_resolution() == vidMode)
+			{
+				//video mode supported
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 void App::OneTimeInit()
 {
   
-    //initalize our main window
+    //initialize our main window
 
 	bool bFullscreen = true;
 #ifdef _DEBUG
 	//bFullscreen = false;
 #endif
-    
-    m_WindowDescription.set_size(CL_Size(1024, 768));
 
+
+	CL_Size vidMode = CL_Size(1024, 768);
+
+	int bits = 32;
+   
 	for (unsigned int i=0; i < GetApp()->GetStartupParms().size(); i++)
 	{
 		string p1 = GetApp()->GetStartupParms().at(i);
@@ -231,14 +253,28 @@ void App::OneTimeInit()
 				LogError("Ignored -resolution parm, format incorrect (should be -resolution 640 480)");
 			} else
 			{
-				m_WindowDescription.set_size(CL_Size(CL_String::to_int(p2), CL_String::to_int(p3)));
+				vidMode = CL_Size(CL_String::to_int(p2), CL_String::to_int(p3));
+
 			}
 		}
 
 	}
+	
+	
+	if (!VidModeIsSupported(vidMode, bits))
+	{
+#ifdef WIN32
+		
+		char stTemp[512];
+		sprintf(stTemp, "%dX%dX%d isn't supported by your video card.\r\nWe'll try 800X600 at 32 bits I guess.", vidMode.width, vidMode.height, bits);
+		MessageBox(NULL, stTemp, "Video Resolution Unsupported", MB_ICONWARNING);
+		vidMode = CL_Size(800, 600);
+#endif
+	}
+	m_WindowDescription.set_size(vidMode);
 
 	m_WindowDescription.set_fullscreen(bFullscreen);
-    m_WindowDescription.set_bpp(32);
+    m_WindowDescription.set_bpp(bits);
     m_WindowDescription.set_title(GetDefaultTitle());
     m_WindowDescription.set_allow_resize(false);
   
@@ -329,6 +365,11 @@ bool App::ActivateVideoRefresh(bool bFullscreen)
 		SetupBackground(GetApp()->GetMainWindow()->get_width(), GetApp()->GetMainWindow()->get_height());
 	}
 
+
+	if (m_pScriptManager)
+	{
+		m_pScriptManager->UpdateAfterScreenChange(true);
+	}
 
 #ifdef _WIN32
 	//hack for multi monitor problem and the game starting and then alt-tabbing back for some reason

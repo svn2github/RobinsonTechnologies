@@ -6,9 +6,10 @@
 #ifndef DataManager_HEADER_INCLUDED // include guard
 #define DataManager_HEADER_INCLUDED  // include guard
 
+#define DATAMANAGER_VERSION 20000000
 using namespace std;
 
-//entites each hold one of these, it needs to be able to handle copying and stuff
+//entities each hold one of these, it needs to be able to handle copying and stuff
 
 class DataObject
 {
@@ -19,7 +20,7 @@ public:
 	void SetNum(const string &keyName, float value);
 	float GetNum();
 
-	void Serialize(CL_FileHelper &helper);
+	void Serialize(CL_FileHelper &helper, int version);
 
 	DataObject()
 	{
@@ -56,6 +57,10 @@ public:
 	void Delete(const string &keyName);
 	void Clear();
 	bool SetIfNull(const string &keyName, const string &value);
+	float GetNumWithDefault(const string &keyName, float value);
+	string GetWithDefault(const string &keyName, const string &value);
+
+	bool SetNumIfNull(const string &keyName, float value);
 	float GetNum(const string &keyName);
 	bool SetNum(const string &keyName, float num);
 	float ModNum(const string &keyName, float mod);

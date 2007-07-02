@@ -65,6 +65,7 @@ protected:
 
 	deque< string > m_backBuffer; //so up arrow will show previously entered commands
 	int m_curBackBufferIndex;
+	bool m_bRequestGUIToggle, m_bRequestClipboardCopy;
 
 };
 

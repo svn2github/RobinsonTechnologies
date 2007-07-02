@@ -21,6 +21,7 @@ void DataObject::SetNum(const string &keyName, float value)
 {
 	m_key = keyName;
 	m_num = value;
+	m_value.clear();
 	m_dataType = DataManager::E_NUM;
 }
 
@@ -35,13 +36,20 @@ float DataObject::GetNum()
 
 
 
-void DataObject::Serialize(CL_FileHelper &helper)
+void DataObject::Serialize(CL_FileHelper &helper, int version)
 {
 	//loads or saves to disk
 
 	helper.process(m_dataType);
 	helper.process(m_key);
 	helper.process(m_value);
+
+ //automatically convert old data types
+	if (version >= 20000000 || helper.IsWriting())
+ {
+	 helper.process(m_num);
+ }
+
 }
 
 DataManager::DataManager()
@@ -72,9 +80,14 @@ float DataManager::ModNum(const string &keyName, float value)
 		return value;
 	}
 
+	
+	if (pData->m_dataType == DataManager::E_STRING)
+	{
+		//we'll, we need to convert this first..
+		pData->SetNum(keyName, pData->GetNum());
+	}
+
 	pData->m_num += value;
-	pData->m_value.clear();
-	pData->m_dataType = DataManager::E_NUM;
   return pData->m_num;
 }
 
@@ -98,13 +111,39 @@ string DataManager::Get(const string &keyName)
 	return pData->Get();
 }
 
+string DataManager::GetWithDefault(const string &keyName, const string &value)
+{
+	DataObject *pData = FindDataByKey(keyName);
+
+	if (!pData) 
+	{
+		Set(keyName, value);
+		return value;
+	}
+	
+	return pData->Get();
+}
+
 float DataManager::GetNum(const string &keyName)
 {
 	DataObject *pData = FindDataByKey(keyName);
 
 	if (!pData) return 0;
 	
-	return CL_String::to_float(pData->Get());
+	return pData->GetNum();
+}
+
+float DataManager::GetNumWithDefault(const string &keyName, float value)
+{
+	DataObject *pData = FindDataByKey(keyName);
+
+	if (!pData) 
+	{
+		SetNum(keyName, value);
+		return value;
+	}
+
+	return pData->GetNum();
 }
 
 
@@ -117,6 +156,19 @@ bool DataManager::SetIfNull(const string &keyName, const string &value)
 
 	DataObject d;
 	d.Set(keyName, value);
+	m_data[keyName]=d;
+	return true; //true that we created a key
+}
+
+//returns true if we actually set the value, which we only do if it didn't exist
+bool DataManager::SetNumIfNull(const string &keyName, float value)
+{
+	DataObject *pData = FindDataByKey(keyName);
+
+	if (pData) return false; //didn't need to set it
+
+	DataObject d;
+	d.SetNum(keyName, value);
 	m_data[keyName]=d;
 	return true; //true that we created a key
 }
@@ -177,14 +229,35 @@ void DataManager::Serialize(CL_FileHelper &helper)
 	//load/save needed data
 	int size = m_data.size();
 
+	int version = DATAMANAGER_VERSION;
+	
+	if (helper.IsWriting())
+	{
+		helper.process(version);
+
+	}
+
 	helper.process(size); //load or write it, depends
+	//these hacks were for backward compatibility after I changed the format..
+	if (!helper.IsWriting())
+	{
+		if (size >= 20000000)
+		{
+			//this is a new style format
+			version = size;
+			helper.process(size); //load or write it, depends
+		} else
+		{
+			version = 0;
+		}
+	}
 
 	if (helper.IsWriting())
 	{
 		dataList::iterator itor = m_data.begin();
 		while (itor != m_data.end())
 		{
-			itor->second.Serialize(helper);
+			itor->second.Serialize(helper, version);
 			itor++;
 		}
 	} else
@@ -193,7 +266,7 @@ void DataManager::Serialize(CL_FileHelper &helper)
 		for (int i=0; i < size; i++)
 		{
 			DataObject o;
-			o.Serialize(helper);
+			o.Serialize(helper, version);
 			m_data[o.m_key] = o;
 		}
 	}
@@ -205,9 +278,15 @@ void DataManager::Serialize(CL_FileHelper &helper)
 Object: DataManager
 An object designed to flexibly store and retrieve numbers and strings very quickly use key/value pairs.
 
+About:
+
 In addition to any <Entity> having its own unique <DataManager> via <Entity::Data> a global one is always available through <GameLogic::Data> as well.
 
-Using the Entity Properties Editor, you can also add/remove/modify data from the editor.
+Data is persistant automatically, ie, saved between sessions.  There are no size limits and lookups are extremely fast. (Internally, a binary search tree is used)
+
+Access from the editor:
+
+Using the Entity Properties Editor, you can also add/remove/modify data from within editor, in addition to normal script access.
 
 Group: Storing Data
 
@@ -248,10 +327,23 @@ boolean SetIfNull(string keyName, string value)
 (end)
 Similar to <Set> but stores the data only if the key didn't already exist.
 
-When <Get>is used with a number (instead of <GetNum>) it is automatically converted into a string.
-
 keyName - Any name you wish.
 value - The string data you wish to store.
+
+Returns:
+
+True if the key didn't exist and the value was stored.  False if it already existed and nothing was changed.
+
+func: SetNumIfNull
+(code)
+boolean SetNumIfNull(string keyName, number value)
+(end)
+Similar to <Set> but stores the data only if the key didn't already exist.
+
+Like <Data:SetIfNull> but hints that we want it stored as a number, not a string.
+
+keyName - Any name you wish.
+value - The number you wish to store.
 
 Returns:
 
@@ -284,6 +376,32 @@ keyName - The key-name used when it was stored.
 Returns:
 
 The number that was stored.
+
+func: GetNumWithDefault
+(code)
+number GetNumWithDefault(string keyName, number defaultValue)
+(end)
+Like <Get> but allows you to also set the default data if the key doesn't exist yet.
+
+keyName - The key-name used when it was stored.
+defaultValue - If the key doesn't exist, it will be created with this value.  (this value will be returned as well)
+
+Returns:
+
+The value that was stored or created.
+
+func: GetWithDefault
+(code)
+number GetWithDefault(string keyName, string defaultValue)
+(end)
+Like <Get> but allows you to also set the default data if the key doesn't exist yet.
+
+keyName - The key-name used when it was stored.
+defaultValue - If the key doesn't exist, it will be created with this value.  (this value will be returned as well)
+
+Returns:
+
+The value that was stored or created.
 
 Group: Miscellaneous
 

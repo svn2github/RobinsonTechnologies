@@ -308,10 +308,20 @@ bool ScriptManager::Init()
 	lua_register(m_pMainState, "LogMsg", luaPrint);
 	lua_register(m_pMainState, "DumpInfo", DumpInfo);
 	 
+	UpdateAfterScreenChange(false);
 	open(m_pMainState);
 	
-	
+
 	return true; //success
+}
+
+void  ScriptManager::UpdateAfterScreenChange(bool bActuallyChanged)
+{
+	if (m_pMainState)
+	{
+		luabind::globals(m_pMainState)["C_SCREEN_X"] = GetScreenX;
+		luabind::globals(m_pMainState)["C_SCREEN_Y"] = GetScreenY;
+	}
 }
 
 
@@ -333,6 +343,22 @@ void ScriptManager::SetGlobal(const char * pGlobalName, int value)
 	lua_pushnumber(m_pMainState, (lua_Integer)value);
 	lua_settable(m_pMainState, LUA_GLOBALSINDEX);
 
+}
+
+bool ScriptManager::VariableExists(const char *pFuncName)
+{
+	GetScriptManager->SetStrict(false);
+	bool bTemp = luabind::type(luabind::globals(m_pMainState)[pFuncName]) != LUA_TNIL;
+	GetScriptManager->SetStrict(true);
+	return bTemp;
+}
+
+bool ScriptManager::FunctionExists(const char *pFuncName)
+{
+	GetScriptManager->SetStrict(false);
+	bool bTemp = luabind::type(luabind::globals(m_pMainState)[pFuncName]) == LUA_TFUNCTION;
+	GetScriptManager->SetStrict(true);
+	return bTemp;
 }
 
 void ScriptManager::SetGlobalBool(const char * pGlobalName, bool value)

@@ -78,6 +78,9 @@ void luabindEntity(lua_State *pState)
 
 			.def("Exists", &DataManager::Exists)
 			.def("ModNum", &DataManager::ModNum)
+			.def("GetNumWithDefault", &DataManager::GetNumWithDefault)
+			.def("GetWithDefault", &DataManager::GetWithDefault)
+			.def("SetNumIfNull", &DataManager::SetNumIfNull)
 			.def("Delete", &DataManager::Delete)
 			.def("Clear", &DataManager::Clear)
 			.def("__tostring", &DataManagerToString)
@@ -462,8 +465,41 @@ Group: General
 			*/
 
 		
+			.def("SetLockedScale", &MovingEntity::SetLockedScale)
 
+			/*
+			func: SetLockedScale
+			(code)
+			nil SetLockedScale(boolean bLocked)
+			(end)
+
+			If true, this entity will not scale with the camera.  This is needed for GUI overlays that shouldn't scale when the rest of the game does.  Defaults to off.
+
+			Note:
+
+			This is automatically set to true when using <Entity:SetAttach> to attach something to the camera, as it's probably a GUI item.
 			
+			Parameters:
+
+			bLocked - Send true if you don't want this scaling with the camera, false for normal behavior.
+			*/
+
+		
+			.def("GetLockedScale", &MovingEntity::GetLockedScale)
+
+			/*
+			func: GetLockedScale
+			(code)
+			boolean GetLockedScale()
+			(end)
+
+			Returns:
+
+			The true if the scale is locked on this entity.  (Meaning it won't scale when the camera zooms in or out)
+			*/
+
+
+
 			.def("GetWorldCollisionRect", &MovingEntity::GetWorldCollisionRect)
 			
 			/*
@@ -757,13 +793,15 @@ Allows you to set a tilepic-style image.  When you click "Convert to entity" on 
 
 Because the change is saved in the entity's Data() system, it is persistent.  (You will see a _TilePic and _TileRect entry in the entities data, using the editor)
 
+You can also use a regular path and filename, so a normal image sitting in your script directory can also be loaded.  (Internally, <Entity:AddImageToMapCache> is used) (~/ for "current script directory" can be used)
+
 Note:
 
 VisualProfiles will override this image.
 
 Parameters:
 
-fileName - A filename of an image in one of the Map directories.  No path should be included, it will find automatically.
+fileName - A filename of an image in one of the Map directories.  No path should be included, it will find automatically.  Or, a path and filename to add any image can be used.
 clipRect - A <Rect> that contains what portion of the image to show.  Send nil to use the entire image.
 */
 
@@ -811,6 +849,21 @@ Rect GetImageClipRect()
 Returns:
 
 A <Rect> containing the portion of the tilepic-style image being displayed.
+*/
+
+
+.def("AddImageToMapCache", &MovingEntity::AddImageToMapCache)
+
+
+/*
+func: AddImageToMapCache
+(code)
+nil AddImageToMapCache(string fileName)
+(end)
+
+Allows you to specify any image to add as a tilepic-style image, even if it isn't in a map directory.  This allows a script to insert its own images that can be referenced by only the filename (without extension) from anywhere.
+
+fileName - A filename of an image in one of the Map directories. ~/ for "current script directory" can be used.
 */
 
 //Group: Physics/Collision Related

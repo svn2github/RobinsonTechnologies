@@ -24,6 +24,8 @@ Console::Console()
 	m_bOnScreen = false; 
 	m_curViewIndexOffset = 0;
 	m_pInputBox = NULL;
+	m_bRequestGUIToggle = false;
+	m_bRequestClipboardCopy = false;
 }
 
 
@@ -81,8 +83,8 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 	switch (key.id)
 	{
 		case CL_KEY_TILDE: //aka GRAVE or backtick
-		SetOnScreen(!m_bOnScreen);
-		//LogMsg("Toggling console display");
+		case CL_KEY_ESCAPE:
+			m_bRequestGUIToggle = true;
 		break;
 
 		case CL_KEY_UP:
@@ -111,8 +113,7 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 
 			{
 				//let's put this in the text buffer
-				CopyToTextBuffer();
-				LogMsg("Log copied to system text buffer.");
+				 m_bRequestClipboardCopy = true;
 			}
 			break;
 
@@ -339,8 +340,23 @@ void Console::RenderPostGUI()
 }
 void Console::Render()
 {
+	
+	if (m_bRequestGUIToggle)
+	{
+		m_bRequestGUIToggle = false;
+		SetOnScreen(!m_bOnScreen);
+		//LogMsg("Toggling console display");
+	}
+
+	
 	if (!m_bOnScreen) return;
 	
+	if (m_bRequestClipboardCopy)
+	{
+		m_bRequestClipboardCopy = false;
+		CopyToTextBuffer();
+		LogMsg("Log copied to system text buffer.");
+	}
 	
 	//figure out overall size
 	CL_Rect r(0,15, GetScreenX, GetScreenY);

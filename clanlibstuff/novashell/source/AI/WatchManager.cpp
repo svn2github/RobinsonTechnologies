@@ -128,8 +128,6 @@ void WatchManager::Update(float step, unsigned int drawID)
 
 void WatchManager::PostUpdate(float step)
 {
-	EntMapCache *pWorldCache = g_pMapManager->GetActiveMapCache();
-	assert(pWorldCache);
 	
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
 	{
@@ -137,12 +135,19 @@ void WatchManager::PostUpdate(float step)
 	}
 }
 
+void WatchManager::OnMapChange(const string &mapName)
+{
+
+	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
+	{
+		m_postUpdateList.at(i)->OnMapChange(mapName);
+	}
+}
+
 
 void WatchManager::ApplyPhysics(float step)
 {
-	EntMapCache *pWorldCache = g_pMapManager->GetActiveMapCache();
-	assert(pWorldCache);
-
+	
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
 	{
 		m_postUpdateList.at(i)->ApplyPhysics(step);

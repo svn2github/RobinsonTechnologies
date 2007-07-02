@@ -360,6 +360,11 @@ MapInfo *pWorldInfo = GetMapInfoByPath(stPath);
 		}
 		
 	    sig_map_changed(); //broadcast this to anybody who is interested
+
+		//LogMsg("Switched map at %u", GetApp()->GetGameTick());
+		//also let all entities on the watch listen know
+		g_watchManager.OnMapChange(m_pActiveMap->GetName());
+
 	}
 
 	return false;

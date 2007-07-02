@@ -40,6 +40,8 @@ MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName)
 	if (!pMap) pMap = g_pMapManager->GetActiveMap();
 	pMap->AddTile(pTile);
 
+
+	
 	return pEnt;
 }
 

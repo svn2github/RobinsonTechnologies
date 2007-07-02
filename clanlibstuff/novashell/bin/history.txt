@@ -1,8 +1,27 @@
 Changelog
 
-5-7 2007
+
+7-2 2007
 
 * Added very basic tanks example
+* Fixed problem with ducks not pathfinding between houses by doing a "Rebuild World Cache" in the Dink Test, not sure when that got corrupted?
+* Improved how the Dink GUI script works, it's now initialized in the game_start.lua, not attached to the player.
+* Setup the detail 1/2 layers to depth sort in the Dink houses map, was kind of a bug because if you destroyed a lot of barrels they'd "flicker" over eachother
+* Added new global script commands "FunctionExists" and "VariableExists"
+* BUGFIX: Doing Entity:SetAlignment() no longer causes a crash if no visual has been set yet
+* BUGFIX: Ctrl-C to copy the system console text to the clipboard now overrides the selected textbox (was copying the wrong thing before at times..)
+* Escape can now be used to close the system console
+* Added Entity:AddImageToMapCache
+* Entity:SetImage() can now load regular non-map images too (they are automatically added to the map resource system and shared if needed)
+* C_SCREEN_X and C_SCREEN_Y are now updated when the screen resolution is changed.  I suppose we also should add a "VideoResolutionChanged()" callback or something eventually too...
+* Added DataManager:SetNumIfNull, DataManager:GetWithDefault and DataManager:GetNumWithDefault script function
+* BUGFIX: DataManager:ModNum() now works correctly even when it is originally a string (will be changed to num automatically)
+* BUGFIX: Data saved with SetNum will now actually save correctly.  Dataformat changed, like with all data structures it quietly will convert/update when needed, but be aware you can't go back to an older exe
+* generic_text.lua modified to remember its text scale when reinitted or save/loaded
+* Added Entity:SetLockedScale Entity:GetLockedScale, to specify if an entity will scale when the camera zooms or not (so we can stop GUI items from scaling..)
+* SetAttach works better, you can attach something to something else that is attached to the camera and everything works as expected
+* A problem with bricks moving was fixed by moving some of its important properties to be set in its OnInit instead of OnPostInit
+* Will warn and change to 800X600 if 1024X768X32 isn't supported.  (windows only)
 
 4-26 2007
 

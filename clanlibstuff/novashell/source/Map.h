@@ -27,7 +27,7 @@ class NavGraphManager;
 typedef std::map<ScreenID, MapChunk*> map_chunk_map;
 
 typedef std::list<unsigned int> tag_hash_list;
-#define C_MAP_FILE_VERSION 1
+#define C_MAP_FILE_VERSION 2
 
 enum
 {

@@ -473,7 +473,7 @@ bool Map::Load(string dirPath)
 		return false;
 	}
 
-	LogMsg("Loaded map %s.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), m_chunkMap.size(), GetSizeX(), GetSizeY());
+	LogMsg("Loaded map %s at tick %u.  %d non-empty chunks, size is %d by %d.", GetName().c_str(), GetApp()->GetGameTick(), m_chunkMap.size(), GetSizeX(), GetSizeY());
 	SAFE_DELETE(pFile);
 
 	SetModified(false) ; //how could it be modified?  we just loaded it
@@ -807,7 +807,7 @@ void Map::ReInitEntities()
 					
 					pEnt = ((TileEntity*)*tileItor)->GetEntity();
 					//we don't want to reinit things attached to the camera because generally those are GUI elements and get screwy
-					if (pEnt && pEnt->GetAttachEntityID() != C_ENTITY_CAMERA) 
+					//if (pEnt && pEnt->GetAttachEntityID() != C_ENTITY_CAMERA) 
 					{
 						float orientation = pEnt->GetBody()->GetOrientation();
 						CL_Vector2 facing = pEnt->GetVectorFacing();

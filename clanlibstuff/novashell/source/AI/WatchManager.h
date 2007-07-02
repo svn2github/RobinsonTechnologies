@@ -41,6 +41,7 @@ public:
 	void RemoveFromVisibilityList(MovingEntity *pEnt);
 	void Remove(MovingEntity *pEnt);
 	void ApplyPhysics(float step);
+	void OnMapChange(const string &mapName);
 
 	unsigned int GetVisibilityID() {return m_visibilityID;}
 

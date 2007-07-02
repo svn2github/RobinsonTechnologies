@@ -7,8 +7,8 @@ Removing path nodes can confuse warp targets:
 
 If path nodes are removed that connected two warp targets, the engine won't realize it and will still show them connected.
 
-Work around:
+Only 32 bit mode supported:
 
-Use 
+By default the game will play fullscreen at 32 bit bitdepth.  But if you play windowed and your display is set at 16 bit, the map thumbnails will be blank.
 
 */

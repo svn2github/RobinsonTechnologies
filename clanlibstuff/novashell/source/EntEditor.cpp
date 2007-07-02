@@ -929,10 +929,10 @@ if (GetGameLogic->GetUserProfileName().empty())
 	pItem->enable(false);
 
 
-	pItem = m_pMenu->create_item("MapGen/Generate Small Map (disabled right now)");
+	//pItem = m_pMenu->create_item("MapGen/Generate Small Map (disabled right now)");
 	//m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateSmall);
 
-	pItem = m_pMenu->create_item("MapGen/Generate Large Map (disabled right now)");
+	//pItem = m_pMenu->create_item("MapGen/Generate Large Map (disabled right now)");
 	//m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGenerateLarge);
 	
 	//too touchy to include right now

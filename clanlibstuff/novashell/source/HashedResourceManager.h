@@ -26,6 +26,7 @@ public:
 	virtual ~HashedResourceManager();
 
 	CL_Surface * GetResourceByHashedID(unsigned int resourceID);
+	bool HashedIDExists(unsigned int resourceID);
 	CollisionData * GetCollisionDataByHashedIDAndRect(unsigned int m_resourceID, const CL_Rect &rectSource);
 	bool Init();
 	bool AddGraphic(string str); //cache and hash a new image, include the full path and extension to

@@ -64,7 +64,11 @@ public:
 	void SetGlobal(const char * pGlobalName, int value);
 	void SetGlobalBool(const char * pGlobalName, bool value);
 	void SetStrict(bool bStrict);
+	bool VariableExists(const char *pFuncName);
+	bool FunctionExists(const char *pFuncName);
+
 	lua_State * GetMainState() {return m_pMainState;}
+	void UpdateAfterScreenChange(bool bActuallyChanged);
 
 protected:
 

@@ -140,6 +140,19 @@ CL_Surface * HashedResourceManager::GetResourceByHashedID(unsigned int resourceI
 	return (*itor).second->GetImage();
 }
 
+bool HashedResourceManager::HashedIDExists(unsigned int resourceID)
+{
+	HashedResourceMap::iterator itor = m_hashedResourceMap.find(resourceID);
+
+	if (itor == m_hashedResourceMap.end()) 
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
 HashedResource * HashedResourceManager::GetResourceClassByHashedID(unsigned int resourceID)
 {
 	HashedResourceMap::iterator itor = m_hashedResourceMap.find(resourceID);

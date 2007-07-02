@@ -816,9 +816,11 @@ void GameLogic::Update(float step)
 	}
 	
 	if (g_pSoundManager)
-	g_pSoundManager->UpdateSounds();
+		g_pSoundManager->UpdateSounds();
+
 	g_MessageManager.Update();
 	GetCamera->Update(step);
+//	LogMsg("Cam zoom is %s", VectorToString(&GetCamera->GetScale()).c_str());
 	m_myEntityManager.Update(step);
 	m_worldManager.Update(step);
 	g_textManager.Update(step);

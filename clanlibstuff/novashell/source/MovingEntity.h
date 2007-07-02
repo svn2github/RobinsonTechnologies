@@ -140,6 +140,8 @@ public:
   unsigned int GetImageID(); //returns 0 if not applicable
   bool SetImageByID(unsigned int picID, CL_Rect *pSrcRect);
   void SetImage(const string &fileName, CL_Rect *pSrcRect);
+  void AddImageToMapCache(const string &fileName);
+
 
   bool LoadScript(const char *pFileName);
   void SetMainScriptFileName(const string &fileName);
@@ -278,7 +280,8 @@ public:
   PathPlanner * GetPathPlanner();
   void SetRunStringASAP(const string &command);
   void ProcessPendingMoveAndDeletionOperations();
-  Map * GetMap();
+  Map * GetMap(); //the map we are currently on
+  const string & GetRequestedMapName(); //current map name OR the one we're scheduled to move to ASAP
   void RunPostInitIfNeeded();
   void RunOnMapInsertIfNeeded();
   void CheckVisibilityNotifications(unsigned int notificationID);
@@ -322,6 +325,12 @@ public:
   float GetAccel() {return m_accel;}
   void AddEffect(L_ParticleEffect *pEffect);
   void SetGarbageCollectionOnKill(bool bGarbageCollectOnKill) {m_pScriptObject->SetGarbageCollectOnKill(bGarbageCollectOnKill);}
+  void SetLockedScale(bool b) {m_bLockedScale = b;}
+  bool GetLockedScale() {return m_bLockedScale;}
+  unsigned int GetLastVisibilityID() {return m_lastVisibilityNotificationID;}
+  bool HasRunPhysics(){return m_bRanApplyPhysics;}
+  void OnMapChange(const string &mapName);
+  CL_Vector2 GetRequestPosition() {return m_moveToAtEndOfFrame;}
 
   enum ListenCollision
 {
@@ -371,6 +380,8 @@ protected:
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
 	void ResetEffects();
+	void UpdatePositionFromParent();
+	CL_Vector2 GetRawScreenPosition(bool &bRootIsCam);
 
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;

@@ -221,9 +221,22 @@ bool RunScript(const string &scriptName)
 }
 
 
+bool VariableExists(const string &varName)
+{
+	return GetScriptManager->VariableExists(varName.c_str());
+}
+
+bool FunctionExists(const string &varName)
+{
+	return GetScriptManager->VariableExists(varName.c_str());
+}
+
+
 float LerpNumber(float src, float target, float amount)
 {
-	return Lerp(src, target, amount);
+	float l = Lerp(src, target, amount);
+	set_float_with_target(&l, target, amount); //cheat to avoid round-off errors
+	return l;
 }
 
 
@@ -251,7 +264,6 @@ void luabindGlobalFunctions(lua_State *pState)
 		[
 
 			//stand alone functions
-			
 
 			/*
 			func: LogMsg
@@ -261,6 +273,7 @@ void luabindGlobalFunctions(lua_State *pState)
 
 			Adds a message to the log.  You can see it by bringing up the console, or checking the log.txt file.
 			Lua's native "print" function is routed to use LogMsg also.
+			
 			Parameters:
 			message - Any text you want to display or log.
 			*/
@@ -282,6 +295,53 @@ void luabindGlobalFunctions(lua_State *pState)
 			Parameters:
 			message - Any text.  Note that it prepends the "Error: " to your message automatically.
 			*/
+
+		
+			/*
+			func: Exists
+			(code)
+			nil Exists (string funcOrVarName)
+			(end)
+
+			Allows you to check the global namespace to see if a variable or function name exists.  To improve readability, you should probably use <FunctionExists> or <VariableExists> instead.
+
+			If you'd like to check a specific entity namespace, use <Entity:FunctionExists> and <Entity:VariableExists> instead.
+			
+			Parameters:
+			funcOrVarName - The exact name of the function or variable.
+			*/
+
+			def("FunctionExists", &FunctionExists),
+
+			/*
+			func: FunctionExists
+			(code)
+			nil FunctionExists (string funcName)
+			(end)
+
+			Allows you to check the global namespace to see if a certain function exists.
+
+			If you'd like to check a specific entity namespace, use <Entity:FunctionExists> instead.
+
+			Parameters:
+			funcName - The exact name of the function.
+			*/
+			def("VariableExists", &FunctionExists),
+
+			/*
+			func: VariableExists
+			(code)
+			nil VariableExists (string varName)
+			(end)
+
+			Allows you to check the global namespace to see if a certain function exists.
+
+			If you'd like to check a specific entity namespace, use <Entity:VariableExists> instead.
+
+			Parameters:
+			varName - The exact name of the variable.
+			*/
+
 
 
 			/*
