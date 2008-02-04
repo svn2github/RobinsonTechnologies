@@ -433,7 +433,7 @@ void EntEditMode::Init()
 	//make the coordinate input boxes
 	
 	CL_Point tmp = offset+CL_Point(m_pCheckBoxSnap->get_width(), -2);
-	CL_Rect recSize(tmp, CL_Size(30,16));
+	CL_Rect recSize(tmp, CL_Size(40,16));
 	
 	if (g_pMapManager->GetActiveMap())
 	{
@@ -450,7 +450,7 @@ void EntEditMode::Init()
 	m_slots.connect(m_pInputBoxSnapSizeX->sig_changed(), this, &EntEditMode::OnSnapSizeChanged);
 
 	//need another label for the Y box
-	CL_Label *pLabel = new CL_Label(tmp + CL_Point(33,2), "Y", m_pWindow->get_client_area());
+	CL_Label *pLabel = new CL_Label(tmp + CL_Point(43,2), "Y", m_pWindow->get_client_area());
 
 
 	m_pInputBoxSnapSizeY = new CL_InputBox(CL_String::from_int(int(m_vecSnapSize.y)), m_pWindow->get_client_area());

@@ -1,5 +1,9 @@
 Changelog
 
+2-4 2008
+
+* BUGFIX:  The editors grid spacing input boxes now work properly, all input boxes improved due to a clanlib fix
+* Fixed choppyness of FPS on my new computer by tweaking the timing code
 
 7-2 2007
 

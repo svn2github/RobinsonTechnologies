@@ -589,9 +589,18 @@ void App::SetGameTick(unsigned int num)
 void App::Update()
 {
 	//figure out our average delta frame
+tryagain:
+
 	static unsigned int frameTime;
 	frameTime = CL_System::get_time();
 	unsigned int deltaTick = frameTime -  m_lastFrameTime;
+	
+	/*
+	if ( deltaTick < 7)
+	{
+		goto tryagain;
+	}
+	*/
 	m_lastFrameTime = frameTime;
 	m_thinkTicksToUse += (float(deltaTick) * m_simulationSpeedMod);
 	
@@ -604,8 +613,8 @@ void App::Update()
 		SetGameLogicSpeed(1000 / logicMhz );
 	}
 
-
-	//LogMsg("Delta: %.2f", m_delta);
+	//OutputDebugString(CL_String::from_int(CL_System::get_time()).c_str());
+	//OutputDebugString("\n");
 
 #define C_MAX_TIME_PER_LOGIC_UPDATE_MS 200 //avoid mega slow down
 	while (m_thinkTicksToUse >= GetGameLogicSpeed())
@@ -619,13 +628,15 @@ void App::Update()
 		m_bJustRenderedFrame = false;
 		m_thinkTicksToUse -= GetGameLogicSpeed();
 	
-		if (m_thinkTicksToUse < 5)
+		if (m_thinkTicksToUse > 0 && m_thinkTicksToUse < 1)
 		{
+			LogMsg("Skip %f.02..", m_thinkTicksToUse);
+
 			//don't allow slow accumulation...
 			m_thinkTicksToUse = 0;
-
+		
 		}
-/*
+		/*
 		if (m_thinkTicksToUse < GetGameLogicSpeed()*1.5)
 		{
 			//this stops jerkiness at 60 hz when it 'barely' needs to do a second
@@ -649,7 +660,6 @@ void log_to_cout(const std::string &channel, int level, const std::string &messa
 
 bool App::ParmExists(const string &parm)
 {
-	
 	vector<string>::iterator itor = m_startupParms.begin();
 
 	while (itor != m_startupParms.end())
@@ -657,7 +667,6 @@ bool App::ParmExists(const string &parm)
 		if (*itor == parm) return true;
 		itor++;
 	}
-
 	return false;
 }
 
@@ -677,9 +686,7 @@ int App::main(int argc, char **argv)
 	{
 		
 		//let's just show help stuff
-
 		string message = "\nNovashell Game Creation System "+GetEngineVersionAsString()+"\n\n";
-
 		message += 
 		
 		"Useful parms:\n\n" \
@@ -692,18 +699,12 @@ int App::main(int argc, char **argv)
 		"	-clansound (forces Clanlib sound system)\n" \
 		"";
 
-
-
 #ifdef WIN32
-
 		MessageBox(NULL, message.c_str(), "Command line help", MB_ICONINFORMATION);
-
 #else
-
 		cout << message; //hopefully this will just go right to their console
 #endif
 		return 0;
-
 	}
 
 #ifndef _DEBUG
@@ -721,7 +722,6 @@ int App::main(int argc, char **argv)
         
 		//for compatibility
 		CL_OpenGL::ignore_extension("GL_EXT_abgr");
-
 		
 		CL_SetupGL setup_gl;
 
