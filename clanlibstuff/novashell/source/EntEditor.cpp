@@ -578,7 +578,35 @@ void OpenScriptForEditing(string scriptName)
 	}
 
 #else
-	LogError("Not implemented in linux yet.  Please complain to Seth!");
+   char *parms[2];
+        parms[1] = 0;
+        parms[0] = (char*)file.c_str();
+    
+
+//linux
+	
+	pid_t pid;
+	pid=fork();
+        
+         if (pid==0)
+        {
+                if (execlp("gedit","gedit", file.c_str(), NULL)<0)
+                {
+                           LogError("Unknown error trying to execv the gedit editor.");
+                }
+                else
+                {
+                
+                }
+	  exit(0);
+                                      
+        } else
+        {
+              // LogError("Unknown error trying to fork.");
+        }
+          
+                
+//	LogError("Not implemented in linux yet.  Please complain to Seth!");
 #endif
 
 
