@@ -1,31 +1,32 @@
 bin_PROGRAMS = novashell
 novashell_SOURCES = AppPrecomp.cpp AppUtils.cpp AppUtils.h BaseGameEntity.cpp \
-			BaseGameEntity.h Brain.cpp Brain.h Camera.cpp Camera.h CameraSetting.cpp CameraSetting.h \
-			CollisionData.cpp CollisionData.h Console.cpp Console.h DataManager.cpp DataManager.h \
-			EntChooseScreenMode.cpp EntChooseScreenMode.h EntCollisionEditor.cpp EntCollisionEditor.h \
-			EntEditMode.cpp EntEditMode.h EntEditor.cpp EntEditor.h EntityBindings.cpp \
-			EntityBindings.h EntityManager.cpp EntityManager.h GameLogic.cpp GameLogic.h \
-			GeneratorDink.cpp GeneratorDink.h GeneratorInterface.h GeneratorSimple.cpp \
-			GeneratorSimple.h HashedResource.cpp HashedResource.h HashedResourceManager.cpp \
-			HashedResourceManager.h LayerManager.cpp LayerManager.h luabindBindings.cpp luabindBindings.h \
-			main.cpp main.h MaterialManager.cpp MaterialManager.h Message.cpp Message.h \
-			MessageManager.cpp MessageManager.h MiscClassBindings.cpp MiscClassBindings.h \
-			MovingEntity.cpp movingentity.h MyEntityManager.cpp MyEntityManager.h PointList.cpp \
-			PointList.h Screen.cpp screen.h ScriptManager.cpp ScriptManager.h TagManager.cpp \
-			TagManager.h TextManager.cpp TextManager.h Tile.cpp TileEditOperation.cpp \
-			TileEditOperation.h TileEntity.cpp TileEntity.h Tile.h VectorBindings.cpp VectorBindings.h \
-			VisualProfile.cpp VisualProfile.h VisualProfileManager.cpp VisualProfileManager.h \
-			VisualResource.cpp VisualResource.h Matrix.h BrainManager.cpp BrainManager.h \
-			BrainShake.cpp BrainShake.h BrainColorFlash.cpp BrainFadeOutAndDelete.cpp State.cpp \
-			StateDie.cpp StateFrozen.cpp Trigger.cpp BrainTopBase.cpp BrainTopBase.h \
-			StateTopAttack.cpp StateTopAttack.h StateTopIdle.cpp StateTopIdle.h StateTopWalk.cpp \
-			StateTopWalk.h BrainTopSeek.cpp EntVisualProfileEditor.cpp EntCreationUtils.cpp \
-			EntWorldDialog.cpp EntChoiceDialog.cpp BrainColorFade.cpp BrainBob.cpp BrainFadeIn.cpp \
-			GlobalScriptFunctionBindings.cpp BrainForceVisual.cpp BrainForceVisual.h ListBindings.cpp ListBindings.h \
-			LoopingSoundBindings.cpp LoopingSoundBindings.h TileBindings.cpp TileBindings.h StatePain.cpp \
-			EntMapCache.cpp EntMapCache.h InputManager.cpp InputManager.h MapChunk.cpp MapChunk.h \
-			Map.cpp Map.h MapManager.cpp MapManager.h BrainScale.cpp \
-	EffectManagerBindings.cpp EffectManagerBindings.h EffectManager.cpp EffectManager.h
+				BaseGameEntity.h Brain.cpp Brain.h Camera.cpp Camera.h CameraSetting.cpp CameraSetting.h \
+				CollisionData.cpp CollisionData.h Console.cpp Console.h DataManager.cpp DataManager.h \
+				EntChooseScreenMode.cpp EntChooseScreenMode.h EntCollisionEditor.cpp EntCollisionEditor.h \
+				EntEditMode.cpp EntEditMode.h EntEditor.cpp EntEditor.h EntityBindings.cpp \
+				EntityBindings.h EntityManager.cpp EntityManager.h GameLogic.cpp GameLogic.h \
+				GeneratorDink.cpp GeneratorDink.h GeneratorInterface.h GeneratorSimple.cpp \
+				GeneratorSimple.h HashedResource.cpp HashedResource.h HashedResourceManager.cpp \
+				HashedResourceManager.h LayerManager.cpp LayerManager.h luabindBindings.cpp luabindBindings.h \
+				main.cpp main.h MaterialManager.cpp MaterialManager.h Message.cpp Message.h \
+				MessageManager.cpp MessageManager.h MiscClassBindings.cpp MiscClassBindings.h \
+				MovingEntity.cpp movingentity.h MyEntityManager.cpp MyEntityManager.h PointList.cpp \
+				PointList.h Screen.cpp screen.h ScriptManager.cpp ScriptManager.h TagManager.cpp \
+				TagManager.h TextManager.cpp TextManager.h Tile.cpp TileEditOperation.cpp \
+				TileEditOperation.h TileEntity.cpp TileEntity.h Tile.h VectorBindings.cpp VectorBindings.h \
+				VisualProfile.cpp VisualProfile.h VisualProfileManager.cpp VisualProfileManager.h \
+				VisualResource.cpp VisualResource.h Matrix.h BrainManager.cpp BrainManager.h \
+				BrainShake.cpp BrainShake.h BrainColorFlash.cpp BrainFadeOutAndDelete.cpp State.cpp \
+				StateDie.cpp StateFrozen.cpp Trigger.cpp BrainTopBase.cpp BrainTopBase.h \
+				StateTopAttack.cpp StateTopAttack.h StateTopIdle.cpp StateTopIdle.h StateTopWalk.cpp \
+				StateTopWalk.h BrainTopSeek.cpp EntVisualProfileEditor.cpp EntCreationUtils.cpp \
+				EntWorldDialog.cpp EntChoiceDialog.cpp BrainColorFade.cpp BrainBob.cpp BrainFadeIn.cpp \
+				GlobalScriptFunctionBindings.cpp BrainForceVisual.cpp BrainForceVisual.h ListBindings.cpp ListBindings.h \
+				LoopingSoundBindings.cpp LoopingSoundBindings.h TileBindings.cpp TileBindings.h StatePain.cpp \
+				EntMapCache.cpp EntMapCache.h InputManager.cpp InputManager.h MapChunk.cpp MapChunk.h \
+				Map.cpp Map.h MapManager.cpp MapManager.h BrainScale.cpp \
+		EffectManagerBindings.cpp EffectManagerBindings.h EffectManager.cpp EffectManager.h \
+	DataEditor.cpp DataEditor.h
 
 # set the include path found by configure
 INCLUDES = -I$(top_srcdir)/SharedLib -I$(top_srcdir)/SharedLib/lua \

@@ -1,0 +1,10 @@
+AC_INIT(configure.in)
+
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(novashell, 0.1)
+
+AC_LANG_CPLUSPLUS
+AC_PROG_CXX
+AM_PROG_LIBTOOL
+
+AC_OUTPUT(Makefile source/Makefile SharedLib/Makefile SharedLib/lua/Makefile SharedLib/lua/src/Makefile SharedLib/misc/Makefile SharedLib/luabind/Makefile SharedLib/luabind/src/Makefile source/physics/Makefile source/AI/Makefile source/GUIStyleBitmap/Makefile SharedLib/linearparticle/Makefile SharedLib/linearparticle/sources/Makefile)
