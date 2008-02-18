@@ -48,7 +48,7 @@ void LogMsg(const char *lpFormat, ...)
 #endif   
 
 	std::cout << stTemp;
-	std::cout.flush();
+	//std::cout.flush();
 
 }
 
@@ -69,7 +69,7 @@ void LogError(const char *lpFormat, ...)
 	#endif
 #endif    
     std::cout << stTemp;
-	std::cout.flush();
+	//std::cout.flush();
 }
 
 App::App()

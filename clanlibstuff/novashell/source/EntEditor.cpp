@@ -545,6 +545,13 @@ void OpenScriptForEditing(string scriptName)
 #ifdef WIN32
 	open_file(GetApp()->GetHWND(), file.c_str());
 #elif __APPLE__
+	
+	if (CL_Display::is_fullscreen())
+	{
+		LogMsg("Switching to windowed mode, otherwise you won't see the text editor pop up.");
+		GetApp()->ToggleWindowedMode();
+	}
+	
 	FSRef theRef;
 	int err = FSPathMakeRef((StringPtr)file.c_str(), &theRef, NULL);
 	if (err)
@@ -584,6 +591,12 @@ void OpenScriptForEditing(string scriptName)
         parms[0] = (char*)file.c_str();
     
 
+		if (CL_Display::is_fullscreen())
+		{
+			LogMsg("Switching to windowed mode, otherwise you won't see the text editor pop up.");
+			GetApp()->ToggleWindowedMode();
+		}
+		
 //linux
 	
 	pid_t pid;

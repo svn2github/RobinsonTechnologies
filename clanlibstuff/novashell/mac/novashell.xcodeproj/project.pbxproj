@@ -147,6 +147,8 @@
 		5D8109330AD6220E004605B8 /* scrollbar_Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D81091F0AD6220D004605B8 /* scrollbar_Bitmap.cpp */; };
 		5D8109340AD6220E004605B8 /* stylemanager_Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8109200AD6220D004605B8 /* stylemanager_Bitmap.cpp */; };
 		5D8109350AD6220E004605B8 /* window_Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8109210AD6220D004605B8 /* window_Bitmap.cpp */; };
+		5D869C620D695F07000A7433 /* DataEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D869C610D695F07000A7433 /* DataEditor.cpp */; };
+		5D869C630D695F07000A7433 /* DataEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D869C610D695F07000A7433 /* DataEditor.cpp */; };
 		5D87774A0A15555400363BAA /* AppUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776D80A15555400363BAA /* AppUtils.cpp */; };
 		5D87774C0A15555400363BAA /* BaseGameEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */; };
 		5D87774E0A15555400363BAA /* Brain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DC0A15555400363BAA /* Brain.cpp */; };
@@ -233,6 +235,56 @@
 		5D9F8B0C0AB6CDBF000546C2 /* PathPlanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */; };
 		5D9F8B0D0AB6CDBF000546C2 /* WatchManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B050AB6CDBE000546C2 /* WatchManager.cpp */; };
 		5D9F8B0E0AB6CDBF000546C2 /* WorldNavManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9F8B060AB6CDBE000546C2 /* WorldNavManager.cpp */; };
+		5DC0BD300BA7E1800004DD83 /* EffectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD2E0BA7E1800004DD83 /* EffectManager.cpp */; };
+		5DC0BD310BA7E1800004DD83 /* EffectManagerBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD2F0BA7E1800004DD83 /* EffectManagerBindings.cpp */; };
+		5DC0BD320BA7E1800004DD83 /* EffectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD2E0BA7E1800004DD83 /* EffectManager.cpp */; };
+		5DC0BD330BA7E1800004DD83 /* EffectManagerBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD2F0BA7E1800004DD83 /* EffectManagerBindings.cpp */; };
+		5DC0BD4B0BA7E1D80004DD83 /* L_Defination.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD340BA7E1D80004DD83 /* L_Defination.h */; };
+		5DC0BD4C0BA7E1D80004DD83 /* L_DroppingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD350BA7E1D80004DD83 /* L_DroppingEffect.cpp */; };
+		5DC0BD4D0BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD360BA7E1D80004DD83 /* L_DroppingEffect.h */; };
+		5DC0BD4E0BA7E1D80004DD83 /* L_EffectEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD370BA7E1D80004DD83 /* L_EffectEmitter.cpp */; };
+		5DC0BD4F0BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD380BA7E1D80004DD83 /* L_EffectEmitter.h */; };
+		5DC0BD500BA7E1D80004DD83 /* L_EffectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD390BA7E1D80004DD83 /* L_EffectManager.cpp */; };
+		5DC0BD510BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3A0BA7E1D80004DD83 /* L_EffectManager.h */; };
+		5DC0BD520BA7E1D80004DD83 /* L_ExplosionEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3B0BA7E1D80004DD83 /* L_ExplosionEffect.cpp */; };
+		5DC0BD530BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3C0BA7E1D80004DD83 /* L_ExplosionEffect.h */; };
+		5DC0BD540BA7E1D80004DD83 /* L_MotionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3D0BA7E1D80004DD83 /* L_MotionController.cpp */; };
+		5DC0BD550BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3E0BA7E1D80004DD83 /* L_MotionController.h */; };
+		5DC0BD560BA7E1D80004DD83 /* L_Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3F0BA7E1D80004DD83 /* L_Particle.cpp */; };
+		5DC0BD570BA7E1D80004DD83 /* L_Particle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD400BA7E1D80004DD83 /* L_Particle.h */; };
+		5DC0BD580BA7E1D80004DD83 /* L_ParticleEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD410BA7E1D80004DD83 /* L_ParticleEffect.cpp */; };
+		5DC0BD590BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD420BA7E1D80004DD83 /* L_ParticleEffect.h */; };
+		5DC0BD5A0BA7E1D80004DD83 /* L_ParticleMem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD430BA7E1D80004DD83 /* L_ParticleMem.cpp */; };
+		5DC0BD5B0BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD440BA7E1D80004DD83 /* L_ParticleMem.h */; };
+		5DC0BD5C0BA7E1D80004DD83 /* L_ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD450BA7E1D80004DD83 /* L_ParticleSystem.cpp */; };
+		5DC0BD5D0BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD460BA7E1D80004DD83 /* L_ParticleSystem.h */; };
+		5DC0BD5E0BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD470BA7E1D80004DD83 /* L_ShootingEffect.cpp */; };
+		5DC0BD5F0BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD480BA7E1D80004DD83 /* L_ShootingEffect.h */; };
+		5DC0BD600BA7E1D80004DD83 /* L_Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD490BA7E1D80004DD83 /* L_Vector.cpp */; };
+		5DC0BD610BA7E1D80004DD83 /* L_Vector.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD4A0BA7E1D80004DD83 /* L_Vector.h */; };
+		5DC0BD620BA7E1D80004DD83 /* L_Defination.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD340BA7E1D80004DD83 /* L_Defination.h */; };
+		5DC0BD630BA7E1D80004DD83 /* L_DroppingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD350BA7E1D80004DD83 /* L_DroppingEffect.cpp */; };
+		5DC0BD640BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD360BA7E1D80004DD83 /* L_DroppingEffect.h */; };
+		5DC0BD650BA7E1D80004DD83 /* L_EffectEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD370BA7E1D80004DD83 /* L_EffectEmitter.cpp */; };
+		5DC0BD660BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD380BA7E1D80004DD83 /* L_EffectEmitter.h */; };
+		5DC0BD670BA7E1D80004DD83 /* L_EffectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD390BA7E1D80004DD83 /* L_EffectManager.cpp */; };
+		5DC0BD680BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3A0BA7E1D80004DD83 /* L_EffectManager.h */; };
+		5DC0BD690BA7E1D80004DD83 /* L_ExplosionEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3B0BA7E1D80004DD83 /* L_ExplosionEffect.cpp */; };
+		5DC0BD6A0BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3C0BA7E1D80004DD83 /* L_ExplosionEffect.h */; };
+		5DC0BD6B0BA7E1D80004DD83 /* L_MotionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3D0BA7E1D80004DD83 /* L_MotionController.cpp */; };
+		5DC0BD6C0BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3E0BA7E1D80004DD83 /* L_MotionController.h */; };
+		5DC0BD6D0BA7E1D80004DD83 /* L_Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3F0BA7E1D80004DD83 /* L_Particle.cpp */; };
+		5DC0BD6E0BA7E1D80004DD83 /* L_Particle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD400BA7E1D80004DD83 /* L_Particle.h */; };
+		5DC0BD6F0BA7E1D80004DD83 /* L_ParticleEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD410BA7E1D80004DD83 /* L_ParticleEffect.cpp */; };
+		5DC0BD700BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD420BA7E1D80004DD83 /* L_ParticleEffect.h */; };
+		5DC0BD710BA7E1D80004DD83 /* L_ParticleMem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD430BA7E1D80004DD83 /* L_ParticleMem.cpp */; };
+		5DC0BD720BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD440BA7E1D80004DD83 /* L_ParticleMem.h */; };
+		5DC0BD730BA7E1D80004DD83 /* L_ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD450BA7E1D80004DD83 /* L_ParticleSystem.cpp */; };
+		5DC0BD740BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD460BA7E1D80004DD83 /* L_ParticleSystem.h */; };
+		5DC0BD750BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD470BA7E1D80004DD83 /* L_ShootingEffect.cpp */; };
+		5DC0BD760BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD480BA7E1D80004DD83 /* L_ShootingEffect.h */; };
+		5DC0BD770BA7E1D80004DD83 /* L_Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD490BA7E1D80004DD83 /* L_Vector.cpp */; };
+		5DC0BD780BA7E1D80004DD83 /* L_Vector.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD4A0BA7E1D80004DD83 /* L_Vector.h */; };
 		5DC415F20A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
 		5DC415F40A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
 		5DCC34AB0A1C86A200886F30 /* libjpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34A70A1C86A200886F30 /* libjpeg.framework */; };
@@ -404,6 +456,18 @@
 				5DCC34CB0A1C86B200886F30 /* libpng.framework in CopyFiles */,
 				5DCC34CC0A1C86B200886F30 /* Ogg.framework in CopyFiles */,
 				5DCC34CD0A1C86B200886F30 /* Vorbis.framework in CopyFiles */,
+				5DC0BD4B0BA7E1D80004DD83 /* L_Defination.h in CopyFiles */,
+				5DC0BD4D0BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */,
+				5DC0BD4F0BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */,
+				5DC0BD510BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */,
+				5DC0BD530BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */,
+				5DC0BD550BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */,
+				5DC0BD570BA7E1D80004DD83 /* L_Particle.h in CopyFiles */,
+				5DC0BD590BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */,
+				5DC0BD5B0BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */,
+				5DC0BD5D0BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */,
+				5DC0BD5F0BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */,
+				5DC0BD610BA7E1D80004DD83 /* L_Vector.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,6 +490,18 @@
 				5DCC34CF0A1C86D200886F30 /* libpng.framework in CopyFiles */,
 				5DCC34D00A1C86D200886F30 /* Ogg.framework in CopyFiles */,
 				5DCC34D10A1C86D200886F30 /* Vorbis.framework in CopyFiles */,
+				5DC0BD620BA7E1D80004DD83 /* L_Defination.h in CopyFiles */,
+				5DC0BD640BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */,
+				5DC0BD660BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */,
+				5DC0BD680BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */,
+				5DC0BD6A0BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */,
+				5DC0BD6C0BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */,
+				5DC0BD6E0BA7E1D80004DD83 /* L_Particle.h in CopyFiles */,
+				5DC0BD700BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */,
+				5DC0BD720BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */,
+				5DC0BD740BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */,
+				5DC0BD760BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */,
+				5DC0BD780BA7E1D80004DD83 /* L_Vector.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,6 +617,7 @@
 		5D81091F0AD6220D004605B8 /* scrollbar_Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = scrollbar_Bitmap.cpp; path = GUIStyleBitmap/scrollbar_Bitmap.cpp; sourceTree = "<group>"; };
 		5D8109200AD6220D004605B8 /* stylemanager_Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stylemanager_Bitmap.cpp; path = GUIStyleBitmap/stylemanager_Bitmap.cpp; sourceTree = "<group>"; };
 		5D8109210AD6220D004605B8 /* window_Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = window_Bitmap.cpp; path = GUIStyleBitmap/window_Bitmap.cpp; sourceTree = "<group>"; };
+		5D869C610D695F07000A7433 /* DataEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DataEditor.cpp; sourceTree = "<group>"; };
 		5D8776D80A15555400363BAA /* AppUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AppUtils.cpp; sourceTree = "<group>"; };
 		5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BaseGameEntity.cpp; sourceTree = "<group>"; };
 		5D8776DB0A15555400363BAA /* BaseGameEntity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BaseGameEntity.h; sourceTree = "<group>"; };
@@ -711,6 +788,31 @@
 		5D9F8B040AB6CDBE000546C2 /* PathPlanner.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PathPlanner.cpp; path = AI/PathPlanner.cpp; sourceTree = "<group>"; };
 		5D9F8B050AB6CDBE000546C2 /* WatchManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WatchManager.cpp; path = AI/WatchManager.cpp; sourceTree = "<group>"; };
 		5D9F8B060AB6CDBE000546C2 /* WorldNavManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WorldNavManager.cpp; path = AI/WorldNavManager.cpp; sourceTree = "<group>"; };
+		5DC0BD2E0BA7E1800004DD83 /* EffectManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EffectManager.cpp; sourceTree = "<group>"; };
+		5DC0BD2F0BA7E1800004DD83 /* EffectManagerBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EffectManagerBindings.cpp; sourceTree = "<group>"; };
+		5DC0BD340BA7E1D80004DD83 /* L_Defination.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_Defination.h; path = ../../../SharedLib/linearparticle/sources/L_Defination.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD350BA7E1D80004DD83 /* L_DroppingEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_DroppingEffect.cpp; path = ../../../SharedLib/linearparticle/sources/L_DroppingEffect.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD360BA7E1D80004DD83 /* L_DroppingEffect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_DroppingEffect.h; path = ../../../SharedLib/linearparticle/sources/L_DroppingEffect.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD370BA7E1D80004DD83 /* L_EffectEmitter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_EffectEmitter.cpp; path = ../../../SharedLib/linearparticle/sources/L_EffectEmitter.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD380BA7E1D80004DD83 /* L_EffectEmitter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_EffectEmitter.h; path = ../../../SharedLib/linearparticle/sources/L_EffectEmitter.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD390BA7E1D80004DD83 /* L_EffectManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_EffectManager.cpp; path = ../../../SharedLib/linearparticle/sources/L_EffectManager.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD3A0BA7E1D80004DD83 /* L_EffectManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_EffectManager.h; path = ../../../SharedLib/linearparticle/sources/L_EffectManager.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD3B0BA7E1D80004DD83 /* L_ExplosionEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_ExplosionEffect.cpp; path = ../../../SharedLib/linearparticle/sources/L_ExplosionEffect.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD3C0BA7E1D80004DD83 /* L_ExplosionEffect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_ExplosionEffect.h; path = ../../../SharedLib/linearparticle/sources/L_ExplosionEffect.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD3D0BA7E1D80004DD83 /* L_MotionController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_MotionController.cpp; path = ../../../SharedLib/linearparticle/sources/L_MotionController.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD3E0BA7E1D80004DD83 /* L_MotionController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_MotionController.h; path = ../../../SharedLib/linearparticle/sources/L_MotionController.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD3F0BA7E1D80004DD83 /* L_Particle.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_Particle.cpp; path = ../../../SharedLib/linearparticle/sources/L_Particle.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD400BA7E1D80004DD83 /* L_Particle.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_Particle.h; path = ../../../SharedLib/linearparticle/sources/L_Particle.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD410BA7E1D80004DD83 /* L_ParticleEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_ParticleEffect.cpp; path = ../../../SharedLib/linearparticle/sources/L_ParticleEffect.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD420BA7E1D80004DD83 /* L_ParticleEffect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_ParticleEffect.h; path = ../../../SharedLib/linearparticle/sources/L_ParticleEffect.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD430BA7E1D80004DD83 /* L_ParticleMem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_ParticleMem.cpp; path = ../../../SharedLib/linearparticle/sources/L_ParticleMem.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD440BA7E1D80004DD83 /* L_ParticleMem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_ParticleMem.h; path = ../../../SharedLib/linearparticle/sources/L_ParticleMem.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD450BA7E1D80004DD83 /* L_ParticleSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_ParticleSystem.cpp; path = ../../../SharedLib/linearparticle/sources/L_ParticleSystem.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD460BA7E1D80004DD83 /* L_ParticleSystem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_ParticleSystem.h; path = ../../../SharedLib/linearparticle/sources/L_ParticleSystem.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD470BA7E1D80004DD83 /* L_ShootingEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_ShootingEffect.cpp; path = ../../../SharedLib/linearparticle/sources/L_ShootingEffect.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD480BA7E1D80004DD83 /* L_ShootingEffect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_ShootingEffect.h; path = ../../../SharedLib/linearparticle/sources/L_ShootingEffect.h; sourceTree = SOURCE_ROOT; };
+		5DC0BD490BA7E1D80004DD83 /* L_Vector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = L_Vector.cpp; path = ../../../SharedLib/linearparticle/sources/L_Vector.cpp; sourceTree = SOURCE_ROOT; };
+		5DC0BD4A0BA7E1D80004DD83 /* L_Vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_Vector.h; path = ../../../SharedLib/linearparticle/sources/L_Vector.h; sourceTree = SOURCE_ROOT; };
 		5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AppPrecomp.cpp; path = ../source/AppPrecomp.cpp; sourceTree = SOURCE_ROOT; };
 		5DC415F10A1B33AA00E9A026 /* appPrecomp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = appPrecomp.h; path = ../source/appPrecomp.h; sourceTree = SOURCE_ROOT; };
 		5DCC34A70A1C86A200886F30 /* libjpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libjpeg.framework; path = "../../../../dev/Clanlib-0.8/Frameworks/libjpeg.framework"; sourceTree = SOURCE_ROOT; };
@@ -812,7 +914,6 @@
 			isa = PBXGroup;
 			children = (
 				20286C32FDCF999611CA2CEA /* Frameworks */,
-				20286C2AFDCF999611CA2CEA /* Sources */,
 				20286C2CFDCF999611CA2CEA /* Resources */,
 				195DF8CFFE9D517E11CA2CBB /* Products */,
 			);
@@ -844,6 +945,7 @@
 		20286C32FDCF999611CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20286C2AFDCF999611CA2CEA /* Sources */,
 				5D4682D80B9925CE00BC8CE7 /* Development */,
 				5DCC34A60A1C866D00886F30 /* Misc */,
 				5DCDB5E10A1A00150043DCFA /* Release */,
@@ -943,6 +1045,7 @@
 		5D8776D50A15555400363BAA /* source */ = {
 			isa = PBXGroup;
 			children = (
+				5DC0BD790BA7E1DF0004DD83 /* LinearParticle */,
 				5D8105170AD6211F004605B8 /* GUIStyleBitmap */,
 				5D8776D80A15555400363BAA /* AppUtils.cpp */,
 				5DCDB01D0A19ADF70043DCFA /* Entities */,
@@ -1177,6 +1280,36 @@
 			name = States;
 			sourceTree = "<group>";
 		};
+		5DC0BD790BA7E1DF0004DD83 /* LinearParticle */ = {
+			isa = PBXGroup;
+			children = (
+				5DC0BD340BA7E1D80004DD83 /* L_Defination.h */,
+				5DC0BD350BA7E1D80004DD83 /* L_DroppingEffect.cpp */,
+				5DC0BD360BA7E1D80004DD83 /* L_DroppingEffect.h */,
+				5DC0BD370BA7E1D80004DD83 /* L_EffectEmitter.cpp */,
+				5DC0BD380BA7E1D80004DD83 /* L_EffectEmitter.h */,
+				5DC0BD390BA7E1D80004DD83 /* L_EffectManager.cpp */,
+				5DC0BD3A0BA7E1D80004DD83 /* L_EffectManager.h */,
+				5DC0BD3B0BA7E1D80004DD83 /* L_ExplosionEffect.cpp */,
+				5DC0BD3C0BA7E1D80004DD83 /* L_ExplosionEffect.h */,
+				5DC0BD3D0BA7E1D80004DD83 /* L_MotionController.cpp */,
+				5DC0BD3E0BA7E1D80004DD83 /* L_MotionController.h */,
+				5DC0BD3F0BA7E1D80004DD83 /* L_Particle.cpp */,
+				5DC0BD400BA7E1D80004DD83 /* L_Particle.h */,
+				5DC0BD410BA7E1D80004DD83 /* L_ParticleEffect.cpp */,
+				5DC0BD420BA7E1D80004DD83 /* L_ParticleEffect.h */,
+				5DC0BD430BA7E1D80004DD83 /* L_ParticleMem.cpp */,
+				5DC0BD440BA7E1D80004DD83 /* L_ParticleMem.h */,
+				5DC0BD450BA7E1D80004DD83 /* L_ParticleSystem.cpp */,
+				5DC0BD460BA7E1D80004DD83 /* L_ParticleSystem.h */,
+				5DC0BD470BA7E1D80004DD83 /* L_ShootingEffect.cpp */,
+				5DC0BD480BA7E1D80004DD83 /* L_ShootingEffect.h */,
+				5DC0BD490BA7E1D80004DD83 /* L_Vector.cpp */,
+				5DC0BD4A0BA7E1D80004DD83 /* L_Vector.h */,
+			);
+			name = LinearParticle;
+			sourceTree = "<group>";
+		};
 		5DC490510A16EAF6007BE8D2 /* luabind */ = {
 			isa = PBXGroup;
 			children = (
@@ -1220,6 +1353,7 @@
 		5DCDB01D0A19ADF70043DCFA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				5D869C610D695F07000A7433 /* DataEditor.cpp */,
 				5D669E560B858C18003EE62C /* EntMapCache.cpp */,
 				5D8105120AD620CA004605B8 /* EntChoiceDialog.cpp */,
 				5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */,
@@ -1250,6 +1384,7 @@
 		5DCDB01E0A19AE590043DCFA /* Script */ = {
 			isa = PBXGroup;
 			children = (
+				5DC0BD2F0BA7E1800004DD83 /* EffectManagerBindings.cpp */,
 				5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */,
 				5D8776F30A15555400363BAA /* EntityBindings.h */,
 				5D8776F40A15555400363BAA /* EntityManager.cpp */,
@@ -1301,6 +1436,7 @@
 		5DCDB81E0A1AE5CA0043DCFA /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				5DC0BD2E0BA7E1800004DD83 /* EffectManager.cpp */,
 				5D669E500B858BE2003EE62C /* InputManager.cpp */,
 				5D669E510B858BE2003EE62C /* MapManager.cpp */,
 				5D8776E00A15555400363BAA /* Camera.cpp */,
@@ -1554,6 +1690,20 @@
 				5D669E5B0B858C3E003EE62C /* Map.cpp in Sources */,
 				5D669E5C0B858C3E003EE62C /* MapChunk.cpp in Sources */,
 				5D253BE70B97FA420005D295 /* BrainScale.cpp in Sources */,
+				5DC0BD320BA7E1800004DD83 /* EffectManager.cpp in Sources */,
+				5DC0BD330BA7E1800004DD83 /* EffectManagerBindings.cpp in Sources */,
+				5DC0BD630BA7E1D80004DD83 /* L_DroppingEffect.cpp in Sources */,
+				5DC0BD650BA7E1D80004DD83 /* L_EffectEmitter.cpp in Sources */,
+				5DC0BD670BA7E1D80004DD83 /* L_EffectManager.cpp in Sources */,
+				5DC0BD690BA7E1D80004DD83 /* L_ExplosionEffect.cpp in Sources */,
+				5DC0BD6B0BA7E1D80004DD83 /* L_MotionController.cpp in Sources */,
+				5DC0BD6D0BA7E1D80004DD83 /* L_Particle.cpp in Sources */,
+				5DC0BD6F0BA7E1D80004DD83 /* L_ParticleEffect.cpp in Sources */,
+				5DC0BD710BA7E1D80004DD83 /* L_ParticleMem.cpp in Sources */,
+				5DC0BD730BA7E1D80004DD83 /* L_ParticleSystem.cpp in Sources */,
+				5DC0BD750BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */,
+				5DC0BD770BA7E1D80004DD83 /* L_Vector.cpp in Sources */,
+				5D869C630D695F07000A7433 /* DataEditor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1715,6 +1865,20 @@
 				5D669E5D0B858C3E003EE62C /* Map.cpp in Sources */,
 				5D669E5E0B858C3E003EE62C /* MapChunk.cpp in Sources */,
 				5D253BE80B97FA420005D295 /* BrainScale.cpp in Sources */,
+				5DC0BD300BA7E1800004DD83 /* EffectManager.cpp in Sources */,
+				5DC0BD310BA7E1800004DD83 /* EffectManagerBindings.cpp in Sources */,
+				5DC0BD4C0BA7E1D80004DD83 /* L_DroppingEffect.cpp in Sources */,
+				5DC0BD4E0BA7E1D80004DD83 /* L_EffectEmitter.cpp in Sources */,
+				5DC0BD500BA7E1D80004DD83 /* L_EffectManager.cpp in Sources */,
+				5DC0BD520BA7E1D80004DD83 /* L_ExplosionEffect.cpp in Sources */,
+				5DC0BD540BA7E1D80004DD83 /* L_MotionController.cpp in Sources */,
+				5DC0BD560BA7E1D80004DD83 /* L_Particle.cpp in Sources */,
+				5DC0BD580BA7E1D80004DD83 /* L_ParticleEffect.cpp in Sources */,
+				5DC0BD5A0BA7E1D80004DD83 /* L_ParticleMem.cpp in Sources */,
+				5DC0BD5C0BA7E1D80004DD83 /* L_ParticleSystem.cpp in Sources */,
+				5DC0BD5E0BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */,
+				5DC0BD600BA7E1D80004DD83 /* L_Vector.cpp in Sources */,
+				5D869C620D695F07000A7433 /* DataEditor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

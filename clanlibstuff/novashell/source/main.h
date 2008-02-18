@@ -201,13 +201,13 @@ public:
 	int GetSoundSystem() {return m_soundSystem;}
 	DataManager * Data() {return &m_prefs;}
 	const string & GetBaseDirectory() {return m_baseDirectory;} //where our prefs.dat is
+    void ToggleWindowedMode();
 
 private:
     
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
 	void OneTimeDeinit();
     void OneTimeInit();
-    void ToggleWindowedMode();
 	void OnRender();
    void UpdateLogic();
     void OnLoseFocus();
