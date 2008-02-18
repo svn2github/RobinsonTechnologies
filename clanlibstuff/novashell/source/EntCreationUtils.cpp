@@ -12,14 +12,14 @@ BaseGameEntity * CreateEntitySpecial(const string &EntName, const string &parms)
 	if (CL_String::compare_nocase(EntName, "WorldChooseDialog"))
 	{
 		EntWorldDialog *pEnt = new EntWorldDialog();
-		GetGameLogic->GetMyEntityManager()->Add(pEnt);
+		GetGameLogic()->GetMyEntityManager()->Add(pEnt);
 
 		return pEnt;
 	} else
 		if (CL_String::compare_nocase(EntName, "ChoiceDialog"))
 		{
 			EntChoiceDialog *pEnt = new EntChoiceDialog(parms);
-			GetGameLogic->GetMyEntityManager()->Add(pEnt);
+			GetGameLogic()->GetMyEntityManager()->Add(pEnt);
 			return pEnt;
 		}
 

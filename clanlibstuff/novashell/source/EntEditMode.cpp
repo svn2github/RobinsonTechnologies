@@ -13,6 +13,7 @@
 #include "MiscClassBindings.h"
 #include "GlobalScriptFunctionBindings.h"
 #include "Console.h"
+#include "DataEditor.h" //we use a few of its helper functions
 
 #define C_SCALE_MOD_AMOUNT 0.01f
 
@@ -30,7 +31,7 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 
 	m_slots.connect(CL_Mouse::sig_key_dblclk(), this, &EntEditMode::OnMouseDoubleClick);
 
-	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntEditMode::OnMapChange);
+	m_slots.connect(GetGameLogic()->GetMyWorldManager()->sig_map_changed, this, &EntEditMode::OnMapChange);
 
 	m_pContextMenu = NULL;
 
@@ -558,7 +559,7 @@ void EntEditMode::SnapSizeChanged()
 	
 	if (m_pCheckBoxSnap->is_checked())
 	{
-		if (pEnt && !GetGameLogic->GetShowGrid()) pEnt->OnToggleGrid();
+		if (pEnt && !GetGameLogic()->GetShowGrid()) pEnt->OnToggleGrid();
 
 		m_pInputBoxSnapSizeX->enable(true);
 		m_pInputBoxSnapSizeY->enable(true);
@@ -585,7 +586,7 @@ void EntEditMode::SnapSizeChanged()
 	} else
 	{
 	
-		if (pEnt && GetGameLogic->GetShowGrid()) pEnt->OnToggleGrid();
+		if (pEnt && GetGameLogic()->GetShowGrid()) pEnt->OnToggleGrid();
 		
 		m_pInputBoxSnapSizeX->enable(false);
 		m_pInputBoxSnapSizeY->enable(false);
@@ -2136,7 +2137,7 @@ void EntEditMode::OnPropertiesOK()
 
 void EntEditMode::OnPropertiesEditScript()
 {
-	string file = GetGameLogic->GetScriptRootDir()+"/"+m_pPropertiesInputScript->get_text();
+	string file = GetGameLogic()->GetScriptRootDir()+"/"+m_pPropertiesInputScript->get_text();
 	g_VFManager.LocateFile(file);
 	OpenScriptForEditing(file);
 }
@@ -2150,7 +2151,7 @@ void EntEditMode::OnPropertiesOpenScript()
 	string original_dir = CL_Directory::get_current();
 	string fileNameWithoutPath = CL_String::get_filename(fname);
 
-	string dir = GetGameLogic->GetScriptRootDir()+"/"+fname;
+	string dir = GetGameLogic()->GetScriptRootDir()+"/"+fname;
 	if (g_VFManager.LocateFile(dir))
 	{
 		//was able to locate it in one of our resource paths
@@ -2180,11 +2181,11 @@ void EntEditMode::OnPropertiesOpenScript()
 
 	//make the path relative
 
-	int index = fname.find(GetGameLogic->GetScriptRootDir()+"/");
+	int index = fname.find(GetGameLogic()->GetScriptRootDir()+"/");
 	if (index != -1)
 	{
 		//don't include the root dir part
-		index += GetGameLogic->GetScriptRootDir().size();
+		index += GetGameLogic()->GetScriptRootDir().size();
 		fname = fname.substr(index, fname.size()-index);
 	}
 	
@@ -2213,35 +2214,6 @@ void EntEditMode::OnPropertiesRemoveData()
 	}
 }
 
-void CreateEditDataDialog(DataObject &o)
-{
-   CL_InputDialog dlg("Edit Data Dialog", "Ok", "Cancel", "",GetApp()->GetGUI());
-   dlg.set_event_passing(false);
-
-   CL_InputBox *pName = dlg.add_input_box("Name", o.m_key, 600);
-   pName->set_tab_id(0);
-
-   CL_InputBox *pValue = dlg.add_input_box("Value", o.Get(), 600);
-   pValue->set_tab_id(1);
-   dlg.get_button(0)->set_tab_id(2);
-   dlg.get_button(1)->set_tab_id(3);
-
-   dlg.set_focus();
-   pName->set_focus();
-   dlg.run();
-   
-   if (dlg.get_result_button() == 0)
-   {
-      if (pName->get_text().size() > 0)
-	  {
-	   o.Set(pName->get_text(), pValue->get_text());
-	  } else
-	  {
-		LogMsg("Can't have a key with no name, ignoring input.");
-	  }
-   }
-
-}
 
 void EntEditMode::OnPropertiesAddData()
 {
@@ -2250,54 +2222,6 @@ void EntEditMode::OnPropertiesAddData()
 	if (o.m_key.size() > 0)
 	m_pPropertiesListData->insert_item(PropertyMakeItemString(o));
 }
-
-string EntEditMode::PropertyMakeItemString(DataObject &o)
-{
-	return ("Name: |" + o.m_key+"|  Value: |"+o.Get()+"|");
-}
-
-void EntEditMode::OnPropertiesEditData(const CL_InputEvent &input)
-{
-	int index = m_pPropertiesListData->get_item(input.mouse_pos);
-	if (index == -1) return;
-
-	CL_ListItem *pItem = m_pPropertiesListData->get_item(index);
-
-	vector<string> words = CL_String::tokenize(pItem->str, "|", false);
-	string name = words[1].c_str();
-	string value = words[3].c_str();
-
-	DataObject o;
-	o.Set(name, value);
-
-	CreateEditDataDialog(o);
-
-	//update the listbox
-	m_pPropertiesListData->change_item(PropertyMakeItemString(o), index);
-	
-}
-
-void EntEditMode::PropertiesSetDataManagerFromListBox(DataManager *pData, CL_ListBox &listBox)
-{
-	pData->Clear();
-
-	string name;
-	string value; 
-
-	//cycle through and add each key/value pair
-	for (int i=0; i < m_pPropertiesListData->get_count(); i++)
-	{
-		CL_ListItem *pItem = m_pPropertiesListData->get_item(i);
-
-		vector<string> words = CL_String::tokenize(pItem->str, "|", false);
-		name = words[1].c_str();
-		value = words[3].c_str();
-
-		//OPTIMIZE:  Later, we should examine and if we find a # value add it as a # instead of a string,
-		pData->Set(name, value); //it will create it if it doesn't exist
-	}
-}
-
 
 void EntEditMode::OnPropertiesConvert()
 {
@@ -2421,7 +2345,6 @@ if (m_bDialogIsOpen) return;
 	m_pPropertiesListData = &listData;
 	offsetY+= 4 + listData.get_height();
 
-	//add a little file open button
 	CL_Button buttonAddData (CL_Point(buttonOffsetX, offsetY), "Add", window.get_client_area());
 	CL_Button buttonRemoveData (CL_Point(buttonOffsetX+50, offsetY), "Remove Selected", window.get_client_area());
 	offsetY += 20;
@@ -2529,7 +2452,7 @@ if (m_bDialogIsOpen) return;
 	slots.connect(buttonAddData.sig_clicked(), this, &EntEditMode::OnPropertiesAddData);
 	slots.connect(buttonRemoveData.sig_clicked(), this, &EntEditMode::OnPropertiesRemoveData);
 
-	slots.connect(listData.sig_mouse_dblclk(), this, &EntEditMode::OnPropertiesEditData);
+	slots.connect(listData.sig_mouse_dblclk(), &OnPropertiesEditData, &listData);
 	
 	//populate the listbox
 
@@ -2548,7 +2471,6 @@ if (m_bDialogIsOpen) return;
 	}
 
 	listData.sort();
-	
 	window.run();	//loop in the menu until quit() is called by hitting a button
 	
 	//Process GUI here

@@ -346,7 +346,7 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 
 	ritor = v.rbegin();
 
-	bool bEditorOpen = GetGameLogic->GetEditorActive();
+	bool bEditorOpen = GetGameLogic()->GetEditorActive();
 
 	for (;ritor != v.rend(); ritor++)
 	{
@@ -361,7 +361,7 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 			if (!bEditorOpen) continue;
 			
 			bool IsDialogOpen();
-			if (GetGameLogic->IsEditorDialogOpen())
+			if (GetGameLogic()->IsEditorDialogOpen())
 			{
 					//with a dialog open we don't want to run crazy code right now..
 					continue;

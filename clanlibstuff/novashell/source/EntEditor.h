@@ -64,6 +64,8 @@ private:
 	void OnListLoseFocus(const CL_InputEvent &key);
 	void validator_numbers(char &character, bool &accept);
 	void MapOptionsDialog();
+	void OnWorldProperties();
+	void OnPreferences();
 	void onButtonDown(const CL_InputEvent &key);
 	void OnMouseDown(const CL_InputEvent &key);
 	void OnMouseUp(const CL_InputEvent &key);

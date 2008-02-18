@@ -101,7 +101,7 @@ bool EntVisualProfileEditor::Init(MovingEntity *pEnt)
 
 	int buttonOffsetX = 10;
 	int curY = 10;
-	CL_Button *pButton = new CL_Button(CL_Point(buttonOffsetX,ptSize.y-50), "Close", m_pWindow->get_client_area());
+	CL_Button *pButton = new CL_Button(CL_Point(buttonOffsetX,ptSize.y-50), "Close & Save", m_pWindow->get_client_area());
 
 	new CL_Label(CL_Point(buttonOffsetX, curY), "Use the arrow keys to adjust the offset of the selected animation.  Hold", m_pWindow->get_client_area()); curY += 16;
 	new CL_Label(CL_Point(buttonOffsetX, curY), "shift to move in larger increments.", m_pWindow->get_client_area()); curY += 16;

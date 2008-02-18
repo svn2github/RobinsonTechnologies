@@ -25,16 +25,12 @@ void DataObject::SetNum(const string &keyName, float value)
 	m_dataType = DataManager::E_NUM;
 }
 
-
-
 float DataObject::GetNum()
 {
 	if (m_dataType == DataManager::E_NUM) return m_num;
 
 	return CL_String::to_float(m_value);
 }
-
-
 
 void DataObject::Serialize(CL_FileHelper &helper, int version)
 {
@@ -273,6 +269,9 @@ void DataManager::Serialize(CL_FileHelper &helper)
 
 	
 }
+
+
+
 
 /*
 Object: DataManager

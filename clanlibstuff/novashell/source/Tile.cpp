@@ -260,14 +260,14 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	
 	assert(pWorldCache && "Why render nothing?");
 	
-	if (GetGameLogic->GetParallaxActive())
+	if (GetGameLogic()->GetParallaxActive())
 	{
 		bUseParallax = true;
 		pLayer = &pWorld->GetLayerManager().GetLayerInfo(pTile->GetLayer());
 		
 		if (pLayer->RequiresParallax())
 		{
-		if (GetGameLogic->GetMakingThumbnail())
+		if (GetGameLogic()->GetMakingThumbnail())
 		{
 			if (!pLayer->GetUseParallaxInThumbnail())
 			{

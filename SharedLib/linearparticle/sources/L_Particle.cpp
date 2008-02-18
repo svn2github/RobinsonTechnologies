@@ -573,10 +573,10 @@ void L_Particle::rotating_process(void)
 			current_radian = current_radian + radian*time_elapesed;
 
 			if(current_radian >= L_2PI)
-				current_radian -= L_2PI;
+				current_radian -= float(L_2PI);
 
 			else if(current_radian <= -L_2PI)
-				current_radian += L_2PI;
+				current_radian += float(L_2PI);
 		}
 
 		//rotating_type = 2

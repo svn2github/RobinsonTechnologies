@@ -9,6 +9,7 @@
 #include "GeneratorDink.h"
 #include "Console.h"
 #include "AI/WorldNavManager.h"
+#include "DataEditor.h"
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -32,11 +33,11 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_vecLastMousePos = CL_Point(0,0);
    m_bShowWorldChunkGridLines = g_pMapManager->GetActiveMapCache()->GetDrawWorldChunkGrid();
    m_bShowCollision = g_pMapManager->GetActiveMapCache()->GetDrawCollision();
-   m_bShowPathfinding = GetGameLogic->GetShowPathfinding();
-   m_bShowAI = GetGameLogic->GetShowAI();
+   m_bShowPathfinding = GetGameLogic()->GetShowPathfinding();
+   m_bShowAI = GetGameLogic()->GetShowAI();
 
    m_slot.connect(CL_Keyboard::sig_key_down(), this, &EntEditor::onButtonDown);
-   m_slot.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntEditor::OnMapChange);
+   m_slot.connect(GetGameLogic()->GetMyWorldManager()->sig_map_changed, this, &EntEditor::OnMapChange);
 
    m_slot.connect(CL_Mouse::sig_move(),this, &EntEditor::OnMouseMove);
    m_slot.connect(CL_Mouse::sig_key_down(),this, &EntEditor::OnMouseDown);
@@ -48,7 +49,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    m_pLayerListWindow = NULL;
    m_bHideMode = false;
    
-   GetGameLogic->SetGamePaused(true);
+   GetGameLogic()->SetGamePaused(true);
 
    for (int i=0; i < e_modeCount; i++)
    {
@@ -57,7 +58,7 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
    SetName("editor");
    GetScriptManager->RunFunction("OnOpenEditor");
    Init();
-   GetGameLogic->SetEditorActive(true);
+   GetGameLogic()->SetEditorActive(true);
  
    OnToggleEditMode(); //turn on the edit submode
     
@@ -86,9 +87,9 @@ EntEditor::~EntEditor()
     SAFE_DELETE(m_pButton);
     SAFE_DELETE(m_pLabel);
     SAFE_DELETE(m_pWindow);
-	GetGameLogic->SetGamePaused(false); //unpause the game if it was
-	GetGameLogic->SetEditorActive(false);
-	GetGameLogic->SetShowGrid(false);
+	GetGameLogic()->SetGamePaused(false); //unpause the game if it was
+	GetGameLogic()->SetEditorActive(false);
+	GetGameLogic()->SetShowGrid(false);
 	//GetApp()->GetGUI()->close();
 	GetScriptManager->RunFunction("OnCloseEditor");
 
@@ -138,8 +139,8 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 	case CL_KEY_F:
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 		{
-			GetGameLogic->ToggleShowFPS();
-			m_pMenuShowFPSCheckbox->set_selected(GetGameLogic->GetShowFPS());
+			GetGameLogic()->ToggleShowFPS();
+			m_pMenuShowFPSCheckbox->set_selected(GetGameLogic()->GetShowFPS());
 		}
 		break;
 
@@ -255,14 +256,14 @@ void EntEditor::OnToggleWorldChunkGrid()
 
 void EntEditor::OnToggleGrid()
 {
-	GetGameLogic->SetShowGrid(!GetGameLogic->GetShowGrid());
-	m_pShowGridCheckBox->set_selected(GetGameLogic->GetShowGrid());
+	GetGameLogic()->SetShowGrid(!GetGameLogic()->GetShowGrid());
+	m_pShowGridCheckBox->set_selected(GetGameLogic()->GetShowGrid());
 }
 
 void EntEditor::OnToggleGamePaused()
 {
-	GetGameLogic->SetGamePaused(!GetGameLogic->GetGamePaused());
-	m_pMenuGamePausedCheckbox->set_selected(GetGameLogic->GetGamePaused());
+	GetGameLogic()->SetGamePaused(!GetGameLogic()->GetGamePaused());
+	m_pMenuGamePausedCheckbox->set_selected(GetGameLogic()->GetGamePaused());
 	
 }
 
@@ -275,18 +276,18 @@ void EntEditor::OnToggleShowCollision()
 void EntEditor::OnToggleShowPathfinding()
 {
 	m_bShowPathfinding= !m_bShowPathfinding;
-	GetGameLogic->SetShowPathfinding(m_bShowPathfinding);
+	GetGameLogic()->SetShowPathfinding(m_bShowPathfinding);
 }
 
 void EntEditor::OnToggleShowAI()
 {
 	m_bShowAI= !m_bShowAI;
-	GetGameLogic->SetShowAI(m_bShowAI);
+	GetGameLogic()->SetShowAI(m_bShowAI);
 }
 
 void EntEditor::OnToggleParallax()
 {
-	GetGameLogic->SetParallaxActive(!GetGameLogic->GetParallaxActive());
+	GetGameLogic()->SetParallaxActive(!GetGameLogic()->GetParallaxActive());
 }
 
 void EntEditor::MapOptionsDialog()
@@ -408,7 +409,7 @@ void EntEditor::MapOptionsDialog()
 			}
 		}
 
-		GetGameLogic->GetMyWorldManager()->sig_map_changed();
+		GetGameLogic()->GetMyWorldManager()->sig_map_changed();
 	}
 
 }
@@ -465,7 +466,7 @@ void EntEditor::OnRevertChanges()
 
 void EntEditor::OnToggleShowEntityCollision()
 {
-	GetGameLogic->SetShowEntityCollisionData(!GetGameLogic->GetShowEntityCollisionData());
+	GetGameLogic()->SetShowEntityCollisionData(!GetGameLogic()->GetShowEntityCollisionData());
 }
 
 void EntEditor::OnToggleLockAtRefresh()
@@ -587,12 +588,16 @@ void OpenScriptForEditing(string scriptName)
 	
 	pid_t pid;
 	pid=fork();
-        
+
+
+
          if (pid==0)
         {
-                if (execlp("gedit","gedit", file.c_str(), NULL)<0)
+			string editor = GetApp()->Data()->Get("linux_editor");
+			if (execlp(editor.c_str(),editor.c_str(), file.c_str(), NULL)<0)
                 {
-                           LogError("Unknown error trying to execv the gedit editor.");
+                           LogError("Unknown error trying to execv %s %s.  Check the editor settings in Options->Novashell System Preferences.",
+							   editor.c_str(), file.c_str());
                 }
                 else
                 {
@@ -605,8 +610,6 @@ void OpenScriptForEditing(string scriptName)
               // LogError("Unknown error trying to fork.");
         }
           
-                
-//	LogError("Not implemented in linux yet.  Please complain to Seth!");
 #endif
 
 
@@ -616,7 +619,7 @@ void OpenScriptForEditing(string scriptName)
 void EntEditor::OnOpenScript()
 {
 	string original_dir = CL_Directory::get_current();
-	string dir = original_dir + "/" + GetGameLogic->GetScriptRootDir();
+	string dir = original_dir + "/" + GetGameLogic()->GetScriptRootDir();
 	CL_Directory::change_to(dir);
 	CL_FileDialog dlg("Open LUA Script", "", "*.lua", GetApp()->GetGUI());
 
@@ -694,7 +697,7 @@ void EntEditor::OnAddNewMap()
 
 	if (dlg.get_result_button() == 0)
 	{
-		string mapName = GetGameLogic->GetBaseMapPath() +  pName->get_text();
+		string mapName = GetGameLogic()->GetBaseMapPath() +  pName->get_text();
 		
 		if (pName->get_text().size() > 0)
 		{
@@ -722,7 +725,7 @@ void EntEditor::OnAddNewMap()
 
 void EntEditor::OnEditStartupLua()
 {
-	string file = GetGameLogic->GetScriptRootDir();
+	string file = GetGameLogic()->GetScriptRootDir();
 	file += "/system_start.lua";
 	g_VFManager.LocateFile(file);
 	OpenScriptForEditing(file);
@@ -730,7 +733,7 @@ void EntEditor::OnEditStartupLua()
 
 void EntEditor::OnEditGameStartLua()
 {
-	string file = GetGameLogic->GetScriptRootDir();
+	string file = GetGameLogic()->GetScriptRootDir();
 	file += "/game_start.lua";
 	g_VFManager.LocateFile(file);
 	OpenScriptForEditing(file);
@@ -738,7 +741,7 @@ void EntEditor::OnEditGameStartLua()
 
 void EntEditor::OnEditSetupConstants()
 {
-	string file = GetGameLogic->GetScriptRootDir();
+	string file = GetGameLogic()->GetScriptRootDir();
 	file += "/system/setup_constants.lua";
 	g_VFManager.LocateFile(file);
 	OpenScriptForEditing(file);
@@ -756,7 +759,7 @@ void EntEditor::OnRebuildNavigationMaps()
 	
 	if (!ConfirmMessage("Rebuild tag/world navigation cache data", "This may clear up any weird data problems from the result of a crash or merging maps.\n\nMake sure the world/mod/saved game is loaded that you would like this applied to.\n\nThis may take a long time, are you sure?")) return;
 
-	GetGameLogic->RequestRebuildCacheData();
+	GetGameLogic()->RequestRebuildCacheData();
 	
 }
 
@@ -813,12 +816,12 @@ assert(!m_pWindow);
 
 string windowLabel = ""; //"Editor Tools Palette";
 
-if (GetGameLogic->GetUserProfileName().empty())
+if (GetGameLogic()->GetUserProfileName().empty())
 {
 	windowLabel +=" Editing ** MASTER MAP FILES **, be careful!";
 } else
 {
-	windowLabel += "Editing map data in profile '"+GetGameLogic->GetUserProfileName() + "'.";
+	windowLabel += "Editing map data in profile '"+GetGameLogic()->GetUserProfileName() + "'.";
 }
 
 	m_pWindow = new CL_Window(CL_Rect(0, 0, GetScreenX, C_EDITOR_MAIN_MENU_BAR_HEIGHT), windowLabel, CL_Window::close_button, GetApp()->GetGUI()->get_client_area());
@@ -871,6 +874,13 @@ if (GetGameLogic->GetUserProfileName().empty())
 	pItem = m_pMenu->create_item("Options/Map Properties");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::MapOptionsDialog);
 
+	pItem = m_pMenu->create_item("Options/Profile Global Properties");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnWorldProperties);
+
+	pItem = m_pMenu->create_item("Options/Novashell System Preferences");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnPreferences);
+
+
 	pItem = m_pMenu->create_item("Utilities/Clear Map");
 	m_slot.connect(pItem->sig_clicked(), this, &EntEditor::OnClearMap);
 
@@ -902,8 +912,8 @@ if (GetGameLogic->GetUserProfileName().empty())
 
 	pItem = m_pMenu->create_toggle_item("Display/Video Options/Toggle FPS Display (Ctrl+F)");
 	m_pMenuShowFPSCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
-	m_pMenuShowFPSCheckbox->set_selected(GetGameLogic->GetShowFPS());
-	m_slot.connect(pItem->sig_clicked(),GetGameLogic, &GameLogic::ToggleShowFPS);
+	m_pMenuShowFPSCheckbox->set_selected(GetGameLogic()->GetShowFPS());
+	m_slot.connect(pItem->sig_clicked(),GetGameLogic(), &GameLogic::ToggleShowFPS);
 
 	pItem = m_pMenu->create_toggle_item("Display/Show Map Collision Data (Ctrl+Q)");
 	m_pMenuShowCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
@@ -922,17 +932,17 @@ if (GetGameLogic->GetUserProfileName().empty())
 
 	pItem = m_pMenu->create_toggle_item("Display/Parallax Scrolling");
 	m_pMenuParallaxCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
-	m_pMenuParallaxCheckbox->set_selected(GetGameLogic->GetParallaxActive());
+	m_pMenuParallaxCheckbox->set_selected(GetGameLogic()->GetParallaxActive());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleParallax);
 
 	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Processing (Ctrl+S)");
 	m_pMenuShowEntityCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
-	m_pMenuShowEntityCollisionCheckbox->set_selected(GetGameLogic->GetShowEntityCollisionData());
+	m_pMenuShowEntityCollisionCheckbox->set_selected(GetGameLogic()->GetShowEntityCollisionData());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowEntityCollision);
 
 	pItem = m_pMenu->create_toggle_item("Display/Show Grid Lines (Ctrl+G)");
 	m_pShowGridCheckBox = static_cast<CL_MenuItem*>(pItem->get_data());
-	m_pShowGridCheckBox->set_selected(GetGameLogic->GetShowGrid());
+	m_pShowGridCheckBox->set_selected(GetGameLogic()->GetShowGrid());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleGrid);
 
 	pItem = m_pMenu->create_toggle_item("Display/Show Map Chunk Grid Lines (Ctrl+Shift+G)");
@@ -983,7 +993,7 @@ if (GetGameLogic->GetUserProfileName().empty())
 
 	pItem = m_pMenu->create_toggle_item("Game/Game Paused (Ctrl+P)");
 	m_pMenuGamePausedCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
-	m_pMenuGamePausedCheckbox->set_selected(GetGameLogic->GetGamePaused());
+	m_pMenuGamePausedCheckbox->set_selected(GetGameLogic()->GetGamePaused());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleGamePaused);
 
 	DisableAllModes();
@@ -1521,9 +1531,9 @@ void EntEditor::Render(void *pTarget)
 {
 	string profile = "** Master Files **";
 
-	if (!GetGameLogic->GetUserProfileName().empty())
+	if (!GetGameLogic()->GetUserProfileName().empty())
 	{
-		profile = GetGameLogic->GetUserProfileName();
+		profile = GetGameLogic()->GetUserProfileName();
 	}
 	
 	if (m_bHideMode)
@@ -1589,4 +1599,30 @@ void EntEditor::OnWorldDoubleClick( const CL_InputEvent &input )
 	//m_pWorldListWindow->release_mouse();
 
 	MapOptionsDialog();
+}
+
+void EntEditor::OnWorldProperties()
+{
+	if (!GetGameLogic()->UserProfileActive())
+	{
+		CL_MessageBox::info("No user profile is active.  First, start a game.", GetApp()->GetGUI());
+		return;
+	}
+	
+	DataEditor d;
+	d.Init("User Profile Global Properties", "This data area is global and automatically saved and loaded with the game.\r\n"\
+		"\r\nTo read or write this data by script, use GetGameLogic:Data() to return this as a DataManager object.\r\n"
+		"\r\nKey names starting with an underscore mean the engine needs these for its own use.",
+		GetGameLogic()->Data());
+}
+
+
+void EntEditor::OnPreferences()
+{
+	
+	DataEditor d;
+	d.Init("Novashell System Preferences", "This data is stored in the prefs.dat file.\r\n"\
+		"\r\nBy editing values, you can set the default video mode.\r\n"
+		"\r\nParms starting with linux_, osx_, or windows_ mean they are only applicable to that particular system.",
+		GetApp()->Data());
 }

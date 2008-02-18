@@ -313,10 +313,10 @@ void EntChoiceDialog::BuildDialog()
 {
 	assert(!m_pWindow);
 
-	m_pWindow = new CL_Window(m_title, CL_Window::no_buttons, GetGameLogic->GetGameGUI()->get_client_area());
-	m_pTitleFont = new CL_Font("Window/font", GetGameLogic->GetGUIStyle()->get_resources());
+	m_pWindow = new CL_Window(m_title, CL_Window::no_buttons, GetGameLogic()->GetGameGUI()->get_client_area());
+	m_pTitleFont = new CL_Font("Window/font", GetGameLogic()->GetGUIStyle()->get_resources());
 	//we're also going to need to show some text in addition to the options
-	m_pFont = new CL_Font("ListBox/font", GetGameLogic->GetGUIStyle()->get_resources());
+	m_pFont = new CL_Font("ListBox/font", GetGameLogic()->GetGUIStyle()->get_resources());
 	
 	if (m_pWindow)
 	{
@@ -343,7 +343,7 @@ void EntChoiceDialog::BuildDialog()
 	
 	} else
 	{
-		m_pListWorld = new CL_ListBox(GetGameLogic->GetGameGUI()->get_client_area());
+		m_pListWorld = new CL_ListBox(GetGameLogic()->GetGameGUI()->get_client_area());
 	}
 	
 	m_slots.connect( m_pListWorld->sig_activated(), this, &EntChoiceDialog::OnSelection);

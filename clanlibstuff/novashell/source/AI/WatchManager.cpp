@@ -116,7 +116,7 @@ void WatchManager::Update(float step, unsigned int drawID)
 		m_visibilityNotificationList.at(i)->CheckVisibilityNotifications(m_visibilityID);
 	}
 
-	if (!GetGameLogic->GetGamePaused())
+	if (!GetGameLogic()->GetGamePaused())
 	{
 		m_visibilityNotificationList.clear();
 		m_visibilityID = GetApp()->GetUniqueNumber();

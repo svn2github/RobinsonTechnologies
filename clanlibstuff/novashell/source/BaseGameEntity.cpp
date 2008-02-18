@@ -35,6 +35,7 @@ BaseGameEntity::~BaseGameEntity()
 
 void BaseGameEntity::SetDeleteFlag(bool bNew)
 {
+
 	if (bNew && bNew != m_deleteFlag)
 	{
 		sig_delete(m_ID);

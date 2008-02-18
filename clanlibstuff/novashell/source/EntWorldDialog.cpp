@@ -74,11 +74,11 @@ bool LocateWorldPath(string m_path, string &pathOut)
 	if (!exist( modInfoFile.c_str()) )
 	{
 		//try another way
-		modInfoFile = GetGameLogic->GetWorldsDirPath() + "/"  +m_path+ "." + string(C_WORLD_INFO_EXTENSION);
+		modInfoFile = GetGameLogic()->GetWorldsDirPath() + "/"  +m_path+ "." + string(C_WORLD_INFO_EXTENSION);
 		if (exist(modInfoFile.c_str()))
 		{
 			//yep, use this
-			pathOut = GetGameLogic->GetWorldsDirPath() + "/"  +m_path;
+			pathOut = GetGameLogic()->GetWorldsDirPath() + "/"  +m_path;
 			return true;
 		} else
 		{
@@ -135,7 +135,7 @@ void SetupModPathsFromWorldInfo(string modPath)
 					ShowMessage("Can't find a world dependency", st);
 			} else
 			{			
-				GetGameLogic->AddModPath(modInfo.m_requestedResources[i].m_modPath);
+				GetGameLogic()->AddModPath(modInfo.m_requestedResources[i].m_modPath);
 			}
 		}
 
@@ -150,7 +150,7 @@ void SetupModPathsFromWorldInfo(string modPath)
 		}
 
 		
-		GetGameLogic->AddModPath(modPath);
+		GetGameLogic()->AddModPath(modPath);
 		GetApp()->SetWindowTitle(modInfo.m_stDisplayName);
 
 	}
@@ -182,9 +182,9 @@ void EntWorldDialog::HandleMessageString(const std::string &msg)
 
 	if (msg == "BootUpWorld")
 	{
-		GetGameLogic->ClearModPaths();
+		GetGameLogic()->ClearModPaths();
 		SetupModPathsFromWorldInfo(m_modInfo[g_defaultWorldDialogSelection].m_stDirName);
-		GetGameLogic->SetRestartEngineFlag(true);
+		GetGameLogic()->SetRestartEngineFlag(true);
 		SetDeleteFlag(true);
 	} else
 	{
@@ -266,9 +266,9 @@ void EntWorldDialog::ScanDirectoriesForModInfo()
 {
 	m_modInfo.clear();
 	
-	ScanDirectoryForModInfo(GetGameLogic->GetWorldsDirPath());
+	ScanDirectoryForModInfo(GetGameLogic()->GetWorldsDirPath());
 
-	if (GetGameLogic->GetWorldsDirPath() != "worlds")
+	if (GetGameLogic()->GetWorldsDirPath() != "worlds")
 	{
 		//might as well add our local worlds too
 		ScanDirectoryForModInfo("worlds");

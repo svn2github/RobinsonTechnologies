@@ -204,7 +204,7 @@ bool Screen::Load()
 	
 	if (!pFile) return true;
 
-	GetGameLogic->ShowLoadingMessage();
+	GetGameLogic()->ShowLoadingMessage();
 
 	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
 	try

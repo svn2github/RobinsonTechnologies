@@ -20,6 +20,8 @@
 #include "EntWorldDialog.h"
 #include "EffectManager.h"
 
+const char C_GAME_TICK_OF_LAST_LOAD_VAR_NAME[]= "_gameTickOfLastLoad";
+
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
 #include <luabind/luabind.hpp>
@@ -170,7 +172,7 @@ void GameLogic::SaveGlobals()
 {
 	if (UserProfileActive())
 	{
-		m_data.Set("gameTick", CL_String::from_int(GetApp()->GetGameTick()));
+		m_data.Set(C_GAME_TICK_OF_LAST_LOAD_VAR_NAME, CL_String::from_int(GetApp()->GetGameTick()));
 
 		//save out our globals
 		CL_OutputSource *pSource = g_VFManager.PutFile(C_PROFILE_DAT_FILENAME);
@@ -199,7 +201,7 @@ void GameLogic::LoadGlobals()
 			helper.process(version);
 			m_data.Serialize(helper);
 			SAFE_DELETE(pSource);
-			GetApp()->SetGameTick(m_data.GetNum("gameTick"));
+			GetApp()->SetGameTick(m_data.GetNum(C_GAME_TICK_OF_LAST_LOAD_VAR_NAME));
 			return;
 		}
 	}
@@ -207,7 +209,7 @@ void GameLogic::LoadGlobals()
 	//if we got here, let's init the defaults
 	//init defaults if we couldn't load them
 	
-	m_data.Set("gameTick", "0");
+	m_data.Set(C_GAME_TICK_OF_LAST_LOAD_VAR_NAME, "0");
 	GetApp()->SetGameTick(0);
 }
 
@@ -409,7 +411,7 @@ bool GameLogic::Init()
 	m_pPlayer = NULL;
 	//calculate our user profile base path, later, this could be in the windows user dir or whatever is correct
 	m_strBaseUserProfilePath = CL_Directory::get_current() + "/profiles";
-	GetGameLogic->ShowLoadingMessage();
+	GetGameLogic()->ShowLoadingMessage();
 
 	if (IsOnReadOnlyDisk())
 	{
@@ -906,7 +908,7 @@ void GameLogic::HandleMessageString(const string &msg)
 
 void SetCameraToTrackPlayer()
 {
-	MovingEntity * pEnt = (MovingEntity *)GetGameLogic->GetMyPlayer();
+	MovingEntity * pEnt = (MovingEntity *)GetGameLogic()->GetMyPlayer();
 
 	if (pEnt)
 	{
@@ -923,7 +925,7 @@ void SetCameraToTrackPlayer()
 
 void MovePlayerToCamera()
 {
-	MovingEntity * pEnt = (MovingEntity *)GetGameLogic->GetMyPlayer();
+	MovingEntity * pEnt = (MovingEntity *)GetGameLogic()->GetMyPlayer();
 
 	if (pEnt)
 	{
@@ -950,7 +952,7 @@ void GameLogic::ClearAllMapsFromMemory()
 
 void MoveCameraToPlayer()
 {
-	MovingEntity * pEnt = (MovingEntity *)GetGameLogic->GetMyPlayer();
+	MovingEntity * pEnt = (MovingEntity *)GetGameLogic()->GetMyPlayer();
 
 	if (pEnt)
 	{
@@ -965,13 +967,13 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle)
 {
 	CL_GUIManager *pStyle = GetApp()->GetGUI();
 
-	GetGameLogic->SetShowMessageActive(true); //so it knows not to send mouse clicks to the engine while
+	GetGameLogic()->SetShowMessageActive(true); //so it knows not to send mouse clicks to the engine while
 
-	if (!bForceClassicStyle && GetGameLogic->GetGameGUI())
+	if (!bForceClassicStyle && GetGameLogic()->GetGameGUI())
 	{
-			NS_MessageBox m(GetGameLogic->GetGameGUI(), title, msg, "Ok", "", "");
+			NS_MessageBox m(GetGameLogic()->GetGameGUI(), title, msg, "Ok", "", "");
 			m.run();
-			GetGameLogic->SetShowMessageActive(false);
+			GetGameLogic()->SetShowMessageActive(false);
 			return;
 	}
 	
@@ -979,7 +981,7 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle)
 	
 	//we're showing this
 	message.run();
-	GetGameLogic->SetShowMessageActive(false);
+	GetGameLogic()->SetShowMessageActive(false);
 }
 
 
@@ -995,7 +997,7 @@ void ScheduleSystem(unsigned int deliveryMS, unsigned int targetID,const char * 
 
 bool RunGlobalScriptFromTopMountedDir(const char *pName)
 {
-	string fileName = GetGameLogic->GetScriptRootDir()+"/";
+	string fileName = GetGameLogic()->GetScriptRootDir()+"/";
 	fileName += pName;
 
 	if (!g_VFManager.LocateFile(fileName))

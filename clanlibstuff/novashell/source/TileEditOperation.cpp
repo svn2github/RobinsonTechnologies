@@ -421,7 +421,7 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 			//layer.  
 			layerToUse = m_forceLayerOfNextPaste;
 		}
-		if (GetGameLogic->GetParallaxActive() && !m_bIgnoreParallaxOnNextPaste)
+		if (GetGameLogic()->GetParallaxActive() && !m_bIgnoreParallaxOnNextPaste)
 		{
 			Layer &layer = g_pMapManager->GetActiveMap()->GetLayerManager().GetLayerInfo(layerToUse);
 			if (layer.GetScrollMod().x != 0 || layer.GetScrollMod().y != 0)

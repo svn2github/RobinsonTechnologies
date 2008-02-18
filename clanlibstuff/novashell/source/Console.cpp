@@ -224,7 +224,7 @@ void Console::SetOnScreen(bool bNew)
 		
 		KillGUI();
 
-		if (bNew)
+		if (bNew && GetApp()->GetMainWindow())
 		{
 			//turn on the GUi stuff
 			CL_Rect inputRect(C_CONSOLE_INPUT_LABEL_SIZE+2,GetScreenY-C_CONSOLE_ENTER_HEIGHT, GetScreenX-3, GetScreenY-7);

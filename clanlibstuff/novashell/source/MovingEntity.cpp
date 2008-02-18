@@ -492,9 +492,9 @@ void MovingEntity::SetText(const string &text)
 	{
 		if (!m_pFont)
 		{
-			if (GetGameLogic->GetGUIStyle())
+			if (GetGameLogic()->GetGUIStyle())
 			{
-				m_pFont = new CL_Font("font_label", GetGameLogic->GetGUIStyle()->get_resources());
+				m_pFont = new CL_Font("font_label", GetGameLogic()->GetGUIStyle()->get_resources());
 			} else
 			{
 				m_pFont = new CL_Font(*GetApp()->GetFont(C_FONT_NORMAL));
@@ -2391,14 +2391,14 @@ void MovingEntity::Render(void *pTarget)
 	
 		pWorldCache = pWorld->GetMyMapCache();
 
-		if (GetGameLogic->GetParallaxActive())
+		if (GetGameLogic()->GetParallaxActive())
 		{
 			bUseParallax = true;
 			pLayer = &pWorld->GetLayerManager().GetLayerInfo(m_pTile->GetLayer());
 			if (pLayer->RequiresParallax())
 			{
 
-			if (GetGameLogic->GetMakingThumbnail())
+			if (GetGameLogic()->GetMakingThumbnail())
 			{
 				if (!pLayer->GetUseParallaxInThumbnail())
 				{
@@ -2496,7 +2496,7 @@ void MovingEntity::Render(void *pTarget)
 	*/
 
 	/*
-	if (GetGameLogic->GetMakingThumbnail())
+	if (GetGameLogic()->GetMakingThumbnail())
 	{
 		return;
 	}
@@ -2640,7 +2640,7 @@ void MovingEntity::ProcessPendingMoveAndDeletionOperations()
 void MovingEntity::CheckVisibilityNotifications(unsigned int notificationID)
 {
 
-	if (GetGameLogic->GetGamePaused()) return;
+	if (GetGameLogic()->GetGamePaused()) return;
 
 	if (notificationID != m_lastVisibilityNotificationID)
 	{
@@ -2651,7 +2651,7 @@ void MovingEntity::CheckVisibilityNotifications(unsigned int notificationID)
 void MovingEntity::Update(float step)
 {
 
-if (GetGameLogic->GetGamePaused()) return;
+if (GetGameLogic()->GetGamePaused()) return;
 
 	if (g_watchManager.GetVisibilityID() == m_lastVisibilityNotificationID)
 	{
@@ -2857,7 +2857,7 @@ void MovingEntity::SetIsOnScreen(bool bNew)
 void MovingEntity::PostUpdate(float step)
 {
 	
-	if (GetGameLogic->GetGamePaused()) return;
+	if (GetGameLogic()->GetGamePaused()) return;
 	if (m_bRanPostUpdate) return; else m_bRanPostUpdate = true;
 	if (m_bRequestsVisibilityNotifications)
 	{

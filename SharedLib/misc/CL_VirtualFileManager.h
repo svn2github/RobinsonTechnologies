@@ -20,6 +20,7 @@ public:
 
 	CL_InputSource * GetFile(const string &fname);
 	CL_OutputSource * PutFile(const string &fname);
+	
 	bool RemoveFile(const string &fname);
 	bool CreateDir(const string &fname);
 
@@ -49,6 +50,11 @@ public:
 	CL_InputSource * GetFile(const string &fname);
 	
 	CL_OutputSource * PutFile(const string &fname); //puts a file in the newest mounted path
+
+	//I grow weary of needing to use try/catch to write/read a file, so I use these simple helpers:
+	CL_InputSource * GetFileRaw(const string &fname); //wraps simple file access (doesn't use mounted paths), returns NULL on fail
+	CL_OutputSource * PutFileRaw(const string &fname); //wraps simple file writing (doesn't use mounted paths), returns NULL on fail
+
 	bool RemoveFile(const string &fname); //removes a file from the newest mounted path
 	bool CreateDir(const string &fname); //creates a dir in newest mounted path
 	bool LocateFile(string &fnameOut); //returns the correct path to find this file

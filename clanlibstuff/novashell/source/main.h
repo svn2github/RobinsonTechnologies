@@ -67,6 +67,7 @@ enum
 #include <fstream>
 
 #include "misc/ISoundManager.h"
+#include "DataManager.h"
 
 extern ISoundManager *g_pSoundManager;
 
@@ -198,7 +199,8 @@ public:
 	bool GetCursorVisible();
 	int GetPlatform();
 	int GetSoundSystem() {return m_soundSystem;}
-
+	DataManager * Data() {return &m_prefs;}
+	const string & GetBaseDirectory() {return m_baseDirectory;} //where our prefs.dat is
 
 private:
     
@@ -215,7 +217,9 @@ private:
 	void Update();
 	void ComputeSpeed();
 	bool VidModeIsSupported(CL_Size vidMode, int bit);
-
+	int GetAverageDelta();
+	void LoadPrefs();
+	void SavePrefs();
 	CL_ResourceManager * m_pResourceManager;
     CL_ResourceManager * m_pGUIResourceManager;
     CL_DisplayWindow * m_pWindow;
@@ -258,24 +262,27 @@ private:
 	CL_FramerateCounter *m_pFrameRate;
 	bool m_bCursorVisible;
 	int m_soundSystem;
-
 	
 	CL_SetupSound *m_pSetup_sound;
 	CL_SetupVorbis *m_pSetup_vorbis;
 	CL_SoundOutput *m_pSound_output;
-	
+	deque<int> m_deltaHistory;
+	string m_baseDirectory;
+
+	DataManager m_prefs;
 	
 };
 
 extern App MyApp;
 
 App * GetApp();
+GameLogic * GetGameLogic();
+
 void LogMsg(const char *lpFormat, ...);
 
 #define GetScreenX (GetApp()->GetMainWindow()->get_width())
 #define GetScreenY (GetApp()->GetMainWindow()->get_height())
 #define GetCamera GetApp()->GetMyCamera()
-#define GetGameLogic GetApp()->GetMyGameLogic()
 #define GetHashedResourceManager GetApp()->GetMyHashedResourceManager()
 #define GetScriptManager GetApp()->GetMyScriptManager()
 #define GetVisualProfileManager GetApp()->GetMyVisualProfileManager()

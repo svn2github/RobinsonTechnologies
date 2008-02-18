@@ -18,7 +18,7 @@ EntChooseScreenMode::EntChooseScreenMode() : BaseGameEntity(BaseGameEntity::GetN
 	m_slots.connect(CL_Mouse::sig_move(), this, &EntChooseScreenMode::OnMouseMove);
 	m_vecLastMousePos = CL_Point(0,0);
 
-	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntChooseScreenMode::Init);
+	m_slots.connect(GetGameLogic()->GetMyWorldManager()->sig_map_changed, this, &EntChooseScreenMode::Init);
 	//GUI
 	m_pWindow = NULL;
 	m_pLabel = NULL;

@@ -262,3 +262,38 @@ bool CL_VirtualFileManager::LocateFile(string &fnameOut)
 
 	return false; //couldn't find it
 }
+
+CL_InputSource * CL_VirtualFileManager::GetFileRaw( const string &fname )
+{
+	//try to open the file they want
+	CL_InputSource_File *pFile = NULL;
+
+	try
+	{
+		pFile = new CL_InputSource_File(fname);
+
+	} catch(CL_Error error)
+	{
+		//file doesn't exist
+		delete pFile;
+		return NULL;
+	}
+	return pFile;
+}
+
+CL_OutputSource * CL_VirtualFileManager::PutFileRaw( const string &fname )
+{
+	//try to open the file they want for writing
+	CL_OutputSource_File *pFile = NULL;
+
+	try
+	{
+		pFile = new CL_OutputSource_File(fname);
+
+	} catch(CL_Error error)
+	{
+		delete pFile;
+		return NULL;
+	}
+	return pFile;
+}

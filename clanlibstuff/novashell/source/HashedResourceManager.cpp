@@ -69,7 +69,7 @@ bool HashedResourceManager::Init()
 
 	for (;itor != vecPaths.rend(); itor++)
 	{
-		if (!ScanPathForResources( (*itor) +"/"+GetGameLogic->GetBaseMapPath()))
+		if (!ScanPathForResources( (*itor) +"/"+GetGameLogic()->GetBaseMapPath()))
 		{
 			return false;
 		}

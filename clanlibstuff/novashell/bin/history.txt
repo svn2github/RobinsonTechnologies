@@ -1,9 +1,19 @@
 Changelog
 
-2-4 2008
+2-18 2008
 
+* Tweaked timing a little
 * BUGFIX:  The editors grid spacing input boxes now work properly, all input boxes improved due to a clanlib fix
-* Fixed choppyness of FPS on my new computer by tweaking the timing code
+* ClanLib exceptions are now printed to the log.txt file, should help with troubleshooting OSX/Linux
+* BUGFIX: ClanAudio tweaked, shouldn't 'stutter' on some systems anymore
+* Windows: build is now using ClanSound as the default sound system
+* BUGFIX: Fixed crash that could occur when the engine would try to scheduled a message to a about-to-be-deleted entity (mikael)
+* Windows: Windowed mode now allows any window size
+* Improved error handling when failing to create a window
+* Added Options->Profile Global Properties menu option
+* Added Options->Novashell System Preferences menu option
+* "Edit" button to edit scripts now works in linux
+* Can now set the default start-up video mode, windowed/fullscreen and linux text editor in the Novashell System Preferences menu
 
 7-2 2007
 

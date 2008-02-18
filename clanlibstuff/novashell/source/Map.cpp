@@ -400,7 +400,7 @@ bool Map::Load(string dirPath)
 
 	m_layerManager.Load(m_strDirPath+C_LAYER_FILENAME);
 	
-	GetGameLogic->ShowLoadingMessage();
+	GetGameLogic()->ShowLoadingMessage();
 
 	CL_InputSource *pFile = g_VFManager.GetFile(m_strDirPath+C_MAP_DAT_FILENAME);
 	if (!pFile)
@@ -483,7 +483,7 @@ bool Map::Load(string dirPath)
 bool Map::SaveRequested()
 {
 	if (!GetAutoSave()) return false; //we're told not save 
-	if (GetGameLogic->UserProfileActive())
+	if (GetGameLogic()->UserProfileActive())
 	{
 		//do we really want to save this?  We aren't in the official editor...
 		if (!GetPersistent()) return false;

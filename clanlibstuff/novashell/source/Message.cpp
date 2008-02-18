@@ -46,7 +46,7 @@ void Message::Deliver()
 	if (m_targetID == 0)
 	{
 		//special system message
-		GetGameLogic->HandleMessageString(m_text);
+		GetGameLogic()->HandleMessageString(m_text);
 		return;
 	}
 	if (!m_pEnt) 
@@ -55,6 +55,12 @@ void Message::Deliver()
 		return;
 	}
 
+	if (m_pEnt->GetType() < 0 || m_pEnt->GetType() > BaseGameEntity::C_ENTITY_BASE_TYPES)
+	{
+		//this must be an invalid entity
+		LogError("Entity ID %d not able to accept message: %s.  Avoiding crash.", m_targetID, m_text.c_str());
+		return;
+	}
 	m_pEnt->HandleMessageString(m_text);
 }
 
@@ -75,6 +81,13 @@ void Message::SetTarget(unsigned int entID)
 		{
 			LogMsg("Unable to schedule message, entID %d doesn't exist", entID);
 			assert(m_pEnt);
+			return;
+		}
+
+		if (m_pEnt->GetDeleteFlag())
+		{
+			LogMsg("Ignoring Schedule() command for EntID %d (%s), it's marked for deletion. (\"%s\" would never have been delivered)", m_pEnt->ID(), m_pEnt->GetName().c_str(),m_text.c_str());
+			m_pEnt = NULL;
 			return;
 		}
 

@@ -55,7 +55,7 @@ void EntMapCache::SetWorld( Map * pWorld)
 	m_pWorld = pWorld;
 	pWorld->SetMyMapCache(this);
 
-	m_slots.connect(GetGameLogic->GetMyWorldManager()->sig_map_changed, this, &EntMapCache::OnMapChange);
+	m_slots.connect(GetGameLogic()->GetMyWorldManager()->sig_map_changed, this, &EntMapCache::OnMapChange);
 	} else
 	{
 		assert(pWorld == m_pWorld);
@@ -187,9 +187,9 @@ bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 	//ugly, but I need a way for each sprite to know when to use special behavior like ignoring
 	//parallax repositioning when making the thumbnail during its draw phase
 
-	GetGameLogic->SetMakingThumbnail(true);
+	GetGameLogic()->SetMakingThumbnail(true);
 	RenderViewList(GetApp()->GetBackgroundCanvas()->get_gc());
-	GetGameLogic->SetMakingThumbnail(false);
+	GetGameLogic()->SetMakingThumbnail(false);
 
 	GetApp()->GetBackgroundCanvas()->get_pixeldata(rectSrc).convert(*pbuf);
 
@@ -245,7 +245,7 @@ void EntMapCache::RemoveTileFromList(Tile *pTile)
 			g_watchManager.OnEntityDeleted( pEnt);
 
 			/*
-			if (GetGameLogic->GetShowEntityCollisionData())
+			if (GetGameLogic()->GetShowEntityCollisionData())
 			{
 				for (unsigned int i=0; i < m_entityList.size(); i++)
 				{
@@ -365,7 +365,7 @@ void EntMapCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vec
 					} 
 
 					if (
-						(!GetGameLogic->GetEditorActive() && pLayer->GetShowInEditorOnly())
+						(!GetGameLogic()->GetEditorActive() && pLayer->GetShowInEditorOnly())
 						|| !pLayer->IsDisplayed() )
 					{
 						//don't render this						
@@ -499,14 +499,14 @@ void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThu
 	
 		scrollMod = layer.GetScrollMod();
 			 
-		if ( GetGameLogic->GetParallaxActive() && (scrollMod !=  CL_Vector2::ZERO))
+		if ( GetGameLogic()->GetParallaxActive() && (scrollMod !=  CL_Vector2::ZERO))
 		{
 			bNoParallax = false; //we need special handling
 		}
 	
 		if (layer.GetShowInEditorOnly())
 		{
-			if (!GetGameLogic->GetEditorActive() || !layer.IsDisplayed())
+			if (!GetGameLogic()->GetEditorActive() || !layer.IsDisplayed())
 			{
 				//well, we don't want to show this, but we do want its entities to get processed.
 				bNoParallax = false;
@@ -820,7 +820,7 @@ void EntMapCache::Update(float step)
 		return;
 	}
 
-	if (GetGameLogic->GetGamePaused() == false)
+	if (GetGameLogic()->GetGamePaused() == false)
 	{
 		//note, if tiles ever actually need to DO something in their think phase, this should use
 		//m_tileLayerDrawList instead of entityList
@@ -1065,7 +1065,7 @@ void EntMapCache::Render(void *pTarget)
 	
 	RenderViewList(pGC);
 
-	if (GetGameLogic->GetShowPathfinding())
+	if (GetGameLogic()->GetShowPathfinding())
 	{
 		if (m_pWorld->NavGraphDataExists())
 			m_pWorld->GetNavGraph()->Render(true, pGC);
@@ -1076,13 +1076,13 @@ void EntMapCache::Render(void *pTarget)
 		RenderCollisionOutlines(pGC);
 	}
 
-	if (GetGameLogic->GetShowEntityCollisionData())
+	if (GetGameLogic()->GetShowEntityCollisionData())
 	{
 		//show extra debug stuff
 		RenderCollisionLists(pGC);
 	}
 
-	if (GetGameLogic->GetShowAI())
+	if (GetGameLogic()->GetShowAI())
 	{
 		RenderGoalAI(pGC);
 	}
@@ -1098,7 +1098,7 @@ void EntMapCache::Render(void *pTarget)
 		}
 	}
 
-	if (GetGameLogic->GetShowGrid())
+	if (GetGameLogic()->GetShowGrid())
 	{
 		RenderGrid(pGC);
 	}

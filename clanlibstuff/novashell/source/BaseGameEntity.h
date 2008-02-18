@@ -34,7 +34,8 @@ public:
   enum 
   {
 	  C_ENTITY_TYPE_BASE = 0,
-	  C_ENTITY_TYPE_MOVING = 1
+	  C_ENTITY_TYPE_MOVING = 1,
+	  C_ENTITY_BASE_TYPES
   };
 
   virtual ~BaseGameEntity();

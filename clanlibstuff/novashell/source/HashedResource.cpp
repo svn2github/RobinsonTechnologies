@@ -268,7 +268,7 @@ void HashedResource::SetHasColorKey(bool bActive, CL_Color col)
 
 bool HashedResource::LoadImage()
 {
-	GetGameLogic->ShowLoadingMessage();
+	GetGameLogic()->ShowLoadingMessage();
 
 	SAFE_DELETE(m_pImage);
 

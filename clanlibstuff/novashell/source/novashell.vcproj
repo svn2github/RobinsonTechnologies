@@ -387,6 +387,14 @@
 					Name="Editor"
 					>
 					<File
+						RelativePath=".\DataEditor.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\DataEditor.h"
+						>
+					</File>
+					<File
 						RelativePath="EntChooseScreenMode.cpp"
 						>
 						<FileConfiguration

@@ -379,7 +379,7 @@ bool compareTextObjectsBackwards(const TextObject &A, const TextObject &B)
 void TextManager::Update(float step)
 {
 	
-	if (GetGameLogic->GetGamePaused()) return;
+	if (GetGameLogic()->GetGamePaused()) return;
 
 	
 	

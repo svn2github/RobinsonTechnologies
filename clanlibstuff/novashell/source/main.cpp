@@ -8,6 +8,11 @@
 #include "Console.h"
 #include "AI/WatchManager.h"
 
+#define C_PREFS_DAT_FILENAME "prefs.dat"
+
+#define C_DELTA_HISTORY_BUFFER_SIZE 1
+const unsigned int C_PREF_DAT_VERSION = 0;
+
 ISoundManager *g_pSoundManager;
 
 #ifdef _WIN32
@@ -20,7 +25,7 @@ ISoundManager *g_pSoundManager;
 
 App MyApp; //declare the main app global
 App * GetApp(){return &MyApp;}
-
+GameLogic * GetGameLogic() {return MyApp.GetMyGameLogic();}
 
 void LogMsg(const char *lpFormat, ...)
 {
@@ -148,6 +153,8 @@ unsigned int App::GetUniqueNumber()
 void App::OneTimeDeinit()
 {
    
+	SavePrefs();
+
 	for (int i=0; i < C_FONT_COUNT; i++)
 	{
 		SAFE_DELETE(m_pFonts[i]);
@@ -218,8 +225,24 @@ void App::OneTimeInit()
 	//bFullscreen = false;
 #endif
 
+	bFullscreen = !CL_String::to_bool(m_prefs.Get("start_in_windowed_mode"));
+	
 
 	CL_Size vidMode = CL_Size(1024, 768);
+	
+	string res = m_prefs.Get("default_screen_resolution");
+	vector<string> v = CL_String::tokenize(res, " ", true);
+
+	if (v.size() == 2)
+	{
+		vidMode.width = CL_String::to_int(v[0]);
+		vidMode.height = CL_String::to_int(v[1]);
+	} else
+	{
+		LogMsg("Don't understand a default_screen_resolution of \"%s\", ignoring.", res.c_str());
+	}
+
+
 
 	int bits = 32;
    
@@ -261,16 +284,20 @@ void App::OneTimeInit()
 	}
 	
 	
-	if (!VidModeIsSupported(vidMode, bits))
+	if (bFullscreen && !VidModeIsSupported(vidMode, bits))
 	{
+	
 #ifdef WIN32
-		
 		char stTemp[512];
 		sprintf(stTemp, "%dX%dX%d isn't supported by your video card.\r\nWe'll try 800X600 at 32 bits I guess.", vidMode.width, vidMode.height, bits);
+
 		MessageBox(NULL, stTemp, "Video Resolution Unsupported", MB_ICONWARNING);
 		vidMode = CL_Size(800, 600);
 #endif
-	}
+
+		//vidmodesupport isn't reliable for OSX/Linux, so we don't make this error out..
+	} 
+
 	m_WindowDescription.set_size(vidMode);
 
 	m_WindowDescription.set_fullscreen(bFullscreen);
@@ -282,8 +309,25 @@ void App::OneTimeInit()
     m_WindowDescription.set_flipping_buffers(2);
     m_WindowDescription.set_refresh_rate(75);
 	SetRefreshType(FPS_AT_REFRESH);
-  
-    m_pWindow = new CL_DisplayWindow(m_WindowDescription);
+
+	try
+	{
+		m_pWindow = new CL_DisplayWindow(m_WindowDescription);
+	} catch(CL_Error error)
+
+	{
+		string fullscreen = "fullscreen";
+		if (!bFullscreen) fullscreen = "windowed";
+		LogError("Unable to create %dX%dX%d (%s) window. (%s)  Changing to windowed mode in prefs.dat.  Try running again.",
+		vidMode.width, vidMode.height, bits, fullscreen.c_str(), error.message.c_str());
+		
+		//set some parms for compability:
+
+		m_prefs.Set("start_in_windowed_mode", "yes");
+		m_prefs.Set("default_screen_resolution", "1024 768");
+		
+		return;
+	}
   
 	g_Console.Init();
 
@@ -296,7 +340,8 @@ void App::OneTimeInit()
     
     m_pStyle = new CL_StyleManager_Silver(GetApp()->GetGUIResourceManager());
     m_pGui = new CL_GUIManager(m_pStyle);
-  
+
+	
 	m_pCamera = new Camera; 
 #ifdef WIN32
 	m_Hwnd = GetActiveWindow();
@@ -330,6 +375,7 @@ case C_SOUNDSYSTEM_FMOD:
 	SetActiveWindow(m_Hwnd);
 #endif
 
+	
 }
        
 bool App::SetScreenSize(int x, int y)
@@ -360,7 +406,21 @@ bool App::ActivateVideoRefresh(bool bFullscreen)
 #endif
 	}   else
 	{
+		
+		
+		try{
 		m_pWindow->set_fullscreen(m_WindowDescription.get_size().width, m_WindowDescription.get_size().height, m_WindowDescription.get_bpp(), m_WindowDescription.get_refresh_rate());
+		} catch (CL_Error error)
+		{
+			string fullscreen = "fullscreen";
+			if (!bFullscreen) fullscreen = "windowed";
+			LogError("Unable to create %dX%d (%s) window. (%s) trying to recover",
+				m_WindowDescription.get_size().width, m_WindowDescription.get_size().height, fullscreen.c_str(), error.message.c_str());
+
+			//set some parms for compability:
+			SetScreenSize(1024,768);
+		}
+			
 		//surfaces are now invalid.  Rebuild them ?
 		SetupBackground(GetApp()->GetMainWindow()->get_width(), GetApp()->GetMainWindow()->get_height());
 	}
@@ -399,7 +459,6 @@ void App::OnWindowResize(int x, int y)
 {
     m_bWindowResizeRequest = true;
 }
-
 
 void App::OnWindowClose()
 {
@@ -554,6 +613,7 @@ void App::ClearTimingAfterLongPause()
 {
     m_lastFrameTime = CL_System::get_time();
  	m_thinkTicksToUse = 0;
+	m_deltaHistory.clear();
 }
 
 void App::RequestAppExit()
@@ -585,36 +645,56 @@ void App::SetGameTick(unsigned int num)
 {
 	 m_gameTick = num;
 }
-
+int App::GetAverageDelta()
+{
+	unsigned int delta = 0;
+	for (unsigned int i=0; i < m_deltaHistory.size(); i++)
+	{
+		delta += m_deltaHistory[i];
+	}
+	return delta/m_deltaHistory.size();
+}
 void App::Update()
 {
 	//figure out our average delta frame
-tryagain:
 
 	static unsigned int frameTime;
 	frameTime = CL_System::get_time();
 	unsigned int deltaTick = frameTime -  m_lastFrameTime;
-	
-	/*
-	if ( deltaTick < 7)
+
+	//if (deltaTick < 1000/cl_max(1, GetFPS()+3))
 	{
-		goto tryagain;
+	//	return;
 	}
-	*/
+
+
 	m_lastFrameTime = frameTime;
+	
 	m_thinkTicksToUse += (float(deltaTick) * m_simulationSpeedMod);
 	
 	if (deltaTick != 0)
 	{
 		//very important, here we set the min and max range of allowed logic updates.  Too small, and physics might break, too large and.. uh..
 		//well nothing bad should happen but still, 120 is probably enough for any monitor to "look smooth".
-		int logicMhz = cl_max(60, 1000/deltaTick);
+		
+		int logicMhz = (1000/deltaTick);
+		
+		logicMhz = cl_max(60, logicMhz);
 		logicMhz = cl_min(120, logicMhz);
+		
+		m_deltaHistory.push_back(logicMhz);
+		if (m_deltaHistory.size() > C_DELTA_HISTORY_BUFFER_SIZE)
+		m_deltaHistory.pop_front(); //cycle the values
+
+		//get average delta
+		logicMhz = GetAverageDelta();
+		//LogMsg("Setting logic speed to %d", 1000/logicMhz);
 		SetGameLogicSpeed(1000 / logicMhz );
 	}
 
 	//OutputDebugString(CL_String::from_int(CL_System::get_time()).c_str());
 	//OutputDebugString("\n");
+bool bDidUpdate = false;
 
 #define C_MAX_TIME_PER_LOGIC_UPDATE_MS 200 //avoid mega slow down
 	while (m_thinkTicksToUse >= GetGameLogicSpeed())
@@ -628,13 +708,11 @@ tryagain:
 		m_bJustRenderedFrame = false;
 		m_thinkTicksToUse -= GetGameLogicSpeed();
 	
-		if (m_thinkTicksToUse > 0 && m_thinkTicksToUse < 1)
+		if (m_thinkTicksToUse > 0 && m_thinkTicksToUse < 3)
 		{
-			LogMsg("Skip %f.02..", m_thinkTicksToUse);
-
+			//LogMsg("Skip %f.02..", m_thinkTicksToUse);
 			//don't allow slow accumulation...
 			m_thinkTicksToUse = 0;
-		
 		}
 		/*
 		if (m_thinkTicksToUse < GetGameLogicSpeed()*1.5)
@@ -648,8 +726,11 @@ tryagain:
 		{
 			//our CPU can't keep up, skip the rest for now so we can get a visual update
 			m_thinkTicksToUse = 0;
+			// /LogMsg("Slowdown..");
 			break;
 		}
+
+		bDidUpdate = true;
 	}
 }
 
@@ -670,12 +751,72 @@ bool App::ParmExists(const string &parm)
 	return false;
 }
 
+void App::LoadPrefs()
+{
+	CL_InputSource *pSource = g_VFManager.GetFileRaw(GetBaseDirectory() + C_PREFS_DAT_FILENAME);
+	if (pSource)
+	{
+		CL_FileHelper helper(pSource);
+
+		unsigned int version;
+		helper.process(version);
+		m_prefs.Serialize(helper);
+		SAFE_DELETE(pSource);
+	}
+	
+	//set defaults, no prefs file exists
+	m_prefs.SetIfNull("start_in_windowed_mode", "no");
+	m_prefs.SetIfNull("default_screen_resolution", "1024 768");
+	m_prefs.SetIfNull("linux_editor", "gedit");
+	m_prefs.SetIfNull("command_line_parms", "");
+
+}
+
+void App::SavePrefs()
+{
+	//save out our globals
+	CL_OutputSource *pSource =  g_VFManager.PutFileRaw(GetBaseDirectory() + C_PREFS_DAT_FILENAME);
+	
+	if (pSource)
+	{
+		CL_FileHelper helper(pSource);
+		helper.process_const(C_PREF_DAT_VERSION);
+		m_prefs.Serialize(helper);
+		SAFE_DELETE(pSource);
+	} else
+	{
+		LogError("Unable to write %s%s.", GetBaseDirectory().c_str(), C_PREFS_DAT_FILENAME);
+	}
+}
 
 int App::main(int argc, char **argv)
 {
  
 	//first move to our current dir
 	CL_Directory::change_to(CL_System::get_exe_path());
+
+#ifdef __APPLE__
+
+	char stTemp[512];
+	getcwd((char*)&stTemp, 512);
+	//	LogMsg("Current working dir is %s", stTemp);
+	CL_Directory::change_to("Contents/Resources");
+	getcwd((char*)&stTemp, 512);
+	LogMsg("Game: Set working dir to %s", stTemp);
+#endif
+
+	m_baseDirectory = CL_Directory::get_current()+"/"; //save for later
+
+	//load our system prefs
+	LoadPrefs();
+
+	vector<string> v =CL_String::tokenize(m_prefs.Get("command_line_parms"), " ", true);
+	for (int i=0; i < v.size(); i++)
+	{
+		m_startupParms.push_back(v[i]);
+	}
+
+
 
 	for (int i=1; i < argc; i++)
 	{
@@ -722,15 +863,13 @@ int App::main(int argc, char **argv)
         
 		//for compatibility
 		CL_OpenGL::ignore_extension("GL_EXT_abgr");
-		
 		CL_SetupGL setup_gl;
-
 		
-	SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
+    	SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
 
 #ifdef _WIN32
 
-	SetSoundSystem(C_SOUNDSYSTEM_FMOD);
+	//SetSoundSystem(C_SOUNDSYSTEM_FMOD);
 	if ( ParmExists("-clansound"))
 	{
 		SetSoundSystem(C_SOUNDSYSTEM_CLANLIB);
@@ -741,9 +880,7 @@ int App::main(int argc, char **argv)
 		SetSoundSystem(C_SOUNDSYSTEM_FMOD);
 	}
 
-
 #endif
-			
 
 if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 {
@@ -751,8 +888,6 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 		m_pSetup_vorbis = new CL_SetupVorbis();
 		m_pSound_output = new CL_SoundOutput(44100);
 }
-	
-
    
     // Create a console window for text-output if in debug mode
 #ifdef _DEBUG
@@ -760,29 +895,23 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
     console.redirect_stdio();
 #endif  
 
-#ifdef __APPLE__
 
-	char stTemp[512];
-	getcwd((char*)&stTemp, 512);
-//	LogMsg("Current working dir is %s", stTemp);
-	CL_Directory::change_to("Contents/Resources");
-  getcwd((char*)&stTemp, 512);
-  LogMsg("Game: Set working dir to %s", stTemp);
-#endif
 
     try
     {
         OneTimeInit();
 	
-       	CL_Slot slot_quit = m_pWindow->sig_window_close().connect(this, &App::OnWindowClose);
+       	if (m_pWindow)
+		{
+		
+		CL_Slot slot_quit = m_pWindow->sig_window_close().connect(this, &App::OnWindowClose);
        	CL_Slot slot_on_resize = m_pWindow->sig_resize().connect(this, &App::OnWindowResize);
         CL_Slot slot_on_lose_focus = m_pWindow->sig_lost_focus().connect(this, &App::OnLoseFocus);
         CL_Slot slot_on_get_focus = m_pWindow->sig_got_focus().connect(this, &App::OnGotFocus);
-        CL_Slot m_slot_button_up = CL_Keyboard::sig_key_up().connect(this, &App::OnKeyUp);
+		CL_Slot m_slot_button_up = CL_Keyboard::sig_key_up().connect(this, &App::OnKeyUp);
   
 		// Everytime the GUI draws, let's draw the game under it
 		CL_Slot m_slotOnPaint = GetGUI()->sig_paint().connect(this, &App::OnRender);
-
   
 		m_pGameLogic->OneTimeModSetup();
 
@@ -822,8 +951,6 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 					m_bJustRenderedFrame = true; //sometimes we want to know if we just rendered something in the update logic, entities
 					//use to check if now is a valid time to see if they are onscreen or not without having to recompute visibility
 
-				  
-
 					 // Flip the display, showing on the screen what we have drawed
                     // since last call to flip_display()
                     CL_Display::flip(m_videoflipStyle);
@@ -836,7 +963,7 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
                 //don't currently have focus   
                 if (!m_pWindow->is_fullscreen())
 				{
-					if (GetGameLogic)
+					if (GetGameLogic())
 					{
 						EntChooseScreenMode *pChoose = (EntChooseScreenMode*) EntityMgr->GetEntityByName("choose screen mode");
 						{
@@ -857,13 +984,14 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
                 CL_System::keep_alive();
 				ClearTimingAfterLongPause();
             }
-            
         }
-         
+		}
+
     }
     catch(CL_Error error)
     {
-        std::cout << "CL_Error Exception caught : " << error.message.c_str() << std::endl;			
+		LogError("CL_Error Exception: %s",error.message.c_str());
+		std::cout << "CL_Error Exception caught : " << error.message << std::endl;			
         
         // Display console close message and wait for a key
 		OneTimeDeinit();
@@ -896,10 +1024,15 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
     OneTimeDeinit();
     }    catch(CL_Error error)
     {
-	#ifdef WIN32
+
+		LogError("Early Exception caught: %s",error.message.c_str());
+
+#ifdef WIN32
         MessageBox(NULL, error.message.c_str(), "Early Error!", MB_ICONEXCLAMATION);
 #else
-        std::cout << "Early Exception caught : " << error.message.c_str() << std::endl;			
+        std::cout << "Early Exception caught : " << error.message.c_str() << std::endl;
+
+
 #endif
 
 #ifdef __APPLE__

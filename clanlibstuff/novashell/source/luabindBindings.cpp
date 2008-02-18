@@ -40,9 +40,9 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 	luabind::globals(pLuaState)["GetApp"] = GetApp();
 	luabind::globals(pLuaState)["GetSoundManager"] = g_pSoundManager;
 	luabind::globals(pLuaState)["GetTextManager"] = &g_textManager;
-	luabind::globals(pLuaState)["GetMapManager"] = GetGameLogic->GetMyWorldManager();
+	luabind::globals(pLuaState)["GetMapManager"] = GetGameLogic()->GetMyWorldManager();
 
-	luabind::globals(pLuaState)["GetGameLogic"] = GetGameLogic;
+	luabind::globals(pLuaState)["GetGameLogic"] = GetGameLogic();
 	luabind::globals(pLuaState)["GetTagManager"] = &g_TagManager;
 	luabind::globals(pLuaState)["GetCamera"] = GetCamera;
 	luabind::globals(pLuaState)["GetInputManager"] = &g_inputManager;
