@@ -2198,31 +2198,6 @@ void EntEditMode::OnPropertiesOpenScript()
 	m_pPropertiesInputScript->set_text(fname);
 }
 
-void EntEditMode::OnPropertiesRemoveData()
-{
-	//kill all selected items
-	
-	for (int i=0; i < m_pPropertiesListData->get_count(); i++)
-	{
-		CL_ListItem *pItem = m_pPropertiesListData->get_item(i);
-
-		if (pItem->selected)
-		{
-			m_pPropertiesListData->remove_item(i);
-			i = -1;
-		}
-	}
-}
-
-
-void EntEditMode::OnPropertiesAddData()
-{
-	DataObject o;
-	CreateEditDataDialog(o);
-	if (o.m_key.size() > 0)
-	m_pPropertiesListData->insert_item(PropertyMakeItemString(o));
-}
-
 void EntEditMode::OnPropertiesConvert()
 {
 	m_guiResponse = C_GUI_CONVERT;
@@ -2449,8 +2424,8 @@ if (m_bDialogIsOpen) return;
 	slots.connect(buttonOpenScript.sig_clicked(), this, &EntEditMode::OnPropertiesOpenScript);
 	slots.connect(buttonEditScript.sig_clicked(), this, &EntEditMode::OnPropertiesEditScript);
 
-	slots.connect(buttonAddData.sig_clicked(), this, &EntEditMode::OnPropertiesAddData);
-	slots.connect(buttonRemoveData.sig_clicked(), this, &EntEditMode::OnPropertiesRemoveData);
+	slots.connect(buttonAddData.sig_clicked(), &OnPropertiesAddData, &listData);
+	slots.connect(buttonRemoveData.sig_clicked(), &OnPropertiesRemoveData, &listData);
 
 	slots.connect(listData.sig_mouse_dblclk(), &OnPropertiesEditData, &listData);
 	

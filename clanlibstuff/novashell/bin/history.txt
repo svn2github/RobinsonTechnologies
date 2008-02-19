@@ -1,5 +1,9 @@
 Changelog
 
+2-19 2008
+
+* Add/Remove now works correctly on the preferences menu
+
 2-18 2008
 
 * Tweaked timing a little
@@ -14,6 +18,7 @@ Changelog
 * Added Options->Novashell System Preferences menu option
 * "Edit" button to edit scripts now works in linux
 * Can now set the default start-up video mode, windowed/fullscreen and linux text editor in the Novashell System Preferences menu
+* Linux/OSX builds now switch to windowed mode automatically when you try to edit a script
 
 7-2 2007
 

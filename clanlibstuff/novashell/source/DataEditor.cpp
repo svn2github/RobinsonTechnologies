@@ -48,6 +48,8 @@ bool DataEditor::Init( const string sTitle, const string sDescription, DataManag
 	offsetY+= 4 + listData.get_height();
 	CL_Button buttonAddData (CL_Point(buttonOffsetX, offsetY), "Add", window.get_client_area());
 	CL_Button buttonRemoveData (CL_Point(buttonOffsetX+50, offsetY), "Remove Selected", window.get_client_area());
+	
+	
 	offsetY += 20;
 
 	//populate the listbox
@@ -74,6 +76,9 @@ bool DataEditor::Init( const string sTitle, const string sDescription, DataManag
 	slots.connect(buttonOk.sig_clicked(), this, &DataEditor::SetExitMode, CLICKED_OK);
 	slots.connect(buttonOk.sig_clicked(), (CL_Component*)&window, &CL_Component::quit);
 	slots.connect(listData.sig_mouse_dblclk(), &OnPropertiesEditData, &listData);
+
+	slots.connect(buttonAddData.sig_clicked(), &OnPropertiesAddData, &listData);
+	slots.connect(buttonRemoveData.sig_clicked(), &OnPropertiesRemoveData, &listData);
 
 	window.run();	//loop in the menu until quit() is called by hitting a button
 
@@ -162,3 +167,28 @@ void CreateEditDataDialog(DataObject &o)
 	}
 }
 
+
+void OnPropertiesRemoveData(CL_ListBox *pListBox)
+{
+	//kill all selected items
+
+	for (int i=0; i < pListBox->get_count(); i++)
+	{
+		CL_ListItem *pItem = pListBox->get_item(i);
+
+		if (pItem->selected)
+		{
+			pListBox->remove_item(i);
+			i = -1;
+		}
+	}
+}
+
+
+void OnPropertiesAddData(CL_ListBox *pListBox)
+{
+	DataObject o;
+	CreateEditDataDialog(o);
+	if (o.m_key.size() > 0)
+		pListBox->insert_item(PropertyMakeItemString(o));
+}

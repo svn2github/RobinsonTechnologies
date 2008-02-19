@@ -43,6 +43,9 @@ void OnPropertiesEditData(const CL_InputEvent &input, CL_ListBox *pList);
 void PropertiesSetDataManagerFromListBox(DataManager *pData, CL_ListBox &listBox);
 string PropertyMakeItemString(DataObject &o);
 void CreateEditDataDialog(DataObject &o);
+void OnPropertiesRemoveData(CL_ListBox *pListBox);
+void OnPropertiesAddData(CL_ListBox *pListBox);
+
 
 
 

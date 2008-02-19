@@ -121,8 +121,6 @@ protected:
 	void OnPropertiesOK();
 	void OnPropertiesOpenScript();
 	void OnPropertiesEditScript();
-	void OnPropertiesAddData();
-	void OnPropertiesRemoveData();
 	void OnPropertiesConvert();
 	void OnExternalDialogClose(int entID);
 	bool MouseIsOverSelection(CL_Point ptMouse);
