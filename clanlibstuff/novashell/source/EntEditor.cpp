@@ -543,6 +543,8 @@ void OpenScriptForEditing(string scriptName)
 	LogMsg("Launching %s...", file.c_str());
 
 #ifdef WIN32
+	file = CL_Directory::get_current() + "/"+file;
+	
 	open_file(GetApp()->GetHWND(), file.c_str());
 #elif __APPLE__
 	

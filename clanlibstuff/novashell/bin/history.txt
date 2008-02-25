@@ -3,6 +3,7 @@ Changelog
 2-19 2008
 
 * Add/Remove now works correctly on the preferences menu
+* Windows:  Launching .lua files to edit works better on vista
 
 2-18 2008
 
