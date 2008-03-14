@@ -131,7 +131,8 @@ void WatchManager::PostUpdate(float step)
 	
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
 	{
-		m_postUpdateList.at(i)->PostUpdate(step);
+		if (m_postUpdateList.at(i))
+			m_postUpdateList.at(i)->PostUpdate(step);
 	}
 }
 
@@ -140,7 +141,8 @@ void WatchManager::OnMapChange(const string &mapName)
 
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
 	{
-		m_postUpdateList.at(i)->OnMapChange(mapName);
+		if (m_postUpdateList.at(i))
+			m_postUpdateList.at(i)->OnMapChange(mapName);
 	}
 }
 
@@ -150,7 +152,8 @@ void WatchManager::ApplyPhysics(float step)
 	
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
 	{
-		m_postUpdateList.at(i)->ApplyPhysics(step);
+		if (m_postUpdateList.at(i))
+			m_postUpdateList.at(i)->ApplyPhysics(step);
 	}
 }
 

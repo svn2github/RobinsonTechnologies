@@ -38,6 +38,13 @@ void Goal_Think::Activate()
 	  m_iStatus = active;
 }
 
+void Goal_Think::Kill()
+{
+	RemoveAllSubgoals();
+	m_iStatus = completed;
+}
+
+
 //------------------------------ Process --------------------------------------
 //
 //  processes the subgoals
@@ -54,7 +61,7 @@ int Goal_Think::Process()
 
 	if (m_SubGoals.size() == 1)	 
 	{
-		//this is the last thing on the last and it's done
+		//this is the last thing on the list and it's done
 		if (m_goalName == "Base")
 		{
 			//nothing else to do right now.  Kill the thing too
@@ -62,6 +69,8 @@ int Goal_Think::Process()
 		    m_iStatus = inactive;
 		} else
 		{
+			LogMsg("Ended subgoal %s", m_goalName.c_str());
+			
 			m_iStatus = SubgoalStatus;
 		}
 		
@@ -250,6 +259,42 @@ void Goal_Think::RenderEvaluations(int left, int top)const
     left += 75;
   }
   */
+}
+
+Goal_Think * Goal_Think::GetActiveGoal()
+{
+	//recursively figure out what is the active goal
+	if (!m_SubGoals.empty())
+	{
+		if (m_SubGoals.front()->GetType() == goal_think) return ((Goal_Think*)m_SubGoals.front())->GetActiveGoal();
+	}
+	
+	//special case for the base to pass NIL
+
+	if (m_SubGoals.size() == 1 && m_goalName == "Base") return NULL;
+	
+	//otherwise, we're it
+	return this;
+}
+
+Goal_Think * Goal_Think::GetGoalByName(const string &name)
+{
+	if (name == m_goalName) return this;
+	Goal_Think *pTempGoal = NULL;
+
+	std::list<Goal<MovingEntity>*>::iterator curG;
+	//scan all goals under us..
+	for (curG=m_SubGoals.begin(); curG != m_SubGoals.end(); ++curG)
+	{
+		//is this subgoal the right one?
+		if ((*curG)->GetType() == goal_think)
+		{
+			pTempGoal = ((Goal_Think*)(*curG))->GetGoalByName(name);
+			if (pTempGoal) return pTempGoal; //found it I guess
+		}
+	}
+
+	return NULL;
 }
 
 bool Goal_Think::IsGoalActiveByName(const string &name)
@@ -460,7 +505,7 @@ This lets you run any piece of lua code in owner <Entity>'s namespace.
 
 You can use it to call a function, change a variable, or anything else.
 
-The string is not compiled until the time of execution.
+The string is not parsed until the time of execution.
 
 Usage:
 
@@ -489,7 +534,7 @@ GoalManager AddNewGoal(string goalName)
 Adds a new subgoal with the desired name and returns a handle to the created goal, allowing you to populate it.
 Think of goal as an empty folder that is ready to handle more commands/goals.
 
-When a goal has "focus" it will run all items in it sequentially until empty, then delete itself, unless it is the "root".
+When a goal has "focus" it will run all items in it sequentially until empty, then delete itself, unless it is the "Base".
 
 Usage:
 (code)
@@ -522,7 +567,7 @@ nil RemoveAllSubgoals()
 (end)
 Deletes all goals and subgoals under this <GoalManager>.
 
-This will cause it to delete itself, unless it is the "Root" <GoalManager> of this entity.
+This will cause it to delete itself, unless it is the "Base" <GoalManager> of this entity.
 
 func: IsGoalActiveByName
 (code)
@@ -534,6 +579,16 @@ goalName - The name of the goal you probably added with <AddNewGoal> or PushNewG
 Returns:
 
 True if a goal by this name exists somewhere in the hierarchy of this <GoalManager>.
+
+func: GetActiveGoal
+(code)
+GoalManager GetActiveGoal()
+(end)
+Returns the <GoalManager> object connected to the active goal.  If nil, no goal is currently active.  (Ie, the base is the only thing active)
+
+Returns:
+
+A <GoalManager> of the active goal or nil if no goal is active.
 
 func: GetGoalCount
 (code)
@@ -555,6 +610,17 @@ goalName - The name of a goal(s) you probably added with <AddNewGoal> or PushNew
 Returns:
 
 The number of Goals with this name under this <GoalManager>.
+
+
+func: GetGoalByName
+(code)
+GoalManager GetGoalByName(string goalName)
+(end)
+Allows you to grab a goal object by name.
+
+Returns:
+
+A <GoalManager> of the goal with this name, or nil if nothing is found.
 */
 
 

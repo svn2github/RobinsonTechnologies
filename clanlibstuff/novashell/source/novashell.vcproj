@@ -937,6 +937,14 @@
 			<Filter
 				Name="Script"
 				>
+				<File
+					RelativePath=".\ScriptCallbackManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\ScriptCallbackManager.h"
+					>
+				</File>
 				<Filter
 					Name="Lua"
 					>

@@ -384,7 +384,7 @@ bool GameLogic::Init()
 	{
 		g_pSoundManager->Init();
 	}
-
+	GetApp()->OnGameReset();
 	g_VFManager.Reset();
 
 	g_VFManager.MountDirectoryPath(CL_Directory::get_current()+"/base");

@@ -44,7 +44,6 @@ int Goal_Delay::Process()
 //-----------------------------------------------------------------------------
 void Goal_Delay::Terminate()
 {
-	
 }
 
 void Goal_Delay::LostFocus()

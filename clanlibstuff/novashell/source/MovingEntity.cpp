@@ -1204,7 +1204,7 @@ bool MovingEntity::Init()
 		LoadScript(C_DEFAULT_SCRIPT);
 	}
 
-	if (m_pSprite->is_null() || m_pVisualProfile)
+	if (m_pSprite->is_null())
 	{
 		//avoid a crash
 		if (!m_pVisualProfile)
@@ -1659,6 +1659,7 @@ void MovingEntity::SetAnimByName(const string &name)
 {
 	if (GetVisualProfile())
 	{
+		LogMsg("Setting brain %s", name.c_str());
 		m_animID = GetVisualProfile()->TextToAnimID(name);
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
 	}
@@ -1670,14 +1671,17 @@ void MovingEntity::SetAnimFrame(int frame)
 	{
 		if (frame == C_ANIM_FRAME_LAST)
 		{
-			frame = GetSprite()->get_frame_count();
+			frame = GetSprite()->get_frame_count()-1;
 		}
+		GetSprite()->restart(); //clear finished flags, timing
 		GetSprite()->set_frame(frame);	
 		
 	} else
 	{
 		LogMsg("Error, ent %d (%s) can't set anim frame, no visual seems to be assigned to it. (Use OnPostInit maybe?)", ID(), GetName().c_str());
 	}
+
+	m_bRestartAnim = false; //if this had been set, we probably don't want it activated now
 }
 
 int MovingEntity::GetAnimFrame()
@@ -2141,6 +2145,7 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 		int frameTemp = 0;
 		if (m_bRestartAnim)
 		{
+			if (m_pSprite && !m_pSprite->is_null()) m_pSprite->restart();
 			m_bRestartAnim = false;
 		} else
 		{
@@ -2301,7 +2306,7 @@ CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
 {
 
 	bRootIsCam = false;
-	assert(m_bLockedScale && m_attachEntID != 0);
+	//assert(m_bLockedScale && m_attachEntID != 0);
 
 	
 	if (m_attachEntID == C_ENTITY_CAMERA)
@@ -2310,6 +2315,11 @@ CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
 		return m_attachOffset;
 	}
 
+	if (m_attachEntID == 0)
+	{
+		//not attached to anything...
+		return GetPos()-GetCamera->GetPos();
+	}
 	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(m_attachEntID);
 	return pEnt->GetRawScreenPosition(bRootIsCam)+m_attachOffset;
 	
@@ -2518,13 +2528,26 @@ void MovingEntity::Render(void *pTarget)
 		if (m_bLockedScale)
 		{
 			m_pFont->set_scale(textScaleX , textScaleY);
-			vecPos = m_attachOffset;
+			
 		} else
 		{
 			m_pFont->set_scale(textScaleX * GetCamera->GetScale().x, textScaleY *GetCamera->GetScale().y);
 			m_pFont->set_alignment(originTemp, offsetX * GetCamera->GetScale().x, offsetY * GetCamera->GetScale().y);
+		}
 
+		if (m_attachEntID != 0)
+		{
+			bool bRootIsCam;
 
+			CL_Vector2 vTemp = GetRawScreenPosition(bRootIsCam);
+			if (bRootIsCam)
+			{
+				vecPos = vTemp;
+			}
+		} else
+		{
+			//we're not attached to anything			
+			//vecPos = m_attachOffset;
 		}
 
 		float oldAlpha = m_pFont->get_alpha();
@@ -3101,15 +3124,12 @@ void MovingEntity::UpdatePositionFromParent()
 
 void MovingEntity::OnMapChange( const string &mapName )
 {
-
 	
 	if (m_attachEntID == C_ENTITY_NONE)
 	{
 		//don't care	
 		return;
 	}
-
-
 
 	UpdatePositionFromParent();
 
@@ -3129,9 +3149,6 @@ void MovingEntity::OnMapChange( const string &mapName )
 			itor++;
 		}
 	}
-
-
-	
 
 }
 

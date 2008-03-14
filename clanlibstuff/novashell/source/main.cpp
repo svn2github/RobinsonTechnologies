@@ -429,6 +429,7 @@ bool App::ActivateVideoRefresh(bool bFullscreen)
 	if (m_pScriptManager)
 	{
 		m_pScriptManager->UpdateAfterScreenChange(true);
+		m_videoCallback.OnActivate();
 	}
 
 #ifdef _WIN32
@@ -697,7 +698,7 @@ void App::Update()
 bool bDidUpdate = false;
 
 #define C_MAX_TIME_PER_LOGIC_UPDATE_MS 200 //avoid mega slow down
-	while (m_thinkTicksToUse >= GetGameLogicSpeed())
+	while (m_thinkTicksToUse > GetGameLogicSpeed())
 	{
 		if (!m_pGameLogic->GetGamePaused())
 		{
@@ -708,12 +709,14 @@ bool bDidUpdate = false;
 		m_bJustRenderedFrame = false;
 		m_thinkTicksToUse -= GetGameLogicSpeed();
 	
+		
 		if (m_thinkTicksToUse > 0 && m_thinkTicksToUse < 3)
 		{
-			//LogMsg("Skip %f.02..", m_thinkTicksToUse);
+			//LogMsg("Skip %.2f", m_thinkTicksToUse);
 			//don't allow slow accumulation...
 			m_thinkTicksToUse = 0;
 		}
+		
 		/*
 		if (m_thinkTicksToUse < GetGameLogicSpeed()*1.5)
 		{
@@ -726,7 +729,7 @@ bool bDidUpdate = false;
 		{
 			//our CPU can't keep up, skip the rest for now so we can get a visual update
 			m_thinkTicksToUse = 0;
-			// /LogMsg("Slowdown..");
+		//	 LogMsg("Slowdown..");
 			break;
 		}
 
@@ -811,7 +814,7 @@ int App::main(int argc, char **argv)
 	LoadPrefs();
 
 	vector<string> v =CL_String::tokenize(m_prefs.Get("command_line_parms"), " ", true);
-	for (int i=0; i < v.size(); i++)
+	for (unsigned int i=0; i < v.size(); i++)
 	{
 		m_startupParms.push_back(v[i]);
 	}
@@ -921,7 +924,7 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 
 		// Class to give us the framerate
 		m_pFrameRate = new CL_FramerateCounter();
-
+		//m_pFrameRate->set_fps_limit(60);
         // Run until someone presses escape
         while (!m_bQuit)
         {
@@ -1064,7 +1067,15 @@ catch (int param)
     return 0;
 }
 
+void App::AddCallbackOnResolutionChange(const string &callbackFunction, int entityID)
+{
+	m_videoCallback.Add(callbackFunction, entityID);
+}
 
+void App::OnGameReset()
+{
+	m_videoCallback.Reset();
+}
 //lua natural docs stuff
 /*
 Object: App
@@ -1143,10 +1154,6 @@ Returns:
 
 True on success.  Except it doesn't detect errors yet, so I guess always true.
 
-Warning:
-
-Doesn't work under linux builds at the moment.  OSX and Windows are ok.  Use the -resolution parm with the .exe works on all systems.
-
 func: ParmExists
 (code)
 boolean ParmExists(string parmToFind)
@@ -1203,19 +1210,41 @@ It can't be used to cheat, because, well, everything is going fast, not just the
 
 func: GetSimulationSpeedMod
 (code)
-function GetSimulationSpeedMod()
+number GetSimulationSpeedMod()
 (end)
 
 Return:
 
 Gets the current simulation speed mod.
-*/
 
 
+func: AddCallbackOnResolutionChange
+(code)
+nil AddCallbackOnResolutionChange(string callbackName, number entityID)
+(end)
+Allows you to have an entity or global function notified if the screen resolution changes.  The callback is automatically deleted
+when an <Entity> dies. In the case of a global function, there is no way to unregister it.
 
-/*
+Usage:
+(code)
+//Inside of the an entities OnInit()
+	GetApp:AddCallbackOnResolutionChange("OnResChange", this:GetID());
 
-//Section: Related Constants
+//Then, elsewhere in the script, define the function "OnResChange"...
+
+function OnResChange()
+	LogMsg("interface.lua>> Hey, the screen resolution changed to " .. C_SCREEN_X .. " " .. C_SCREEN_Y .. "!");
+//Do stuff like move the GUI or whatever
+end
+(end)
+
+Parameters:
+
+string callBackName - The name of the callback function that should be called. (Must exist in your code)
+entityID - If it's an <Entity> function and not a global function, you'll need to enter the <Entity>'s ID here.  Otherwise, <C_ENTITY_NONE>.
+
+
+Section: Related Constants
 
 Group: C_PLATFORM_CONSTANTS
 

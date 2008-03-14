@@ -57,6 +57,8 @@ public:
   void AddApproach(int entToFaceID, int distanceRequired);
   Goal_Think * PushNewGoal(const string &goalName);
   Goal_Think * AddNewGoal(const string &goalName);
+  Goal_Think * GetActiveGoal();
+  Goal_Think * GetGoalByName(const string &goalName);
 
   //this adds the MoveToPosition goal to the *back* of the subgoal list.
   void AddMoveToPosition(CL_Vector2 pos);
@@ -81,6 +83,7 @@ public:
 
   bool IsGoalActiveByName(const string &name);
 	
+  void Kill();
   int GetGoalCount();
 
   //this renders the evaluations (goal scores) at the specified location

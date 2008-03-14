@@ -111,6 +111,8 @@ void luabindEntity(lua_State *pState)
 			.def("GetID", &BaseGameEntity::ID)
 			.def("GetName", &BaseGameEntity::GetName)
 			.def("SetName", &BaseGameEntity::SetName)
+			.def("GetType", &BaseGameEntity::GetType)
+			.def("SetType", &BaseGameEntity::SetType)
 			.def("SetDeleteFlag", &BaseGameEntity::SetDeleteFlag)
 			.def("Send", &BaseGameEntity::HandleMessageString)
 			.def("__tostring", &SpecialEntityToString)
@@ -243,6 +245,32 @@ Group: General
 			*/
 
 
+
+
+			/*
+			func: SetType
+			(code)
+			nil SetType(number custom)
+			(end)
+			Allows you to set a number to help you organize entity types.  Check the C_TYPE_* constants as defined in setup_constants.lua.  Purely for scripting ease, not used by the engine internally.
+
+			Parameters:
+
+			custom - Should be sent one of the C_TYPE_* constants as defined in setup_constants.lua.
+
+			*/
+
+			/*
+			func: GetType
+			(code)
+			number GetType()
+			(end)
+
+			Returns:
+
+			One of the C_TYPE_* constants as defined in setup_constants.lua.
+			*/
+			
 			/*
 			func: GetPos
 			(code)

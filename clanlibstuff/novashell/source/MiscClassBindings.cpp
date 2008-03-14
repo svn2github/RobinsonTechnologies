@@ -498,6 +498,7 @@ myColor = Color(255,255,255,255);
 		.def("GetCursorVisible", &App::GetCursorVisible)
 		.def("GetPlatform", &App::GetPlatform)
 		.def("__tostring", &AppToString)
+		.def("AddCallbackOnResolutionChange", &App::AddCallbackOnResolutionChange)
 
 		,class_<ISoundManager>("SoundManager")
 		//.def("PlayMusic", &ISoundManager::PlayMusic)
@@ -650,6 +651,9 @@ myColor = Color(255,255,255,255);
 		.def("IsGoalActiveByName", &Goal_Think::IsGoalActiveByName)
 		.def("GetGoalCountByName", &Goal_Think::GetGoalCountByName)
 		.def("GetGoalCount", &Goal_Think::GetGoalCount)
+		.def("GetGoalByName", &Goal_Think::GetGoalByName)
+		.def("GetActiveGoal", &Goal_Think::GetActiveGoal)
+		.def("Kill", &Goal_Think::Kill)
 
 		,class_<WatchManager>("WatchManager")
 		.def("__tostring", &WatchManagerToString)

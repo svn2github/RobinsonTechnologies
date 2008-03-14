@@ -1,9 +1,20 @@
 Changelog
 
-2-19 2008
+3-13 2008
 
 * Add/Remove now works correctly on the preferences menu
 * Windows:  Launching .lua files to edit works better on vista
+* Linux:  ALSA sound now supported
+* Fixed crash that could happen related to attaching to an object that wasn't attached to the camera 
+* Added new script command: App:AddCallbackOnResolutionChange
+* interface.lua modified to re-center GUI on a resolution change in examples
+* Some work done on the particle system, fixed some incorrect data in the docs
+* Particle:SetBlendMode added, fixed up the fountain water in the top view rpg example
+* Added Entity:GetType/Entity:SetType
+* BUGFIX: Setting a visual profile in the Init() is no longer ignored in some circumstances, would cause the barrels to rebreak when reloading
+* BUGFIX: Fixed problem with animations not properly resetting the finished/looping states, was letting you punch crazy sometimes on RPG example
+* Added GoalManager:GetActiveGoal() and GoalManager:GetGoalByName()
+* BUGFIX: Crash could happen when an entity on the watch list was deleted
 
 2-18 2008
 

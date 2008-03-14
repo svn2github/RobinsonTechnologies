@@ -543,7 +543,15 @@ void OpenScriptForEditing(string scriptName)
 	LogMsg("Launching %s...", file.c_str());
 
 #ifdef WIN32
-	file = CL_Directory::get_current() + "/"+file;
+	
+	//for some reason, under Vista, we suddenly need full paths which sort of confuses things as sometimes we are sent links that already
+	//have one..
+
+	if (file.length()>4 && file[1]!=':')
+	{
+		//prepend the full path
+		file = CL_Directory::get_current() + "/"+file;
+	}
 	
 	open_file(GetApp()->GetHWND(), file.c_str());
 #elif __APPLE__

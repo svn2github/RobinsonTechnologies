@@ -27,7 +27,7 @@ Novashell specific Lua additions/changes:
 
 * // C++ style comments are supported
 * != (inequality) operator is supported
-* dofile, load, and other things deemed "dangerous" are missing. dofile was replaced with "RunScript".
+* dofile, load, and other things deemed "dangerous" are missing. dofile was replaced with <RunScript>.
 * Many new object types, as detailed in these docs
 
 How this API is organized:
@@ -68,6 +68,7 @@ enum
 
 #include "misc/ISoundManager.h"
 #include "DataManager.h"
+#include "ScriptCallbackManager.h"
 
 extern ISoundManager *g_pSoundManager;
 
@@ -202,7 +203,8 @@ public:
 	DataManager * Data() {return &m_prefs;}
 	const string & GetBaseDirectory() {return m_baseDirectory;} //where our prefs.dat is
     void ToggleWindowedMode();
-
+	void AddCallbackOnResolutionChange(const string &callbackFunction, int entityID);
+	void OnGameReset();
 private:
     
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
@@ -270,6 +272,7 @@ private:
 	string m_baseDirectory;
 
 	DataManager m_prefs;
+	ScriptCallbackManager m_videoCallback;
 	
 };
 
