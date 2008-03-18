@@ -1659,7 +1659,7 @@ void MovingEntity::SetAnimByName(const string &name)
 {
 	if (GetVisualProfile())
 	{
-		LogMsg("Setting brain %s", name.c_str());
+		//LogMsg("Setting brain %s", name.c_str());
 		m_animID = GetVisualProfile()->TextToAnimID(name);
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
 	}
