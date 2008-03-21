@@ -330,7 +330,6 @@ void MovingEntity::Kill()
 	{
 			g_watchManager.RemoveFromVisibilityList(this);
 	}
-	
 
 	SAFE_DELETE(m_pPathPlanner);
 	SAFE_DELETE(m_pGoalManager);
@@ -1727,19 +1726,42 @@ void MovingEntity::LastCollisionWasInvalidated()
 void MovingEntity::OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollision)
 {
 
-	if (m_collisionMode == COLLISION_MODE_NONE)
+	switch (m_collisionMode)
 	{
+
+	case COLLISION_MODE_NONE:
 		*pBoolAllowCollision = false;
 		return;
-	} else if (m_collisionMode == COLLISION_MODE_STATIC_ONLY)
-	{
+		break;
+
+	case COLLISION_MODE_STATIC_ONLY:
 		if (pOtherBody->GetParentEntity() != 0)
 		{
 			*pBoolAllowCollision = false;
 			return;
 		}
+		break;
 
+
+	case COLLISION_MODE_ENTITIES_ONLY:
+		if (pOtherBody->GetParentEntity() == 0)
+		{
+			//it's static, ignore this collision	
+			*pBoolAllowCollision = false;
+			return;
+		}
+		break;
+
+	case COLLISION_MODE_PLAYER_ONLY:
+		if ( !GetPlayer || pOtherBody->GetParentEntity() != GetPlayer)
+		{
+			//it's not the player...
+			*pBoolAllowCollision = false;
+			return;
+		}
 	}
+
+
 	m_bOldTouchedAGroundThisFrame = m_bTouchedAGroundThisFrame;
 	m_oldFloorMaterialID = m_floorMaterialID;
 

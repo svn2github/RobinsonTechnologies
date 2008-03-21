@@ -1,5 +1,8 @@
 Changelog
 
+* Added a little moving platform on the treeworld example, it's pretty crap but it does work
+* Added C_COLLISION_MODE_PLAYER_ONLY  and C_COLLISION_MODE_ENTITIES_ONLY (for use with Entity:SetCollisionMode() )
+
 3-13 2008
 
 * Add/Remove now works correctly on the preferences menu

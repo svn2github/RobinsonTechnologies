@@ -96,8 +96,8 @@ App::App()
 	m_baseGameSpeed = 10;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-	m_engineVersion = 0.23f;
-	m_engineVersionString = "0.23";
+	m_engineVersion = 0.24f;
+	m_engineVersionString = "0.24";
 
 	m_pSetup_sound = NULL;
 	m_pSetup_vorbis = NULL;
@@ -447,7 +447,6 @@ void App::SetupBackground(int x, int y)
     SAFE_DELETE(m_pBackgroundCanvas);
     SAFE_DELETE(m_pBackground);
 	m_pBackground = new CL_Surface(CL_PixelBuffer(x, y,x*4,  CL_PixelFormat::abgr8888));
-
     m_pBackgroundCanvas = new CL_Canvas(*m_pBackground);
     SetupMouseClipping();
     //LogMsg("Background rebuilt");
@@ -514,7 +513,8 @@ void App::SetupMouseClipping()
 
 void App::OnLoseFocus()
 {
-    m_HaveFocus = false;
+	//LogMsg("Lost focus..");
+	m_HaveFocus = false;
     SetupMouseClipping();
     if (m_pWindow->is_fullscreen())
     {
@@ -529,6 +529,7 @@ void App::OnLoseFocus()
 
 void App::OnGotFocus()
 {
+	//LogMsg("Got focus...");
     m_HaveFocus = true;
   // m_bWindowResizeRequest = true; //draw background again
    SetupMouseClipping();

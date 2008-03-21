@@ -14,6 +14,8 @@ Additional Art:
 Akiko Robinson
 Erin McCLellan
 
+Music: Kevin MacLeod (incompetech.com) Licensed under Creative Commons "Attribution 3.0" http://creativecommons.org/licenses/by/3.0/
+
 Novashell is powered by the Clanlib Game SDK (www.clanlib.org)
 
 Special thanks:
