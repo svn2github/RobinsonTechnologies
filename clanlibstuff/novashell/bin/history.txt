@@ -20,6 +20,7 @@ Changelog
 * Tree world example now has two moving platforms (one done with pathfinding, one done without), all platforms can now be 'jumped up through'
 * Script: Ambient sound objects now functional, rpg example now uses them instead of music objects where appropriate.
 * WIP: Sort of a cutscene happens when you exit the Inn in the rpg example
+* BUGFIX: Collision now works properly with tilepics that have larger collision areas than pic area (harrio)
 
 3-13 2008
 

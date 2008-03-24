@@ -113,8 +113,16 @@ CL_Rectf CombineRects(const CL_Rectf &a, const CL_Rectf &b)
 
 CL_Rectf Tile::GetWorldCombinedRect()
 {
-	if (m_pCollisionData && m_pCollisionData->HasData())
-	return CombineRects(GetWorldColRect(), GetWorldRect());
+	
+	if (GetType() == C_TILE_TYPE_ENTITY)
+	{
+		if (m_pCollisionData && m_pCollisionData->HasData())
+		return CombineRects(GetWorldColRect(), GetWorldRect());
+	} else
+	{
+		//tilepics have a more generic collision...
+		return CombineRects(GetWorldColRect(), GetWorldRect());
+	}
 
 	return GetWorldRect();
 }
@@ -123,10 +131,9 @@ CL_Rectf Tile::GetWorldCombinedRect()
 
 CL_Rect Tile::GetWorldCombinedRectInt()
 {
-	if (m_pCollisionData && m_pCollisionData->HasData())
-	return CL_Rect(CombineRects(GetWorldColRect(), GetWorldRect()));
-
-	return GetWorldRectInt();
+	CL_Rectf r = GetWorldCombinedRect();
+	
+	return CL_Rect(r.left,r.top,r.right,r.bottom);
 }
 
 const CL_Rect & Tile::GetBoundsRect()
