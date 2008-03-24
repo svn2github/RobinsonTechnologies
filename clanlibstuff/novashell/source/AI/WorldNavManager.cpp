@@ -416,9 +416,16 @@ void WorldNavManager::StripUnrequiredNodesFromPath(MacroPathInfo &m)
 MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, Map *pDestMap, CL_Vector2 vDest)
 {
 	//first we need to locate a door, any door, it doesn't have to  be the closest, it just has to be reachable
-	int startWarpID = pEnt->GetMap()->GetNavGraph()->GetClosestSpecialNode(pEnt, pEnt->GetMap(), pEnt->GetPos(), C_NODE_TYPE_WARP);
+	NavGraphManager::eStatus status;
+	int startWarpID = pEnt->GetMap()->GetNavGraph()->GetClosestSpecialNode(pEnt, pEnt->GetMap(), pEnt->GetPos(), C_NODE_TYPE_WARP, &status);
 
 	MacroPathInfo m;
+
+	if (status == NavGraphManager::NO_NODE_CLOSE)
+	{
+		m.m_status = MacroPathInfo::NO_NODE_CLOSE;
+		return m;
+	}
 
 	if (startWarpID == invalid_node_index)
 	{ 
@@ -429,7 +436,13 @@ MacroPathInfo WorldNavManager::FindPathToMapAndPos(MovingEntity *pEnt, Map *pDes
 
 	//now we need to find a door on the goal map that definitely can connect to
 
-	int destWarpID = pDestMap->GetNavGraph()->GetClosestSpecialNode(pEnt,pDestMap,  vDest, C_NODE_TYPE_WARP);
+	int destWarpID = pDestMap->GetNavGraph()->GetClosestSpecialNode(pEnt,pDestMap,  vDest, C_NODE_TYPE_WARP, &status);
+
+	if (status == NavGraphManager::NO_NODE_CLOSE)
+	{
+		m.m_status = MacroPathInfo::NO_NODE_CLOSE;
+		return m;
+	}
 
 	if (destWarpID == invalid_node_index)
 	{

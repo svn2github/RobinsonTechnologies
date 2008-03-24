@@ -331,6 +331,7 @@ public:
   bool HasRunPhysics(){return m_bRanApplyPhysics;}
   void OnMapChange(const string &mapName);
   CL_Vector2 GetRequestPosition() {return m_moveToAtEndOfFrame;}
+  void UpdateSoundByPosition(int soundID, float minHearing, float maxHearing, float volMod);
 
   enum ListenCollision
 {
@@ -383,7 +384,6 @@ protected:
 	void ResetEffects();
 	void UpdatePositionFromParent();
 	CL_Vector2 GetRawScreenPosition(bool &bRootIsCam);
-
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
     CL_Slot m_collisionSlot;

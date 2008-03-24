@@ -415,14 +415,25 @@ bool Screen::RemoveTileBySimilarType(Tile *pSrcTile)
 	{
 		pTile = (*itor);
 
+		if (pTile->GetType() == C_TILE_TYPE_REFERENCE)
+		{
+			pTile = pTile->GetTileWereAReferenceFrom();
+		}
+
 		//make add a unique ID or more ways to match later?
 		if (
 			pTile->GetPos() == pSrcTile->GetPos()
 			&& pTile->GetType() == pSrcTile->GetType()
 			)
 		{
-				
-			RemoveTileByItor(itor, pSrcTile->GetLayer());
+			if (pTile->GetParentScreen() == this)
+			{
+				RemoveTileByItor(itor, pSrcTile->GetLayer());
+			} else
+			{
+				//we only had a reference, let the real screen delete it
+				pTile->GetParentScreen()->RemoveTileBySimilarType(pTile);
+			}
 			
 			return true;
 		}
@@ -507,7 +518,7 @@ void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 		
 	} else
 	{
-		//it was only a reference
+		
 		SetRequestIsEmptyRefreshCheck(true);
 	}
 

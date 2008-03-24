@@ -9,7 +9,7 @@
 #include "MovingEntity.h"
 #include "VisualProfileManager.h"
 
-#define C_MAX_UPDATE_SPEED_MS 200 //how fast we'll update our postion from the real entity at max
+#define C_MAX_UPDATE_SPEED_MS 200 //how fast we'll update our position from the real entity at max
 
 //------------------------------- Activate ------------------------------------
 //-----------------------------------------------------------------------------
@@ -52,10 +52,23 @@ void Goal_Approach::Activate()
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
-
+	
 	if (!m_macroPath.IsValid())
 	{
-		LogMsg("Ent %d (%s) failed to find valid path", m_pOwner->ID(), m_pOwner->GetName().c_str());
+		if (m_macroPath.m_status == MacroPathInfo::NO_NODE_CLOSE)
+		{
+			//try our best anyway
+			if (m_pDestMap == m_pOwner->GetMap())
+			{
+				//dumb seek method
+				m_bTriedComplexWay = false;
+				AddSubgoal(new Goal_SeekToPosition(m_pOwner, m_vDestination));
+				return;
+
+			}
+		}
+
+		//LogMsg("Ent %d (%s) failed to find valid path", m_pOwner->ID(), m_pOwner->GetName().c_str());
 		
 		//try anyway, even though it's probably a waste of time
 		if (m_pDestMap == m_pOwner->GetMap())

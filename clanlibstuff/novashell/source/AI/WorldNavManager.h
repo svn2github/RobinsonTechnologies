@@ -32,7 +32,6 @@ public:
 	MicroPathChunk(int nodeID):
 	m_worldNodeID(nodeID)
 	{
-
 	}
 	int m_worldNodeID;
 	
@@ -42,8 +41,19 @@ class MacroPathInfo
 public:
 	bool IsValid() {return !m_path.empty();}
 
-	list<int> m_path;
+	MacroPathInfo()
+	{
+		m_status = OK;
+	}
 
+	list<int> m_path;
+	enum eStatus
+	{
+		OK,
+		NO_NODE_CLOSE
+	};
+
+	eStatus m_status;
 private:
 
 };

@@ -35,16 +35,24 @@ public:
 
 	NavGraph&                          GetGraph()const{return *m_pNavGraph;}
 
+	enum eStatus
+	{
+		OK,
+		NO_NODE_CLOSE,
+		NO_SPECIAL_NODE_FOUND
+	};
+
 	void AddTileNode(Tile *pTile);
 	void RemoveTileNode(Tile *pTile);
 	float GetNodeMaxLinkDistance() {return 400;}
 	Map * GetParent() {return m_pWorld;}
-	int GetClosestSpecialNode(MovingEntity *pEnt, Map *pMap, const CL_Vector2 pos, int nodeType);
+	int GetClosestSpecialNode(MovingEntity *pEnt, Map *pMap, const CL_Vector2 pos, int nodeType,  NavGraphManager::eStatus *pStatus);
 	bool DoNodesConnect(int a, int b);
 	void SetPerformLinkOnAdd(bool bNew) {m_bPerformLinkOnAdd = bNew;}
 	bool GetPerformLinkOnAdd(){return m_bPerformLinkOnAdd;}
 	void Clear();
 
+	
 protected:
 	
 

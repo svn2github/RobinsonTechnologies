@@ -35,6 +35,15 @@ void Goal_MoveToMapAndPos::Activate()
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
 	
+	if (m_macroPath.m_status == MacroPathInfo::NO_NODE_CLOSE)
+	{
+
+		//dumb seek method
+		AddSubgoal(new Goal_SeekToPosition(m_pOwner, m_vDestination));
+		return;
+	}
+
+
 	if (!m_macroPath.IsValid())
 	{
 		m_iStatus = failed;
@@ -45,7 +54,7 @@ void Goal_MoveToMapAndPos::Activate()
 	if (m_macroPath.m_path.size() == 1)
 	{
 #ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-		LogMsg("Ent %d (%s) can get there without wapring actually", m_pOwner->ID(), m_pOwner->GetName().c_str());
+		LogMsg("Ent %d (%s) can get there without warping actually", m_pOwner->ID(), m_pOwner->GetName().c_str());
 			
 #endif	//if this happens, it means we CAN actually go directly there without warping.  Possibly the 
 		//m_bTriedSimpleWay thing failed.

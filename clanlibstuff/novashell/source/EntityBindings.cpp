@@ -2304,16 +2304,18 @@ The soundID handle.  This can be used with the <SoundManager> for additional con
 /*
 func: PlaySoundPositioned
 (code)
-number PlaySound(string soundFile)
+number PlaySoundPositioned(string soundFile)
 (end)
 
 If the entity is near the screen then the sound will be heard with appropriate panning and volume.
 
 If the entity is too far from the camera or on a different map, the sound isn't played.
 
+Internally, it just calls <UpdateSoundByPosition> with default parameters (100, 500, 1).
+
 Note:
 
-Panning/stereo effects not implemented, internally it's just using <PlaySound> right now.
+Panning not implemented yet.
 
 Parameters:
 
@@ -2322,9 +2324,29 @@ soundFile - The file name to play.
 Returns:
 
 The soundID handle.  This can be used with the <SoundManager> for additional controls if needed.
-
-
 */
+
+
+.def("UpdateSoundByPosition", &MovingEntity::UpdateSoundByPosition)
+
+/*
+func: UpdateSoundByPosition
+(code)
+number UpdateSoundByPosition(number soundID, number hearingMin, number hearingMax, number volMod)
+(end)
+
+If the entity is near the screen then the sound will be heard with appropriate panning and volume.
+
+If the entity is too far from the camera or on a different map, the sound isn't played.
+
+Parameters:
+
+soundID - The ID of an existing sound (for instance, what <PlaySound> returns)
+hearingMin - If the entity is closer than this distance to listner, it will play maximum
+hearingMax - From the distance of hearingMin to the distance of hearingMax, the sound will gradually fade out.
+*/
+
+
 
 //Group: Text Related
 

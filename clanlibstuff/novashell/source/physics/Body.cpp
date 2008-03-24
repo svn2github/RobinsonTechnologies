@@ -273,11 +273,13 @@ bool CBody::Collide(CBody& xBody, float dt)
 	{
 	
 		//either body can invalidate this collision if they choose
-		bool bAllowCollision = true;
-		sig_collision(N, t, &xBody, &bAllowCollision);
-		xBody.sig_collision(-N, t, this, &bAllowCollision);
+		bool bAllowCollisionA = true;
+		bool bAllowCollisionB = true;
+		sig_collision(N, t, &xBody, &bAllowCollisionA);
 		
-		if (!bAllowCollision) 
+		xBody.sig_collision(-N, t, this, &bAllowCollisionB);
+		
+		if (!bAllowCollisionA || !bAllowCollisionB) 
 		{
 			//ugly hack to fix problems with registering "we touched the ground" and then having
 			//the collision be invalidated later

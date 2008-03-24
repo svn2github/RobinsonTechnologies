@@ -69,8 +69,7 @@ int Goal_Think::Process()
 		    m_iStatus = inactive;
 		} else
 		{
-			LogMsg("Ended subgoal %s", m_goalName.c_str());
-			
+			//LogMsg("Ended subgoal %s", m_goalName.c_str());
 			m_iStatus = SubgoalStatus;
 		}
 		

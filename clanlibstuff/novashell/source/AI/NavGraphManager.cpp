@@ -210,14 +210,16 @@ bool NavGraphManager::DoNodesConnect(int a, int b)
 	return search.IsPathValid();
 }
 
-int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, Map *pMap, const CL_Vector2 pos, int nodeType)
+int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, Map *pMap, const CL_Vector2 pos, int nodeType,  NavGraphManager::eStatus *pStatus)
 {
 	int a = pEnt->GetPathPlanner()->GetClosestNodeToPosition(pMap, pos, true);
-
+	
 	if (a == invalid_node_index)
 	{
-		LogMsg("Ent %d: %s in %s at %s: No pathfinding node close by, can't use pathmanager here", pEnt->ID(), pEnt->GetName().c_str(), pMap->GetName().c_str(),
-			PrintVector(pos).c_str());
+		//LogMsg("Ent %d: %s in %s at %s: No pathfinding node close by, can't use pathmanager here", pEnt->ID(), pEnt->GetName().c_str(), pMap->GetName().c_str(),
+		//	PrintVector(pos).c_str());
+		*pStatus = NavGraphManager::NO_NODE_CLOSE;
+
 		return invalid_node_index;
 	}
 
@@ -233,10 +235,13 @@ int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, Map *pMap, const 
 		delete pCurrentSearch;
 		LogMsg("Unable to locate any connected nodes of type %d", nodeType);
 		return invalid_node_index; //they can query this object to see it failed
+		*pStatus = NavGraphManager::NO_SPECIAL_NODE_FOUND;
+
 	}
 
 	int chosenNode = pCurrentSearch->GetFinalNode();
 	SAFE_DELETE(pCurrentSearch);
+	*pStatus = NavGraphManager::OK;
 
 	return chosenNode;
 }

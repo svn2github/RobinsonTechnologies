@@ -1,7 +1,25 @@
+Known problems:
+
+The game timing is not perfect sometimes on my dualcore intel under Vista64, plays jittery.  Setting 'lock to video refresh rate'
+rom the editor Video menu can sometimes fix it.  Hrm.
+
 Changelog
 
-* Added a little moving platform on the treeworld example, it's pretty crap but it does work
+3-24 2008
+
 * Added C_COLLISION_MODE_PLAYER_ONLY  and C_COLLISION_MODE_ENTITIES_ONLY (for use with Entity:SetCollisionMode() )
+* Added Entity:UpdateSoundByPosition
+* Entity:PlaySoundPositioned improved
+* Door open/shut noises (like what the maid does in top rpg) are now 'sound positioned'
+* Added new 'looping positional sound' object to system palette (RPG example fountain now uses it)
+* BUGFIX: Fixed problem where sometimes you couldn't delete an entity from the map
+* BUGFIX: If two entities collide, and one of them invalidates the collision but the other doesn't, now the collision will not take place (they will pass through eachother), instead of it being sort of random
+* BUGFIX: An entity can no longer collide with something before its OnPostInit() happens, this was causing objects to mysteriously fall for 1 frame after starting the game.
+* Pathfinding system no longer gives errors when nodes are missing, ie, in the treeworld example 
+* Pathfinding system improved a bit
+* Tree world example now has two moving platforms (one done with pathfinding, one done without), all platforms can now be 'jumped up through'
+* Script: Ambient sound objects now functional, rpg example now uses them instead of music objects where appropriate.
+* WIP: Sort of a cutscene happens when you exit the Inn in the rpg example
 
 3-13 2008
 

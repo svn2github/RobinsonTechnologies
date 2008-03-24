@@ -71,7 +71,7 @@ MovingEntity::~MovingEntity()
 unsigned int MovingEntity::CalculateTimeToReachPosition(const CL_Vector2 &pos)
 {
 	
-	return (Vec2DDistance(GetPos(), pos) *15) / m_desiredSpeed;
+	return (Vec2DDistance(GetPos(), pos) *20) / m_desiredSpeed;
 }
 
 
@@ -880,6 +880,45 @@ string MovingEntity::ProcessPathNoScript(const string &st)
 	return st;
 }
 
+void MovingEntity::UpdateSoundByPosition(int soundID, float minHearing, float maxHearing, float volMod)
+{
+	if (g_pMapManager->GetActiveMap() != GetMap())
+	{
+		//LogMsg("%s is not on the same map, ignoring sound", GetName().c_str());
+		//we're not in the same map
+		g_pSoundManager->SetVolume(soundID, 0);
+		return;
+	}
+	//calculate the volume/pan based on camera position
+
+	CL_Vector2 vDist = GetPos() - GetCamera->GetPosCentered();
+	float dist = vDist.length();
+
+	
+
+	if (dist > maxHearing)
+	{
+	
+		g_pSoundManager->SetVolume(soundID, 0);
+		return;
+	}
+
+	if (dist < minHearing)
+	{
+		g_pSoundManager->SetVolume(soundID, 0);
+	}
+
+	//smoothly transition
+	float percentCloseness = 1 - ( (dist - minHearing) / (maxHearing-minHearing));
+
+	//volMod = min(volMod, 1);
+	assert(volMod >= 0 && volMod <= 1 && "huh?");
+	g_pSoundManager->SetVolume(soundID, percentCloseness * volMod);
+}
+
+const float C_DEFAULT_MIN_HEARING = 100;
+const float C_DEFAULT_MAX_HEARING = 500;
+
 int MovingEntity::PlaySoundPositioned(const string &fName)
 {
 	if (g_pMapManager->GetActiveMap() != GetMap())
@@ -891,6 +930,8 @@ int MovingEntity::PlaySoundPositioned(const string &fName)
 	if (!g_pSoundManager) return C_SOUND_NONE;
 
 	int hHandle = g_pSoundManager->Play(ProcessPath(fName).c_str());
+	
+	UpdateSoundByPosition(hHandle, C_DEFAULT_MIN_HEARING, C_DEFAULT_MAX_HEARING, 1);
 	return hHandle;
 }
 
@@ -923,7 +964,7 @@ void MovingEntity::SetPos(const CL_Vector2 &new_pos)
 
 	if (!m_strWorldToMoveTo.empty())
 	{
-		LogMsg("Warning: SetPos() command issued to Entity %d (%s) ignored, because a a map-move request was scheduled this frame",
+		LogMsg("Warning: SetPos() command issued to Entity %d (%s) ignored, because a map-move request was scheduled this frame",
 			ID(), GetName().c_str());
 	}
 }
@@ -2046,6 +2087,11 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 			return;
 		}
 
+		//what if the other entity hasn't had a chance to run its init stuff yet?
+
+		pEnt->RunPostInitIfNeeded();
+
+
 	}
 	
 	static CollisionData colCustomized;
@@ -2077,6 +2123,8 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 				static CollisionData colMyCustomized;
 				CreateCollisionDataWithTileProperties(m_pTile, colMyCustomized);
 				colMyCustomized.GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
+				
+				
 				m_body.Collide(*pWallBody, step);
 
 				//the dangerous thing about Collide is it calls scripts which could replace or remove our collision info!
