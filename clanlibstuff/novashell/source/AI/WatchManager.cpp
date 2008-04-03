@@ -20,6 +20,24 @@ void WatchManager::Clear()
 	m_visibilityNotificationList.clear();
 }
 
+void WatchManager::AddSilently(MovingEntity *pEnt, int timeToWatchMS)
+{
+	if (!pEnt->IsPlaced())
+	{
+		LogError("WatchManager::Add cannot add an entity to the watch list until it's actually placed on the map.  Do it in function OnMapInsert() instead?");
+		return;
+	}
+	if (IsEntityOnWatchList(pEnt->ID())) return;
+
+
+	WatchObject w;
+	w.m_watchMode = WatchObject::MODE_SILENT;
+	w.m_entID = pEnt->ID();
+	w.m_watchTimer = GetApp()->GetGameTick()+timeToWatchMS;
+	m_watchList.push_back(w);
+}
+
+
 void WatchManager::Add(MovingEntity *pEnt, int timeToWatchMS)
 {
 	if (!pEnt->IsPlaced())
@@ -35,11 +53,13 @@ void WatchManager::Add(MovingEntity *pEnt, int timeToWatchMS)
 		if (itor->m_entID == pEnt->ID())
 		{
 			itor->m_watchTimer = GetApp()->GetGameTick()+timeToWatchMS;
+			itor->m_watchMode = WatchObject::MODE_NORMAL;
 			return;
 		}
 	}
 	
 	WatchObject w;
+	w.m_watchMode = WatchObject::MODE_NORMAL;
 	w.m_entID = pEnt->ID();
 	w.m_watchTimer = GetApp()->GetGameTick()+timeToWatchMS;
 	m_watchList.push_back(w);
@@ -58,16 +78,28 @@ void WatchManager::Remove(MovingEntity *pEnt)
 	}
 }
 
+bool WatchManager::IsEntityOnWatchList(int entID)
+{
+	watch_list::iterator itor;
+	for (itor=m_watchList.begin(); itor != m_watchList.end(); ++itor)
+	{
+		if (itor->m_entID == entID)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void WatchManager::Update(float step, unsigned int drawID)
 {
 	//if any of these entities have not been processed yet, let's do it
-
 	m_postUpdateList.clear();
 	
 	MovingEntity *pEnt;
 	unsigned int gameTick = GetApp()->GetGameTick();
 	watch_list::iterator itor;
-	
+	bool bNotify;
 	for (itor=m_watchList.begin(); itor != m_watchList.end();)
 	{
 		pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(itor->m_entID);
@@ -82,10 +114,19 @@ void WatchManager::Update(float step, unsigned int drawID)
 		if (itor->m_watchTimer < gameTick)
 		{
 			//LogMsg("Removing %s from watch list", pEnt->GetName().c_str());
+			bNotify = false;
+
+			if (itor->m_watchMode == WatchObject::MODE_NORMAL)
+			{
+				bNotify = true;
+			}
 			itor = m_watchList.erase(itor);
 
-			//now, it's just going to instantly run the "OnLoseVisible" again if we don't do something..
-			pEnt->OnWatchListTimeout(pEnt->GetDrawID() == drawID);
+			if (bNotify)
+			{
+				//now, it's just going to instantly run the "OnLoseVisible" again if we don't do something..
+				pEnt->OnWatchListTimeout(pEnt->GetDrawID() == drawID);
+			}
 			continue;
 		}
 
@@ -124,6 +165,11 @@ void WatchManager::Update(float step, unsigned int drawID)
 
 	//post update will now be run on all ents, starting in the world cache, then calling our postupdate
 
+}
+
+void WatchManager::AddEntityToPostUpdateList(MovingEntity *pEnt)
+{
+	m_postUpdateList.push_back(pEnt);
 }
 
 void WatchManager::PostUpdate(float step)
@@ -201,9 +247,11 @@ void WatchManager::ProcessPendingEntityMovementAndDeletions()
 		//uh, is it possible this pointer could be bad?  Not sure
 		if (m_postUpdateList.at(i))
 		{
-			m_postUpdateList.at(i)-> ProcessPendingMoveAndDeletionOperations();
+			m_postUpdateList.at(i)->ProcessPendingMoveAndDeletionOperations();
 		}
 	}
+
+
 }
 
 /*

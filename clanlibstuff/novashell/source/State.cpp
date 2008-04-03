@@ -3,7 +3,7 @@
 
 State::State(MovingEntity * pParent): m_pParent(pParent)
 {
-	
+	m_bIgnoreAnimLoopingOnSpriteFinished = false;
 }
 
 State::~State()
@@ -21,16 +21,22 @@ void State::RegisterClass()
 
 bool State::AnimIsLooping()
 {
+	
 	if (m_pParent->GetSprite()->is_looping())
 	{
+		m_bIgnoreAnimLoopingOnSpriteFinished = false;
 		return true;
 	}
 
 	if (m_pParent->GetSprite()->is_finished())
 	{
+		if (m_bIgnoreAnimLoopingOnSpriteFinished) return false;
+		m_bIgnoreAnimLoopingOnSpriteFinished = true;
 		//m_pParent->GetSprite()->restart();
 		return true;
 	}
+
+	m_bIgnoreAnimLoopingOnSpriteFinished = false;
 
 	return false;
 }

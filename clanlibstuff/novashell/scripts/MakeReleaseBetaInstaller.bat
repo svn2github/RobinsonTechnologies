@@ -6,6 +6,9 @@ call DeleteGarbageFiles.bat
 cd ..
 SET C_FILENAME=NovashellInstaller.exe
 
+//delete our installer too
+del %C_TARGET_EXE% > NUL
+
 call vnet.bat
 set C_TARGET_EXE=bin\game.exe
 

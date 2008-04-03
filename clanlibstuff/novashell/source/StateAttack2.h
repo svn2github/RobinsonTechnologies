@@ -1,7 +1,7 @@
 //  ***************************************************************
-//  StatePain - Creation date: 01/28/2007
+//  StateAttack2 - Creation date: 04/01/2008
 //  -------------------------------------------------------------
-//  Robinson Technologies Copyright (C) 2007 - All Rights Reserved
+//  Copyright 2008: Robinson Technologies - Check license.txt for license info.
 //
 //  ***************************************************************
 //  Programmer(s):  Seth A. Robinson (seth@rtsoft.com)
@@ -11,27 +11,27 @@
 //it will automatically register itself and be available
 //from lua script as a state behavior.
 
-#ifndef StatePain_h__
-#define StatePain_h__
+#ifndef StateAttack2_h__
+#define StateAttack2_h__
 
 #include "State.h"
 
-class StatePain: public State
+class StateAttack2: public State
 {
 public:
-	StatePain(MovingEntity *pParent);
-	virtual ~StatePain();
+	StateAttack2(MovingEntity *pParent);
+	virtual ~StateAttack2();
 	virtual void Update(float step);
 	virtual void PostUpdate(float step);
-	virtual const char * GetName() {return "Pain";};
-	virtual State * CreateInstance(MovingEntity *pParent) {return new StatePain(pParent);}
+	virtual const char * GetName() {return "Attack2";};
+	virtual State * CreateInstance(MovingEntity *pParent) {return new StateAttack2(pParent);}
 	virtual void OnAdd();
 	virtual void OnRemove();
 
 protected:
-	bool m_bCallbackActive;
+
 
 private:
 };
 
-#endif // StatePain_h__
+#endif // StateAttack2_h__

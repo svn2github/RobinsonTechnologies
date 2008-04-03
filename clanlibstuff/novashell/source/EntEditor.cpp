@@ -474,10 +474,12 @@ void EntEditor::OnToggleLockAtRefresh()
 	if (GetApp()->GetRefreshType() == App::FPS_AT_REFRESH)
 	{
 		GetApp()->SetRefreshType(App::FPS_UNLIMITED);
+		GetApp()->ClearTimingAfterLongPause();
 	} else 
 	{
 		GetApp()->SetRefreshType(App::FPS_AT_REFRESH);
-	}
+		GetApp()->ClearTimingAfterLongPause();
+}
 
 	//update our checkbox
 	m_pMenuLockAtRefreshCheckbox->set_selected(GetApp()->GetRefreshType() == App::FPS_AT_REFRESH);

@@ -304,13 +304,13 @@ Group: General
 			/*
 			func: SetPosAndMap
 			(code)
-			nil SetPosAndMap(Vector2 vPos, Map map)
+			nil SetPosAndMap(Vector2 vPos, string mapName)
 			(end)
 
 			Parameters:
 
 			vPos - a <Vector2> object containing the position to move to. Our own position information is ignored.
-			map - The <Map> the entity should move to.  Note, the move actually happens at the end of the logic cycle, not instantly.
+			mapName - The name of the <Map> the entity should move to.  Note, the move actually happens at the end of the logic cycle, not instantly.  The map will be loaded if needed.
 			
 			*/
 			.def("SetPosAndMapByTagName", &MovingEntity::SetPosAndMapByTagName)
@@ -1985,6 +1985,30 @@ Returns:
 True if the entity can be moved here without overlapping any walls or other collidable things.
 */
 
+
+.def("GetApproachPosition", &MovingEntity::GetApproachPosition)
+
+/*
+func: GetApproachPosition
+(code)
+boolean GetApproachPosition(Entity ent, number distance, Vector2 vOutputPos)
+(end)
+
+Query an entity to find a nearby position that the sent entity would fit in.  Useful for figuring out where to programmatically place people during cut-scenes in a 2d overheard RPG.
+
+If the two entities are on the same map, it will automatically try to locate a spot closest to where the <Entity> is already.
+
+Parameters:
+
+ent - The <Entity> that we will need to fit in the space we find.
+distance - How far away the spot is.  Use -1 to mean "inside", else, a spot will be chosen so the two entities don't overlap.
+vOutputPos - This will hold the chosen position after the function is called.
+
+Returns:
+
+True if successfully located a position and put it in vOutputPos.
+*/
+
 .def("SetIsCreature", &MovingEntity::SetIsCreature)
 
 /*
@@ -2257,11 +2281,7 @@ Returns:
 True if the variable/table/etc exists in this namespace, or in the global namespace.
 */
 
-//.def("OnDamage", &MovingEntity::OnDamage)
-
-
 .def("DumpScriptInfo", &MovingEntity::DumpScriptInfo)
-
 
 /*
 func: DumpScriptInfo

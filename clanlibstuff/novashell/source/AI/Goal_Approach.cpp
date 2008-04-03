@@ -136,19 +136,7 @@ void Goal_Approach::ProcessNextMapChunk()
 
 }
 
-CL_Vector2 GetPointOutsideOfRectFromInside(const CL_Rectf &r, const CL_Vector2 v, float padding)
-{
-	//i'm sure there is a much better mathy way of doing this, but this will do.  we need to throw a ray
-	//from the center of this rect until we hit the edge
-	CL_Vector2 pos = CL_Vector2::ZERO;
-	
-	while (r.is_inside( *(CL_Pointf*)&pos))
-	{
-      pos += v*2;
-	}
 
-	return pos + v * padding;
-}
 
 
 bool Goal_Approach::UpdatePositionFromEntityID()
@@ -168,89 +156,17 @@ bool Goal_Approach::UpdatePositionFromEntityID()
 
 	m_pDestMap = pEnt->GetMap();
 
-	
 	//bad idea to sit directly on top of  the entity, let's move off it
-	CL_Rectf c;
 	
 	m_locationUpdateTimer = GetApp()->GetGameTick()+C_MAX_UPDATE_SPEED_MS;
-
-	if (pEnt->GetCollisionData() && m_distanceRequired >= 0) //a -1 means they want to be "inside"
+	
+	if (!pEnt->GetApproachPosition(m_pOwner, m_distanceRequired, m_vDestination))
 	{
-		c = pEnt->GetTile()->GetWorldColRect()- *(CL_Pointf*)&pEnt->GetPos();
-	} else
-	{
-		//well, let's get the direction we want another way
-		CL_Vector2 pos = pEnt->GetPos();
-		
-		if (m_distanceRequired <= 0)
-		{
-			//they want to stand directly on top, we don't need to calculate anything fancy
-			m_vDestination = pos;
-			return true;
-		}
-
-		c = CL_Rectf(pos.x - 5, pos.y - 5, pos.x+5, pos.y + 5);
+		m_iStatus = failed;
+		return false;
 	}
-
-	CL_Vector2 vecAngleFromTarget;
+	m_vLookPosition = pEnt->GetPos();
 	
-	if (m_pDestMap == m_pOwner->GetMap())
-	{
-	   vecAngleFromTarget = pEnt->GetVectorToEntity(m_pOwner);
-	} else
-	{
-		//we don't care which way you approach it, no preference
-		vecAngleFromTarget = CL_Vector2(0,-1); //up
-	}
-
-	CL_Rectf ourRect = m_pOwner->GetTile()->GetWorldColRect();
-
-	float padding = max(ourRect.get_height(), ourRect.get_width()) + 1;
-
-	m_vLookPosition = pEnt->GetPos(); //where we want to look and where we want to stand are two different things
-	//is this a valid point?
-	int tries = 9;
-	while(tries--)
-	{
-
-		m_vDestination = GetPointOutsideOfRectFromInside(c, vecAngleFromTarget, padding) + pEnt->GetPos();
-	
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-
-		LogMsg("Approach of %s: Trying angle %s at pos %s", m_pOwner->GetName().c_str(), PrintVector(vecAngleFromTarget).c_str(), 
-			PrintVector(m_vDestination).c_str());
-#endif
-	
-		//found a potential, let's do further checking for more accuracy?
-#ifdef _DEBUG
-//		DrawBullsEyeWorld(m_vDestination, CL_Color::red, 20, CL_Display::get_current_window()->get_gc());
-#endif
-	
-		if (m_pOwner->IsValidPosition(m_pDestMap, m_vDestination, true))
-		{
-			//cool
-			break;
-		}
-
-		if (!tries)
-		{
-			//give up
-			LogMsg("Approach: Ent %d (%s) Failed to find acceptable position close to entity %d (%s), everything blocked?  Let's just skip this.",
-				m_pOwner->ID(), m_pOwner->GetName().c_str(), pEnt->ID(), pEnt->GetName().c_str());
-			m_iStatus = failed;
-			return false;
-		}
-
-		//well, we failed.  Perhaps there is a wall or something here blocking us.  Let's try from another angle.
-
-		float angle = atan2(vecAngleFromTarget.x, vecAngleFromTarget.y)- (PI/4);
-		angle = fmod(angle+PI, PI*2)-PI;
-		vecAngleFromTarget.x = sin(angle);
-		vecAngleFromTarget.y = cos(angle);
-		vecAngleFromTarget.unitize();
-		
-	}
-
 	return true; //everything seems ok
 }
 

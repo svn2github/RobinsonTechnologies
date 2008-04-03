@@ -38,6 +38,7 @@ protected:
 	void RegisterClass();
 
 	MovingEntity *m_pParent;
+	bool m_bIgnoreAnimLoopingOnSpriteFinished;
 };
 
 #endif // State_h__

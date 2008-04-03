@@ -32,6 +32,7 @@ protected:
 	
 
 private:
+		bool m_bCallbackActive;
 };
 
 #endif // StateDie_h__

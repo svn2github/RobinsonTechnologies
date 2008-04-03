@@ -196,8 +196,6 @@ public:
 
   bool InZoneByMaterialType(int matType) {return GetNearbyZoneByCollisionRectAndType(matType).m_materialID != CMaterial::C_MATERIAL_TYPE_NONE;}
   bool InNearbyZoneByMaterialType(const CL_Vector2 &vPos, int matType) {return GetNearbyZoneByPointAndType(vPos, matType).m_materialID != CMaterial::C_MATERIAL_TYPE_NONE;}
-  bool GetOnLadder() {return m_bOnLadder;}
-  void SetOnLadder(bool bOnLadder) {m_bOnLadder = bOnLadder;}
   CL_Sprite * GetSprite(){return m_pSprite;}
   int GetAnimID() {return m_animID;}
   void SetAnimPause(bool bPause) { m_bAnimPaused = bPause;}
@@ -218,8 +216,6 @@ public:
   BrainManager * GetBrainManager() {return (BrainManager*)&m_brainManager;}
   string ProcessPath(const string &st); //replaces ~ with current script path
   string ProcessPathNoScript(const string &st); //doesn't add the "script" part
-
-  void OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity *pProjectile);
   void SetFacing(int facing);
   void SetFacingTarget(int facing);
   int GetFacing(){return m_facing;}
@@ -332,6 +328,7 @@ public:
   void OnMapChange(const string &mapName);
   CL_Vector2 GetRequestPosition() {return m_moveToAtEndOfFrame;}
   void UpdateSoundByPosition(int soundID, float minHearing, float maxHearing, float volMod);
+  bool GetApproachPosition(MovingEntity *pEnt, int distance, CL_Vector2 &pOutputPos);
 
   enum ListenCollision
 {
@@ -384,6 +381,7 @@ protected:
 	void ResetEffects();
 	void UpdatePositionFromParent();
 	CL_Vector2 GetRawScreenPosition(bool &bRootIsCam);
+	void ForceUpdatingPeriod(); //force entity to update for a few frames, no matter where it is
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
     CL_Slot m_collisionSlot;
@@ -406,7 +404,6 @@ protected:
 	bool m_bOldTouchedAGroundThisFrame;
 	int m_oldFloorMaterialID;
 	int m_listenCollision, m_listenCollisionStatic;
-	bool m_bOnLadder;
 	bool m_bAnimPaused;
 	CL_Color m_defaultTextColor;
 	string m_strWorldToMoveTo; //if empty, we don't have a world move scheduled

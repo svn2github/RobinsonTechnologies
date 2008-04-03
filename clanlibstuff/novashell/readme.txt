@@ -1,13 +1,8 @@
 ** To build Novashell **
 
-Note, at this time you need to use the Clanlib 0.8 that is currently under development (and in SVN), not the released version!
-
-After 0.8.1 is release this shouldn't be a requirement anymore.
-
-
 ** WINDOWS **
 
-Checkout Clanlib 0.8 from SVN from www.clanlib.org.  Also download the related precompiled
+Install or checkout Clanlib 0.8.1 or newer from www.clanlib.org.  Also download the related precompiled
 binaries you will need from here:  http://clanlib.org/download-binaries-win32-vc80.html
 
 Make sure the examples work ok and everything compiles.
@@ -34,7 +29,9 @@ The .bat file novashell/scripts/MakeReleaseBetaInstaller.bat is a script that wi
  To use this, you would need to do the following:
  
   * Add <checkoutdir>util to your system path
-  * Install NSIS in <checkoutdir>util/NSIS
+  * Install NSIS 2.35+ in <checkoutdir>util/NSIS
+  * Install the "AccessControl" NSIS plugin (the installer sets some permissions to make it easier
+    for users to edit files)
   * install naturaldocs in <checkoutdir>util/naturaldocs  (http://naturaldocs.org/ )
   
 Create a batch file in <checkoutdir> called SetFTPLogonInfo.bat with the following:
@@ -46,7 +43,7 @@ SET _FTP_PASS_= password
 
 ** OSX **
 
-Checkout Clanlib 0.8 from SVN from www.clanlib.org.  Also download the related precompiled
+Checkout Clanlib 0.8.1 from SVN from www.clanlib.org.  Also download the related precompiled
 binaries you will need from here: http://clanlib.org/download-binaries-osx-gcc40-universal.html
 
 After checking out the Novashell SVN tree, open clanlibstuff/novashell/mac/novashell.xcodeproj, you may need to
@@ -58,7 +55,7 @@ it up into a dmg and upload it.  You'd have to edit the scripts involved to get 
 
 ** LINUX **
 
-Checkout Clanlib 0.8 from SVN from www.clanlib.org.  You'll also need to grab the additional libs clanlib needs, but
+Checkout Clanlib 0.8.1 from SVN from www.clanlib.org.  You'll also need to grab the additional libs clanlib needs, but
 hey, you're a linux guy, you can probably figure out the dependencies.
 
 Next, check out *JUST* the novashell (and sub dirs), then, from inside that directory, check out "SharedLib".

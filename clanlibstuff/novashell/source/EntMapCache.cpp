@@ -8,6 +8,7 @@
 #include "AI/Goal_Think.h"
 #include "AI/WatchManager.h"
 #include "MaterialManager.h"
+#include "State.h"
 
 #define C_TILE_EDIT_UNDO_LEVEL 20
 
@@ -273,6 +274,16 @@ void EntMapCache::RemoveTileFromList(Tile *pTile)
 			m_tileLayerDrawList[i] = NULL;
 		}
 	}
+}
+
+bool EntMapCache::IsOnEntityDrawList(MovingEntity *pEnt)
+{
+	for (unsigned int i=0; i < m_entityList.size(); i++)
+	{
+		if (m_entityList[i] == pEnt) return true;
+	}
+
+	return false;
 }
 
 void EntMapCache::ProcessPendingEntityMovementAndDeletions()
@@ -689,6 +700,16 @@ void EntMapCache::RenderGoalAI(CL_GraphicContext *pGC)
 					{
 						//render goal names in  the stack
 						CL_Vector2 pos = WorldToScreen(pEnt->GetPos());
+						
+						//first render some general info about the entity:
+
+						string info = pEnt->GetName() + " ("+ CL_String::from_int(pEnt->ID())+") " +
+						pEnt->GetBrainManager()->GetState()->GetName();
+						
+						ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+						CL_Color col = CL_Color(30,255,30);
+						DrawWithShadow(pos.x, pos.y, info, col);
+						
 						pEnt->GetGoalManager()->RenderAtPos(pos);
 						//render any custom debug data a goal wants to
 						pEnt->GetGoalManager()->Render();

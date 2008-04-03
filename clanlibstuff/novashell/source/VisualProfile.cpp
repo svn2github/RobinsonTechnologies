@@ -48,6 +48,14 @@ VisualProfile::VisualProfile()
 
 	m_animArray[PAIN_LEFT].m_name = "pain_left";
 	m_animArray[PAIN_RIGHT].m_name = "pain_right";
+	m_animArray[PAIN_UP].m_name = "pain_up";
+	m_animArray[PAIN_DOWN].m_name = "pain_down";
+
+	m_animArray[PAIN_UP_LEFT].m_name = "pain_up_left";
+	m_animArray[PAIN_DOWN_LEFT].m_name = "pain_down_left";
+
+	m_animArray[PAIN_UP_RIGHT].m_name = "pain_up_right";
+	m_animArray[PAIN_DOWN_RIGHT].m_name = "pain_down_right";
 
 	m_animArray[DIE_LEFT].m_name = "die_left";
 	m_animArray[DIE_RIGHT].m_name = "die_right";
@@ -58,10 +66,7 @@ VisualProfile::VisualProfile()
 
 	m_animArray[DIE_UP_RIGHT].m_name = "die_up_right";
 	m_animArray[DIE_DOWN_RIGHT].m_name = "die_down_right";
-
-	m_animArray[TURN_LEFT].m_name = "turn_left";
-	m_animArray[TURN_RIGHT].m_name = "turn_right";
-
+	
 	m_animArray[ATTACK1_LEFT].m_name = "attack1_left";
 	m_animArray[ATTACK1_RIGHT].m_name = "attack1_right";
 
@@ -73,6 +78,53 @@ VisualProfile::VisualProfile()
 
 	m_animArray[ATTACK1_UP_RIGHT].m_name = "attack1_up_right";
 	m_animArray[ATTACK1_DOWN_RIGHT].m_name = "attack1_down_right";
+
+	m_animArray[ATTACK2_LEFT].m_name = "attack2_left";
+	m_animArray[ATTACK2_RIGHT].m_name = "attack2_right";
+
+	m_animArray[ATTACK2_UP].m_name = "attack2_up";
+	m_animArray[ATTACK2_DOWN].m_name = "attack2_down";
+
+	m_animArray[ATTACK2_UP_LEFT].m_name = "attack2_up_left";
+	m_animArray[ATTACK2_DOWN_LEFT].m_name = "attack2_down_left";
+
+	m_animArray[ATTACK2_UP_RIGHT].m_name = "attack2_up_right";
+	m_animArray[ATTACK2_DOWN_RIGHT].m_name = "attack2_down_right";
+
+
+	m_animArray[SPECIAL1_LEFT].m_name = "special1_left";
+	m_animArray[SPECIAL1_RIGHT].m_name = "special1_right";
+	m_animArray[SPECIAL1_UP].m_name = "special1_up";
+	m_animArray[SPECIAL1_DOWN].m_name = "special1_down";
+
+	m_animArray[SPECIAL1_UP_LEFT].m_name = "special1_up_left";
+	m_animArray[SPECIAL1_DOWN_LEFT].m_name = "special1_down_left";
+
+	m_animArray[SPECIAL1_UP_RIGHT].m_name = "special1_up_right";
+	m_animArray[SPECIAL1_DOWN_RIGHT].m_name = "special1_down_right";
+
+	m_animArray[TURN_LEFT].m_name = "turn_left";
+	m_animArray[TURN_RIGHT].m_name = "turn_right";
+	m_animArray[TURN_UP].m_name = "turn_up";
+	m_animArray[TURN_DOWN].m_name = "turn_down";
+
+	m_animArray[TURN_UP_LEFT].m_name = "turn_up_left";
+	m_animArray[TURN_DOWN_LEFT].m_name = "turn_down_left";
+
+	m_animArray[TURN_UP_RIGHT].m_name = "turn_up_right";
+	m_animArray[TURN_DOWN_RIGHT].m_name = "turn_down_right";
+
+
+	m_animArray[JUMP_LEFT].m_name = "jump_left";
+	m_animArray[JUMP_RIGHT].m_name = "jump_right";
+	m_animArray[JUMP_UP].m_name = "jump_up";
+	m_animArray[JUMP_DOWN].m_name = "jump_down";
+
+	m_animArray[JUMP_UP_LEFT].m_name = "jump_up_left";
+	m_animArray[JUMP_DOWN_LEFT].m_name = "jump_down_left";
+
+	m_animArray[JUMP_UP_RIGHT].m_name = "jump_up_right";
+	m_animArray[JUMP_DOWN_RIGHT].m_name = "jump_down_right";
 
 }
 
@@ -151,205 +203,91 @@ CL_Sprite * VisualProfile::GetSpriteByAnimID(int animID)
 
 int VisualProfile::GetAnimID(int eState, int eFacing)
 {
-	int animID = 0;
+	int baseVisualState = (eState*FACING_COUNT);
+	int animID = baseVisualState+eFacing;
 
-	switch (eState)
+	if (!IsActive(animID))
 	{
-	case VISUAL_STATE_IDLE:
-
-		switch(eFacing)
+		//if it's something small, let's fix it ourself
+		
+		switch (eFacing)
 		{
-		case FACING_LEFT: animID = IDLE_LEFT; break;
-		case FACING_RIGHT: animID = IDLE_RIGHT;break;
-		case FACING_UP: animID = IDLE_UP;break;
-		case FACING_DOWN: animID = IDLE_DOWN;break;
+		case FACING_UP_RIGHT:
+		case FACING_UP_LEFT:
+			animID = baseVisualState +FACING_UP;
+			break;
 
-		case FACING_UP_LEFT: animID = IDLE_UP_LEFT; break;
-		case FACING_DOWN_LEFT: animID = IDLE_DOWN_LEFT; break;
-		case FACING_UP_RIGHT: animID = IDLE_UP_RIGHT; break;
-		case FACING_DOWN_RIGHT: animID = IDLE_DOWN_RIGHT; break;
+		case FACING_DOWN_RIGHT:
+		case FACING_DOWN_LEFT:
+			animID = baseVisualState +FACING_DOWN;
+			break;
+		
+		
+		case FACING_LEFT:
+			animID = baseVisualState +FACING_UP_LEFT;
+			break;
+
+		case FACING_RIGHT:
+			animID = baseVisualState +FACING_DOWN_RIGHT;
+			break;
+		
+		case FACING_UP:
+			animID = baseVisualState +FACING_UP_RIGHT;
+			break;
+
+		case FACING_DOWN:
+			animID = baseVisualState +FACING_DOWN_LEFT;
+			break;
 		}
-		if (!IsActive(animID))
-		{
-			//if it's something small, let's fix it ourself
-			switch (animID)
-			{
-			case IDLE_UP_RIGHT:
-			case IDLE_UP_LEFT:
-				animID = IDLE_UP;
-				break;
+	}
 
-			case IDLE_DOWN_RIGHT:
-			case IDLE_DOWN_LEFT:
-				animID = IDLE_DOWN;
-				break;
-			}
+	if (!IsActive(animID) && IsActive( baseVisualState +FACING_LEFT) && IsActive( baseVisualState +FACING_RIGHT))
+	{
+		//well, the left and right are here, even though it looks like nothing else is.  Let's force the anim to be either left or right.
+
+		switch (eFacing)
+		{
+		case FACING_UP_RIGHT:
+		case FACING_DOWN_RIGHT:
+		case FACING_UP:
+			animID = baseVisualState +FACING_RIGHT;
+			break;
+		case FACING_UP_LEFT:
+		case FACING_DOWN_LEFT:
+		case FACING_DOWN:
+			animID = baseVisualState +FACING_LEFT;
+			break;
 		}
+		
+	}
 
-		break;
-
-	case VISUAL_STATE_RUN:
-		switch(eFacing)
-		{
-		case FACING_LEFT: animID = RUN_LEFT; break;
-		case FACING_RIGHT: animID = RUN_RIGHT; break;
-		case FACING_UP: animID = RUN_UP; break;
-		case FACING_DOWN: animID = RUN_DOWN; break;
-
-		case FACING_UP_LEFT: animID = RUN_UP_LEFT; break;
-		case FACING_DOWN_LEFT: animID = RUN_DOWN_LEFT; break;
-		case FACING_UP_RIGHT: animID = RUN_UP_RIGHT; break;
-		case FACING_DOWN_RIGHT: animID = RUN_DOWN_RIGHT; break;
-		}
-		if (!IsActive(animID))
-		{
-			//if it's something small, let's fix it ourself
-			switch (animID)
-			{
-			case RUN_UP_RIGHT:
-			case RUN_UP_LEFT:
-				animID = RUN_UP;
-				break;
-
-			case RUN_DOWN_RIGHT:
-			case RUN_DOWN_LEFT:
-				animID = RUN_DOWN;
-				break;
-
-			}
-		}	
-
-		break;
-
-	case VISUAL_STATE_WALK:
-		switch(eFacing)
-		{
-		case FACING_LEFT: animID = WALK_LEFT; break;
-		case FACING_RIGHT: animID = WALK_RIGHT; break;
-		case FACING_UP: animID = WALK_UP; break;
-		case FACING_DOWN: animID = WALK_DOWN; break;
-
-		case FACING_UP_LEFT: animID = WALK_UP_LEFT; break;
-		case FACING_DOWN_LEFT: animID = WALK_DOWN_LEFT; break;
-		case FACING_UP_RIGHT: animID = WALK_UP_RIGHT; break;
-		case FACING_DOWN_RIGHT: animID = WALK_DOWN_RIGHT; break;
-		}	
+	if (!IsActive(animID))
+	{
+		//still can't locate it.
+		animID = baseVisualState +FACING_LEFT;
 
 		if (!IsActive(animID))
 		{
-			//if it's something small, let's fix it ourself
-			switch (animID)
+			//we'll have to temporarily use a different anim set
+			if (eState == VISUAL_STATE_WALK)
 			{
-			case WALK_UP_RIGHT:
-			case WALK_UP_LEFT:
-				animID = WALK_UP;
-				break;
-
-			case WALK_DOWN_RIGHT:
-			case WALK_DOWN_LEFT:
-				animID = WALK_DOWN;
-				break;
-
+				if (IsActive(RUN_LEFT) || IsActive(RUN_UP_LEFT))
+				{
+					//well, it looks like they have a run but not a walk.
+					return GetAnimID(VISUAL_STATE_RUN, eFacing);
+				}
+			}
+			
+			if (eState == VISUAL_STATE_RUN) return GetAnimID(VISUAL_STATE_WALK, eFacing);
+			if (eState == VISUAL_STATE_PAIN) return GetAnimID(VISUAL_STATE_IDLE, eFacing);
+			if (eState == VISUAL_STATE_ATTACK2) return GetAnimID(VISUAL_STATE_ATTACK1, eFacing);
+			
+			if (eState != VISUAL_STATE_IDLE) //avoid recursion freeze
+			{
+				return GetAnimID(VISUAL_STATE_IDLE, eFacing);
 			}
 		}
 
-		break;
-
-	case VISUAL_STATE_PAIN:
-		if (eFacing == FACING_LEFT) animID = PAIN_LEFT; else animID = PAIN_RIGHT;
-		break;
-
-	case VISUAL_STATE_TURN:
-		if (eFacing == FACING_LEFT) animID = TURN_LEFT; else animID = TURN_RIGHT;
-		break;
-
-	case VISUAL_STATE_ATTACK1:
-		switch(eFacing)
-		{
-		case FACING_LEFT: animID = ATTACK1_LEFT; break;
-		case FACING_RIGHT: animID = ATTACK1_RIGHT; break;
-		case FACING_UP: animID = ATTACK1_UP; break;
-		case FACING_DOWN: animID = ATTACK1_DOWN; break;
-
-		case FACING_UP_LEFT: animID = ATTACK1_UP_LEFT; break;
-		case FACING_DOWN_LEFT: animID = ATTACK1_DOWN_LEFT; break;
-		case FACING_UP_RIGHT: animID = ATTACK1_UP_RIGHT; break;
-		case FACING_DOWN_RIGHT: animID = ATTACK1_DOWN_RIGHT; break;
-		}
-		if (!IsActive(animID))
-		{
-			//if it's something small, let's fix it ourself
-			switch (animID)
-			{
-			case ATTACK1_UP_RIGHT:
-			case ATTACK1_UP_LEFT:
-				animID = ATTACK1_UP;
-				break;
-
-			case ATTACK1_DOWN_RIGHT:
-			case ATTACK1_DOWN_LEFT:
-				animID = ATTACK1_DOWN;
-				break;
-
-			}
-		}	
-
-		break;
-
-
-	case VISUAL_STATE_DIE:
-		switch(eFacing)
-		{
-		case FACING_LEFT: animID = DIE_LEFT; break;
-		case FACING_RIGHT: animID = DIE_RIGHT; break;
-		case FACING_UP: animID = DIE_UP; break;
-		case FACING_DOWN: animID = DIE_DOWN; break;
-
-
-		case FACING_UP_LEFT: animID = DIE_UP_LEFT; break;
-		case FACING_DOWN_LEFT: animID = DIE_DOWN_LEFT; break;
-		case FACING_UP_RIGHT: animID = DIE_UP_RIGHT; break;
-		case FACING_DOWN_RIGHT: animID = DIE_DOWN_RIGHT; break;
-
-		}
-		if (!IsActive(animID))
-		{
-			//if it's something small, let's fix it ourself
-			switch (animID)
-			{
-
-			case DIE_UP_RIGHT:
-			case DIE_UP_LEFT:
-				animID = DIE_UP;
-				break;
-
-			case DIE_DOWN_RIGHT:
-			case DIE_DOWN_LEFT:
-				animID = DIE_DOWN;
-				break;
-
-			}
-		}	
-
-		if (!IsActive(animID))
-		{
-			//It's still broke?   Must be a two way death only
-			switch (animID)
-			{
-
-			case DIE_UP:
-				animID = DIE_LEFT;
-				break;
-
-			case DIE_DOWN:
-				animID = DIE_RIGHT;
-				break;
-			}
-		}	
-		break;
-
-	default:
-		throw CL_Error("Unknown state:" +CL_String::from_int(eState));
 	}
 
 	if (!IsActive(animID))
@@ -786,6 +724,26 @@ constant: walk_up_right
 
 constant: walk_down_right
 
+
+Group: Run State Anims
+Anim's with these names are preferred by the engine when in the <Run> state. If not found, <Walk> anims will be used.
+
+constant: run_left
+
+constant: run_right
+
+constant: run_up
+
+constant: run_down
+
+constant: run_up_left
+
+constant: run_down_left
+
+constant: run_up_right
+
+constant: run_down_right
+
 Group: Pain State Anims
 Anim's with these names are preferred by the engine when in the <Pain> state.
 
@@ -805,24 +763,6 @@ constant: pain_up_right
 
 constant: pain_down_right
 
-Group: Attack State Anims
-Anim's with these names are preferred by the engine when in the <Attack> state.
-
-constant: attack_left
-
-constant: attack_right
-
-constant: attack_up
-
-constant: attack_down
-
-constant: attack_up_left
-
-constant: attack_down_left
-
-constant: attack_up_right
-
-constant: attack_down_right
 
 Group: Die State Anims
 Anim's with these names are preferred by the engine when in the <Die> state.
@@ -842,5 +782,44 @@ constant: die_down_left
 constant: die_up_right
 
 constant: die_down_right
+
+Group: Attack1 State Anims
+Anim's with these names are preferred by the engine when in the <Attack> state.
+
+constant: attack1_left
+
+constant: attack1_right
+
+constant: attack1_up
+
+constant: attack1_down
+
+constant: attack1_up_left
+
+constant: attack1_down_left
+
+constant: attack1_up_right
+
+constant: attack1_down_right
+
+
+Group: Special1 State Anims
+Anim's with these names are preferred by the engine when in the <Pain> state.
+
+constant: special1_left
+
+constant: special1_right
+
+constant: special1_up
+
+constant: special1_down
+
+constant: special1_up_left
+
+constant: special1_down_left
+
+constant: special1_up_right
+
+constant: special1_down_right
 */
 

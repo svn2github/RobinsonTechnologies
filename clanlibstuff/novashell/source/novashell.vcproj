@@ -78,7 +78,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				AdditionalDependencies="fmodvc.lib"
 				OutputFile="../bin/game.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -180,7 +179,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="fmodvc.lib"
 				OutputFile="../bin/game_debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -583,6 +581,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\StateAttack2.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\StateDie.cpp"
 						>
 					</File>
@@ -591,19 +593,23 @@
 						>
 					</File>
 					<File
+						RelativePath=".\StateJump.cpp"
+						>
+					</File>
+					<File
 						RelativePath=".\StatePain.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\StatePain.h"
+						RelativePath=".\StateRun.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateSpecial1.cpp"
 						>
 					</File>
 					<File
 						RelativePath=".\StateTopAttack.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\StateTopAttack.h"
 						>
 					</File>
 					<File
@@ -612,6 +618,10 @@
 					</File>
 					<File
 						RelativePath=".\StateTopWalk.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTurn.cpp"
 						>
 					</File>
 				</Filter>
@@ -2207,6 +2217,7 @@
 					>
 					<FileConfiguration
 						Name="Release|Win32"
+						ExcludedFromBuild="true"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2215,6 +2226,7 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2667,6 +2679,10 @@
 						>
 					</File>
 					<File
+						RelativePath=".\StateAttack2.h"
+						>
+					</File>
+					<File
 						RelativePath=".\StateDie.h"
 						>
 					</File>
@@ -2675,11 +2691,35 @@
 						>
 					</File>
 					<File
+						RelativePath=".\StateJump.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StatePain.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateRun.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateSpecial1.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTopAttack.h"
+						>
+					</File>
+					<File
 						RelativePath=".\StateTopIdle.h"
 						>
 					</File>
 					<File
 						RelativePath=".\StateTopWalk.h"
+						>
+					</File>
+					<File
+						RelativePath=".\StateTurn.h"
 						>
 					</File>
 				</Filter>

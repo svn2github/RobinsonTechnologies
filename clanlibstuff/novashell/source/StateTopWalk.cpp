@@ -23,13 +23,7 @@ void StateTopWalk::OnAdd()
 {
 	if (m_pParent->GetVisualProfile())
 	{
-		if (m_pParent->GetVisualProfile()->IsActive(VisualProfile::WALK_LEFT))
-		{
-			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_WALK);
-		} else
-		{
-			m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_RUN);
-		}
+		m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_WALK);
 	}
 
 	m_bCallbackActive = m_pParent->GetScriptObject()->FunctionExists("OnWalkLoop");

@@ -141,7 +141,7 @@ void  Goal<entity_type>::RenderAtPos(CL_Vector2& pos)const
 	if (hasFailed()) col = CL_Color(255,0,0);
     if (isActive()) col = CL_Color(255,255,30);
 
-  DrawWithShadow(pos.x, pos.y, GetName(), col);
+    DrawWithShadow(pos.x, pos.y, GetName(), col);
 }
 
 #endif

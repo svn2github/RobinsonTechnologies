@@ -22,6 +22,8 @@ StateDie::~StateDie()
 void StateDie::OnAdd()
 {
 	m_pParent->SetVisualState(VisualProfile::VISUAL_STATE_DIE);
+	m_bCallbackActive = m_pParent->GetScriptObject()->FunctionExists("OnDieLoop");
+
 }
 
 void StateDie::OnRemove()
@@ -35,7 +37,10 @@ void StateDie::Update(float step)
 
 void StateDie::PostUpdate(float step)
 {
-
+	if (m_bCallbackActive && AnimIsLooping())
+	{
+		m_pParent->RunFunction("OnDieLoop");
+	}
 }
 
 /*
@@ -64,4 +69,10 @@ Example .xml for a die animation:
 	<animation on_finish="last_frame" pingpong="no" loop="no" speed="50"/>
 </sprite>
 (end)
+
+Script functions it calls:
+
+If the script function *"OnDieLoop"* exists in the entity's script, it will call it every time the animation loops.
+
+
 */

@@ -59,6 +59,7 @@ public:
 	void PushUndoOperation(const operation_deque &op);
 	void PopUndoOperation();
 	int GetUndoOpsAvailableCount() {return m_undoDeque.size();};
+	bool IsOnEntityDrawList(MovingEntity *pEnt);
 
 protected:
 
@@ -71,7 +72,6 @@ protected:
 	void RenderGoalAI(CL_GraphicContext *pGC);
 	void RenderCollisionLists(CL_GraphicContext *pGC);
 	void RenderGrid(CL_GraphicContext *pTarget);
-
 	Map *m_pWorld; 
 	
 	//these are rebuilt every frame

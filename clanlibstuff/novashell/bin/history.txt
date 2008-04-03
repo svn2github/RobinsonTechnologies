@@ -5,6 +5,29 @@ rom the editor Video menu can sometimes fix it.  Hrm.
 
 Changelog
 
+4-2 2008
+
+* Added new visual/ai states:  Run, Special1, Attack2, Turn, Jump
+* All states now will call On<VisualStateName>Loop if it exists in the entity's script
+* Added Entity:GetApproachPosition()  (used when the player dies for positioning people in the 'wake up' cutscene..)
+* Misc errors fixed in docs
+* Anims that are not set to repeat in their visual profile will now no longer call OnDieFinished() (or whatever) every frame, but only once (unless anim is changed/restarted)
+* BUGFIX:  Fixed bug where warping an entity onto the screen from offscreen would sometimes not work right
+
+3-28 2008
+
+* Windows installer now sets permission of Novashell folder to read/write for users, this makes it easier
+  to edit/play with scripts and levels on Vista.  If you see any weirdness, try deleting your install dir
+  completely and reinstalling.
+* FMOD support disabled, no longer including the .dll.  Doesn't seem like it's needed anymore, also, this
+  frees up any legal problems with people trying to sell a game.
+* SCRIPT: Added utils/audio_utils.lua in RPG example, Music turns on/off automatically while fighting
+* EDITOR: Show Ai/Pathfinding info now also displays name, ID and current state
+* VisualProfiles work better, better at choosing which anim to play.  All visual states now work the same and
+  will work with 8 directions, before, "Pain" actually would only work on the 2d side view example.
+* Simplified the xml's in the dink example, engine can now figure out which dirs to use if only diagonals are present
+  
+
 3-24 2008
 
 * Added C_COLLISION_MODE_PLAYER_ONLY  and C_COLLISION_MODE_ENTITIES_ONLY (for use with Entity:SetCollisionMode() )

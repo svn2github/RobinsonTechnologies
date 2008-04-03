@@ -8,6 +8,7 @@
 //  ***************************************************************
 
 //watch entities and run their logic no matter where they are in the world
+//Also independently can notify objects when they have become onscreen/offscreen visually
 
 #ifndef WatchManager_h__
 #define WatchManager_h__
@@ -18,8 +19,14 @@ class WatchObject
 {
 public:
 
+	enum eMode
+	{
+		MODE_NORMAL,
+		MODE_SILENT //no notifications
+	};
 	unsigned int m_watchTimer;
 	unsigned int m_entID;
+	eMode m_watchMode;
 };
 
 typedef std::list<WatchObject> watch_list;
@@ -42,9 +49,10 @@ public:
 	void Remove(MovingEntity *pEnt);
 	void ApplyPhysics(float step);
 	void OnMapChange(const string &mapName);
-
+	void AddEntityToPostUpdateList(MovingEntity *pEnt); //usually you wouldn't use this..!
 	unsigned int GetVisibilityID() {return m_visibilityID;}
-
+	bool IsEntityOnWatchList(int entID);
+	void AddSilently(MovingEntity *pEnt, int timeToWatchMS);
 protected:
 
 	watch_list m_watchList;

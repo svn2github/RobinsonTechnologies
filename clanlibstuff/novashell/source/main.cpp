@@ -16,7 +16,7 @@ const unsigned int C_PREF_DAT_VERSION = 0;
 ISoundManager *g_pSoundManager;
 
 #ifdef _WIN32
-#include "misc/FMSoundManager.h"
+	 //#include "misc/FMSoundManager.h" //FMOD disabled for now
 #endif
 
 #include <ClanLib/vorbis.h>
@@ -102,7 +102,7 @@ App::App()
 	m_pSetup_sound = NULL;
 	m_pSetup_vorbis = NULL;
 	m_pSound_output = NULL;
-	
+	ClearTimingAfterLongPause();
 	ComputeSpeed();
 	m_thinkTicksToUse = 0;
     for (int i=0; i < C_FONT_COUNT; i++)
@@ -361,7 +361,9 @@ case C_SOUNDSYSTEM_CLANLIB:
 case C_SOUNDSYSTEM_FMOD:
 
 #ifdef _WIN32
-	g_pSoundManager = new CFMSoundManager;
+	LogError("FMOD sound system not supported on this platform yet.");
+
+	//g_pSoundManager = new CFMSoundManager;
 #else
 	LogError("FMOD sound system not supported on this platform yet.");
 #endif

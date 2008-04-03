@@ -201,6 +201,102 @@ bool MovingEntity::IsCloseToEntityByID(int entID, int dist)
 	return IsCloseToEntity(pEnt, dist);
 }
 
+CL_Vector2 GetPointOutsideOfRectFromInside(const CL_Rectf &r, const CL_Vector2 v, float padding)
+{
+	//i'm sure there is a much better mathy way of doing this, but this will do.  we need to throw a ray
+	//from the center of this rect until we hit the edge
+	CL_Vector2 pos = CL_Vector2::ZERO;
+
+	while (r.is_inside( *(CL_Pointf*)&pos))
+	{
+		pos += v*2;
+	}
+
+	return pos + v * padding;
+}
+
+bool MovingEntity::GetApproachPosition(MovingEntity *pEnt, int distance, CL_Vector2 &pOutputPos)
+{
+	CL_Rectf c;
+
+	if (this->GetCollisionData() && distance >= 0) //a -1 means they want to be "inside"
+	{
+		c = this->GetTile()->GetWorldColRect()- *(CL_Pointf*)&this->GetPos();
+	} else
+	{
+		//well, let's get the direction we want another way
+		CL_Vector2 pos = this->GetPos();
+
+		if (distance <= 0)
+		{
+			//they want to stand directly on top, we don't need to calculate anything fancy
+			pOutputPos = pos;
+			return true;
+		}
+
+		c = CL_Rectf(pos.x - 5, pos.y - 5, pos.x+5, pos.y + 5);
+	}
+
+	CL_Vector2 vecAngleFromTarget;
+
+	if (this->GetMap() == pEnt->GetMap())
+	{
+		vecAngleFromTarget = this->GetVectorToEntity(pEnt);
+	} else
+	{
+		//we don't care which way you approach it, no preference
+		vecAngleFromTarget = CL_Vector2(0,-1); //up
+	}
+
+	CL_Rectf ourRect = pEnt->GetTile()->GetWorldColRect();
+
+	float padding = max(ourRect.get_height(), ourRect.get_width()) + 1;
+
+	//is this a valid point?
+	int tries = 9;
+	while(tries--)
+	{
+
+		pOutputPos = GetPointOutsideOfRectFromInside(c, vecAngleFromTarget, padding) + this->GetPos();
+
+#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+
+		LogMsg("Approach of %s: Trying angle %s at pos %s", pEnt->GetName().c_str(), PrintVector(vecAngleFromTarget).c_str(), 
+			PrintVector(pOutputPos).c_str());
+#endif
+
+		//found a potential, let's do further checking for more accuracy?
+#ifdef _DEBUG
+		//		DrawBullsEyeWorld(m_vDestination, CL_Color::red, 20, CL_Display::get_current_window()->get_gc());
+#endif
+
+		if (pEnt->IsValidPosition(this->GetMap(), pOutputPos, true))
+		{
+			//cool
+			break;
+		}
+
+		if (!tries)
+		{
+			//give up
+			LogMsg("Approach: Ent %d (%s) Failed to find acceptable position close to entity %d (%s), everything blocked?  Let's just skip this.",
+				pEnt->ID(), pEnt->GetName().c_str(), this->ID(), this->GetName().c_str());
+			return false;
+		}
+
+		//well, we failed.  Perhaps there is a wall or something here blocking us.  Let's try from another angle.
+
+		float angle = atan2(vecAngleFromTarget.x, vecAngleFromTarget.y)- (PI/4);
+		angle = fmod(angle+PI, PI*2)-PI;
+		vecAngleFromTarget.x = sin(angle);
+		vecAngleFromTarget.y = cos(angle);
+		vecAngleFromTarget.unitize();
+
+	}
+
+	return true; //success
+}
+
 void MovingEntity::SetCollisionScale(const CL_Vector2 &vScale)
 {
 	if (!m_pCollisionData)
@@ -428,7 +524,6 @@ void MovingEntity::SetDefaults()
 	m_pSpriteLastUsed = NULL;
 	m_pCollisionData = NULL;
 	m_ticksOnGround = 0;
-	m_bOnLadder = false;
 	m_navNodeType = C_NODE_TYPE_NORMAL;
 	m_bAnimPaused = false;
 	SetCollisionMode(COLLISION_MODE_ALL);
@@ -894,8 +989,6 @@ void MovingEntity::UpdateSoundByPosition(int soundID, float minHearing, float ma
 	CL_Vector2 vDist = GetPos() - GetCamera->GetPosCentered();
 	float dist = vDist.length();
 
-	
-
 	if (dist > maxHearing)
 	{
 	
@@ -984,6 +1077,20 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 	return true; 
 }
 
+
+void MovingEntity::ForceUpdatingPeriod()
+{
+	if (!g_pMapManager->GetActiveMapCache()->IsOnEntityDrawList(this))
+	{
+#ifdef _DEBUG
+	LogMsg("Forcing update for %s", GetName().c_str());
+#endif
+	g_watchManager.AddSilently(this, 100);
+	RunPostInitIfNeeded();
+	}
+
+}
+
 void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName)
 {
 
@@ -994,18 +1101,26 @@ void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldNa
 		m_strWorldToMoveTo = worldName; //can't do it now, but we'll do it asap
 		//we can't just move now, because we still need to finish drawing this frame
 		m_moveToAtEndOfFrame = new_pos;
+
+#ifdef _DEBUG
+		LogMsg("Warping at end of logic ent %s...", GetName().c_str());
+#endif
+
 	} else
 	{
 		m_body.GetPosition().x = new_pos.x;
 		m_body.GetPosition().y = new_pos.y;
-
+#ifdef _DEBUG
+		LogMsg("Moving ent %s...", GetName().c_str());
+#endif
 		if (GetCamera->GetEntTracking() == ID())
 		{
 			GetCamera->SetInstantUpdateOnNextFrame(true);
 		}
 	}
-	
 	m_bMovedFlag = true;
+	ForceUpdatingPeriod();
+
 }
 
 
@@ -1324,6 +1439,7 @@ void MovingEntity::ResetEffects()
 
 void MovingEntity::RunPostInitIfNeeded()
 {
+	assert(IsPlaced());
 	if (!m_bHasRunPostInit)
 	{
 
@@ -1691,6 +1807,7 @@ void MovingEntity::UpdateTilePosition()
 
 		pWorldToMoveTo->AddTile(m_pTile);
 		m_bMovedFlag = false;
+
 	} 
 
 }
@@ -1738,15 +1855,6 @@ int MovingEntity::GetAnimFrame()
 	return 0;
 }
 
-void MovingEntity::OnDamage(const CL_Vector2 &normal, float depth, MovingEntity * enemy, int damage, int uservar, MovingEntity * pProjectile)
-{
-	SetOnLadder(false);
-
-	if (!GetScriptObject() || !GetScriptObject()->FunctionExists("OnDamage")) return;
-
-	try {luabind::call_function<void>(m_pScriptObject->GetState(), "OnDamage", normal, depth, enemy, damage, uservar, pProjectile);
-	} LUABIND_ENT_CATCH("Error while calling OnDamage(Vector2 normal, float depth, enemy, int damage, int uservar, projectile)");
-}
 
 void MovingEntity::SetSpriteByVisualStateAndFacing()
 {
@@ -2081,7 +2189,7 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 
 		if (pEnt->GetDrawID() == m_drawID)
 		{
-			//he's already been processed and we have to assume he would have process us too
+			//he's already been processed and we have to assume he would have processed us too
 			//note, it's possible this could be wrong as they may get their "neighbor list" slightly
 			//differently, but I don't think it's possible for one to miss if they actually DO touch
 			return;
@@ -2831,8 +2939,6 @@ if (GetGameLogic()->GetGamePaused()) return;
 void MovingEntity::ApplyPhysics(float step)
 {
 	
-	
-	
 	if (m_attachEntID != C_ENTITY_NONE)
 	{
 		if (m_attachEntID != C_ENTITY_CAMERA)
@@ -2854,7 +2960,7 @@ void MovingEntity::ApplyPhysics(float step)
 
 	if (!GetBody()->IsUnmovable() && GetCollisionData())
 	{
-		//the draw ID let's other objects know that we've already processed
+		//the draw ID lets other objects know that we've already processed
 		m_drawID = g_pMapManager->GetActiveMapCache()->GetUniqueDrawID();
 
 		ApplyGenericMovement(step);
