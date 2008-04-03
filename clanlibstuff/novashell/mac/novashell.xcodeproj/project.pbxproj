@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D0A99950DA50B7E0072BDB0 /* StateAttack2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99900DA50B7E0072BDB0 /* StateAttack2.cpp */; };
+		5D0A99960DA50B7E0072BDB0 /* StateJump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99910DA50B7E0072BDB0 /* StateJump.cpp */; };
+		5D0A99970DA50B7E0072BDB0 /* StateRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99920DA50B7E0072BDB0 /* StateRun.cpp */; };
+		5D0A99980DA50B7E0072BDB0 /* StateSpecial1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99930DA50B7E0072BDB0 /* StateSpecial1.cpp */; };
+		5D0A99990DA50B7E0072BDB0 /* StateTurn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99940DA50B7E0072BDB0 /* StateTurn.cpp */; };
+		5D0A999A0DA50B7E0072BDB0 /* StateAttack2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99900DA50B7E0072BDB0 /* StateAttack2.cpp */; };
+		5D0A999B0DA50B7E0072BDB0 /* StateJump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99910DA50B7E0072BDB0 /* StateJump.cpp */; };
+		5D0A999C0DA50B7E0072BDB0 /* StateRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99920DA50B7E0072BDB0 /* StateRun.cpp */; };
+		5D0A999D0DA50B7E0072BDB0 /* StateSpecial1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99930DA50B7E0072BDB0 /* StateSpecial1.cpp */; };
+		5D0A999E0DA50B7E0072BDB0 /* StateTurn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99940DA50B7E0072BDB0 /* StateTurn.cpp */; };
 		5D130AB70A2BD7B400475F87 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5D130AB60A2BD7B400475F87 /* app.icns */; };
 		5D130AB80A2BD7B400475F87 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5D130AB60A2BD7B400475F87 /* app.icns */; };
 		5D1A38520A382D48005FF1C0 /* BrainManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */; };
@@ -215,6 +225,10 @@
 		5D8778830A1555F600363BAA /* CL_SoundManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781B0A1555F600363BAA /* CL_SoundManager.cpp */; };
 		5D8778850A1555F600363BAA /* CL_VirtualFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781D0A1555F600363BAA /* CL_VirtualFileManager.cpp */; };
 		5D87788A0A1555F600363BAA /* MiscUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778220A1555F600363BAA /* MiscUtils.cpp */; };
+		5D93BD040D8A37A300801A5D /* ScriptCallbackManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D93BD020D8A37A300801A5D /* ScriptCallbackManager.cpp */; };
+		5D93BD050D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D93BD030D8A37A300801A5D /* ScriptCallbackManager.h */; };
+		5D93BD060D8A37A300801A5D /* ScriptCallbackManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D93BD020D8A37A300801A5D /* ScriptCallbackManager.cpp */; };
+		5D93BD070D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D93BD030D8A37A300801A5D /* ScriptCallbackManager.h */; };
 		5D9682860A5DF79A0015B20A /* BrainColorFlash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */; };
 		5D9682870A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */; };
 		5D9682890A5DF79A0015B20A /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682800A5DF79A0015B20A /* State.cpp */; };
@@ -468,6 +482,7 @@
 				5DC0BD5D0BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */,
 				5DC0BD5F0BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */,
 				5DC0BD610BA7E1D80004DD83 /* L_Vector.h in CopyFiles */,
+				5D93BD050D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,12 +517,18 @@
 				5DC0BD740BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */,
 				5DC0BD760BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */,
 				5DC0BD780BA7E1D80004DD83 /* L_Vector.h in CopyFiles */,
+				5D93BD070D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5D0A99900DA50B7E0072BDB0 /* StateAttack2.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateAttack2.cpp; sourceTree = "<group>"; };
+		5D0A99910DA50B7E0072BDB0 /* StateJump.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateJump.cpp; sourceTree = "<group>"; };
+		5D0A99920DA50B7E0072BDB0 /* StateRun.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateRun.cpp; sourceTree = "<group>"; };
+		5D0A99930DA50B7E0072BDB0 /* StateSpecial1.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateSpecial1.cpp; sourceTree = "<group>"; };
+		5D0A99940DA50B7E0072BDB0 /* StateTurn.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTurn.cpp; sourceTree = "<group>"; };
 		5D130AB60A2BD7B400475F87 /* app.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = app.icns; sourceTree = "<group>"; };
 		5D130AC60A2BD86100475F87 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainManager.cpp; sourceTree = "<group>"; };
@@ -778,6 +799,8 @@
 		5D8778210A1555F600363BAA /* ISoundManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ISoundManager.h; sourceTree = "<group>"; };
 		5D8778220A1555F600363BAA /* MiscUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MiscUtils.cpp; sourceTree = "<group>"; };
 		5D8778230A1555F600363BAA /* MiscUtils.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MiscUtils.h; sourceTree = "<group>"; };
+		5D93BD020D8A37A300801A5D /* ScriptCallbackManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallbackManager.cpp; sourceTree = "<group>"; };
+		5D93BD030D8A37A300801A5D /* ScriptCallbackManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScriptCallbackManager.h; sourceTree = "<group>"; };
 		5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainColorFlash.cpp; sourceTree = "<group>"; };
 		5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainFadeOutAndDelete.cpp; sourceTree = "<group>"; };
 		5D9682800A5DF79A0015B20A /* State.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = State.cpp; sourceTree = "<group>"; };
@@ -1269,6 +1292,11 @@
 		5D9682980A5DF7A80015B20A /* States */ = {
 			isa = PBXGroup;
 			children = (
+				5D0A99900DA50B7E0072BDB0 /* StateAttack2.cpp */,
+				5D0A99910DA50B7E0072BDB0 /* StateJump.cpp */,
+				5D0A99920DA50B7E0072BDB0 /* StateRun.cpp */,
+				5D0A99930DA50B7E0072BDB0 /* StateSpecial1.cpp */,
+				5D0A99940DA50B7E0072BDB0 /* StateTurn.cpp */,
 				5D7A781F0B757D9B003C896A /* StatePain.cpp */,
 				5D2F67110A86F4D800419CA6 /* StateTopAttack.cpp */,
 				5D2F67120A86F4D800419CA6 /* StateTopIdle.cpp */,
@@ -1384,6 +1412,8 @@
 		5DCDB01E0A19AE590043DCFA /* Script */ = {
 			isa = PBXGroup;
 			children = (
+				5D93BD020D8A37A300801A5D /* ScriptCallbackManager.cpp */,
+				5D93BD030D8A37A300801A5D /* ScriptCallbackManager.h */,
 				5DC0BD2F0BA7E1800004DD83 /* EffectManagerBindings.cpp */,
 				5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */,
 				5D8776F30A15555400363BAA /* EntityBindings.h */,
@@ -1704,6 +1734,12 @@
 				5DC0BD750BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */,
 				5DC0BD770BA7E1D80004DD83 /* L_Vector.cpp in Sources */,
 				5D869C630D695F07000A7433 /* DataEditor.cpp in Sources */,
+				5D93BD060D8A37A300801A5D /* ScriptCallbackManager.cpp in Sources */,
+				5D0A999A0DA50B7E0072BDB0 /* StateAttack2.cpp in Sources */,
+				5D0A999B0DA50B7E0072BDB0 /* StateJump.cpp in Sources */,
+				5D0A999C0DA50B7E0072BDB0 /* StateRun.cpp in Sources */,
+				5D0A999D0DA50B7E0072BDB0 /* StateSpecial1.cpp in Sources */,
+				5D0A999E0DA50B7E0072BDB0 /* StateTurn.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1879,6 +1915,12 @@
 				5DC0BD5E0BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */,
 				5DC0BD600BA7E1D80004DD83 /* L_Vector.cpp in Sources */,
 				5D869C620D695F07000A7433 /* DataEditor.cpp in Sources */,
+				5D93BD040D8A37A300801A5D /* ScriptCallbackManager.cpp in Sources */,
+				5D0A99950DA50B7E0072BDB0 /* StateAttack2.cpp in Sources */,
+				5D0A99960DA50B7E0072BDB0 /* StateJump.cpp in Sources */,
+				5D0A99970DA50B7E0072BDB0 /* StateRun.cpp in Sources */,
+				5D0A99980DA50B7E0072BDB0 /* StateSpecial1.cpp in Sources */,
+				5D0A99990DA50B7E0072BDB0 /* StateTurn.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
