@@ -228,8 +228,12 @@ public:
  
   unsigned int CalculateTimeToReachPosition(const CL_Vector2 &pos);
 
-  int GetVisualState() {return m_visualState;}
+  int GetVisualState();
   void SetVisualState(int visualState);
+  void SetVisualStateOverride(int visualState);
+  int GetVisualStateOverride();
+
+
   void SetSpriteByVisualStateAndFacing();
   void LastCollisionWasInvalidated();
 
@@ -467,6 +471,7 @@ protected:
 	float m_accel; //how fast we can acellerate
 	bool m_bUsingTilePicCollision;
 	L_EffectManager m_effectManager;
+	int m_visualStateOverride; 
 	
 };
 

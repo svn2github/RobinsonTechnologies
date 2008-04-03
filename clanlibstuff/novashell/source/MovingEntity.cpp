@@ -541,6 +541,7 @@ void MovingEntity::SetDefaults()
 	m_customDampening = -1;
 	m_gravityOverride = C_GRAVITY_OVERRIDE_DISABLED;
 	m_blendMode = C_BLEND_MODE_NORMAL;
+	m_visualStateOverride = VisualProfile::VISUAL_STATE_NONE;
 	SetIsCreature(false);
 }
 
@@ -718,10 +719,33 @@ int MovingEntity::GetFacingTarget()
 	return VectorToFacing(m_vecFacingTarget);
 }
 
+void MovingEntity::SetVisualStateOverride(int visualState)
+{
+	if (visualState != GetVisualState())
+	{
+		m_bRestartAnim = true;
+	}
+	m_visualStateOverride = visualState;
+}
+
+int MovingEntity::GetVisualState()
+{
+	if (m_visualStateOverride != VisualProfile::VISUAL_STATE_NONE)
+	{
+		return m_visualStateOverride;
+	}
+
+	return m_visualState;
+}
+
+int MovingEntity::GetVisualStateOverride()
+{
+		return m_visualStateOverride;
+}	
 
 void MovingEntity::SetVisualState(int visualState)
 {
-	if (m_visualState != visualState) 
+	if (m_visualStateOverride == VisualProfile::VISUAL_STATE_NONE && m_visualState != visualState) 
 	{
 		m_bRestartAnim = true;
 	}

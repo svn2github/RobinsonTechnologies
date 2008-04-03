@@ -1,6 +1,7 @@
 #include "AppPrecomp.h"
 #include "BrainForceVisual.h"
 #include "MovingEntity.h"
+#include "VisualProfile.h"
 
 BrainForceVisual registryInstanceBrainForceVisual(NULL); //self register ourselves i nthe brain registry
 
@@ -13,6 +14,7 @@ BrainForceVisual::BrainForceVisual(MovingEntity * pParent):Brain(pParent)
 		return;
 	}
 
+	m_forceSetID = VisualProfile::VISUAL_STATE_NONE;
 }
 
 
@@ -29,7 +31,12 @@ void BrainForceVisual::HandleMsg(const string &msg)
 			m_forceAnim = words[1];
 			m_pParent->SetAnimByName(m_forceAnim);
 
-		} 
+		}  else
+			if (words[0] == "force_set")
+			{
+				m_forceSetID = CL_String::to_int(words[1]);
+				m_pParent->SetVisualStateOverride(m_forceSetID);
+			} 
 		else
 		{
 			LogMsg("Brain %s doesn't understand keyword '%s'", GetName(), words[0].c_str());
@@ -41,11 +48,21 @@ void BrainForceVisual::HandleMsg(const string &msg)
 
 BrainForceVisual::~BrainForceVisual()
 {
+	if (m_forceSetID != VisualProfile::VISUAL_STATE_NONE)
+	{
+		
+		if (m_pParent) m_pParent->SetVisualStateOverride(VisualProfile::VISUAL_STATE_NONE);
+	} 	
 }
 
 void BrainForceVisual::Update(float step)
 {
+	if (m_forceSetID != VisualProfile::VISUAL_STATE_NONE)
+	{
+	} else
+	{
 		m_pParent->GetBrainManager()->SendToBrainBaseSimple(C_BRAIN_MESSAGE_DONT_SET_VISUAL,0,0);
+	}
 	
 }
 
@@ -67,9 +84,12 @@ Parameters it understands:
 
 force_anim - Forces this animation to be played and causes the AI system to stop changing it.
 
-Usage:
+force_set - Forces this visual set to be played.  One of the C_VISUAL_STATE defines from setup_constants.lua.
+
+Usage:ual
 (code)
-this:GetBrainManager():Add("ForceVisual", "force_anim=climb"); //look like we're climbing
+this:GetBrainManager():Add("ForceVisual", "force_anim=climb"); //look like we're climbing, using the "climb" anim in our visual profile.
+this:GetBrainManager():Add("ForceVisual", "force_set=" .. C_VISUAL_STATE_JUMP ); //look like we're jumping, supporting different anims for each direction
 (end)
 
 */

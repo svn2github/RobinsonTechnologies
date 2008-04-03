@@ -32,6 +32,11 @@ void StateJump::OnRemove()
 void StateJump::Update(float step)
 {
 
+	if (m_pParent->IsFacingTarget(0.5))
+	{
+		m_pParent->GetBrainManager()->GetBrainBase()->AddWeightedForce( m_pParent->GetVectorFacing() * m_pParent->GetDesiredSpeed() );
+	}
+	
 }
 
 void StateJump::PostUpdate(float step)
@@ -44,8 +49,7 @@ void StateJump::PostUpdate(float step)
 
 /*
 Object: Jump
-A state that causes an entity to stop moving and play his attack animation.
-
+A state that causes an entity to play his jump animation.
 
 An attack animation is detected from the visual profile .xml when anim states named <jump_left>, <jump_down_left>, and so on are found.  The best match for the <Entity>'s current direction is used.
 

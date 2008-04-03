@@ -31,6 +31,7 @@ protected:
 	
 
 	string m_forceAnim;
+	int m_forceSetID;
 private:
 };
 

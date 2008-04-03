@@ -806,8 +806,63 @@ This sets the current animation based on the facing and visual state.  Normally 
 */
 
 .def("SetVisualState", &MovingEntity::SetVisualState)
+
+/*
+func: SetVisualState
+(code)
+nil SetVisualState(number visualStateID)
+(end)
+
+This sets the current animation set from the current profile. Note, brains will set this automatically when states change.  (I.e., state Idle will set it to C_VISUAL_STATE_IDLE)
+
+Parameters:
+
+visualStateID - One of the C_VISUAL_STATE* defines from setup_constants.lua.
+*/
+
+
+
 .def("GetVisualState", &MovingEntity::GetVisualState)
 
+/*
+func: GetVisualState
+(code)
+number GetVisualState()
+(end)
+
+Returns:
+
+The current visual state ID.  Note, if the <ForceVisual> brain is using force_set or <SetVisualStateOverride> was used, this will return that instead.
+*/
+
+.def("SetVisualStateOverride", &MovingEntity::SetVisualStateOverride)
+
+
+/*
+func: SetVisualStateOverride
+(code)
+nil SetVisualStateOverride(number visualStateID)
+(end)
+
+Allows you to force a certain visual state regardless of what brains are setting.  It's what the <ForceVisual> brain uses internally when the force_set parm is used.
+
+Parameters:
+
+visualStateID - One of the C_VISUAL_STATE* defines from setup_constants.lua.  Use C_VISUAL_STATE_NONE to disable the override.
+*/
+.def("GetVisualStateOverride", &MovingEntity::GetVisualStateOverride)
+
+
+/*
+func: GetVisualStateOverride
+(code)
+number GetVisualStateOverride()
+(end)
+
+Returns:
+
+The current visual state ID that is override the real one, or C_VISUAL_STATE_NONE if no override is active.
+*/
 .def("SetImage", &MovingEntity::SetImage)
 
 

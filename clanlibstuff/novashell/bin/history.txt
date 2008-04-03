@@ -1,18 +1,18 @@
-Known problems:
-
-The game timing is not perfect sometimes on my dualcore intel under Vista64, plays jittery.  Setting 'lock to video refresh rate'
-rom the editor Video menu can sometimes fix it.  Hrm.
+Known problems: Occasional framerate stutters under dual core processers under vista64?
 
 Changelog
 
-4-2 2008
+4-3 2008
 
 * Added new visual/ai states:  Run, Special1, Attack2, Turn, Jump
 * All states now will call On<VisualStateName>Loop if it exists in the entity's script
 * Added Entity:GetApproachPosition()  (used when the player dies for positioning people in the 'wake up' cutscene..)
 * Misc errors fixed in docs
 * Anims that are not set to repeat in their visual profile will now no longer call OnDieFinished() (or whatever) every frame, but only once (unless anim is changed/restarted)
-* BUGFIX:  Fixed bug where warping an entity onto the screen from offscreen would sometimes not work right
+* BUGFIX:  Fixed bug where warping an entity onto the screen from offscreen would sometimes not work right, now that entity will always get its OnPostInit called first
+* Added "force_set" command to ForceVisual brain, so you can override visuals with whole animation sets for all directions, not just single anims
+* Added Entity:GetVisualStateOverride() and Entity:SetVisualStateOverride() (same as the 
+* Script: Player in RPG can now die and respawn by his bed with a little cutscene, but not finished..
 
 3-28 2008
 
