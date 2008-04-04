@@ -2,6 +2,14 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+4-4 2008
+
+* When parms are changed in the system preferences dialog (-nomusic, etc) the changes now happen right away
+* It is now possible to cut and paste objects between saved games (ie, from the players world into the master game edit world) and
+	 between worlds.  (Up to you to make sure the graphics/scripts needed exist in the world you are pasting to!)
+	 
+
+
 4-3 2008
 
 * Added new visual/ai states:  Run, Special1, Attack2, Turn, Jump

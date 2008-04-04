@@ -10,6 +10,7 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		Release Debug|Win32 = Release Debug|Win32
 		Release|Win32 = Release|Win32
 		Static MT Debug|Win32 = Static MT Debug|Win32
 		Static MT Release|Win32 = Static MT Release|Win32
@@ -19,6 +20,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Debug|Win32.Build.0 = Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Release Debug|Win32.ActiveCfg = Release Debug|Win32
+		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Release Debug|Win32.Build.0 = Release Debug|Win32
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Release|Win32.ActiveCfg = Release|Win32
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Release|Win32.Build.0 = Release|Win32
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MT Debug|Win32.ActiveCfg = Debug|Win32
@@ -31,6 +34,8 @@ Global
 		{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}.Static MTDLL Release|Win32.Build.0 = Release|Win32
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Debug|Win32.Build.0 = Static MTDLL Debug|Win32
+		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Release Debug|Win32.ActiveCfg = Release Debug|Win32
+		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Release Debug|Win32.Build.0 = Release Debug|Win32
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Release|Win32.ActiveCfg = Static MTDLL Release|Win32
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Release|Win32.Build.0 = Static MTDLL Release|Win32
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Static MT Debug|Win32.ActiveCfg = Static MT Debug|Win32

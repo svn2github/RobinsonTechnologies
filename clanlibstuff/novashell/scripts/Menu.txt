@@ -120,6 +120,11 @@ Group: States  {
    File: Pain  (StatePain.cpp)
    File: Frozen  (StateFrozen.cpp)
    File: Die  (StateDie.cpp)
+   File: Attack2  (StateAttack2.cpp)
+   File: Jump  (StateJump.cpp)
+   File: Run  (StateRun.cpp)
+   File: Special1  (StateSpecial1.cpp)
+   File: Turn  (StateTurn.cpp)
    }  # Group: States
 
 Group: Index  {

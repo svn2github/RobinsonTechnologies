@@ -21,15 +21,15 @@ bool DataEditor::Init( const string sTitle, const string sDescription, DataManag
 {
 	//setup our GUI window
 
-	CL_Point ptSize(550,500);
+	CL_Point ptSize(550,530);
 	CL_Window window(CL_Rect(0, 0, ptSize.x, ptSize.y), sTitle, 0, GetApp()->GetGUI());
 	window.set_event_passing(false);
 	window.set_position(300, GetScreenY- (ptSize.y+100));
-	int offsetY = 100;
+	int offsetY = 130;
 	int buttonOffsetX = 10;
 
 
-	CL_Rect rPos(buttonOffsetX,10,ptSize.x- (buttonOffsetX*2) ,100);
+	CL_Rect rPos(buttonOffsetX,10,ptSize.x- (buttonOffsetX*2) ,offsetY);
 /*
 	CL_RichEdit richEdit(rPos, window.get_client_area());
 	richEdit.add_text(sDescription, GetApp()->GetFont(C_FONT_GRAY), CL_Color::black);

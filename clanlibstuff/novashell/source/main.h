@@ -205,6 +205,8 @@ public:
     void ToggleWindowedMode();
 	void AddCallbackOnResolutionChange(const string &callbackFunction, int entityID);
 	void OnGameReset();
+	void BuildCommandLineParms();
+
 private:
     
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
@@ -255,6 +257,7 @@ private:
 	float m_baseGameSpeed; //faster and we move faster, computed against baselogicmhz
 	float m_baseLogicMhz; //MS between thinks
 	vector<string> m_startupParms;
+	string m_originalParms; //doesn't include any parms we added later
 	float m_simulationSpeedMod;
 	bool m_bJustRenderedFrame;
 	bool m_bRequestVideoInit;

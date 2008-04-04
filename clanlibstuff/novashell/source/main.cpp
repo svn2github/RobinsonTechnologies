@@ -7,6 +7,7 @@
 #include "VisualProfileManager.h"
 #include "Console.h"
 #include "AI/WatchManager.h"
+#include "EntEditMode.h"
 
 #define C_PREFS_DAT_FILENAME "prefs.dat"
 
@@ -154,6 +155,8 @@ void App::OneTimeDeinit()
 {
    
 	SavePrefs();
+
+	g_EntEditModeCopyBuffer.ClearSelection();
 
 	for (int i=0; i < C_FONT_COUNT; i++)
 	{
@@ -795,11 +798,34 @@ void App::SavePrefs()
 	}
 }
 
+
+void App::BuildCommandLineParms()
+{
+	m_startupParms.clear();
+	vector<string> v =CL_String::tokenize(m_prefs.Get("command_line_parms"), " ", true);
+	for (unsigned int i=0; i < v.size(); i++)
+	{
+		m_startupParms.push_back(v[i]);
+	}
+
+	v =CL_String::tokenize(m_originalParms, " ", true);
+	for (unsigned int i=0; i < v.size(); i++)
+	{
+		m_startupParms.push_back(v[i]);
+	}
+
+
+}
 int App::main(int argc, char **argv)
 {
  
 	//first move to our current dir
 	CL_Directory::change_to(CL_System::get_exe_path());
+
+#ifdef WIN32
+
+	::SetProcessAffinityMask( ::GetCurrentProcess(), 1 );
+#endif
 
 #ifdef __APPLE__
 
@@ -811,24 +837,20 @@ int App::main(int argc, char **argv)
 	LogMsg("Game: Set working dir to %s", stTemp);
 #endif
 
+	for (int i=1; i < argc; i++)
+	{
+		m_originalParms += argv[i];
+	}
+
+
 	m_baseDirectory = CL_Directory::get_current()+"/"; //save for later
+
 
 	//load our system prefs
 	LoadPrefs();
 
-	vector<string> v =CL_String::tokenize(m_prefs.Get("command_line_parms"), " ", true);
-	for (unsigned int i=0; i < v.size(); i++)
-	{
-		m_startupParms.push_back(v[i]);
-	}
-
-
-
-	for (int i=1; i < argc; i++)
-	{
-		m_startupParms.push_back(argv[i]);
-	}
-
+	BuildCommandLineParms();
+	
 	if ( ParmExists("-h") ||  ParmExists("-help") ||ParmExists("/?") ||ParmExists("/help") || ParmExists("--h") || ParmExists("--help") )
 	{
 		
@@ -957,7 +979,7 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 					m_bJustRenderedFrame = true; //sometimes we want to know if we just rendered something in the update logic, entities
 					//use to check if now is a valid time to see if they are onscreen or not without having to recompute visibility
 
-					 // Flip the display, showing on the screen what we have drawed
+					 // Flip the display, showing on the screen what we have drawn
                     // since last call to flip_display()
                     CL_Display::flip(m_videoflipStyle);
                     

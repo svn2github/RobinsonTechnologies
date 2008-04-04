@@ -696,7 +696,7 @@ void GameLogic::Kill()
 		EntityMgr->GetEntityByName("coleditor")->SetDeleteFlag(true);
 	}
 
-	g_EntEditModeCopyBuffer.ClearSelection();
+	//g_EntEditModeCopyBuffer.ClearSelection();
 	
 	//save out warp cache
 	g_worldNavManager.Save();
@@ -814,6 +814,7 @@ void GameLogic::Update(float step)
 		}
 		m_bRestartEngineFlag = false;
 
+		GetApp()->BuildCommandLineParms();
 		Init();
 	}
 	

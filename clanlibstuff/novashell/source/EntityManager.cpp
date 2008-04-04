@@ -52,7 +52,13 @@ BaseGameEntity* EntityManager::GetEntityByName(std::string name)
 //-----------------------------------------------------------------------------
 void EntityManager::RemoveEntity(BaseGameEntity* pEntity)
 {    
-  m_EntityMap.erase(m_EntityMap.find(pEntity->ID()));
+  
+	EntityMap::iterator ent = m_EntityMap.find(pEntity->ID());
+	
+	if (ent != m_EntityMap.end())
+	{
+		m_EntityMap.erase(ent);
+	}
 } 
 
 //---------------------------- RegisterEntity ---------------------------------

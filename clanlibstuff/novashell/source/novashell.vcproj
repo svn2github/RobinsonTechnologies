@@ -218,6 +218,110 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release Debug|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops;.\global_props.vsprops"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release/novashell.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc;..\..\..\SharedLib\include\ClanLib"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CLANLIB"
+				StringPooling="true"
+				MinimalRebuild="false"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="AppPrecomp.h"
+				PrecompiledHeaderFile=".\Release/novashell.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
+				BrowseInformation="1"
+				WarningLevel="3"
+				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				LinkLibraryDependencies="false"
+				OutputFile="../bin/game.exe"
+				LinkIncremental="1"
+				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="..\..\..\SharedLib\lib;..\..\..\SharedLib\lib\clanlib;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\FMOD\lib"
+				IgnoreDefaultLibraryNames=""
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile=".\Release/test.pdb"
+				SubSystem="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+				EmbedManifest="true"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+				SuppressStartupBanner="true"
+				OutputFile=".\Release/novashell.bsc"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -245,6 +349,14 @@
 						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\AppUtils.cpp"
@@ -259,6 +371,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -281,6 +401,16 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						PreprocessorDefinitions=""
+						UsePrecompiledHeader="2"
+						PrecompiledHeaderThrough="AppPrecomp.h"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -312,6 +442,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\misc\MiscUtils.cpp"
@@ -326,6 +464,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -362,6 +508,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -414,6 +568,16 @@
 								PrecompiledHeaderThrough="AppPrecomp.h"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PreprocessorDefinitions=""
+								UsePrecompiledHeader="2"
+								PrecompiledHeaderThrough="AppPrecomp.h"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\EntCollisionEditor.cpp"
@@ -445,6 +609,15 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PreprocessorDefinitions=""
+								PrecompiledHeaderThrough="AppPrecomp.h"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -487,6 +660,16 @@
 								<Tool
 									Name="VCCLCompilerTool"
 									PreprocessorDefinitions=""
+									PrecompiledHeaderThrough="AppPrecomp.h"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release Debug|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									PreprocessorDefinitions=""
+									UsePrecompiledHeader="2"
 									PrecompiledHeaderThrough="AppPrecomp.h"
 								/>
 							</FileConfiguration>
@@ -734,6 +917,15 @@
 							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions=""
+							PrecompiledHeaderThrough="AppPrecomp.h"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\TileEditOperation.cpp"
@@ -763,6 +955,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								PrecompiledHeaderThrough="AppPrecomp.h"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -803,6 +1003,14 @@
 							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PrecompiledHeaderThrough="AppPrecomp.h"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\CameraSetting.cpp"
@@ -838,6 +1046,15 @@
 							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions=""
+							PrecompiledHeaderThrough="AppPrecomp.h"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\HashedResourceManager.cpp"
@@ -856,6 +1073,14 @@
 						<Tool
 							Name="VCCLCompilerTool"
 							UsePrecompiledHeader="2"
+							PrecompiledHeaderThrough="AppPrecomp.h"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
 							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
@@ -899,6 +1124,15 @@
 							Name="VCCLCompilerTool"
 							PreprocessorDefinitions=""
 							UsePrecompiledHeader="2"
+							PrecompiledHeaderThrough="AppPrecomp.h"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions=""
 							PrecompiledHeaderThrough="AppPrecomp.h"
 						/>
 					</FileConfiguration>
@@ -977,6 +1211,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lauxlib.c"
@@ -991,6 +1233,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1017,6 +1267,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lcode.c"
@@ -1031,6 +1289,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1057,6 +1323,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\ldebug.c"
@@ -1071,6 +1345,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1097,6 +1379,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\ldump.c"
@@ -1111,6 +1401,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1137,6 +1435,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lgc.c"
@@ -1151,6 +1457,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1177,6 +1491,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\liolib.c"
@@ -1191,6 +1513,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1217,6 +1547,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lmathlib.c"
@@ -1231,6 +1569,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1257,6 +1603,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\loadlib.c"
@@ -1271,6 +1625,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1297,6 +1659,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lopcodes.c"
@@ -1311,6 +1681,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1337,6 +1715,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lparser.c"
@@ -1351,6 +1737,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1377,6 +1771,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lstring.c"
@@ -1391,6 +1793,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1417,6 +1827,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\ltable.c"
@@ -1431,6 +1849,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1457,6 +1883,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\ltm.c"
@@ -1471,6 +1905,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1497,6 +1939,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\lvm.c"
@@ -1511,6 +1961,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1537,6 +1995,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\lua\src\print.c"
@@ -1551,6 +2017,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1581,6 +2055,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\class_info.cpp"
@@ -1595,6 +2077,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1621,6 +2111,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\class_rep.cpp"
@@ -1635,6 +2133,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1661,6 +2167,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\error.cpp"
@@ -1675,6 +2189,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1701,6 +2223,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\function.cpp"
@@ -1715,6 +2245,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1741,6 +2279,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\link_compatibility.cpp"
@@ -1755,6 +2301,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1781,6 +2335,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\open.cpp"
@@ -1795,6 +2357,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1821,6 +2391,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\pcall.cpp"
@@ -1835,6 +2413,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1861,6 +2447,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\scope.cpp"
@@ -1875,6 +2469,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -1901,6 +2503,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\weak_ref.cpp"
@@ -1921,6 +2531,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\..\..\SharedLib\luabind\src\wrapper_base.cpp"
@@ -1935,6 +2553,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -2022,6 +2648,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\GUIStyleBitmap\checkbox_Bitmap.cpp"
@@ -2036,6 +2670,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -2062,6 +2704,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\GUIStyleBitmap\inputbox_Bitmap.cpp"
@@ -2076,6 +2726,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -2102,6 +2760,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\GUIStyleBitmap\listbox_Bitmap.cpp"
@@ -2116,6 +2782,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -2142,6 +2816,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\GUIStyleBitmap\stylemanager_Bitmap.cpp"
@@ -2162,6 +2844,14 @@
 								UsePrecompiledHeader="0"
 							/>
 						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath=".\GUIStyleBitmap\window_Bitmap.cpp"
@@ -2176,6 +2866,14 @@
 						</FileConfiguration>
 						<FileConfiguration
 							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								UsePrecompiledHeader="0"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release Debug|Win32"
 							>
 							<Tool
 								Name="VCCLCompilerTool"
@@ -2207,6 +2905,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\misc\CL_SoundManager.h"
@@ -2226,6 +2932,15 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -2269,6 +2984,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\linearparticle\sources\L_EffectEmitter.cpp"
@@ -2283,6 +3006,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2309,6 +3040,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\linearparticle\sources\L_ExplosionEffect.cpp"
@@ -2323,6 +3062,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2349,6 +3096,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\linearparticle\sources\L_Particle.cpp"
@@ -2363,6 +3118,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2389,6 +3152,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\linearparticle\sources\L_ParticleMem.cpp"
@@ -2403,6 +3174,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2429,6 +3208,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\linearparticle\sources\L_ShootingEffect.cpp"
@@ -2449,6 +3236,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\linearparticle\sources\L_Vector.cpp"
@@ -2463,6 +3258,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2493,6 +3296,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\EffectExplosion.cpp"
@@ -2507,6 +3318,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"
@@ -2533,6 +3352,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\MotionController.cpp"
@@ -2553,6 +3380,14 @@
 							UsePrecompiledHeader="0"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\Particle.cpp"
@@ -2567,6 +3402,14 @@
 					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
 						>
 						<Tool
 							Name="VCCLCompilerTool"

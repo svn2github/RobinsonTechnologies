@@ -1647,7 +1647,10 @@ void EntEditor::OnPreferences()
 	
 	DataEditor d;
 	d.Init("Novashell System Preferences", "This data is stored in the prefs.dat file.\r\n"\
-		"\r\nBy editing values, you can set the default video mode.\r\n"
-		"\r\nParms starting with linux_, osx_, or windows_ mean they are only applicable to that particular system.",
+		"\r\nBy editing values, you can set the default video mode.\r\n" \
+		"\r\nParms starting with linux_, osx_, or windows_ mean they are only applicable to that particular system.\r\n" \
+		"\r\nValid command_line_parms are -nosound, -nomusic, MyWorld.novashell, etc.",
 		GetApp()->Data());
+
+	GetApp()->BuildCommandLineParms();
 }
