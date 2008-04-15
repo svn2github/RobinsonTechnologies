@@ -433,7 +433,10 @@
 ** functions. This limit is arbitrary; its only purpose is to stop C
 ** functions to consume unlimited stack space.
 */
-#define LUAI_MAXCSTACK	2048
+#define LUAI_MCS_AUX	((int)(INT_MAX / (4*sizeof(LUA_NUMBER))))
+#define LUAI_MAXCSTACK	(LUAI_MCS_AUX > SHRT_MAX ? SHRT_MAX : LUAI_MCS_AUX)
+
+//#define LUAI_MAXCSTACK 8000
 
 
 
@@ -601,7 +604,7 @@ union luai_Cast { double l_d; long l_l; };
 #endif
 
 
-/*
+/* many
 @@ LUA_MAXCAPTURES is the maximum number of captures that a pattern
 @* can do during pattern-matching.
 ** CHANGE it if you need more captures. This limit is arbitrary.

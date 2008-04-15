@@ -1169,7 +1169,7 @@ void EntEditMode::OffsetSelectedItems(CL_Vector2 vOffset, bool bBigMovement)
 	PushUndosIntoUndoOperation();
 }
 
-void EntEditMode::HandleMessageString(const string &msg)
+std::string EntEditMode::HandleMessageString( const string &msg )
 {
 	vector<string> words = CL_String::tokenize(msg, "|");
 	
@@ -1189,6 +1189,7 @@ void EntEditMode::HandleMessageString(const string &msg)
 		LogMsg("Don't know how to handle message %s", msg.c_str());
 	}
 
+		return "";
 }
 
 

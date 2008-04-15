@@ -21,7 +21,7 @@ Wow, that's a long title.
 
 Lua and you:
 
-Novashell uses Lua 5.1 under the hood.  You can use google to find good tutorials on how it works.
+Novashell uses Lua 5.13 under the hood.  You can use google to find good tutorials on how it works.
 
 Novashell specific Lua additions/changes:
 

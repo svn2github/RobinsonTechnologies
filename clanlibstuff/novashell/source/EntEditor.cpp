@@ -687,7 +687,7 @@ bool EntEditor::GetHideMode()
 	return m_bHideMode;
 }
 
-void EntEditor::HandleMessageString(const string &msg)
+string EntEditor::HandleMessageString(const string &msg)
 {
 	vector<string> words = CL_String::tokenize(msg, "|");
 
@@ -701,7 +701,9 @@ void EntEditor::HandleMessageString(const string &msg)
 			LogMsg("Don't know how to handle message %s", msg.c_str());
 		}
 
+	return "";
 }
+
 
 
 void EntEditor::OnAddNewMap()

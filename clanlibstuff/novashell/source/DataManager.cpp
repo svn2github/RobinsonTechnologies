@@ -144,29 +144,29 @@ float DataManager::GetNumWithDefault(const string &keyName, float value)
 
 
 //returns true if we actually set the value, which we only do if it didn't exist
-bool DataManager::SetIfNull(const string &keyName, const string &value)
+string DataManager::SetIfNull(const string &keyName, const string &value)
 {
 	DataObject *pData = FindDataByKey(keyName);
 
-	if (pData) return false; //didn't need to set it
+	if (pData) return pData->Get(); //didn't need to set it
 
 	DataObject d;
 	d.Set(keyName, value);
 	m_data[keyName]=d;
-	return true; //true that we created a key
+	return value; //true that we created a key
 }
 
 //returns true if we actually set the value, which we only do if it didn't exist
-bool DataManager::SetNumIfNull(const string &keyName, float value)
+float DataManager::SetNumIfNull(const string &keyName, float value)
 {
 	DataObject *pData = FindDataByKey(keyName);
 
-	if (pData) return false; //didn't need to set it
+	if (pData) return pData->GetNum(); //didn't need to set it
 
 	DataObject d;
 	d.SetNum(keyName, value);
 	m_data[keyName]=d;
-	return true; //true that we created a key
+	return value;
 }
 
 bool DataManager::Exists(const string &keyName)
@@ -322,7 +322,7 @@ True if a new piece of data was created, false if existing data was replaced.
 
 func: SetIfNull
 (code)
-boolean SetIfNull(string keyName, string value)
+string SetIfNull(string keyName, string value)
 (end)
 Similar to <Set> but stores the data only if the key didn't already exist.
 
@@ -331,11 +331,11 @@ value - The string data you wish to store.
 
 Returns:
 
-True if the key didn't exist and the value was stored.  False if it already existed and nothing was changed.
+String that was set, or existed before.
 
 func: SetNumIfNull
 (code)
-boolean SetNumIfNull(string keyName, number value)
+number SetNumIfNull(string keyName, number value)
 (end)
 Similar to <Set> but stores the data only if the key didn't already exist.
 
@@ -346,7 +346,7 @@ value - The number you wish to store.
 
 Returns:
 
-True if the key didn't exist and the value was stored.  False if it already existed and nothing was changed.
+Returns the number that was set or existed before.
 
 Group: Retrieving Data
 

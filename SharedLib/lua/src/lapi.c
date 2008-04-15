@@ -93,18 +93,18 @@ void luaA_pushobject (lua_State *L, const TValue *o) {
 
 
 LUA_API int lua_checkstack (lua_State *L, int size) {
-  int res;
-  lua_lock(L);
-  if ((L->top - L->base + size) > LUAI_MAXCSTACK)
-    res = 0;  /* stack overflow */
-  else {
-    luaD_checkstack(L, size);
-    if (L->ci->top < L->top + size)
-      L->ci->top = L->top + size;
-    res = 1;
-  }
-  lua_unlock(L);
-  return res;
+	int res;
+	lua_lock(L);
+	if ((L->top - L->base + size) > LUAI_MAXCSTACK)
+		res = 0;  /* stack overflow */
+	else {
+		luaD_checkstack(L, size);
+		if (L->ci->top < L->top + size)
+			L->ci->top = L->top + size;
+		res = 1;
+	}
+	lua_unlock(L);
+	return res;
 }
 
 
@@ -749,7 +749,7 @@ LUA_API int lua_setfenv (lua_State *L, int idx) {
       res = 0;
       break;
   }
-  luaC_objbarrier(L, gcvalue(o), hvalue(L->top - 1));
+  if (res) luaC_objbarrier(L, gcvalue(o), hvalue(L->top - 1));
   L->top--;
   lua_unlock(L);
   return res;

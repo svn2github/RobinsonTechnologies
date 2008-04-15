@@ -64,7 +64,7 @@ protected:
 	void OnSnapSizeChanged(const string &st);
 	void BuildDefaultEntity();
 	void OffsetSelectedItems(CL_Vector2 vOffset, bool bBigMovement);
-	virtual void HandleMessageString(const string &msg);
+	virtual string HandleMessageString(const string &msg);
 	void OnMapChange();
 	void GetSettingsFromWorld();
 	void ScaleUpSelected();

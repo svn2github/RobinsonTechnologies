@@ -38,6 +38,12 @@ public:
 	  C_ENTITY_BASE_TYPES
   };
 
+  enum
+  {
+	  C_PRIORITY_LEVEL_NORMAL = 0,
+	  C_PRIORITY_LEVEL_HIGH = 100
+  };
+
   virtual ~BaseGameEntity();
     
     virtual void Update(float step){}; 
@@ -51,6 +57,8 @@ public:
     
     int          GetType()const{return m_iType;}
     void         SetType(int new_type){m_iType = new_type;}
+	int          GetPriorityLevel()const{return m_priorityLevel;}
+	void         SetPriorityLevel(int priority){m_priorityLevel = priority;}
     virtual void SetName(const std::string &name) {m_EntName = name;}
     const std::string & GetName(){return m_EntName;} 
     bool GetDeleteFlag(){return m_deleteFlag;}
@@ -58,9 +66,9 @@ public:
 	virtual BaseGameEntity * CreateClone() {return NULL;}
 	void SetTile(TileEntity *pTileEnt) {m_pTile = pTileEnt;}
 	TileEntity * GetTile() {return m_pTile;}
-	virtual void HandleMessageString(const std::string &msg){};
+	virtual std::string HandleMessageString(const std::string &msg){ return "";};
 	virtual bool HandleMessage(const Message &msg){return false;};
-
+	bool UnderPriorityLevel();
 	CL_Signal_v1<int> sig_delete; //anyone can attach to this to know when it dies.  Sends its ID #.
 
 private:
@@ -90,7 +98,7 @@ protected:
 	int         m_iType;
   BaseGameEntity(int ID);
   TileEntity *m_pTile; //NULL unless we're attached to a tile
-
+	int m_priorityLevel;
 };
 
 

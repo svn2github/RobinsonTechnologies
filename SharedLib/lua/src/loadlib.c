@@ -367,7 +367,7 @@ static const char *findfile (lua_State *L, const char *name,
     if (readable(filename))  /* does file exist and is readable? */
       return filename;  /* return that file name */
     lua_pop(L, 2);  /* remove path template and file name */ 
-    luaO_pushfstring(L, "\n\tno file " LUA_QS, filename);
+    lua_pushfstring(L, "\n\tno file " LUA_QS, filename);
     lua_concat(L, 2);
   }
   return NULL;  /* not found */
@@ -427,7 +427,7 @@ static int loader_Croot (lua_State *L) {
   funcname = mkfuncname(L, name);
   if ((stat = ll_loadfunc(L, filename, funcname)) != 0) {
     if (stat != ERRFUNC) loaderror(L, filename);  /* real error */
-    luaO_pushfstring(L, "\n\tno module " LUA_QS " in file " LUA_QS,
+    lua_pushfstring(L, "\n\tno module " LUA_QS " in file " LUA_QS,
                         name, filename);
     return 1;  /* function not found */
   }
@@ -442,7 +442,7 @@ static int loader_preload (lua_State *L) {
     luaL_error(L, LUA_QL("package.preload") " must be a table");
   lua_getfield(L, -1, name);
   if (lua_isnil(L, -1))  /* not found? */
-    luaO_pushfstring(L, "\n\tno field package.preload['%s']", name);
+    lua_pushfstring(L, "\n\tno field package.preload['%s']", name);
   return 1;
 }
 

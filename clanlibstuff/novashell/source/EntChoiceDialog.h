@@ -25,7 +25,7 @@ class EntChoiceDialog: public BaseGameEntity
 public:
 	EntChoiceDialog(const string &initMessage="");
 	virtual ~EntChoiceDialog();
-	virtual void HandleMessageString(const std::string &msg);
+	virtual string HandleMessageString(const std::string &msg);
 
 protected:
 

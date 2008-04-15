@@ -113,6 +113,9 @@ void luabindEntity(lua_State *pState)
 			.def("SetName", &BaseGameEntity::SetName)
 			.def("GetType", &BaseGameEntity::GetType)
 			.def("SetType", &BaseGameEntity::SetType)
+
+			.def("GetPriorityLevel", &BaseGameEntity::GetPriorityLevel)
+			.def("SetPriorityLevel", &BaseGameEntity::SetPriorityLevel)
 			.def("SetDeleteFlag", &BaseGameEntity::SetDeleteFlag)
 			.def("Send", &BaseGameEntity::HandleMessageString)
 			.def("__tostring", &SpecialEntityToString)
@@ -158,6 +161,9 @@ function OnMapInsert() //run right after they are inserted on the map.
 end
 
 function OnPostInit() //run once when their first logic cycle happens (for instance, when they come on screen)
+end
+
+function OnSave() //run right before the entity is saved or cloned
 end
 
 function OnKill() //run right before being destroyed/removed from the map 
@@ -270,7 +276,38 @@ Group: General
 
 			One of the C_TYPE_* constants as defined in setup_constants.lua.
 			*/
-			
+		
+
+			/*
+			func: SetPriorityLevel
+			(code)
+			nil SetPriorityLevel(number level)
+			(end)
+			Allows you to set a priority level.  Check the C_PRIORITY_LEVEL_* constants as defined in setup_constants.lua.
+
+			If an entity's priority level is lower than the current global priority level, it will not update.
+
+			This isn't currently fully implemented, so for now, just know that if you set this to 100, an entity will keep updating even while 'paused', good for GUI things for instance.
+
+			Parameters:
+
+			level - Should be sent one of the C_PRIORITY_LEVEL_* constants as defined in setup_constants.lua.
+
+			*/
+
+			/*
+			func: GetPriorityLevel
+			(code)
+			number GetPriorityLevel()
+			(end)
+
+			Returns:
+
+			One of the C_PriorityLevel_* constants as defined in setup_constants.lua.
+			*/
+
+
+
 			/*
 			func: GetPos
 			(code)

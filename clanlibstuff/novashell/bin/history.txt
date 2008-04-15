@@ -2,13 +2,26 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+4-14 2008
+
+* Fixed error message that appeared when you opened the dink palette (Ketla)
+* Fixed a few bugs in "Beer invaders" example (Endy)
+* Updated lua interpreter to v5.13
+* All entities now call the script function "OnSave()" (if it exists) right before saving/cloning
+* Script: the player script in rpg example now uses m_hp and m_hp_max locally and saves to the Data() when done, instead of access Data() all the time
+* ChoiceDialog entity now will call a global callback function if no entity ID is specified instead of doing nothing
+* BUGFIX: Entity:SetTextAlignment now works properly
+* Added Entity:SetPriorityLevel()/Entity:GetPriorityLevel()  (so some things can continue to update while the game is paused/dialog is shown)
+* BUGFIX: sending a blank message (ie, "msg=;") will no longer crash a ChoiceDialog
+* Script: Added a flexible item system to rpg example, can buy and use a health potion
+* Script: Added escape menu, cannot exit/save game while cutscene is in progress (rpg example)
+* Data:SetIfNull and Data:SetNumIfNull now return the updated value, instead of a bool.  More useful.
+
 4-4 2008
 
 * When parms are changed in the system preferences dialog (-nomusic, etc) the changes now happen right away
 * It is now possible to cut and paste objects between saved games (ie, from the players world into the master game edit world) and
 	 between worlds.  (Up to you to make sure the graphics/scripts needed exist in the world you are pasting to!)
-	 
-
 
 4-3 2008
 
@@ -19,7 +32,7 @@ Changelog
 * Anims that are not set to repeat in their visual profile will now no longer call OnDieFinished() (or whatever) every frame, but only once (unless anim is changed/restarted)
 * BUGFIX:  Fixed bug where warping an entity onto the screen from offscreen would sometimes not work right, now that entity will always get its OnPostInit called first
 * Added "force_set" command to ForceVisual brain, so you can override visuals with whole animation sets for all directions, not just single anims
-* Added Entity:GetVisualStateOverride() and Entity:SetVisualStateOverride() (same as the 
+* Added Entity:GetVisualStateOverride() and Entity:SetVisualStateOverride() 
 * Script: Player in RPG can now die and respawn by his bed with a little cutscene, but not finished..
 
 3-28 2008

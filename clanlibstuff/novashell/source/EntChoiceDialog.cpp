@@ -11,13 +11,13 @@ EntChoiceDialog::EntChoiceDialog(const string &initMessage): BaseGameEntity(Base
 	m_pFont  = NULL;
 	m_pListWorld = NULL;
 	m_pWindow = NULL;
-	m_entityID = 0;
+	m_entityID = C_ENTITY_NONE;
 	m_chosenID = -1;
 	m_mode = nothing;
 	m_pTitleFont = NULL;
 	m_callbackFunctionName = "OnDialogResponse";
 	m_textRect = CL_Rect(0,0,0,0);
-
+	m_startingSelection = "_first_";
 
 	m_slots.connect (CL_Keyboard::sig_key_down(), this, &EntChoiceDialog::OnButtonDown);
 	m_timer.SetUseSystemTime(true);
@@ -31,6 +31,8 @@ EntChoiceDialog::EntChoiceDialog(const string &initMessage): BaseGameEntity(Base
 
 EntChoiceDialog::~EntChoiceDialog()
 {
+	
+	
 	if (GetApp() && GetApp()->GetMyScriptManager())	
 	{
 		GetApp()->GetMyScriptManager()->RunFunction("OnDialogClose", (BaseGameEntity*)this);
@@ -71,7 +73,13 @@ void EntChoiceDialog::ProcessInitString(const string &msg)
 		
 		if (words[0] == "msg")
 		{
-			m_msg = CL_String::tokenize(words[1], "\n", false);
+			if (words.size() == 1)
+			{
+				m_msg.clear();
+			} else
+			{
+				m_msg = CL_String::tokenize(words[1], "\n", false);
+			}
 		}else
 		
 		{
@@ -82,7 +90,9 @@ void EntChoiceDialog::ProcessInitString(const string &msg)
 }
 
 
-void EntChoiceDialog::HandleMessageString(const std::string &msg)
+
+
+string EntChoiceDialog::HandleMessageString(const std::string &msg)
 {
 	vector<string> words = CL_String::tokenize(msg, "|");
 
@@ -96,7 +106,20 @@ void EntChoiceDialog::HandleMessageString(const std::string &msg)
 		d.m_text = words[1];
 		m_choices.push_back(d);
 	} else
+		if (words[0] == "get_callback")
+		{
+			return m_callbackFunctionName;
+		} else
 
+			if (words[0] == "get_entity_id")
+		{
+			return CL_String::from_int(m_entityID);
+		} else
+			if (words[0] == "get_selection")
+			{
+				return m_startingSelection;
+			} else
+		
 		if (words[0] == "activate")
 		{
 			m_mode = adding;	
@@ -110,7 +133,10 @@ void EntChoiceDialog::HandleMessageString(const std::string &msg)
 			m_timer.SetIntervalReached();
 			m_curElementToPlace = 0;
 			
-			if (m_startingSelection.empty()) m_startingSelection = m_choices[0].m_result; //default to first option
+			if (m_startingSelection.empty() || m_startingSelection == "_first_") 
+			{
+				m_startingSelection = m_choices[0].m_result; //default to first option
+			}
 			AddItems(); //add the first one
 			CalculateCenteredWindowPosition();
 			GetApp()->GetMyScriptManager()->RunFunction("OnDialogOpen", (BaseGameEntity*)this);
@@ -118,6 +144,8 @@ void EntChoiceDialog::HandleMessageString(const std::string &msg)
 	{
 		LogMsg("EntChoiceDialog: Don't know how to handle message %s", msg.c_str());
 	}
+
+		return "";
 }
 
 void EntChoiceDialog::CalculateCenteredWindowPosition()
@@ -162,13 +190,18 @@ void EntChoiceDialog::AddItems()
 
 		CalculateSize();
 
-		if (m_choices[m_curElementToPlace].m_result == m_startingSelection)
+		if (m_startingSelection != "")
 		{
-			m_pListWorld->set_current_item(index);
-			m_startingSelection = "";
-			m_slots.connect( m_pListWorld->sig_highlighted(), this, &EntChoiceDialog::OnHighlighted);
+			m_pListWorld->clear_selection();
+		} 
 
-		}
+			if (m_choices[m_curElementToPlace].m_result == m_startingSelection || m_startingSelection == "_first_")
+			{
+				m_pListWorld->set_current_item(index);
+				m_startingSelection = "";
+				m_slots.connect( m_pListWorld->sig_highlighted(), this, &EntChoiceDialog::OnHighlighted);
+			} 
+
 
 		m_curElementToPlace++;
 		if (m_curElementToPlace >= m_choices.size())
@@ -323,8 +356,8 @@ void EntChoiceDialog::BuildDialog()
 		//turn the windows BG off
 	
 		m_pListWorld = new CL_ListBox(m_pWindow->get_client_area());
+		m_pListWorld->clear_selection();
 		
-
 		if (!m_msg.empty())
 		{
 
@@ -357,6 +390,8 @@ void EntChoiceDialog::OnSelection(int selItem)
 	
 	if (m_pListWorld->get_count() < 1) return; //not ready for prime time
 
+	if (m_startingSelection != "") return; //not ready
+
 	m_pListWorld->enable(false);
 	if (m_pWindow)
 	{
@@ -380,7 +415,7 @@ void EntChoiceDialog::FinalSelectionProcessing()
 {
 	SetDeleteFlag(true);
 
-	if (m_entityID > 0)
+	if (m_entityID != C_ENTITY_NONE)
 	{
 		MovingEntity *m_pParent = ((MovingEntity*)EntityMgr->GetEntityFromID(m_entityID));
 
@@ -389,13 +424,20 @@ void EntChoiceDialog::FinalSelectionProcessing()
 			GetScriptManager->SetStrict(false);
 			try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), 
 				m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result, (BaseGameEntity*)this);
-			} LUABIND_ENT_BRAIN_CATCH( ("Error while calling" + m_callbackFunctionName).c_str());
+			} LUABIND_ENT_BRAIN_CATCH( ("Error while calling " + m_callbackFunctionName).c_str());
 			GetScriptManager->SetStrict(true);
 
 		} else
 		{
 			LogMsg("ChoiceDialog: Can't send result %s, entity no longer exists", m_choices[m_chosenID].m_result.c_str());
 		}
+	} else
+	{
+		GetScriptManager->SetStrict(false);
+		try {luabind::call_function<void>(GetScriptManager->GetMainState(), 
+			m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result, (BaseGameEntity*)this);
+		} LUABIND_CATCH( ("Error while calling " + m_callbackFunctionName));
+		GetScriptManager->SetStrict(true);
 	}
 
 

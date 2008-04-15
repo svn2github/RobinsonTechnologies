@@ -399,6 +399,7 @@ void MovingEntity::ClearColorMods()
 void MovingEntity::Kill()
 {
 
+
 	//tell any entities that were attached to us that we're dying and to also kill themselves
 	if (!m_attachedEntities.empty())
 	{
@@ -416,9 +417,9 @@ void MovingEntity::Kill()
 		}
 	}
 
-	if (m_pScriptObject && IsPlaced() && m_pScriptObject->FunctionExists("OnKill"))
+	if (m_pScriptObject && IsPlaced())
 	{
-		m_pScriptObject->RunFunction("OnKill");
+		RunFunctionIfExists("OnKill");
 		g_inputManager.RemoveBindingsByEntity(this);
 	}
 
@@ -481,7 +482,7 @@ bool MovingEntity::HandleMessage(const Message &msg)
 	return false; //didn't handle
 }
 
-void MovingEntity::HandleMessageString(const string &msg)
+std::string MovingEntity::HandleMessageString( const string &msg )
 {
 	if (GetScriptObject())
 	{
@@ -491,6 +492,8 @@ void MovingEntity::HandleMessageString(const string &msg)
 		LogMsg("Can't deliver message %s, script not active in ent %d",
 			msg.c_str(), ID());
 	}
+
+	return "";
 }
 
 void MovingEntity::SetDefaults()
@@ -580,9 +583,9 @@ void MovingEntity::SetText(const string &text)
 	m_text = text;
 	StringReplace("\\n", "\n", m_text);
 
-	if (m_text.empty())
+	if (m_pFont)
 	{
-		SAFE_DELETE(m_pFont);
+		//SAFE_DELETE(m_pFont);
 	} else
 	{
 		if (!m_pFont)
@@ -817,6 +820,13 @@ void MovingEntity::SetNameEx(const std::string &name, bool bRemoveOldTag)
 
 void MovingEntity::Serialize(CL_FileHelper &helper)
 {
+	
+	if (helper.IsWriting() && m_pScriptObject && IsPlaced() && m_bHasRunPostInit && !GetDeleteFlag())
+	{
+		RunFunctionIfExists("OnSave");
+	}
+
+	
 	//load/save needed data
 	cl_uint8 ver = m_pTile->GetParentScreen()->GetVersion();
 
@@ -874,7 +884,7 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 
 	if (!helper.IsWriting())
 	{
-		//we need to init this too
+		//we need to init this too, as we just loaded it.
 		Init();
 		m_body.SetOrientation(orientation);
 		//SetSpriteByVisualStateAndFacing();
@@ -890,6 +900,12 @@ void MovingEntity::SetMainScriptFileName(const string &fileName)
 
 BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 {
+	if (m_pScriptObject && IsPlaced() && m_bHasRunPostInit)
+	{
+		RunFunctionIfExists("OnSave");
+	}
+	
+	
 	MovingEntity *pNew = new MovingEntity;
 	pTile->SetEntity(pNew);
 
@@ -2730,7 +2746,8 @@ void MovingEntity::Render(void *pTarget)
 		if (m_bLockedScale)
 		{
 			m_pFont->set_scale(textScaleX , textScaleY);
-			
+			m_pFont->set_alignment(originTemp, offsetX , offsetY);
+
 		} else
 		{
 			m_pFont->set_scale(textScaleX * GetCamera->GetScale().x, textScaleY *GetCamera->GetScale().y);
@@ -2876,7 +2893,7 @@ void MovingEntity::CheckVisibilityNotifications(unsigned int notificationID)
 void MovingEntity::Update(float step)
 {
 
-if (GetGameLogic()->GetGamePaused()) return;
+	if (UnderPriorityLevel()) return;
 
 	if (g_watchManager.GetVisibilityID() == m_lastVisibilityNotificationID)
 	{
@@ -2962,7 +2979,8 @@ if (GetGameLogic()->GetGamePaused()) return;
 
 void MovingEntity::ApplyPhysics(float step)
 {
-	
+	if (UnderPriorityLevel()) return;
+
 	if (m_attachEntID != C_ENTITY_NONE)
 	{
 		if (m_attachEntID != C_ENTITY_CAMERA)
@@ -3080,7 +3098,8 @@ void MovingEntity::SetIsOnScreen(bool bNew)
 void MovingEntity::PostUpdate(float step)
 {
 	
-	if (GetGameLogic()->GetGamePaused()) return;
+	if (UnderPriorityLevel()) return;
+
 	if (m_bRanPostUpdate) return; else m_bRanPostUpdate = true;
 	if (m_bRequestsVisibilityNotifications)
 	{

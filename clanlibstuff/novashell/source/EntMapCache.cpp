@@ -841,8 +841,12 @@ void EntMapCache::Update(float step)
 		return;
 	}
 
-	if (GetGameLogic()->GetGamePaused() == false)
+	//if (GetGameLogic()->GetGamePaused() == false)
 	{
+	
+		//we need to check per-entity to see if they have priority to run here!! and in the watchmanager? ugh!
+		
+		
 		//note, if tiles ever actually need to DO something in their think phase, this should use
 		//m_tileLayerDrawList instead of entityList
 		

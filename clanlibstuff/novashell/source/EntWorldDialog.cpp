@@ -177,7 +177,7 @@ EntWorldDialog::~EntWorldDialog()
 }
 
 
-void EntWorldDialog::HandleMessageString(const std::string &msg)
+string EntWorldDialog::HandleMessageString(const std::string &msg)
 {
 
 	if (msg == "BootUpWorld")
@@ -190,6 +190,8 @@ void EntWorldDialog::HandleMessageString(const std::string &msg)
 	{
 		LogError("Unknown message: %s", msg.c_str());
 	}
+
+	return "";
 	
 }
 

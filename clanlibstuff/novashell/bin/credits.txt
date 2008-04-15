@@ -16,6 +16,8 @@ Erin McCLellan
 
 Music: Kevin MacLeod (incompetech.com) Licensed under Creative Commons "Attribution 3.0" http://creativecommons.org/licenses/by/3.0/
 
+gulp.ogg (with Seth's EQ change): by Oto No Happa http://www.geocities.jp/spacheeg/
+
 Novashell is powered by the Clanlib Game SDK (www.clanlib.org)
 
 Special thanks:

@@ -201,7 +201,7 @@ public:
   void SetAnimPause(bool bPause) { m_bAnimPaused = bPause;}
   bool GetAnimPause() {return m_bAnimPaused;}
   
-  virtual void HandleMessageString(const string &msg);
+  virtual string HandleMessageString(const string &msg);
   virtual bool HandleMessage(const Message &msg);
 
   void SetDefaultTextColor(CL_Color color) {m_defaultTextColor = color;}

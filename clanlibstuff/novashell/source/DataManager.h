@@ -56,11 +56,11 @@ public:
 	bool Exists(const string &keyName); //returns true if key exists
 	void Delete(const string &keyName);
 	void Clear();
-	bool SetIfNull(const string &keyName, const string &value);
+	string SetIfNull(const string &keyName, const string &value);
 	float GetNumWithDefault(const string &keyName, float value);
 	string GetWithDefault(const string &keyName, const string &value);
 
-	bool SetNumIfNull(const string &keyName, float value);
+	float SetNumIfNull(const string &keyName, float value);
 	float GetNum(const string &keyName);
 	bool SetNum(const string &keyName, float num);
 	float ModNum(const string &keyName, float mod);

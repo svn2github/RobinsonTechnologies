@@ -2,6 +2,7 @@
 #include "BaseGameEntity.h"
 #include "EntityManager.h"
 #include "TileEntity.h"
+#include "GameLogic.h"
 
 int BaseGameEntity::m_iNextValidID = 101; //we reserve ID's less than this for special things
 
@@ -10,7 +11,8 @@ int BaseGameEntity::m_iNextValidID = 101; //we reserve ID's less than this for s
 BaseGameEntity::BaseGameEntity(int ID):m_iType(C_ENTITY_TYPE_BASE),
                                        m_bTag(false)
 {
-    m_deleteFlag = false;
+    m_priorityLevel = C_PRIORITY_LEVEL_NORMAL;
+	m_deleteFlag = false;
 	m_pTile = NULL;
     SetID(ID);
 	EntityMgr->RegisterEntity(this);
@@ -33,6 +35,15 @@ BaseGameEntity::~BaseGameEntity()
 	EntityMgr->RemoveEntity(this);
 }
 
+bool BaseGameEntity::UnderPriorityLevel()
+{
+	//this is a hack for now, the plan is to add a GetGameLogic()->SetCurrentPriorityLevel() to test this against at some point
+
+	if (!GetGameLogic()->GetGamePaused())
+		return false;
+
+	if (GetPriorityLevel() <= 0) return true; else return false;
+}
 void BaseGameEntity::SetDeleteFlag(bool bNew)
 {
 

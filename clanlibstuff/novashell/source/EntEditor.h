@@ -32,7 +32,7 @@ public:
 	void BuildWorldListBox();
 	void BuildLayerControlBox();
 	bool IsDialogOpen() {return m_bDialogOpen;}
-	virtual void HandleMessageString(const string &msg);
+	virtual string HandleMessageString(const string &msg);
 	void SetHideMode(bool bHide);
 	bool GetHideMode();
 	void OnToggleGrid();
