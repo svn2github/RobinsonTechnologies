@@ -1634,7 +1634,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 
 	case CL_KEY_C:
 
-		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		if (IsControlKeyDown())
 		{
 			//two modes of copy, one to cut out subtiles..
 			if (m_dragInProgress)
@@ -1679,7 +1679,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		break;
 
 	case CL_KEY_X:
-		if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL)) return;
+		if (!IsControlKeyDown()) return;
 		OnCut();
 		break;
 
@@ -1703,13 +1703,13 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		break;
 
 	case CL_KEY_Z:
-		if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL)) return;
+		if (!IsControlKeyDown()) return;
 		OnUndo();
 		break;
 
 	case CL_KEY_V:
 			
-	if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+	if (IsControlKeyDown())
 	{
 		CL_Vector2 vecMouseClickPos = CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y());
 		CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(vecMouseClickPos);

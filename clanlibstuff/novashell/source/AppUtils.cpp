@@ -734,3 +734,13 @@ bool RotateVectorTowardsAnotherVector(CL_Vector2 &vecFacing, CL_Vector2 vecFacin
 
 	return true;
 }
+
+bool IsControlKeyDown()
+{
+	return 
+		(CL_Keyboard::get_keycode(CL_KEY_CONTROL)
+#ifdef __APPLE__
+		|| CL_Keyboard::get_keycode(CL_KEY_COMMAND)
+#endif
+		);
+}

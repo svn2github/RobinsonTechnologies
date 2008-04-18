@@ -2,12 +2,15 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
-5-16 2008
+5-18 2008
 
 * Feature: Can edit X/Y position from entity properties
 * Numbers are truncated to required precision when viewing in text form (2.30000 becomes 2.3 and 2.00000 becomes 2)
-* NEW FEATURE: Tile paint mode added. Hold down V to 'paint' over the surface, grid snap must be on.
-* Joystick support added, check the InputManager docs to see how it works.  Treeworld and RPG example also support joysticks now.
+* NEW FEATURE: Tile paint mode added. Hold down V to 'paint' over a map
+* Command-C, Command-V can be used for cutting and pasting entities (Cobra)
+* OS X BUGFIX: Cut and paste from GUI menus now works in OS X, has been broken for a few builds, didn't notice!
+* NEW FEATURE: Joystick support added, check the InputManager docs to see how it works.  Treeworld and RPG example also support joysticks now.
+- Note, joystick support isn't finished, we still need a way to read analog sticks.  Also, OS X needs clanlib joystick support.
 
 4-14 2008
 

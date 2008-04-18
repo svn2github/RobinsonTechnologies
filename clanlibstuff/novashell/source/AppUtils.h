@@ -4,6 +4,8 @@
 #include "Screen.h"
 #include "misc/C2DMAtrix.h"
 
+bool IsControlKeyDown(); //is Control or the Command key (OSX only) down?
+
 void BlitMessage(string msg, int posY = -1);
 string ColorToString(const CL_Color &colr);
 CL_Color StringToColor(const string &stColor);
