@@ -423,7 +423,6 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 	{
 		m_pListType->insert_item(g_materialManager.GetMaterial(i)->GetName());
 	}
-
 	
 	//setup our own tip display
 	m_pLabel = new CL_Label(CL_Point(100,1),"", m_pWindow->get_client_area());

@@ -77,6 +77,10 @@ private:
 	unsigned int byte_this;
 public:
 
+	bool operator != (const CBit32& v) const
+	{
+		return !(byte_this == (v.byte_this));
+	}
 
 	void clear()
 	{

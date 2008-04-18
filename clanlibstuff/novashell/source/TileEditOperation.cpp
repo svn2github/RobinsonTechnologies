@@ -629,14 +629,17 @@ void TileEditOperation::ApplyScaleMod(CL_Vector2 vMod)
 }
 
 
-bool TilesAreSimilar(Tile *pTile, Tile *pSrcTile)
+bool TilesAreSimilar(Tile *pTile, Tile *pSrcTile, bool bPickyMode)
 {
-	
 	
 	if (pTile->GetType() != pSrcTile->GetType())
 	{
 		//can't be a match here
 		return false;
+	}
+	if (bPickyMode)
+	{
+		if (pTile->GetBitField() != pSrcTile->GetBitField()) return false;
 	}
 
 	if (pTile->GetType() == C_TILE_TYPE_PIC)

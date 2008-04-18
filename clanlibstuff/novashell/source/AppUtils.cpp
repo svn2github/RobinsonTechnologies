@@ -10,6 +10,18 @@ CL_Vector2 Vector2Perp(const CL_Vector2 &v)
 }
 
 
+void DrawTextBar(int posY, CL_Color barColor, string msg)
+{
+	CL_Rect r(0,posY,GetScreenX, posY+15);
+	CL_Display::fill_rect(r, barColor);
+
+	//draw the text over it
+	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
+	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,posY+7, msg);
+
+}
+
 void DrawBullsEyeWorld(CL_Vector2 vecPos, CL_Color col, int size, CL_GraphicContext *pGC)
 {
 
@@ -279,9 +291,33 @@ string RectfToStringEx(const CL_Rectf * pR)
 	return string(stTemp);
 }
 
+
+string SimplifyNumberString(string num)
+{
+	//find the decimal point
+	size_t decimalPos = num.rfind(num, '.');
+
+	if (decimalPos != string::npos)
+	{
+		//we found one.  Let's simplify stuff.
+		
+		size_t endpos = num.find_last_not_of('0');
+
+		if( string::npos != endpos )
+			num = num.substr( 0, endpos+1 );
+
+		//if the last char is a ., kill it too
+
+		if (num[num.size()-1] == '.')
+			num = num.substr(0, num.size()-1);
+	}
+	return num;
+}
+
+
 string VectorToString(const CL_Vector2 * pVec)
 {
-	return CL_String::from_float(pVec->x) + " " + CL_String::from_float(pVec->y);
+	return ( SimplifyNumberString (CL_String::from_float(pVec->x)) + " " + SimplifyNumberString(CL_String::from_float(pVec->y)));
 }
 
 

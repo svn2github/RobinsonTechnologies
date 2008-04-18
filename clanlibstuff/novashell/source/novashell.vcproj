@@ -261,10 +261,10 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="AppPrecomp.h"
-				PrecompiledHeaderFile=".\Release/novashell.pch"
-				AssemblerListingLocation=".\Release/"
-				ObjectFile=".\Release/"
-				ProgramDataBaseFileName=".\Release/"
+				PrecompiledHeaderFile=".\Release/debug_novashell.pch"
+				AssemblerListingLocation=".\Release Debug/"
+				ObjectFile=".\Release Debug/"
+				ProgramDataBaseFileName=".\Release Debug/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
@@ -284,7 +284,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
-				OutputFile="../bin/game.exe"
+				OutputFile="../bin/game_release_debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\SharedLib\lib;..\..\..\SharedLib\lib\clanlib;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\FMOD\lib"
@@ -3307,6 +3307,34 @@
 				</File>
 				<File
 					RelativePath=".\EffectExplosion.cpp"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\Joystick.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

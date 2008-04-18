@@ -74,12 +74,13 @@ public:
 	CL_Color GetColor() {return m_color;}
 	int GetGraphNodeID() {return m_graphNodeID;}
 	void SetGraphNodeID(int id) {assert(m_graphNodeID == invalid_node_index); m_graphNodeID = id;}
+	CBit32 GetBitField() {return m_bitField;}
 enum
 {
  e_flippedX = D_BIT_0,
  e_flippedY = D_BIT_1,
  e_customCollision = D_BIT_2,
- e_needsUpdate = D_BIT_3,
+ e_needsUpdate = D_BIT_3, //not used?
  e_notPersistent = D_BIT_4, //if true, won't be saved to disk
  e_castShadow = D_BIT_5,
  e_sortShadow = D_BIT_6,

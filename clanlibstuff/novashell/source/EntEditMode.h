@@ -136,7 +136,7 @@ protected:
 	void DrawDragRect(CL_GraphicContext *pGC);
 	void onButtonDownTilePicInfo(const CL_InputEvent &key);
 	void TurnOffFocus();
-
+	void TilePaint();
 	enum
 	{
 		C_GUI_CANCEL,
@@ -160,6 +160,7 @@ protected:
 	bool m_bHideSelection;
 	CL_ListBox * m_pTilePicColList;
 	HashedResource * m_pResInfo; 
+	bool m_bTilePaintModeActive;
 };
 
 

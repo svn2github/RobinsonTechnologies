@@ -19,7 +19,6 @@ EntChoiceDialog::EntChoiceDialog(const string &initMessage): BaseGameEntity(Base
 	m_textRect = CL_Rect(0,0,0,0);
 	m_startingSelection = "_first_";
 
-	m_slots.connect (CL_Keyboard::sig_key_down(), this, &EntChoiceDialog::OnButtonDown);
 	m_timer.SetUseSystemTime(true);
 
 	SetName("ChoiceDialog");
@@ -31,8 +30,6 @@ EntChoiceDialog::EntChoiceDialog(const string &initMessage): BaseGameEntity(Base
 
 EntChoiceDialog::~EntChoiceDialog()
 {
-	
-	
 	if (GetApp() && GetApp()->GetMyScriptManager())	
 	{
 		GetApp()->GetMyScriptManager()->RunFunction("OnDialogClose", (BaseGameEntity*)this);
@@ -86,16 +83,23 @@ void EntChoiceDialog::ProcessInitString(const string &msg)
 			LogMsg("EntChoiceDialog doesn't understand keyword %s", words[0].c_str());
 		}
 	}
-	
 }
-
-
-
 
 string EntChoiceDialog::HandleMessageString(const std::string &msg)
 {
 	vector<string> words = CL_String::tokenize(msg, "|");
 
+	if (words[0] == "mod_selection")
+	{
+		if (words.size() < 2)
+		{
+			LogError("Mod selection should look like:  mod_selection|1  (or -1)");
+				return "";
+		}
+
+		ChangeSelection(CL_String::to_int(words[1]));
+
+	} else
 	if (words[0] == "add_choice")
 	{
 		DialogChoice d;
@@ -110,7 +114,6 @@ string EntChoiceDialog::HandleMessageString(const std::string &msg)
 		{
 			return m_callbackFunctionName;
 		} else
-
 			if (words[0] == "get_entity_id")
 		{
 			return CL_String::from_int(m_entityID);
@@ -119,6 +122,10 @@ string EntChoiceDialog::HandleMessageString(const std::string &msg)
 			{
 				return m_startingSelection;
 			} else
+				if (words[0] == "select_active")
+				{
+					OnSelection(-1);
+				} else
 		
 		if (words[0] == "activate")
 		{
@@ -145,7 +152,7 @@ string EntChoiceDialog::HandleMessageString(const std::string &msg)
 		LogMsg("EntChoiceDialog: Don't know how to handle message %s", msg.c_str());
 	}
 
-		return "";
+	return "";
 }
 
 void EntChoiceDialog::CalculateCenteredWindowPosition()
@@ -163,12 +170,10 @@ void EntChoiceDialog::CalculateCenteredWindowPosition()
 	}
 
 	r.right = max(m_textRect.get_width(), choiceMaxLength);
-
 	r.bottom = m_textRect.get_height() + (m_choices.size() * m_pFont->get_height());
 
 	//center this rect on screen
 	m_pWindow->set_position( (GetScreenX/2) - r.right/2, GetScreenY/2 - r.bottom/2);
-
 }
 
 
@@ -239,7 +244,6 @@ void EntChoiceDialog::RemoveItems()
 
 void EntChoiceDialog::Update(float step)
 {
-
 	switch (m_mode)
 	{
 	case adding:
@@ -297,31 +301,6 @@ void EntChoiceDialog::ChangeSelection(int offset)
 	int selected = m_pListWorld->get_current_item();
 	selected = altmod(selected + offset, m_pListWorld->get_count());
 	m_pListWorld->set_current_item(selected);
-}
-
-
-void EntChoiceDialog::OnButtonDown(const CL_InputEvent &key)
-{
-
-	if (!m_pListWorld->is_enabled()) return;
-
-	switch(key.id)
-	{
-		
-		case CL_KEY_UP:
-			ChangeSelection(-1);
-			break;
-
-		case CL_KEY_DOWN:
-			ChangeSelection(1);
-			break;
-
-		case CL_KEY_ENTER:
-			OnSelection(-1);
-			break;
-
-	}	
-	
 }
 
 

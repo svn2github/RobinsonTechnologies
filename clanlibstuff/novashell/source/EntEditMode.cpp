@@ -56,6 +56,8 @@ EntEditMode::EntEditMode(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_pPropertiesListData = NULL;
 	m_operation = C_OP_NOTHING;
 	m_bHideSelection = false;
+	m_bTilePaintModeActive = false;
+
 	SetName("edit mode");
 	Init();
 }
@@ -267,17 +269,12 @@ void EntEditMode::OnReplace()
 		{
 			pEnt = NULL;
 		}
-		
 
 		destPos = pTile->GetPos();
-
-
 		OnPaste(g_EntEditModeCopyBuffer, destPos+vPasteOffset);
-
 	}
 
 	PushUndosIntoUndoOperation();
-
 }
 
 void EntEditMode::ScaleSelection(CL_Vector2 vMod, bool bBigMovement)
@@ -329,7 +326,6 @@ void EntEditMode::OnHideModeChanged(bool bHide)
 void EntEditMode::Init()
 {
 	Kill();
-
 	
 	//setup GUI
 	m_pWindow = new CL_Window(CL_Rect(0, 0, 200, 150), "Tile Edit Floating Palette", CL_Window::close_button, GetApp()->GetGUI());
@@ -379,7 +375,7 @@ void EntEditMode::Init()
 
 
 	pItem = m_pMenu->create_item("Edit/ ");
-	pItem = m_pMenu->create_item("Edit/(Ctrl-V or right mouse button to paste selection)");
+	pItem = m_pMenu->create_item("Edit/(Ctrl-V to paste selection, hold V for paint mode)");
 	pItem->enable(false);
 
 	pItem = m_pMenu->create_item("Utilities/Import Image(s)");
@@ -463,6 +459,13 @@ void EntEditMode::Init()
 
 	//m_pInputBoxSnapSize->set_position()
 	offset.y += m_pCheckBoxSnap->get_height();
+	
+	//also add the new tile paint mode
+
+	
+	
+	
+	
 	GetSettingsFromWorld();
 	UpdateMenuStatus();
 	SnapSizeChanged(); //handle graying it out if needed
@@ -822,14 +825,11 @@ bool EntEditMode::IsDialogOpen(bool bCheckModelessDialogToo, bool bEvasive)
 	
 		return pVisEditor->IsDialogOpen();
 	}
-	
 
 	//the secondary check is done for script based hot keys and mouse wheels.. but in general, even though a dialog
 	//is open, we still want to be able to zoom, so ..
 	
 	if (m_bDialogIsOpen) return true;
-
-	
 	return false;
 }
 
@@ -865,12 +865,19 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 
 	switch(key.id)
 	{
-	
+		
 	case CL_KEY_W:
 		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 		{
 			OnDefaultTileHardness();
 		}
+		break;
+
+	case CL_KEY_V:
+
+			m_bTilePaintModeActive = false;
+			PushUndosIntoUndoOperation();
+
 		break;
 	
 	case CL_MOUSE_LEFT:
@@ -896,16 +903,12 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 				}
 			}
 			
-			
 			//highlight selected tile(s)
 			
 			if (!m_dragInProgress) break; //not a real drag was happening
 
 			//scan every tile within this range
 			m_vecScreenDragStop =  g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(key.mouse_pos.x, key.mouse_pos.y));
-
-		
-			
 			
 			if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL) &&
 				!CL_Keyboard::get_keycode(CL_KEY_SHIFT) &&
@@ -937,9 +940,6 @@ void EntEditMode::onButtonUp(const CL_InputEvent &key)
 				m_bHideSelection = false;			
 				//they clicked one thing, without really dragging.  Treat it special
 				m_selectedTileList.AddTileByPoint(m_vecDragStart, operation, g_pMapManager->GetActiveMap()->GetLayerManager().GetEditActiveList());
-		
-			
-
 			} else
 			{
 				
@@ -1022,14 +1022,12 @@ void EntEditMode::AddToUndo( TileEditOperation *pTileOperation)
 
 void EntEditMode::PushUndosIntoUndoOperation()
 {
-
 	if (m_undo.empty()) return;
 
 	g_pMapManager->GetActiveMapCache()->PushUndoOperation(m_undo);
 	m_undo.clear();
 
 	UpdateMenuStatus();
-
 }
 
 void EntEditMode::OnUndo()
@@ -1209,7 +1207,7 @@ bool EntEditMode::MouseIsOverSelection(CL_Point ptMouse)
 	
 		if (pWorldSelTile)
 		{
-			return TilesAreSimilar(pWorldSelTile, pSelTile);
+			return TilesAreSimilar(pWorldSelTile, pSelTile, true);
 		}
 
 	}
@@ -1718,6 +1716,9 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		OnPaste(g_EntEditModeCopyBuffer, vecWorld, true);
 		PushUndosIntoUndoOperation();
 		SAFE_DELETE(m_pContextMenu);
+	} else
+	{
+			m_bTilePaintModeActive = true;
 	}
 
 	break;
@@ -1725,8 +1726,43 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	}
 }
 
+void EntEditMode::TilePaint()
+{
+	if (!g_pMapManager->GetActiveMap()->GetSnapEnabled()) return;
+	if (g_EntEditModeCopyBuffer.m_selectedTileList.size() != 1) return;
+
+	CL_Vector2 vecMouseClickPos = CL_Vector2(CL_Mouse::get_x(),CL_Mouse::get_y());
+	CL_Vector2 vecWorld = ConvertMouseToCenteredSelectionUpLeft(vecMouseClickPos);
+	vecWorld = g_pMapManager->GetActiveMap()->SnapWorldCoords(vecWorld, m_vecSnapSize);
+	
+	Screen *pScreen = g_pMapManager->GetActiveMap()->GetScreen(vecWorld);
+	Tile *pReplaceTile = g_EntEditModeCopyBuffer.m_selectedTileList.front()->m_pTile;
+
+	TileEditOperation edit;
+
+	Tile *pTile = pScreen->GetTileByPosition(vecWorld, pReplaceTile->GetLayer());
+
+	//TileEditOperation temp = m_selectedTileList; //copy whatever is highlighted
+
+	if (pTile)
+	{
+		//if this tile is the same as the one we're going to paste, don't do it
+		if (TilesAreSimilar(pTile, pReplaceTile, true)) return;
+	}
+
+	//now add the one
+
+	g_EntEditModeCopyBuffer.SetIgnoreParallaxOnNextPaste();
+	OnPaste(g_EntEditModeCopyBuffer, vecWorld);
+	
+}
+
 void EntEditMode::Update(float step)
 {
+	if (m_bTilePaintModeActive)
+	{
+		TilePaint();
+	}
 }
 
 CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMouse)
@@ -1753,15 +1789,11 @@ CL_Vector2 EntEditMode::ConvertMouseToCenteredSelectionUpLeft(CL_Vector2 vecMous
 		}
 
 		vecMouse = g_pMapManager->GetActiveMap()->SnapWorldCoords(vecMouse, m_vecSnapSize);
-
-
 	} else
 	{
 		vecMouse = g_pMapManager->GetActiveMap()->SnapWorldCoords(vecMouse, CL_Vector2(1,1));
 		vecMouse -= g_EntEditModeCopyBuffer.GetSelectionSizeInWorldUnits()/2;
-
 	}
-	//vecMouse += CL_Vector2(GetWorld->GetDefaultTileSize()/2, GetWorld->GetDefaultTileSize()/2);
 	return vecMouse;
 }
 
@@ -2046,8 +2078,6 @@ void EntEditMode::Render(void *pTarget)
 		{
 
 			Tile *pTile = (*m_selectedTileList.m_selectedTileList.begin())->m_pTile;
-
-
 			unsigned int tileLayer = m_selectedTileList.m_selectedTileList.back()->m_pTile->GetLayer();
 			LayerManager &layerMan = g_pMapManager->GetActiveMap()->GetLayerManager();
 
@@ -2106,6 +2136,16 @@ void EntEditMode::Render(void *pTarget)
 		if (m_operation == C_OP_NOTHING)
 		DrawActiveBrush(pGC);
 	}
+
+	if (m_bTilePaintModeActive)
+	{
+		if (!g_pMapManager->GetActiveMap()->GetSnapEnabled() || g_EntEditModeCopyBuffer.m_selectedTileList.size() != 1) 
+		{
+			//show message so they know how to use the tile paint function
+			DrawTextBar(GetScreenY-20, CL_Color(0,0,0,120), "(To use TilePaint, you must have grid snap on and have one tile/entity in the copy buffer)"); 
+		}
+	}
+
 
 	//for testing
 }
@@ -2263,8 +2303,13 @@ if (m_bDialogIsOpen) return;
 	int SecondOffsetX = 100;
 	int ThirdOffsetX = 190;
 	int offsetY = 10;
-	CL_Button buttonCancel (CL_Point(buttonOffsetX+100,ptSize.y-50), "Cancel", window.get_client_area());
-	CL_Button buttonOk (CL_Point(buttonOffsetX+200,ptSize.y-50), "Ok", window.get_client_area());
+	
+	int rightSideBarStartingX = 135;
+	int rightBarOffsetX = 210;
+
+	
+	CL_Button buttonCancel (CL_Point(buttonOffsetX+100,ptSize.y-45), "Cancel", window.get_client_area());
+	CL_Button buttonOk (CL_Point(buttonOffsetX+200,ptSize.y-45), "Ok", window.get_client_area());
 	
 	CL_CheckBox flipX (CL_Point(buttonOffsetX,offsetY), "Flip X", window.get_client_area());
 	flipX.set_checked(pTile->GetBit(Tile::e_flippedX));
@@ -2309,7 +2354,7 @@ if (m_bDialogIsOpen) return;
 	CL_Button buttonEditScript (CL_Point(buttonOpenScript.get_client_x()+buttonOpenScript.get_width(), offsetY), "Edit", window.get_client_area());
 	offsetY+= 20;
 
-	CL_Label labelData (CL_Point(40, offsetY), "Custom data attached to the object:", window.get_client_area());
+	CL_Label labelData (CL_Point(10, offsetY), "Custom data attached to the object (dbld click to edit):", window.get_client_area());
 	offsetY+= 20;
 
 	CL_Point ptOffset = CL_Point(buttonOffsetX, offsetY);
@@ -2328,13 +2373,13 @@ if (m_bDialogIsOpen) return;
 	CL_Label labelLayer(CL_Point(buttonOffsetX, offsetY), "Changing layer affects all selected", window.get_client_area());
 
 	offsetY += 20;
-	rPos = CL_Rect(0,0, 85, 150);
+	rPos = CL_Rect(0,0, 110, 150);
 	ptOffset = CL_Point(buttonOffsetX, offsetY);
 	rPos.apply_alignment(origin_top_left, -ptOffset.x, -ptOffset.y);
 
+
 	CL_ListBox layerList(rPos, window.get_client_area());
 	LayerManager &layerMan = g_pMapManager->GetActiveMap()->GetLayerManager();
-
 	vector<unsigned int> layerVec;
 	layerMan.PopulateIDVectorWithAllLayers(layerVec);
 	//sort it
@@ -2352,23 +2397,34 @@ if (m_bDialogIsOpen) return;
 			layerList.set_selected(i, true);
 		}
 	}
+	
+	CL_Label labelName5(CL_Point(rightSideBarStartingX, offsetY), "Pos X/Y:", window.get_client_area());
+	rPos = CL_Rect(0,0,110,16);
+	rPos.apply_alignment(origin_top_left, - rightBarOffsetX, -(offsetY));
 
-	 CL_Label labelName3(CL_Point(SecondOffsetX, offsetY), "Base Color:", window.get_client_area());
+	string originalPos =  VectorToString(&pTile->GetPos());
+	CL_InputBox inputPos(rPos, originalPos, window.get_client_area());
+
+	offsetY += 20;
+
+
+	 CL_Label labelName3(CL_Point(rightSideBarStartingX, offsetY), "Base Color:", window.get_client_area());
 	 rPos = CL_Rect(0,0,110,16);
-	 rPos.apply_alignment(origin_top_left, - (labelName3.get_width()+labelName3.get_client_x()+5), -(offsetY));
+	 rPos.apply_alignment(origin_top_left, - rightBarOffsetX, -(offsetY));
 	 
 	 string originalColor = ColorToString(pTile->GetColor());
 	 CL_InputBox inputColor(rPos, originalColor, window.get_client_area());
 
 	 offsetY += 20;
 
-	 CL_Label labelName4(CL_Point(SecondOffsetX, offsetY), "Scale X/Y:", window.get_client_area());
+	 CL_Label labelName4(CL_Point(rightSideBarStartingX, offsetY), "Scale X/Y:", window.get_client_area());
 	 rPos = CL_Rect(0,0,110,16);
-	 rPos.apply_alignment(origin_top_left, - (labelName4.get_width()+labelName3.get_client_x()+5), -(offsetY));
+	 rPos.apply_alignment(origin_top_left, - rightBarOffsetX, -(offsetY));
 
-	 string originalScale =  CL_String::from_float(pTile->GetScale().x) + " " + CL_String::from_float(pTile->GetScale().y);
+	 string originalScale = VectorToString(&pTile->GetScale());
 	 CL_InputBox inputScale(rPos, originalScale, window.get_client_area());
 
+	
 	if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 	{
 		buttonConvert.enable(true);
@@ -2386,7 +2442,8 @@ if (m_bDialogIsOpen) return;
 			inputName.set_text(C_MULTIPLE_SELECT_TEXT);
 			inputName.enable(false);
 			inputEntity.set_text(C_MULTIPLE_SELECT_TEXT);
-		
+			inputPos.set_text(C_MULTIPLE_SELECT_TEXT);
+			inputPos.enable(false);
 			listData.enable(false);
 			buttonAddData.enable(false);
 			buttonRemoveData.enable(false);
@@ -2519,9 +2576,9 @@ if (m_bDialogIsOpen) return;
 			
 			flags = flags | TileEditOperation::eBitScale;
 		}
+
 		//run through and copy these properties to all the valid tiles in the selection
 		pTileList->CopyTilePropertiesToSelection(pTile, flags);
-
 
 		if (pEnt && pTileList->m_selectedTileList.size() == 1)
 		{
@@ -2530,6 +2587,13 @@ if (m_bDialogIsOpen) return;
 			{
 				pEnt->SetName(inputName.get_text());
 			}
+
+			CL_Vector2 vNewPos = StringToVector(inputPos.get_text());
+			if (vNewPos != pEnt->GetPos())
+			{
+				pEnt->SetPos(vNewPos);
+			}
+
 			PropertiesSetDataManagerFromListBox(pEnt->GetData(), listData);
 		}
 

@@ -311,7 +311,6 @@ bool ScriptManager::Init()
 	UpdateAfterScreenChange(false);
 	open(m_pMainState);
 	
-
 	return true; //success
 }
 

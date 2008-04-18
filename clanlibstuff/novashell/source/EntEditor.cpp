@@ -301,7 +301,7 @@ void EntEditor::MapOptionsDialog()
 	CL_InputBox *pCache = dlg.add_input_box("Cache Sensitivity (0 for none, 1 for double the viewable area):", CL_String::from_float(g_pMapManager->GetActiveMap()->GetCacheSensitivity()));
 	CL_InputBox *pThumb = dlg.add_input_box("Auto Thumbnail Size: (0 for none):", CL_String::from_int(g_pMapManager->GetActiveMap()->GetThumbnailWidth()));
 	CL_InputBox *pBGColor = dlg.add_input_box("BG Color: (in the format of r g b a)", ColorToString(g_pMapManager->GetActiveMap()->GetBGColor()));
-	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", CL_String::from_float(g_pMapManager->GetActiveMap()->GetGravity()));
+	CL_InputBox *pGravity = dlg.add_input_box("Gravity:", SimplifyNumberString(CL_String::from_float(g_pMapManager->GetActiveMap()->GetGravity())));
 	CL_InputBox *pZoom = dlg.add_input_box("Current Camera Zoom (1 1 for normal):", VectorToString(&GetCamera->GetScale()));
 	CL_CheckBox *pPersistent = dlg.add_check_box("Persistent (changes saved for each player profile)", g_pMapManager->GetActiveMap()->GetPersistent(), 270);
 	CL_CheckBox *pAutoSave = dlg.add_check_box("Auto Save (if false, must use File->Save)", g_pMapManager->GetActiveMap()->GetAutoSave(), 200);
@@ -1565,16 +1565,9 @@ void EntEditor::Render(void *pTarget)
 	
 	if (m_bHideMode)
 	{
-		//draw bar at the top of the screen
-		CL_Rect r(0,0,GetScreenX, 15);
-		CL_Display::fill_rect(r, CL_Color(0,0,0,80));
-
-		//draw the text over it
-		ResetFont(GetApp()->GetFont(C_FONT_GRAY));
-		GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
-		GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, profile + " - TAB to restore");
+		//draw bar
+		DrawTextBar(0, CL_Color(0,0,0,80),  profile + " - TAB to restore"); 
 	}
-
 }
 
 void EntEditor::Update(float step)

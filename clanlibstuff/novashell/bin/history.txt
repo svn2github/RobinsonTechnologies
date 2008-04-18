@@ -2,6 +2,13 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+5-16 2008
+
+* Feature: Can edit X/Y position from entity properties
+* Numbers are truncated to required precision when viewing in text form (2.30000 becomes 2.3 and 2.00000 becomes 2)
+* NEW FEATURE: Tile paint mode added. Hold down V to 'paint' over the surface, grid snap must be on.
+* Joystick support added, check the InputManager docs to see how it works.  Treeworld and RPG example also support joysticks now.
+
 4-14 2008
 
 * Fixed error message that appeared when you opened the dink palette (Ketla)

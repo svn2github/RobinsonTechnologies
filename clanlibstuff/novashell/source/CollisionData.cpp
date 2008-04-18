@@ -37,6 +37,7 @@ const CL_Rectf & CollisionData::GetCombinedCollisionRect()
 
 	return m_collisionRect;
 }
+
 void CollisionData::SetScale(const CL_Vector2 &vScale)
 {
 	
@@ -57,7 +58,6 @@ void CollisionData::SetScale(const CL_Vector2 &vScale)
 
 void CollisionData::Load(const string &fileName)
 {
-
 	m_dataChanged = false;
 	SetRequestRectRecalculation();
 	m_fileName = fileName;
@@ -74,7 +74,6 @@ void CollisionData::Load(const string &fileName)
 
     Serialize(helper);
 	SAFE_DELETE(pFile);
-
 }
 
 void CollisionData::SaveIfNeeded()
@@ -157,8 +156,6 @@ void CollisionData::RecalculateCombinedOffsets()
 
 			}
 		}
-		
-		
 		listItor++;
 	}
 
@@ -168,7 +165,6 @@ void CollisionData::RecalculateCombinedOffsets()
 	{
 		//uh oh, has no collision data.  At least let's make it 0's
 		m_collisionRect = CL_Rectf(0,0,0,0);
-	
 	}
 
 	if (m_vecCombinedOffset.x == 100000)
@@ -271,7 +267,6 @@ void CollisionData::Serialize(CL_FileHelper &helper)
 		}
 	} else
 	{
-		
 		//we're reading
 		//first read how many lists we've got
 		unsigned int listCount;

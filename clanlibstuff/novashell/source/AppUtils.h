@@ -19,7 +19,6 @@ void RenderVertexList(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCou
 CL_Vector2 MakeNormal(CL_Vector2 &a, CL_Vector2 &b);
 void RenderVertexListRotated(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCount, CL_Color &colr, CL_GraphicContext *pGC,  float angleRad);
 void DrawLineFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC);
-
 void DrawRectFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC);
 void DrawRectFromWorldCoordinatesRotated(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC, float angleRad);
 string GetStrippedFilename(string str);
@@ -44,6 +43,9 @@ CL_Vector2 Vector2Perp(const CL_Vector2 &v);
 void CenterComponentOnScreen(CL_Component *pComp);
 void DrawWithShadow(int x, int y, const string &msg, CL_Color col = CL_Color(255,255,30));
 void DrawBullsEyeWorld(CL_Vector2 vecPos, CL_Color col, int size, CL_GraphicContext *pGC);
+void DrawTextBar(int posY, CL_Color barColor, string msg);
+
+string SimplifyNumberString(string num);
 
 typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
 

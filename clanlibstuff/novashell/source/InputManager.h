@@ -47,6 +47,46 @@ public:
 typedef std::map<unsigned int, vector<KeyInfo> > ScriptKeyMap;
 
 
+class JoyDirection
+{
+public:
+	JoyDirection()
+	{
+		m_bDown = false;
+
+	}
+	bool Update(float pos); //returns true if state was changed
+	bool IsPressed() {return m_bDown;}
+private:
+
+	bool m_bDown;
+};
+
+class JoystickInfo
+{
+public:
+		
+	JoystickInfo(int joyID) {m_joyID = joyID;}
+	enum eDirs
+	{
+		LEFT,
+		RIGHT,
+		UP,
+		DOWN,
+		DIR_COUNT
+	};
+	
+	void UpdateAxis(eDirs dir, float pos);
+	int GetID() {return m_joyID;}
+	string GetName();
+	int GetButtonCount();
+private:
+
+	
+	int m_joyID;
+	JoyDirection m_Dir[DIR_COUNT];
+};
+
 class InputManager
 {
 public:
@@ -64,10 +104,19 @@ public:
 	bool RemoveBinding(const string &keyName, const string &callbackFunction, int entityID);
 	void PrintStatistics();
 	void RemoveBindingsByEntity(MovingEntity *pEnt);
-
+	int GetJoystickCount();
+	void on_joystick_down(const CL_InputEvent &key, int joyID);
+	void on_joystick_up(const CL_InputEvent &key, int joyID);
+	void on_joystick_move(const CL_InputEvent &key, int joyID);
+	void OneTimeInit();
+	JoystickInfo * GetJoystick(int joyID);
 protected:
-	
+
+	void ShowJoystickErrorMessage(string keyName);
+	CL_SlotContainer m_slots;
+
 	ScriptKeyMap m_map;
+	vector< JoystickInfo> m_joyInfo;
 
 private:
 };

@@ -164,8 +164,6 @@ Zone GetCollisionByRay(Map * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int
 
 	}
 
-
-
 	if (bDebug)
 	{
 		CL_Display::flip(2); //show it now
@@ -193,7 +191,6 @@ Zone GetCollisionByRay(Map * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int
 				litor++;
 				z.m_materialID = litor->GetType(); 
 			}
-
 		}
 
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
@@ -286,6 +283,14 @@ string CameraSettingsToString(CameraSetting * pObj)
 	sprintf(stTemp, "CameraSettings");
 	return string(stTemp);
 }
+
+string JoystickToString(JoystickInfo * pObj)
+{
+	char stTemp[256];
+	sprintf(stTemp, "Joystick %d: %s", pObj->GetID(), pObj->GetName());
+	return string(stTemp);
+}
+
 
 string InputManagerToString(InputManager * pObj)
 {
@@ -606,6 +611,13 @@ myColor = Color(255,255,255,255);
 		,class_<CameraSetting>("CameraSettings")
 		.def("__tostring", &CameraSettingsToString)
 
+		,class_<JoystickInfo>("Joystick")
+		.def("__tostring", &JoystickToString)
+		.def("GetButtonCount", &JoystickInfo::GetButtonCount)
+		.def("GetName", &JoystickInfo::GetName)
+		.def("GetID", &JoystickInfo::GetID)
+
+
 		,class_<InputManager>("InputManager")
 		.def("__tostring", &InputManagerToString)
 		.def("AddBinding", &InputManager::AddBinding)
@@ -613,6 +625,8 @@ myColor = Color(255,255,255,255);
 		.def("RemoveBindingsByEntity", &InputManager::RemoveBindingsByEntity)
 		.def("GetMousePos", &InputManager::GetMousePos)
 		.def("SetMousePos", &InputManager::SetMousePos)
+		.def("GetJoystickCount", &InputManager::GetJoystickCount)
+		.def("GetJoystick", &InputManager::GetJoystick)
 
 		,class_<Goal_Think>("GoalManager")
 

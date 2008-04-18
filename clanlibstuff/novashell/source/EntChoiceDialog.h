@@ -39,7 +39,6 @@ protected:
 	};
 
 	void BuildDialog();
-	void OnButtonDown(const CL_InputEvent &key);
 	void ChangeSelection(int offset);
 	void OnSelection(int selItem);
 	void ProcessInitString(const string &msg);

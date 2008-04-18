@@ -327,16 +327,7 @@ void Console::RenderPostGUI()
 	if (!m_bOnScreen) return;
 
 	//So we can draw the info bar across the top OVER the main editor menu if need be, while still using the editor GUI below..
-
-	//draw bar at the top of the screen
-	CL_Rect r(0,0,GetScreenX, 15);
-	CL_Display::fill_rect(r, CL_Color(200,0,0,255));
-
-	//draw the text over it
-	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
-	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
-	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,7, "System Console - Press ` (backtick) to close, Ctrl-C to copy into system clipboard, Page-Up/Page-Down to scroll");
-
+	DrawTextBar(0, CL_Color(200,0,0,255), "System Console - Press ` (backtick) to close, Ctrl-C to copy into system clipboard, Page-Up/Page-Down to scroll"); 
 }
 void Console::Render()
 {

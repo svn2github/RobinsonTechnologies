@@ -119,7 +119,7 @@ protected:
 };
 
 typedef std::deque<TileEditOperation> operation_deque;
-bool TilesAreSimilar(Tile *pTile, Tile *pSrcTile);
+bool TilesAreSimilar(Tile *pTile, Tile *pSrcTile, bool bPickyMode = false); //if picky, bits are checked too
 
 
 #endif                  // include guard
