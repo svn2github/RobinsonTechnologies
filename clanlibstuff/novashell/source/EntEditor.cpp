@@ -531,6 +531,12 @@ void OpenScriptForEditing(string scriptName)
 		if (!ConfirmMessage("Script doesn't exist", file + " not found.\n\nWould you like to create this script?")) return;
 		
 		CL_OutputSource *pFile = g_VFManager.PutFile(file);
+		
+		if (!pFile)
+		{
+			LogError("Unable to create the file %s.  Bad directory maybe?", file.c_str());
+			return;
+		}
 		string text;
 		
 		text = "\nfunction OnInit() //run upon initialization\r\n\r\nend\r\n\r\n"; pFile->write(text.c_str(), text.size());

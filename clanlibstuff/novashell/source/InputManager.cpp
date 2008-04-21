@@ -16,6 +16,14 @@
 #define C_JOYSTICK_AXIS_MOD 50 //add to axis ids so we don't conflict with buttons
 #define C_JOYSTICK_ID_ANY_MOD 20000 //reserved area to mean "any joystick"
 
+StickData::StickData()
+{
+	m_vec = CL_Vector2(0,0);
+	
+	//360 controller is 5,6 btw
+	m_axis[0] = 2;
+	m_axis[1] = 7;
+}
 
 void InputManager::on_joystick_down(const CL_InputEvent &key, int joyID)
 {
@@ -52,10 +60,22 @@ void InputManager::on_joystick_move(const CL_InputEvent &key, int joyID)
 		//up and down
 		m_joyInfo[joyID].UpdateAxis(JoystickInfo::DOWN, key.axis_pos);
 		m_joyInfo[joyID].UpdateAxis(JoystickInfo::UP, -key.axis_pos);
+
+		m_joyInfo[joyID].m_stick[0].m_vec.y = key.axis_pos;
 	} else if (key.id == 0)
 	{
 		m_joyInfo[joyID].UpdateAxis(JoystickInfo::RIGHT, key.axis_pos);
 		m_joyInfo[joyID].UpdateAxis(JoystickInfo::LEFT, -key.axis_pos);
+		m_joyInfo[joyID].m_stick[0].m_vec.x = key.axis_pos;
+	} else if (key.id == m_joyInfo[joyID].m_stick[1].m_axis[0])
+	{
+		m_joyInfo[joyID].m_stick[1].m_vec.x = key.axis_pos;
+
+	} else if (key.id == m_joyInfo[joyID].m_stick[1].m_axis[1])
+
+	{
+		m_joyInfo[joyID].m_stick[1].m_vec.y = key.axis_pos;
+
 	}
 }
 
@@ -100,7 +120,7 @@ void JoystickInfo::UpdateAxis(eDirs dir, float pos)
 
 std::string JoystickInfo::GetName()
 {
-	return CL_Display::get_current_window()->get_ic()->get_joystick(m_joyID).get_device_name();
+	return m_name;
 }
 
 int JoystickInfo::GetButtonCount()
@@ -108,6 +128,12 @@ int JoystickInfo::GetButtonCount()
 	return CL_Display::get_current_window()->get_ic()->get_joystick(m_joyID).get_button_count();
 }
 
+void JoystickInfo::SetRightStickAxis(int axis1, int axis2)
+{
+	m_stick[1].m_axis[0] = axis1;
+	m_stick[1].m_axis[1] = axis2;
+
+}
 InputManager::InputManager()
 {
 	Init();
@@ -135,7 +161,8 @@ void InputManager::OneTimeInit()
 		m_slots.connect(joystick.sig_axis_move(), this, &InputManager::on_joystick_move, i);
 		m_slots.connect(joystick.sig_key_up(), this, &InputManager::on_joystick_up, i);
 		m_slots.connect(joystick.sig_key_down(), this, &InputManager::on_joystick_down, i);
-		m_joyInfo.push_back(JoystickInfo(i));
+		m_joyInfo.push_back(JoystickInfo(i, joystick.get_name()));
+		
 	}
 }
 
@@ -149,7 +176,7 @@ void InputManager::PrintStatistics()
 
 	for (;itor != m_map.end(); itor++)
 	{
-		LogMsg("Hash %d", itor->first);
+		//LogMsg("Hash %d", itor->first);
 		totalBinds += itor->second.size();
 	}
 
@@ -635,7 +662,7 @@ Adding a binding causes the engine to call the specified function every time the
 
 How to build the inputName string:
 
-This can be a single key, joystick button/dir/axis, or mouse button.
+This can be a single key, joystick button/dir, or mouse button.
 
 Valid input name examples: *a*, *b*, *c*, *3*, *4*, *f1*, *control*, *mouse_middle*, *mouse_left*, *space*, *mouse_wheel_up*, *tab*, *escape*, *subtract*, *equals*, *numpad_subtract*, *numpad_add*, *left*, *right*, *up*, *down* and so forth.
 
@@ -687,12 +714,9 @@ end
 
 About Joystick mapping:
 
-Valid joystick name examples: *joy_0_left*, *joy_1_up*, *joy_0_button_0*, *joy_any_down*, *joy_0_axis_0*
+Valid joystick name examples: *joy_0_left*, *joy_1_up*, *joy_0_button_0*, *joy_any_down*
 
 Instead of a # for which joystick, you can use "*any*" to map to all of them.
-
-If you map to an axis, your callback will be a floating point # between 0 and 1 of the axis, instead of a on/off boolean.
-
 
 Parameters:
 
@@ -779,4 +803,5 @@ Returns:
 
 A <Joystick> object or nil if the joystick doesn't exist.
 */
+
 

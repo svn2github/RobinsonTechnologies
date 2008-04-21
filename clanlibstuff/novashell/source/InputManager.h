@@ -62,11 +62,19 @@ private:
 	bool m_bDown;
 };
 
+class StickData
+{
+public:
+	StickData();
+	int m_axis[2];
+	CL_Vector2 m_vec;
+};
+
 class JoystickInfo
 {
 public:
 		
-	JoystickInfo(int joyID) {m_joyID = joyID;}
+	JoystickInfo(int joyID, string name) {m_joyID = joyID; m_name = name;}
 	enum eDirs
 	{
 		LEFT,
@@ -80,6 +88,13 @@ public:
 	int GetID() {return m_joyID;}
 	string GetName();
 	int GetButtonCount();
+	CL_Vector2 GetLeftStickPosition() { return m_stick[0].m_vec;}
+	CL_Vector2 GetRightStickPosition() {return m_stick[1].m_vec;}
+	void SetRightStickAxis(int axis1, int axis2);
+
+	string m_name; //we cache it because clanlib seems to forget??
+	StickData m_stick[2];
+
 private:
 
 	

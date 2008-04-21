@@ -55,10 +55,10 @@ void Message::Deliver()
 		return;
 	}
 
-	if (m_pEnt->GetType() < 0 || m_pEnt->GetType() > BaseGameEntity::C_ENTITY_BASE_TYPES)
+	if (m_pEnt->GetType() < 0 || m_pEnt->GetType() > 20000)
 	{
 		//this must be an invalid entity
-		LogError("Entity ID %d not able to accept message: %s.  Avoiding crash.", m_targetID, m_text.c_str());
+		LogError("Entity ID %d has a strange SetType set. %s.  Avoiding crash.", m_targetID, m_text.c_str());
 		return;
 	}
 	m_pEnt->HandleMessageString(m_text);

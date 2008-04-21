@@ -75,7 +75,7 @@ public:
 	  void HandleMessageString(const string &msg);
 	  void ClearAllMapsFromMemory();
 	  DataManager * Data() {return &m_data;}
-	  void SetShowMessageActive(bool bNew) {m_bShowingMessageWindow = bNew;}
+	  void SetShowMessageActive(bool bNew, CL_Window *pMsgWindow = false);
 	  bool GetShowMessageActive() {return m_bShowingMessageWindow;}
 	  void SetShowFPS(bool bNew) {m_bShowFPS = bNew;}
 	  bool GetShowFPS() {return m_bShowFPS;}
@@ -148,6 +148,7 @@ private:
 	CL_ResourceManager * m_pGUIResources;
 	CL_StyleManager_Bitmap * m_pGUIStyle;
 	CL_GUIManager *m_pGUIManager;
+	CL_Window *m_pShowMessageWindow;
 };
 
 void MovePlayerToCamera();

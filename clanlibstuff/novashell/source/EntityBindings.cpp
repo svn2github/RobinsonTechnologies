@@ -95,6 +95,7 @@ void luabindEntity(lua_State *pState)
 			.def("SendToBrainByName", &BrainManager::SendToBrainByName)
 			.def("AskBrainByName", &BrainManager::AskBrainByName)
 			.def("SendToBrainBase", &BrainManager::SendToBrainBase)
+			.def("GetBrainByName", &BrainManager::GetBrainByName)
 
 			.def("SetStateByName", &BrainManager::SetStateByNameNoReturn)
 			.def("GetActiveStateName", &BrainManager::GetStateByName)

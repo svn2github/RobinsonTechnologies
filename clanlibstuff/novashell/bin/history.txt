@@ -2,7 +2,23 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
-5-18 2008
+4-20
+
+* Added Joystick:GetLeftStickPosition() and Joystick:GetLeftStickPosition()
+* Gives warnings instead of crash with certain invalid visual profile settings
+* Added BrainManager:GetBrainByName
+* BUGFIX: Trying to create a .lua file in a bad directory no longer crashes the editor
+* BUGFIX: Can change the audio in a LoopSound using LoopingSound:Init() now
+* Added Camera:SetEntityTrackingOffset
+* If a GoalManager is removed while moving somewhere, it no longer changes the visual state back to idle if it notices it wasn't
+	in a run or walk state to begin with
+* BUGFIX: Using Entity:SetType() could cause some messages to not be delivered (log would say a crash was avoided)
+* Entity:PlaySoundPositioned tweaked, louder
+* Entity:IsCloseToEntity() will just send false instead of crashing if you send it nil..
+* Escape/Enter now also work to close emergency messages created with ShowMessage()
+* Mouse cursor is now always returned to the "on" state when loading a world
+
+4-18 2008
 
 * Feature: Can edit X/Y position from entity properties
 * Numbers are truncated to required precision when viewing in text form (2.30000 becomes 2.3 and 2.00000 becomes 2)

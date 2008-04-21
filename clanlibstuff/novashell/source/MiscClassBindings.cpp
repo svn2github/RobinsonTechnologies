@@ -584,6 +584,7 @@ myColor = Color(255,255,255,255);
 		.def("SetPosTarget", &Camera::SetTargetPos)
 		.def("SetPosCenteredTarget", &Camera::SetTargetPosCentered)
 		.def("SetScaleTarget", &Camera::SetScaleTarget)
+		.def("SetEntityTrackingOffset", &Camera::SetEntityTrackingOffset)
 
 		//Interpolation Settings
 		.def("SetMoveLerp", &Camera::SetMoveLerp)
@@ -616,6 +617,9 @@ myColor = Color(255,255,255,255);
 		.def("GetButtonCount", &JoystickInfo::GetButtonCount)
 		.def("GetName", &JoystickInfo::GetName)
 		.def("GetID", &JoystickInfo::GetID)
+		.def("GetLeftStickPosition", &JoystickInfo::GetLeftStickPosition)
+		.def("GetRightStickPosition", &JoystickInfo::GetRightStickPosition)
+		.def("SetRightStickAxis", &JoystickInfo::SetRightStickAxis)
 
 
 		,class_<InputManager>("InputManager")

@@ -30,7 +30,10 @@ BrainTopSeek::~BrainTopSeek()
 void BrainTopSeek::OnRemove()
 {
 	//LogMsg("TopSeek removed");
-	m_pParent->GetBrainManager()->SetStateByName("Idle");
+	if (m_pParent->GetVisualState() == VisualProfile::VISUAL_STATE_WALK || m_pParent->GetVisualState() == VisualProfile::VISUAL_STATE_IDLE)
+	{
+		m_pParent->GetBrainManager()->SetStateByName("Idle");
+	}
 	
 }
 

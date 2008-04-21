@@ -31,6 +31,12 @@ LoopingSound::~LoopingSound()
 
 void LoopingSound::Init(const string &file)
 {
+	if (m_handle != C_SOUND_NONE)
+	{
+		g_pSoundManager->KillChannel(m_handle);
+		m_handle = C_SOUND_NONE;
+	}
+
 	Play(false);
 	
 	m_file = file;

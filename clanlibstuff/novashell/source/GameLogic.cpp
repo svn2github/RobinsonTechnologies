@@ -60,7 +60,7 @@ GameLogic::GameLogic()
 	SetShowMessageActive(false);
 	m_strBaseMapPath = C_BASE_MAP_PATH+ string("/");
 	m_strScriptRootDir = "script";
-
+	m_pShowMessageWindow = false;
 	m_bRebuildCacheData = false;
 	m_strWorldsDirPath = "worlds";
 
@@ -379,14 +379,14 @@ bool GameLogic::Init()
 {
 
 	assert(!g_pMapManager->GetActiveMap());
-	
+	GetApp()->SetCursorVisible(true); //the default condition
+
 	if (g_pSoundManager && !GetApp()->ParmExists("-nosound"))
 	{
 		g_pSoundManager->Init();
 	}
 	GetApp()->OnGameReset();
 	g_VFManager.Reset();
-
 	g_VFManager.MountDirectoryPath(CL_Directory::get_current()+"/base");
 	
 	m_activeWorldName = "base";
@@ -596,7 +596,18 @@ void GameLogic::OnKeyUp(const CL_InputEvent &key)
 
 void GameLogic::OnKeyDown(const CL_InputEvent &key)
 {
-		if (g_inputManager.HandleEvent(key, true))
+		
+	if (GetShowMessageActive())
+	{
+		if (key.id == CL_KEY_ESCAPE || key.id == CL_KEY_ENTER)
+			
+			if (m_pShowMessageWindow)
+			{
+				m_pShowMessageWindow->quit();
+			}
+	}
+	
+	if (g_inputManager.HandleEvent(key, true))
 		{
 			//they handled it, let's ignore it
 			return;
@@ -681,7 +692,7 @@ void GameLogic::RebuildBuffers()
 
 void GameLogic::Kill()
 {
-	BlitMessage("Saving data...");
+	//BlitMessage("Saving data...");
 
 
 	if (g_pMapManager->GetActiveMap())
@@ -951,6 +962,12 @@ void GameLogic::ClearAllMapsFromMemory()
    
 }
 
+void GameLogic::SetShowMessageActive( bool bNew, CL_Window *pMsgWindow )
+{
+	m_bShowingMessageWindow = bNew;
+	m_pShowMessageWindow = pMsgWindow;
+}
+
 void MoveCameraToPlayer()
 {
 	MovingEntity * pEnt = (MovingEntity *)GetGameLogic()->GetMyPlayer();
@@ -968,18 +985,19 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle)
 {
 	CL_GUIManager *pStyle = GetApp()->GetGUI();
 
-	GetGameLogic()->SetShowMessageActive(true); //so it knows not to send mouse clicks to the engine while
 
 	if (!bForceClassicStyle && GetGameLogic()->GetGameGUI())
 	{
 			NS_MessageBox m(GetGameLogic()->GetGameGUI(), title, msg, "Ok", "", "");
+			GetGameLogic()->SetShowMessageActive(true, &m); //so it knows not to send mouse clicks to the engine while
 			m.run();
 			GetGameLogic()->SetShowMessageActive(false);
 			return;
 	}
 	
 	CL_MessageBox message(title, msg, "Ok", "", "", pStyle);
-	
+	GetGameLogic()->SetShowMessageActive(true, &message); //so it knows not to send mouse clicks to the engine while
+
 	//we're showing this
 	message.run();
 	GetGameLogic()->SetShowMessageActive(false);

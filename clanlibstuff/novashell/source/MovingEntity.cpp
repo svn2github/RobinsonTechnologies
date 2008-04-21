@@ -189,6 +189,7 @@ bool MovingEntity::IsOnSameMapAsEntityByID(int entID)
 
 bool MovingEntity::IsCloseToEntity(MovingEntity *pEnt, int dist)
 {
+	if (!pEnt) return false;
 	if (GetMap() != pEnt->GetMap()) return false;
 	return ( dist >   (GetPos()-pEnt->GetPos()).length()  );
 }
@@ -890,7 +891,6 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 		//SetSpriteByVisualStateAndFacing();
 	}
 
-
 }
 
 void MovingEntity::SetMainScriptFileName(const string &fileName)
@@ -1050,7 +1050,7 @@ void MovingEntity::UpdateSoundByPosition(int soundID, float minHearing, float ma
 }
 
 const float C_DEFAULT_MIN_HEARING = 100;
-const float C_DEFAULT_MAX_HEARING = 500;
+const float C_DEFAULT_MAX_HEARING = 800;
 
 int MovingEntity::PlaySoundPositioned(const string &fName)
 {
@@ -2544,6 +2544,13 @@ CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
 }
 void MovingEntity::Render(void *pTarget)
 {
+	if (m_pSprite->get_current_frame() == -1)
+	{
+		LogError("Sprite %d (%s) has no valid sprite frame assigned.  Don't set 1 frame anims to ping pong? Turn looping on?", ID(), GetName().c_str());
+		return;
+	}
+
+	
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	static float yawHold, pitchHold;
 
@@ -2935,7 +2942,7 @@ void MovingEntity::Update(float step)
 
 	m_brainManager.Update(step);
 
-	if (!m_bAnimPaused)
+	if (!m_bAnimPaused && m_pSprite->get_current_frame() != -1)
 	{
 		m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
 	}

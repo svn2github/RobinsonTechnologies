@@ -191,7 +191,6 @@ private:
 	int m_masterNavMapID; //a central node that connects to all warps on this map
 	tag_hash_list m_warpTagHashIDList; //keep track of the hash's of named tagobjects WARPS that exist and belong to this map (note, only warps!)
 
-	bool m_bKillingMap; //true if we're killing everything
 };
 
 void RemoveWorldFiles(const string &path); //util for deleting stuff

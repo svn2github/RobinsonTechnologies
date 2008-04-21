@@ -59,6 +59,7 @@ CL_Rectf Camera::GetViewRectWorld()
 
 void Camera::Reset()
 {
+	m_entityTrackingOffset = CL_Vector2(0,40);
 	m_bInstantUpdateASAP = false;
 	m_vecPos = g_mapDefaultCenterPos;
 	m_vecTargetPos = g_mapDefaultCenterPos;
@@ -140,7 +141,8 @@ void Camera::UpdateTarget()
 			CL_Vector2 vPos = pEnt->GetPos();
 			
 			//hard coded offset so we don't stare at the feet when zoomed in.  Move later
-			vPos.y -= (40*pEnt->GetScale().y);
+			vPos.y -= (m_entityTrackingOffset.y*pEnt->GetScale().y);
+			vPos.x -= (m_entityTrackingOffset.x*pEnt->GetScale().x);
 			SetTargetPosCentered(vPos);
 		} else
 		{
@@ -212,6 +214,10 @@ void Camera::Update(float step)
 
 }
 
+void Camera::SetEntityTrackingOffset( CL_Vector2 offset )
+{
+	m_entityTrackingOffset = offset;
+}
 /*
 Object: Camera
 Controls what part of the world is currently on the screen, and at what zoom level.

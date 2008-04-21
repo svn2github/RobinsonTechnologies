@@ -42,7 +42,7 @@ public:
 	void InstantUpdate(); //move camera instantly without lerping, useful after a focus change
 
 	int GetEntTracking(){return m_entTrackID;};
-
+	void SetEntityTrackingOffset(CL_Vector2 offset);
 protected:
 
 	void UpdateTarget();
@@ -56,6 +56,7 @@ protected:
 	int m_entTrackID;
 	bool m_bInstantUpdateASAP;
 	float m_moveLerp, m_scaleLerp;
+	CL_Vector2 m_entityTrackingOffset;
 };
 
 #endif                  // include guard
