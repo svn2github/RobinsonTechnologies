@@ -1516,7 +1516,8 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	m_pScriptObject = new ScriptObject();
 	string s = C_DEFAULT_SCRIPT_PATH;
 	s += pFileName;
-	
+
+	StringReplace("\\", "/", s);
 	g_VFManager.LocateFile(s);
 
 	if (!m_pScriptObject->Load(s.c_str()))
