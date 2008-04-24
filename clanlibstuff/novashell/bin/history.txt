@@ -2,6 +2,10 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+4-25
+
+BUGFIX:  Game was defaulting to "retail" mode in the last build, which disabled the editor (Starclopsofish)
+
 4-22
 
 * "\"'s are now automatically converted to "/"'s on linux when loading scripts

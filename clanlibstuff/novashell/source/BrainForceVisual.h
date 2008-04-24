@@ -25,7 +25,7 @@ public:
 	virtual const char * GetName() {return "ForceVisual";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainForceVisual(pParent);}
 
-	virtual void BrainForceVisual::HandleMsg(const string &msg);
+	virtual void HandleMsg(const string &msg);
 
 protected:
 	

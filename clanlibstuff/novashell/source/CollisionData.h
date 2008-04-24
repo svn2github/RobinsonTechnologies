@@ -47,7 +47,8 @@ protected:
 	int CountValidLineLists();
 	void SetRequestRectRecalculation() {m_bNeedsRecalc = true;}
 	void RecalculateCombinedOffsets();
-	void CollisionData::SetDefaults();
+	void SetDefaults();
+
 private:
 	CL_Rect m_rect;
 	CL_Rectf m_collisionRect;
