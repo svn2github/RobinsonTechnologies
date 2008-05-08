@@ -2,6 +2,16 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+5-8
+
+* Added some missing documentation for the latest joystick functions
+* Added string.findnocase to misc_utils.lua
+* Moved joystick code to system/joystick.lua, cleaned it up a bit, second stick on wireless 360 controller is now properly mapped
+* Fixed crash issue with MapManager:UnloadMapByName()
+* Strict variable checking now works again
+* Added the "Strong AI" example, it shows how to use the two sticks on a 360 (or similar) controller.  I did a few cleanups on it, but I want to fix it up
+and do a new ending for the game..
+
 4-25
 
 BUGFIX:  Game was defaulting to "retail" mode in the last build, which disabled the editor (Starclopsofish)

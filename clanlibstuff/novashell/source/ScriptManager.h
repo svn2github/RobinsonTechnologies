@@ -32,9 +32,11 @@ public:
 	~ScriptObject();
 	bool Load(const char *pFileName);
 	void RunFunction(const char *pFuncName);
+
 	void SetGlobal(const string& key, int value);
 	void RunString(const char *pString);
 	bool FunctionExists(const char *pFuncName);
+	bool FunctionExists(string &funcName);
 	bool VariableExists(const char *pVarName);
 
 	lua_State * GetState() {return m_pLuaState;}
@@ -66,6 +68,7 @@ public:
 	void SetStrict(bool bStrict);
 	bool VariableExists(const char *pFuncName);
 	bool FunctionExists(const char *pFuncName);
+	bool FunctionExists(string &funcName);
 
 	lua_State * GetMainState() {return m_pMainState;}
 	void UpdateAfterScreenChange(bool bActuallyChanged);

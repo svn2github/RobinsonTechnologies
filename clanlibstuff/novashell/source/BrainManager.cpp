@@ -409,6 +409,23 @@ Returns:
 
 How many brains were actually removed.
 
+func: GetBrainByName
+(code)
+Brain GetBrainByName(string brainName)
+(end)
+
+This lets you see if an entity has a specific brain and returns it.
+
+Note:
+
+<Brain> Is undocumented right now and only has a GetName() function, so this function is really only for tested to see if a certain brain exists or not at this time.
+
+Parameters:
+
+brainName - The name of the brain you'd like returned.
+
+Returns:  A <Brain> object or nil if no brain by this name exists in this entities <BrainManager>.
+
 func: SendToBrainByName
 (code)
 nil SendToBrainByName(string brainName, string msg)

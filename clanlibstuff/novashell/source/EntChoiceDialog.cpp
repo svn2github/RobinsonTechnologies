@@ -400,7 +400,9 @@ void EntChoiceDialog::FinalSelectionProcessing()
 
 		if (m_pParent)
 		{
+			if (!m_pParent->GetScriptObject()->FunctionExists(m_callbackFunctionName))
 			GetScriptManager->SetStrict(false);
+
 			try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), 
 				m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result, (BaseGameEntity*)this);
 			} LUABIND_ENT_BRAIN_CATCH( ("Error while calling " + m_callbackFunctionName).c_str());
@@ -412,7 +414,8 @@ void EntChoiceDialog::FinalSelectionProcessing()
 		}
 	} else
 	{
-		GetScriptManager->SetStrict(false);
+		if (!GetScriptManager->FunctionExists(m_callbackFunctionName))
+			GetScriptManager->SetStrict(false);
 		try {luabind::call_function<void>(GetScriptManager->GetMainState(), 
 			m_callbackFunctionName.c_str(), m_choices[m_chosenID].m_text, m_choices[m_chosenID].m_result, (BaseGameEntity*)this);
 		} LUABIND_CATCH( ("Error while calling " + m_callbackFunctionName));

@@ -38,11 +38,12 @@ void ScriptCallbackManager::OnActivate()
 
 	while (listItor != m_items.end())
 	{
-		LogMsg("Calling %s", listItor->m_callback.c_str());
+		//LogMsg("Calling %s", listItor->m_callback.c_str());
 		
 		if (listItor->m_entityID == C_ENTITY_NONE)
 		{
 			//global kind of thing
+			if (!GetScriptManager->FunctionExists(listItor->m_callback))
 			GetScriptManager->SetStrict(false);
 
 			try {
@@ -61,6 +62,7 @@ void ScriptCallbackManager::OnActivate()
 			} else
 			{
 				//let's actually run this function in this entities namespace
+				if (!m_pParent->GetScriptObject()->FunctionExists(listItor->m_callback))
 				GetScriptManager->SetStrict(false);
 
 				try {luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(),listItor->m_callback.c_str());

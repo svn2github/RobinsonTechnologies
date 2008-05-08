@@ -234,6 +234,11 @@ bool ScriptObject::FunctionExists(const char *pFuncName)
 	return bTemp;
 }
 
+bool ScriptObject::FunctionExists(string &funcName)
+{
+	return FunctionExists(funcName.c_str());
+}
+
 bool ScriptObject::VariableExists(const char *pFuncName)
 {
 	GetScriptManager->SetStrict(false);
@@ -245,7 +250,7 @@ bool ScriptObject::VariableExists(const char *pFuncName)
 void ScriptObject::RunFunction(const char *pFuncName)
 {
 //	DumpTable(m_pLuaState, NULL, LUA_REGISTRYINDEX);
-	GetScriptManager->SetStrict(false);
+	//GetScriptManager->SetStrict(false);
 
 	try { 
 		luabind::call_function<void>(m_pLuaState, pFuncName);
@@ -263,7 +268,7 @@ void ScriptObject::RunFunction(const char *pFuncName)
 		
 	}
 
-	GetScriptManager->SetStrict(true);
+	//GetScriptManager->SetStrict(true);
 
 }
 
@@ -326,14 +331,18 @@ void  ScriptManager::UpdateAfterScreenChange(bool bActuallyChanged)
 
 void ScriptManager::SetStrict(bool bStrict)
 {
+	SetGlobalBool("g_allowStrict", bStrict);
+	
+	/*
 	if (bStrict)
 	{
-		SetGlobalBool("g_allowStrict", true);
-
+		LogMsg("Setting strict to true");
 	} else
 	{
-		SetGlobalBool("g_allowStrict", false);
+		LogMsg("Setting strict to false");
+
 	}
+	*/
 }
 
 void ScriptManager::SetGlobal(const char * pGlobalName, int value)
@@ -358,6 +367,11 @@ bool ScriptManager::FunctionExists(const char *pFuncName)
 	bool bTemp = luabind::type(luabind::globals(m_pMainState)[pFuncName]) == LUA_TFUNCTION;
 	GetScriptManager->SetStrict(true);
 	return bTemp;
+}
+
+bool ScriptManager::FunctionExists(string &funcName)
+{
+	return FunctionExists(funcName.c_str());
 }
 
 void ScriptManager::SetGlobalBool(const char * pGlobalName, bool value)

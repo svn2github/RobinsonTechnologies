@@ -247,12 +247,10 @@ These functions are global and can be run from anywhere, they aren't attached to
 
 bool LUAExists(const string & name)
 {
-	GetScriptManager->SetGlobalBool("g_allowStrict", false);
+	GetScriptManager->SetStrict(false);
 	bool bTemp = luabind::type(luabind::globals(GetScriptManager->GetMainState())[name]) != LUA_TNIL;
-	GetScriptManager->SetGlobalBool("g_allowStrict", true);
-
+	GetScriptManager->SetStrict(true);
 	return bTemp; //doesn't exist
-
 }
 
 

@@ -74,6 +74,7 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 			if (m_state == STATE_OUTSIDE)
 			{
 				m_state = STATE_INSIDE;
+				if (!m_pParent->GetScriptObject()->FunctionExists("OnTriggerEnter"))
 				GetScriptManager->SetStrict(false);
 
 				try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), "OnTriggerEnter", GetPlayer);
@@ -85,6 +86,9 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 			{
 				if (m_pulseTimer.IntervalReached() || m_behaviorVar == 0)
 				{
+					if (!m_pParent->GetScriptObject()->FunctionExists("OnTriggerInside"))
+						GetScriptManager->SetStrict(false);
+
 					GetScriptManager->SetStrict(false);
 				try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), "OnTriggerInside", GetPlayer);
 					} LUABIND_ENT_BRAIN_CATCH( "Error while calling function OnTriggerInside");
@@ -97,7 +101,9 @@ void Trigger::SetTriggerState(bool bInsideRegion)
 		{
 			//must have just exited
 			m_state = STATE_OUTSIDE;
-			GetScriptManager->SetStrict(false);
+			if (!m_pParent->GetScriptObject()->FunctionExists("OnTriggerExit"))
+				GetScriptManager->SetStrict(false);
+
 			try {luabind::call_function<void>(m_pParent->GetScriptObject()->GetState(), "OnTriggerExit", GetPlayer);
 			} LUABIND_ENT_BRAIN_CATCH( "Error while calling function OnTriggerExit");
 			GetScriptManager->SetStrict(true);

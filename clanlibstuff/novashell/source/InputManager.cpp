@@ -582,6 +582,8 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 			if (pKeyInfo->m_entityID == C_ENTITY_NONE)
 			{
 				//global kind of thing
+				
+				if (!GetScriptManager->FunctionExists(pKeyInfo->m_callback))
 				GetScriptManager->SetStrict(false);
 
 				try {bKeepPassingItOn = luabind::call_function<bool>(GetScriptManager->GetMainState(), 
@@ -599,8 +601,10 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 				} else
 				{
 					//let's actually run this function in this entities namespace
-					GetScriptManager->SetStrict(false);
-
+					if (!m_pParent->GetScriptObject()->FunctionExists(pKeyInfo->m_callback))
+					{
+						GetScriptManager->SetStrict(false);
+					}
 					try {bKeepPassingItOn = luabind::call_function<bool>(m_pParent->GetScriptObject()->GetState(), pKeyInfo->m_callback.c_str(),bKeyDown);
 					} LUABIND_ENT_BRAIN_CATCH(pKeyInfo->m_callback.c_str());
 					GetScriptManager->SetStrict(true);
@@ -802,6 +806,7 @@ You use the normal <AddBinding> to map to joysticks.
 Returns:
 
 A <Joystick> object or nil if the joystick doesn't exist.
+
 */
 
 

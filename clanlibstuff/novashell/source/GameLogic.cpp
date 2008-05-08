@@ -378,6 +378,9 @@ void GameLogic::AddModPath(string s)
 bool GameLogic::Init()
 {
 
+	LogMsg("");
+	LogMsg("Initializing GameLogic...");
+
 	assert(!g_pMapManager->GetActiveMap());
 	GetApp()->SetCursorVisible(true); //the default condition
 
@@ -721,8 +724,6 @@ void GameLogic::Kill()
 	SAFE_DELETE(m_pGUIStyle);
 	SAFE_DELETE(m_pGUIResources);
 	SAFE_DELETE(m_pGUIManager);
-
-	LogMsg("Initializing GameLogic");
 
 	if (g_pSoundManager)
 	{

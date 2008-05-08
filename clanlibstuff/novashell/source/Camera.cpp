@@ -140,7 +140,6 @@ void Camera::UpdateTarget()
 		{
 			CL_Vector2 vPos = pEnt->GetPos();
 			
-			//hard coded offset so we don't stare at the feet when zoomed in.  Move later
 			vPos.y -= (m_entityTrackingOffset.y*pEnt->GetScale().y);
 			vPos.x -= (m_entityTrackingOffset.x*pEnt->GetScale().x);
 			SetTargetPosCentered(vPos);
@@ -317,6 +316,34 @@ The <Camera> is smart enough to follow entities through doors/warps even if they
 Parameters:
 
 entityID - The ID of an <Entity> you'd like the <Camera> to follow around.  Send <C_ENTITY_NONE> to disable entity tracking.
+
+func: GetEntityTrackingByID
+(code)
+number GetEntityTrackingByID()
+(end)
+
+Returns:
+
+The entityID of the <Entity> we're tracking or <C_ENTITY_NONE> if none.
+
+
+func: SetEntityTrackingOffset
+(code)
+nil SetEntityTrackingOffset(Vector2 vOffset)
+(end)
+
+
+When you've set <SetEntityTrackingByID> you may wish to fine tune what the camera focuses on.  By default, this is set to 0,40.  In other words, it looks above the feet by 40 units, so when we zoom in we don't see a close-up of the feet in the treeworld example.
+
+If your game is top view, you probably should set this to Vector2(0,0) so the true center of the entity (as determined by its collision usually) is used.
+
+Note:
+
+This value is automatically scaled by the cameras current scale/zoom.
+
+Parameters:
+
+vOffset - a <Vector2> object containing the offset the camera should use.
 
 func: GetEntityTrackingByID
 (code)

@@ -68,6 +68,7 @@ void WatchManager::Add(MovingEntity *pEnt, int timeToWatchMS)
 void WatchManager::Remove(MovingEntity *pEnt)
 {
 	watch_list::iterator itor;
+
 	for (itor=m_watchList.begin(); itor != m_watchList.end(); ++itor)
 	{
 		if (itor->m_entID == pEnt->ID())
@@ -76,6 +77,8 @@ void WatchManager::Remove(MovingEntity *pEnt)
 			return;
 		}
 	}
+
+	
 }
 
 bool WatchManager::IsEntityOnWatchList(int entID)
