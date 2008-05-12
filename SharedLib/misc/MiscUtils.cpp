@@ -229,9 +229,22 @@ void UnzipToDir(CL_Zip_Archive &zip, string outputDir)
 		if (file_list[i].get_filename()[file_list[i].get_filename().length()-1] == '/')
 		{
 			//it's a directory
-			CL_Directory::create(outputDir+'/'+file_list[i].get_filename());
+		
+			//CL_Directory::create(outputDir+'/'+file_list[i].get_filename());
+		
 		} else
 		{
+
+			//in a perfect world we'd always get our directories first, but it seems some zip utilities don't order them this way..
+			//first make sure the dir exists
+			
+			string dir = CL_String::get_path(file_list[i].get_filename());
+			if (dir != ".")
+			{
+				CreateDirectoryRecursively(outputDir, dir);
+			}
+
+
 			//file to write
 
 			CL_OutputSource_File *pFile = NULL;
