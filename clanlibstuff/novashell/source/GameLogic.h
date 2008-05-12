@@ -25,6 +25,7 @@ class MessageManager;
 class CL_VirtualFileManager;
 
 #define C_WORLD_INFO_EXTENSION "novashell"
+#define C_WORLD_ZIP_EXTENSION "novazip"
 
 class GameLogic
 {

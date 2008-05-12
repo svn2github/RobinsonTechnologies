@@ -2,7 +2,18 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
-5-8
+5-12 2008
+
+* Added support for ".novazip" single file format to exchange worlds.  In windows, you can double
+click a .novazip file (it's just a normal zip with the folder and description .novashell file) and
+it will install it into your worlds folder for you.  It will also do this if you just copy a
+.novazip file into your worlds directory manually.
+
+For OSX and linux, there is no automatic file association but it should all still work.
+
+
+
+5-8 2008
 
 * Added some missing documentation for the latest joystick functions
 * Added string.findnocase to misc_utils.lua
@@ -12,15 +23,15 @@ Changelog
 * Added the "Strong AI" example, it shows how to use the two sticks on a 360 (or similar) controller.  I did a few cleanups on it, but I want to fix it up
 and do a new ending for the game..
 
-4-25
+4-25 2008
 
 BUGFIX:  Game was defaulting to "retail" mode in the last build, which disabled the editor (Starclopsofish)
 
-4-22
+4-22 2008
 
 * "\"'s are now automatically converted to "/"'s on linux when loading scripts
 
-4-20
+4-20 2008
 
 * Added Joystick:GetLeftStickPosition() and Joystick:GetLeftStickPosition()
 * Gives warnings instead of crash with certain invalid visual profile settings

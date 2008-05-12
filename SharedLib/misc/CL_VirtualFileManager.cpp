@@ -13,7 +13,7 @@ bool CL_VirtualFileSource::RemoveFile(const string &fname)
 
 bool CL_VirtualFileSource::CreateDir(const string &fname)
 {
-	return CL_Directory::create(m_strPath + "/" + fname); //create it if it doesn't exist.  I'd test for existance
+	return CL_Directory::create(m_strPath + "/" + fname); //create it if it doesn't exist.  I'd test for existence
 }
 
 CL_OutputSource * CL_VirtualFileSource::PutFile(const string &fname)
@@ -248,7 +248,7 @@ bool CL_VirtualFileManager::LocateFile(string &fnameOut)
 		{
 		case CL_VirtualFileSource::eFilePath:
 
-			if (exist( (pSource->m_strPath+"/"+fnameOut).c_str()))
+			if (FileExists( (pSource->m_strPath+"/"+fnameOut)))
 			{
 				fnameOut = pSource->m_strPath+"/"+fnameOut;
 				return true;

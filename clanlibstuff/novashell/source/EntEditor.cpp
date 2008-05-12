@@ -526,7 +526,7 @@ void OpenScriptForEditing(string scriptName)
 {
 	string file = scriptName;
 
-	if (!exist(file.c_str()))
+	if (!FileExists(file))
 	{
 		if (!ConfirmMessage("Script doesn't exist", file + " not found.\n\nWould you like to create this script?")) return;
 		

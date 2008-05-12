@@ -19,6 +19,7 @@
 #include "GUIStyleBitmap/NS_MessageBox.h"
 #include "EntWorldDialog.h"
 #include "EffectManager.h"
+#include "NovaZip.h"
 
 const char C_GAME_TICK_OF_LAST_LOAD_VAR_NAME[]= "_gameTickOfLastLoad";
 
@@ -126,8 +127,34 @@ void GameLogic::OneTimeModSetup()
 			m_strWorldsDirPath = CL_String::get_path(p1);
 			SetupModPathsFromWorldInfo(p1);
 		}
+
+		if (CL_String::get_extension(p1) == C_WORLD_ZIP_EXTENSION)
+		{
+			NovaZip nova;
+			if (nova.InstallWorld(p1))
+			{
+			}
+		}
 	}
 
+
+	//scan the worlds directory for anything that needs to be installed
+	CL_DirectoryScanner scanner;
+
+	scanner.scan(GetWorldsDirPath(), string("*.")+C_WORLD_ZIP_EXTENSION);
+	while (scanner.next())
+	{
+		std::string file = scanner.get_name();
+			if (scanner.get_name()[0] != '.')
+			{
+
+				NovaZip nova;
+				if (nova.InstallWorld(GetWorldsDirPath() + "/" + scanner.get_name()))
+				{
+					RemoveFile(GetWorldsDirPath() +"/" +scanner.get_name());
+				}
+			}
+	}
 }
 
 void GameLogic::ShowLoadingMessage()

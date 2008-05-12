@@ -22,6 +22,26 @@ string GetNextLineFromFile(FILE *fp)
 	return line;
 }
 
+string GetNextLineFromFile(CL_InputSource *pInput)
+{
+	string line;
+	char c;
+
+	while (pInput->tell() < pInput->size())
+	{
+		c = pInput->read_char8();
+
+		if (c == '\r') continue; //don't care about these stupid things
+
+		line += c;
+
+		if (c == '\n')
+		{
+			return line; //go ahead and quit now, we found a cr
+		}
+	}
+	return line;
+}
 
 int random(int range)
 {
@@ -53,7 +73,7 @@ bool open_file(HWND hWnd, const char st_file[])
 {
 #ifndef _NOSHELL32
 
-	if (!exist(st_file))
+	if (!FileExists(st_file))
 	{
 		//file doesn't exist
 		return false;
@@ -123,7 +143,7 @@ void add_text(const char *tex ,const char *filename)
 
 	FILE *          fp = NULL;
 	if (strlen(tex) < 1) return;
-	if (exist(filename) == false)
+	if (FileExists(filename) == false)
 	{
 
 		fp = fopen(filename, "wb");
@@ -143,21 +163,107 @@ void add_text(const char *tex ,const char *filename)
 }
 
 
-//find the clanlib one later or add one?
-bool exist(const char * name)
+bool FileExists(string file)
 {
-	if (name[0] == 0) return false;
+	CL_InputSource_File *pFile = NULL;
 
-	FILE *fp;
-	fp = fopen(name, "rb");
-	if (!fp)
+	try
 	{
-		//	  fclose(fp);
-		return(false);
+		pFile = new CL_InputSource_File(file);
+
+	} catch(CL_Error error)
+	{
+		//file doesn't exist
+		delete pFile;
+		return false;
+	}
+	delete pFile;
+	return true;
+}
+
+
+//snippet from Zahlman's post on gamedev:  http://www.gamedev.net/community/forums/topic.asp?topic_id=372125
+void StringReplace(const std::string& what, const std::string& with, std::string& in)
+{
+	int pos = 0;
+	int whatLen = what.length();
+	int withLen = with.length();
+	while ((pos = in.find(what, pos)) != std::string::npos)
+	{
+		in.replace(pos, whatLen, with);
+		pos += withLen;
+	}
+}
+
+void CreateDirectoryRecursively(string basePath, string path)
+{
+	StringReplace("\\", "/", path);
+	StringReplace("\\", "/", basePath);
+
+	vector<string> tok = CL_String::tokenize(path, "/", true);
+
+	if (basePath[basePath.size()-1] != '/') basePath += "/";
+	path = "";
+	for (unsigned int i=0; i < tok.size(); i++)
+	{
+		path += tok[i].c_str();
+		//LogMsg("Creating %s%s", basePath.c_str(), path.c_str());
+		CL_Directory::create(basePath+path);
+		path += "/";
 	}
 
-	fclose(fp);
-	return(true);
+}
+
+void UnzipToDir(CL_Zip_Archive &zip, string outputDir)
+{
+
+	vector<byte> buff;
+	buff.resize(4096);
+
+	std::vector<CL_Zip_FileEntry> &file_list = zip.get_file_list();
+
+	string path;
+
+	for (unsigned int i=0; i < file_list.size(); i++)
+	{
+		if (file_list[i].get_filename()[file_list[i].get_filename().length()-1] == '/')
+		{
+			//it's a directory
+			CL_Directory::create(outputDir+'/'+file_list[i].get_filename());
+		} else
+		{
+			//file to write
+
+			CL_OutputSource_File *pFile = NULL;
+
+			try
+			{
+				pFile = new CL_OutputSource_File(outputDir+'/'+file_list[i].get_filename());
+
+			} catch(CL_Error error)
+			{
+				delete pFile;
+				LogError("Unable to create file %s/%s", outputDir.c_str(), file_list[i].get_filename().c_str());
+				return;
+			}
+
+			CL_InputSource *pInput = zip.open_source(file_list[i].get_filename());
+
+			//do the copy...
+			unsigned int bytesRead = 0;
+			while ( (bytesRead = pInput->read(&buff[0], buff.size()))  > 0)
+			{
+				pFile->write(&buff[0], bytesRead);
+				if (bytesRead < buff.size()) break;
+			}
+
+			delete (pFile);
+			delete (pInput);
+
+		}
+
+		//LogMsg("Unzipping %s", file_list[i].get_filename().c_str());
+	}
 }
 
 

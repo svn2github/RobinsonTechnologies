@@ -1138,6 +1138,14 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\NovaZip.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\NovaZip.h"
+					>
+				</File>
+				<File
 					RelativePath=".\ScriptManager.cpp"
 					>
 				</File>

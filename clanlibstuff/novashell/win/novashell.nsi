@@ -147,6 +147,33 @@ CreateDirectory "$SMPROGRAMS\${_TITLE_}"
   System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
 !undef Index
 
+
+;novazip
+
+; back up old value of .opt
+!define Index "Line${__LINE__}"
+  ReadRegStr $1 HKCR ".novazip" ""
+  StrCmp $1 "" "${Index}-NoBackup"
+    StrCmp $1 "NovashellZipFile" "${Index}-NoBackup"
+    WriteRegStr HKCR ".novazip" "backup_val" $1
+"${Index}-NoBackup:"
+  WriteRegStr HKCR ".novazip" "" "NovashellZipFile"
+  ReadRegStr $0 HKCR "NovashellZipFile" ""
+  StrCmp $0 "" 0 "${Index}-Skip"
+	WriteRegStr HKCR "NovashellZipFile" "" "Novashell Zipped World"
+	WriteRegStr HKCR "NovashellZipFile\shell" "" "open"
+	WriteRegStr HKCR "NovashellZipFile\DefaultIcon" "" "$INSTDIR\game.exe,0"
+"${Index}-Skip:"
+  WriteRegStr HKCR "NovashellZipFile\shell\open\command" "" \
+    '"$INSTDIR\game.exe" "%1"'
+  ;WriteRegStr HKCR "OptionsFile\shell\edit" "" "Edit Options File"
+  ;WriteRegStr HKCR "OptionsFile\shell\edit\command" "" \
+   ;'$INSTDIR\execute.exe "%1"'
+ 
+  System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+!undef Index
+
+
 SectionEnd
 
 
@@ -232,6 +259,26 @@ skip_it:
 "${Index}-NoOwn:"
 !undef Index
   ;rest of script 
+  
+  
+  
+   ;start of restore script
+!define Index "Line${__LINE__}"
+  ReadRegStr $1 HKCR ".novazip" ""
+  StrCmp $1 "NovashellZipFile" 0 "${Index}-NoOwn" ; only do this if we own it
+    ReadRegStr $1 HKCR ".novazip" "backup_val"
+    StrCmp $1 "" 0 "${Index}-Restore" ; if backup="" then delete the whole key
+      DeleteRegKey HKCR ".novazip"
+    Goto "${Index}-NoOwn"
+"${Index}-Restore:"
+      WriteRegStr HKCR ".novazip" "" $1
+      DeleteRegValue HKCR ".novazip" "backup_val"
+   
+    DeleteRegKey HKCR "NovashellZipFile" ;Delete key with association settings
+ 
+    System::Call 'Shell32::SHChangeNotify(i 0x8000000, i 0, i 0, i 0)'
+"${Index}-NoOwn:"
+!undef Index
 
 
 SectionEnd

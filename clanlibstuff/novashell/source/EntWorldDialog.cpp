@@ -5,64 +5,11 @@
 int g_defaultWorldDialogSelection = 0;
 
 
-void RemoveEndingCR(string &text)
-{
-	if (*text.rbegin() == 10)
-	{
-		text.erase(text.size()-1, 1);
-	}
 
-	if (*text.rbegin() == '\n')
-	{
-		text.erase(text.size()-1, 1);
-	}
-
-}
-
-bool ReadWorldInfoFile(ModInfoItem *pModInfo, const string fileName)
-{
-
-	FILE *fp = fopen(fileName.c_str(), "rb");
-	if (!fp) 
-	{
-		LogMsg("Unable to find %s, ignoring mod", fileName.c_str());
-		return false;
-	}
-	
-	while (!feof(fp))
-	{
-		vector<string> tok = CL_String::tokenize(GetNextLineFromFile(fp), "|", true);
-
-		if (CL_String::compare_nocase(tok[0], "world_name"))
-		{
-			pModInfo->m_stDisplayName = tok[1];
-			
-			RemoveEndingCR(pModInfo->m_stDisplayName);
-		}
-		
-		if (CL_String::compare_nocase(tok[0], "engine_version_requested"))
-		{
-			pModInfo->m_engineVersionRequested = CL_String::to_float(tok[1]);
-		}
-
-		if (CL_String::compare_nocase(tok[0], "add_world_requirement"))
-		{
-			ResourceInfoItem res;
-			res.m_modPath = tok[1];
-			res.m_requestedVersion = CL_String::to_float(tok[2]);
-			pModInfo->m_requestedResources.push_back(res);
-		}
-
-	}
-
-	fclose(fp);
-	return true;
-
-}
 bool LocateWorldPath(string m_path, string &pathOut)
 {
 	
-	if (exist( (m_path+ "." + string(C_WORLD_INFO_EXTENSION)).c_str()  ))
+	if (FileExists( (m_path+ "." + string(C_WORLD_INFO_EXTENSION)) ))
 	{
 		pathOut = m_path;
 		return true;
@@ -71,11 +18,11 @@ bool LocateWorldPath(string m_path, string &pathOut)
 	
 	string modInfoFile = m_path+ "." + string(C_WORLD_INFO_EXTENSION);
 
-	if (!exist( modInfoFile.c_str()) )
+	if (!FileExists( modInfoFile) )
 	{
 		//try another way
 		modInfoFile = GetGameLogic()->GetWorldsDirPath() + "/"  +m_path+ "." + string(C_WORLD_INFO_EXTENSION);
-		if (exist(modInfoFile.c_str()))
+		if (FileExists(modInfoFile))
 		{
 			//yep, use this
 			pathOut = GetGameLogic()->GetWorldsDirPath() + "/"  +m_path;
@@ -84,7 +31,7 @@ bool LocateWorldPath(string m_path, string &pathOut)
 		{
 			//try another way
 			modInfoFile = "worlds/" +m_path+ "." + string(C_WORLD_INFO_EXTENSION);
-			if (exist(modInfoFile.c_str()))
+			if (FileExists(modInfoFile))
 			{
 				//yep, use this
 				pathOut = "worlds/" +m_path;
@@ -94,7 +41,7 @@ bool LocateWorldPath(string m_path, string &pathOut)
 	}
 
 
-	if (!exist( (modInfoFile+"." + string(C_WORLD_INFO_EXTENSION)).c_str()) )
+	if (!FileExists( (modInfoFile+"." + string(C_WORLD_INFO_EXTENSION))) )
 	{
 		LogError("Unable to locate %s.  World is missing perhaps?",  modInfoFile.c_str());
 		return false;

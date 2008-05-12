@@ -12,28 +12,7 @@
 
 #include "Map.h"
 #include "BaseGameEntity.h"
-
-
-class ResourceInfoItem
-{
-public:
-
-	string m_modPath;
-	float m_requestedVersion;
-};
-
-class ModInfoItem
-{
-public:
-
-	string m_stDirName;
-	string m_stDisplayName;
-	float m_engineVersionRequested;
-
-	vector<ResourceInfoItem> m_requestedResources;
-	
-};
-
+#include "NovaZip.h"
 
 class EntWorldDialog: public BaseGameEntity
 {

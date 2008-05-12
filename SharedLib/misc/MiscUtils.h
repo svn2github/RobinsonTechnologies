@@ -57,8 +57,7 @@ inline float frandom(float x=1.0f)
 {
 	return (rand() / (float) RAND_MAX) * x;
 }
-
-bool exist(const char * name);
+void StringReplace(const std::string& what, const std::string& with, std::string& in);
 void add_text(const char *tex ,const char *filename);
 #ifdef _WIN32
 bool open_file(HWND hWnd, const char st_file[]);
@@ -70,6 +69,11 @@ double altfmod(double a, double b);
 bool RemoveFile(const std::string &fileName);
 void set_float_with_target(float *p_float, float f_target, float f_friction);
 string GetNextLineFromFile(FILE *fp);
+string GetNextLineFromFile(CL_InputSource *pInput);
+bool FileExists(string file);
+void CreateDirectoryRecursively(string basePath, string path);
+void UnzipToDir(CL_Zip_Archive &zip, string outputDir);
+
 
 //these must exist somewhere in your project, it's how I like to write my errors
 void LogMsg(const char *lpFormat, ...);
@@ -92,8 +96,6 @@ inline void Clamp(T& arg, const U& minVal, const V& maxVal)
 		arg = (T)maxVal;
 	}
 }
-
-
 
 //helper to make saving and loading simpler
 
