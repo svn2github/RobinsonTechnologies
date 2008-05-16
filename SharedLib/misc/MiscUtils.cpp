@@ -217,7 +217,7 @@ void CreateDirectoryRecursively(string basePath, string path)
 void UnzipToDir(CL_Zip_Archive &zip, string outputDir)
 {
 
-	vector<byte> buff;
+	vector<unsigned char> buff;
 	buff.resize(4096);
 
 	std::vector<CL_Zip_FileEntry> &file_list = zip.get_file_list();
