@@ -12,6 +12,11 @@
 #define C_PREFS_DAT_FILENAME "prefs.dat"
 
 #define C_DELTA_HISTORY_BUFFER_SIZE 1
+
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 const unsigned int C_PREF_DAT_VERSION = 0;
 
 ISoundManager *g_pSoundManager;
@@ -119,7 +124,7 @@ App::App()
 
 App::~App()
 {
- 
+
 }
 
 int App::GetPlatform()
@@ -816,9 +821,91 @@ void App::BuildCommandLineParms()
 
 
 }
+static pascal OSErr open_app_ae_handler(const AppleEvent *apple_event, AppleEvent *reply, SInt32 ref_con)
+{
+	//LogMsg("Something happene2d!");
+	return noErr;
+}
+
+void App::AddStartupParm(string parm)
+{
+	m_startupParms.push_back(parm);
+							 
+}
+
+static pascal OSErr open_documents_ae_handler(const AppleEvent *apple_event, AppleEvent *reply, SInt32 ref_con)
+{
+	//never gets called on document double click
+	//program does get launched though if it wasn't running
+	
+	
+	FSRef				vFile;
+	AEDescList			docList;
+	long				x, numDocs;
+	AEKeyword			vKeyword;
+	DescType			vOutType;
+	Size				vOutActualSize;
+	OSErr				vErr;
+	
+	// Get list of files from Apple Event and count its items:
+	vErr = AEGetParamDesc(apple_event, keyDirectObject, typeAEList, &docList );	
+	vErr = AECountItems( &docList, &numDocs );
+	
+	// Go through list and open all  items:
+	for( x = 1; x <= numDocs; x++ )
+	{
+		// Get an FSSpec to our file:
+		vErr = AEGetNthPtr( &docList,
+							x, 
+							typeFSRef, 
+							&vKeyword,
+							&vOutType, 
+							&vFile, 
+							sizeof(FSRef), 
+							&vOutActualSize );
+		
+		
+		if (vErr != noErr)
+		{
+			LogError("AEGetNthPtr error of some sort. (%d)", vErr);
+			return noErr;
+		}
+		
+		//	Will return the decomposed Unicode name. From there you can convert it to a
+		//		CFString and then to a C String.
+		HFSUniStr255 name;
+		vErr = FSGetCatalogInfo( &vFile, kFSCatInfoNone, NULL, &name, NULL, NULL);
+
+		if (vErr != noErr)
+		{
+			LogError("FSGetCatalogInfo error of some sort. (%d)", vErr);
+			return noErr;
+		}
+		
+		CFStringRef str = CFStringCreateWithCharacters( kCFAllocatorDefault, &name.unicode[0], name.length );
+		char s[512], path[512];
+		CFStringGetCString(str, s, 512,  kCFStringEncodingMacRoman);
+		CFRelease( str );
+		
+		FSRefMakePath(&vFile, (UInt8*)path, 512);
+		if (vErr != noErr)
+		{
+			LogError("FSRefMakePath error of some sort. (%d)", vErr);
+			return noErr;
+		}
+			
+		LogMsg("Opening %s", path, s);
+		GetApp()->AddStartupParm(string(path));
+	}
+	vErr = AEDisposeDesc( &docList );
+	
+	return noErr;
+}
+
+
 int App::main(int argc, char **argv)
 {
- 
+
 	//first move to our current dir
 	CL_Directory::change_to(CL_System::get_exe_path());
 
@@ -828,15 +915,45 @@ int App::main(int argc, char **argv)
 #endif
 
 #ifdef __APPLE__
+	OSStatus status;
 
+	
+	long response;
+	status = Gestalt(gestaltSystemVersion, &response);
+	Boolean ok = ((status == noErr) && (response >= 0x00001040));
+	if (!ok)
+	{
+		DialogRef theAlert;
+		CreateStandardAlert(kAlertStopAlert, CFSTR("Mac OS X 10.4 (minimum) is required for this application"), NULL, NULL, &theAlert);
+		RunStandardAlert(theAlert, NULL, NULL);
+		ExitToShell();
+	}
+	
 	char stTemp[512];
 	getcwd((char*)&stTemp, 512);
 	//	LogMsg("Current working dir is %s", stTemp);
 	CL_Directory::change_to("Contents/Resources");
 	getcwd((char*)&stTemp, 512);
 	LogMsg("Game: Set working dir to %s", stTemp);
+
+	
 #endif
 
+#ifdef __APPLE__
+	
+	//register for file open events
+	
+	if(AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments, open_documents_ae_handler, NULL, false) != noErr)
+		LogError("Error installing apple event handler for open documents!");
+	
+	if(AEInstallEventHandler(kCoreEventClass,  kAEOpenApplication, open_app_ae_handler, NULL, false) != noErr)
+		LogError("Error installing apple event handler for open app"); 
+	
+	//LogMsg("Installed event handlers.");
+	
+#endif
+	
+	
 	for (int i=1; i < argc; i++)
 	{
 		m_originalParms += argv[i];
@@ -849,6 +966,7 @@ int App::main(int argc, char **argv)
 	//load our system prefs
 	LoadPrefs();
 
+	
 	BuildCommandLineParms();
 	
 	if ( ParmExists("-h") ||  ParmExists("-help") ||ParmExists("/?") ||ParmExists("/help") || ParmExists("--h") || ParmExists("--help") )
@@ -909,7 +1027,8 @@ int App::main(int argc, char **argv)
 	}
 
 #endif
-
+		
+	
 if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 {
 		m_pSetup_sound = new CL_SetupSound();
@@ -922,8 +1041,6 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
     CL_ConsoleWindow console("Console");
     console.redirect_stdio();
 #endif  
-
-
 
     try
     {
@@ -940,9 +1057,10 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
   
 		// Everytime the GUI draws, let's draw the game under it
 		CL_Slot m_slotOnPaint = GetGUI()->sig_paint().connect(this, &App::OnRender);
-  
-		m_pGameLogic->OneTimeModSetup();
+		CL_System::keep_alive(); 
 
+		m_pGameLogic->OneTimeModSetup();
+		
 		if (!m_pGameLogic || (!m_pGameLogic->Init())) throw CL_Error("Error initting game logic");
 	
 		ClearTimingAfterLongPause();
@@ -951,7 +1069,8 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 		m_pFrameRate = new CL_FramerateCounter();
 		//m_pFrameRate->set_fps_limit(60);
         // Run until someone presses escape
-        while (!m_bQuit)
+  	
+		while (!m_bQuit)
         {
 			if (m_HaveFocus)
             {
@@ -982,10 +1101,11 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
 					 // Flip the display, showing on the screen what we have drawn
                     // since last call to flip_display()
                     CL_Display::flip(m_videoflipStyle);
-                    
+                      
                     // This call updates input and performs other "housekeeping"
                     // call this each frame
             		CL_System::keep_alive(); 
+					
              } else
             {
                 //don't currently have focus   
@@ -1089,7 +1209,11 @@ catch (int param)
 #endif
 		
 	}
-    return 0;
+  
+#ifdef __APPLE__
+//DisposeAEEventHandlerUPP(od_handler);
+#endif
+return 0;
 }
 
 void App::AddCallbackOnResolutionChange(const string &callbackFunction, int entityID)

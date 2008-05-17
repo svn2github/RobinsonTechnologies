@@ -88,10 +88,11 @@ bool NovaZip::InstallWorld( string fileName )
 	std::vector<CL_Zip_FileEntry> &file_list = zip.get_file_list();
 	int size = file_list.size();
 	
-	string novashellFileName;
+	string novashellFileName = "";
 
 	for (int i=0; i<size; i++)
 	{
+		//LogMsg("Checking %s..", file_list[i].get_filename().c_str()); 
 		if (file_list[i].get_filename().find(".novashell") != string::npos)
 		{
 			novashellFileName = file_list[i].get_filename();

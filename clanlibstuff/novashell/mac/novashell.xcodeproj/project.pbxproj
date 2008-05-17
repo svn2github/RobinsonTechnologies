@@ -103,6 +103,8 @@
 		5D5BCAB00AB550CD004C08CE /* EntVisualProfileEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */; };
 		5D5BCAB10AB550CD004C08CE /* BrainTopSeek.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */; };
 		5D5BCAB20AB550CD004C08CE /* EntVisualProfileEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */; };
+		5D625CAA0DDDBA2B0018AE52 /* NovaZip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D625CA90DDDBA2B0018AE52 /* NovaZip.cpp */; };
+		5D625CAB0DDDBA2B0018AE52 /* NovaZip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D625CA90DDDBA2B0018AE52 /* NovaZip.cpp */; };
 		5D66058B0ABFCECE00892168 /* EntCreationUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */; };
 		5D66058C0ABFCECE00892168 /* EntWorldDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */; };
 		5D66058D0ABFCECE00892168 /* EntCreationUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */; };
@@ -609,6 +611,7 @@
 		5D5BCA970AB550A0004C08CE /* Goal_TraverseEdge.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_TraverseEdge.cpp; path = AI/Goal_TraverseEdge.cpp; sourceTree = "<group>"; };
 		5D5BCAAD0AB550CD004C08CE /* BrainTopSeek.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainTopSeek.cpp; sourceTree = "<group>"; };
 		5D5BCAAE0AB550CD004C08CE /* EntVisualProfileEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntVisualProfileEditor.cpp; sourceTree = "<group>"; };
+		5D625CA90DDDBA2B0018AE52 /* NovaZip.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NovaZip.cpp; sourceTree = "<group>"; };
 		5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntCreationUtils.cpp; sourceTree = "<group>"; };
 		5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EntWorldDialog.cpp; sourceTree = "<group>"; };
 		5D669E500B858BE2003EE62C /* InputManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InputManager.cpp; sourceTree = "<group>"; };
@@ -1476,6 +1479,7 @@
 				5D8777020A15555400363BAA /* HashedResourceManager.cpp */,
 				5D8777040A15555400363BAA /* LayerManager.cpp */,
 				5D87770A0A15555400363BAA /* MaterialManager.cpp */,
+				5D625CA90DDDBA2B0018AE52 /* NovaZip.cpp */,
 				5D87770E0A15555400363BAA /* MessageManager.cpp */,
 				5D8777140A15555400363BAA /* MyEntityManager.cpp */,
 				5D8777300A15555400363BAA /* TagManager.cpp */,
@@ -1740,6 +1744,7 @@
 				5D0A999C0DA50B7E0072BDB0 /* StateRun.cpp in Sources */,
 				5D0A999D0DA50B7E0072BDB0 /* StateSpecial1.cpp in Sources */,
 				5D0A999E0DA50B7E0072BDB0 /* StateTurn.cpp in Sources */,
+				5D625CAB0DDDBA2B0018AE52 /* NovaZip.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1921,6 +1926,7 @@
 				5D0A99970DA50B7E0072BDB0 /* StateRun.cpp in Sources */,
 				5D0A99980DA50B7E0072BDB0 /* StateSpecial1.cpp in Sources */,
 				5D0A99990DA50B7E0072BDB0 /* StateTurn.cpp in Sources */,
+				5D625CAA0DDDBA2B0018AE52 /* NovaZip.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

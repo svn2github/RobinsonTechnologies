@@ -206,7 +206,7 @@ public:
 	void AddCallbackOnResolutionChange(const string &callbackFunction, int entityID);
 	void OnGameReset();
 	void BuildCommandLineParms();
-
+	void AddStartupParm(string parm);
 private:
     
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}

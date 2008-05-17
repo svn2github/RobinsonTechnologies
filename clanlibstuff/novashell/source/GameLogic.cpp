@@ -129,12 +129,19 @@ void GameLogic::OneTimeModSetup()
 		}
 
 		if (CL_String::get_extension(p1) == C_WORLD_ZIP_EXTENSION)
-		{
+		{		
 			NovaZip nova;
 			if (nova.InstallWorld(p1))
 			{
 			}
 		}
+		
+#ifdef _DEBUG
+		//NovaZip nova;
+		//nova.InstallWorld("/Users/Seth/Desktop/Dink.novazip");
+#endif
+		
+		
 	}
 
 
