@@ -81,8 +81,9 @@ NovaZip::~NovaZip()
 }
 
 
-bool NovaZip::InstallWorld( string fileName )
+bool NovaZip::InstallWorld( string fileName, string *pWorldDirOut )
 {
+	*pWorldDirOut = "";
 	
 	CL_Zip_Archive zip(fileName);
 	std::vector<CL_Zip_FileEntry> &file_list = zip.get_file_list();
@@ -143,5 +144,6 @@ bool NovaZip::InstallWorld( string fileName )
 	//actually write out all the files
 	UnzipToDir(zip, GetApp()->GetBaseDirectory() +GetGameLogic()->GetWorldsDirPath());
 
+	*pWorldDirOut = modInfo.m_stDirName;
 	return true; //success
 }

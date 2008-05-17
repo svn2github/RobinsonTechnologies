@@ -102,8 +102,8 @@ App::App()
 	m_baseGameSpeed = 10;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-	m_engineVersion = 0.26f;
-	m_engineVersionString = "0.26";
+	m_engineVersion = 0.27f;
+	m_engineVersionString = "0.27";
 
 	m_pSetup_sound = NULL;
 	m_pSetup_vorbis = NULL;
@@ -115,6 +115,7 @@ App::App()
     {
        m_pFonts[i] = 0;
     }
+	m_pConsoleFont = NULL;
 
 #ifdef WIN32
 	m_Hwnd = false;
@@ -182,6 +183,7 @@ void App::OneTimeDeinit()
 	SAFE_DELETE(m_pHashedResourceManager);
 	g_Console.KillGUI();
 
+	SAFE_DELETE(m_pConsoleFont);
 	SAFE_DELETE(m_pGui);
     SAFE_DELETE(m_pStyle);
 
@@ -194,6 +196,7 @@ void App::OneTimeDeinit()
 	SAFE_DELETE(m_pSound_output);
 	SAFE_DELETE(m_pSetup_vorbis);
 	SAFE_DELETE(m_pSetup_sound);
+	
 	
 
 }
@@ -349,7 +352,8 @@ void App::OneTimeInit()
     m_pStyle = new CL_StyleManager_Silver(GetApp()->GetGUIResourceManager());
     m_pGui = new CL_GUIManager(m_pStyle);
 
-	
+	m_pConsoleFont = new CL_Font("Window/font_disabled", m_pGUIResourceManager);
+
 	m_pCamera = new Camera; 
 #ifdef WIN32
 	m_Hwnd = GetActiveWindow();
@@ -821,6 +825,8 @@ void App::BuildCommandLineParms()
 
 
 }
+
+#ifdef __APPLE__
 static pascal OSErr open_app_ae_handler(const AppleEvent *apple_event, AppleEvent *reply, SInt32 ref_con)
 {
 	//LogMsg("Something happene2d!");
@@ -902,6 +908,7 @@ static pascal OSErr open_documents_ae_handler(const AppleEvent *apple_event, App
 	return noErr;
 }
 
+#endif
 
 int App::main(int argc, char **argv)
 {

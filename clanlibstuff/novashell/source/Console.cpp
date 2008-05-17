@@ -317,8 +317,8 @@ void Console::RenderGUIOverlay()
 
 
 
-	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_top_right);
-	GetApp()->GetFont(C_FONT_GRAY)->draw(C_CONSOLE_INPUT_LABEL_SIZE-2, (GetScreenY-C_CONSOLE_ENTER_HEIGHT)+2, text);
+	GetApp()->GetConsoleFont()->set_alignment(origin_top_right);
+	GetApp()->GetConsoleFont()->draw(C_CONSOLE_INPUT_LABEL_SIZE-2, (GetScreenY-C_CONSOLE_ENTER_HEIGHT)+2, text);
 
 }
 
@@ -331,14 +331,12 @@ void Console::RenderPostGUI()
 }
 void Console::Render()
 {
-	
 	if (m_bRequestGUIToggle)
 	{
 		m_bRequestGUIToggle = false;
 		SetOnScreen(!m_bOnScreen);
 		//LogMsg("Toggling console display");
 	}
-
 	
 	if (!m_bOnScreen) return;
 	
@@ -353,12 +351,12 @@ void Console::Render()
 	CL_Rect r(0,15, GetScreenX, GetScreenY);
 	CL_Display::fill_rect(r, CL_Color(0,0,0,140));
 
-	CL_Font *pFont = GetApp()->GetFont(C_FONT_GRAY);
+	CL_Font *pFont = GetApp()->GetConsoleFont();
 	
 	if (!pFont)
 	{
 		//serious error, was unable to init a base font
-		throw CL_Error("Serious error: Font not initialized, check the log text file.  Did your script run GetGameLogic:InitGameGUI?");
+		throw CL_Error("Serious error: Console font not initialized, check the log text file.");
 	}
 	
 	ResetFont(pFont);

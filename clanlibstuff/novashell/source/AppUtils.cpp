@@ -16,9 +16,9 @@ void DrawTextBar(int posY, CL_Color barColor, string msg)
 	CL_Display::fill_rect(r, barColor);
 
 	//draw the text over it
-	ResetFont(GetApp()->GetFont(C_FONT_GRAY));
-	GetApp()->GetFont(C_FONT_GRAY)->set_alignment(origin_center);
-	GetApp()->GetFont(C_FONT_GRAY)->draw(GetScreenX/2,posY+7, msg);
+	ResetFont(GetApp()->GetConsoleFont());
+	GetApp()->GetConsoleFont()->set_alignment(origin_center);
+	GetApp()->GetConsoleFont()->draw(GetScreenX/2,posY+7, msg);
 
 }
 

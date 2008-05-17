@@ -94,6 +94,8 @@ bool GameLogic::IsEditorDialogOpen()
 }
 void GameLogic::OneTimeModSetup()
 {
+	bool bSentWorldToInstall = false;
+
 	if (GetApp()->GetStartupParms().size() > 0)
 	{
 		LogMsg("Command line parms received:");
@@ -130,21 +132,29 @@ void GameLogic::OneTimeModSetup()
 
 		if (CL_String::get_extension(p1) == C_WORLD_ZIP_EXTENSION)
 		{		
+			bSentWorldToInstall = true;
 			NovaZip nova;
-			if (nova.InstallWorld(p1))
+			string worldDir;
+			if (nova.InstallWorld(p1, &worldDir))
 			{
+				//m_strWorldsDirPath = CL_String::get_path(p1);
+				SetupModPathsFromWorldInfo(worldDir);
 			}
 		}
 		
 #ifdef _DEBUG
 		//NovaZip nova;
 		//nova.InstallWorld("/Users/Seth/Desktop/Dink.novazip");
+		//nova.InstallWorld(GetWorldsDirPath() + "/Dink7zip.novazip");
+		//nova.InstallWorld(GetWorldsDirPath() + "/Dink.novazip");
 #endif
 		
 		
 	}
 
-
+	
+if (!bSentWorldToInstall)
+{
 	//scan the worlds directory for anything that needs to be installed
 	CL_DirectoryScanner scanner;
 
@@ -156,12 +166,19 @@ void GameLogic::OneTimeModSetup()
 			{
 
 				NovaZip nova;
-				if (nova.InstallWorld(GetWorldsDirPath() + "/" + scanner.get_name()))
+				string worldDir;
+				if (nova.InstallWorld(GetWorldsDirPath() + "/" + scanner.get_name(), &worldDir))
 				{
-					RemoveFile(GetWorldsDirPath() +"/" +scanner.get_name());
+					if (worldDir != "")
+					{
+						//well, they really did install it
+						RemoveFile(GetWorldsDirPath() +"/" +scanner.get_name());
+					}
 				}
 			}
 	}
+	}
+	
 }
 
 void GameLogic::ShowLoadingMessage()

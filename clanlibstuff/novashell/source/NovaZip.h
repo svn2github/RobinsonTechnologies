@@ -38,7 +38,7 @@ public:
 	virtual ~NovaZip();
 
 	
-	bool InstallWorld(string fileName);
+	bool InstallWorld(string fileName, string *pWorldDirOut );
 
 protected:
 

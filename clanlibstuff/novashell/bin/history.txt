@@ -2,15 +2,16 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
-5-12 2008
+5-18 2008
 
 * Added support for ".novazip" single file format to exchange worlds.  In windows, you can double
 click a .novazip file (it's just a normal zip with the folder and description .novashell file) and
-it will install it into your worlds folder for you.  It will also do this if you just copy a
-.novazip file into your worlds directory manually.
+it will install it into your worlds folder for you. 
 
-For OSX and linux, there is no automatic file association but it should all still work.
+Or, you can place a .novazip file in the main worlds dir, it will install and then delete the original file.
 
+* Added OS X file assocation support for .novazip and .novashell files
+* In-game console now loads its own font, instead of requiring that the world's font be loaded
 
 
 5-8 2008

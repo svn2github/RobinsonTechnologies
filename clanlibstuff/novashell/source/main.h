@@ -63,6 +63,7 @@ enum
       C_FONT_COUNT
 };
 
+
 #include <iostream>
 #include <fstream>
 
@@ -144,6 +145,7 @@ public:
 	VisualProfileManager * GetMyVisualProfileManager() {return m_pVisualProfileManager;}
 	ScriptManager * GetMyScriptManager() {return m_pScriptManager;}
     CL_Font * GetFont(int font_id){return m_pFonts[font_id];}
+	CL_Font * GetConsoleFont() {return m_pConsoleFont;}
     void SetupBackground(int x, int y);
     void OnWindowResize(int x, int y);
     CL_Surface * GetBackground() {return m_pBackground;}
@@ -227,7 +229,8 @@ private:
 	CL_ResourceManager * m_pResourceManager;
     CL_ResourceManager * m_pGUIResourceManager;
     CL_DisplayWindow * m_pWindow;
-    CL_Font *m_pFonts[C_FONT_COUNT];
+    CL_Font *m_pFonts[C_FONT_COUNT]; //game GUI fonts
+	CL_Font *m_pConsoleFont;  //system font for the console/etc
     CL_Surface *m_pBackground;
     CL_Canvas *m_pBackgroundCanvas; //attached to the background, gives us an interface to its graphical context
 	bool m_bWindowResizeRequest; 
