@@ -12,7 +12,7 @@ Or, you can place a .novazip file in the main worlds dir, it will install and th
 
 * Added OS X file assocation support for .novazip and .novashell files
 * In-game console now loads its own font, instead of requiring that the world's font be loaded
-
+* Updated the tutorials a bit to mention newer features
 
 5-8 2008
 

@@ -158,7 +158,7 @@ if (!bSentWorldToInstall)
 	//scan the worlds directory for anything that needs to be installed
 	CL_DirectoryScanner scanner;
 
-	scanner.scan(GetWorldsDirPath(), string("*.")+C_WORLD_ZIP_EXTENSION);
+	scanner.scan(GetApp()->GetBaseDirectory() +GetGameLogic()->GetWorldsDirPath(), string("*.")+C_WORLD_ZIP_EXTENSION);
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
