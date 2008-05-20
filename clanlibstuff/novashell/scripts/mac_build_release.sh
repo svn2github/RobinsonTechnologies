@@ -34,7 +34,8 @@ then
 fi
 
 #refresh media data from the main server (first deleting the old stuff)
-rm ./build/Default/novashell.app/log.txt
+rm ./build/Default/novashell.app/Contents/Resources/log.txt
+rm ./build/Default/novashell.app/Contents/Resources/prefs.dat
 rm -R ./build/Default/novashell.app/Contents/Resources/base
 rm -R ./build/Default/novashell.app/Contents/Resources/worlds
 
