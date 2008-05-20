@@ -82,6 +82,7 @@ public:
 	  bool GetShowFPS() {return m_bShowFPS;}
 	  void ToggleShowFPS() {m_bShowFPS = !m_bShowFPS;}
 	  void SetRestartEngineFlag(bool bNew) { 			m_bRestartEngineFlag = bNew;}
+	  bool GetRestartEngineFlag() {return m_bRestartEngineFlag;}
 	  void Quit() {GetApp()->OnWindowClose();}
 	  bool IsShuttingDown();
 	  void OnPlayerDeleted(int id);

@@ -18,7 +18,7 @@ Map::Map()
 	m_pWorldCache = NULL;
 	SetDefaultTileSizeX(0);
 	SetDefaultTileSizeY(64);
-
+	m_bKillingMap = false;
 	for (int i=0; i < e_byteCount; i++) m_byteArray[i] = 0;
 	for (int i=0; i < e_intCount; i++) m_intArray[i] = 0;
 	for (int i=0; i < e_uintCount; i++) m_uintArray[i] = 0;
@@ -106,6 +106,7 @@ Map::~Map()
 void Map::Kill()
 {
   
+	m_bKillingMap = true;
 //	m_pWorldCache = NULL; 
 
 	if (m_pWorldCache)
@@ -122,6 +123,7 @@ void Map::Kill()
     }
     m_chunkMap.clear();
 	SAFE_DELETE(m_pNavGraphManager);
+	m_bKillingMap = false;
  }
 
 EntMapCache * Map::GetMyMapCache()

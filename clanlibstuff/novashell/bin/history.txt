@@ -2,6 +2,11 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+5-20 2008
+
+* Fixed some serious crash bugs related to loading/unloading maps on the fly and the tag manager!
+  You should use Utilities->Rebuild World Cache to make sure everything is ok on your world.
+
 5-18 2008
 
 * Added support for ".novazip" single file format to exchange worlds.  In windows, you can double

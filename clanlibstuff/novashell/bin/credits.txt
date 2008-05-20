@@ -25,6 +25,8 @@ Special thanks:
 Matt Buckland - For writing Programming Game AI by Example, the BEST AI book out there - some code is based on his
 examples from the book.
 
+Note:  If you wouldn't mind your real name being thanked, just drop me a line and let me know what it is, and I'll add it in addition to your handle!
+
 whisperstorm
 Loken
 Uhfgood
@@ -38,4 +40,5 @@ Harry
 Pleng
 Pekuja
 mikael
+Cobra
 

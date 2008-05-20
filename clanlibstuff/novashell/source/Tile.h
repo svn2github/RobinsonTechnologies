@@ -73,7 +73,7 @@ public:
 	void SetColor(const CL_Color color) {m_color = color;}
 	CL_Color GetColor() {return m_color;}
 	int GetGraphNodeID() {return m_graphNodeID;}
-	void SetGraphNodeID(int id) {assert(m_graphNodeID == invalid_node_index); m_graphNodeID = id;}
+	void SetGraphNodeID(int id) { /*assert(m_graphNodeID == invalid_node_index);*/ m_graphNodeID = id;}
 	CBit32 GetBitField() {return m_bitField;}
 enum
 {

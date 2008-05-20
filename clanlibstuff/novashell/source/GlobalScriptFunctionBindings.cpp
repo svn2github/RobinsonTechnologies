@@ -61,12 +61,24 @@ MovingEntity * GetEntityByName(const string &name)
 	{
 		//let's load it right now
 		g_pMapManager->LoadMap(t->m_pWorld->GetDirPath(), false);
-		t->m_pWorld->PreloadMap();
+#ifdef _DEBUG
+		t = g_TagManager.GetFromString(name);
+#endif
+		if (t)
+		{
+			t->m_pWorld->PreloadMap();
+		} else
+		{
+			assert(!"Why did this tag get screwed up?");
+		}
 
-		if (t->m_entID == 0)
+		if (!t || t->m_entID == 0)
 		{
 			LogMsg("GetEntityByName: Entity %s couldn't be located.  Outdated tag? Removing it.", name.c_str());
-			g_TagManager.RemoveByHashID(t->m_hashID, 0);
+			if (t)
+			{
+				g_TagManager.RemoveByHashID(t->m_hashID, 0);
+			}
 			return NULL; //not loaded yet
 		}
 	}

@@ -123,6 +123,7 @@ public:
 	void BuildNavGraph();
 	bool GetModified(); //this checks the world and all screesn to see if anything needs to be saved
 	void SetModified(bool bModified);
+	bool IsKillingMapNow() { return m_bKillingMap;}
 
 private:
 
@@ -190,6 +191,7 @@ private:
 	NavGraphManager *m_pNavGraphManager;
 	int m_masterNavMapID; //a central node that connects to all warps on this map
 	tag_hash_list m_warpTagHashIDList; //keep track of the hash's of named tagobjects WARPS that exist and belong to this map (note, only warps!)
+	bool m_bKillingMap;
 
 };
 

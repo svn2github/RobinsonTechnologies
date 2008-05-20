@@ -146,30 +146,36 @@ bool MapManager::LoadMap(string stPath, bool bSetActiveIfNoneIs)
 
 	if (!pWorldInfo) 
 	{
-		throw CL_Error("Couldn't load map " + stPath);
+		throw CL_Error("Couldn't load map \"" + stPath+"\"");
+		return false;
+	}
+
+	if (pWorldInfo->m_world.IsInitted())
+	{
+		LogMsg("Why load %s, it's already initted!", m_pActiveMap->GetName().c_str());
 		return false;
 	}
 
 	if (m_pActiveMap == &pWorldInfo->m_world)
 	{
-		if (m_pActiveMap->IsInitted())
-		{
-			LogMsg("Why load %s, it's already initted!", m_pActiveMap->GetName().c_str());
-			return false;
-		}
-		
+#ifdef _DEBUG
+		LogMsg("Loading active map %s", stPath.c_str());
+#endif	
 		
 		//Um, we are reloading the world that is currently on the screen.  We better
 		//let people know so the cached data will be reset etc
 		m_pActiveMap = NULL;
 		m_pActiveMapCache = NULL;
 		sig_map_changed(); //broadcast this to anybody who is interested
+	} else
+	{
+#ifdef _DEBUG
+		LogMsg("Loading map %s", stPath.c_str());
+#endif	
 	}
 
 	pWorldInfo->m_world.Load(stPath);
 	pWorldInfo->m_worldCache.SetWorld(&pWorldInfo->m_world);
-
-
 
 	if (!m_pActiveMap && bSetActiveIfNoneIs)
 	{
@@ -258,6 +264,8 @@ MapInfo * MapManager::GetMapInfoByName(const string &stName)
 void MapManager::UnloadMapByName(const string &stName)
 {
 
+
+	
 	map_info_list::iterator itor =m_mapInfoList.begin();
 	bool bMapChanged = false;
 	
@@ -267,11 +275,27 @@ void MapManager::UnloadMapByName(const string &stName)
 	{
 		if ( (*itor)->m_world.GetName() == stName)
 		{
+
 			worldPath = (*itor)->m_world.GetDirPath();
+			if ( ! (*itor)->m_world.IsInitted())
+			{
+				LogMsg("Ignoring UnloadMapByName, %s isn't loaded yet.", stName.c_str());
+				return;
+			}
+			
 			if (GetActiveMap() == &(*itor)->m_world)
 			{
 				//we're about to delete something currently active, let the rest of the world know
+#ifdef _DEBUG
+				LogMsg("Unloading active map %s changed", stName.c_str());
+#endif
 				bMapChanged = true;
+			} else
+			{
+
+#ifdef _DEBUG
+				LogMsg("Unload map %s", stName.c_str());
+#endif	
 			}
 			
 			delete *itor;
