@@ -528,6 +528,17 @@ bool GameLogic::Init()
 }
 
 
+void GameLogic::OnScreenChanged()
+{
+	EntEditor * pEnt = (EntEditor *)EntityMgr->GetEntityByName("editor");
+
+	if (pEnt)
+	{
+		//the editor is open, lets reset it..
+		pEnt->OnScreenChanged();
+	}
+}
+
 
 bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the editor
 {

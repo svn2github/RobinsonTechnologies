@@ -43,6 +43,7 @@ public:
 	void KillGUI(); //should be called before the main GUI is shutdown for good
 
 	void RenderPostGUI();
+	void OnScreenChanged(); //screensize changed
 
 protected:
 

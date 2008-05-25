@@ -103,6 +103,7 @@ public:
 	  void ResetLastUpdateTimer() { m_lastUpdateTime = CL_System::get_time();} //resets how many MS we've been stuck in a function
 	  unsigned int GetTimeSinceLastUpdateMS() {return CL_System::get_time()-m_lastUpdateTime;}  //how many MS we've been stuck in a function
 	  bool IsEditorDialogOpen();
+	  void OnScreenChanged();
 
 private:
 
@@ -114,7 +115,6 @@ private:
 	void OnKeyUp(const CL_InputEvent &key);
 	void RenderGameGUI(bool bDrawMainGUIToo);   
 	void DeleteAllCacheFiles();
-
 	MyEntityManager m_myEntityManager;
     CL_SlotContainer m_slots;
 

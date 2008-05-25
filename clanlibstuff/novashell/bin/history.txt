@@ -2,6 +2,16 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+5-23 2008
+
+* Editor resizes its menus after a screensize change (Uhfgood)
+* Added low res example, it just shows you can setup editor.lua so hitting F1 changes to a highscreen res to make a low res game possible to edit
+	...the lowest res my graphic card can do is 640X480 so I used that. 
+* Added FadeInLastPlayedMusic and RestartLastPlayedMusic functions to the SmartSound object in sound.lua
+* Ambience and music will now fade down when the editor is opened (if g_SmartSoung and g_SmartAmbience was used to play it)
+	I added this to the default editor.lua.
+
+
 5-20 2008
 
 * Fixed some serious crash bugs related to loading/unloading maps on the fly and the tag manager!

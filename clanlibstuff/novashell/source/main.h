@@ -209,6 +209,8 @@ public:
 	void OnGameReset();
 	void BuildCommandLineParms();
 	void AddStartupParm(string parm);
+	int GetScreenSizeX();
+	int GetScreenSizeY();
 private:
     
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
@@ -279,6 +281,7 @@ private:
 
 	DataManager m_prefs;
 	ScriptCallbackManager m_videoCallback;
+	bool m_notifyOfScreenChange;
 	
 };
 

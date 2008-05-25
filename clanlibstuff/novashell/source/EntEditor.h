@@ -36,8 +36,10 @@ public:
 	void SetHideMode(bool bHide);
 	bool GetHideMode();
 	void OnToggleGrid();
+	void OnScreenChanged();
 
 	CL_Signal_v1<bool> sig_hide_mode_changed;
+	void Kill();
 
 private:
     
@@ -121,7 +123,6 @@ private:
 	void SetAllLayersActive(bool bNew);
 	void OnSetScreenSize();
 	void PopulateResolutionList();
-	
 	CL_Label *m_pLabel;
     CL_Menu *m_pMenu;
     CL_Button *m_pButton;

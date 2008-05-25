@@ -11,6 +11,7 @@
 #include "AI/WorldNavManager.h"
 #include "DataEditor.h"
 
+
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
 #endif
@@ -56,40 +57,50 @@ EntEditor::EntEditor() : BaseGameEntity(BaseGameEntity::GetNextValidID())
 	   m_modeCheckBoxArray[i] = NULL;
    }
    SetName("editor");
-   GetScriptManager->RunFunction("OnOpenEditor");
    Init();
-   GetGameLogic()->SetEditorActive(true);
- 
-   OnToggleEditMode(); //turn on the edit submode
-    
-   BuildLayerControlBox();
-   
-#ifndef _DEBUG
-	//these slow down my debug too much
-   BuildWorldListBox();
-#endif
+   ScheduleSystem(1, ID(), "OnOpenEditor");
+
 
 }
 
-EntEditor::~EntEditor()
+
+void EntEditor::Kill()
 {
-	SetCameraToTrackPlayer();
 	DisableAllModes();
 
 	SAFE_DELETE(m_pListBoxWorld);
 	SAFE_DELETE(m_pWorldListWindow);
 
 	KillLayerListStuff();
-	
+
 	SAFE_DELETE(m_pGenerator);
-    SAFE_DELETE(m_pMenu);
-    SAFE_DELETE(m_pButtonToggleEditMode);
-    SAFE_DELETE(m_pButton);
-    SAFE_DELETE(m_pLabel);
-    SAFE_DELETE(m_pWindow);
+	SAFE_DELETE(m_pMenu);
+	SAFE_DELETE(m_pButtonToggleEditMode);
+	SAFE_DELETE(m_pButton);
+	SAFE_DELETE(m_pLabel);
+	SAFE_DELETE(m_pWindow);
+
+	for (int i=0; i < e_modeCount; i++)
+	{
+		m_modeCheckBoxArray[i] = NULL;
+	}
+
+	m_pLayerLabel = NULL;
+	m_pListLayerActive = NULL;
+	m_pListLayerDisplay = NULL;
+	m_pLayerListWindow = NULL;
+
+}
+
+EntEditor::~EntEditor()
+{
+	
+	Kill();
+	SetCameraToTrackPlayer();
 	GetGameLogic()->SetGamePaused(false); //unpause the game if it was
 	GetGameLogic()->SetEditorActive(false);
 	GetGameLogic()->SetShowGrid(false);
+
 	//GetApp()->GetGUI()->close();
 	GetScriptManager->RunFunction("OnCloseEditor");
 
@@ -112,6 +123,11 @@ void EntEditor::OnMouseUp(const CL_InputEvent &key)
 				m_bScrollingMap = false;
 		break;
 	}
+}
+
+void EntEditor::OnScreenChanged()
+{
+		Init();
 }
 
 void EntEditor::OnMouseDown(const CL_InputEvent &key)
@@ -329,7 +345,7 @@ void EntEditor::MapOptionsDialog()
 	case 1:
 		clicked_button = "Cancel"; break;
 	default:
-		assert(!"Dumbass!");
+		return;
 	}
 	
 	tile_list tileListOfPointersOnly;
@@ -702,6 +718,11 @@ string EntEditor::HandleMessageString(const string &msg)
 		SetHideMode(!GetHideMode());
 
 	} else
+		if (msg == "OnOpenEditor")
+		{
+			GetScriptManager->RunFunction("OnOpenEditor");
+
+		} else
 		
 		{
 			LogMsg("Don't know how to handle message %s", msg.c_str());
@@ -845,7 +866,9 @@ void EntEditor::PopulateResolutionList()
 
 bool EntEditor::Init()
 {
-assert(!m_pWindow);
+
+	Kill();
+	assert(!m_pWindow);
 
 string windowLabel = ""; //"Editor Tools Palette";
 
@@ -1045,6 +1068,17 @@ if (GetGameLogic()->GetUserProfileName().empty())
     m_slot.connect(m_pButtonToggleEditMode->sig_clicked(),this, &EntEditor::OnToggleEditMode);
 	*/
 	
+	GetGameLogic()->SetEditorActive(true);
+
+	OnToggleEditMode(); //turn on the edit submode
+
+	BuildLayerControlBox();
+
+#ifndef _DEBUG
+	//these slow down my debug too much
+	BuildWorldListBox();
+#endif
+
 	return true;
 }
 
@@ -1485,6 +1519,7 @@ void EntEditor::DisableAllModes()
 	GetMyEntityMgr->TagEntityForDeletionByName("choose screen mode");
 	GetMyEntityMgr->TagEntityForDeletionByName("edit mode");
 
+	
 	for (int i=0; i < e_modeCount; i++)
 	{
 		if (m_modeCheckBoxArray[i])

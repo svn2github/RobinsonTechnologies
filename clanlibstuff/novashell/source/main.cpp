@@ -8,6 +8,7 @@
 #include "Console.h"
 #include "AI/WatchManager.h"
 #include "EntEditMode.h"
+#include "EntEditor.h"
 
 #define C_PREFS_DAT_FILENAME "prefs.dat"
 
@@ -104,6 +105,7 @@ App::App()
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
 	m_engineVersion = 0.27f;
 	m_engineVersionString = "0.27";
+	m_notifyOfScreenChange = false;
 
 	m_pSetup_sound = NULL;
 	m_pSetup_vorbis = NULL;
@@ -394,6 +396,8 @@ case C_SOUNDSYSTEM_FMOD:
        
 bool App::SetScreenSize(int x, int y)
 {
+	
+
 	if (m_WindowDescription.get_size() != CL_Size(x, y))
 	{
 		m_WindowDescription.set_size(CL_Size(x,y));
@@ -405,9 +409,13 @@ bool App::SetScreenSize(int x, int y)
 
 bool App::ActivateVideoRefresh(bool bFullscreen)
 {
+	CL_Display::flip(0);
+	//CL_System::keep_alive(); 
 
 	m_bRequestVideoInit = false;
 	
+	CL_Size oldSize(GetApp()->GetMainWindow()->get_width(), GetApp()->GetMainWindow()->get_height());
+
 	if (!bFullscreen)
 	{
 		m_pWindow->set_size(m_WindowDescription.get_size().width,m_WindowDescription.get_size().height );
@@ -432,7 +440,9 @@ bool App::ActivateVideoRefresh(bool bFullscreen)
 				m_WindowDescription.get_size().width, m_WindowDescription.get_size().height, fullscreen.c_str(), error.message.c_str());
 
 			//set some parms for compability:
-			SetScreenSize(1024,768);
+			
+			SetScreenSize(oldSize.width,oldSize.height);
+			return false;
 		}
 			
 		//surfaces are now invalid.  Rebuild them ?
@@ -440,16 +450,22 @@ bool App::ActivateVideoRefresh(bool bFullscreen)
 	}
 
 
-	if (m_pScriptManager)
+	m_notifyOfScreenChange = true;
+
+	EntEditor * pEnt = (EntEditor *)EntityMgr->GetEntityByName("editor");
+
+	if (pEnt)
 	{
-		m_pScriptManager->UpdateAfterScreenChange(true);
-		m_videoCallback.OnActivate();
+		//the editor is open, lets reset it..
+		pEnt->Kill();
 	}
 
 #ifdef _WIN32
 	//hack for multi monitor problem and the game starting and then alt-tabbing back for some reason
 	SetActiveWindow(m_Hwnd);
 #endif
+
+	
 
 return true;
 }
@@ -1081,6 +1097,19 @@ if (GetSoundSystem() == C_SOUNDSYSTEM_CLANLIB)
         {
 			if (m_HaveFocus)
             {
+				if (m_notifyOfScreenChange)
+				{
+					if (m_pScriptManager)
+					{
+						m_pScriptManager->UpdateAfterScreenChange(true);
+						m_videoCallback.OnActivate();
+						m_pGameLogic->OnScreenChanged();
+					}
+					g_Console.OnScreenChanged();
+
+					m_notifyOfScreenChange = false;
+				}
+				
 				if (m_bRequestVideoInit) ActivateVideoRefresh(m_pWindow->is_fullscreen());
 
 				if (m_bRequestToggleFullscreen) ToggleWindowedMode();
@@ -1232,6 +1261,17 @@ void App::OnGameReset()
 {
 	m_videoCallback.Reset();
 }
+
+int App::GetScreenSizeX()
+{	
+	return m_WindowDescription.get_size().width;
+}
+
+int App::GetScreenSizeY()
+{	
+	return m_WindowDescription.get_size().height;
+}
+
 //lua natural docs stuff
 /*
 Object: App

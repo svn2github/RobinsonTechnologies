@@ -322,6 +322,16 @@ void Console::RenderGUIOverlay()
 
 }
 
+void Console::OnScreenChanged()
+{
+	if (m_bOnScreen)
+	{
+		SetOnScreen(false);
+	
+	}
+
+}
+
 void Console::RenderPostGUI()
 {
 	if (!m_bOnScreen) return;
