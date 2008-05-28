@@ -305,7 +305,8 @@ void EntWorldDialog::OnClickConnect()
 
 void EntWorldDialog::OnSelected(int selItem)
 {
-	//let's load the world
+	
+	    //let's load the world
 	
 		CL_ListItem *pItem = m_pListWorld->get_item(m_pListWorld->get_current_item());
 

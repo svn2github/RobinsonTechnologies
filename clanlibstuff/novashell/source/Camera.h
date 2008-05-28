@@ -43,6 +43,9 @@ public:
 
 	int GetEntTracking(){return m_entTrackID;};
 	void SetEntityTrackingOffset(CL_Vector2 offset);
+	void SetLimitToMapArea(bool bNew);
+	bool GetLimitToMapArea() {return m_bLimitToMapArea;}
+
 protected:
 
 	void UpdateTarget();
@@ -57,6 +60,7 @@ protected:
 	bool m_bInstantUpdateASAP;
 	float m_moveLerp, m_scaleLerp;
 	CL_Vector2 m_entityTrackingOffset;
+	bool m_bLimitToMapArea;
 };
 
 #endif                  // include guard

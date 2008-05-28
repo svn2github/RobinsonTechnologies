@@ -432,6 +432,7 @@ bool GameLogic::Init()
 	LogMsg("");
 	LogMsg("Initializing GameLogic...");
 
+
 	assert(!g_pMapManager->GetActiveMap());
 	GetApp()->SetCursorVisible(true); //the default condition
 
@@ -798,6 +799,10 @@ void GameLogic::Kill()
 	g_materialManager.Init();
 	g_watchManager.Clear();
 	GetVisualProfileManager->Kill();
+	
+	//flush key input
+	CL_System::keep_alive(); 
+
 
 }
 

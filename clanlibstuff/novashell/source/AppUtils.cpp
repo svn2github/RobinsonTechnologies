@@ -178,8 +178,8 @@ string PrintRect(CL_Rectf r)
 {
 	char stTemp[256];
 
-	sprintf(stTemp, "Top: %.2f, Left: %.2f, Bottom: %.2f, Right: %.2f",
-		r.top, r.left, r.bottom, r.right);
+	sprintf(stTemp, "Left: %.2f, Top: %.2f, Right: %.2f, Bottom: %.2f",
+		r.left, r.top, r.right, r.bottom);
 
 	return string(stTemp);
 }
@@ -188,8 +188,8 @@ string PrintRectInt(CL_Rect r)
 {
 	char stTemp[256];
 
-	sprintf(stTemp, "Top: %d, Left: %d, Bottom: %d, Right: %d",
-		r.top, r.left, r.bottom, r.right);
+	sprintf(stTemp, "Left: %d, Top: %d, Right: %d, Bottom: %d",
+		r.left, r.top, r.right, r.bottom);
 
 	return string(stTemp);
 }

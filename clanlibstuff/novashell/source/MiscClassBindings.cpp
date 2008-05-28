@@ -550,7 +550,9 @@ myColor = Color(255,255,255,255);
 		.def("BuildLocalNavGraph", &Map::BuildNavGraph)
 		.def("GetCollisionByRay", &GetCollisionByRay)
 		.def("GetTilesByRect", &GetTileListByRect)
-
+		.def("GetWorldRect", &Map::GetWorldRectExact)
+		.def("SetWorldRect", &Map::SetWorldRectExact)
+		.def("ComputeWorldRect", &Map::ComputeWorldRect)
 
 		,class_<MapManager>("MapManager")
 		.def("__tostring", &MapManagerToString)
@@ -585,6 +587,8 @@ myColor = Color(255,255,255,255);
 		.def("SetPosCenteredTarget", &Camera::SetTargetPosCentered)
 		.def("SetScaleTarget", &Camera::SetScaleTarget)
 		.def("SetEntityTrackingOffset", &Camera::SetEntityTrackingOffset)
+		.def("SetLimitToMapArea", &Camera::SetLimitToMapArea)
+		.def("GetLimitToMapArea", &Camera::GetLimitToMapArea)
 
 		//Interpolation Settings
 		.def("SetMoveLerp", &Camera::SetMoveLerp)

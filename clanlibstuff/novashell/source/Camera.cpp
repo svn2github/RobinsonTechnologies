@@ -68,6 +68,7 @@ void Camera::Reset()
 	m_entTrackID = 0;
 	m_moveLerp = C_DEFAULT_LERP;
 	m_scaleLerp = C_DEFAULT_LERP;
+	m_bLimitToMapArea = false;
 }
 
 void Camera::SetPos(CL_Vector2 vecPos)
@@ -149,6 +150,61 @@ void Camera::UpdateTarget()
 			m_entTrackID = 0;
 		}
 	} 
+
+	if (m_bLimitToMapArea && !GetGameLogic()->GetEditorActive())
+	{
+		if (g_pMapManager->GetActiveMap())
+		{
+	
+			//limit to map area
+			CL_Rect r = g_pMapManager->GetActiveMap()->GetWorldRectExact();
+			//LogMsg("Limiting to %s", PrintRectInt(r).c_str());
+
+			if (m_vecTargetPos.y + (float(GetScreenY))/m_vecScale.y > r.bottom)
+			{
+				m_vecTargetPos.y = r.bottom - (float(GetScreenY))/m_vecScale.y;
+			} else
+				if (m_vecTargetPos.y < r.top)
+				{
+					//we're too high
+					
+					m_vecTargetPos.y = r.top;
+
+					if (m_vecTargetPos.y + (float(GetScreenY))/m_vecScale.y > r.bottom)
+					{
+						//oh no, now we broke the other side.  The map is too small for this screen size...
+						//force it down I guess
+						m_vecTargetPos.y = r.bottom - (float(GetScreenY))/m_vecScale.y;
+					}
+
+				}
+
+
+				//also check the left and right bounds
+				if (m_vecTargetPos.x + (float(GetScreenX))/m_vecScale.x > r.right)
+				{
+					m_vecTargetPos.x = r.right - (float(GetScreenX))/m_vecScale.x;
+				} else
+					if (m_vecTargetPos.x < r.left)
+					{
+						//we're too high
+						m_vecTargetPos.x = r.left;
+
+						if (m_vecTargetPos.x + (float(GetScreenX))/m_vecScale.x > r.right)
+						{
+							//oh no, now we broke the other side.  The map is too small for this screen size...
+							//force it left I guess
+							m_vecTargetPos.x = r.right - (float(GetScreenX))/m_vecScale.x;
+						}
+
+
+					}
+			
+
+		}
+		
+	}
+
 }
 
 void Camera::SetTargetPosCentered(CL_Vector2 vecTarget)
@@ -216,6 +272,12 @@ void Camera::Update(float step)
 void Camera::SetEntityTrackingOffset( CL_Vector2 offset )
 {
 	m_entityTrackingOffset = offset;
+}
+
+void Camera::SetLimitToMapArea( bool bNew )
+{
+	m_bLimitToMapArea = bNew;
+
 }
 /*
 Object: Camera
@@ -353,6 +415,30 @@ number GetEntityTrackingByID()
 Returns:
 
 The entityID of the <Entity> we're tracking or <C_ENTITY_NONE> if none.
+
+
+func: SetLimitToMapArea
+(code)
+nil SetLimitToMapArea(boolean bLimitToMapArea)
+(end)
+
+If your player is standing on the bottom of a map, but it annoys you that he's still centered in the camera, this function is for you.
+
+If enabled, it will automatically scan each map at load time and figure out its dimensions.  To manually set the viewable area, use <Map:SetWorldRect> or
+<Map:ComputeWorldRect> to re-scan if the map size changes.
+
+Parameters:
+
+bLimitToMapArea - if true, the camera will attempt to limit the view to the active areas of the map
+
+func: GetLimitToMapArea
+(code)
+boolean GetLimitToMapArea()
+(end)
+
+Returns:
+
+True if the camera is currently limiting its view to the active map area.
 
 
 func: SetPosTarget

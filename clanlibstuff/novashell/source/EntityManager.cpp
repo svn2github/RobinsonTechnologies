@@ -37,7 +37,14 @@ BaseGameEntity* EntityManager::GetEntityByName(std::string name)
     for (; ent != m_EntityMap.end(); ++ent)
     {
         {
-            if ( (*ent).second->GetName() == name) return (*ent).second;
+            if ( (*ent).second->GetName() == name)
+			{
+			
+				if ( !(*ent).second->GetDeleteFlag())
+				{
+					return (*ent).second;
+				}
+			}
         }
     }
     

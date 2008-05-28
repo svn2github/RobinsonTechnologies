@@ -1051,7 +1051,7 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	m_pMenuGamePausedCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuGamePausedCheckbox->set_selected(GetGameLogic()->GetGamePaused());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleGamePaused);
-
+LogMsg("Disabling all modes..");
 	DisableAllModes();
 	SetDefaultTipLabel();
 

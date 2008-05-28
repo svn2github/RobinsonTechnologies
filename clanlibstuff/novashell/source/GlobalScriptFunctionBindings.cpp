@@ -290,8 +290,7 @@ void luabindGlobalFunctions(lua_State *pState)
 
 			def("Exists", &LUAExists),
 
-			def("LogError", &LogErrorLUA),
-
+		
 			/*
 			func: LogError
 			(code)

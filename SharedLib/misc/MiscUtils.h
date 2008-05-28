@@ -73,7 +73,8 @@ string GetNextLineFromFile(CL_InputSource *pInput);
 bool FileExists(string file);
 void CreateDirectoryRecursively(string basePath, string path);
 void UnzipToDir(CL_Zip_Archive &zip, string outputDir);
-
+CL_Rectf CombineRects(const CL_Rectf &a, const CL_Rectf &b);
+CL_Rect CombineRects(const CL_Rect &a, const CL_Rect &b);
 
 //these must exist somewhere in your project, it's how I like to write my errors
 void LogMsg(const char *lpFormat, ...);

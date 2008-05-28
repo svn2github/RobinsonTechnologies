@@ -82,6 +82,7 @@ lua_State * m_pMainState;
 extern InputManager g_inputManager;
 
 int luaPrint(lua_State *L);
+int luaPrintError(lua_State *L);
 void ShowLUAMessagesIfNeeded(lua_State *pState, int result);
 void DumpTable( lua_State *L, const char *pTableName = NULL, int tableIndex = LUA_GLOBALSINDEX);
 

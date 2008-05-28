@@ -101,15 +101,7 @@ const CL_Rectf & Tile::GetWorldColRect()
 	return r;
 }
 
-CL_Rectf CombineRects(const CL_Rectf &a, const CL_Rectf &b)
-{
-	CL_Rectf r;
-	r.left = min(a.left, b.left);
-	r.top = min(a.top, b.top);
-	r.right = max(a.right, b.right);
-	r.bottom = max(a.bottom, b.bottom);
-	return r;
-}
+
 
 CL_Rectf Tile::GetWorldCombinedRect()
 {

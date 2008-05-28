@@ -2,6 +2,18 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+5-28 2008
+
+* BUGFIX:  Internal fonts are now always not antialiased
+* Added Entity:GetRect() and Entity:GetWorldRect() script functions
+* Two visual profiles with the same filename name but in different directories are now not assumed to be the same
+* Script comand LogError is now as robust as LogMsg, before, it was confused by the LogError("crap", some var); syntax
+* Keyboard is flushed before the world select menu is shown, fixed a possible problem with quitting and restarting a world accidently
+* BUGFIX: Small quirk with toggling between full screen modes while toggling the editor off and on fixed
+* Added Map:GetWorldRect(), Map:SetWorldRect() and Map:ComputeWorldRect() script functions
+* Added Camera:SetLimitToMapArea() and Camera:GetLimitToMapArea()
+* More work done on the LowRes example.. I know, I can't use that mario sprite, going to remove it ASAP
+
 5-23 2008
 
 * Editor resizes its menus after a screensize change (Uhfgood)

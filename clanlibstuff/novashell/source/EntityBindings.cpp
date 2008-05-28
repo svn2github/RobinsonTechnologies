@@ -566,8 +566,56 @@ Group: General
 
 
 
-			.def("GetWorldCollisionRect", &MovingEntity::GetWorldCollisionRect)
+			.def("GetWorldRect", &MovingEntity::GetWorldRect)
 			
+			/*
+			func: GetWorldRect
+			(code)
+			Rectf GetWorldRect()
+			(end)
+
+			Usage:
+			(code)
+			LogMsg("My image position in world coordinates is " .. tostring(this:GetWorldRect());
+			(end)
+			Returns:
+
+			A <Rectf> object containing the region the entity's image occupies in world coordinates.
+			*/
+
+
+
+			.def("GetRect", &MovingEntity::GetBoundsRect)
+
+			/*
+			func: GetRect
+			(code)
+			Rectf GetRect()
+			(end)
+
+			Returns:
+
+			A <Rectf> object containing the entity's image size in local coordinates.
+			*/
+
+			/*
+			func: SetDeleteFlag
+			(code)
+			void SetDeleteFlag(boolean bRequestDelete)
+			(end)
+
+			This is the how you delete an entity.  Instead of happening instantly, it actually happens at the end of that logic cycle.
+
+			As always, the entities *OnKill()* script function will be run right before it's destroyed.	(well, if the entity has a script running)
+
+			Parameters:
+
+			bRequestDelete - If true, this entity will be deleted ASAP.
+			*/
+
+
+			.def("GetWorldCollisionRect", &MovingEntity::GetWorldCollisionRect)
+
 			/*
 			func: GetWorldCollisionRect
 			(code)
@@ -829,6 +877,23 @@ True if the active animation is currently paused.
 */
 
 .def("SetAlignment", &MovingEntity::SetAlignment)
+
+
+/*
+func: SetAlignment
+(code)
+nil SetAlignment(number origin, Vector2 vOffset)
+(end)
+
+Allows you to set an alignment for images.  Doesn't work with VisualProfile set images, it's more for GUI type stuff that was set with SetImage.
+(end)
+
+Parameters:
+
+origin - One of the <C_ORIGIN_CONSTANTS>.
+vOffset - A <Vector2> object containing an offset to place the image.
+*/
+
 
 
 .def("SetSpriteByVisualStateAndFacing", &MovingEntity::SetSpriteByVisualStateAndFacing)

@@ -2780,6 +2780,9 @@ void MovingEntity::Render(void *pTarget)
 		a = cl_min(a, 255); a = cl_max(0, a);
 
 		m_pFont->set_alpha(float(a)/255);
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+
 		m_pFont->draw( vecPos.x, vecPos.y, m_text, pGC);
 
 		//put it back to how it was

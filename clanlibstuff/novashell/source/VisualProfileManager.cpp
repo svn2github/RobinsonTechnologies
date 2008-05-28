@@ -36,7 +36,7 @@ VisualResource * VisualProfileManager::GetVisualResourceByHashedID(unsigned int 
 
 VisualResource * VisualProfileManager::GetVisualResource(const string &fileName)
 {
-	unsigned int resourceID = FileNameToID(fileName.c_str());
+	unsigned int resourceID = HashString(fileName.c_str());
 
 	VisualResource *pRes = GetVisualResourceByHashedID(resourceID);
 

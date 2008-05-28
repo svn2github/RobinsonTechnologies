@@ -25,6 +25,9 @@ Map::Map()
 	for (int i=0; i < e_floatCount; i++) m_floatArray[i] = 0;
 	m_uintArray[e_uintBGColor] = CL_Color::aliceblue.color;
 
+	m_bNeedToComputeBounds = true;
+	m_worldBounds = CL_Rect(0,0,0,0);
+
 #ifdef _DEBUG
  
 	m_worldChunkPixelSize = 512;
@@ -124,6 +127,10 @@ void Map::Kill()
     m_chunkMap.clear();
 	SAFE_DELETE(m_pNavGraphManager);
 	m_bKillingMap = false;
+
+	m_bNeedToComputeBounds = true;
+	m_worldBounds = CL_Rect(0,0,0,0);
+
  }
 
 EntMapCache * Map::GetMyMapCache()
@@ -219,6 +226,8 @@ int Map::GetYFromScreenID(ScreenID screenID)
 	val =CL_HIWORD(screenID);
 	return *(short*)&val;
 }
+
+
 
 
 void Map::DeleteExistingMap()
@@ -929,5 +938,94 @@ void Map::SetMyMapCache(EntMapCache *pWorldCache)
 {
 	 m_pWorldCache = pWorldCache;
 }
+
+CL_Rect Map::GetWorldRectExact()
+{
+	if (m_bNeedToComputeBounds)
+	{
+		ComputeWorldRect(0);
+	}
+
+	return m_worldBounds;
+}
+
+void Map::SetWorldRectExact(CL_Rect r)
+{
+	m_worldBounds = r;
+	m_bNeedToComputeBounds = false;
+}
+
+CL_Rect Map::ComputeWorldRect(int reserved)
+{
+	tile_list tileList;
+	tile_list::iterator tileItor;
+	//TilePic *pTilePic;
+	MovingEntity *pEnt;
+	int tileType;
+	CL_Rect r(0,0,0,0);
+
+	if (!IsInitted()) return r;
+
+	
+	bool bFirst = true;
+
+	map_chunk_map::const_iterator itor = m_chunkMap.begin();
+	while (itor != m_chunkMap.end())
+	{
+		if (!itor->second->IsEmpty() && itor->second->IsScreenLoaded())
+		{
+			tileList.clear();
+
+			itor->second->GetScreen()->GetPtrToAllTiles(&tileList);
+
+			//now we need to reinit them or something
+			for (tileItor = tileList.begin(); tileItor != tileList.end(); tileItor++)
+			{
+
+				if (m_layerManager.GetLayerInfo( (*tileItor)->GetLayer()).RequiresParallax()
+					|| m_layerManager.GetLayerInfo( (*tileItor)->GetLayer()).GetShowInEditorOnly())
+				{
+					continue;
+				}
+
+				tileType = (*tileItor)->GetType();
+				
+				//scan for any exceptions that we shouldn't scan
+				switch (tileType)
+				{
+
+				case C_TILE_TYPE_ENTITY:
+					pEnt = ((TileEntity*)*tileItor)->GetEntity();
+					if (pEnt->GetLockedScale())
+					{
+						continue;
+					}
+					break;
+
+					//pTilePic = ((TilePic*)*tileItor);
+
+				}
+
+
+				if (bFirst)
+				{
+					bFirst = false;
+					r = (*tileItor)->GetWorldRectInt();
+				} else
+				{
+					r = CombineRects(r, (*tileItor)->GetWorldRectInt());
+
+				}
+
+				//LogMsg(PrintRectInt(r).c_str());
+			}
+		}
+		itor++;
+	}	
+	m_worldBounds = r;
+	m_bNeedToComputeBounds = false;
+	return r;
+}
+
 
 

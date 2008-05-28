@@ -337,3 +337,23 @@ void ClearPixelBuffer(CL_PixelBuffer* pPixelBuffer, CL_Color color)
 	}
 	pPixelBuffer->unlock();
 }
+
+CL_Rectf CombineRects(const CL_Rectf &a, const CL_Rectf &b)
+{
+	CL_Rectf r;
+	r.left = min(a.left, b.left);
+	r.top = min(a.top, b.top);
+	r.right = max(a.right, b.right);
+	r.bottom = max(a.bottom, b.bottom);
+	return r;
+}
+
+CL_Rect CombineRects(const CL_Rect &a, const CL_Rect &b)
+{
+	CL_Rect r;
+	r.left = min(a.left, b.left);
+	r.top = min(a.top, b.top);
+	r.right = max(a.right, b.right);
+	r.bottom = max(a.bottom, b.bottom);
+	return r;
+}

@@ -4212,10 +4212,6 @@
 			RelativePath="..\bin\history.txt"
 			>
 		</File>
-		<File
-			RelativePath="..\..\..\Competition\ld11\readme.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
