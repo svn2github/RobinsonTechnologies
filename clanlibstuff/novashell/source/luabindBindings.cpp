@@ -55,6 +55,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 #else
 	luabind::globals(pLuaState)["g_isDebug"] = false;	 //will be set later
 #endif
+	luabind::globals(pLuaState)["g_isRetail"] = false;	 //will be set later
 
 
 }

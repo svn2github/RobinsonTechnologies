@@ -80,15 +80,21 @@ void BrainTopBase::Update(float step)
 	if (!m_pParent->IsOnGround() && m_airControlFilter.x != -1)
 	{
 		m_force.x *= m_airControlFilter.x;
+	
+	} else
+	{
+		m_force.x *= m_controlFilter.x;
+	}
+	
+	if (!m_pParent->IsOnGround() && m_airControlFilter.y != -1)
+	{
 		m_force.y *= m_airControlFilter.y;
 
 	} else
 	{
-		m_force.x *= m_controlFilter.x;
 		m_force.y *= m_controlFilter.y;
-
 	}
-	
+
 	m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_pParent->GetTurnSpeed() *step);
 	
 	m_pParent->AddForce(m_force);

@@ -2,7 +2,7 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
-5-29
+5-30 2008
 
 * Invalid profiles give better error messages instead of forcing you to quit with a brief one
 * Added Entity:SetAnimLoopCallback and Entity:GetAnimLoopCallback, a simple way to figure out when an anim ends or loops, without
@@ -14,6 +14,12 @@ Changelog
 * Little fix in treeworlds player jump script so the jump anim plays sooner
 * Some base scripts modified so if in retail mode (the -retail flag, or a game calls SetRetailMode(true)) the game will
   exit instead of running the world select menu by default like before.
+* Console window is no longer available if the -retail flag is used.  Can still pop up on an error condition though. (tinnycan)
+* Early script errors now properly trigger the console to be displayed to make them more obvious
+* Added MovingEntity:GetAnimName script function
+* Dampening works more logically now, for some reason it was only applied when entities were moving very slow.. probably
+	something related to phystics, but treeworld seems fine so I don't think anything is broken...
+* LowRes example improved, not done..
 
 5-28 2008
 

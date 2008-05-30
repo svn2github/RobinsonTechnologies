@@ -785,6 +785,21 @@ animName - This the name of an animation that has been defined in its Visual Pro
 */
 
 
+.def("GetAnimName", &MovingEntity::GetAnimName)
+
+/*
+func: GetAnimName
+(code)
+string GetAnimName()
+(end)
+
+Returns:
+
+The name of the current animation.  Returns a blank string if no visual profile is active for the entity.
+*/
+
+
+
 .def("SetAnimFrame", &MovingEntity::SetAnimFrame)
 
 
@@ -828,7 +843,7 @@ func: SetAnimLoopCallback
 nil SetAnimLoopCallback(boolean bActive)
 (end)
 
-If true, everytime the animation playing loops, or reaches the end, the engine will attempt to call a script function named "OnAnimLoop" in this entities namespace.
+If true, every time the animation playing loops, or reaches the end, the engine will attempt to call a script function named "OnAnimLoop" in this entities namespace.
 
 
 Parameters:

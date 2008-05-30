@@ -1864,6 +1864,14 @@ void MovingEntity::SetAnimByName(const string &name)
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
 	}
 }
+string MovingEntity::GetAnimName()
+{
+	if (GetVisualProfile())
+	{
+		return GetVisualProfile()->AnimIDToText(m_animID);
+	}
+	return "";
+}
 
 void MovingEntity::SetAnimFrame(int frame)
 {
@@ -3181,8 +3189,9 @@ void MovingEntity::PostUpdate(float step)
 					AddForce(CL_Vector2(0, (gravity*3)) );
 				}
 			}
+			if (IsOnGround())
 
-			if (IsOnGround() && m_body.GetLinVelocity().Length() < 0.4)
+			//if (IsOnGround() && m_body.GetLinVelocity().Length() < 0.4)
 			{
 				//apply dampening
 				set_float_with_target(&m_body.GetLinVelocity().x, 0, (groundDampening) * step);

@@ -155,7 +155,8 @@ public:
   void LoadCollisionInfo(const string &fileName);
   void SetCollisionInfoFromPic(unsigned int picID, const CL_Rect &recPic);
   void SetAnimByName(const string &name);
-  void EnableRotation(bool bRotate);
+  string GetAnimName();
+	void EnableRotation(bool bRotate);
   bool GetEnableRotation();
   void SetRotation(float angle);
   float GetRotation();

@@ -80,6 +80,20 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 		return;
 	}
 	
+	if (!IsActive() && key.id == CL_KEY_TILDE)
+	{
+		if (GetApp()->GetMyScriptManager())
+		{
+			if (luabind::globals(GetApp()->GetMyScriptManager()->GetMainState())["g_isRetail"] == true)
+			{
+				//in retail mode, don't allow them to use this console thing
+				return;
+			}
+
+		}
+
+	}
+
 	switch (key.id)
 	{
 		case CL_KEY_TILDE: //aka GRAVE or backtick
@@ -226,7 +240,7 @@ void Console::SetOnScreen(bool bNew)
 
 		if (bNew && GetApp()->GetMainWindow() && GetApp()->GetGUI())
 		{
-			//turn on the GUi stuff
+			//turn on the GUI stuff
 			CL_Rect inputRect(C_CONSOLE_INPUT_LABEL_SIZE+2,GetScreenY-C_CONSOLE_ENTER_HEIGHT, GetScreenX-3, GetScreenY-7);
 			m_pInputBox = new CL_InputBox(inputRect, "", GetApp()->GetGUI()->get_client_area());
 			m_curViewIndexOffset = 0; //reset this
@@ -236,6 +250,8 @@ void Console::SetOnScreen(bool bNew)
 
 			m_slots.connect(m_pInputBox->sig_return_pressed(), this, &Console::PressedEnter);
 			m_slots.connect(m_pInputBox->sig_validate_character(), this, &Console::InputValidator);
+			
+			
 			if (GetScriptManager)
 			GetScriptManager->SetGlobalBool("g_consoleActive", true);
 
@@ -327,7 +343,7 @@ void Console::OnScreenChanged()
 	if (m_bOnScreen)
 	{
 		SetOnScreen(false);
-	
+	m_bRequestGUIToggle = true;
 	}
 
 }
