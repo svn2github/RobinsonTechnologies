@@ -819,6 +819,53 @@ The frame of the animation currently being display.
 */
 
 
+
+.def("SetAnimLoopCallback", &MovingEntity::SetAnimLoopCallback)
+
+/*
+func: SetAnimLoopCallback
+(code)
+nil SetAnimLoopCallback(boolean bActive)
+(end)
+
+If true, everytime the animation playing loops, or reaches the end, the engine will attempt to call a script function named "OnAnimLoop" in this entities namespace.
+
+
+Parameters:
+
+bActive - If true, enabled.  Send false to turn it off which is the default.
+*/
+
+.def("GetAnimLoopCallback", &MovingEntity::GetAnimLoopCallback)
+
+/*
+func: GetAnimLoopCallback
+(code)
+boolean GetAnimLoopCallback()
+(end)
+
+Returns:
+
+True if "OnAnimLoop" is set to be called when the current animation loops or reaches the end.
+*/
+
+
+
+.def("GetLockedScale", &MovingEntity::GetLockedScale)
+
+/*
+func: GetLockedScale
+(code)
+boolean GetLockedScale()
+(end)
+
+Returns:
+
+The true if the scale is locked on this entity.  (Meaning it won't scale when the camera zooms in or out)
+*/
+
+
+
 .def("SetBlendMode", &MovingEntity::SetBlendMode)
 
 /*

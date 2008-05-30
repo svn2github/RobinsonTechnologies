@@ -333,7 +333,8 @@ public:
   CL_Vector2 GetRequestPosition() {return m_moveToAtEndOfFrame;}
   void UpdateSoundByPosition(int soundID, float minHearing, float maxHearing, float volMod);
   bool GetApproachPosition(MovingEntity *pEnt, int distance, CL_Vector2 &pOutputPos);
-
+  void SetAnimLoopCallback(bool bNew) {m_bAnimCallbackActive = bNew;}
+  bool GetAnimLoopCallback() {return m_bAnimCallbackActive;}
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -472,6 +473,7 @@ protected:
 	bool m_bUsingTilePicCollision;
 	L_EffectManager m_effectManager;
 	int m_visualStateOverride; 
+	bool m_bAnimCallbackActive;
 	
 };
 

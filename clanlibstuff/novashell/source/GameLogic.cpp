@@ -685,6 +685,14 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 		switch (key.id)
 		{
 
+		case CL_KEY_F:
+			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+			{
+				ToggleShowFPS();
+			}
+			break;
+
+/*	
 		case CL_KEY_S:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
@@ -713,19 +721,15 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 			break;
 
 	
-		case CL_KEY_F:
-			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
-			{
-				ToggleShowFPS();
-			}
-			break;
+		
+/*	
 		case CL_KEY_J:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
 				SetShowAI(!GetShowAI());
 			}
 			break;
-
+*/
 
 		}
 

@@ -450,7 +450,7 @@ Certain complex brains may register themselves as the "base brain".  Right now o
 
 By registering as the "Base", it's letting the world and other brain's know it can handle certain commands and services.
 
-Parameters:
+Parameters it understands:
 
 msg - The string of text you'd like to send.
 

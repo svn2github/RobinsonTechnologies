@@ -81,13 +81,12 @@ void MapManager::Kill()
 {
 
 	//clear each
-	map_info_list::iterator itor =m_mapInfoList.begin();
-	while (itor != m_mapInfoList.end())
+	while (m_mapInfoList.begin() != m_mapInfoList.end())
 	{
-		delete *itor;
-		itor++;
+		delete *m_mapInfoList.begin();
+		m_mapInfoList.pop_front();
 	}
-
+	
 	m_mapInfoList.clear();
 	g_watchManager.Clear();
 	m_pActiveMap = NULL;

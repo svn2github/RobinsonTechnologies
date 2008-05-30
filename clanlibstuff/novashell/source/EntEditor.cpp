@@ -181,9 +181,9 @@ void EntEditor::onButtonDown(const CL_InputEvent &key)
 		break;
 
 	case CL_KEY_S:
-		if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
+		if (IsControlKeyDown())
 		{
-			OnToggleShowEntityCollision();
+			OnSaveMap();
 		}
 		break;
 
@@ -452,7 +452,8 @@ void EntEditor::SetDefaultTipLabel()
 
 void EntEditor::OnSaveMap()
 {
-	BlitMessage("Saving map...");
+
+	BlitMessage("Saving " + g_pMapManager->GetActiveMap()->GetName());
 	g_pMapManager->GetActiveMap()->ForceSaveNow();
 }
 
@@ -907,7 +908,7 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnEditSetupConstants);
 
 	
-	pItem = m_pMenu->create_item("File/Save Active Map Now");
+	pItem = m_pMenu->create_item("File/Save Active Map Now (Ctrl+S)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnSaveMap);
 
 	pItem = m_pMenu->create_item("File/Revert Changes On Active Map");
@@ -991,7 +992,7 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	m_pMenuParallaxCheckbox->set_selected(GetGameLogic()->GetParallaxActive());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleParallax);
 
-	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Processing (Ctrl+S)");
+	pItem = m_pMenu->create_toggle_item("Display/Show Entity Collision Processing");
 	m_pMenuShowEntityCollisionCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuShowEntityCollisionCheckbox->set_selected(GetGameLogic()->GetShowEntityCollisionData());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleShowEntityCollision);
@@ -1051,7 +1052,6 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	m_pMenuGamePausedCheckbox = static_cast<CL_MenuItem*>(pItem->get_data());
 	m_pMenuGamePausedCheckbox->set_selected(GetGameLogic()->GetGamePaused());
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnToggleGamePaused);
-LogMsg("Disabling all modes..");
 	DisableAllModes();
 	SetDefaultTipLabel();
 

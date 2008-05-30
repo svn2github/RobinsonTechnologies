@@ -16,6 +16,7 @@ BrainTopBase::BrainTopBase(MovingEntity * pParent):Brain(pParent)
 	SetSort(100); //always run last
 
 	m_controlFilter = CL_Vector2(1,1); //full control
+	m_airControlFilter = CL_Vector2(-1,-1); //full control
 }
 
 BrainTopBase::~BrainTopBase()
@@ -76,9 +77,17 @@ void BrainTopBase::Update(float step)
 	Clamp(m_force.x, -accel, accel); //limit force to accel power
 	Clamp(m_force.y, -accel, accel); //limit force to accel power
 
-	
-	m_force.x *= m_controlFilter.x;
-	m_force.y *= m_controlFilter.y;
+	if (!m_pParent->IsOnGround() && m_airControlFilter.x != -1)
+	{
+		m_force.x *= m_airControlFilter.x;
+		m_force.y *= m_airControlFilter.y;
+
+	} else
+	{
+		m_force.x *= m_controlFilter.x;
+		m_force.y *= m_controlFilter.y;
+
+	}
 	
 	m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_pParent->GetTurnSpeed() *step);
 	
@@ -111,7 +120,16 @@ void BrainTopBase::HandleMsg(const string &msg)
 		else if (words[0] == "control_filtery")
 		{
 			m_controlFilter.y = CL_String::to_float(words[1]);
+		}  
+		else if (words[0] == "air_control_filterx")
+		{
+			m_airControlFilter.x = CL_String::to_float(words[1]);
 		} 
+		else if (words[0] == "air_control_filtery")
+		{
+			m_airControlFilter.y = CL_String::to_float(words[1]);
+		} 
+
 				else
 				{
 					LogMsg("Brain %s doesn't understand keyword '%s'", GetName(), words[0].c_str());
@@ -138,6 +156,8 @@ Parameters:
 
 control_filterx - a number from 0 to 1 showing how much influence it should have for movement on this axis.  Default is 1, full influence.
 control_filtery - a number from 0 to 1 showing how much influence it should have for movement on this axis.  Default is 1, full influence.
+air_control_filterx - Like above, but only applicable to when the entity is not on the ground.  Ignored if not specifically set.
+air_control_filtery - Like above, but only applicable to when the entity is not on the ground.  Ignored if not specifically set.
 
 Usage:
 (code)

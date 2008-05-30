@@ -501,6 +501,7 @@ std::string MovingEntity::HandleMessageString( const string &msg )
 
 void MovingEntity::SetDefaults()
 {
+	m_bAnimCallbackActive = false;
 	m_bRunUpdateEveryFrame = false;
 	m_accel = C_DEFAULT_ENTITY_ACCELERATION;
 	m_bUsingTilePicCollision = false;
@@ -727,10 +728,11 @@ int MovingEntity::GetFacingTarget()
 
 void MovingEntity::SetVisualStateOverride(int visualState)
 {
-	if (visualState != GetVisualState())
+	if (visualState != m_visualStateOverride)
 	{
 		m_bRestartAnim = true;
 	}
+
 	m_visualStateOverride = visualState;
 }
 
@@ -1403,6 +1405,8 @@ bool MovingEntity::Init()
 
 	if (m_pSprite->is_null())
 	{
+		string sFile = "system/system.xml";
+
 		//avoid a crash
 		if (!m_pVisualProfile)
 		{
@@ -1415,14 +1419,17 @@ bool MovingEntity::Init()
 				LogError("No visual profile was set in script %s's init!  Maybe it had a syntax error, go check the log. (trying to load default)", m_mainScript.c_str());
 			}
 			
-			string sFile = "system/system.xml";
 			g_VFManager.LocateFile(sFile);
 			SetVisualProfile(sFile,"ent_default");
 		}
 
 		if (!m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT))
 		{
-			LogMsg("Unable to set default anim of idle_left in profile %s!", m_pVisualProfile->GetName().c_str());
+			LogError("Unable to set default anim of idle_left in profile %s!", m_pVisualProfile->GetName().c_str());
+			g_VFManager.LocateFile(sFile);
+			SetVisualProfile(sFile,"ent_default");
+
+
 		}
 		SetSpriteData(m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT));
 	}
@@ -1898,6 +1905,18 @@ void MovingEntity::SetSpriteByVisualStateAndFacing()
 	if (GetVisualProfile())
 	{
 		m_animID = GetVisualProfile()->GetAnimID(GetVisualState(), GetFacing());
+		if (m_animID == -1)
+		{
+			//unable to get a valid anim
+			
+			/*
+			string sFile = "system/system.xml";
+			g_VFManager.LocateFile(sFile);
+			SetVisualProfile(sFile,"ent_default");
+			*/
+			
+			return;
+		}
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
 	}
 }
@@ -2362,7 +2381,10 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 		int frameTemp = 0;
 		if (m_bRestartAnim)
 		{
-			if (m_pSprite && !m_pSprite->is_null()) m_pSprite->restart();
+			if (m_pSprite && !m_pSprite->is_null()) 
+			{
+				m_pSprite->restart();
+			}
 			m_bRestartAnim = false;
 		} else
 		{
@@ -2948,6 +2970,14 @@ void MovingEntity::Update(float step)
 	if (!m_bAnimPaused && m_pSprite->get_current_frame() != -1)
 	{
 		m_pSprite->update( float(GetApp()->GetGameLogicSpeed()) / 1000.0f );
+		if (m_bAnimCallbackActive)
+		{
+				if (m_pSprite->is_finished() || m_pSprite->is_looping())
+				{
+					RunFunction("OnAnimLoop");
+				}
+
+		}
 	}
 
 	if (m_effectManager.effect_list.size() > 0)

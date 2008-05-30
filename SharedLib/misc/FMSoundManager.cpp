@@ -1,7 +1,7 @@
 #include "FMSoundManager.h"
 #include <fmod_errors.h> 
 
-#ifndef _NO_CLANLIB
+#ifndef _OLDLIBRARY
 	#include "CL_VirtualFileManager.h"
 	//well, there are many betters way to get access to the virtual file manager but this will do
 	extern CL_VirtualFileManager g_VFManager;
@@ -16,17 +16,21 @@ void SoundEffect::FadeToVolume(float targetVol, int durationMS)
 	m_original = float(FSOUND_GetVolume(m_channelID))/255;
 	m_eventType = ISoundManager::C_EFFECT_FADE;
 	
-#ifndef _NO_CLANLIB
-	m_startTimeMS = CL_System::get_time();
-#else
-	assert(!"This isn't supported without clanlib");
-#endif
+	#ifndef _OLDLIBRARY
+		m_startTimeMS = CL_System::get_time();
+	#else
+		m_startTimeMS = 0;
+		assert(!"This isn't supported without clanlib");
+	#endif
 }
 
 bool SoundEffect::Update(unsigned int timeMS)
 {
+#ifndef _OLDLIBRARY
 	switch (m_eventType)
 	{
+	
+	
 	case ISoundManager::C_EFFECT_FADE:
 		//process the fading here
 		if (timeMS > m_startTimeMS+m_durationMS)
@@ -35,6 +39,8 @@ bool SoundEffect::Update(unsigned int timeMS)
 			return false; //you can erase us now
 		} else
 		{
+		
+			
 			//still fading.  
 			float lerpAmount = (float(timeMS-m_startTimeMS))/float(m_durationMS);
 			FSOUND_SetVolume(m_channelID, int(Lerp(m_original, m_target, lerpAmount)*255));
@@ -45,7 +51,7 @@ bool SoundEffect::Update(unsigned int timeMS)
 
 		LogError("Unknown effect type: %d", m_eventType);
 	}
-
+#endif
 	return true; //keep processing this, don't delete it
 }
 
@@ -127,7 +133,7 @@ FSOUND_SAMPLE * CFMSoundManager::GetSoundSampleByName(const char *p_fname)
 CFMSound * CFMSoundManager::PreloadSound(const char *p_fname)
 {
 
-#ifndef _NO_CLANLIB
+#ifndef _OLDLIBRARY
 
 	string fname = p_fname;
 
@@ -143,7 +149,7 @@ if (!g_VFManager.LocateFile(fname))
    int i_index = m_a_sounds.size()-1; //only works with push back, later we'll add insert where
    //LogMsg("Sound array is now %d.", i_index);
    //a vector has a null sound or something like that
-#ifndef _NO_CLANLIB
+#ifndef _OLDLIBRARY
 
    m_a_sounds[i_index].p_sample = FSOUND_Sample_Load(FSOUND_FREE, fname.c_str(), 0,0, 0);
 #else
@@ -366,7 +372,7 @@ void CFMSoundManager::UpdateSounds()
 {
 	if (!m_b_ready) return;
 
-#ifndef _NO_CLANLIB
+#ifndef _OLDLIBRARY
 	channelMap::iterator itor;
 
 	unsigned int curTime = CL_System::get_time();

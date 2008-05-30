@@ -280,6 +280,9 @@ ScriptManager::ScriptManager()
 
 ScriptManager::~ScriptManager()
 {
+#ifdef _DEBUG
+	LogMsg("Killing scriptmanager");
+#endif
 	Kill();
 } 
 

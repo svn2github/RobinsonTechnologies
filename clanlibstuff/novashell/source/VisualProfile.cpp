@@ -301,7 +301,8 @@ int VisualProfile::GetAnimID(int eState, int eFacing)
 
 		if (!IsActive(emergencyID))
 		{
-			throw CL_Error("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)+" (" + m_animArray[animID].m_name+")" );	
+			LogMsg( ("Missing animation data for visual profile " + GetName() + " at index " + CL_String::from_int(animID)+" (" + m_animArray[animID].m_name+")").c_str() );	
+			return -1;
 		}
 
 		return emergencyID;
@@ -313,6 +314,7 @@ int VisualProfile::GetAnimID(int eState, int eFacing)
 CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 {
 	int animID = GetAnimID(eState, eFacing);
+	if (animID == -1) return NULL;
 
 	if (!IsActive(animID))
 	{

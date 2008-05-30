@@ -42,7 +42,7 @@ private:
 
 	CL_Vector2 m_force;
 	float m_maxForce;
-	CL_Vector2 m_controlFilter; //how much force actually gets applied
+	CL_Vector2 m_controlFilter, m_airControlFilter; //how much force actually gets applied
 	bool m_DontMessWithVisual;
 };
 

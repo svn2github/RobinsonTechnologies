@@ -6,10 +6,11 @@
 #ifndef FMSoundManager_HEADER_INCLUDED // include guard
 #define FMSoundManager_HEADER_INCLUDED  // include guard
 
-#ifndef _NO_CLANLIB
+#ifndef _OLDLIBRARY
 	#include "MiscUtils.h"
 #else
 	#include "all.h" //my old basecode for dungeon scroll
+
 #endif
 
 #include "ISoundManager.h"

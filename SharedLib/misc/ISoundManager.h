@@ -16,7 +16,7 @@
 	#include "all.h" //my old basecode for dungeon scroll
 #endif
 #include <cassert>
-
+#include <map>
 using namespace std;
 
 #define C_SOUND_NONE -1
