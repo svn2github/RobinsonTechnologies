@@ -104,6 +104,7 @@ public:
 	  unsigned int GetTimeSinceLastUpdateMS() {return CL_System::get_time()-m_lastUpdateTime;}  //how many MS we've been stuck in a function
 	  bool IsEditorDialogOpen();
 	  void OnScreenChanged();
+	  bool IsRetail();
 
 private:
 

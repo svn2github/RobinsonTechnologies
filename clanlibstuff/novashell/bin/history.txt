@@ -2,6 +2,14 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+5-31 2008
+
+* Fixed broken physics in treeworld example, whups
+* If not in retail mode, debug keys work without the editor open again, like Ctrl-Q to show collision outlines and such
+* Ctrl-S will no longer work in retail mode
+
+
+
 5-30 2008
 
 * Invalid profiles give better error messages instead of forcing you to quit with a brief one

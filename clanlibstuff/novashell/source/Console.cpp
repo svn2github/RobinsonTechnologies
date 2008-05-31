@@ -84,7 +84,7 @@ void Console::OnKeyDown(const CL_InputEvent &key)
 	{
 		if (GetApp()->GetMyScriptManager())
 		{
-			if (luabind::globals(GetApp()->GetMyScriptManager()->GetMainState())["g_isRetail"] == true)
+			if (GetGameLogic()->IsRetail())
 			{
 				//in retail mode, don't allow them to use this console thing
 				return;

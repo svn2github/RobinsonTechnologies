@@ -3189,16 +3189,26 @@ void MovingEntity::PostUpdate(float step)
 					AddForce(CL_Vector2(0, (gravity*3)) );
 				}
 			}
-			if (IsOnGround())
-
-			//if (IsOnGround() && m_body.GetLinVelocity().Length() < 0.4)
+			
+			if (GetEnableRotation())
 			{
-				//apply dampening
+				if (IsOnGround() && m_body.GetLinVelocity().Length() < 0.4)
+				{
+					//when rotating is active, things jitter pretty bad.
+					
+					//apply dampening
+					set_float_with_target(&m_body.GetLinVelocity().x, 0, (groundDampening) * step);
+					set_float_with_target(&m_body.GetLinVelocity().y, 0, (groundDampening) * step);
+					set_float_with_target(&m_body.GetAngVelocity(), 0, (groundDampening/3) *step);
+				} 
+			} else
+			{
 				set_float_with_target(&m_body.GetLinVelocity().x, 0, (groundDampening) * step);
 				set_float_with_target(&m_body.GetLinVelocity().y, 0, (groundDampening) * step);
-				set_float_with_target(&m_body.GetAngVelocity(), 0, (groundDampening/3) *step);
+
 			}
 
+		
 		} else
 		{
 			//no gravity active

@@ -660,6 +660,12 @@ void GameLogic::OnKeyUp(const CL_InputEvent &key)
 		}
 }
 
+bool GameLogic::IsRetail()
+{
+	if (!GetApp()->GetMyScriptManager()) return false;
+
+	return (luabind::globals(GetApp()->GetMyScriptManager()->GetMainState())["g_isRetail"] == true);
+}
 void GameLogic::OnKeyDown(const CL_InputEvent &key)
 {
 		
@@ -692,10 +698,11 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 			}
 			break;
 
-/*	
+
 		case CL_KEY_S:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
+				if (!IsRetail())
 				SetShowEntityCollisionData(!GetShowEntityCollisionData());
 			}
 			break;
@@ -705,7 +712,8 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 			{
 				if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
 				{
-					SetShowPathfinding(!GetShowPathfinding());
+					if (!IsRetail())
+						SetShowPathfinding(!GetShowPathfinding());
 				} 
 			}
 			break;
@@ -715,21 +723,23 @@ void GameLogic::OnKeyDown(const CL_InputEvent &key)
 			{
 					if (g_pMapManager->GetActiveMap())
 					{
+						if (!IsRetail())
 						g_pMapManager->GetActiveMapCache()->SetDrawCollision(!g_pMapManager->GetActiveMapCache()->GetDrawCollision());
 					}
+
 			}
 			break;
 
 	
 		
-/*	
 		case CL_KEY_J:
 			if (CL_Keyboard::get_keycode(CL_KEY_CONTROL))
 			{
+				if (!IsRetail())
 				SetShowAI(!GetShowAI());
 			}
 			break;
-*/
+
 
 		}
 
