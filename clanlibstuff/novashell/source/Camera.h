@@ -50,7 +50,7 @@ protected:
 
 	void UpdateTarget();
 	CL_Vector2 ClampScaleToRange(CL_Vector2 vecScale);
-
+	CL_Vector2 CalculateLimitToMapArea(CL_Vector2 v);
 
 	CL_Vector2 m_vecPos;
 	CL_Vector2 m_vecTargetPos; 

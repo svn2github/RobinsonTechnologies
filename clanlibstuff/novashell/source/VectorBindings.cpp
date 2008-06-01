@@ -17,6 +17,16 @@ void NormalizeVector2(CL_Vector2 * pV)
 	pV->unitize();
 }
 
+CL_Rect CalculateCombinedRect(CL_Rect *r, const CL_Rect &r2)
+{
+	return CombineRects(*r, r2);
+}
+
+CL_Rectf CalculateCombinedRectf(CL_Rectf *r, const CL_Rectf &r2)
+{
+	return CombineRects(*r, r2);
+}
+
 void luabindVector(lua_State *pState)
 {
 
@@ -313,10 +323,24 @@ Group: Member Functions
 
 			Returns:
 
-			A <Rect> the exact size of the union.
+			A <Rect> of the exact size of the union.
 			*/
 
 			.def("CalculateUnion", &CL_Rect::calc_union)
+
+			/*
+			func: CalculateCombined
+			(code)
+			Rect CalculateCombined(Rect rectB)
+			(end)
+
+			Returns:
+
+			A <Rect> of the area required to enclose both the original and passed in rectangle.
+			*/
+
+			.def("CalculateCombined", &CalculateCombinedRect)
+
 
 			/*
 			Group: Operators
@@ -448,6 +472,21 @@ Group: Member Functions
 			*/
 
 			.def("CalculateUnion", &CL_Rectf::calc_union)
+
+			/*
+			func: CalculateCombined
+			(code)
+			Rectf CalculateCombined(Rectf rectB)
+			(end)
+
+			Returns:
+
+			A <Rectf> of the area required to enclose both the original and passed in rectangle.
+			*/
+
+			.def("CalculateCombined", &CalculateCombinedRectf)
+
+
 
 			/*
 			Group: Operators

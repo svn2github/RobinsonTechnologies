@@ -49,7 +49,7 @@ public:
 
     const CL_Rect *GetWorldRect(); //rect in screenchunks
 	CL_Rect GetWorldRectInPixels(); //full world bounds in rect coordinates, based on chunks, not exact visual data
-	CL_Rect GetWorldRectExact();  //more exact, based on visuals.  Will compute if required, so might be slow to get
+	CL_Rectf GetWorldRectExact();  //more exact, based on visuals.  Will compute if required, so might be slow to get
     int GetSizeX(){return m_mapRect.get_width();}
     int GetSizeY(){return m_mapRect.get_height();}
     int GetXFromScreenID(ScreenID screenID);
@@ -125,8 +125,8 @@ public:
 	bool GetModified(); //this checks the world and all screesn to see if anything needs to be saved
 	void SetModified(bool bModified);
 	bool IsKillingMapNow() { return m_bKillingMap;}
-	CL_Rect ComputeWorldRect(int reserved); //very slow!
-	void SetWorldRectExact(CL_Rect r);
+	CL_Rectf ComputeWorldRect(int reserved); //very slow!
+	void SetWorldRectExact(CL_Rectf r);
 	
 private:
 
@@ -194,7 +194,7 @@ private:
 	int m_masterNavMapID; //a central node that connects to all warps on this map
 	tag_hash_list m_warpTagHashIDList; //keep track of the hash's of named tagobjects WARPS that exist and belong to this map (note, only warps!)
 	bool m_bKillingMap;
-	CL_Rect m_worldBounds; //the exact size of the map
+	CL_Rectf m_worldBounds; //the exact size of the map
 	bool m_bNeedToComputeBounds;
 
 };
@@ -279,7 +279,7 @@ The map name.  (the name of its directory)
 
 func: GetWorldRect
 (code)
-Rect GetWorldRect()
+Rectf GetWorldRect()
 (end)
 
 Returns:
@@ -289,18 +289,18 @@ If chunks of the map are erased, you must call <ComputeWorldRect> yourself if yo
 
 Returns:
 
-a <Rect> containing the location of the used map.
+a <Rectf> containing the location of the used map.
 
 func: SetWorldRect
 (code)
-nil SetWorldRect(Rect viewArea)
+nil SetWorldRect(Rectf viewArea)
 (end)
 
 Allows you to manually set the map view rect, allowing more control when the camera is setup to respect these boundries.
 
 Parameters:
 
-viewArea - a <Rect> object containing the size of this map in world coordinates.
+viewArea - a <Rectf> object containing the boundries of this map in world coordinates.
 
 func: ComputeWorldRect
 (code)

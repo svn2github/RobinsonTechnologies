@@ -50,7 +50,6 @@ MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 	m_pPathPlanner = NULL;
 	m_pGoalManager = NULL;
 	m_mainScript = C_DEFAULT_SCRIPT;
-	m_iType = C_ENTITY_TYPE_MOVING;
 	m_pFont = NULL;
 	m_defaultTextColor = CL_Color(255,100,200,255);
 	m_bUsingCustomCollisionData = false;
@@ -1101,8 +1100,9 @@ void MovingEntity::SetPos(const CL_Vector2 &new_pos)
 
 	if (!m_strWorldToMoveTo.empty())
 	{
-		LogMsg("Warning: SetPos() command issued to Entity %d (%s) ignored, because a map-move request was scheduled this frame",
-			ID(), GetName().c_str());
+		m_moveToAtEndOfFrame = new_pos;
+		//LogMsg("Warning: SetPos() command issued to Entity %d (%s) ignored, because a map-move request was scheduled this frame",
+		//	ID(), GetName().c_str());
 	}
 }
 
@@ -2940,8 +2940,6 @@ void MovingEntity::Update(float step)
 		return;
 	}
 
-
-
 	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 	m_bRanPostUpdate = false;
 	m_bRanApplyPhysics = false;
@@ -2949,7 +2947,6 @@ void MovingEntity::Update(float step)
 	ClearColorMods();
 
 	RunPostInitIfNeeded();
-
 
 	if (m_bRunUpdateEveryFrame)
 	{

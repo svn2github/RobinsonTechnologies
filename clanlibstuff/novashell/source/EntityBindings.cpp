@@ -261,6 +261,8 @@ Group: General
 			(end)
 			Allows you to set a number to help you organize entity types.  Check the C_TYPE_* constants as defined in setup_constants.lua.  Purely for scripting ease, not used by the engine internally.
 
+			Defaults to 0.
+
 			Parameters:
 
 			custom - Should be sent one of the C_TYPE_* constants as defined in setup_constants.lua.

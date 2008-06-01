@@ -181,6 +181,11 @@ if (!bSentWorldToInstall)
 	
 }
 
+void GameLogic::AddCallbackOnPostLogicUpdate(const string &callbackFunction, int entityID)
+{
+	m_postLogicUpdateCallback.Add(callbackFunction, entityID);
+}
+
 void GameLogic::ShowLoadingMessage()
 {
 	if (GetTimeSinceLastUpdateMS() > C_TIME_TO_WAIT_BEFORE_SHOWING_LOADING_MESSAGE_MS)
@@ -813,7 +818,7 @@ void GameLogic::Kill()
 	g_materialManager.Init();
 	g_watchManager.Clear();
 	GetVisualProfileManager->Kill();
-	
+	m_postLogicUpdateCallback.Reset();
 	//flush key input
 	CL_System::keep_alive(); 
 
@@ -915,9 +920,15 @@ void GameLogic::Update(float step)
 		g_pSoundManager->UpdateSounds();
 
 	g_MessageManager.Update();
-	GetCamera->Update(step);
 //	LogMsg("Cam zoom is %s", VectorToString(&GetCamera->GetScale()).c_str());
 	m_myEntityManager.Update(step);
+	
+	if (!GetGamePaused())
+	{
+		m_postLogicUpdateCallback.OnActivate(step);
+	}
+	GetCamera->Update(step);
+
 	m_worldManager.Update(step);
 	g_textManager.Update(step);
 }
@@ -1232,6 +1243,44 @@ bRestart - If true, the engine will save all modified data and restart as soon a
 
 
 /*
+
+
+func: AddCallbackOnPostLogicUpdate
+(code)
+nil AddCallbackOnPostLogicUpdate(string callbackName, number entityID)
+(end)
+
+Allows you to add a function to be called after the entities logic updates happen.  I added this as an easy way to make a game loop without needing to connect it with an entity.
+
+The callback is automatically deleted when an <Entity> dies. In the case of a global function, there is no way to unregister it.
+
+Note:
+
+It must accept a single parm, this "Step" is a number that contains the 'step-size' used in the logic update, similar to an entities Update(step).
+
+Usage:
+(code)
+//Example to make a global game loop function, run this somewhere at the start:
+GetGameLogic:AddCallbackOnPostLogicUpdate("OnGameLoop", C_ENTITY_NONE);
+
+//this is run every logic tick
+
+function OnGameLoop(step)
+	LogMsg("Game loop update");
+
+	//shake the camera randomly.. earthquake!
+	GetCamera:SetPos(GetCamera:GetPos() + Vector2(10-Random(20), 10-Random(20)));
+
+end
+
+(end)
+
+Parameters:
+
+string callBackName - The name of the callback function that should be called. (Must exist in your code)
+entityID - If it's an <Entity> function and not a global function, you'll need to enter the <Entity>'s ID here.  Otherwise, <C_ENTITY_NONE>.
+
+
 func: IsShuttingDown
 (code)
 boolean IsShuttingDown()

@@ -939,7 +939,7 @@ void Map::SetMyMapCache(EntMapCache *pWorldCache)
 	 m_pWorldCache = pWorldCache;
 }
 
-CL_Rect Map::GetWorldRectExact()
+CL_Rectf Map::GetWorldRectExact()
 {
 	if (m_bNeedToComputeBounds)
 	{
@@ -949,13 +949,13 @@ CL_Rect Map::GetWorldRectExact()
 	return m_worldBounds;
 }
 
-void Map::SetWorldRectExact(CL_Rect r)
+void Map::SetWorldRectExact(CL_Rectf r)
 {
 	m_worldBounds = r;
 	m_bNeedToComputeBounds = false;
 }
 
-CL_Rect Map::ComputeWorldRect(int reserved)
+CL_Rectf Map::ComputeWorldRect(int reserved)
 {
 	tile_list tileList;
 	tile_list::iterator tileItor;

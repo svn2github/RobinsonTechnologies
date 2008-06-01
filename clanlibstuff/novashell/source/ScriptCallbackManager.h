@@ -30,7 +30,7 @@ public:
 
 	bool Add(const string &callbackFunction, int entityID);
 	void OnActivate();
-
+	void OnActivate(float fNum);
 	void Reset();
 	void OnEntDeleted(int entID);
 

@@ -105,6 +105,7 @@ public:
 	  bool IsEditorDialogOpen();
 	  void OnScreenChanged();
 	  bool IsRetail();
+	  void AddCallbackOnPostLogicUpdate(const string &callbackFunction, int entityID);
 
 private:
 
@@ -152,6 +153,9 @@ private:
 	CL_StyleManager_Bitmap * m_pGUIStyle;
 	CL_GUIManager *m_pGUIManager;
 	CL_Window *m_pShowMessageWindow;
+
+	ScriptCallbackManager m_postLogicUpdateCallback;
+
 };
 
 void MovePlayerToCamera();

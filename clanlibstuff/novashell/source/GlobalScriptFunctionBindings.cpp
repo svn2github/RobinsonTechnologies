@@ -360,9 +360,7 @@ void luabindGlobalFunctions(lua_State *pState)
 			(end)
 			
 			Creates an entity on the specified map at vPos and inits it using the script file name specified.
-
-			Another method of creating entities is using <Entity::GetPos>.
-
+		
 			There is an <Entity::CreateEntity> version that is identical except it allows relative paths (relative to the entity's script) to be used.
 			
 			Parameters:

@@ -486,6 +486,7 @@ myColor = Color(255,255,255,255);
 		.def("Data", &GameLogic::Data)
 		.def("InitGameGUI", &GameLogic::InitGameGUI)
 		.def("__tostring", &GameLogicToString)
+		.def("AddCallbackOnPostLogicUpdate", &GameLogic::AddCallbackOnPostLogicUpdate)
 
 		,class_<App>("App")
 //		.def("SetGameLogicSpeed", &App::SetGameLogicSpeed)

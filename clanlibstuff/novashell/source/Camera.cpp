@@ -151,60 +151,62 @@ void Camera::UpdateTarget()
 		}
 	} 
 
-	if (m_bLimitToMapArea && !GetGameLogic()->GetEditorActive())
-	{
+	
+
+}
+
+CL_Vector2 Camera::CalculateLimitToMapArea(CL_Vector2 v)
+{
 		if (g_pMapManager->GetActiveMap())
 		{
-	
-			//limit to map area
-			CL_Rect r = g_pMapManager->GetActiveMap()->GetWorldRectExact();
+		//limit to map area
+			CL_Rectf r = g_pMapManager->GetActiveMap()->GetWorldRectExact();
 			//LogMsg("Limiting to %s", PrintRectInt(r).c_str());
 
-			if (m_vecTargetPos.y + (float(GetScreenY))/m_vecScale.y > r.bottom)
+			if (v.y + (float(GetScreenY))/m_vecScale.y > r.bottom)
 			{
-				m_vecTargetPos.y = r.bottom - (float(GetScreenY))/m_vecScale.y;
+				v.y = r.bottom - (float(GetScreenY))/m_vecScale.y;
 			} else
-				if (m_vecTargetPos.y < r.top)
+				if (v.y < r.top)
 				{
 					//we're too high
-					
-					m_vecTargetPos.y = r.top;
 
-					if (m_vecTargetPos.y + (float(GetScreenY))/m_vecScale.y > r.bottom)
+					v.y = r.top;
+
+					if (v.y + (float(GetScreenY))/m_vecScale.y > r.bottom)
 					{
 						//oh no, now we broke the other side.  The map is too small for this screen size...
 						//force it down I guess
-						m_vecTargetPos.y = r.bottom - (float(GetScreenY))/m_vecScale.y;
+						v.y = r.bottom - (float(GetScreenY))/m_vecScale.y;
 					}
 
 				}
 
 
 				//also check the left and right bounds
-				if (m_vecTargetPos.x + (float(GetScreenX))/m_vecScale.x > r.right)
+				if (v.x + (float(GetScreenX))/m_vecScale.x > r.right)
 				{
-					m_vecTargetPos.x = r.right - (float(GetScreenX))/m_vecScale.x;
+					v.x = r.right - (float(GetScreenX))/m_vecScale.x;
 				} else
-					if (m_vecTargetPos.x < r.left)
+					if (v.x < r.left)
 					{
 						//we're too high
-						m_vecTargetPos.x = r.left;
+						v.x = r.left;
 
-						if (m_vecTargetPos.x + (float(GetScreenX))/m_vecScale.x > r.right)
+						if (v.x + (float(GetScreenX))/m_vecScale.x > r.right)
 						{
 							//oh no, now we broke the other side.  The map is too small for this screen size...
 							//force it left I guess
-							m_vecTargetPos.x = r.right - (float(GetScreenX))/m_vecScale.x;
+							v.x = r.right - (float(GetScreenX))/m_vecScale.x;
 						}
 
 
 					}
-			
+
 
 		}
-		
-	}
 
+	return v;
 }
 
 void Camera::SetTargetPosCentered(CL_Vector2 vecTarget)
@@ -266,6 +268,13 @@ void Camera::Update(float step)
 		m_vecPos.x = RoundNearest(m_vecPos.x,1.0f);
 		m_vecPos.y = RoundNearest(m_vecPos.y,1.0f);
 	}
+
+
+	if (m_bLimitToMapArea && !GetGameLogic()->GetEditorActive())
+	{
+		m_vecPos = CalculateLimitToMapArea(m_vecPos);
+	}
+
 
 }
 
