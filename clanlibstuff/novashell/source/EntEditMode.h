@@ -137,6 +137,7 @@ protected:
 	void onButtonDownTilePicInfo(const CL_InputEvent &key);
 	void TurnOffFocus();
 	void TilePaint();
+	void OnRoundOffTiles();
 	enum
 	{
 		C_GUI_CANCEL,

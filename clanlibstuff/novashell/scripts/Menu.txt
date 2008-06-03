@@ -57,42 +57,6 @@ Group: System Objects  {
    File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
    File: Known Issues  (KnownIssues.cpp)
-
-   Group: Box2D  {
-
-      Group: Contrib  {
-
-         Group: Freeglut  {
-
-            File: freeglut_stroke_mono_roman.c  (Box2D\Contrib\freeglut\freeglut_stroke_mono_roman.c)
-            File: freeglut_stroke_roman.c  (Box2D\Contrib\freeglut\freeglut_stroke_roman.c)
-            File: functions declared in this file probably will not be implemented.  (Box2D\Contrib\freeglut\freeglut_videoresize.c)
-            File: functions declared in this file probably will not be implemented.  (Box2D\Contrib\freeglut\freeglut_overlay.c)
-            File: The arrangement of the table below depends on the fact that  (Box2D\Contrib\freeglut\freeglut_cursor.c)
-            }  # Group: Freeglut
-
-         Group: TestBed.Net  {
-
-            File: Program  (Box2D\Contrib\TestBed.Net\Program.cs)
-            File: Settings  (Box2D\Contrib\TestBed.Net\Settings.cs)
-            File: Test  (Box2D\Contrib\TestBed.Net\Test.cs)
-            File: Tests.Bridge  (Box2D\Contrib\TestBed.Net\Tests\Bridge.cs)
-            }  # Group: TestBed.Net
-
-         File: you can change the number of checkers across there sphere in draw_ball  (Box2D\Contrib\glui\glui_rotation.cpp)
-         }  # Group: Contrib
-
-      File: Dynamics\b2Island.cpp  (Box2D\Source\Dynamics\b2Island.cpp)
-      File: we want this predicate without division:  (Box2D\Source\Collision\Shapes\b2PolygonShape.cpp)
-      }  # Group: Box2D
-
-   Group: Chipmunk-4.0.2  {
-
-      File: cpArray is rarely used and will probably go away.  (Chipmunk-4.0.2\src\cpArray.h)
-      File: cpArray is rarely used and will probably go away.  (Chipmunk-4.0.2\src\cpArray.c)
-      File: v_bias and w_bias are used internally for penetration/joint correction.  (Chipmunk-4.0.2\src\cpBody.h)
-      }  # Group: Chipmunk-4.0.2
-
    }  # Group: System Objects
 
 Group: Game Objects  {
@@ -171,7 +135,5 @@ Group: Index  {
    Function Index: Functions
    Object Index: Objects
    Variable Index: Variables
-   Class Index: Classes
-   File Index: Files
    }  # Group: Index
 

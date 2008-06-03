@@ -87,7 +87,7 @@ CL_Rectf TileEntity::GetWorldRect()
 	return m_pEntity->GetWorldRect();
 }
 
-const CL_Vector2 & TileEntity::GetPos()
+CL_Vector2 TileEntity::GetPos()
 {
 	assert(m_pEntity);
 	return m_pEntity->GetPos();
@@ -112,7 +112,7 @@ void TileEntity::SetEntity(MovingEntity *pEnt)
 	}
 }
 
-CBody * TileEntity::GetCustomBody()
+b2Body * TileEntity::GetCustomBody()
 {
 	assert(m_pEntity);
 	return m_pEntity->GetBody();

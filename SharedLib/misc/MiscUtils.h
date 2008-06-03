@@ -80,6 +80,8 @@ CL_Rect CombineRects(const CL_Rect &a, const CL_Rect &b);
 void LogMsg(const char *lpFormat, ...);
 void LogError(const char *lpFormat, ...);
 
+float RadiansToDegrees(float rad);
+float DegreesToRadians(float deg);
 
 //clamps the first argument between the second two
 template <class T, class U, class V>

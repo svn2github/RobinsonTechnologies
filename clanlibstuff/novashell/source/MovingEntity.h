@@ -14,6 +14,7 @@
 #include "linearparticle/sources/L_EffectManager.h"
 class Goal_Think;
 class PathPlanner;
+class b2Body;
 //#include "AI/Goal_Think.h"
 
 #define C_DEFAULT_SCRIPT_PATH "script/"
@@ -68,8 +69,8 @@ public:
   virtual void SetName(const std::string &name);
   void SetNameEx(const std::string &name, bool bRemoveOldTag);
 
-  const CL_Vector2 & GetPos() {return *(CL_Vector2*)&m_body.GetPosition();}
-  CL_Vector2 GetPosSafe() {return *(CL_Vector2*)&m_body.GetPosition();}
+  CL_Vector2 GetPos() {return m_pos;}
+  CL_Vector2 GetPosSafe() {return m_pos;}
   void  SetPos(const CL_Vector2 &new_pos);
   void SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName);
   int GetSizeX(){ if (m_pSprite->get_current_frame() == -1) return 0; return int(m_pSprite->get_width() * m_pTile->GetScale().x); };
@@ -81,6 +82,7 @@ public:
   CL_Rectf GetWorldCollisionRect();
   virtual CL_Rectf GetWorldRect();
   const CL_Rect & GetBoundsRect();
+  PhysicsManager * GetPhysicsManager() {return GetMap()->GetPhysicsManager();}
 
   float GetBoundingCollisionRadius();
   
@@ -133,7 +135,8 @@ public:
   void RenderShadow(void *pTarget);
   BaseGameEntity * CreateClone(TileEntity *pTile);
   void SetIsOnGround(bool bOnGround);
-  CBody * GetBody(){return &m_body;}
+  b2Body * GetBody(){return m_pBody;}
+  b2Body * m_pBody;
   void SetSpriteData(CL_Sprite *pSprite);
  // void SetImageClipRect(const CL_Rect &r);
   CL_Rect GetImageClipRect();
@@ -161,8 +164,9 @@ public:
   void SetRotation(float angle);
   float GetRotation();
   unsigned int GetDrawID() {return m_drawID;}
-  float GetMass() {return m_body.GetMass();}
-  void SetMass(float mass){m_body.SetMass(mass);}
+  float GetMass() {return m_pBody->GetMass();}
+ 
+  void SetMass(float mass){SetDensity(mass);}
   void SetDensity(float fDensity);
   void PostUpdate(float step);
   void SetListenCollision(int eListen);
@@ -177,8 +181,8 @@ public:
   void AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque);
   void AddForceAndTorqueBurst(CL_Vector2 force, CL_Vector2 torque);
 
-  CL_Vector2 GetForce() {return *(CL_Vector2*)&m_body.GetNetForce();};
-  CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_body.GetLinVelocity();}
+  CL_Vector2 GetForce() {return *(CL_Vector2*)&m_pBody->GetLinearVelocity();};
+  CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_pBody->GetLinearVelocity();}
   void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
   float GetDistanceFromEntityByID(int id);
@@ -251,6 +255,7 @@ public:
   CL_Vector2 GetVisualOffset();
   void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
   void SetCollisionMode(int mode);
+  int GetCollisionMode() {return m_collisionMode;};
   void UpdateTriggers(float step);
   Goal_Think * GetGoalManager();
   bool IsGoalManagerActive() {return m_pGoalManager != NULL;}
@@ -336,6 +341,8 @@ public:
   bool GetApproachPosition(MovingEntity *pEnt, int distance, CL_Vector2 &pOutputPos);
   void SetAnimLoopCallback(bool bNew) {m_bAnimCallbackActive = bNew;}
   bool GetAnimLoopCallback() {return m_bAnimCallbackActive;}
+  void AddContact(ContactPoint &cp);
+  
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -381,17 +388,19 @@ protected:
 
 	void ProcessCollisionTileList(tile_list &tList, float step);
 	void ProcessCollisionTile(Tile *pTile, float step);
-	void OnCollision(const Vector & N, float &t, CBody *pOtherBody, bool *pBoolAllowCollide); 
+	void OnCollision(const Vector & N, float &t, Body *pOtherBody, bool *pBoolAllowCollide); 
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
 	void ResetEffects();
 	void UpdatePositionFromParent();
 	CL_Vector2 GetRawScreenPosition(bool &bRootIsCam);
 	void ForceUpdatingPeriod(); //force entity to update for a few frames, no matter where it is
+	void InitializeBody();
+	void KillBody();
+	void HandleContacts();
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
     CL_Slot m_collisionSlot;
-	CBody m_body; //physics object
 	bool m_bIsAtRest;
 	bool m_bMovedFlag; //if true, we need to update our tile position
 	unsigned int m_groundTimer; //relax when we say they are on the  ground or not to take care of tiny bounces
@@ -475,6 +484,10 @@ protected:
 	L_EffectManager m_effectManager;
 	int m_visualStateOverride; 
 	bool m_bAnimCallbackActive;
+	CL_Vector2 m_pos;
+	float m_angle;
+	vector<ContactPoint> m_entContacts;
+	vector<ContactPoint> m_staticContacts;
 	
 };
 

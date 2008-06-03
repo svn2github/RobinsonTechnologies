@@ -30,9 +30,9 @@ public:
 	virtual void Update(float step);
 	virtual void Render(CL_GraphicContext *pGC);
 
-	virtual const CL_Vector2 & GetPos();
+	virtual CL_Vector2 GetPos();
 	virtual void SetPos(const CL_Vector2 &vecPos);
-	virtual CBody * GetCustomBody();
+	virtual b2Body * GetCustomBody();
 	virtual void RenderShadow(CL_GraphicContext *pGC);
 
 protected:

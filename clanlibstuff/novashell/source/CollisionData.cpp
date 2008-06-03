@@ -107,12 +107,16 @@ void CollisionData::ApplyScaleToAll(const CL_Vector2 &vScale)
 
 const CL_Vector2 & CollisionData::GetCombinedOffsets()
 {
+	assert(m_vecCombinedOffset == CL_Vector2::ZERO);
+	return m_vecCombinedOffset;
+	/*
 	if (m_bNeedsRecalc)
 	{
 		RecalculateCombinedOffsets();
 	}
 	
 	return m_vecCombinedOffset;
+	*/
 }
 int CollisionData::GetVertCount()
 {
@@ -131,7 +135,7 @@ int CollisionData::GetVertCount()
 
 void CollisionData::RecalculateCombinedOffsets()
 {
-	m_vecCombinedOffset = CL_Vector2(100000,100000);
+	//m_vecCombinedOffset = CL_Vector2(100000,100000);
 	m_collisionRect = CL_Rectf(FLT_MAX,FLT_MAX,-FLT_MAX,-FLT_MAX);
 
 	line_list::iterator listItor = m_lineList.begin();
@@ -141,8 +145,8 @@ void CollisionData::RecalculateCombinedOffsets()
 		
 		if (listItor->HasData())
 		{
-			m_vecCombinedOffset.x = min(m_vecCombinedOffset.x, listItor->GetOffset().x);
-			m_vecCombinedOffset.y = min(m_vecCombinedOffset.y, listItor->GetOffset().y);
+		///	m_vecCombinedOffset.x = min(m_vecCombinedOffset.x, listItor->GetOffset().x);
+		//	m_vecCombinedOffset.y = min(m_vecCombinedOffset.y, listItor->GetOffset().y);
 
 			
 			if (g_materialManager.GetMaterial(listItor->GetType())->GetType() == CMaterial::C_MATERIAL_TYPE_NORMAL)
@@ -167,15 +171,18 @@ void CollisionData::RecalculateCombinedOffsets()
 		m_collisionRect = CL_Rectf(0,0,0,0);
 	}
 
+	/*
 	if (m_vecCombinedOffset.x == 100000)
 	{
 		//must be invalid data
 		m_vecCombinedOffset = CL_Vector2(0,0);
 	}
+	*/
 	
 }
 void CollisionData::RecalculateOffsets()
 {
+	return;
 	line_list::iterator listItor = m_lineList.begin();
    
 	while (listItor != m_lineList.end())
@@ -189,6 +196,7 @@ void CollisionData::RecalculateOffsets()
 
 void CollisionData::RemoveOffsets()
 {
+	return;
 	line_list::iterator listItor = m_lineList.begin();
 
 	while (listItor != m_lineList.end())
@@ -258,7 +266,9 @@ void CollisionData::Serialize(CL_FileHelper &helper)
 				
 				//write how many points are in this list
 				helper.process_const(cl_uint32(listItor->GetPointList()->size()));
-				helper.process(listItor->GetOffset());
+				CL_Vector2 offsetUnused;
+				//helper.process(listItor->GetOffset());
+				helper.process(offsetUnused);
 				//write 'em
 				helper.process_array(&listItor->GetPointList()->at(0), listItor->GetPointList()->size());
 			}
@@ -288,7 +298,7 @@ void CollisionData::Serialize(CL_FileHelper &helper)
 				CL_Vector2 vTemp;
 				helper.process(vTemp);
 				m_lineList.push_back(ptList);
-				m_lineList.rbegin()->SetOffset(vTemp);
+				//m_lineList.rbegin()->SetOffset(vTemp);
 
 				m_lineList.rbegin()->GetPointList()->resize(vecCount);
 				helper.process_array(&m_lineList.rbegin()->GetPointList()->at(0), vecCount);
@@ -320,64 +330,43 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 
 	while (itor != pLineList->end())
 	{
-	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-	{
-	
-		itor->RemoveOffsets();
-
-		for (unsigned int i=0; i < itor->GetPointList()->size(); i++)
-		{
-
-			CL_Vector2 *p = &itor->GetPointList()->at(i);
-
-
-			//do each vert
-			if (pTile->GetBit(Tile::e_flippedX))
-			{
-				p->x = -p->x;
-			}
-
-			if (pTile->GetBit(Tile::e_flippedY))
-			{
-				p->y = -p->y;
-			}
-
-
-		}
-		itor->CalculateOffsets();
-	} else
-	{
-	
-		itor->RemoveOffsets();
-
-		//modify each vert on each line
-		CL_Rectf bounds = itor->GetRect();
+		
 		CL_Rectf picBounds = pTile->GetBoundsRect();
+		bool bNeedsReverse = false;
+		
+		if (pTile->GetBit(Tile::e_flippedX))
+		{
+			bNeedsReverse = !bNeedsReverse;
+		}
 
+		if (pTile->GetBit(Tile::e_flippedY))
+		{
+			bNeedsReverse = !bNeedsReverse;
+		}
 		for (unsigned int i=0; i < itor->GetPointList()->size(); i++)
 		{
-			
 			CL_Vector2 *p = &itor->GetPointList()->at(i);
-
 			
 			//do each vert
 			if (pTile->GetBit(Tile::e_flippedX))
 			{
 				p->x = picBounds.right + (-p->x);
+				bNeedsReverse = !bNeedsReverse;
 			}
 
 			if (pTile->GetBit(Tile::e_flippedY))
 			{
 				p->y = picBounds.bottom + (-p->y);
+				bNeedsReverse = !bNeedsReverse;
 			}
 
-			
 		}
-		itor->CalculateOffsets();
-	}
-
+		if (bNeedsReverse)
+		{
+			//reverse the winding so box2d won't get mad
+			std::reverse(itor->GetPointList()->begin(), itor->GetPointList()->end());
+		}
 		itor++;
 	}
 	
-
 }

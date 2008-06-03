@@ -1,6 +1,16 @@
 #include "MiscUtils.h"
 
+float RadiansToDegrees(float rad)
+{
+	const float k = 180.0f / M_PI;
+	return rad * k;
+}
 
+inline float DegreesToRadians(float deg)
+{
+	const float k = M_PI / 180.0f;
+	return deg * k;
+}
 string GetNextLineFromFile(FILE *fp)
 {
 	string line;

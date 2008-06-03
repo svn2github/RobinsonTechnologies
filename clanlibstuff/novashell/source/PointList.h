@@ -16,7 +16,8 @@ enum
 
 typedef std::vector<CL_Vector2> point_list;
 
-class CBody;
+struct Body;
+struct b2PolygonDef;
 
 class PointList
 {
@@ -30,12 +31,15 @@ public:
 	point_list * GetPointList() {return &m_points;}
 	void CalculateOffsets();
 	CL_Vector2 & GetOffset() {return m_vecOffset;}
-	void SetOffset(CL_Vector2 &v) {m_vecOffset = v;}
+	void SetOffset(CL_Vector2 &v) { /*m_vecOffset = v;*/}
 	void RemoveOffsets();
 	void ApplyScale(const CL_Vector2 &vScale);
 	void PrintPoints(); //debug thing
 
-	CBody & GetAsBody(const CL_Vector2 &vPos, CBody *pCustomBody = NULL);
+	Body & GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody = NULL);
+	
+	void GetAsPolygonDef(b2PolygonDef *shapeDef);
+
 	const CL_Rectf & GetRect();
 	bool HasData() {return m_points.size() > 0;}
 	bool ComputeConvexHull(); //any illegal verts are moved to legal positions, which creates dupes...

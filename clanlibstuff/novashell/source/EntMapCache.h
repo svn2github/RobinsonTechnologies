@@ -41,7 +41,7 @@ public:
 	void SetDrawWorldChunkGrid(bool bNew) {m_bDrawWorldChunkGrid = bNew;}
 	bool GetDrawWorldChunkGrid() {return m_bDrawWorldChunkGrid;}
 
-	void SetDrawCollision(bool bNew) {m_bDrawCollisionData = bNew;}
+	void SetDrawCollision(bool bNew);
 	bool GetDrawCollision() {return m_bDrawCollisionData;}
 	void SetWorld(Map *pWorld);
 	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect, bool bWithCollisionOnly = false, bool bAllowLoadOnDemand = true);

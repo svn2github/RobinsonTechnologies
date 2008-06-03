@@ -5,6 +5,7 @@
 #include "AI/NavGraphManager.h"
 #include "AI/WorldNavManager.h"
 
+
 #define C_DEFAULT_THUMBNAIL_WIDTH 8
 #define C_DEFAULT_THUMBNAIL_HEIGHT 8
 
@@ -125,6 +126,7 @@ void Map::Kill()
          }
     }
     m_chunkMap.clear();
+	m_physicsManager.Kill();
 	SAFE_DELETE(m_pNavGraphManager);
 	m_bKillingMap = false;
 
@@ -266,6 +268,7 @@ void Map::Init(CL_Rect worldRect)
 	}
 
 	m_mapRect = worldRect;
+	m_physicsManager.Init(this);
 }
 
 
@@ -424,9 +427,6 @@ bool Map::Load(string dirPath)
 	{
 		//LogMsg("Loading world map...");
 
-
-
-
 		CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
 
 		helper.process(m_version);
@@ -454,6 +454,8 @@ bool Map::Load(string dirPath)
 		ScreenID screenID;
 
 		helper.process(chunkType);
+		
+		m_physicsManager.SetGravity(CL_Vector2(0, GetGravity()));
 		//LogMsg("Loading worldchunks...");
 		while (chunkType != C_DATA_MAP_END_OF_CHUNKS)
 		{
@@ -820,12 +822,12 @@ void Map::ReInitEntities()
 					//we don't want to reinit things attached to the camera because generally those are GUI elements and get screwy
 					//if (pEnt && pEnt->GetAttachEntityID() != C_ENTITY_CAMERA) 
 					{
-						float orientation = pEnt->GetBody()->GetOrientation();
+						float orientation = pEnt->GetRotation();
 						CL_Vector2 facing = pEnt->GetVectorFacing();
 						pEnt->Kill();
 						pEnt->SetVectorFacing(facing);
 						pEnt->Init();
-						pEnt->GetBody()->SetOrientation(orientation);
+						pEnt->SetRotation(orientation);
 						pEnt->RunOnMapInsertIfNeeded();
 					}
 
@@ -890,6 +892,7 @@ void Map::ReInitCollisionOnTilePics()
 
 				case C_TILE_TYPE_PIC:
 					pTilePic = ((TilePic*)*tileItor);
+						//LogMsg("Reloading tilepic collision");
 					pTilePic->ReinitCollision();
 
 					break;

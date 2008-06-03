@@ -4,7 +4,6 @@
 #include "CollisionData.h"
 #include "MovingEntity.h"
 #include "LayerManager.h"
-
 #define C_DEFAULT_LAYER 1
 
 void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC);
@@ -402,6 +401,20 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 		pSurf->draw(params1, pGC);
 }
 
+TilePic::~TilePic()
+{
+	KillBody();
+}
+
+void TilePic::KillBody()
+{
+	if (m_pBody && m_pParentScreen)
+	{
+		m_pParentScreen->GetParentMapChunk()->GetParentMap()->GetPhysicsManager()->GetBox2D()->DestroyBody(m_pBody);
+		m_pBody = NULL;
+	}
+
+}
 void TilePic::RenderShadow(CL_GraphicContext *pGC)
 {
 		RenderTilePicShadow(this, pGC);
@@ -470,21 +483,61 @@ CollisionData * TilePic::GetCollisionData()
 	if (m_pCollisionData) return m_pCollisionData;
 
 	m_pCollisionData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(m_resourceID, m_rectSrc);
-	
-	if (m_vecScale.x != 1 || m_vecScale.y != 1)
+
+	if (GetParentScreen() && m_pCollisionData->GetLineList()->size() > 0)
 	{
-		//we may have to do something custom here
-		if (m_pCollisionData->GetLineList()->size() > 0)
+
+		if (m_pCollisionData->GetLineList()->begin()->HasData())
 		{
-			//well, this has real data most likely, so let's create our own copy and apply scale to it
-			CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
-			m_pCollisionData = pNewCol;
-			m_bUsingCustomCollision = true;
-			m_pCollisionData->SetScale(m_vecScale);
+
+		
+		if (m_vecScale != CL_Vector2(1,1))
+		{
+			//we may have to do something custom here
+				//well, this has real data most likely, so let's create our own copy and apply scale to it
+				CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
+				/*
+				CollisionData *pNewCol = new CollisionData();
+				CreateCollisionDataWithTileProperties(this, *pNewCol);
+				*/
+				m_pCollisionData = pNewCol;
+				m_bUsingCustomCollision = true;
+				m_pCollisionData->SetScale(m_vecScale);
+	
+		}
+
+		//MAKE BODY
+		KillBody();
+
+		b2BodyDef bd;
+		bd.position = ToPhysicsSpace(GetPos());
+		m_pBody = GetParentScreen()->GetParentMapChunk()->GetParentMap()->GetPhysicsManager()->GetBox2D()->CreateBody(&bd);
+		bd.userData = this;
+		b2PolygonDef groundShapeDef;
+
+		if (UsesTileProperties())
+		{
+			CollisionData col;
+			CreateCollisionDataWithTileProperties(this, col);
+			col.GetLineList()->begin()->GetAsPolygonDef(&groundShapeDef);
+		} else
+		{
+
+			m_pCollisionData->GetLineList()->begin()->GetAsPolygonDef(&groundShapeDef);
+		}
+		groundShapeDef.userData = NULL; //Not an ent, screw this
+		//CL_Rectf r = m_pCollisionData->GetCombinedCollisionRect();
+		//groundShapeDef.SetAsBox(r.get_width()/C_PHYSICS_PIXEL_SIZE, r.get_height()/C_PHYSICS_PIXEL_SIZE);
+
+		m_pBody->CreateShape(&groundShapeDef);
+
+		groundShapeDef.isSensor = true;
+		m_pBody->CreateShape(&groundShapeDef);
 		}
 
 	}
 
+	
 	return m_pCollisionData;
 }
 

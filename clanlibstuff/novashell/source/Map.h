@@ -20,9 +20,11 @@ extern const CL_Vector2 g_mapDefaultCenterPos;
 #include "MapChunk.h"
 #include "CameraSetting.h"
 #include "LayerManager.h"
+#include "PhysicsManager.h"
 
 class EntMapCache;
 class NavGraphManager;
+
 
 typedef std::map<ScreenID, MapChunk*> map_chunk_map;
 
@@ -81,7 +83,7 @@ public:
 	CameraSetting * GetCameraSetting() {return &m_cameraSetting;}
 	CL_Color GetBGColor() {CL_Color color; color.color = m_uintArray[e_uintBGColor]; return color;}
 	void SetBGColor(CL_Color col){m_uintArray[e_uintBGColor] = col.color;}
-	void SetGravity(float grav){m_floatArray[e_floatGravity] = grav; m_bDataChanged = true;}
+	void SetGravity(float grav){m_floatArray[e_floatGravity] = grav; m_bDataChanged = true; m_physicsManager.SetGravity(CL_Vector2(0, grav));}
 	float GetGravity() {return m_floatArray[e_floatGravity];}
 	void SetThumbnailWidth(int width) {m_intArray[e_intThumbnailWidth] = width; m_bDataChanged = true;}
 	void SetThumbnailHeight(int height) {m_intArray[e_intThumbnailHeight] = height; m_bDataChanged = true;}
@@ -127,6 +129,7 @@ public:
 	bool IsKillingMapNow() { return m_bKillingMap;}
 	CL_Rectf ComputeWorldRect(int reserved); //very slow!
 	void SetWorldRectExact(CL_Rectf r);
+	PhysicsManager * GetPhysicsManager() {return &m_physicsManager;}
 	
 private:
 
@@ -196,6 +199,7 @@ private:
 	bool m_bKillingMap;
 	CL_Rectf m_worldBounds; //the exact size of the map
 	bool m_bNeedToComputeBounds;
+	PhysicsManager m_physicsManager;
 
 };
 

@@ -556,7 +556,7 @@ void EntCollisionEditor::OnNextLine()
 
 
 
-void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, CBody *pCustomBody)
+void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, Body *pCustomBody)
 {
 
 	CL_Vector2 a,b, firstVert;
@@ -572,15 +572,6 @@ void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicCo
 		return;
 	}
 
-	if (!bRenderVertBoxes && pCustomBody)
-	{
-		//it's connected to a physics system, it's better if we render it a different way, so we can see rotation
-		CBody *pBody = &pl.GetAsBody(CL_Vector2(0,0), pCustomBody);
-		
-		RenderVertexListRotated(vecPos, (CL_Vector2*)pBody->GetVertArray(), pBody->GetVertCount(), col, pGC,
-			RadiansToDegrees(pBody->GetOrientation()));
-		return;
-	}
 
 	a = pl.GetPointList()->at(0);
 	a += vecPos;
@@ -622,20 +613,21 @@ void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicCo
 
 }
 
-void RenderVectorCollisionData(const CL_Vector2 &vecPos, CollisionData &col, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, CBody *pCustomBody)
+void RenderVectorCollisionData(const CL_Vector2 &vecPos, CollisionData &col, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, Body *pCustomBody)
 {
 	line_list *pLineList = col.GetLineList();
 	line_list::iterator itor = pLineList->begin();
 
 	while (itor != pLineList->end())
 	{
-		RenderVectorPointList(vecPos + (*itor).GetOffset(), (*itor), pGC, bRenderVertBoxes, pColorOveride, pCustomBody);
+		RenderVectorPointList(vecPos, (*itor), pGC, bRenderVertBoxes, pColorOveride, pCustomBody);
 		itor++;
 	}
 }
 
 void RenderTileListCollisionData(tile_list &tileList, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride)
 {
+	
 	tile_list::iterator itor = tileList.begin();
 
 	CollisionData col, *pCol;
@@ -653,23 +645,19 @@ void RenderTileListCollisionData(tile_list &tileList, CL_GraphicContext *pGC, bo
 				itor++;
 				continue;
 			}
-			
-			if (pCol->GetLineList()->size() > 0)
-			{
-				vPos -= pCol->GetLineList()->begin()->GetOffset();
-			}
+				
 		}
 		
 		if ((*itor)->UsesTileProperties())
 		{
 			//we need a customized version
 			CreateCollisionDataWithTileProperties((*itor), col);
-			RenderVectorCollisionData(vPos, col, pGC, bRenderVertBoxes, pColorOveride, (*itor)->GetCustomBody());
+			RenderVectorCollisionData(vPos, col, pGC, bRenderVertBoxes, pColorOveride, NULL);
 		} else
 		{
 			pCol = (*itor)->GetCollisionData();
 			if (pCol)
-			RenderVectorCollisionData(vPos, *pCol, pGC, bRenderVertBoxes, pColorOveride, (*itor)->GetCustomBody());
+			RenderVectorCollisionData(vPos, *pCol, pGC, bRenderVertBoxes, pColorOveride, NULL);
 		}
 	
 		itor++;

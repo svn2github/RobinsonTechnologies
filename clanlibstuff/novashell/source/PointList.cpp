@@ -3,7 +3,7 @@
 #include "physics/Body.h"
 #include "MaterialManager.h"
 #include "AppUtils.h"
-
+#include "PhysicsManager.h"
 
 //for SimpleHull2D function:
 //Copyright 2002, softSurfer (www.softsurfer.com)
@@ -146,7 +146,7 @@ bool PointList::ComputeConvexHull()
 }
 
 
-CBody g_Body; //a global for now, until I put in the real definitions
+Body g_Body; //a global for now, until I put in the real definitions
 
 PointList::PointList()
 {
@@ -207,7 +207,8 @@ bool PointList::BuildBoundingRect()
 
 void PointList::RemoveOffsets()
 {
-
+	assert(m_vecOffset == CL_Vector2(0,0));
+return;
 	for (unsigned int i=0; i < m_points.size(); i++)
 	{
 		m_points[i] += m_vecOffset;
@@ -219,7 +220,7 @@ void PointList::RemoveOffsets()
 
 void PointList::CalculateOffsets()
 {
-	RemoveOffsets();
+		return;
 	if (m_points.size() == 0) return;
 
 	m_bNeedsToRecalculateRect = true; //force recalulation to happen now	
@@ -255,12 +256,12 @@ void PointList::PrintPoints()
 
 }
 
-CBody & PointList::GetAsBody(const CL_Vector2 &vPos, CBody *pCustomBody)
+Body & PointList::GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody)
 {
 	// assert(m_points.size() > 0);
  	 if (pCustomBody)
 	 {
-		 pCustomBody->SetVertArray(pCustomBody->GetPosition(), (Vector*)&m_points[0], m_points.size());
+		 pCustomBody->SetVertArray(pCustomBody->m_position, (Vector*)&m_points[0], m_points.size());
 		 pCustomBody->SetMaterial(g_materialManager.GetMaterial(m_type));
 		 return *pCustomBody;
 	 }
@@ -313,6 +314,20 @@ bool PointList::GetCircleIntersection(const CL_Vector2 &c, float radius)
 	}
 
 	return false;
+}
+
+void PointList::GetAsPolygonDef(b2PolygonDef *shapeDef )
+{
+	for (unsigned int i=0; i < GetPointList()->size(); i++)
+	{
+		shapeDef->vertices[i].x = m_points[i].x / C_PHYSICS_PIXEL_SIZE;
+		shapeDef->vertices[i].y = m_points[i].y / C_PHYSICS_PIXEL_SIZE;
+	}
+
+	shapeDef->vertexCount = GetPointList()->size();
+
+	shapeDef->restitution = g_materialManager.GetMaterial(m_type)->GetRestitution();
+	shapeDef->friction = g_materialManager.GetMaterial(m_type)->GetFriction();
 }
 
 bool PointList::GetLineIntersection(const CL_Vector2 &a, const CL_Vector2 &b)

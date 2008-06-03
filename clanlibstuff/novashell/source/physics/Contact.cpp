@@ -86,6 +86,8 @@ void ResolveOverlap(  const Vector& Ncoll, float depth, float spring_value, floa
 // return values : V0, w0, V1, w1 will change upon a collision
 // -------------
 ///////////////////////////////////////////////////////////////
+
+/*
 void ResolveCollision(Vector Ncoll, float t, float fCoF, float fCoR,
 					  const Vector& C0, const Vector& P0, Vector& V0, float& w0, float m0, float i0, 
 					  const Vector& C1, const Vector& P1, Vector& V1, float& w1, float m1, float i1,
@@ -222,7 +224,7 @@ void CContact::Reset()
 }
 CContact::CContact(const Vector* CA, const Vector* CB, int Cnum, 
 				   const Vector& N, float t, 
-				   CBody* pxBodyA, CBody* pxBodyB, const CMaterial *mat)
+				   Body* pxBodyA, Body* pxBodyB, const CMaterial *mat)
 {
 	m_iNumContacts = 0;
 	m_pxBodies[0]  = pxBodyA;
@@ -257,6 +259,7 @@ void CContact::Render(void) const
 }
 */
 
+/*
 void CContact::AddContactPair(const Vector& CA, const Vector& CB)
 {
 	if (m_iNumContacts >= eMaxContacts)
@@ -310,7 +313,9 @@ void CContact::ResolveOverlap(const Vector& C0, const Vector& C1)
 
 	return;
 /**/
-	float m0 = m_pxBodies[0]->GetInvMass();
+	
+/*
+float m0 = m_pxBodies[0]->GetInvMass();
 	float m1 = m_pxBodies[1]->GetInvMass();
 	float m  = m0 + m1;
 
@@ -367,3 +372,5 @@ void CContact::ResolveCollision(const Vector& C0, const Vector& C1)
 					   m_pMaterial->GetStaticFriction());
 
 }
+
+*/

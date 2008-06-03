@@ -2,6 +2,10 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
+6-3 3008
+
+* Added editor utility menu option to round off tile/entity positions to 1
+
 5-31 2008
 
 * Fixed broken physics in treeworld example, whups

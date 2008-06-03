@@ -210,6 +210,39 @@ void EntEditMode::OnDeleteBadTiles()
 	CL_MessageBox::info("Bad tile search results", "Removed " + CL_String::from_int(tilesRemoved) + " tiles.", GetApp()->GetGUI());
 }
 
+
+
+void EntEditMode::OnRoundOffTiles()
+{
+	tile_list tlist;
+
+	BlitMessage("Rounding off tiles...");
+
+	CL_Rectf r = GetCamera->GetViewRectWorld();
+	g_pMapManager->GetActiveMapCache()->AddTilesByRect(CL_Rect(r.left, r.top, r.right, r.bottom), &tlist, g_pMapManager->GetActiveMap()->GetLayerManager().GetAllList());
+
+	LogMsg("Found %d tiles to look through.", tlist.size());
+
+	//delete any that have missing art
+
+	int tilesRemoved = 0;
+	tile_list::iterator itor;
+	for (itor = tlist.begin(); itor != tlist.end(); itor++)
+	{
+		Tile *pTile = (*itor);
+
+		CL_Vector2 vPos = pTile->GetPos();
+		vPos.x =  RoundNearest(vPos.x, 1.0f);
+		vPos.y =  RoundNearest(vPos.y, 1.0f);
+
+		
+		(*itor)->SetPos(vPos);
+
+	}
+
+}
+
+
 void EntEditMode::OnReplace()
 {
 	if (m_selectedTileList.IsEmpty())
@@ -393,6 +426,10 @@ void EntEditMode::Init()
 
 	pItem = m_pMenu->create_item("Utilities/Remove tiles with missing graphics (limited by view)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDeleteBadTiles);
+
+	pItem = m_pMenu->create_item("Utilities/Round off all tile and entity positions to 1 unit (limited by view)");
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnRoundOffTiles);
+
 
 	pItem = m_pMenu->create_item("Utilities/Create tile from tile (Ctrl-C while dragging a selection rectangle (Hold space to adjust drag position)");
 	pItem->enable(false);
@@ -1956,7 +1993,7 @@ void EntEditMode::OnDefaultTileHardness()
 
 	if (m_selectedTileList.IsEmpty())
 	{
-		CL_MessageBox::info("No tiles selected.  Left click on a tile first.", GetApp()->GetGUI());
+		CL_MessageBox::info("No tile selected.  Left click on a tile first.", GetApp()->GetGUI());
 		return;
 	}
 
@@ -1997,18 +2034,22 @@ void EntEditMode::OnDefaultTileHardness()
 	m_pEntCollisionEditor = (EntCollisionEditor*) GetMyEntityMgr->Add(new EntCollisionEditor);
 	m_slots.connect(m_pEntCollisionEditor->sig_delete, this, &EntEditMode::OnCollisionDataEditEnd);
 
-	CL_Rect rec(pTile->GetWorldRect());
+
 	
+
 	CL_Vector2 vEditPos = pTile->GetPos();
+	CL_Rect rec(pTile->GetWorldRect());
+	rec.apply_alignment(origin_top_left, vEditPos.x, vEditPos.y);
+
 
 	CL_Vector2 vOriginalPos = vEditPos;
 	if (bIsEnt)
 	{
-		rec.apply_alignment(origin_top_left,m_pOriginalEditEnt->GetVisualOffset().x, m_pOriginalEditEnt->GetVisualOffset().y);
-		vEditPos += m_pOriginalEditEnt->GetVisualOffset();
+		//rec.apply_alignment(origin_top_left,m_pOriginalEditEnt->GetVisualOffset().x, m_pOriginalEditEnt->GetVisualOffset().y);
+		//vEditPos += m_pOriginalEditEnt->GetVisualOffset();
 		//total hack to fake the visual offset while we're drawing it
 		
-		m_pOriginalEditEnt->SetPos(m_pOriginalEditEnt->GetPos() + m_pOriginalEditEnt->GetVisualOffset());
+		//m_pOriginalEditEnt->SetPos(m_pOriginalEditEnt->GetPos() + m_pOriginalEditEnt->GetVisualOffset());
 		m_collisionEditOldTilePos = m_pOriginalEditEnt->GetPos();
 	
 	} else
@@ -2020,16 +2061,11 @@ void EntEditMode::OnDefaultTileHardness()
 		((TilePic*)pTile)->ForceUsingCustomCollisionData();
 	}
 
-	rec.apply_alignment(origin_top_left, vEditPos.x, vEditPos.y);
+	//rec.apply_alignment(origin_top_left, vEditPos.x, vEditPos.y);
 
-	//the collision shape MUST be have point 0,0 inside of it, so if we want a shape to start at offset
-	//50,50 in an image, it breaks.  To fix, we automatically handle creating an offset from the real 
-	//position.  But for entities, this isn't needed as the shape is always going to be centered around
-	//0,0
+	bool useCollisionOffsets = false;
 
-	bool useCollisionOffsets = true;
-
-	pTile->GetCollisionData()->RemoveOffsets();
+	//pTile->GetCollisionData()->RemoveOffsets();
 
 	m_pTileWeAreEdittingCollisionOn = pTile; //messy way of remembering this in the
 	//callback that is hit when editing is done

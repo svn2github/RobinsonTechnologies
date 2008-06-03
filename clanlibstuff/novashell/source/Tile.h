@@ -16,7 +16,7 @@ class Screen;
 class MovingEntity;
 class CollisionData;
 class CL_Surface;
-class CBody;
+class b2Body;
 
 enum
 {
@@ -40,7 +40,7 @@ public:
 	void SetBit(cl_uint32 bit, bool bNew) {m_bitField.set_bit(bit, bNew);}
 	const CL_Vector2 & GetScale() {return m_vecScale;}
 	virtual void SetScale(const CL_Vector2 &v);
-	virtual const CL_Vector2 & GetPos() {return m_vecPos;}
+	virtual CL_Vector2 GetPos() {return m_vecPos;}
 	CL_Vector2 GetPosSafe() {return GetPos();}
 	virtual void SetPos(const CL_Vector2 &vecPos) {m_vecPos = vecPos;}
 	bool IsEdgeCase() {return m_pEdgeCaseList != NULL;}
@@ -69,7 +69,7 @@ public:
 	virtual void RenderShadow(CL_GraphicContext *pGC) {return;}
 	Screen * GetParentScreen();
 	void SetParentScreen(Screen *pScreen) {m_pParentScreen = pScreen;}
-	virtual CBody * GetCustomBody() {return NULL;}
+	virtual b2Body * GetCustomBody() {return NULL;}
 	void SetColor(const CL_Color color) {m_color = color;}
 	CL_Color GetColor() {return m_color;}
 	int GetGraphNodeID() {return m_graphNodeID;}
@@ -119,7 +119,9 @@ public:
 	{
 		m_type = C_TILE_TYPE_PIC;
 		m_rot = 0;
+		m_pBody = NULL;
 	}
+	virtual ~TilePic();
 	
 	virtual Tile * CreateClone();
 	virtual void Serialize(CL_FileHelper &helper);
@@ -137,9 +139,11 @@ public:
 	virtual CollisionData * GetCollisionData();
 	virtual void Render(CL_GraphicContext *pGC);
 	virtual void RenderShadow(CL_GraphicContext *pGC);
+	void KillBody();
 	unsigned int m_resourceID;
 	CL_Rect m_rectSrc;
 	float m_rot; //rotation
+	b2Body *m_pBody; //NULL if not using collision
 
 
 };

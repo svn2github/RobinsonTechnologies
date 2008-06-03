@@ -77,7 +77,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
+				LinkLibraryDependencies="true"
 				OutputFile="../bin/game.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -1174,7 +1174,27 @@
 					>
 				</File>
 				<File
+					RelativePath=".\physics\Collision.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\physics\Contact.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\DebugDraw.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\DebugDraw.h"
+					>
+				</File>
+				<File
+					RelativePath=".\PhysicsManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\PhysicsManager.h"
 					>
 				</File>
 				<File

@@ -1,41 +1,28 @@
-#ifndef OLI_VECTOR_H
-#define OLI_VECTOR_H
-#include "ClanLib/core.h"
-
-const float   Pi        = atan(1.0f) * 4.0f;
-
-
-
-/*
-------------------------------------------------------------------
-Started: 09/01/2004 22:20:40
-  
-$Header: $
-$Revision: $
-$Locker: $
-$Date: $
-  
-Author: Olivier renault
-------------------------------------------------------------------
-Module: 
-Description: 
-------------------------------------------------------------------
-$History: $
-------------------------------------------------------------------
-*/
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
+#include <glut.h>
 
 typedef unsigned char   u_char;
 typedef unsigned short  u_short;
 typedef unsigned int    u_int;
 typedef unsigned long   u_long;
 
-#define for if(0); else for
-//#include "AI/misc/utils.h"
+#define ARGB_A(u) (((u)>>24) & 0x000000FF)
+#define ARGB_R(u) (((u)>>16) & 0x000000FF)
+#define ARGB_G(u) (((u)>> 8) & 0x000000FF)
+#define ARGB_B(u) (((u)>> 0) & 0x000000FF)
+
+//assert macros
+#define assertf(a, text) \
+{ \
+	extern int assert_internal(const char* file, int line, const char* desc, ...); \
+	static int s_result=0;\
+	if(!(a) && (s_result == 0)) s_result = assert_internal(__FILE__, __LINE__, text); \
+}
+//#define assert(a) assertf(a, #a)
 
 inline float sign(float x)
 {
@@ -53,73 +40,29 @@ inline void swapf(float& a, float& b)
 	b = c;
 }
 
-inline float pPi()
+inline float pi()
 {
-	const float pi = atan(1.0f) * 4.0f;
+    static const float g_pi = atan(1.0f) * 4.0f;
 
-	return pi;
-}
-
-inline float pTwoPi()
-{
-	const float two_pi = 2.0f * pPi();
-	return two_pi;
-}
-
-
-inline float clampf(float x, float min, float max)
-{
-	return (x < min)? min : (x > max)? max : x;
-}
-inline float wrapf(float x, float min, float max)
-{
-	return (x < min)? (x - min) + max : (x > max)? (x - max) + min : x;
-
-}
-
-inline float RadiansToDegrees(float rad)
-{
-	const float k = 180.0f / Pi;
-	return rad * k;
-}
-
-inline float DegreesToRadians(float deg)
-{
-	const float k = Pi / 180.0f;
-	return deg * k;
+	return g_pi;
 }
 
 //===========================================================================
 // VECTORS
 //===========================================================================
-class Matrix;
-
 class Vector
 {
 public:
 	float x,y;
-
-
-	static const Vector& Blank() { static const Vector V(0, 0); return V; }
 public:
 	inline Vector(void)
 	{}
-
-	/*
-	operator const CL_Vector2 * () { return (CL_Vector2*)this; } //conversion operator
-	operator const CL_Vector2 () { return *(CL_Vector2*)this; } //conversion operator
-	operator CL_Vector2 () { return *(CL_Vector2*)this; } //conversion operator
-*/
 
 	inline Vector(float Ix,float Iy)
 	: x(Ix)
 	, y(Iy)
 	{}
 
-	Vector(CL_Vector2 v)
-		: x (v.x)
-		, y(v.y)
-	{}
 	inline Vector &operator /=(const float Scalar)	{ x /= Scalar; y /= Scalar;		return *this; }
 
 	inline Vector &operator *=(const float Scalar)	{ x *= Scalar; y *= Scalar;		return *this; }
@@ -142,103 +85,61 @@ public:
 
 	friend Vector operator * (float k, const Vector& V) {	return Vector(V.x*k, V.y*k); }
 
-	Vector operator * (const Matrix& M) const;
 	
-	Vector operator ^ (const Matrix& M) const;
-	
-	Vector& operator *=(const Matrix& M);
-	
-	Vector& operator ^=(const Matrix& M);
-
 	inline Vector operator -(void) const { return Vector(-x, -y); }
 	
-	inline float Length(void) const { return (float) sqrt(x*x + y*y); }
+	inline float length(void) const { return (float) sqrt(x*x + y*y); }
 
-	float Normalise(void) 
+	void swap(Vector& other)
+	{
+		Vector temp = *this;
+		*this = other;
+		other = temp;
+	}
+
+	float normalise(void) 
 	{	
-		float fLength = Length();	
+		float l = length();	
 		
-		if (fLength == 0.0f) 
+		if (l == 0.0f) 
 			return 0.0f; 
 		
-		(*this) *= (1.0f / fLength); 
-	
-		return fLength;	
+		(*this) /= l; 
+		return l;	
 	}
 
-	Vector Direction(void) const
+	Vector perp() const
 	{
-		Vector Temp(*this);
-
-		Temp.Normalise();
-
-		return Temp;
+		return Vector(-y, x);
 	}
 
-	float Angle(const Vector& xE)
+	float angle(const Vector& xE) const
 	{
 		float dot = (*this) * xE;
 		float cross = (*this) ^ xE;
-		
-		// angle between segments
 		float angle = (float) atan2(cross, dot);
-
 		return angle;
 	}
 
-	Vector& Rotate(float angle)
+	Vector& rotate(float angle)
 	{
 		float tx = x;
 		x =  x * cos(angle) - y * sin(angle);
 		y = tx * sin(angle) + y * cos(angle);
-
 		return *this;
 	}
 
-	Vector& Rotate(const Vector& xCentre, float fAngle)
+	Vector& transform(const Vector& trans, float rot)
 	{
-		Vector D = *this - xCentre;
-		D.Rotate(fAngle);
-
-		*this = xCentre + D;
-
+		Vector D = *this;
+		D.rotate(rot);
+		*this = trans + D;
 		return *this;
 	}
 
-	void Clamp(const Vector& min, const Vector& max)
+	void randomise(const Vector& min, const Vector& max)
 	{
-		x = (x < min.x)? min.x : (x > max.x)? max.x : x;
-		y = (y < min.y)? min.y : (y > max.y)? max.y : y;
-	}
-
-	void Randomise(const Vector& xMin, const Vector& xMax)
-	{
-		x = frand(xMax.x - xMin.x) + xMin.x;
-		y = frand(xMax.y - xMin.y) + xMin.y;
-	}
-
-	void Render(void) const
-	{
-		glColor3f(1.0f, 1.0f, 0.1f);
-		glPointSize(3.0f);
-		glBegin(GL_POINTS);
-		glVertex2f(x, y);
-		glEnd();
+		x = frand(max.x - min.x) + min.x;
+		y = frand(max.y - min.y) + min.y;
 	}
 };
-
-#define ARGB_A(u) (((u)>>24) & 0x000000FF)
-#define ARGB_R(u) (((u)>>16) & 0x000000FF)
-#define ARGB_G(u) (((u)>> 8) & 0x000000FF)
-#define ARGB_B(u) (((u)>> 0) & 0x000000FF)
-
-extern void RenderSegment		 (const Vector& A, const Vector& B, u_int uARGB, u_short uStipple, float fPointSize, float fLineWidth);
-extern void RenderArrow			 (const Vector& P, const Vector& D, float length, u_int uARGB);
-extern void	RenderSolidCircle	 (const Vector& xPos, float fRad);
-extern void	RenderCircle		 (const Vector& xPos, float fRad);
-extern bool FindRoots			 (float a, float b, float c, float& t0, float& t1);
-extern bool RaySphereIntersection(const Vector& C, float r, const Vector& O, const Vector& D, float tmin, float tmax, float& t);
-
-
-
-#endif

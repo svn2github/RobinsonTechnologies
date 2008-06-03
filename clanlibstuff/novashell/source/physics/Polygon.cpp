@@ -1,629 +1,324 @@
 #include "AppPrecomp.h"
-#include "vector.h"
-#include "Matrix.h"
 #include "Polygon.h"
 
 // taken from 
 // http://www.physicsforums.com/showthread.php?s=e251fddad79b926d003e2d4154799c14&t=25293&page=2&pp=15
-float PolyColl::CalculateMass(const Vector* A, int Anum, float density)
+float Poly::calculateMass(float density)
 {
-	if (Anum < 2)
+	if (m_count < 2)
 		return 5.0f * density;
 
 	float mass = 0.0f;
-
-	for(int j = Anum-1, i = 0; i < Anum; j = i, i ++)
-	{
-		Vector P0 = A[j];
-		Vector P1 = A[i];
-		mass +=  (float) fabs(P0 ^ P1);
-	}
-	if (Anum <= 2)
-		mass = 10.0f;
-
+	for(int j = m_count-1, i = 0; i < m_count; j = i, i ++)
+		mass +=  (float) fabs(m_vertices[i] ^ m_vertices[j]);
+	
 	mass *= density * 0.5f;
-
 	return mass;
 }
 
 // taken from 
 // http://www.physicsforums.com/showthread.php?s=e251fddad79b926d003e2d4154799c14&t=25293&page=2&pp=15
-float PolyColl::CalculateInertia(const Vector* A, int Anum, float mass)
+float Poly::calculateInertia()
 {
-	if (Anum == 1)	return 0.0f;
+	if (m_count == 1) 
+		return 0.0f;
 
 	float denom = 0.0f;
 	float numer = 0.0f;
-
-	for(int j = Anum-1, i = 0; i < Anum; j = i, i ++)
+	for(int j = m_count-1, i = 0; i < m_count; j = i, i ++)
 	{
-		Vector P0 = A[j];
-		Vector P1 = A[i];
-
-		float a = (float) fabs(P0 ^ P1);
-		float b = (P1*P1 + P1*P0 + P0*P0);
-
+		float a = (float) fabs(m_vertices[i] ^ m_vertices[j]);
+		float b = (m_vertices[j]*m_vertices[j] + m_vertices[j]*m_vertices[i] + m_vertices[i]*m_vertices[i]);
 		denom += (a * b);
 		numer += a;
 	}
-	float inertia = (mass / 6.0f) * (denom / numer);
-
+	float inertia = (denom / numer) * (1.0f / 6.0f);;
 	return inertia;
 }
 
 
-Vector* PolyColl::BuildBox(int& iNumVertices, float width, float height)
+Poly::Poly()
 {
-	Vector* axVertices = new Vector[4];
+	m_count = 0;
+	m_vertices = NULL;
+}
+
+
+Poly::Poly(const Vector& min, const Vector& max)
+{
+	m_vertices[0] = Vector(min.x, min.y);
+	m_vertices[1] = Vector(min.x, max.y);
+	m_vertices[2] = Vector(max.x, max.y);
+	m_vertices[3] = Vector(max.x, min.y);
+	m_count = 4;
+}
+
+
+void Poly::SetVertInfo(Vector *pVerts, int count)
+{
+	m_vertices = pVerts;
+	m_count = count;
+}
+
+Poly::Poly(int count, float radius)
+{
+	m_count = count;
 	
-	axVertices[0] = Vector(-width/2, -height/2);
-	axVertices[1] = Vector( width/2, -height/2);
-	axVertices[2] = Vector( width/2,  height/2);
-	axVertices[3] = Vector(-width/2,  height/2);
-	iNumVertices = 4;
-	return axVertices;
-}
-
-Vector* PolyColl::BuildBlob(int iNumVertices, float radiusx, float radiusy)
-{
-	if (iNumVertices == 0)
-		return NULL;
-	
-	Vector* axVertices = new Vector[iNumVertices];
-
-	if (iNumVertices == 1)
+	for(int i = 0; i < m_count; i ++)
 	{
-		axVertices[0] = Vector(0, 0);
-		return axVertices;
-	}
+		float a = 2.0f * pi() * (i / (float) m_count);
 
-	float a = pPi() / iNumVertices;
-	float da = 2.0f * pPi() / iNumVertices;
-
-	for(int i = 0; i < iNumVertices; i ++)
-	{
-		a += da;
-
-		axVertices[i] = Vector(cos(a) * radiusx, sin(a) * radiusy);
-	}
-	return axVertices;
-}
-void GetInterval(const Vector *axVertices, int iNumVertices, 
-				 const Vector& xAxis, float& min, float& max);
-
-bool FindMTD(Vector* xAxis, float* taxis, int iNumAxes, Vector& N, float& t);
-
-bool IntervalIntersect(const Vector* A, int Anum,
-					   const Vector* B, int Bnum,
-					   const Vector& xAxis, 
-					   const Vector& xOffset, const Vector& xVel, const Matrix& xOrient,
-					   float& taxis, float tmax);
-
-bool PolyColl::Collide(const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA,
-					   const Vector* B, int Bnum, const Vector& PB, const Vector& VB, const Matrix& OB,
-					   Vector& N, float& t)
-{
-	if (!A || !B) return false;
-
-	if (Anum < 2 && Bnum < 2)
-		return false;
-
-	Matrix xOrient = OA ^ OB;
-	Vector xOffset = (PA - PB) ^ OB;
-	Vector xVel    = (VA - VB) ^ OB;
-	
-	// All the separation axes
-	Vector xAxis[64]; // note : a maximum of 32 vertices per poly is supported
-	float  taxis[64];
-	int    iNumAxes=0;
-	assert(Anum < 32 && Bnum < 32 && "Max verts reached!");
-
-	float fVel2 = xVel * xVel;
-
-	if (fVel2 > 0.00001f)
-	{
-		xAxis[iNumAxes] = Vector(-xVel.y, xVel.x);
-
-		if (!IntervalIntersect(	A, Anum, 
-								B, Bnum, 
-								xAxis[iNumAxes], 
-								xOffset, xVel, xOrient,
-								taxis[iNumAxes], t))
-		{
-			return false;
-		}
-		iNumAxes++;
-	}
-
-	if (Anum > 1)
-	{
-		// test separation axes of A
-		for(int j = Anum-1, i = 0; i < Anum; j = i, i ++)
-		{
-			Vector E0 = A[j];
-			Vector E1 = A[i];
-			Vector E  = E1 - E0;
-			xAxis[iNumAxes] = Vector(-E.y, E.x) * xOrient;
-			
-			if (!IntervalIntersect(	A, Anum, 
-									B, Bnum, 
-									xAxis[iNumAxes], 
-									xOffset, xVel, xOrient,
-									taxis[iNumAxes], t))
-			{
-				return false;
-			}
-
-			iNumAxes++;
-		}
-	}
-
-	// test separation axes of B
-	if (Bnum > 1)
-	{
-		for(int j = Bnum-1, i = 0; i < Bnum; j = i, i ++)
-		{
-			Vector E0 = B[j];
-			Vector E1 = B[i];
-			Vector E  = E1 - E0;
-			xAxis[iNumAxes] = Vector(-E.y, E.x);
-
-			if (!IntervalIntersect(	A, Anum, 
-									B, Bnum, 
-									xAxis[iNumAxes], 
-									xOffset, xVel, xOrient,
-									taxis[iNumAxes], t))
-			{
-				return false;
-			}
-
-			iNumAxes++;
-		}
-	}
-
-	// special case for segments
-	if (Bnum == 2)
-	{
-		Vector E  = B[1] - B[0];
-		xAxis[iNumAxes] = E;
-		
-		if (!IntervalIntersect(	A, Anum, 
-								B, Bnum, 
-								xAxis[iNumAxes], 
-								xOffset, xVel, xOrient,
-								taxis[iNumAxes], t))
-		{
-			return false;
-		}
-
-		iNumAxes++;
-	}
-
-	// special case for segments
-	if (Anum == 2)
-	{
-		Vector E  = A[1] - A[0];
-		xAxis[iNumAxes] = E * xOrient;
-		
-		if (!IntervalIntersect(	A, Anum, 
-								B, Bnum, 
-								xAxis[iNumAxes], 
-								xOffset, xVel, xOrient,
-								taxis[iNumAxes], t))
-		{
-			return false;
-		}
-
-		iNumAxes++;
-	}
-
-	if (!FindMTD(xAxis, taxis, iNumAxes, N, t))
-		return false;
-
-	// make sure the polygons gets pushed away from each other.
-	if (N * xOffset < 0.0f)
-		N = -N;
-
-	N *= OB;
-	return true;
-}
-
-// calculate the projection range of a polygon along an axis
-void GetInterval(const Vector *axVertices, int iNumVertices, const Vector& xAxis, float& min, float& max)
-{
-	min = max = (axVertices[0] * xAxis);
-
-	for(int i = 1; i < iNumVertices; i ++)
-	{
-		float d = (axVertices[i] * xAxis);
-		if (d < min) min = d; else if (d > max) max = d;
+		m_vertices[i] = Vector(cos(a), sin(a)) * radius;
 	}
 }
 
-bool IntervalIntersect(const Vector* A, int Anum,
-					   const Vector* B, int Bnum,
-					   const Vector& xAxis, 
-					   const Vector& xOffset, const Vector& xVel, const Matrix& xOrient,
-					   float& taxis, float tmax)
+void Poly::transform(const Vector& position, float rotation)
 {
-	float min0, max0;
-	float min1, max1;
-	GetInterval(A, Anum, xAxis ^ xOrient, min0, max0);
-	GetInterval(B, Bnum, xAxis, min1, max1);
+	for(int i = 0; i < m_count; i ++)
+		m_vertices[i].transform(position, rotation);
+}
 
-	float h = xOffset * xAxis;
-	min0 += h;
-	max0 += h;
+void Poly::translate(const Vector& delta)
+{
+	for(int i = 0; i < m_count; i ++)
+		m_vertices[i] += delta;
+}
 
-	float d0 = min0 - max1; // if overlapped, do < 0
-	float d1 = min1 - max0; // if overlapped, d1 > 0
-
-	// separated, test dynamic intervals
-	if (d0 > 0.0f || d1 > 0.0f) 
+void Poly::render(bool solid) const
+{
+	if(solid)
 	{
-		float v = xVel * xAxis;
-
-		// small velocity, so only the overlap test will be relevant. 
-		if (fabs(v) < 0.0000001f)
-			return false;
-
-		float t0 =-d0 / v; // time of impact to d0 reaches 0
-		float t1 = d1 / v; // time of impact to d0 reaches 1
-
-		if (t0 > t1) { float temp = t0; t0 = t1; t1 = temp; }
-		taxis  = (t0 > 0.0f)? t0 : t1;
-
-		if (taxis < 0.0f || taxis > tmax)
-			return false;
-
-		return true;
+		glBegin(GL_TRIANGLE_FAN);
 	}
 	else
 	{
-		// overlap. get the interval, as a the smallest of |d0| and |d1|
-		// return negative number to mark it as an overlap
-		taxis = (d0 > d1)? d0 : d1;
-		return true;
+		glBegin(GL_LINE_LOOP);
 	}
-}
-bool FindMTD(Vector* xAxis, float* taxis, int iNumAxes, Vector& N, float& t)
-{
-	// find collision first
-	int mini = -1;
-	t = 0.0f;
-	for(int i = 0; i < iNumAxes; i ++)
-	{	
-		if (taxis[i] > 0)
-		{
-			if (taxis[i] > t)
-			{
-				mini = i;
-				t = taxis[i];
-				N = xAxis[i];
-				N.Normalise();
-			}
-		}
-	}
-
-	// found one
-	if (mini != -1)
-		return true; 
-
-	// nope, find overlaps
-	mini = -1;
-	for(int i = 0; i < iNumAxes; i ++)
+	for(int i = 0; i < m_count; i ++)
 	{
-		float n = xAxis[i].Normalise();
-		taxis[i] /= n;
+		glVertex2f(m_vertices[i].x, m_vertices[i].y);
+	}
+	glVertex2f(m_vertices[0].x, m_vertices[0].y);
+	glEnd();
+}
 
-		if (taxis[i] > t || mini == -1)
-		{
-			mini = i;
-			t = taxis[i];
-			N = xAxis[i];
-		}
+CollisionInfo Poly::collide(const Poly& poly, const Vector& delta) const
+{
+	CollisionInfo info;
+	// reset info to some weird values
+	info.m_overlapped = true;		 // we'll be regressing tests from there
+	info.m_collided = true;
+	info.m_mtdLengthSquared = -1.0f; // flags mtd as not being calculated yet
+	info.m_tenter = 1.0f;			 // flags swept test as not being calculated yet
+	info.m_tleave = 0.0f;			 // <--- ....
+
+		
+	// test separation axes of current polygon
+	for(int j = m_count-1, i = 0; i < m_count; j = i, i ++)
+	{
+		Vector v0 = m_vertices[j];
+		Vector v1 = m_vertices[i];
+
+		Vector edge = v1 - v0; // edge
+		Vector axis = edge.perp(); // sep axis is perpendicular ot the edge
+		
+		if(separatedByAxis(axis, poly, delta, info))
+			return CollisionInfo();
 	}
 
-	if (mini == -1)
-		printf("Error\n");
+	// test separation axes of other polygon
+	for(int j = poly.m_count-1, i = 0; i < poly.m_count; j = i, i ++)
+	{
+		Vector v0 = poly.m_vertices[j];
+		Vector v1 = poly.m_vertices[i];
 
-	return (mini != -1);
+		Vector edge = v1 - v0; // edge
+		Vector axis = edge.perp(); // sep axis is perpendicular ot the edge
+		if(separatedByAxis(axis, poly, delta, info))
+			return CollisionInfo();
+	}
+
+	assert(!(info.m_overlapped) || (info.m_mtdLengthSquared >= 0.0f));
+	assert(!(info.m_collided)   || (info.m_tenter <= info.m_tleave));
+
+	// sanity checks
+	info.m_overlapped &= (info.m_mtdLengthSquared >= 0.0f);
+	info.m_collided   &= (info.m_tenter <= info.m_tleave);	
+
+	// normalise normals
+	info.m_Nenter.normalise();
+	info.m_Nleave.normalise();
+
+	return info;
 }
 
-
-//----------------------------------------------------------------------------------------------- 
-// Find closest point on a segment to a vertex
-//----------------------------------------------------------------------------------------------- 
-bool ProjectPointOnSegment(const Vector& V, const Vector& A, const Vector& B, Vector& W, float* pt=NULL)
+void Poly::calculateInterval(const Vector& axis, float& min, float& max) const
 {
-	Vector AV = V - A;
-	Vector AB = B - A;
-	float t = (AV * AB) / (AB * AB);
+	min = max = (m_vertices[0] * axis);
 
-	if (t < 0.0f) t = 0.0f; else if (t > 1.0f) t = 1.0f;
-
-	if (pt)	*pt = t;
-
-	W = A + t * AB;
-
-	return true;
+	for(int i = 1; i < m_count; i ++)
+	{
+		float d = (m_vertices[i] * axis);
+		if (d < min) 
+			min = d; 
+		else if (d > max) 
+			max = d;
+	}
 }
 
-//----------------------------------------------------------------------------------------------- 
-// Tranform a contact point into world collision space
-//----------------------------------------------------------------------------------------------- 
-static Vector Transform(const Vector& Vertex, const Vector& P, const Vector& V, const Matrix& xOrient, float t)
+bool Poly::separatedByAxis(const Vector& axis, const Poly& poly, const Vector& delta, CollisionInfo& info) const
 {
-	Vector T = P + (Vertex * xOrient);
+	float mina, maxa;
+	float minb, maxb;
 
-	if(t > 0.0f)
-		T += V * t;
+	// calculate both polygon intervals along the axis we are testing
+	calculateInterval(axis, mina, maxa);
+	poly.calculateInterval(axis, minb, maxb);
 
-	return T;
-}
+	// calculate the two possible overlap ranges.
+	// either we overlap on the left or right of the polygon.
+	float d0 = (maxb - mina); // 'left' side
+	float d1 = (minb - maxa); // 'right' side
+	float v  = (axis * delta); // project delta on axis for swept tests
 
-//----------------------------------------------------------------------------------------------- 
-// find the support points of a convex shape along a direction
-//----------------------------------------------------------------------------------------------- 
-int FindSupportPoints(const Vector& N, float t, const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA, Vector* S)
-{
-	Vector Norm = N ^ OA;
-
-	float d[32];
-	float dmin;
-	dmin = d[0] = A[0] * Norm;
+	bool sep_overlap = separatedByAxis_overlap(axis, d0, d1, info);
+	bool sep_swept   = separatedByAxis_swept  (axis, d0, d1, v, info);
 	
-	for(int i = 1; i < Anum; i ++)
-	{
-		d[i] = A[i] * Norm;
-
-		if (d[i] < dmin)
-		{
-			dmin = d[i];
-		}
-	}
-
-	// we will limit the number of support points to only 2. 
-	// if we have more than 2 support points, we take the extremums.
-	int Snum = 0;
-	const float threshold = 1.0E-3f;
-	float s[2];
-	float sign = false;
-
-	Vector Perp(-Norm.y, Norm.x);
-
-	for(int i = 0; i < Anum; i ++)
-	{
-		if (d[i] < dmin + threshold)
-		{
-			Vector Contact = Transform(A[i], PA, VA, OA, t);
-
-			float c = Contact * Perp;
-
-			if (Snum < 2)
-			{
-				s[Snum] = c;
-				S[Snum] = Contact;
-				Snum++;
-
-				if (Snum > 1)
-				{
-					sign = (s[1] > s[0]);
-				}
-			}
-			else
-			{
-				float&  min = (sign)? s[0] : s[1];
-				float&  max = (sign)? s[1] : s[0];
-				Vector& Min = (sign)? S[0] : S[1];
-				Vector& Max = (sign)? S[1] : S[0];
-
-				if (c < min)
-				{
-					min = c;
-					Min = Contact;
-				}
-				else if (c > max)
-				{
-					max = c;
-					Max = Contact;
-				}
-			}
-		}
-	}
-	return Snum;
+	// both tests didnt find any collision
+	// return separated
+	return (sep_overlap && sep_swept);
 }
 
-// convert sets of support points to contact points.
-bool ConvertSupportPointsToContacts(const Vector& N,
-									Vector* S0, int S0num, 
-									Vector* S1, int S1num,
-									Vector* C0,
-									Vector* C1,
-									int& Cnum)
+bool Poly::separatedByAxis_overlap(const Vector& axis, float d0, float d1, CollisionInfo& info) const
 {
-	Cnum = 0;
-
-	if (S0num == 0 || S1num == 0)
+	if(!info.m_overlapped)
 		return false;
 
-	if (S0num == 1 && S1num == 1)
+	// intervals do not overlap. 
+	// so no overlpa possible.
+	if(d0 < 0.0f || d1 > 0.0f)
 	{
-		C0[Cnum] = S0[0];
-		C1[Cnum] = S1[0];
-		Cnum++;
+		info.m_overlapped = false;
+		return true;
+	}
+	
+	// find out if we overlap on the 'right' or 'left' of the polygon.
+	float overlap = (d0 < -d1)? d0 : d1;
+
+	// the axis length squared
+	float axis_length_squared = (axis * axis);
+
+	assert(axis_length_squared > 0.00001f);
+
+	// the mtd vector for that axis
+	Vector sep = axis * (overlap / axis_length_squared);
+
+	// the mtd vector length squared.
+	float sep_length_squared = (sep * sep);
+
+	// if that vector is smaller than our computed MTD (or the mtd hasn't been computed yet)
+	// use that vector as our current mtd.
+	if(sep_length_squared < info.m_mtdLengthSquared || (info.m_mtdLengthSquared < 0.0f))
+	{
+		info.m_mtdLengthSquared = sep_length_squared;
+		info.m_mtd				= sep;
+	}
+	return false;
+}
+
+bool Poly::separatedByAxis_swept(const Vector& axis, float d0, float d1, float v, CollisionInfo& info) const
+{
+	if(!info.m_collided)
+		return false;
+
+	// projection too small. ignore test
+	if(fabs(v) < 0.0000001f) return true;
+
+	Vector N0 = axis;
+	Vector N1 = -axis;
+	float t0 = d0 / v;   // estimated time of collision to the 'left' side
+	float t1 = d1 / v;  // estimated time of collision to the 'right' side
+
+	// sort values on axis
+	// so we have a valid swept interval
+	if(t0 > t1) 
+	{
+		swapf(t0, t1);
+		N0.swap(N1);
+	}
+	
+	// swept interval outside [0, 1] boundaries. 
+	// polygons are too far apart
+	if(t0 > 1.0f || t1 < 0.0f)
+	{
+		info.m_collided = false;
 		return true;
 	}
 
-	Vector xPerp(-N.y, N.x);
-
-	float min0 = S0[0] * xPerp;
-	float max0 = min0;
-	float min1 =  S1[0] * xPerp;
-	float max1 = min1;
-
-	if (S0num == 2)
+	// the swept interval of the collison result hasn't been
+	// performed yet.
+	if(info.m_tenter > info.m_tleave)
 	{
-		max0 = S0[1] * xPerp;
-
-		if (max0 < min0) 
-		{ 
-			swapf(min0, max0);
-
-			Vector T = S0[0];
-			S0[0] = S0[1];
-			S0[1] = T;
-		}
-	}
-
-	if (S1num == 2)
-	{
-		max1 = S1[1] * xPerp;
-
-		if (max1 < min1) 
-		{ 
-			swapf(min1, max1);
-
-			Vector T = S1[0];
-			S1[0] = S1[1];
-			S1[1] = T;
-		}
-	}
-
-	if (min0 > max1 || min1 > max0)
+		info.m_tenter = t0;
+		info.m_tleave = t1;
+		info.m_Nenter = N0;
+		info.m_Nleave = N1;
+		// not separated
 		return false;
-
-	if (min0 > min1)
-	{
-		Vector Pseg;
-		if (ProjectPointOnSegment(S0[0], S1[0], S1[1], Pseg))
-		{
-			C0[Cnum] = S0[0];
-			C1[Cnum] = Pseg;
-			Cnum++;
-		}
 	}
+	// else, make sure our current interval is in 
+	// range [info.m_tenter, info.m_tleave];
 	else
 	{
-		Vector Pseg;
-		if (ProjectPointOnSegment(S1[0], S0[0], S0[1], Pseg))
+		// separated.
+		if(t0 > info.m_tleave || t1 < info.m_tenter)
 		{
-			C0[Cnum] = Pseg;
-			C1[Cnum] = S1[0];
-			Cnum++;
+			info.m_collided = false;
+			return true;
 		}
-	}
 
-	if (max0 != min0 && max1 != min1)
-	{
-		if (max0 < max1)
+		// reduce the collison interval
+		// to minima
+		if (t0 > info.m_tenter)
 		{
-			Vector Pseg;
-			if (ProjectPointOnSegment(S0[1], S1[0], S1[1], Pseg))
-			{
-				C0[Cnum] = S0[1];
-				C1[Cnum] = Pseg;
-				Cnum++;
-			}
+			info.m_tenter = t0;
+			info.m_Nenter = N0;
 		}
-		else
+		if (t1 < info.m_tleave)
 		{
-			Vector Pseg;
-			if (ProjectPointOnSegment(S1[1], S0[0], S0[1], Pseg))
-			{
-				C0[Cnum] = Pseg;
-				C1[Cnum] = S1[1];
-				Cnum++;
-			}
-		}
-	}
-	return true;
-}
-
-bool PolyColl::FindContacts(const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA,
-							const Vector* B, int Bnum, const Vector& PB, const Vector& VB, const Matrix& OB,
-							const Vector& N, float t,
-							Vector* CA, 
-							Vector* CB, 
-							int& Cnum)
-{
-	Vector S0[4];
-	Vector S1[4];
-	int S0num = FindSupportPoints( N, t, A, Anum, PA, VA, OA, S0);
-	int S1num = FindSupportPoints(-N, t, B, Bnum, PB, VB, OB, S1);
-
-	if (!ConvertSupportPointsToContacts(N, S0, S0num, S1, S1num, CA, CB, Cnum))
+			info.m_tleave = t1;
+			info.m_Nleave = N1;
+		}			
+		// not separated
 		return false;
-
-	return true;
+	}
 }
 
-// clip a ray to a polygon
-bool PolyColl::ClipSegment(const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA,
-						   const Vector& xStart, const Vector& xEnd, 
-						   float& tnear, float& tfar, Vector& Nnear, Vector& Nfar)
+SupportPoints Poly::getSupports(const Vector& axis)
 {
-	if (!A) return false;
+	SupportPoints supports;
 
-	Vector xPos = xStart - PA;
-	Vector xDir = xEnd - xStart;
-	xDir ^= OA;
-	xPos ^= OA;
-	
-	// test separation axes of A
-	for(int j = Anum-1, i = 0; i < Anum; j = i, i ++)
+	float min = -1.0f;
+	const float threshold = 1.0E-1f;
+	int count = 0;
+
+	int num = m_count;
+	for(int i = 0; i < num; i ++)
 	{
-		Vector E0 = A[j];
-		Vector E1 = A[i];
-		Vector E  = E1 - E0;
-		Vector En(E.y, -E.x);
-		Vector D = E0 - xPos;
-
-		float denom = D * En;
-		float numer = xDir * En;
-
-		// ray parallel to plane
-		if (fabs(numer) < 1.0E-8f)
-		{
-			// origin outside the plane, no intersection
-			if (denom < 0.0f)
-				return false;
-		}
-		else
-		{
-			float tclip = denom / numer;
-
-			// near intersection
-			if (numer < 0.0f)
-			{
-				if (tclip > tfar)
-					return false;
-
-				if (tclip > tnear)
-				{
-					tnear = tclip;
-					Nnear = En;
-					Nnear.Normalise();
-					Nnear *= OA;
-				}
-			}
-			// far intersection
-			else
-			{
-				if (tclip < tnear)
-					return false;
-
-				if (tclip < tfar)
-				{
-					tfar = tclip;
-					Nfar = En;
-					Nfar.Normalise();
-					Nfar *= OA;
-				}
-			}
-		}
+		float t = (axis * m_vertices[i]);
+		if(t < min || i == 0)
+			min = t;
 	}
 
-	return true;
+	for(int i = 0; i < num; i ++)
+	{
+		float t = (axis * m_vertices[i]);
+		
+		if(t < min+threshold)
+		{
+			supports.m_support[supports.m_count++] = m_vertices[i];
+			if (supports.m_count == 2) break;
+		}
+	}
+	return supports;
 }
-

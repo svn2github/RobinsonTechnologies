@@ -27,13 +27,13 @@
 class CMaterial;
 #include <string>
 using namespace std;
-
+/*
 class CContact
 {
 public:
 	enum { eMaxContacts = 2 };
 
-	class CBody* m_pxBodies [2];
+	struct Body* m_pxBodies [2];
 	Vector       m_xContacts[eMaxContacts][2];
 	Vector		 m_xNormal;
 	float		 m_t;
@@ -44,11 +44,11 @@ public:
 	
 	CContact(const Vector* CA, const Vector* CB, int iCnum, 
 			 const Vector& N, float t, 
-			 CBody* pxBodyA, CBody* pxBodyB, const CMaterial *mat);
+			 Body* pxBodyA, Body* pxBodyB, const CMaterial *mat);
 
 	void Reset();
 		
-	class CBody* GetBody(int i) { return m_pxBodies[i]; }
+	class Body* GetBody(int i) { return m_pxBodies[i]; }
 
 	void Solve();
 	
@@ -60,7 +60,7 @@ private:
 	void ResolveOverlap  (const Vector& CA, const Vector& CB);
 	void AddContactPair	 (const Vector& CA, const Vector& CB);
 };
-
+*/
 /*
 Object: Material
 Stores data and properties for an individual material.

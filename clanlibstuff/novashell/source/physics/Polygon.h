@@ -1,60 +1,36 @@
-#ifndef OLI_POLYGON_H
-#define OLI_POLYGON_H
+#pragma once
 
+#include "Vector.h"
+#include "Collision.h"
 
-/*
-#include "Polygon.h"
-*/
-
-/*
-------------------------------------------------------------------
-Started: 12/06/2004 14:37:12
-  
-$Header: $
-$Revision: $
-$Locker: $
-$Date: $
-  
-Author: Olivier renault
-------------------------------------------------------------------
-Module: 
-Description: 
-------------------------------------------------------------------
-$History: $
-------------------------------------------------------------------
-*/
-
-
-class Vector;
-
-class PolyColl
+// basic polygon structure
+struct Poly
 {
 public:
-	static float    CalculateMass   (const Vector* A, int Anum, float density);
-	static float    CalculateInertia(const Vector* A, int Anum, float mass);
+	Poly();
+	Poly(const Vector& min, const Vector& max);
+	Poly(int count, float radius);
 
-	static Vector*	BuildBox	(int& iNumVertices, float width, float height);
-	static Vector*	BuildBlob	(int iNumVertices, float radiusx, float radiusy);
+	float calculateMass(float density);
+	float calculateInertia();
 
-	//static void		Render		(const Vector& xOffset, float angle, u_int ARGBfill, u_int ARGBline, const Vector* axVertices, int iNumVertices);
-	
-	static bool		Collide		(const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA,
-								 const Vector* B, int Bnum, const Vector& PB, const Vector& VB, const Matrix& OB,
-								 Vector& N, float& t);
+	void			transform	(const Vector& position, float rotation);
+	void			translate	(const Vector& delta);
+	CollisionInfo	collide		(const Poly& poly, const Vector& delta) const;
+	SupportPoints	getSupports	(const Vector& axis);
+	void			render		(bool solid=true) const;
+	void SetVertInfo(Vector *pVerts, int count);
+public:
+	//enum { MAX_VERTICES = 32 };
+	Vector	* m_vertices;
+	int		m_count;
 
-	// calculate contact points of two colliding polygons
-	static bool FindContacts(const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA,
-							 const Vector* B, int Bnum, const Vector& PB, const Vector& VB, const Matrix& OB,
-							 const Vector& N, float t,
-							 Vector* CA, 
-							 Vector* CB, 
-							 int& Cnum);
+	// collision functions
+private:
+	void calculateInterval(const Vector& axis, float& min, float& max) const;
+	bool separatedByAxis		(const Vector& axis, const Poly& poly, const Vector& delta, CollisionInfo& info) const;
+	bool separatedByAxis_swept	(const Vector& axis, float d0, float d1, float v, CollisionInfo& info) const;
+	bool separatedByAxis_overlap(const Vector& axis, float d0, float d1, CollisionInfo& info) const;
 
-	static bool		ClipSegment	(const Vector* A, int Anum, const Vector& PA, const Vector& VA, const Matrix& OA,
-								 const Vector& xStart, const Vector& xEnd, 
-								 float& tnear, float& tfar, Vector& Nnear, Vector& Nfar);
 };
 
-
-
-#endif

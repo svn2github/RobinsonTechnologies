@@ -644,6 +644,8 @@ void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, c
 
 void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 {
+	
+	
 	Tile *pTile;
 
 	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
@@ -655,32 +657,21 @@ void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 		if (pTile->GetCollisionData())
 		{
 			CollisionData *pCol = pTile->GetCollisionData();
-			CL_Vector2 vOffset = CL_Vector2::ZERO;
-
-			CBody *pBody = NULL;
-
-			if (pCol->GetLineList()->size() > 0)
-			{
-				if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-				{
-					MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
-					pBody = pEnt->GetBody();
-					vOffset = pEnt->GetVisualOffset();
-				}
-			}
-
+			
 			if (pTile->UsesTileProperties())
 			{ 
 				CollisionData col;
 				//we need a customized version
 				CreateCollisionDataWithTileProperties(pTile, col);
-				RenderVectorCollisionData(pTile->GetPos()+vOffset, col, pGC, false, NULL, pBody);
+				RenderVectorCollisionData(pTile->GetPos(), col, pGC, false, NULL, NULL);
 			} else
 			{
-				RenderVectorCollisionData(pTile->GetPos()+vOffset, *pCol, pGC, false, NULL, pBody);
+				RenderVectorCollisionData(pTile->GetPos(), *pCol, pGC, false, NULL, NULL);
 			}
 		}
 	}
+
+	
 }
 
 void EntMapCache::RenderGoalAI(CL_GraphicContext *pGC)
@@ -857,12 +848,15 @@ void EntMapCache::Update(float step)
 		//world-wide updates too
 		g_watchManager.Update(step, m_uniqueDrawID);
 
+		m_pWorld->GetPhysicsManager()->Update(step);
+
 
 		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
 			m_entityList.at(i)->ApplyPhysics(step);
 		}
 
+	
 		//world-wide updates too
 		g_watchManager.ApplyPhysics(step);
 
@@ -874,6 +868,7 @@ void EntMapCache::Update(float step)
 		g_watchManager.PostUpdate(step);
 	}
 
+	
 }
 
 bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity)
@@ -1130,5 +1125,13 @@ void EntMapCache::Render(void *pTarget)
 
 }
 
+void EntMapCache::SetDrawCollision( bool bNew )
+{
+	m_bDrawCollisionData = bNew;
+	
+	if (m_pWorld)
+	m_pWorld->GetPhysicsManager()->SetDrawDebug(m_bDrawCollisionData);
+
+}
 
 

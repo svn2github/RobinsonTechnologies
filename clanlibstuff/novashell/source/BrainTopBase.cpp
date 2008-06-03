@@ -70,6 +70,11 @@ void BrainTopBase::OnAdd()
 
 void BrainTopBase::Update(float step)
 {
+	if (!m_pParent->GetBody())
+	{
+		LogMsg("BrainBase (%d): No body?", m_pParent->ID());
+		return;
+	}
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity(); //figure out what needs to change to get our desired total force
 	m_force = m_force-curForce;
 
@@ -103,11 +108,7 @@ void BrainTopBase::Update(float step)
 	{
 		m_pParent->SetSpriteByVisualStateAndFacing();		
 	}
-
-	//completely stop rotation
-	if (!m_pParent->GetEnableRotation())
-	m_pParent->GetBody()->GetAngVelocity() = 0;
-
+	
 }
 
 
