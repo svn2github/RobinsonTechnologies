@@ -56,6 +56,17 @@ public:
 
 };
 
+
+//this is attached to every 2dbox shape and deleted with its shape is
+class ShapeUserData
+{
+public:
+	MovingEntity *pOwnerEnt;
+	Tile *pOwnerTile;
+	int materialID;
+
+};
+
 class MovingEntity : public BaseGameEntity
 {
 public:
@@ -164,9 +175,9 @@ public:
   void SetRotation(float angle);
   float GetRotation();
   unsigned int GetDrawID() {return m_drawID;}
-  float GetMass() {return m_pBody->GetMass();}
- 
-  void SetMass(float mass){SetDensity(mass);}
+  float GetMass() {return FromPhysicsSpace(m_pBody->GetMass());}
+	bool IsOnScreen();
+  void SetMass(float mass);
   void SetDensity(float fDensity);
   void PostUpdate(float step);
   void SetListenCollision(int eListen);
@@ -181,8 +192,17 @@ public:
   void AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque);
   void AddForceAndTorqueBurst(CL_Vector2 force, CL_Vector2 torque);
 
-  CL_Vector2 GetForce() {return *(CL_Vector2*)&m_pBody->GetLinearVelocity();};
-  CL_Vector2 GetLinearVelocity() {return *(CL_Vector2*)&m_pBody->GetLinearVelocity();}
+  CL_Vector2 GetForce() {
+
+	  return  *(CL_Vector2*)&m_pBody->GetLinearVelocity();
+	 //   return  FromPhysicsSpace(m_pBody->GetLinearVelocity());
+  
+  };
+  CL_Vector2 GetLinearVelocity() 
+  {
+	  return  *(CL_Vector2*)&m_pBody->GetLinearVelocity();
+  // return  FromPhysicsSpace(m_pBody->GetLinearVelocity());
+  }
   void SetPersistent(bool bOn){assert(m_pTile); m_pTile->SetBit(Tile::e_notPersistent, !bOn);}
   bool GetPersistent() {assert(m_pTile); return !m_pTile->GetBit(Tile::e_notPersistent);}
   float GetDistanceFromEntityByID(int id);
@@ -290,9 +310,9 @@ public:
   const string & GetRequestedMapName(); //current map name OR the one we're scheduled to move to ASAP
   void RunPostInitIfNeeded();
   void RunOnMapInsertIfNeeded();
-  void CheckVisibilityNotifications(unsigned int notificationID);
+  void CheckVisibilityNotifications();
   bool GetVisibilityNotifications() {return m_bRequestsVisibilityNotifications;}
-  void SetVisibilityNotifications(bool bNew) {m_bRequestsVisibilityNotifications = bNew;}
+  void SetVisibilityNotifications(bool bNew);
   void OnWatchListTimeout(bool bIsOnScreen);
   int PlaySoundPositioned(const string &fName);
   int PlaySound(const string &fName);
@@ -335,6 +355,7 @@ public:
   bool GetLockedScale() {return m_bLockedScale;}
   unsigned int GetLastVisibilityID() {return m_lastVisibilityNotificationID;}
   bool HasRunPhysics(){return m_bRanApplyPhysics;}
+  bool HasRunPostUpdate(){return m_bRanPostUpdate;}
   void OnMapChange(const string &mapName);
   CL_Vector2 GetRequestPosition() {return m_moveToAtEndOfFrame;}
   void UpdateSoundByPosition(int soundID, float minHearing, float maxHearing, float volMod);
@@ -410,7 +431,7 @@ protected:
 	VisualProfile *m_pVisualProfile;
 	string m_mainScript;
 	unsigned int m_timeLastActive;
-	float m_fDensity;
+	float m_fDensity; //not in physics space, needs to be converted before sending to a Body
 	int m_ticksOnGround; 
 	bool m_bTouchedAGroundThisFrame;
 	unsigned int m_drawID; //if this matches GetWorldCache->GetUniqueDrawID() it means they have

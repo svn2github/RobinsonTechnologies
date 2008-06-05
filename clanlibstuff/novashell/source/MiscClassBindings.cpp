@@ -60,7 +60,6 @@ Zone GetCollisionByRay(Map * pMap, CL_Vector2 vStartPos, CL_Vector2 vFacing, int
 		LogError("GetCollisionByRay reports unknown mode: %d", mode);
 	}
 
-
 	CL_Vector2 vEndPos;
 	vEndPos = vStartPos + (vFacing * actionRange);
 

@@ -21,6 +21,7 @@ public:
 	const CL_Vector2 & GetScale() {return m_vecScale;}
 	CL_Vector2 GetPosCentered();
 	CL_Rectf GetViewRectWorld(); //we we're actually looking at
+	CL_Rect GetViewRectWorldInt();
 	CL_Rect GetScreenRect();
 
 	void SetPos(CL_Vector2 vecPos);

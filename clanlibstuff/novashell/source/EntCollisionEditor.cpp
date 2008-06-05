@@ -375,7 +375,7 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 	m_pos = vPos;
 
 	//create our GUI window at the bottom of the screen
-	CL_Point ptSize(400,150);
+	CL_Point ptSize(440,150);
 	m_pWindow = new CL_Window(CL_Rect(0, 0, ptSize.x, ptSize.y), "Collision Edit Palette", 0, GetApp()->GetGUI());
 	m_pWindow->set_position(200, GetScreenY-ptSize.y);
 
@@ -406,7 +406,7 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 	CL_Rect r = m_pWindow->get_children_rect();
 	//r.set_size(r.get_size() - CL_Size(5,28));
 
-	CL_Size sz(100,120);
+	CL_Size sz(140,120);
 	int rightEdgeOffset = 10;
 	int bottomEdgeOffset = 30;
 
@@ -427,7 +427,7 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 	//setup our own tip display
 	m_pLabel = new CL_Label(CL_Point(100,1),"", m_pWindow->get_client_area());
 
-	new CL_Label(CL_Point(ptSize.x-190,50),"Material Type:", m_pWindow->get_client_area());
+	new CL_Label(CL_Point(ptSize.x-230,50),"Material Type:", m_pWindow->get_client_area());
 
 	m_pWindow->set_event_passing(false);
 

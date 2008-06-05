@@ -921,7 +921,7 @@ void GameLogic::Update(float step)
 
 	g_MessageManager.Update();
 //	LogMsg("Cam zoom is %s", VectorToString(&GetCamera->GetScale()).c_str());
-	m_myEntityManager.Update(step);
+	m_myEntityManager.Update(step); //only big entities are here, like the the choice menu, world select dialog, ent cache manager, not each little one
 	
 	if (!GetGamePaused())
 	{
@@ -964,8 +964,8 @@ void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
 				tiles = g_pMapManager->GetActiveMapCache()->GetTilesRenderedLastFrameCount();
 			}
 			static char buff[256];
-			sprintf(buff, "FPS:%d T:%d: W:%d", GetApp()->GetFPS(), tiles, g_watchManager.GetWatchCount());
-			GetApp()->GetFont(C_FONT_NORMAL)->draw(GetScreenX-240,0, buff);
+			sprintf(buff, "FPS:%d E:%d T:%d: W:%d", GetApp()->GetFPS(),g_pMapManager->GetUpdateEntityCount(),  tiles, g_watchManager.GetWatchCount());
+			GetApp()->GetFont(C_FONT_NORMAL)->draw(GetScreenX-265,0, buff);
 			
 			
 		}

@@ -11,6 +11,7 @@
 
 #include "Map.h"
 #include "EntMapCache.h"
+#include <hash_map>
 
 //things needed for each world map
 
@@ -28,6 +29,9 @@ public:
 };
 
 typedef std::list<MapInfo*> map_info_list;
+
+typedef std::map<unsigned int, MovingEntity*> EntityHashMap;
+typedef std::map<void *, Map*> MapInfoHashMap;
 
 class MapManager
 {
@@ -55,6 +59,9 @@ public:
 	void SaveAllMaps();
 	bool LoadMapByName(const string &stName);
 	int GetTotalMapsAvailable() {return m_mapInfoList.size();}
+	void AddToEntityUpdateList(MovingEntity *pEnt);
+	int GetUpdateEntityCount() {return m_entityUpdateList.size();}
+
 	CL_Signal_v0 sig_map_changed;
 
 protected:
@@ -65,6 +72,8 @@ protected:
 	map_info_list m_mapInfoList;
 	Map *m_pActiveMap;
 	EntMapCache *m_pActiveMapCache;
+	EntityHashMap m_entityUpdateList;
+	MapInfoHashMap m_MapInfoUpdateList;
 };
 
 bool ExistsInModPath(const string fName);

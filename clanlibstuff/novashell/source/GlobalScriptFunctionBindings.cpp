@@ -129,10 +129,6 @@ Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerID
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY || pTile->GetType() == C_TILE_TYPE_PIC)
 		{
 
-			//looks good to me!
-
-			//looks good to me!
-
 			if (!bPixelAccurate || PixelAccurateHitDetection(v, pTile))
 			{
 				return pTile;

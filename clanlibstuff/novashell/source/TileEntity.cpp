@@ -150,12 +150,9 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 
 			if (pSprite->get_angle_pitch() != 0) flippedy = true;
 			if (pSprite->get_angle_yaw() != 0) flippedx = true;
-
-			
+		
 			pBuf = pSprite->get_frame_pixeldata(pSprite->get_current_frame());
-			
-
-
+	
 		}
 		break;
 
@@ -166,7 +163,6 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 
 	
    //we now have the pixels and can do a hit test.  But we need to figure out where to check
-
 
    CL_Rectf r = pTile->GetWorldRect(); 
 

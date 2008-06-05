@@ -76,6 +76,8 @@ void BrainTopBase::Update(float step)
 		return;
 	}
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity(); //figure out what needs to change to get our desired total force
+	//LogMsg("Cur force is %s.  accel is %.2f", PrintVector(curForce).c_str(), m_pParent->GetAccel());
+
 	m_force = m_force-curForce;
 
 	float accel = m_pParent->GetAccel();
@@ -102,7 +104,9 @@ void BrainTopBase::Update(float step)
 
 	m_pParent->RotateTowardsVectorDirection(m_pParent->GetVectorFacingTarget(), m_pParent->GetTurnSpeed() *step);
 	
-	m_pParent->AddForce(m_force);
+	//LogMsg("Adding force of %s", PrintVector(m_force* m_pParent->GetBody()->GetMass()).c_str());
+	m_pParent->AddForceBurst(m_force);
+	//m_pParent->GetBody()->SetLinearVelocity()
 
 	if (!m_DontMessWithVisual)
 	{

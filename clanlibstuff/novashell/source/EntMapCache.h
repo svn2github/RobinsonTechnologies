@@ -44,7 +44,7 @@ public:
 	void SetDrawCollision(bool bNew);
 	bool GetDrawCollision() {return m_bDrawCollisionData;}
 	void SetWorld(Map *pWorld);
-	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect, bool bWithCollisionOnly = false, bool bAllowLoadOnDemand = true);
+	void AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect, bool bWithCollisionOnly = false, bool bAllowLoadOnDemand = true, bool bEntitiesOnly = false);
 	void CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail);
 	void RenderViewList(CL_GraphicContext *pGC);
 	void RemoveTileFromList(Tile *pTile);
@@ -60,7 +60,7 @@ public:
 	void PopUndoOperation();
 	int GetUndoOpsAvailableCount() {return m_undoDeque.size();};
 	bool IsOnEntityDrawList(MovingEntity *pEnt);
-
+	
 protected:
 
 	void CullScreensNotUsedRecently(unsigned int timeRequiredToKeep);

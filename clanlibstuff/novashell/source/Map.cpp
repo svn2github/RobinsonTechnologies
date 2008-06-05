@@ -4,7 +4,7 @@
 #include "GameLogic.h"
 #include "AI/NavGraphManager.h"
 #include "AI/WorldNavManager.h"
-
+#include "EntCreationUtils.h"
 
 #define C_DEFAULT_THUMBNAIL_WIDTH 8
 #define C_DEFAULT_THUMBNAIL_HEIGHT 8
@@ -828,7 +828,8 @@ void Map::ReInitEntities()
 						pEnt->SetVectorFacing(facing);
 						pEnt->Init();
 						pEnt->SetRotation(orientation);
-						pEnt->RunOnMapInsertIfNeeded();
+						InitEntity(pEnt);
+
 					}
 
 					break;

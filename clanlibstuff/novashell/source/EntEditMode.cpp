@@ -1160,7 +1160,7 @@ void EntEditMode::CutSubTile(CL_Rect recCut)
 		return;
 	}
 	
-	if (pTile->GetScale() != CL_Vector2(1,1) || pTile->UsesTileProperties())
+	if (pTile->UsesTileProperties())
 	{
 		CL_MessageBox::info("Can only make subtiles out of tile pics that are not scaled or flipped.  Set scale to 1 1 first.", GetApp()->GetGUI());
 		return;
@@ -1942,6 +1942,7 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 	m_pEntCollisionEditor = NULL; //back to normal mode
 
 	//need to reinit all script based items possibly
+	
 	if (m_pOriginalEditEnt)
 	{
 		m_pOriginalEditEnt->SetPos(m_collisionEditOldTilePos - m_pOriginalEditEnt->GetVisualOffset());
@@ -2045,11 +2046,6 @@ void EntEditMode::OnDefaultTileHardness()
 	CL_Vector2 vOriginalPos = vEditPos;
 	if (bIsEnt)
 	{
-		//rec.apply_alignment(origin_top_left,m_pOriginalEditEnt->GetVisualOffset().x, m_pOriginalEditEnt->GetVisualOffset().y);
-		//vEditPos += m_pOriginalEditEnt->GetVisualOffset();
-		//total hack to fake the visual offset while we're drawing it
-		
-		//m_pOriginalEditEnt->SetPos(m_pOriginalEditEnt->GetPos() + m_pOriginalEditEnt->GetVisualOffset());
 		m_collisionEditOldTilePos = m_pOriginalEditEnt->GetPos();
 	
 	} else
@@ -2061,18 +2057,12 @@ void EntEditMode::OnDefaultTileHardness()
 		((TilePic*)pTile)->ForceUsingCustomCollisionData();
 	}
 
-	//rec.apply_alignment(origin_top_left, vEditPos.x, vEditPos.y);
-
-	bool useCollisionOffsets = false;
-
-	//pTile->GetCollisionData()->RemoveOffsets();
-
 	m_pTileWeAreEdittingCollisionOn = pTile; //messy way of remembering this in the
 	//callback that is hit when editing is done
 
 	m_pMenu->enable(false);
 
-	m_pEntCollisionEditor->Init(vEditPos, rec, pTile->GetCollisionData(), useCollisionOffsets);
+	m_pEntCollisionEditor->Init(vEditPos, rec, pTile->GetCollisionData(), false);
 	m_pEntCollisionEditor->SetBullsEye(vOriginalPos);
 	m_pEntCollisionEditor->SetClip(!bIsEnt);
 }

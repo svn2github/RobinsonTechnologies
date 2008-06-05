@@ -393,15 +393,94 @@ MapInfo *pWorldInfo = GetMapInfoByPath(stPath);
 	return false;
 }
 
+CL_Rect GrowRect(CL_Rect r, int amountToApplyToEachSide)
+{
+	r.left -= amountToApplyToEachSide;
+	r.right += amountToApplyToEachSide;
+	r.top -= amountToApplyToEachSide;
+	r.bottom += amountToApplyToEachSide;
+	r.normalize();
+	return r;
+}
 void MapManager::Update(float step)
 {
-	if (m_pActiveMapCache)
-	m_pActiveMapCache->Update(step);
+
+	//clear lists
+	m_MapInfoUpdateList.clear();
+	m_entityUpdateList.clear();
+
+	//first, lets figure out which entities are going to be on our main screen
+	
+	if (m_pActiveMap)
+	{
+		tile_list t;
+	
+		m_pActiveMapCache->AddTilesByRect(GrowRect(GetCamera->GetViewRectWorldInt(), 100), &t, m_pActiveMap->GetLayerManager().GetAllList(), false, true, true);
+	
+		//OPTIMIZE:  Later, just put them directly on the hashmap in the first place
+		
+		//add them to our hashmap
+		while (t.begin() != t.end())
+		{
+			m_entityUpdateList[ ((TileEntity*)*t.begin())->GetEntity()->ID()] = ((TileEntity*)*t.begin())->GetEntity();
+			t.pop_front();
+		}
+		//LogMsg("Added %d tiles", m_entityUpdateList.size());
+
+		//and add this world to our world update list
+		m_MapInfoUpdateList[GetActiveMap()] = GetActiveMap();
+	}
+
+	//run the physics loop for all worlds on the world update list
+	
+	MapInfoHashMap::iterator itor = m_MapInfoUpdateList.begin();
+	while (itor != m_MapInfoUpdateList.end())
+	{
+		itor->second->GetPhysicsManager()->Update(step);
+		itor++;
+	}
+	
+	//this will also update our entity render list with more stuff
+
+
+	EntityHashMap::iterator entItor;
+
+	g_watchManager.Update(step, 0);
+
+	g_watchManager.PostUpdate(step);
+
+	//finally, run the entities update
+	entItor = m_entityUpdateList.begin();
+	while (entItor != m_entityUpdateList.end())
+	{
+		entItor->second->PostUpdate(step);
+		entItor++;
+	}
+
+	entItor = m_entityUpdateList.begin();
+	while (entItor != m_entityUpdateList.end())
+	{
+		entItor->second->Update(step);
+		entItor->second->ApplyPhysics(step);
+		entItor++;
+	}
+
+	
+
+	//do pending entity deletes
+	entItor = m_entityUpdateList.begin();
+	while (entItor != m_entityUpdateList.end())
+	{
+		entItor->second->ProcessPendingMoveAndDeletionOperations();
+		entItor++;
+	}
 }
 
 void MapManager::Render()
 {
-    if (m_pActiveMapCache) m_pActiveMapCache->Render(GetApp()->GetMainWindow()->get_gc());
+	g_watchManager.Render();
+	 if (m_pActiveMapCache) m_pActiveMapCache->Render(GetApp()->GetMainWindow()->get_gc());
+
 }
 
 EntMapCache * MapManager::GetActiveMapCache()
@@ -413,6 +492,10 @@ Map* MapManager::GetActiveMap()
   return m_pActiveMap;
 }
 
+void MapManager::AddToEntityUpdateList( MovingEntity *pEnt )
+{
+	m_entityUpdateList[pEnt->ID()] = pEnt;
+}
 /*
 Object: MapManager
 Handles loading and unloading maps.

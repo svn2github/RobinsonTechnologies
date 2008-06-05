@@ -57,6 +57,20 @@ CL_Rectf Camera::GetViewRectWorld()
 	return r;
 }
 
+CL_Rect Camera::GetViewRectWorldInt()
+
+{
+	CL_Rect r;
+	CL_Vector2 v;
+	v = g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
+	r.right = v.x;
+	r.bottom = v.y;
+
+	r.left = m_vecPos.x;
+	r.top = m_vecPos.y;
+	return r;
+}
+
 void Camera::Reset()
 {
 	m_entityTrackingOffset = CL_Vector2(0,40);

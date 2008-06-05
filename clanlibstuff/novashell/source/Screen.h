@@ -47,7 +47,7 @@ public:
 	bool Load();
 	std::string GetFileName(); //the filename of our datafile (if we've saved)
 	void SetRequestIsEmptyRefreshCheck(bool bNew);
-	void GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const std::vector<unsigned int> &layerIntVec, unsigned int scanID, bool bWithCollisionOnly = false);
+	void GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const std::vector<unsigned int> &layerIntVec, unsigned int scanID, bool bWithCollisionOnly = false, bool bEntitiesOnly = false);
 	bool RemoveTileBySimilarType(Tile *pSrcTile);
 	bool RemoveTileByPointer(Tile *pSrcTile);
 	bool RemoveTileByPosition(const CL_Vector2 &vecPos, unsigned int layer);

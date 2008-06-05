@@ -13,6 +13,7 @@
 #include "AI/PathPlanner.h"
 #include "AI/WatchManager.h"
 #include "PhysicsManager.h"
+#include "EntCreationUtils.h"
 
 #define C_ANIM_FRAME_LAST -1
 #define C_GROUND_RELAX_TIME_MS 150
@@ -22,13 +23,16 @@
 //provides a work around
 #define C_TICKS_ON_GROUND_NEEDED_TO_TRIGGER_GROUND 1
 
-#define C_DEFAULT_ENTITY_ACCELERATION 50;
+#define C_DEFAULT_ENTITY_ACCELERATION 0.5;
 
 #define C_DEFAULT_TURN_SPEED 0.1f
 
 #define C_DEFAULT_DENSITY 1.0f
 
 #define C_GRAVITY_OVERRIDE_DISABLED 9999999
+
+#define C_DEFAULT_DESIRED_WALK_SPEED 7
+#define C_DEFAULT_MAX_WALK_SPEED 3000
 
 Zone g_ZoneEmpty;
 
@@ -44,11 +48,14 @@ public:
 	}
 };
 
+
+
 ZoneEmptyInit zoneEmpty;
 
 MovingEntity::MovingEntity(): BaseGameEntity(BaseGameEntity::GetNextValidID())
 {
 	m_pBody = NULL;
+	m_pScriptObject = NULL;
 	m_pPathPlanner = NULL;
 	m_pGoalManager = NULL;
 	m_mainScript = C_DEFAULT_SCRIPT;
@@ -67,6 +74,22 @@ MovingEntity::~MovingEntity()
 {
 	Kill();
 	
+}
+
+bool MovingEntity::IsOnScreen()
+{
+
+	if (g_pMapManager->GetActiveMap() != GetMap()) return false;
+
+	//we're on the map, but are we actually on the visible portion?
+	CL_Rectf r  = GetCamera->GetViewRectWorld();
+	CL_Rectf mr = GetWorldCollisionRect();
+
+	if (mr.left > r.right) return false;
+	if (mr.right < r.left) return false;
+	if (mr.top > r.bottom) return false;
+	if (mr.bottom < r.top) return false;
+	return true;
 }
 
 unsigned int MovingEntity::CalculateTimeToReachPosition(const CL_Vector2 &pos)
@@ -400,8 +423,6 @@ void MovingEntity::ClearColorMods()
 
 void MovingEntity::Kill()
 {
-
-
 	//tell any entities that were attached to us that we're dying and to also kill themselves
 	if (!m_attachedEntities.empty())
 	{
@@ -414,6 +435,7 @@ void MovingEntity::Kill()
 			if (pEnt)
 			{
 				pEnt->SetDeleteFlag(true);
+	
 			} 
 			itor++;
 		}
@@ -529,8 +551,8 @@ void MovingEntity::SetDefaults()
 	ClearColorMods();
 	m_requestNewLayerID = C_LAYER_NONE;
 	m_bCanRotate = false;
-	SetMaxWalkSpeed(3000);
-	SetDesiredSpeed(2000);
+	SetMaxWalkSpeed(C_DEFAULT_MAX_WALK_SPEED);
+	SetDesiredSpeed(C_DEFAULT_DESIRED_WALK_SPEED);
 	m_nearbyTileList.clear();
 	m_floorMaterialID = -1;
 	m_bUsingSimpleSprite = false;
@@ -540,7 +562,7 @@ void MovingEntity::SetDefaults()
 	m_bIsAtRest = false;
 	m_groundTimer = 0;
 	m_bMovedFlag = false;
-	m_pScriptObject = NULL;
+	assert(m_pScriptObject == NULL);
 	m_timeLastActive = INT_MAX;
 	m_pSprite = NULL;
 	m_pVisualProfile = NULL; //note, we don't init or delete this ourself, visual manager handles it
@@ -911,6 +933,8 @@ void MovingEntity::Serialize(CL_FileHelper &helper)
 		//we need to init this too, as we just loaded it.
 		Init();
 		SetRotation(orientation);
+		g_pMapManager->AddToEntityUpdateList(this); //this will allow it to get a visibility notification or something
+
 		//SetSpriteByVisualStateAndFacing();
 	}
 
@@ -938,9 +962,9 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 	
 	pNew->SetVectorFacing(m_vecFacing);
 	pNew->Init();
-
 	pNew->SetRotation(GetRotation());
 
+	InitEntity(pNew);
 	return pNew;
 }
 
@@ -1113,7 +1137,15 @@ bool MovingEntity::SetVisualProfile(string resourceFileName, const string &profi
 
 void MovingEntity::InitializeBody()
 {
+	
+	if (!m_bHasRunPostInit)
+	{
+		//don't let the physics start doing crap until the scripts get a chance to do their thing
+		return;
+	}
 	KillBody();
+	
+	
 	if (!m_pTile->GetParentScreen())
 	{
 		//we're not on a real map yet
@@ -1126,7 +1158,7 @@ if (!m_pCollisionData) return;
 	//MAKE BODY
 	b2BodyDef bd;
 
-	bd.userData = m_pTile;
+	bd.userData = this;
 	//bd.isBullet = true; //keep in mind this breaks SetXForm
 	bd.fixedRotation = !m_bCanRotate;
 	bd.position = ToPhysicsSpace(GetPos());
@@ -1134,32 +1166,61 @@ if (!m_pCollisionData) return;
 
 	if (m_pCollisionData->GetLineList()->size() > 0) 
 	{
+		//do this for each line...
 
-	b2PolygonDef shapeDef;
+		line_list::iterator itor = m_pCollisionData->GetLineList()->begin();
 
-	m_pCollisionData->GetLineList()->begin()->GetAsPolygonDef(&shapeDef);
-	shapeDef.density = m_fDensity;
-	shapeDef.userData = this;
-	m_pBody->CreateShape(&shapeDef);
+		for (; itor != m_pCollisionData->GetLineList()->end(); itor++)
+		{
+			PointList * pPointList = &(*itor);
+			CMaterial *pMat = g_materialManager.GetMaterial(pPointList->GetType());
+			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY || pMat->GetType() == CMaterial::C_MATERIAL_TYPE_WARP)		
+			{
+				LogMsg("Ignoring dummy or warp..");
+				continue;
+			}
 
+			b2PolygonDef shapeDef;
 
-	//create sensor version which we may or may not need
-	shapeDef.density = 0;
-	shapeDef.friction = 0;
-	shapeDef.isSensor = true;
-	m_pBody->CreateShape(&shapeDef);
+			pPointList->GetAsPolygonDef(&shapeDef);
+			shapeDef.density = m_fDensity;
+				
+			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_NORMAL)
+			{
+				ShapeUserData *pShapeUserData = new ShapeUserData();
+				pShapeUserData->pOwnerEnt = this;
+				pShapeUserData->pOwnerTile = NULL;
+				pShapeUserData->materialID = pPointList->GetType();
+				shapeDef.userData = pShapeUserData;
 
+				m_pBody->CreateShape(&shapeDef);
+				m_pBody->SetMassFromShapes();
+			}
+			
+			//create sensor version which we may or may not need
+			ShapeUserData *pShapeUserData = new ShapeUserData();
+			pShapeUserData->pOwnerEnt = this;
+			pShapeUserData->pOwnerTile = NULL;
+			pShapeUserData->materialID = pPointList->GetType();
+			shapeDef.userData = pShapeUserData;
 
-	m_pBody->SetMassFromShapes();
+			shapeDef.density = 0;
+			shapeDef.friction = 0;
+			shapeDef.isSensor = true;
+
+			m_pBody->CreateShape(&shapeDef);
+			m_pBody->WakeUp();
+		}
+		
 	}
 
 }
 
 void MovingEntity::SetPos(const CL_Vector2 &new_pos)
 {
-	
-	m_pos = new_pos;
+	//LogMsg("SetPos: Setting ent %d to %s", ID(), PrintVector(m_pos).c_str());
 
+	m_pos = new_pos;
 	m_bMovedFlag = true;
 
 	if (!m_strWorldToMoveTo.empty())
@@ -1188,6 +1249,8 @@ bool MovingEntity::SetPosAndMapByTagName(const string &name)
 
 void MovingEntity::ForceUpdatingPeriod()
 {
+	
+	/*
 	if (!g_pMapManager->GetActiveMapCache()->IsOnEntityDrawList(this))
 	{
 #ifdef _DEBUG
@@ -1196,6 +1259,7 @@ void MovingEntity::ForceUpdatingPeriod()
 	g_watchManager.AddSilently(this, 100);
 	RunPostInitIfNeeded();
 	}
+	*/
 
 }
 
@@ -1455,6 +1519,29 @@ bool MovingEntity::Init()
 	m_pSprite = new CL_Sprite(); //visual data will be set on it later
 
 
+	//override settings with certain things found
+	if (m_dataManager.HasData())
+	{
+
+		if (m_dataManager.Exists(C_ENT_DENSITY_KEY))
+		{
+			if (GetCollisionData() && GetCollisionData()->HasData())
+			{
+				SetDensity(CL_String::to_float(m_dataManager.Get(C_ENT_DENSITY_KEY)));
+			}
+		}
+
+		if (m_dataManager.Exists(C_ENT_ROTATE_KEY))
+		{
+			if (GetCollisionData() && GetCollisionData()->HasData())
+			{
+				EnableRotation(CL_String::to_bool(m_dataManager.Get(C_ENT_ROTATE_KEY)));
+			}
+
+		}
+	}
+
+
 	string stEmergencyMessage;
 
 	if (!m_mainScript.empty())
@@ -1495,31 +1582,7 @@ bool MovingEntity::Init()
 		}
 		SetSpriteData(m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT));
 	}
-
-
-	//override settings with certain things found
-	if (m_dataManager.HasData())
-	{
-
-		
-		if (m_dataManager.Exists(C_ENT_DENSITY_KEY))
-		{
-			if (GetCollisionData() && GetCollisionData()->HasData())
-			{
-				SetDensity(CL_String::to_float(m_dataManager.Get(C_ENT_DENSITY_KEY)));
-			}
-		}
-
-		if (m_dataManager.Exists(C_ENT_ROTATE_KEY))
-		{
-			if (GetCollisionData() && GetCollisionData()->HasData())
-			{
-				EnableRotation(CL_String::to_bool(m_dataManager.Get(C_ENT_ROTATE_KEY)));
-			}
-
-		}
-	}
-
+	
 	m_bHasRunOnInit = true;
 	return true;
 }
@@ -1560,7 +1623,9 @@ void MovingEntity::RunPostInitIfNeeded()
 				m_pScriptObject->RunFunction("OnPostInit");
 		}
 
+
 		m_bHasRunPostInit = true;
+		InitializeBody();
 
 	}
 }
@@ -2178,6 +2243,8 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 	{
 		//guess they really don't want collision
 		m_bUsingCustomCollisionData = false;
+		
+		KillBody();
 		return;
 	}
 	
@@ -2211,7 +2278,8 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 
 	//link to data correctly
 	
-	InitializeBody();
+		//we don't want a physics presence until we give it some time to initialize itself
+		InitializeBody();
 	//pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
 	//SetDensity(m_fDensity);
 	
@@ -2659,6 +2727,9 @@ CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
 }
 void MovingEntity::Render(void *pTarget)
 {
+	
+	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
+
 	if (m_pSprite->get_current_frame() == -1)
 	{
 		LogError("Sprite %d (%s) has no valid sprite frame assigned.  Don't set 1 frame anims to ping pong? Turn looping on?", ID(), GetName().c_str());
@@ -2985,57 +3056,43 @@ void MovingEntity::ProcessPendingMoveAndDeletionOperations()
 		UpdateTilePosition();
 	}
 
-
-	//while we're at it, if any entities are attached, make sure they "update".  Don't worry, it's smart enough
-	//not to allow something to update twice if it's already done it
-
-	if (!m_attachedEntities.empty())
-	{
-		list<int>::iterator itor;
-		MovingEntity *pEnt;
-
-		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
-		{
-
-			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
-			if (pEnt)
-			{
-				pEnt->ProcessPendingMoveAndDeletionOperations();
-			}
-			itor++;
-
-		}
-	}
-
 }
 
-void MovingEntity::CheckVisibilityNotifications(unsigned int notificationID)
+void MovingEntity::CheckVisibilityNotifications()
 {
 
 	if (GetGameLogic()->GetGamePaused()) return;
 
-	if (notificationID != m_lastVisibilityNotificationID)
-	{
-		SetIsOnScreen(false);
-	} 
+	SetIsOnScreen(IsOnScreen());
 }
 
+//run first
 void MovingEntity::Update(float step)
 {
+
+	
+	/*
 	if (g_watchManager.GetVisibilityID() == m_lastVisibilityNotificationID)
 	{
 		//we've already run our update
 		return;
 	}
+	*/
 
-	if (m_pBody)
+	m_staticContacts.clear();
+	m_entContacts.clear();
+
+	if (UnderPriorityLevel()) 
 	{
-		m_pBody->SetXForm(ToPhysicsSpace(m_pos), m_angle);
+		
+		if (m_pBody)
+		{
+			m_pBody->SetXForm(ToPhysicsSpace(m_pos), m_angle);
+		}
+		return;
 	}
-	if (UnderPriorityLevel()) return;
 
 	
-	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 	m_bRanPostUpdate = false;
 	m_bRanApplyPhysics = false;
 	
@@ -3104,6 +3161,7 @@ void MovingEntity::Update(float step)
 			if (pEnt)
 			{
 				pEnt->Update(step);
+				g_pMapManager->AddToEntityUpdateList(pEnt);
 			} else
 			{
 				itor = m_attachedEntities.erase(itor);
@@ -3113,25 +3171,89 @@ void MovingEntity::Update(float step)
 		}
 	}
 
-	//get ready for next frame, if we plan on one coming..
-	if (!m_pBody || !m_pBody->IsSleeping())
-	{
-		m_bTouchedAGroundThisFrame = false;
-	}
-
+	
 
 }
 
-void MovingEntity::ApplyPhysics(float step)
+//run after physics steps
+
+void MovingEntity::PostUpdate(float step)
 {
-	
+
+	if (!m_bHasRunOnInit) return;
+
 	if (m_pBody && !m_pBody->IsStatic() && m_strWorldToMoveTo.empty())
 	{
 		SetPos(FromPhysicsSpace(m_pBody->GetPosition()));
 		m_angle = m_pBody->GetAngle();
 	}
-	
+
 	if (UnderPriorityLevel()) return;
+
+	if (m_bRanPostUpdate) return; else m_bRanPostUpdate = true;
+	
+	if (m_attachEntID != C_ENTITY_NONE)
+	{
+		if (m_attachEntID != C_ENTITY_CAMERA)
+		{
+			MovingEntity *pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(m_attachEntID);
+
+			if (!pEnt->HasRunPostUpdate())
+			{
+				return; //don't update yet
+			}
+		}
+	}
+
+	if (m_attachEntID != C_ENTITY_NONE)
+	{
+		UpdatePositionFromParent();
+	} 
+
+	
+	if (m_bRequestsVisibilityNotifications)
+	{
+			SetIsOnScreen(IsOnScreen());
+			g_watchManager.AddEntityToVisibilityList(this);
+	}
+
+
+	HandleContacts();
+	
+	m_brainManager.PostUpdate(step);
+
+	if (!m_attachedEntities.empty())
+	{
+		list<int>::iterator itor;
+		MovingEntity *pEnt;
+
+		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
+		{
+			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
+			if (pEnt)
+			{
+				pEnt->PostUpdate(step);
+				g_pMapManager->AddToEntityUpdateList(pEnt);
+
+			} else
+			{
+				itor = m_attachedEntities.erase(itor);
+				continue;
+			}
+			itor++;
+		}
+	}
+
+	m_nearbyTileList.clear();
+
+
+}
+
+//run right before physics are applied
+void MovingEntity::ApplyPhysics(float step)
+{
+	if (UnderPriorityLevel()) return;
+	if (m_bRanApplyPhysics) return; else m_bRanApplyPhysics = true;
 
 	if (m_attachEntID != C_ENTITY_NONE)
 	{
@@ -3147,20 +3269,19 @@ void MovingEntity::ApplyPhysics(float step)
 	}
 
 	
-	//apply gravity and things
-	m_zoneVec.clear();
-
-	if (m_bRanApplyPhysics) return; else m_bRanApplyPhysics = true;
-
-	/*
-	if (!GetBody()->GetMass() == 0 && GetCollisionData())
+	//get ready for next frame, if we plan on one coming..
+	if (!m_pBody || !m_pBody->IsSleeping())
 	{
-		//the draw ID lets other objects know that we've already processed
-		m_drawID = g_pMapManager->GetActiveMapCache()->GetUniqueDrawID();
-
-		ApplyGenericMovement(step);
+		m_bTouchedAGroundThisFrame = false;
 	}
-	*/
+
+	if (m_pBody)
+	{
+		//LogMsg("Setting ent %d to %s", ID(), PrintVector(m_pos).c_str());
+		m_pBody->SetXForm(ToPhysicsSpace(m_pos), m_angle);
+	}
+
+	m_zoneVec.clear();
 
 	if (m_attachEntID != C_ENTITY_NONE)
 	{
@@ -3181,6 +3302,8 @@ void MovingEntity::ApplyPhysics(float step)
 			if (pEnt)
 			{
 				pEnt->ApplyPhysics(step);
+				g_pMapManager->AddToEntityUpdateList(pEnt);
+
 			} else
 			{
 				itor = m_attachedEntities.erase(itor);
@@ -3194,13 +3317,18 @@ void MovingEntity::ApplyPhysics(float step)
 void MovingEntity::AddForce(CL_Vector2 force)
 {
 	assert(GetApp()->GetDelta() != 0);
-	m_pBody-> ApplyForce( *(b2Vec2*)& (force * m_pBody->GetMass()), m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
+	//m_pBody-> ApplyForce(  *(b2Vec2*)& ( m_pBody->GetMass() * ToPhysicsSpace(force)), m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
+	m_pBody-> ApplyForce(  *(b2Vec2*)&  force , m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
 }
 
 void MovingEntity::AddForceBurst(CL_Vector2 force)
 {
 	assert(GetApp()->GetDelta() != 0);
-	m_pBody-> ApplyForce( *(b2Vec2*)& (force* m_pBody->GetMass()), m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
+	//m_pBody-> ApplyImpulse(  ToPhysicsSpace(force), m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
+	//the * mass undos the / mass calculation that is done in apply impulse, allowing us to evenly apply force to objects
+	//with different masses
+	m_pBody-> ApplyImpulse(  *(b2Vec2*)& (force * m_pBody->GetMass()), m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
+
 }
 
 void MovingEntity::AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque)
@@ -3249,121 +3377,6 @@ void MovingEntity::SetIsOnScreen(bool bNew)
 			//LogMsg("Ent %d (%s) has left the screen", ID(), GetName().c_str());
 		}
 	}
-}
-
-void MovingEntity::PostUpdate(float step)
-{
-	
-	if (UnderPriorityLevel()) return;
-
-	if (m_bRanPostUpdate) return; else m_bRanPostUpdate = true;
-	if (m_bRequestsVisibilityNotifications)
-	{
-		if (m_lastVisibilityNotificationID != g_watchManager.GetVisibilityID())
-		{
-			SetIsOnScreen(true);
-		}
-		g_watchManager.AddEntityToVisibilityList(this);
-	}
-	
-
-	HandleContacts();
-
-	m_brainManager.PostUpdate(step);
-	
-	
-	/*
-	float groundDampening = 0.05f;
-	if (m_customDampening != -1) groundDampening = m_customDampening;
-	Map *pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
-
-	
-	
-	if (!GetBody()->GetMass() == 0 &&  GetCollisionData())
-	{
-		float gravity;
-
-		if (m_gravityOverride != C_GRAVITY_OVERRIDE_DISABLED)
-		{
-			gravity = m_gravityOverride;
-		} else
-		{
-			gravity = pWorld->GetGravity();
-		}
-
-		if (gravity != 0)
-		{
-			//change to allow gravity in any direction!
-			if ( (m_body.GetLinVelocity().y) < C_MAX_FALLING_DOWN_SPEED)
-			{
-				AddForce(CL_Vector2(0, (gravity)) );
-			
-				if (!IsOnGroundAccurate())
-				{
-					//LogMsg(" %s In the air", GetName().c_str());
-					//additional gravity
-					AddForce(CL_Vector2(0, (gravity*3)) );
-				}
-			}
-			
-			if (GetEnableRotation())
-			{
-				if (IsOnGround() && m_body.GetLinVelocity().length() < 0.4)
-				{
-					//when rotating is active, things jitter pretty bad.
-					
-					//apply dampening
-					set_float_with_target(&m_body.m_velocity.x, 0, (groundDampening) * step);
-					set_float_with_target(&m_body.m_velocity.y, 0, (groundDampening) * step);
-					set_float_with_target(&m_body.m_angvelocity, 0, (groundDampening/3) *step);
-				} 
-			} else
-			{
-				set_float_with_target(&m_body.m_velocity.x, 0, (groundDampening) * step);
-				set_float_with_target(&m_body.m_velocity.y, 0, (groundDampening) * step);
-			}
-	
-		} else
-		{
-			//no gravity active
-			
-				//LogMsg(" %s dampening", GetName().c_str());
-				//apply dampening
-			set_float_with_target(&m_body.m_velocity.x, 0, (groundDampening) * step);
-			set_float_with_target(&m_body.m_velocity.y, 0, (groundDampening) * step);
-			set_float_with_target(&m_body.m_angvelocity, 0, (groundDampening/3) *step);
-
-		}
-		
-		//TODO
-		//GetBody()->update(step);
-	}
-	*/
-
-
-	if (!m_attachedEntities.empty())
-	{
-		list<int>::iterator itor;
-		MovingEntity *pEnt;
-
-		for (itor = m_attachedEntities.begin(); itor != m_attachedEntities.end();)
-		{
-			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
-			if (pEnt)
-			{
-				pEnt->PostUpdate(step);
-			} else
-			{
-				itor = m_attachedEntities.erase(itor);
-				continue;
-			}
-			itor++;
-		}
-	}
-
-	m_nearbyTileList.clear();
-	
-	
 }
 
 
@@ -3595,23 +3608,39 @@ void MovingEntity::AddContact( ContactPoint &cp)
 		//don't care about these yet.. warning, they have bad shape2 data
 		return;
 	}
-	
+	//make sure we are on the update list...
+	g_pMapManager->AddToEntityUpdateList(this);
 
-	if (cp.shape2->GetUserData())
+	bool bIgnore;
+
+	if (cp.pOwnerEnt)
 	{
 		//it's an entity we're colliding with, do we care?
 		if (GetListenCollision() == LISTEN_COLLISION_ALL_ENTITIES
 			||
-			(GetListenCollision() == LISTEN_COLLISION_PLAYER_ONLY && cp.shape2->GetUserData() == GetPlayer))
+			(GetListenCollision() == LISTEN_COLLISION_PLAYER_ONLY && cp.pOwnerEnt == GetPlayer))
 		{
 			//yes
 			//record notification
 			//LogMsg("Adding callback to %d", ID());
-			m_entContacts.push_back(cp);
+			bIgnore = false;
+			for (unsigned int i=0; i < m_entContacts.size(); i++)
+			{
+				if ( m_entContacts[i].pOwnerEnt ==  cp.pOwnerEnt)
+				{
+						bIgnore = true;
+						break;
+				}
+			}
+			if (!bIgnore)
+			{
+				m_entContacts.push_back(cp);
+			}
 		}
 
 	} else
 	{
+		assert(cp.pOwnerTile);
 		//static we're colliding with
 		//it's an entity we're colliding with, do we care?
 		if (GetListenCollisionStatic() == LISTEN_COLLISION_STATIC_ALL)
@@ -3619,7 +3648,24 @@ void MovingEntity::AddContact( ContactPoint &cp)
 			//yes
 			//record notification
 			//LogMsg("Adding static callback to %d", ID());
-			m_staticContacts.push_back(cp);
+			
+			bIgnore = false;
+			
+			/*
+			for (unsigned int i=0; i < m_staticContacts.size(); i++)
+			{
+				if (m_staticContacts[i].shape2->GetBody()->GetUserData() == cp.shape2->GetBody()->GetUserData())
+				{
+					bIgnore = true;
+					break;
+				}
+			}
+			*/
+			if (!bIgnore)
+			{
+				m_staticContacts.push_back(cp);
+			}
+			
 		}
 	}
 }
@@ -3659,12 +3705,18 @@ void MovingEntity::HandleContacts()
 			m_bTouchedAGroundThisFrame = true;
 		}
 #ifdef _DEBUG
-	int id = ((MovingEntity*)m_entContacts[i].shape2->GetUserData())->ID(); //get a giant error if this is invalid
+	int id = m_entContacts[i].pOwnerEnt->ID(); //get a giant error if this is invalid
+
+	//LogMsg("%d getting message from %d", ID(), m_entContacts[i].pOwnerEnt->ID());
+
+	if (id < 0 || id > 10000)
+	{
+		assert(0);
+	}
 #endif
-		//LogMsg("%d getting message from %d", ID(), ((MovingEntity*)m_entContacts[i].shape2->GetUserData())->ID());
 	if (!m_pScriptObject->FunctionExists("OnCollision"))
 			GetScriptManager->SetStrict(false);
-	try {	luabind::call_function<void>(m_pScriptObject->GetState(), "OnCollision",  CL_Vector2(m_entContacts[i].normal.x, m_entContacts[i].normal.y), m_entContacts[i].separation, int(m_entContacts[i].state), ((MovingEntity*)m_entContacts[i].shape2->GetUserData()));
+	try {	luabind::call_function<void>(m_pScriptObject->GetState(), "OnCollision",  CL_Vector2(m_entContacts[i].normal.x, m_entContacts[i].normal.y), m_entContacts[i].separation, int(m_entContacts[i].state), m_entContacts[i].pOwnerEnt);
 		} LUABIND_ENT_CATCH("Error while calling OnCollision(Vector2, float, materialID, Entity)");
 		GetScriptManager->SetStrict(true);
 		//LogMsg("End %d", ID());
@@ -3675,9 +3727,6 @@ void MovingEntity::HandleContacts()
 			break;
 		}
 	}
-
-	m_staticContacts.clear();
-	m_entContacts.clear();
 
 	if (m_bTouchedAGroundThisFrame)
 	{
@@ -3694,3 +3743,26 @@ void MovingEntity::HandleContacts()
 	}
 
 }
+
+void MovingEntity::SetMass( float mass )
+{
+	if (!m_pBody)
+	{
+		LogMsg("SetMass: Entity %d (%s) has no collision properties yet, ignoring", ID(), GetName().c_str());
+		return;
+	}
+	LogMsg("Ignoring SetMass() command in Entity %d (%s) - use SetDensity() instead for now", ID(), GetName().c_str());
+
+	//m_pBody->GetMass()
+}
+
+void MovingEntity::SetVisibilityNotifications( bool bNew )
+{
+	if (m_bRequestsVisibilityNotifications != bNew && bNew)
+	{
+		//set the default state...?  default is off
+		//m_bOnScreen = IsOnScreen();
+	}
+	m_bRequestsVisibilityNotifications = bNew;
+}
+

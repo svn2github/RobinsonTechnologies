@@ -29,11 +29,10 @@ void Screen::DeleteTileData()
 void Screen::DeleteAllTilesOnLayer(unsigned int layer)
 {
 	assert(layer < m_vecLayerList.size() && "Do you want to range this or not?");
-	tile_list::iterator itor = m_vecLayerList[layer].begin();
-
-	while (itor != m_vecLayerList[layer].end())
+	
+	while (m_vecLayerList[layer].begin() != m_vecLayerList[layer].end())
 	{
-		RemoveTileByItor(itor, layer);
+		RemoveTileByItor(m_vecLayerList[layer].begin(), layer);
 	}
 }
 
@@ -318,7 +317,7 @@ void Screen::GetPtrToAllTiles(tile_list *pTileList)
 
 }
 
-void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const vector<unsigned int> &layerIntVec, unsigned int scanID, bool bWithCollisionOnly)
+void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const vector<unsigned int> &layerIntVec, unsigned int scanID, bool bWithCollisionOnly, bool bEntitiesOnly)
 {
 	//we use GetTileList at least once so it can create the layer if need be or error on an invalid layer
 	static Tile *pTile;
@@ -331,7 +330,14 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 	while (itor != m_vecLayerList[layerIntVec[i]].end())
 	{
 		pTile = (*itor);
-	
+		if (bEntitiesOnly)
+		{
+			if (pTile->GetType() != C_TILE_TYPE_ENTITY)
+			{
+				itor++;
+				continue;
+			}
+		}
 		if (pTile->GetType() == C_TILE_TYPE_REFERENCE)
 		{
 			pTile = pTile->GetTileWereAReferenceFrom();

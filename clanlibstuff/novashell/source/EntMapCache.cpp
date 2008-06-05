@@ -288,6 +288,8 @@ bool EntMapCache::IsOnEntityDrawList(MovingEntity *pEnt)
 
 void EntMapCache::ProcessPendingEntityMovementAndDeletions()
 {
+return;
+
 	//process pending movement/deletions
   //	LogMsg("Processing %d ents", m_entityList.size());
 	for (unsigned int i=0; i < m_entityList.size(); i++)
@@ -459,19 +461,12 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 }
 
 
+
 void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail)
 {
 
 	//viewable area in world coords
-	CL_Rect viewRect;
-	CL_Vector2 posTmp = ScreenToWorld(CL_Vector2(recScreen.left,recScreen.top));
-	viewRect.left = int(posTmp.x);
-	viewRect.top = int(posTmp.y);
-
-	posTmp = ScreenToWorld(CL_Vector2(recScreen.right,recScreen.bottom));
-	viewRect.right = int(posTmp.x);
-	viewRect.bottom = int(posTmp.y);
-
+	CL_Rect viewRect = GetCamera->GetViewRectWorldInt();
 	//hack so we don't get shadow popping
 
 	viewRect.right += 100;
@@ -577,7 +572,7 @@ void EntMapCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 }
 
 //break this rect down into chunks to feed into the screens to get tile info
-void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/, bool bAllowLoadOnDemand /* = false*/)
+void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/, bool bAllowLoadOnDemand /* = false*/, bool bEntitiesOnly)
 {
 	CL_Rect rec(recArea);
 	rec.normalize();
@@ -623,7 +618,7 @@ void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, c
 	
 		pScreen = pWorldChunk->GetScreen(bAllowLoadOnDemand);
 
-		if (pScreen) pScreen->GetTilesByRect(scanRec, pTileList, layerIDVect, scanID, bWithCollisionOnly);
+		if (pScreen) pScreen->GetTilesByRect(scanRec, pTileList, layerIDVect, scanID, bWithCollisionOnly, bEntitiesOnly);
 
 		//do we have more to scan on our right after this?
 
@@ -804,25 +799,14 @@ void EntMapCache::AddActiveTrigger(int entID)
 	m_activeTriggers.push_back(entID);
 }
 
+
+
 void EntMapCache::Update(float step)
 {
-	m_uniqueDrawID = GetApp()->GetUniqueNumber();
+	return;
+m_uniqueDrawID = GetApp()->GetUniqueNumber();
 	
-	/*
-	unsigned int gameTick = GetApp()->GetGameTick();
-	if (gameTick > m_cacheCheckTimer)
-	{
-		unsigned int cacheCheckSpeed = 500;
-
-		//time to check it
-		//note, disabled for now
-		//CullScreensNotUsedRecently(gameTick - cacheCheckSpeed);
-		m_cacheCheckTimer = gameTick+cacheCheckSpeed;
-	}
-	*/
-
-
-	ProcessPendingEntityMovementAndDeletions();
+	//ProcessPendingEntityMovementAndDeletions();
 	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
 	ClearTriggers();
 
@@ -848,17 +832,17 @@ void EntMapCache::Update(float step)
 		//world-wide updates too
 		g_watchManager.Update(step, m_uniqueDrawID);
 
-		m_pWorld->GetPhysicsManager()->Update(step);
-
-
+	
+		//chance to do last minute things right before the physics takes place
 		for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
 			m_entityList.at(i)->ApplyPhysics(step);
 		}
-
 	
 		//world-wide updates too
 		g_watchManager.ApplyPhysics(step);
+
+		m_pWorld->GetPhysicsManager()->Update(step);
 
 			for (unsigned int i=0; i < m_entityList.size(); i++)
 		{
@@ -868,7 +852,6 @@ void EntMapCache::Update(float step)
 		g_watchManager.PostUpdate(step);
 	}
 
-	
 }
 
 bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity)
@@ -1081,6 +1064,10 @@ void EntMapCache::RenderGrid(CL_GraphicContext *pTarget)
 void EntMapCache::Render(void *pTarget)
 {
 	
+	//ProcessPendingEntityMovementAndDeletions();
+	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
+	ClearTriggers();
+
 	CL_GraphicContext* pGC = (CL_GraphicContext*)pTarget;
 	
 	RenderViewList(pGC);

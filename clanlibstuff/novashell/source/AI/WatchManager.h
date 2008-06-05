@@ -53,6 +53,7 @@ public:
 	unsigned int GetVisibilityID() {return m_visibilityID;}
 	bool IsEntityOnWatchList(int entID);
 	void AddSilently(MovingEntity *pEnt, int timeToWatchMS);
+	void Render();
 protected:
 
 	watch_list m_watchList;

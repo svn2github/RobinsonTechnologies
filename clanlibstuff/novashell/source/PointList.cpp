@@ -256,6 +256,7 @@ void PointList::PrintPoints()
 
 }
 
+/*
 Body & PointList::GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody)
 {
 	// assert(m_points.size() > 0);
@@ -270,6 +271,7 @@ Body & PointList::GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody)
 	 g_Body.SetVertArray(*(Vector*)& (vPos+m_vecOffset), (Vector*)&m_points[0], m_points.size());
 	 return g_Body;
 }
+*/
 
 //stolen from jyk's snippet from GDNet: http://www.gamedev.net/community/forums/topic.asp?topic_id=304578
 

@@ -38,14 +38,27 @@ MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName)
 	pEnt->Init();
 	
 	if (!pMap) pMap = g_pMapManager->GetActiveMap();
+	if (!pMap)
+	{
+		LogError("CreateEntity (%s at %s) failed, a null map was specified, and no active map found as backup!", scriptFileName.c_str(), VectorToString(&vecPos).c_str());
+		delete pTile;
+		return NULL;
+	}
 	pMap->AddTile(pTile);
-
+	InitEntity(pEnt);
 
 	
 	return pEnt;
 }
 
+void InitEntity(MovingEntity *pEntity)
+{
+	pEntity->Update(0);
+	pEntity->ApplyPhysics(0);
+	pEntity->PostUpdate(0);
+	g_pMapManager->AddToEntityUpdateList(pEntity); //this will allow it to get a visibility notification or something
 
+}
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 {

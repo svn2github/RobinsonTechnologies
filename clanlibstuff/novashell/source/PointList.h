@@ -36,7 +36,7 @@ public:
 	void ApplyScale(const CL_Vector2 &vScale);
 	void PrintPoints(); //debug thing
 
-	Body & GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody = NULL);
+	//Body & GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody = NULL);
 	
 	void GetAsPolygonDef(b2PolygonDef *shapeDef);
 

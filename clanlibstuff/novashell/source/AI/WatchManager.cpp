@@ -93,12 +93,16 @@ bool WatchManager::IsEntityOnWatchList(int entID)
 	}
 	return false;
 }
+void WatchManager::Render()
+{
+	
+}
 
 void WatchManager::Update(float step, unsigned int drawID)
 {
 	//if any of these entities have not been processed yet, let's do it
 	m_postUpdateList.clear();
-	
+
 	MovingEntity *pEnt;
 	unsigned int gameTick = GetApp()->GetGameTick();
 	watch_list::iterator itor;
@@ -128,43 +132,20 @@ void WatchManager::Update(float step, unsigned int drawID)
 			if (bNotify)
 			{
 				//now, it's just going to instantly run the "OnLoseVisible" again if we don't do something..
-				pEnt->OnWatchListTimeout(pEnt->GetDrawID() == drawID);
+				pEnt->OnWatchListTimeout(pEnt->IsOnScreen());
 			}
 			continue;
 		}
 
 		
-		//it's there, let's do our logic on it if it needs it
-
-		if (pEnt->GetDrawID() != drawID)
-		{
-			//it's currently off the screen
-			pEnt->Update(step);
-			m_postUpdateList.push_back(pEnt);
-		} else
-		{
-			//it's on the screen and was already processed the normal way
-		}
+		//force update if it needs it
+		g_pMapManager->AddToEntityUpdateList(pEnt);
+		
 
 		itor++;
 	}
 
-	//at this point all entities who are going to run logic, have.  We can check our list to allow entities
-	//to see if they were are no longer being updated or not
-
-	for (unsigned int i=0; i < m_visibilityNotificationList.size(); i++)
-	{
-		if (m_visibilityNotificationList.at(i))
-		m_visibilityNotificationList.at(i)->CheckVisibilityNotifications(m_visibilityID);
-	}
-
-//	if (!GetGameLogic()->GetGamePaused())
-	{
-		m_visibilityNotificationList.clear();
-		m_visibilityID = GetApp()->GetUniqueNumber();
-	}
-
-	//post update will now be run on all ents, starting in the world cache, then calling our postupdate
+	
 
 }
 
@@ -176,11 +157,17 @@ void WatchManager::AddEntityToPostUpdateList(MovingEntity *pEnt)
 void WatchManager::PostUpdate(float step)
 {
 	
-	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
+	//at this point all entities who are going to run logic, have.  We can check our list to allow entities
+	//to see if they were are no longer being updated or not
+
+	for (unsigned int i=0; i < m_visibilityNotificationList.size(); i++)
 	{
-		if (m_postUpdateList.at(i))
-			m_postUpdateList.at(i)->PostUpdate(step);
+		if (m_visibilityNotificationList.at(i))
+			m_visibilityNotificationList.at(i)->CheckVisibilityNotifications();
 	}
+
+	m_visibilityNotificationList.clear();
+
 }
 
 void WatchManager::OnMapChange(const string &mapName)
@@ -243,6 +230,9 @@ void WatchManager::OnEntityDeleted(MovingEntity *pEnt)
 
 void WatchManager::ProcessPendingEntityMovementAndDeletions()
 {
+	
+	return;
+
 	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
 	{
 		//uh, is it possible this pointer could be bad?  Not sure

@@ -4,6 +4,8 @@
 #include "CollisionData.h"
 #include "MovingEntity.h"
 #include "LayerManager.h"
+#include "MaterialManager.h"
+
 #define C_DEFAULT_LAYER 1
 
 void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC);
@@ -486,11 +488,7 @@ CollisionData * TilePic::GetCollisionData()
 
 	if (GetParentScreen() && m_pCollisionData->GetLineList()->size() > 0)
 	{
-
-		if (m_pCollisionData->GetLineList()->begin()->HasData())
-		{
-
-		
+	
 		if (m_vecScale != CL_Vector2(1,1))
 		{
 			//we may have to do something custom here
@@ -512,27 +510,45 @@ CollisionData * TilePic::GetCollisionData()
 		b2BodyDef bd;
 		bd.position = ToPhysicsSpace(GetPos());
 		m_pBody = GetParentScreen()->GetParentMapChunk()->GetParentMap()->GetPhysicsManager()->GetBox2D()->CreateBody(&bd);
-		bd.userData = this;
-		b2PolygonDef groundShapeDef;
+		//bd.userData = this;
+		b2PolygonDef shapeDef;
 
+		CollisionData *pColTemp = m_pCollisionData;
+		CollisionData col;
 		if (UsesTileProperties())
 		{
-			CollisionData col;
 			CreateCollisionDataWithTileProperties(this, col);
-			col.GetLineList()->begin()->GetAsPolygonDef(&groundShapeDef);
-		} else
-		{
-
-			m_pCollisionData->GetLineList()->begin()->GetAsPolygonDef(&groundShapeDef);
+			pColTemp = &col;
 		}
-		groundShapeDef.userData = NULL; //Not an ent, screw this
-		//CL_Rectf r = m_pCollisionData->GetCombinedCollisionRect();
-		//groundShapeDef.SetAsBox(r.get_width()/C_PHYSICS_PIXEL_SIZE, r.get_height()/C_PHYSICS_PIXEL_SIZE);
+		line_list::iterator itor = pColTemp->GetLineList()->begin();
 
-		m_pBody->CreateShape(&groundShapeDef);
+		for (; itor != pColTemp->GetLineList()->end(); itor++)
+		{
+			PointList * pPointList = &(*itor);
+			CMaterial *pMat = g_materialManager.GetMaterial(pPointList->GetType());
+			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY || pMat->GetType() == CMaterial::C_MATERIAL_TYPE_WARP)		
+			{
+				LogMsg("Ignoring static dummy or warp..");
+				continue;
+			}
 
-		groundShapeDef.isSensor = true;
-		m_pBody->CreateShape(&groundShapeDef);
+		pPointList->GetAsPolygonDef(&shapeDef);
+
+		ShapeUserData *pShapeUserData = new ShapeUserData();
+		pShapeUserData->pOwnerTile = this;
+		pShapeUserData->pOwnerEnt = NULL;
+		pShapeUserData->materialID = pPointList->GetType(); 
+		shapeDef.userData = pShapeUserData;
+
+		m_pBody->CreateShape(&shapeDef);
+
+		pShapeUserData = new ShapeUserData(*pShapeUserData);
+		shapeDef.userData = pShapeUserData;
+
+		shapeDef.isSensor = true;
+		m_pBody->CreateShape(&shapeDef);
+		
+		
 		}
 
 	}
