@@ -26,6 +26,18 @@ class EntMapCache;
 class NavGraphManager;
 
 
+class Zone
+{
+public:
+
+	CL_Rectf m_boundingRect;
+	CL_Vector2 m_vPos; //add this to the bounding rect to get the rect in world coordinates
+	int m_materialID;
+	int m_entityID;
+
+};
+
+
 typedef std::map<ScreenID, MapChunk*> map_chunk_map;
 
 typedef std::list<unsigned int> tag_hash_list;
@@ -130,6 +142,8 @@ public:
 	CL_Rectf ComputeWorldRect(int reserved); //very slow!
 	void SetWorldRectExact(CL_Rectf r);
 	PhysicsManager * GetPhysicsManager() {return &m_physicsManager;}
+	Zone GetZoneByRectAndType(const CL_Rectf rectInput, int matType);
+	Zone GetZoneByPointAndType(const CL_Vector2 &vPos, int matType);
 	
 private:
 

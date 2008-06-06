@@ -181,15 +181,6 @@ void WatchManager::OnMapChange(const string &mapName)
 }
 
 
-void WatchManager::ApplyPhysics(float step)
-{
-	
-	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
-	{
-		if (m_postUpdateList.at(i))
-			m_postUpdateList.at(i)->ApplyPhysics(step);
-	}
-}
 
 void WatchManager::AddEntityToVisibilityList(MovingEntity *pEnt)
 {
@@ -226,23 +217,6 @@ void WatchManager::OnEntityDeleted(MovingEntity *pEnt)
 	{
 		RemoveFromVisibilityList(pEnt);
 	}
-}
-
-void WatchManager::ProcessPendingEntityMovementAndDeletions()
-{
-	
-	return;
-
-	for (unsigned int i=0; i < m_postUpdateList.size(); i++)
-	{
-		//uh, is it possible this pointer could be bad?  Not sure
-		if (m_postUpdateList.at(i))
-		{
-			m_postUpdateList.at(i)->ProcessPendingMoveAndDeletionOperations();
-		}
-	}
-
-
 }
 
 /*

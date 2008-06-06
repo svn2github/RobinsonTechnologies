@@ -3,7 +3,6 @@
 #include "EntCollisionEditor.h"
 #include "Tile.h"
 #include "GameLogic.h"
-#include "physics/Body.h"
 #include "MaterialManager.h"
 #include "MovingEntity.h"
 #include "EntEditor.h"
@@ -534,7 +533,7 @@ void EntCollisionEditor::Render(void *pTarget)
 	DrawBullsEyeWorld(m_trueEntityPosition, CL_Color(255,255,0,200), 10, pGC);
 
 	CL_Color col(255,0,0,255);
-	RenderVectorCollisionData(m_pos, m_col, pGC, true, &col, NULL);
+	RenderVectorCollisionData(m_pos, m_col, pGC, true, &col);
 }
 
 void EntCollisionEditor::Update(float step)
@@ -556,7 +555,7 @@ void EntCollisionEditor::OnNextLine()
 
 
 
-void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, Body *pCustomBody)
+void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride)
 {
 
 	CL_Vector2 a,b, firstVert;
@@ -613,14 +612,14 @@ void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicCo
 
 }
 
-void RenderVectorCollisionData(const CL_Vector2 &vecPos, CollisionData &col, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride, Body *pCustomBody)
+void RenderVectorCollisionData(const CL_Vector2 &vecPos, CollisionData &col, CL_GraphicContext *pGC, bool bRenderVertBoxes, CL_Color *pColorOveride)
 {
 	line_list *pLineList = col.GetLineList();
 	line_list::iterator itor = pLineList->begin();
 
 	while (itor != pLineList->end())
 	{
-		RenderVectorPointList(vecPos, (*itor), pGC, bRenderVertBoxes, pColorOveride, pCustomBody);
+		RenderVectorPointList(vecPos, (*itor), pGC, bRenderVertBoxes, pColorOveride);
 		itor++;
 	}
 }
@@ -652,12 +651,12 @@ void RenderTileListCollisionData(tile_list &tileList, CL_GraphicContext *pGC, bo
 		{
 			//we need a customized version
 			CreateCollisionDataWithTileProperties((*itor), col);
-			RenderVectorCollisionData(vPos, col, pGC, bRenderVertBoxes, pColorOveride, NULL);
+			RenderVectorCollisionData(vPos, col, pGC, bRenderVertBoxes, pColorOveride);
 		} else
 		{
 			pCol = (*itor)->GetCollisionData();
 			if (pCol)
-			RenderVectorCollisionData(vPos, *pCol, pGC, bRenderVertBoxes, pColorOveride, NULL);
+			RenderVectorCollisionData(vPos, *pCol, pGC, bRenderVertBoxes, pColorOveride);
 		}
 	
 		itor++;

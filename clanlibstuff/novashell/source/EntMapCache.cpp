@@ -288,19 +288,6 @@ bool EntMapCache::IsOnEntityDrawList(MovingEntity *pEnt)
 
 void EntMapCache::ProcessPendingEntityMovementAndDeletions()
 {
-return;
-
-	//process pending movement/deletions
-  //	LogMsg("Processing %d ents", m_entityList.size());
-	for (unsigned int i=0; i < m_entityList.size(); i++)
-	{
-		if (!m_entityList[i]) continue;
-		m_entityList[i]->ProcessPendingMoveAndDeletionOperations();
-	}
-
-	//also process our global watch list
-	g_watchManager.ProcessPendingEntityMovementAndDeletions();
-
 }
 
 void EntMapCache::ResetPendingEntityMovementAndDeletions()
@@ -658,10 +645,10 @@ void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 				CollisionData col;
 				//we need a customized version
 				CreateCollisionDataWithTileProperties(pTile, col);
-				RenderVectorCollisionData(pTile->GetPos(), col, pGC, false, NULL, NULL);
+				RenderVectorCollisionData(pTile->GetPos(), col, pGC, false, NULL);
 			} else
 			{
-				RenderVectorCollisionData(pTile->GetPos(), *pCol, pGC, false, NULL, NULL);
+				RenderVectorCollisionData(pTile->GetPos(), *pCol, pGC, false, NULL);
 			}
 		}
 	}
@@ -803,55 +790,6 @@ void EntMapCache::AddActiveTrigger(int entID)
 
 void EntMapCache::Update(float step)
 {
-	return;
-m_uniqueDrawID = GetApp()->GetUniqueNumber();
-	
-	//ProcessPendingEntityMovementAndDeletions();
-	CalculateVisibleList(CL_Rect(0,0,GetScreenX,GetScreenY), false);
-	ClearTriggers();
-
-	if (m_pWorld != g_pMapManager->GetActiveMap())
-	{
-		//we no longer have focus, don't bother doing our AI
-		return;
-	}
-
-	//if (GetGameLogic()->GetGamePaused() == false)
-	{
-	
-		//we need to check per-entity to see if they have priority to run here!! and in the watchmanager? ugh!
-		
-		
-		//note, if tiles ever actually need to DO something in their think phase, this should use
-		//m_tileLayerDrawList instead of entityList
-		
-		for (unsigned int i=0; i < m_entityList.size(); i++)
-		{
-			m_entityList.at(i)->Update(step);
-		}
-		//world-wide updates too
-		g_watchManager.Update(step, m_uniqueDrawID);
-
-	
-		//chance to do last minute things right before the physics takes place
-		for (unsigned int i=0; i < m_entityList.size(); i++)
-		{
-			m_entityList.at(i)->ApplyPhysics(step);
-		}
-	
-		//world-wide updates too
-		g_watchManager.ApplyPhysics(step);
-
-		m_pWorld->GetPhysicsManager()->Update(step);
-
-			for (unsigned int i=0; i < m_entityList.size(); i++)
-		{
-			m_entityList.at(i)->PostUpdate(step);
-		}
-
-		g_watchManager.PostUpdate(step);
-	}
-
 }
 
 bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMovingCreatures, MovingEntity *pIgnoreEntity)
@@ -1039,6 +977,12 @@ void EntMapCache::RenderGrid(CL_GraphicContext *pTarget)
 	{
 		//grid is too small to draw..
 		return;
+	}
+
+	//modify the grid if we're zoomed out really far...looks better
+	while (vSnap.x * GetCamera->GetScale().x < 5)
+	{
+		vSnap *= 2;
 	}
 
 	CL_Rectf rWorld = GetCamera->GetViewRectWorld();

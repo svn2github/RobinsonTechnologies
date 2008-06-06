@@ -9,8 +9,7 @@
 #ifndef MaterialManager_HEADER_INCLUDED // include guard
 #define MaterialManager_HEADER_INCLUDED  // include guard
 
-#include "physics/Contact.h"
-
+#include "Material.h"
 //lua doc info for natural docs processer.  Becareful how you move it, it will break..
 
 /*
@@ -47,7 +46,7 @@ public:
 	
 	
 
-	CMaterial * GetMaterial(int idx) {return &m_vecMat[idx];}
+	CMaterial * GetMaterial(int idx);
 	int GetCount(){return m_vecMat.size();}
 
 	void Init();

@@ -2,7 +2,6 @@
 #define MOVING_ENTITY
 
 #include "BaseGameEntity.h"
-#include "physics/Body.h"
 #include "CollisionData.h"
 #include "Screen.h"
 #include "GameLogic.h"
@@ -10,7 +9,7 @@
 #include "DataManager.h"
 #include "BrainManager.h"
 #include "Trigger.h"
-#include "physics/Contact.h"
+#include "Material.h"
 #include "linearparticle/sources/L_EffectManager.h"
 class Goal_Think;
 class PathPlanner;
@@ -44,17 +43,6 @@ enum
 
 class Brain;
 class VisualProfile;
-
-class Zone
-{
-public:
-	
-	CL_Rectf m_boundingRect;
-	CL_Vector2 m_vPos; //add this to the bounding rect to get the rect in world coordinates
-	int m_materialID;
-	int m_entityID;
-
-};
 
 
 //this is attached to every 2dbox shape and deleted with its shape is
@@ -141,7 +129,7 @@ public:
   bool SetVisualProfile(string resourceFileName, const string &profileName);
   virtual void  Update(float step);
   virtual void  Render(void *pTarget);
-  void ApplyPhysics(float step);
+  void ApplyToPhysics(float step);
   void RenderCollisionLists(CL_GraphicContext *pGC);
   void RenderShadow(void *pTarget);
   BaseGameEntity * CreateClone(TileEntity *pTile);
@@ -175,7 +163,7 @@ public:
   void SetRotation(float angle);
   float GetRotation();
   unsigned int GetDrawID() {return m_drawID;}
-  float GetMass() {return FromPhysicsSpace(m_pBody->GetMass());}
+  float GetMass() {return m_pBody->GetMass();}
 	bool IsOnScreen();
   void SetMass(float mass);
   void SetDensity(float fDensity);
@@ -188,6 +176,10 @@ public:
   int GetListenCollisionStatic() {return m_listenCollisionStatic;}
   void AddForce(CL_Vector2 force);
   void AddForceBurst(CL_Vector2 force);
+  void SetCollisionCategory(int category, bool bOn);
+  void SetCollisionMask(int category, bool bOn);
+  int GetCollisionGroup();
+  void SetCollisionGroup(int group);
 
   void AddForceAndTorque(CL_Vector2 force, CL_Vector2 torque);
   void AddForceAndTorqueBurst(CL_Vector2 force, CL_Vector2 torque);
@@ -200,6 +192,7 @@ public:
   };
   CL_Vector2 GetLinearVelocity() 
   {
+	  if (!m_pBody) return CL_Vector2::ZERO;
 	  return  *(CL_Vector2*)&m_pBody->GetLinearVelocity();
   // return  FromPhysicsSpace(m_pBody->GetLinearVelocity());
   }
@@ -215,7 +208,6 @@ public:
 
   
   ScriptObject * GetScriptObject() {return m_pScriptObject;}
-  Zone GetZoneWeAreOnByMaterialType(int matType);
   Zone GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType);
   Zone GetNearbyZoneByCollisionRectAndType(int matType);
 
@@ -409,7 +401,6 @@ protected:
 
 	void ProcessCollisionTileList(tile_list &tList, float step);
 	void ProcessCollisionTile(Tile *pTile, float step);
-	void OnCollision(const Vector & N, float &t, Body *pOtherBody, bool *pBoolAllowCollide); 
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
 	void ResetEffects();
@@ -419,6 +410,9 @@ protected:
 	void InitializeBody();
 	void KillBody();
 	void HandleContacts();
+	void UpdatePhysicsToPos();
+	void UpdateBodyCollisionMode();
+	void UpdatePosToPhysics();
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
     CL_Slot m_collisionSlot;
@@ -509,6 +503,7 @@ protected:
 	float m_angle;
 	vector<ContactPoint> m_entContacts;
 	vector<ContactPoint> m_staticContacts;
+	b2FilterData m_filterData; //shared between all shapes
 	
 };
 

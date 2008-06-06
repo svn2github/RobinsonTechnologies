@@ -402,7 +402,8 @@ CL_Rect GrowRect(CL_Rect r, int amountToApplyToEachSide)
 	r.normalize();
 	return r;
 }
-void MapManager::Update(float step)
+
+void MapManager::PrepareUpdate(float step)
 {
 
 	//clear lists
@@ -410,15 +411,15 @@ void MapManager::Update(float step)
 	m_entityUpdateList.clear();
 
 	//first, lets figure out which entities are going to be on our main screen
-	
+
 	if (m_pActiveMap)
 	{
 		tile_list t;
-	
+
 		m_pActiveMapCache->AddTilesByRect(GrowRect(GetCamera->GetViewRectWorldInt(), 100), &t, m_pActiveMap->GetLayerManager().GetAllList(), false, true, true);
-	
+
 		//OPTIMIZE:  Later, just put them directly on the hashmap in the first place
-		
+
 		//add them to our hashmap
 		while (t.begin() != t.end())
 		{
@@ -432,24 +433,26 @@ void MapManager::Update(float step)
 	}
 
 	//run the physics loop for all worlds on the world update list
-	
+
 	MapInfoHashMap::iterator itor = m_MapInfoUpdateList.begin();
 	while (itor != m_MapInfoUpdateList.end())
 	{
 		itor->second->GetPhysicsManager()->Update(step);
 		itor++;
 	}
-	
+
 	//this will also update our entity render list with more stuff
-
-
-	EntityHashMap::iterator entItor;
 
 	g_watchManager.Update(step, 0);
 
 	g_watchManager.PostUpdate(step);
 
-	//finally, run the entities update
+}
+void MapManager::Update(float step)
+{
+
+	EntityHashMap::iterator entItor;
+//finally, run the entities update
 	entItor = m_entityUpdateList.begin();
 	while (entItor != m_entityUpdateList.end())
 	{
@@ -461,7 +464,7 @@ void MapManager::Update(float step)
 	while (entItor != m_entityUpdateList.end())
 	{
 		entItor->second->Update(step);
-		entItor->second->ApplyPhysics(step);
+		entItor->second->ApplyToPhysics(step);
 		entItor++;
 	}
 

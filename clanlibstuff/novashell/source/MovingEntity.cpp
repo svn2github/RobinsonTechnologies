@@ -7,7 +7,6 @@
 #include "ScriptManager.h"
 #include "BrainShake.h"
 #include "VisualProfileManager.h"
-#include "physics/Contact.h"
 #include "MaterialManager.h"
 #include "AI/Goal_Think.h"
 #include "AI/PathPlanner.h"
@@ -536,6 +535,10 @@ std::string MovingEntity::HandleMessageString( const string &msg )
 void MovingEntity::SetDefaults()
 {
 	assert(!m_pBody);
+	m_filterData.categoryBits = 0x0001;
+	m_filterData.maskBits = 0xFFFF;
+	m_filterData.groupIndex = 0;
+
 	m_strWorldToMoveTo.clear();
 	//m_pos = CL_Vector2::ZERO; //don't want to actually set this...
 	m_angle = 0;
@@ -964,7 +967,7 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 	pNew->Init();
 	pNew->SetRotation(GetRotation());
 
-	InitEntity(pNew);
+	//InitEntity(pNew);
 	return pNew;
 }
 
@@ -1152,7 +1155,7 @@ void MovingEntity::InitializeBody()
 		return;
 	}
 	
-if (!m_pCollisionData) return;
+if (!m_pCollisionData || !m_pCollisionData->HasData()) return;
 
 	//LogMsg("initializing body (%d) (%s) with density %.2f", ID(), m_mainScript.c_str(), m_fDensity);
 	//MAKE BODY
@@ -1174,9 +1177,9 @@ if (!m_pCollisionData) return;
 		{
 			PointList * pPointList = &(*itor);
 			CMaterial *pMat = g_materialManager.GetMaterial(pPointList->GetType());
-			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY || pMat->GetType() == CMaterial::C_MATERIAL_TYPE_WARP)		
+			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY)		
 			{
-				LogMsg("Ignoring dummy or warp..");
+				//LogMsg("Ignoring dummy or warp..");
 				continue;
 			}
 
@@ -1184,17 +1187,20 @@ if (!m_pCollisionData) return;
 
 			pPointList->GetAsPolygonDef(&shapeDef);
 			shapeDef.density = m_fDensity;
+			shapeDef.filter = m_filterData;
 				
 			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_NORMAL)
 			{
 				ShapeUserData *pShapeUserData = new ShapeUserData();
 				pShapeUserData->pOwnerEnt = this;
 				pShapeUserData->pOwnerTile = NULL;
+				
 				pShapeUserData->materialID = pPointList->GetType();
 				shapeDef.userData = pShapeUserData;
-
+				
 				m_pBody->CreateShape(&shapeDef);
 				m_pBody->SetMassFromShapes();
+
 			}
 			
 			//create sensor version which we may or may not need
@@ -1203,13 +1209,15 @@ if (!m_pCollisionData) return;
 			pShapeUserData->pOwnerTile = NULL;
 			pShapeUserData->materialID = pPointList->GetType();
 			shapeDef.userData = pShapeUserData;
-
+			
 			shapeDef.density = 0;
-			shapeDef.friction = 0;
+			//shapeDef.friction = 0;
 			shapeDef.isSensor = true;
 
 			m_pBody->CreateShape(&shapeDef);
+
 			m_pBody->WakeUp();
+			
 		}
 		
 	}
@@ -1218,10 +1226,15 @@ if (!m_pCollisionData) return;
 
 void MovingEntity::SetPos(const CL_Vector2 &new_pos)
 {
-	//LogMsg("SetPos: Setting ent %d to %s", ID(), PrintVector(m_pos).c_str());
-
+	
 	m_pos = new_pos;
+//	LogMsg("SetPos: Setting ent %d to %s", ID(), PrintVector(m_pos).c_str());
 	m_bMovedFlag = true;
+
+	if (m_bRanApplyPhysics)
+	{
+		UpdatePosToPhysics();
+	}
 
 	if (!m_strWorldToMoveTo.empty())
 	{
@@ -1295,62 +1308,15 @@ void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldNa
 }
 
 
-Zone MovingEntity::GetZoneWeAreOnByMaterialType(int matType)
-{
-	
-	for (unsigned int i=0; i < m_zoneVec.size(); i++)
-	{
-		if (g_materialManager.GetMaterial(m_zoneVec[i].m_materialID)->GetType() == matType)
-		{
-			return m_zoneVec[i]; //valid for the rest of this frame
-		}
-	}
-
-	return g_ZoneEmpty;
-
-}
-
 Zone MovingEntity::GetNearbyZoneByCollisionRectAndType(int matType)
 {
-
-	if ( m_zoneVec.size() == 0) return g_ZoneEmpty;
-
-	static CL_Rectf r;
-	r = m_pTile->GetWorldColRect();
-
-	for (unsigned int i=0; i < m_zoneVec.size(); i++)
-	{
-		if (g_materialManager.GetMaterial(m_zoneVec[i].m_materialID)->GetType() == matType)
-		{
-			if (r.is_overlapped(m_zoneVec[i].m_boundingRect + *(CL_Pointf*)&(m_zoneVec[i].m_vPos)) )
-			{
-				return m_zoneVec[i]; //valid for the rest of this frame
-			}
-			
-		}
-	}
-
-	return g_ZoneEmpty;
+	return GetMap()->GetZoneByRectAndType(GetWorldCollisionRect(), matType);
 }
+
 
 Zone MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matType)
 {
-	static CL_Vector2 v;
-	for (unsigned int i=0; i < m_zoneVec.size(); i++)
-	{
-		if (g_materialManager.GetMaterial(m_zoneVec[i].m_materialID)->GetType() == matType)
-		{
-			v = vPos;
-			v -= m_zoneVec[i].m_vPos;
-			if (m_zoneVec[i].m_boundingRect.is_inside(*(CL_Pointf*)&(v)))
-			{
-				return m_zoneVec[i]; //valid for the rest of this frame
-			}
-		}
-	}
-
-	return g_ZoneEmpty;
-
+	return GetMap()->GetZoneByPointAndType(vPos, matType);
 }
 
 void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
@@ -2075,6 +2041,7 @@ void MovingEntity::LastCollisionWasInvalidated()
 	m_floorMaterialID = m_oldFloorMaterialID;
 }
 
+/*
 void MovingEntity::OnCollision(const Vector & N, float &t, Body *pOtherBody, bool *pBoolAllowCollision)
 {
 
@@ -2180,7 +2147,7 @@ void MovingEntity::OnCollision(const Vector & N, float &t, Body *pOtherBody, boo
 		}
 	}
 }
-
+*/
 void MovingEntity::SetIsOnGround(bool bOnGround)
 {
 	if (bOnGround)
@@ -2196,13 +2163,8 @@ void MovingEntity::SetIsOnGround(bool bOnGround)
 
 void MovingEntity::SetDensity(float fDensity)
 {
-
-	
 	m_fDensity = fDensity;
-	if (!m_bCanRotate)
-	{
-		
-	}
+	
 	if (GetBody())
 	{
 		InitializeBody();
@@ -2272,9 +2234,6 @@ void MovingEntity::LoadCollisionInfo(const string &fileName)
 	}
 
 	pActiveLine = &(*m_pCollisionData->GetLineList()->begin());
-	//get notified of collisions
-	//TODO
-	//m_collisionSlot = m_body.sig_collision.connect(this, &MovingEntity::OnCollision);
 
 	//link to data correctly
 	
@@ -2331,10 +2290,6 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 
 	//m_pSprite->set_alignment(origin_center);
 
-	//get notified of collisions
-	//TODO
-	//m_collisionSlot = m_body.sig_collision.connect(this, &MovingEntity::OnCollision);
-
 	//link to data correctly
 	
 	if (pActiveLine)
@@ -2386,15 +2341,10 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 	pActiveLine->GetPointList()->at(3) = CL_Vector2(colRect.left, colRect.bottom);
 	pActiveLine->CalculateOffsets();
 	//get notified of collisions
-	//TODO
-	//m_collisionSlot = m_body.sig_collision.connect(this, &MovingEntity::OnCollision);
 	m_bUsingCustomCollisionData = true;
 	//link to data correctly
-	//pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
 	InitializeBody();
-
 	SetDensity(1);
-
 }
 
 void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
@@ -2426,8 +2376,6 @@ void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
 		//what if the other entity hasn't had a chance to run its init stuff yet?
 
 		pEnt->RunPostInitIfNeeded();
-
-
 	}
 	
 	static CollisionData colCustomized;
@@ -2531,8 +2479,13 @@ void MovingEntity::SetCollisionMode(int mode)
 		LogError("SetCollisionMode: Invalid mode sent: %d", mode);
 		return;
 	}
+	if (mode != m_collisionMode)
+	{
+		m_collisionMode = mode;
+		UpdateBodyCollisionMode();
+	}
 
-	m_collisionMode = mode;
+
 	
 }
 
@@ -2587,7 +2540,7 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 
 void MovingEntity::ApplyGenericMovement(float step)
 {
-
+/*
 	//schedule tile update if needed
 	m_bMovedFlag = true;
 
@@ -2618,26 +2571,19 @@ void MovingEntity::ApplyGenericMovement(float step)
 	m_scanArea.bottom += padding;
 
 	Map *pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
-
+*/
 	//pWorld->GetMyMapCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
 	
 	
 	//m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
 
 	//ProcessCollisionTileList(m_nearbyTileList, step);
-	
-	
-	
+
 }
 
 
 CL_Vector2 MovingEntity::GetVisualOffset()
 {
-	
-	if (m_pCollisionData && m_pCollisionData->HasData()) 
-	{
-		return -m_pCollisionData->GetCombinedOffsets();
-	}
 	return CL_Vector2(0,0);
 }
 
@@ -2694,8 +2640,6 @@ void MovingEntity::StopX()
 void MovingEntity::SetRotation(float angle)
 {
 	m_angle = angle;
-	//m_pBody->SetXForm(m_pBody->GetPosition(), angle);
-
 }
 float MovingEntity::GetRotation()
 {
@@ -2707,9 +2651,7 @@ CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
 {
 
 	bRootIsCam = false;
-	//assert(m_bLockedScale && m_attachEntID != 0);
 
-	
 	if (m_attachEntID == C_ENTITY_CAMERA)
 	{
 		bRootIsCam = true;
@@ -3069,30 +3011,18 @@ void MovingEntity::CheckVisibilityNotifications()
 //run first
 void MovingEntity::Update(float step)
 {
-
 	
-	/*
-	if (g_watchManager.GetVisibilityID() == m_lastVisibilityNotificationID)
-	{
-		//we've already run our update
-		return;
-	}
-	*/
-
 	m_staticContacts.clear();
 	m_entContacts.clear();
 
 	if (UnderPriorityLevel()) 
 	{
-		
-		if (m_pBody)
-		{
-			m_pBody->SetXForm(ToPhysicsSpace(m_pos), m_angle);
-		}
+		UpdatePosToPhysics();
 		return;
 	}
 
-	
+	assert(IsPlaced());
+
 	m_bRanPostUpdate = false;
 	m_bRanApplyPhysics = false;
 	
@@ -3175,18 +3105,83 @@ void MovingEntity::Update(float step)
 
 }
 
+
+void MovingEntity::UpdateBodyCollisionMode()
+{
+	if (m_pBody)
+	{
+		UpdateBodyFilterData(m_pBody, m_filterData);
+	}
+}
+
+void MovingEntity::UpdatePosToPhysics()
+{
+	if (m_pBody)
+	{
+		//LogMsg("Setting physics %d to %s", ID(), PrintVector(m_pos).c_str());
+		m_pBody->SetXForm(ToPhysicsSpace(m_pos), m_angle);
+	}
+
+}
+
+void MovingEntity::UpdatePhysicsToPos()
+{
+	if (m_pBody)
+	{
+		b2Shape *pShape = m_pBody->GetShapeList();
+		if (pShape)
+		{
+				if (
+					pShape->GetFilterData().categoryBits != m_filterData.categoryBits
+					||
+					pShape->GetFilterData().maskBits != m_filterData.maskBits
+					||
+					pShape->GetFilterData().groupIndex != m_filterData.groupIndex
+					)
+				{
+					UpdateBodyFilterData(m_pBody, m_filterData);
+				}
+		}
+		if (!m_pBody->IsStatic()) 
+		{
+			m_angle = m_pBody->GetAngle();
+			if ( m_strWorldToMoveTo.empty())
+			{
+				//LogMsg("Setting local..");
+				SetPos(FromPhysicsSpace(m_pBody->GetPosition()));
+				//LogMsg("Setting local %d to %s", ID(), PrintVector(m_pos).c_str());
+
+			}
+
+			if (m_customDampening!= -1)
+			{
+				AddForceBurst( -(GetLinearVelocity()*m_customDampening));
+			}
+			if (m_gravityOverride != C_GRAVITY_OVERRIDE_DISABLED)
+			{
+				//remove the real gravity
+				AddForce(-CL_Vector2(0, GetMap()->GetGravity()));
+
+				//add our own
+				AddForce(CL_Vector2(0, m_gravityOverride));
+			}
+
+			
+		}
+	}
+
+}
+
 //run after physics steps
+
+
 
 void MovingEntity::PostUpdate(float step)
 {
 
 	if (!m_bHasRunOnInit) return;
 
-	if (m_pBody && !m_pBody->IsStatic() && m_strWorldToMoveTo.empty())
-	{
-		SetPos(FromPhysicsSpace(m_pBody->GetPosition()));
-		m_angle = m_pBody->GetAngle();
-	}
+	UpdatePhysicsToPos();
 
 	if (UnderPriorityLevel()) return;
 
@@ -3249,8 +3244,9 @@ void MovingEntity::PostUpdate(float step)
 
 }
 
+
 //run right before physics are applied
-void MovingEntity::ApplyPhysics(float step)
+void MovingEntity::ApplyToPhysics(float step)
 {
 	if (UnderPriorityLevel()) return;
 	if (m_bRanApplyPhysics) return; else m_bRanApplyPhysics = true;
@@ -3267,7 +3263,6 @@ void MovingEntity::ApplyPhysics(float step)
 			}
 		}
 	}
-
 	
 	//get ready for next frame, if we plan on one coming..
 	if (!m_pBody || !m_pBody->IsSleeping())
@@ -3275,11 +3270,7 @@ void MovingEntity::ApplyPhysics(float step)
 		m_bTouchedAGroundThisFrame = false;
 	}
 
-	if (m_pBody)
-	{
-		//LogMsg("Setting ent %d to %s", ID(), PrintVector(m_pos).c_str());
-		m_pBody->SetXForm(ToPhysicsSpace(m_pos), m_angle);
-	}
+	UpdatePosToPhysics();
 
 	m_zoneVec.clear();
 
@@ -3301,7 +3292,7 @@ void MovingEntity::ApplyPhysics(float step)
 			pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(*itor);
 			if (pEnt)
 			{
-				pEnt->ApplyPhysics(step);
+				pEnt->ApplyToPhysics(step);
 				g_pMapManager->AddToEntityUpdateList(pEnt);
 
 			} else
@@ -3318,7 +3309,7 @@ void MovingEntity::AddForce(CL_Vector2 force)
 {
 	assert(GetApp()->GetDelta() != 0);
 	//m_pBody-> ApplyForce(  *(b2Vec2*)& ( m_pBody->GetMass() * ToPhysicsSpace(force)), m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
-	m_pBody-> ApplyForce(  *(b2Vec2*)&  force , m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
+	m_pBody-> ApplyForce(  *(b2Vec2*)&  (force*GetMass()) , m_pBody->GetWorldPoint(b2Vec2(0.0f, 0.0f)));
 }
 
 void MovingEntity::AddForceBurst(CL_Vector2 force)
@@ -3457,6 +3448,7 @@ MovingEntity * MovingEntity::Clone(Map *pMap, CL_Vector2 vecPos)
 	}
 	
 	pMap->AddTile(pNew);
+	InitEntity(pNewEnt);
 	return pNewEnt;
 }
 
@@ -3600,7 +3592,6 @@ void MovingEntity::AddContact( ContactPoint &cp)
 {
 	//do we care?
 	//shape1 is ours, shape2 is 'theirs'
-
 	
 	if (cp.state == e_contactRemoved)
 
@@ -3608,9 +3599,7 @@ void MovingEntity::AddContact( ContactPoint &cp)
 		//don't care about these yet.. warning, they have bad shape2 data
 		return;
 	}
-	//make sure we are on the update list...
-	g_pMapManager->AddToEntityUpdateList(this);
-
+	
 	bool bIgnore;
 
 	if (cp.pOwnerEnt)
@@ -3622,7 +3611,7 @@ void MovingEntity::AddContact( ContactPoint &cp)
 		{
 			//yes
 			//record notification
-			//LogMsg("Adding callback to %d", ID());
+			//LogMsg("%d is adding collision from %d (%s)", ID(), cp.pOwnerEnt->ID(), cp.pOwnerEnt->GetName().c_str());
 			bIgnore = false;
 			for (unsigned int i=0; i < m_entContacts.size(); i++)
 			{
@@ -3689,7 +3678,7 @@ void MovingEntity::HandleContacts()
 		} LUABIND_ENT_CATCH("Error while calling OnCollisionStatic(Vector2, float, materialID)");
 		GetScriptManager->SetStrict(true);
 
-		if (GetCollisionMode() == COLLISION_MODE_NONE || GetCollisionMode() == COLLISION_MODE_PLAYER_ONLY)
+		if (GetListenCollision() == LISTEN_COLLISION_STATIC_NONE)
 		{
 			//con't care anymore
 			break;
@@ -3721,7 +3710,7 @@ void MovingEntity::HandleContacts()
 		GetScriptManager->SetStrict(true);
 		//LogMsg("End %d", ID());
 
-		if (GetCollisionMode() == COLLISION_MODE_NONE || GetCollisionMode() == COLLISION_MODE_STATIC_ONLY)
+		if (GetListenCollision() == LISTEN_COLLISION_NONE)
 		{
 			//con't care anymore
 			break;
@@ -3764,5 +3753,26 @@ void MovingEntity::SetVisibilityNotifications( bool bNew )
 		//m_bOnScreen = IsOnScreen();
 	}
 	m_bRequestsVisibilityNotifications = bNew;
+}
+
+void MovingEntity::SetCollisionCategory( int category, bool bOn )
+{
+	SetCollisionCategoryBit(m_filterData, category, bOn);
+}
+
+void MovingEntity::SetCollisionMask( int category, bool bOn )
+{
+	SetCollisionMaskBit(m_filterData, category, bOn);
+
+}
+
+int MovingEntity::GetCollisionGroup()
+{
+	return m_filterData.groupIndex;
+}
+
+void MovingEntity::SetCollisionGroup( int group )
+{
+	m_filterData.groupIndex = group;
 }
 

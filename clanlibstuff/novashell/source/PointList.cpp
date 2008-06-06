@@ -1,6 +1,5 @@
 #include "AppPrecomp.h"
 #include "PointList.h"
-#include "physics/Body.h"
 #include "MaterialManager.h"
 #include "AppUtils.h"
 #include "PhysicsManager.h"
@@ -146,8 +145,6 @@ bool PointList::ComputeConvexHull()
 }
 
 
-Body g_Body; //a global for now, until I put in the real definitions
-
 PointList::PointList()
 {
 	m_bNeedsToRecalculateRect = true;
@@ -256,22 +253,6 @@ void PointList::PrintPoints()
 
 }
 
-/*
-Body & PointList::GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody)
-{
-	// assert(m_points.size() > 0);
- 	 if (pCustomBody)
-	 {
-		 pCustomBody->SetVertArray(pCustomBody->m_position, (Vector*)&m_points[0], m_points.size());
-		 pCustomBody->SetMaterial(g_materialManager.GetMaterial(m_type));
-		 return *pCustomBody;
-	 }
-
-	 g_Body.SetMaterial(g_materialManager.GetMaterial(m_type));
-	 g_Body.SetVertArray(*(Vector*)& (vPos+m_vecOffset), (Vector*)&m_points[0], m_points.size());
-	 return g_Body;
-}
-*/
 
 //stolen from jyk's snippet from GDNet: http://www.gamedev.net/community/forums/topic.asp?topic_id=304578
 

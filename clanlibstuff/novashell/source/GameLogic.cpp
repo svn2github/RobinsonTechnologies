@@ -929,8 +929,11 @@ void GameLogic::Update(float step)
 	}
 	GetCamera->Update(step);
 
+	m_worldManager.PrepareUpdate(step);
 	m_worldManager.Update(step);
 	g_textManager.Update(step);
+
+	
 }
 
 

@@ -61,6 +61,7 @@ public:
 	int GetTotalMapsAvailable() {return m_mapInfoList.size();}
 	void AddToEntityUpdateList(MovingEntity *pEnt);
 	int GetUpdateEntityCount() {return m_entityUpdateList.size();}
+	void PrepareUpdate(float step);
 
 	CL_Signal_v0 sig_map_changed;
 
@@ -68,7 +69,6 @@ protected:
 
 	bool IsMapScanned(const string &stName);
 	void ScanDirToAddMaps(const string &stPath, const string &stLocalPath);
-
 	map_info_list m_mapInfoList;
 	Map *m_pActiveMap;
 	EntMapCache *m_pActiveMapCache;

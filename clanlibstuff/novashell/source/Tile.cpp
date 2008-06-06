@@ -526,29 +526,30 @@ CollisionData * TilePic::GetCollisionData()
 		{
 			PointList * pPointList = &(*itor);
 			CMaterial *pMat = g_materialManager.GetMaterial(pPointList->GetType());
-			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY || pMat->GetType() == CMaterial::C_MATERIAL_TYPE_WARP)		
+			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY )		
 			{
-				LogMsg("Ignoring static dummy or warp..");
 				continue;
 			}
 
 		pPointList->GetAsPolygonDef(&shapeDef);
 
-		ShapeUserData *pShapeUserData = new ShapeUserData();
+		ShapeUserData *pShapeUserData;
+		pShapeUserData = new ShapeUserData();
 		pShapeUserData->pOwnerTile = this;
 		pShapeUserData->pOwnerEnt = NULL;
-		pShapeUserData->materialID = pPointList->GetType(); 
+		pShapeUserData->materialID = pPointList->GetType();
 		shapeDef.userData = pShapeUserData;
 
-		m_pBody->CreateShape(&shapeDef);
-
-		pShapeUserData = new ShapeUserData(*pShapeUserData);
-		shapeDef.userData = pShapeUserData;
+		
+		if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_NORMAL)
+		{
+			m_pBody->CreateShape(&shapeDef);
+			pShapeUserData = new ShapeUserData(*pShapeUserData);
+			shapeDef.userData = pShapeUserData;
+		}
 
 		shapeDef.isSensor = true;
 		m_pBody->CreateShape(&shapeDef);
-		
-		
 		}
 
 	}

@@ -5,6 +5,7 @@
 #include "AI/NavGraphManager.h"
 #include "AI/WorldNavManager.h"
 #include "EntCreationUtils.h"
+#include "MaterialManager.h"
 
 #define C_DEFAULT_THUMBNAIL_WIDTH 8
 #define C_DEFAULT_THUMBNAIL_HEIGHT 8
@@ -958,6 +959,74 @@ void Map::SetWorldRectExact(CL_Rectf r)
 	m_worldBounds = r;
 	m_bNeedToComputeBounds = false;
 }
+#define C_MAX_SHAPES_PER_SCAN 64
+
+b2Shape * g_pShapeArray[C_MAX_SHAPES_PER_SCAN];
+
+
+Zone Map::GetZoneByRectAndType(const CL_Rectf rectInput, int matType)
+{
+	b2AABB r;
+	r.lowerBound.x = ToPhysicsSpace(rectInput.left);
+	r.lowerBound.y = ToPhysicsSpace(rectInput.top);
+
+	r.upperBound.x = ToPhysicsSpace(rectInput.right);
+	r.upperBound.y = ToPhysicsSpace(rectInput.bottom);
+
+	int shapes = GetPhysicsManager()->GetBox2D()->Query(r, g_pShapeArray, C_MAX_SHAPES_PER_SCAN);
+
+	//are any of these what we're looking for?
+	ShapeUserData *pUserData;
+
+	for (int i=0; i < shapes; i++)
+	{
+		pUserData = (ShapeUserData*)g_pShapeArray[i]->GetUserData();
+		if (pUserData)
+		{
+			if (g_materialManager.GetMaterial(pUserData->materialID)->GetType() == matType)
+			{
+				Zone z;
+				b2AABB b; 
+				b2XForm t; t.SetIdentity();
+				g_pShapeArray[i]->ComputeAABB(&b, t);
+				z.m_boundingRect = CL_Rectf(FromPhysicsSpace(b.lowerBound.x), FromPhysicsSpace(b.lowerBound.y),
+					FromPhysicsSpace(b.upperBound.x), FromPhysicsSpace(b.upperBound.y));
+				z.m_materialID = pUserData->materialID;
+
+				if (pUserData->pOwnerEnt)
+				{
+					z.m_entityID = pUserData->pOwnerEnt->ID();
+					z.m_vPos = pUserData->pOwnerEnt->GetPos();
+				} else
+				{
+					z.m_entityID = C_ENTITY_NONE;
+					if (pUserData->pOwnerTile)
+					{
+						z.m_vPos = pUserData->pOwnerTile->GetPos();
+					} else
+					{
+						assert(!"huh?");
+					}
+				}
+
+
+				return z;
+			}
+		}
+	}
+
+	return g_ZoneEmpty;
+
+}
+
+
+Zone Map::GetZoneByPointAndType(const CL_Vector2 &vPos, int matType)
+{
+
+	CL_Rectf r(vPos.x, vPos.y, vPos.x+1, vPos.y+1);
+	return GetZoneByRectAndType(r, matType);
+	
+};
 
 CL_Rectf Map::ComputeWorldRect(int reserved)
 {

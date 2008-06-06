@@ -4,6 +4,7 @@
 #include "GameLogic.h"
 #include "TileEntity.h"
 #include "MovingEntity.h"
+#include "EntCreationUtils.h"
 
 const SelectedTile& SelectedTile::operator=(const SelectedTile &rhs)
 {
@@ -470,6 +471,10 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 			//move it to the new position and layer if required
 			pTile->SetPos(vecDestTileWorld);
 			g_pMapManager->GetActiveMap()->AddTile(pTile);
+			if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+			{
+				InitEntity( ((TileEntity*)pTile)->GetEntity());
+			}
 		}
 		itor++;
 	}

@@ -57,6 +57,7 @@ Group: System Objects  {
    File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
    File: Known Issues  (KnownIssues.cpp)
+   File: Material  (Material.h)
    }  # Group: System Objects
 
 Group: Game Objects  {
@@ -86,8 +87,8 @@ Group: Simple Objects  {
    File: LayerList  (LayerManager.h)
    File: Tag  (TagManager.h)
    File: Zone  (MovingEntity.h)
-   File: Material  (physics\Contact.h)
    File: Joystick  (Joystick.cpp)
+   File: Material  (physics\temp\Contact.h)
    }  # Group: Simple Objects
 
 Group: Effect Objects  {

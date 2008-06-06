@@ -53,11 +53,28 @@ MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName)
 
 void InitEntity(MovingEntity *pEntity)
 {
+
+	bool bEditorHack = false;
+	if (pEntity->IsPlaced() && GetGameLogic()->GetEditorActive() && GetGameLogic()->GetGamePaused())
+	{
+		//hack so we can run its init scripts now, so apples and such will start falling even if they aren't on the screen
+		GetGameLogic()->SetGamePaused(false);
+		//LogMsg("Ent %d is placed", pEntity->ID());
+		bEditorHack = true;
+	} else
+	{
+		//LogMsg("Ent %d is not placed", pEntity->ID());
+
+	}
+	
 	pEntity->Update(0);
-	pEntity->ApplyPhysics(0);
+	pEntity->ApplyToPhysics(0);
 	pEntity->PostUpdate(0);
 	g_pMapManager->AddToEntityUpdateList(pEntity); //this will allow it to get a visibility notification or something
-
+	if (bEditorHack)
+	{
+		GetGameLogic()->SetGamePaused(true);
+	}
 }
 
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)

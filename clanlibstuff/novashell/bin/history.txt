@@ -2,9 +2,24 @@ Known problems: Occasional framerate stutters under dual core processers under v
 
 Changelog
 
-6-3 3008
+6-6 3008
 
-* Added editor utility menu option to round off tile/entity positions to 1
+* Physics engine replaced with Box2D.. this caused a lot of internal changes as old hacks and uglyness was removed, you will need to
+	update any older projects by doing the following:
+	- Tweak speeds and forces, it's close but a bit different
+	- For platformers, change the line type to "Ice no bounce" in most cases, this way there is no friction when jumping and rubbing against things
+	- Use the in-game visual profile editor to center entities correctly, they may be offset
+	- Use the collision editor and move vertices, they may be offset incorrectly
+	- Remove all SetMass() statements, replace SetMass(0) with SetDensity(0) (to make an object immovable)
+	- Adding things to the watch list is less important, things will automatically be updated even offscreen if they are moving.  So things like an apple
+	falling no longer need to be worried about, their AI will automatically shut down when they come to a stop offscreen.
+	- Entity initializing is now more robust and happens all at once instead of needing to wait a frame for the PostInit(), it just makes things
+		more logical I think
+	
+	
+* FEATURE: Added editor utility menu option to round off tile/entity positions to 1
+* FEATURE: Grid display will start skipping lines if you zoom out too far (3dsmax style), easier on the eyes
+* SetMass() removed.  You must use SetDensity(0) to mean "static" or SenDentity(some num) to set how heavy something is
 
 5-31 2008
 

@@ -15,52 +15,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////// 
 //------------------------------------------------------------------------------------------------ 
 
+//These are left over from Olii's PollyColy code
 
-#ifdef ASURA_USE_PRAGMA_ONCE
-	#pragma once
-#endif
 
 #ifndef __CONTACT_H__
 #define __CONTACT_H__
 
-#include "vector.h"
+
 class CMaterial;
 #include <string>
 using namespace std;
-/*
-class CContact
-{
-public:
-	enum { eMaxContacts = 2 };
 
-	struct Body* m_pxBodies [2];
-	Vector       m_xContacts[eMaxContacts][2];
-	Vector		 m_xNormal;
-	float		 m_t;
-	int			 m_iNumContacts;
-	const CMaterial *m_pMaterial;
-
-	CContact();
-	
-	CContact(const Vector* CA, const Vector* CB, int iCnum, 
-			 const Vector& N, float t, 
-			 Body* pxBodyA, Body* pxBodyB, const CMaterial *mat);
-
-	void Reset();
-		
-	class Body* GetBody(int i) { return m_pxBodies[i]; }
-
-	void Solve();
-	
-private:
-	void ResolveCollision();
-	void ResolveOverlap  ();
-
-	void ResolveCollision(const Vector& CA, const Vector& CB);
-	void ResolveOverlap  (const Vector& CA, const Vector& CB);
-	void AddContactPair	 (const Vector& CA, const Vector& CB);
-};
-*/
 /*
 Object: Material
 Stores data and properties for an individual material.
@@ -184,16 +149,16 @@ constant: C_MATERIAL_TYPE_NONE
 Means invalid material.  Signals a zone with no data when using GetWallByRay()
 
 constant: C_MATERIAL_TYPE_NORMAL
-The default.  Just a normal thing you can bump into.
+The default.  Just a normal thing you can bump into.  Any other material type will not perform real collisions, just report them.
 
 constant: C_MATERIAL_TYPE_VERTICAL_LADDER
-Tells the engine to treat this material as a ladder.  Only used in 2d side view brain at the moment.
+For designating shapes as ladders.  Defined in setup_constants.lua and used in the treeworld scripts.
 
 constant: C_MATERIAL_TYPE_WARP
-Tells the engine to treat this material like a magical warp.  Causes the entities OnWarp function to be run.
+For designating shapes as warps.  Defined in setup_constants.lua and used in the treeworld scripts.
 
 constant: C_MATERIAL_TYPE_DUMMY
-For tweaking sorting and smart shadows.  The engine ignores it for collision but will still calculate the depth dot (lowest point of collision) and shadow information based on it.  Good for tweaking those things, make sure it's the first line in a collision shape.
+For tweaking sorting and smart shadows.  The engine completely ignores it for collision but will still calculate the depth dot (lowest point of collision) and shadow information based on it.  Good for tweaking those things, make sure it's the first line in a collision shape.
 */
 
 	enum
@@ -232,7 +197,5 @@ private:
 	int m_special;
 };
 
-// HACK : use a shared material for all objects
-extern CMaterial s_xContactMaterial;
 
 #endif//__CONTACT_H__

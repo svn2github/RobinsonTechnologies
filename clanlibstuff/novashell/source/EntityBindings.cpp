@@ -1350,6 +1350,100 @@ Returns:
 One of the <C_LISTEN_COLLISION_STATIC_CONSTANTS> to indicate the current static (meaning tiles that aren't entities) collision listen mode.
 */
 
+
+.def("SetCollisionCategory", &MovingEntity::SetCollisionCategory)
+/*
+func: SetCollisionCategory
+(code)
+nil SetCollisionCategory(number category, boolean bOn)
+(end)
+
+This allows additional control over what collides with what.
+
+There are 16 categories from 0 to 15.  By default, every dynamic object is a member of category 0. Normally you would only want an object to be a member of one category, so don't forget to turn off the old category if you turn a different one on.
+
+By turning this bit and enabling another one (normally you just want one active) you can get additional collision filtering control in conjunction with the <SetCollisionMask> function.
+
+Note:
+
+This won't affect the <SetCollisionListen> type functions, you will be able to listen in regardless of whether a real collision takes place.
+
+Parameters:
+
+category - Which category you want to set, must be a number between 0 and 15.
+bOn - If true, this entity is a member of this category, if false, the opposite.
+
+*/
+
+.def("SetCollisionMask", &MovingEntity::SetCollisionMask)
+/*
+func: SetCollisionMask
+(code)
+nil SetCollisionMask(number category, boolean bOn)
+(end)
+
+By default, an entity will collide with all category types. (0 to 15 are ON)  
+If you would like this entity to ignore all entities that are members of category 1, then you could set the category 1 mask to off.
+
+Note:
+
+This won't affect the <SetCollisionListen> type functions, you will be able to listen in regardless of whether a real collision takes place.
+
+
+Parameters:
+
+category - Which category mask you want to set, must be a number between 0 and 15.
+bOn - If true, this object will collide with entities of that category type, if false, we will pass through them.
+*/
+
+.def("SetCollisionGroup", &MovingEntity::SetCollisionGroup)
+/*
+func: SetCollisionGroup
+(code)
+nil SetCollisionGroup(number group)
+(end)
+
+In addition to the other methods, another optional way to control what an entity can collide with is a collision group.
+By default, this is 0, which means no group.
+
+If two or more objects are set to the same collision group there are two possible outcomes:
+
+If more than 0:  These objects will always collide
+If less than 0:  These objects will never collide
+
+Example:
+
+(code)
+//inside our bullet.lua, we decide that we don't want it to collide with other bullets
+
+this:SetCollisionGroup(-1);
+
+//Any other entity that also defines this will join our 'never collide' group.
+//We could have easily chosen -500 or -666 to be evil, as long as it's negative, they
+//will never collide.  1 or 500 would have meant always collide.
+(end)
+
+Note:
+
+This takes precendence over the <SetCollisionCategory> and <SetCollisionMask> functions.
+
+Parameters:
+
+group - a number between -64000 and 64000
+*/
+
+.def("GetCollisionGroup", &MovingEntity::GetCollisionGroup)
+/*
+func: GetCollisionGroup
+(code)
+number GetCollisionGroup(number group)
+(end)
+
+Returns:
+
+The current collision group this entity is in, 0 for none.
+*/
+
 .def("SetDensity", &MovingEntity::SetDensity)
 
 /*
@@ -1370,21 +1464,6 @@ Parameters:
 
 density - How dense this object is.  0.2 is like Styrofoam, 3 is like a block of steel.
 
-*/
-
-.def("SetMass", &MovingEntity::SetMass)
-
-/*
-func: SetMass
-(code)
-nil SetMass(number mass)
-(end)
-
-This sets the total mass of the current collision shape.  Normally you would use <SetDensity> instead, so it would scale to  the size of the object automatically.  (Big snakes should be able to push around small snakes, for example)
-
-Parameters:
-
-mass - The total mass of the entity when computed collisions.
 */
 
 
@@ -2890,8 +2969,6 @@ True if this entity has actually been placed on a map.
 
 	Let's you check to see if you're standing on a certain type of collision/zone by material type, such as a ladder or warp.
 
-	This check is very fast because nearby zones are cached during the collision phase.
-
 	The method used to determine if you're making contact with any collision shape of the requested material is by checking to see if its rect and your collision rect overlap.
 	
 	An entity should have a collision shape to use this function.
@@ -2914,7 +2991,7 @@ True if this entity has actually been placed on a map.
 	boolean InNearbyZoneByMaterialType(Vector2 vPos, number materialType)
 	(end)
 
-	Similar to <InZoneByMaterialType> but lets you enter an exact point to check.  Note, this is only checking nearby zones that were cached during the collision phase.
+	Similar to <InZoneByMaterialType> but lets you enter an exact point to check.
 	
 	It's useful for seeing if there is a ladder an inch below your entity's foot, for instance.
 
@@ -2955,9 +3032,7 @@ True if this entity has actually been placed on a map.
 		end
 	end
 	(end)
-
-	This check is very fast because nearby zones are cached during the collision phase.
-
+	
 	The method used to determine if you're making contact with any collision shape of the requested material is by checking to see if its rect and your collision rect overlap.
 
 	An entity should have a collision shape to use this function.
@@ -2980,8 +3055,6 @@ True if this entity has actually been placed on a map.
 	(end)
 
 	Similar to <InNearbyZoneByMaterialType> but returns a <Zone> data object that describes the collision better. 
-
-	This check is very fast because nearby zones are cached during the collision phase.
 
 	The method used to determine if you're making contact with any collision shape of the requested material is by checking to see if its rect and your collision rect overlap.
 

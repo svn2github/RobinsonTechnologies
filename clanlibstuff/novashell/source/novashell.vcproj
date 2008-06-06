@@ -452,6 +452,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\DebugDraw.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\SharedLib\misc\MiscUtils.cpp"
 					>
 					<FileConfiguration
@@ -889,6 +893,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Material.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\Message.cpp"
 					>
 				</File>
@@ -1146,6 +1154,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\PhysicsManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\ScriptManager.cpp"
 					>
 				</File>
@@ -1163,46 +1175,6 @@
 				</File>
 				<File
 					RelativePath=".\AI\WatchManager.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Physics"
-				>
-				<File
-					RelativePath=".\physics\Body.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\physics\Collision.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\physics\Contact.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\DebugDraw.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\DebugDraw.h"
-					>
-				</File>
-				<File
-					RelativePath=".\PhysicsManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\PhysicsManager.h"
-					>
-				</File>
-				<File
-					RelativePath=".\physics\Polygon.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\physics\Vector.cpp"
 					>
 				</File>
 			</Filter>
@@ -3484,10 +3456,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\AppUtils.h"
-				>
-			</File>
-			<File
 				RelativePath="main.h"
 				>
 			</File>
@@ -3823,6 +3791,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\PhysicsManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\TagManager.h"
 					>
 				</File>
@@ -3856,6 +3828,10 @@
 				</File>
 				<File
 					RelativePath=".\MapChunk.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Material.h"
 					>
 				</File>
 				<File
@@ -4148,26 +4124,14 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="Physics"
+				Name="Misc"
 				>
 				<File
-					RelativePath=".\physics\Body.h"
+					RelativePath=".\AppUtils.h"
 					>
 				</File>
 				<File
-					RelativePath=".\physics\Contact.h"
-					>
-				</File>
-				<File
-					RelativePath=".\physics\Matrix.h"
-					>
-				</File>
-				<File
-					RelativePath=".\physics\Polygon.h"
-					>
-				</File>
-				<File
-					RelativePath=".\physics\vector.h"
+					RelativePath=".\DebugDraw.h"
 					>
 				</File>
 			</Filter>
