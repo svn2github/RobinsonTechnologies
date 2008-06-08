@@ -2,7 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "novashell", "novashell.vcproj", "{3F50EFE6-A0F3-4A8E-B8BB-28C2287B392A}"
 	ProjectSection(ProjectDependencies) = postProject
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A} = {7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7} = {6D88EC57-4B69-45F3-99A2-0C951D80B5B7}
 		{975AC3AB-1EC8-4A37-B136-7234981396B2} = {975AC3AB-1EC8-4A37-B136-7234981396B2}
 	EndProjectSection
@@ -10,8 +9,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanCore", "C:\pro\ClanLibSVN\Development\ClanLib-0.8\Sources\clanCore.vcproj", "{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanDisplay", "C:\pro\ClanLibSVN\Development\ClanLib-0.8\Sources\clanDisplay.vcproj", "{975AC3AB-1EC8-4A37-B136-7234981396B2}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Box2D", "..\..\..\SharedLib\Box2D\Build\VC8\Box2D.vcproj", "{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,20 +63,6 @@ Global
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Static MTDLL Debug|Win32.Build.0 = Static MTDLL Debug|Win32
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Static MTDLL Release|Win32.ActiveCfg = Static MTDLL Release|Win32
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Debug|Win32.Build.0 = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release Debug|Win32.ActiveCfg = Release Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release Debug|Win32.Build.0 = Release Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release|Win32.ActiveCfg = Release Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release|Win32.Build.0 = Release Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MT Debug|Win32.ActiveCfg = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MT Debug|Win32.Build.0 = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MT Release|Win32.ActiveCfg = Release|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MT Release|Win32.Build.0 = Release|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MTDLL Debug|Win32.ActiveCfg = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MTDLL Debug|Win32.Build.0 = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MTDLL Release|Win32.ActiveCfg = Release|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MTDLL Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
