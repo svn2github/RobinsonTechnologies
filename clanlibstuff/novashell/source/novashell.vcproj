@@ -283,12 +283,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
+				LinkLibraryDependencies="true"
 				OutputFile="../bin/game_release_debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\SharedLib\lib;..\..\..\SharedLib\lib\clanlib;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\FMOD\lib"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="msvcprt.lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Release/test.pdb"
 				SubSystem="2"

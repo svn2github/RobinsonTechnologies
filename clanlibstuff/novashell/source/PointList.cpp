@@ -4,6 +4,259 @@
 #include "AppUtils.h"
 #include "PhysicsManager.h"
 
+string PointList::ErrorToString(PointList::eVertCheckStatus error)
+{
+	switch(error)
+	{
+	case STATUS_OK:
+		return "OK"; break;
+	
+	case STATUS_NOT_ENOUGH_VERTS:
+		return "Not enough verts"; break;
+
+	case STATUS_TOO_MANY_VERTS:
+		return "Too many vertexes"; break;
+		
+		
+		case STATUS_TOO_SKINNY:
+			return "Polygon too skinny"; break;
+		case STATUS_BAD_EDGES:
+			return "Bad edges, try adjusting the angles a bit."; break;
+		case STATUS_RADIUS_LESS:
+			return "Your shape has a radius/extent less than b2_toiSlop.  Adjust!"; break;
+	}
+
+	assert(0);
+	return "Unknown";
+	
+}
+
+
+
+//functions from inside Box2d...
+
+static b2Vec2 ComputeCentroid(const b2Vec2* vs, int32 count)
+{
+	b2Assert(count >= 3);
+
+	b2Vec2 c; c.Set(0.0f, 0.0f);
+	float32 area = 0.0f;
+
+	// pRef is the reference point for forming triangles.
+	// It's location doesn't change the result (except for rounding error).
+	b2Vec2 pRef(0.0f, 0.0f);
+#if 0
+	// This code would put the reference point inside the polygon.
+	for (int32 i = 0; i < count; ++i)
+	{
+		pRef += vs[i];
+	}
+	pRef *= 1.0f / count;
+#endif
+
+	const float32 inv3 = 1.0f / 3.0f;
+
+	for (int32 i = 0; i < count; ++i)
+	{
+		// Triangle vertices.
+		b2Vec2 p1 = pRef;
+		b2Vec2 p2 = vs[i];
+		b2Vec2 p3 = i + 1 < count ? vs[i+1] : vs[0];
+
+		b2Vec2 e1 = p2 - p1;
+		b2Vec2 e2 = p3 - p1;
+
+		float32 D = b2Cross(e1, e2);
+
+		float32 triangleArea = 0.5f * D;
+		area += triangleArea;
+
+		// Area weighted centroid
+		c += triangleArea * inv3 * (p1 + p2 + p3);
+	}
+
+	// Centroid
+	b2Assert(area > B2_FLT_EPSILON);
+	c *= 1.0f / area;
+	return c;
+}
+
+// http://www.geometrictools.com/Documentation/MinimumAreaRectangle.pdf
+static void ComputeOBB(b2OBB* obb, const b2Vec2* vs, int32 count)
+{
+	b2Assert(count <= b2_maxPolygonVertices);
+	b2Vec2 p[b2_maxPolygonVertices + 1];
+	for (int32 i = 0; i < count; ++i)
+	{
+		p[i] = vs[i];
+	}
+	p[count] = p[0];
+
+	float32 minArea = B2_FLT_MAX;
+
+	for (int32 i = 1; i <= count; ++i)
+	{
+		b2Vec2 root = p[i-1];
+		b2Vec2 ux = p[i] - root;
+		float32 length = ux.Normalize();
+		b2Assert(length > B2_FLT_EPSILON);
+		b2Vec2 uy(-ux.y, ux.x);
+		b2Vec2 lower(B2_FLT_MAX, B2_FLT_MAX);
+		b2Vec2 upper(-B2_FLT_MAX, -B2_FLT_MAX);
+
+		for (int32 j = 0; j < count; ++j)
+		{
+			b2Vec2 d = p[j] - root;
+			b2Vec2 r;
+			r.x = b2Dot(ux, d);
+			r.y = b2Dot(uy, d);
+			lower = b2Min(lower, r);
+			upper = b2Max(upper, r);
+		}
+
+		float32 area = (upper.x - lower.x) * (upper.y - lower.y);
+		if (area < 0.95f * minArea)
+		{
+			minArea = area;
+			obb->R.col1 = ux;
+			obb->R.col2 = uy;
+			b2Vec2 center = 0.5f * (lower + upper);
+			obb->center = root + b2Mul(obb->R, center);
+			obb->extents = 0.5f * (upper - lower);
+		}
+	}
+
+	b2Assert(minArea < B2_FLT_MAX);
+}
+//code originally by JamesTan - http://www.box2d.org/forum/viewtopic.php?f=3&t=720
+PointList::eVertCheckStatus PointList::IsValidBox2DPolygon()
+{
+	// No vertices, return false
+	if(m_points.empty() || m_points.size() < 2)
+		return STATUS_NOT_ENOUGH_VERTS;
+	if ( m_points.size() > b2_maxPolygonVertices)
+	{
+		return STATUS_TOO_MANY_VERTS;
+	}
+
+	if (GetRect().get_height() == 1 && GetRect().get_width() == 1)
+	{
+		//a special pass...
+		//it's not ok, but a 1X1 box is used on things scaled up, which is ok in the end
+		return STATUS_OK;
+	}
+
+	// Create our vertices
+	std::vector<b2Vec2> vertices;
+	std::vector<b2Vec2> normals;
+
+	// Clear our vectors
+	vertices.clear();
+	normals.clear();
+
+	// Assign the vertices
+	point_list::iterator vertex_idx = m_points.begin();
+
+	while (vertex_idx != m_points.end())
+	{
+		vertices.push_back(ToPhysicsSpace(*vertex_idx));
+		vertex_idx++;
+	}
+
+	// Compute the normals
+	for (unsigned int i = 0; i < (unsigned int)vertices.size(); i++)
+	{
+		unsigned int j = i + 1;
+
+		int32 i1 = i;
+		int32 i2 = i + 1 < vertices.size() ? i + 1 : 0;
+		b2Vec2 edge = vertices[i2] - vertices[i1];
+
+		if (edge.LengthSquared() < FLT_EPSILON * FLT_EPSILON)
+			return STATUS_BAD_EDGES;
+
+		b2Vec2 normal = b2Cross(edge, 1.f);
+		normal.Normalize();
+		normals.push_back(normal);
+	}
+
+	// Ensure the polygon is convex.
+	for (unsigned int i = 0; i < (unsigned int)vertices.size(); ++i)
+	{
+		for (unsigned int j = 0; j < (unsigned int)vertices.size(); ++j)
+		{
+			// Don't check vertices on the current edge.
+			if (j == i || j == (i + 1) % (unsigned int)vertices.size())
+				continue;
+
+			// Your polygon is non-convex (it has an indentation).
+			// Or your polygon is too skinny.
+			float s = b2Dot(normals[i], vertices[j] - vertices[i]);
+
+			if (s > -b2_linearSlop)
+				return STATUS_TOO_SKINNY;
+		}
+	}
+
+	// Ensure the polygon is counter-clockwise.
+	for (unsigned int i = 1; i < (unsigned int)vertices.size(); ++i)
+	{
+		float cross = b2Cross(normals[i-1], normals[i]);
+
+		// Keep asinf happy.
+		cross = b2Clamp(cross, -1.0f, 1.0f);
+
+		// You have consecutive edges that are almost parallel on your polygon.
+		float angle = asinf(cross);
+
+		if (angle <= b2_angularSlop)
+			return STATUS_BAD_EDGES;
+	}
+
+	// Compute the polygon centroid.
+	b2Vec2 centroid = ComputeCentroid(&vertices[0], vertices.size());
+
+	// Compute the oriented bounding box.
+	b2OBB obb;
+	ComputeOBB(&obb, &vertices[0], vertices.size());
+
+
+
+	// Create core polygon shape by shifting edges inward.
+	// Also compute the min/max radius for CCD.
+	for (int32 i = 0; i < vertices.size(); ++i)
+	{
+		int32 i1 = i - 1 >= 0 ? i - 1 : vertices.size() - 1;
+		int32 i2 = i;
+
+		b2Vec2 n1 = normals[i1];
+		b2Vec2 n2 = normals[i2];
+		b2Vec2 v = vertices[i] - centroid;;
+
+		b2Vec2 d;
+		d.x = b2Dot(n1, v) - b2_toiSlop;
+		d.y = b2Dot(n2, v) - b2_toiSlop;
+
+		// Shifting the edge inward by b2_toiSlop should
+		// not cause the plane to pass the centroid.
+
+		// Your shape has a radius/extent less than b2_toiSlop.
+		if (d.x < 0.0f || d.y <= 0.0f)
+		{
+			return STATUS_RADIUS_LESS;
+		}
+	
+		b2Mat22 A;
+		A.col1.x = n1.x; A.col2.x = n1.y;
+		A.col1.y = n2.x; A.col2.y = n2.y;
+		A.Solve(d) + centroid;
+	}
+	return STATUS_OK;
+}
+
+
+
+
 //for SimpleHull2D function:
 //Copyright 2002, softSurfer (www.softsurfer.com)
 // This code may be freely used and modified for any purpose
@@ -79,6 +332,7 @@ int simpleHull_2D( CL_Vector2* V, int n, CL_Vector2* H )
 	delete D;
 	return h-1;
 }
+
 
 void PointList::RemoveDuplicateVerts()
 {

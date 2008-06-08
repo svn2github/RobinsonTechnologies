@@ -168,12 +168,8 @@ public:
   void SetMass(float mass);
   void SetDensity(float fDensity);
   void PostUpdate(float step);
-  void SetListenCollision(int eListen);
-  int GetListenCollision() {return m_listenCollision;}
   void SetAnimFrame(int frame);
   int GetAnimFrame();
-  void SetListenCollisionStatic(int eListen) {m_listenCollisionStatic = eListen;}
-  int GetListenCollisionStatic() {return m_listenCollisionStatic;}
   void AddForce(CL_Vector2 force);
   void AddForceBurst(CL_Vector2 force);
   void SetCollisionCategory(int category, bool bOn);
@@ -266,8 +262,6 @@ public:
   void DumpScriptInfo();
   CL_Vector2 GetVisualOffset();
   void RotateTowardsVectorDirection(const CL_Vector2 &vecTargetfloat, float maxTurn);
-  void SetCollisionMode(int mode);
-  int GetCollisionMode() {return m_collisionMode;};
   void UpdateTriggers(float step);
   Goal_Think * GetGoalManager();
   bool IsGoalManagerActive() {return m_pGoalManager != NULL;}
@@ -355,7 +349,11 @@ public:
   void SetAnimLoopCallback(bool bNew) {m_bAnimCallbackActive = bNew;}
   bool GetAnimLoopCallback() {return m_bAnimCallbackActive;}
   void AddContact(ContactPoint &cp);
-  
+  void SetCollisionListenCategory(int category, bool bOn);
+  uint16 GetCollisionListenBits() {return m_collisionListenBits;}
+  void SetCollisionCategories(uint16 mask);
+  void SetCollisionListenCategories( uint16 mask );
+
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -383,18 +381,6 @@ enum ListenStaticCollision
 	LISTEN_COLLISION_STATIC_COUNT
 };
 
-enum  CollisionMode
-{
-
-	COLLISION_MODE_ALL = 0,
-	COLLISION_MODE_NONE,
-	COLLISION_MODE_STATIC_ONLY,
-	COLLISION_MODE_PLAYER_ONLY,
-	COLLISION_MODE_ENTITIES_ONLY,
-	COLLISION_MODE_COUNT
-
-};
-
 protected:
 
 	void SetDefaults();
@@ -415,7 +401,6 @@ protected:
 	void UpdatePosToPhysics();
 	CL_Rectf m_scanArea;
 	tile_list m_nearbyTileList;
-    CL_Slot m_collisionSlot;
 	bool m_bIsAtRest;
 	bool m_bMovedFlag; //if true, we need to update our tile position
 	unsigned int m_groundTimer; //relax when we say they are on the  ground or not to take care of tiny bounces
@@ -433,7 +418,6 @@ protected:
 	vector<Zone> m_zoneVec;
 	bool m_bOldTouchedAGroundThisFrame;
 	int m_oldFloorMaterialID;
-	int m_listenCollision, m_listenCollisionStatic;
 	bool m_bAnimPaused;
 	CL_Color m_defaultTextColor;
 	string m_strWorldToMoveTo; //if empty, we don't have a world move scheduled
@@ -457,7 +441,6 @@ protected:
 
 	Trigger m_trigger;
 	bool m_bRestartAnim;
-	int m_collisionMode;
 	int m_animID;
 
 	Goal_Think *m_pGoalManager;
@@ -501,9 +484,9 @@ protected:
 	bool m_bAnimCallbackActive;
 	CL_Vector2 m_pos;
 	float m_angle;
-	vector<ContactPoint> m_entContacts;
-	vector<ContactPoint> m_staticContacts;
+	vector<ContactPoint> m_contacts;
 	b2FilterData m_filterData; //shared between all shapes
+	uint16 m_collisionListenBits;
 	
 };
 

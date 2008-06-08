@@ -1118,22 +1118,6 @@ fileName - A filename of an image in one of the Map directories. ~/ for "current
 
 //Group: Physics/Collision Related
 
-.def("SetCollisionMode", &MovingEntity::SetCollisionMode)
-/*
-func: SetCollisionMode
-(code)
-nil SetCollisionMode(number collisionMode)
-(end)
-
-Sets the overall collision mode of the Entity.
-
-Parameters:
-
-collisionMode - One of the <C_COLLISION_MODE_CONSTANTS>.
-
-*/
-
-
 
 .def("InitCollisionDataBySize", &MovingEntity::InitCollisionDataBySize)
 
@@ -1246,154 +1230,115 @@ The angle of rotation in radians.
 */
 
 
-
-.def("SetListenCollision", &MovingEntity::SetListenCollision)
-
+.def("SetCategory", &MovingEntity::SetCollisionCategory)
 /*
-func: SetListenCollision
+func: SetCategory
 (code)
-nil SetListenCollision(number listenCollisionMode)
+nil SetCategory(number category, boolean bOn)
 (end)
 
-If not set to <C_LISTEN_COLLISION_NONE> the entity's script will be called with information about collision with entities.
+By default, an entity is a member of category C_CATEGORY_ENTITY. (Defined as 0 in setup_constants.lua)  These categories are useful for controlling which objects collide (<SetCollisionListenCategory> and what collisions an entity cares about knowing about with <SetListenCategory>.
 
-The callback allows you to examine the collision angle, who it was with, the force, and reject it if desired by returning false instead of true.
+(Note, these replace the SetCollision, SetStaticCollision, SetCollisionListen and SetStaticCollisionListen functions from older versions!)
 
-If you enable this, your script must include a function with the following name and parameters:
-(code)
-function OnCollision(normal, depth, materialID, ent) //return true/false to allow/disallow the collision
+Tilepics are always members of C_CATEGORY_TILEPIC, which is defined as 1 in setup_constants.lua.
 
-	//normal is a Vector2 object showing the direction of the impact in a unit vector.
-	//depth is how much penetration there is, how much the two entities overlap
-
-	LogMsg("Touched Entity # " .. ent:GetID() .. " Depth: " .. tostring(depth) .. " normal: " .. tostring(normal));
-
-	if (normal.y < -0.1 and depth > 0) then
-		//hmm, this means the entity must have jumped up and hit us with its head.  
-		Crumble(); //let this brick break
-	end
-
-	//if we return false, the collision is ignored by both entities and we can walk through eachother.
-
-	return true; //enable the collision
-end
-(end)
+There are 16 categories from 0 to 15. It's possible to be a member of more than one category at once.
 
 Parameters:
 
-listenCollisionMode - Must be one of the <C_LISTEN_COLLISION_CONSTANTS>.
+category - Which category you want to set, must be a number between 0 and 15. (Check <C_CATEGORY_CONSTANTS> for the predefined ones)
+bOn - If true, this entity is a member of this category, if false, the opposite.
 
 */
 
-
-.def("GetListenCollision", &MovingEntity::GetListenCollision)
-
-
-/*
-func: GetListenCollision
-(code)
-collisionMode GetListenCollision()
-(end)
-
-Returns:
-
-One of the <C_LISTEN_COLLISION_CONSTANTS> to indicate the current entity collision listen mode.
-*/
-
-
-.def("SetListenCollisionStatic", &MovingEntity::SetListenCollisionStatic)
-
-/*
-func: SetListenCollisionStatic
-(code)
-nil SetListenCollisionStatic(number listenCollisionStaticMode)
-(end)
-
-If not set to <C_LISTEN_COLLISION_STATIC_NONE> the entity's script will be called with information about collision with static tiles. (non entities)
-
-The callback allows you to examine the collision angle, who it was with, the force, and reject it if desired by returning false instead of true.
-
-If you enable this, your script must include a function with the following name and parameters:
-(code)
-function OnCollisionStatic(normal, depth, materialID)
-
-	//normal is a Vector2 object showing the direction of the impact in a unit vector.
-	//depth is how much penetration there is, how much overlap there is
-
-	LogMsg("Hit Static: Depth: " .. tostring(depth) .. " normal: " .. tostring(normal));
-
-	if (materialID == C_MATERIAL_VERTICAL_LADDER) then
-			LogMsg("You just touched a tile that has a collision line set to "V Ladder" type!
-		end
-
-	//we'd need to return false here to ignore the collision, so we can walk through whatever it is.
-
-	return true;
-end
-(end)
-
-Parameters:
-
-listenCollisionStaticMode - Must be one of the <C_LISTEN_COLLISION_STATIC_CONSTANTS>.
-
-*/
-.def("GetListenCollisionStatic", &MovingEntity::GetListenCollisionStatic)
-
-/*
-func: GetListenCollisionStatic
-(code)
-collisionStaticMode GetListenCollisionStatic()
-(end)
-
-Returns:
-
-One of the <C_LISTEN_COLLISION_STATIC_CONSTANTS> to indicate the current static (meaning tiles that aren't entities) collision listen mode.
-*/
-
-
-.def("SetCollisionCategory", &MovingEntity::SetCollisionCategory)
+.def("SetCollisionCategory", &MovingEntity::SetCollisionMask)
 /*
 func: SetCollisionCategory
 (code)
 nil SetCollisionCategory(number category, boolean bOn)
 (end)
 
-This allows additional control over what collides with what.
-
-There are 16 categories from 0 to 15.  By default, every dynamic object is a member of category 0. Normally you would only want an object to be a member of one category, so don't forget to turn off the old category if you turn a different one on.
-
-By turning this bit and enabling another one (normally you just want one active) you can get additional collision filtering control in conjunction with the <SetCollisionMask> function.
+By default, an entity will collide with all category types. (0 to 15 are ON)  
+If you would like this entity to be able to pass through certain categories, you must set it to off.
 
 Note:
 
-This won't affect the <SetCollisionListen> type functions, you will be able to listen in regardless of whether a real collision takes place.
+This doesn't affect the settings of <SetCollisionListenCategory>, it's possible to never collide with anything but still hear about all the (would-be) collisions.
+
 
 Parameters:
 
-category - Which category you want to set, must be a number between 0 and 15.
-bOn - If true, this entity is a member of this category, if false, the opposite.
-
+category - Which category you want to set, must be a number between 0 and 15.  (Check <C_CATEGORY_CONSTANTS> for the predefined ones)
+bOn - If true, this object will collide with entities of that category type, if false, we will pass through them.
 */
 
-.def("SetCollisionMask", &MovingEntity::SetCollisionMask)
+.def("SetCollisionCategories", &MovingEntity::SetCollisionCategories)
 /*
-func: SetCollisionMask
+func: SetCollisionCategories
 (code)
-nil SetCollisionMask(number category, boolean bOn)
+nil SetCollisionCategories(number categoryMask)
 (end)
 
-By default, an entity will collide with all category types. (0 to 15 are ON)  
-If you would like this entity to ignore all entities that are members of category 1, then you could set the category 1 mask to off.
-
-Note:
-
-This won't affect the <SetCollisionListen> type functions, you will be able to listen in regardless of whether a real collision takes place.
-
+Let's you set all 16 states at once with a single number.  
+Only use this if you know what you are doing, or use the C_CATEGORIES_NONE define to easily turn off all of them.
 
 Parameters:
 
-category - Which category mask you want to set, must be a number between 0 and 15.
+categoryMask - A single 16 bit number representing each category. 
+*/
+
+.def("SetCollisionListenCategory", &MovingEntity::SetCollisionListenCategory)
+/*
+func: SetCollisionListenCategory
+(code)
+nil SetCollisionListenMask(number category, boolean bOn)
+(end)
+
+Similar to <SetCollisionMask> but rather than affecting what this entity collides with, it controls which collisions you will hear about in a callback.
+
+By default, all categories are set to off, so no calls to an OnCollision() will be made in this entities script/lua namespace.
+
+If you enable listening to any of the categories, your script must include a function with the following name and parameters:
+(code)
+
+//vPosition, vVelocity and vNormal are Vector2's, depth and materialID are numbers, entity is a Entity, and state let's you know
+//if this is a first contact or a persisting one. (Don't worry about state for now, will add more later..)
+
+//if entity is nil, it is a collision with a TilePic
+
+function OnCollision(vPosition, vVelocity, vNormal, depth, materialID, entity, state)
+
+//vNormal is a Vector2 object showing the direction of the impact in a unit vector.
+//depth is how much penetration there is, how much overlap there is
+
+LogMsg("Hit Static: Depth: " .. tostring(depth) .. " vNormal: " .. tostring(vNormal));
+
+	if (materialID == C_MATERIAL_VERTICAL_LADDER) then
+		LogMsg("You just touched a tile that has a collision line set to the "V Ladder" type!
+	end
+end
+(end)
+
+Parameters:
+
+category - Which category mask you want to set, must be a number between 0 and 15. (Check <C_CATEGORY_CONSTANTS> for the predefined ones)
 bOn - If true, this object will collide with entities of that category type, if false, we will pass through them.
+*/
+
+.def("SetCollisionListenCategories", &MovingEntity::SetCollisionListenCategories)
+/*
+func: SetCollisionListenCategories
+(code)
+nil SetCollisionListenCategories(number categoryMask)
+(end)
+
+Let's you set all 16 states at once with a single number.  
+Only use this if you know what you are doing, or use the C_CATEGORIES_NONE define to easily turn off all of them.
+
+Parameters:
+
+categoryMask - A single 16 bit number representing each category. 
 */
 
 .def("SetCollisionGroup", &MovingEntity::SetCollisionGroup)
@@ -3094,50 +3039,6 @@ Group: C_ANIM_FRAME_CONSTANTS
 
 constants: C_ANIM_FRAME_LAST
 Means the last frame of the animation.
-
-
-Group: C_ENTITY_CONSTANTS
-
-constants: C_ENTITY_NONE
-Means no entity is specified.
-
-constants: C_ENTITY_CAMERA
-Use <Entity::SetAttach> with this to make things move with the camera, good for GUI overlays like health bars.
-
-Group: C_COLLISION_MODE_CONSTANTS
-Used with <Entity::SetCollisionMode>.
-
-constants: C_COLLISION_MODE_ALL
-Can collide with entities and static tiles.
-
-constants: C_COLLISION_MODE_NONE
-Doesn't collide with anything.
-
-constants: C_COLLISION_MODE_STATIC_ONLY
-Only collides with static tiles, not other entities.
-
-
-Group: C_LISTEN_COLLISION_CONSTANTS
-Used with <Entity::SetListenCollision>.
-
-constants: C_LISTEN_COLLISION_NONE
-No script callbacks for entity collisions.
-
-constants: C_LISTEN_COLLISION_PLAYER_ONLY
-Callbacks only happen when colliding with an active player.
-
-constants: C_LISTEN_COLLISION_ALL_ENTITIES
-Script callbacks happen for all entity collisions.
-
-
-Group: C_LISTEN_COLLISION_STATIC_CONSTANTS
-Used with <Entity::SetListenCollisionStatic>.
-
-constants: C_LISTEN_COLLISION_STATIC_NONE
-No script callbacks for static tile collisions.
-
-constants: C_LISTEN_COLLISION_STATIC_ALL
-Script callbacks happen on every static tile collision.
 
 
 Group: C_GRAVITY_CONSTANTS

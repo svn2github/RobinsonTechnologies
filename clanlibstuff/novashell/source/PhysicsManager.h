@@ -12,6 +12,37 @@
 
 #include "Box2D/Include/Box2D.h"
 #include "DebugDraw.h"
+#define SetBitSimple(n) (0x01<<(n))
+
+class Tile;
+class MovingEntity;
+
+
+enum ContactState
+{
+	e_contactAdded,
+	e_contactPersisted,
+	e_contactRemoved,
+};
+
+
+struct ContactPoint
+{
+	b2Shape* shape1;
+	b2Shape* shape2;
+	b2Vec2 normal;
+	b2Vec2 position;
+	b2Vec2 velocity;
+	b2ContactID id;
+	float separation;
+	ContactState state;
+
+	//information about shape 2, which is assumed to be the 'other' guy
+	int materialID;
+	Tile * pOwnerTile; //null if not a tile
+	MovingEntity *pOwnerEnt; //null if shape2 didn't come from an ent
+
+};
 
 
 class ContactListener : public b2ContactListener
@@ -20,6 +51,11 @@ public:
 	void Add(const b2ContactPoint* point);
 	void Persist(const b2ContactPoint* point);
 	void Remove(const b2ContactPoint* point);
+
+private:
+	void SetupAndSendContactInfo(ContactState contactState, ContactPoint &cp, const b2ContactPoint *point);
+	
+	ContactPoint m_cp;
 
 };
 
@@ -75,37 +111,6 @@ private:
 	DestructionListener m_destructionLister;
 
 };
-
-
-
-enum ContactState
-{
-	e_contactAdded,
-	e_contactPersisted,
-	e_contactRemoved,
-};
-
-class Tile;
-class MovingEntity;
-
-struct ContactPoint
-{
-	b2Shape* shape1;
-	b2Shape* shape2;
-	b2Vec2 normal;
-	b2Vec2 position;
-	b2Vec2 velocity;
-	b2ContactID id;
-	float separation;
-	ContactState state;
-	
-	//information about shape 2, which is assumed to be the 'other' guy
-	int materialID;
-	Tile * pOwnerTile; //null if not a tile
-	MovingEntity *pOwnerEnt; //null if shape2 didn't come from an ent
-	
-};
-
 
 b2Vec2 ToPhysicsSpace(CL_Vector2 v);
 CL_Vector2 FromPhysicsSpace(b2Vec2 v);

@@ -237,6 +237,26 @@ void TileEditOperation::AddTileByPoint(const CL_Vector2 &vecDragStart, int opera
 	}
 }
 
+void TileEditOperation::AddTilesToSelection(const TileEditOperation &editList, int operation)
+{
+	if (!g_pMapManager->GetActiveMapCache()) return;
+
+	Tile *pTile = NULL;
+	bool bPerformDupeCheck = false;
+	if (!IsEmpty()) bPerformDupeCheck = true;
+
+	selectedTile_list::const_iterator itor = editList.m_selectedTileList.begin();
+
+	while (itor != editList.m_selectedTileList.end())
+	{
+		pTile = (*itor)->m_pTile;
+		AddTileToSelection(operation, bPerformDupeCheck, pTile);
+
+		itor++;
+	}
+	
+}
+
 void TileEditOperation::AddTilesByWorldRect(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec)
 {
 	

@@ -77,6 +77,60 @@ void InitEntity(MovingEntity *pEntity)
 	}
 }
 
+void ReInitEntity(MovingEntity *pEnt)
+{
+//we don't want to reinit things attached to the camera because generally those are GUI elements and get screwy
+	float orientation = pEnt->GetRotation();
+	CL_Vector2 facing = pEnt->GetVectorFacing();
+	pEnt->Kill();
+	pEnt->SetVectorFacing(facing);
+	pEnt->Init();
+	pEnt->SetRotation(orientation);
+	InitEntity(pEnt);
+}
+void ReInitTileList(tile_list &t)
+{
+	
+	tile_list::iterator itor = t.begin();
+
+	Tile *pTile;
+
+	while (itor != t.end())
+	{
+		pTile = (*itor);
+
+
+		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+		{
+			ReInitEntity(((TileEntity*)pTile)->GetEntity());
+		}
+
+		itor++;
+	}
+
+}
+
+void GetPointersToSimilarTilesOnMap(Map *pMap, tile_list &t, Tile *pTile)
+{
+	//get a list of all similar tiles, so we can update them when we're done if applicable
+	pMap->GetMyMapCache()->AddTilesByRect(pMap->GetWorldRectInPixels(),
+		&t, pMap->GetLayerManager().GetAllList(), false, false);
+	//now we should remove any that aren't similar, or already on our selected list
+
+	tile_list::iterator tItor = t.begin();
+
+	while(tItor != t.end() )
+	{
+		if ( !TilesAreSimilar((*tItor), pTile))
+		{
+			//remove this one
+			tItor = t.erase(tItor);
+			continue;
+		}
+		tItor++;
+	}
+
+}
 void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 {
 	CollisionData *pCol = pTile->GetCollisionData();
@@ -105,6 +159,7 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 	{
 		density = 0.8 - pLine->GetRect().get_height() / picSizeY;
 
+/*	
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 		{
 			CL_Rectf worldRect = pTile->GetWorldRect();
@@ -113,9 +168,11 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 		} else
 		{
 
-			bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pLine->GetRect().bottom );
 		}
-	} 
+*/
+		bottomOffset = pTile->GetWorldRect().bottom - (pTile->GetPos().y + pLine->GetRect().bottom );
+
+		} 
 
 	if (bottomOffset != 0)
 	{

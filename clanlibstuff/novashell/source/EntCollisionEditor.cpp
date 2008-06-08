@@ -28,7 +28,6 @@ EntCollisionEditor::EntCollisionEditor(): BaseGameEntity(BaseGameEntity::GetNext
 	m_mode = e_modeAddCreate;
 	m_pButtonOK = m_pButtonCancel = NULL;
 	ClearSelection();
-	m_recalculateOffsetsWhenDone = true;
 	SetName("coleditor");
 
 	EntEditor *pEditor = (EntEditor*) EntityMgr->GetEntityByName("editor");
@@ -303,9 +302,6 @@ void EntCollisionEditor::OnOk()
 	m_bDataChanged = true;
 	*m_pCollisionData = m_col; //copy it back
 	
-	if (m_recalculateOffsetsWhenDone)
-	m_pCollisionData->RecalculateOffsets();
-
 	m_pCollisionData->SetDataChanged(true);
 
 	LogMsg("Final collision edit data:");
@@ -313,6 +309,7 @@ void EntCollisionEditor::OnOk()
 
 	m_pCollisionData->GetLineList()->begin()->ComputeConvexHull();
 	m_pCollisionData->GetLineList()->begin()->PrintPoints();
+	m_pCollisionData->CheckForErrors("", true);
 
 	//OTE:  Check OnCollisionDataEditEnd in EntEditMode to see what else we do after ending an edit
 	SetDeleteFlag(true);
@@ -363,14 +360,6 @@ void EntCollisionEditor::Init(CL_Vector2 vPos, CL_Rect vEditBounds, CollisionDat
 
 	m_rectArea = vEditBounds;
 	
-	if (!calcOffsets)
-	{
-			m_recalculateOffsetsWhenDone = false;
-	} else
-	{
-		m_col.RemoveOffsets();
-
-	}
 	m_pos = vPos;
 
 	//create our GUI window at the bottom of the screen

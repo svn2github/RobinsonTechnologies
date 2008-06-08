@@ -58,7 +58,7 @@ number GetType()
 
 Returns:
 
-One ofthe <C_MATERIAL_TYPE_CONSTANTS>.
+One of the <C_MATERIAL_TYPE_CONSTANTS>.
 */
 
 /*
@@ -160,6 +160,12 @@ For designating shapes as warps.  Defined in setup_constants.lua and used in the
 constant: C_MATERIAL_TYPE_DUMMY
 For tweaking sorting and smart shadows.  The engine completely ignores it for collision but will still calculate the depth dot (lowest point of collision) and shadow information based on it.  Good for tweaking those things, make sure it's the first line in a collision shape.
 */
+
+	enum
+	{
+		C_MATERIAL_NONE = -1
+		
+	};
 
 	enum
 	{

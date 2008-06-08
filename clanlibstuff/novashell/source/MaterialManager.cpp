@@ -35,11 +35,11 @@ int MaterialManager::AddMaterial(float fCoF, float fCoR, float fCoS, float fSep,
 
 CMaterial * MaterialManager::GetMaterial( int idx )
 {
-	if (idx < m_vecMat.size())
+	if (idx < int(m_vecMat.size()) && idx >= 0)
 	{
 		return &m_vecMat[idx];
 	}
 
 	LogError("A material of ID %d was referenced but does not exist.. missing some GetMaterialManager:AddMaterial() commands that this world needs?", idx);
-	return &m_vecMat[idx];
+	return &m_vecMat[0];
 }

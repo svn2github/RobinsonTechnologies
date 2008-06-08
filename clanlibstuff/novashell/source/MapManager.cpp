@@ -432,6 +432,7 @@ void MapManager::PrepareUpdate(float step)
 		m_MapInfoUpdateList[GetActiveMap()] = GetActiveMap();
 	}
 
+	g_watchManager.AddWatched();
 	//run the physics loop for all worlds on the world update list
 
 	MapInfoHashMap::iterator itor = m_MapInfoUpdateList.begin();
@@ -442,9 +443,7 @@ void MapManager::PrepareUpdate(float step)
 	}
 
 	//this will also update our entity render list with more stuff
-
 	g_watchManager.Update(step, 0);
-
 	g_watchManager.PostUpdate(step);
 
 }
@@ -498,7 +497,26 @@ Map* MapManager::GetActiveMap()
 void MapManager::AddToEntityUpdateList( MovingEntity *pEnt )
 {
 	m_entityUpdateList[pEnt->ID()] = pEnt;
+
+	
+	//update physics for this entities map later too?
+
+	m_MapInfoUpdateList[pEnt->GetMap()] = pEnt->GetMap();
 }
+
+bool MapManager::IsOnEntityUpdateList( MovingEntity *pEnt)
+{
+	EntityHashMap::iterator itor = m_entityUpdateList.find(pEnt->ID());
+
+	if (itor != m_entityUpdateList.end())
+	{
+		//bingo!
+		//return &(itor->second);
+		return true;
+	}
+	return false; //not on list
+}
+
 /*
 Object: MapManager
 Handles loading and unloading maps.

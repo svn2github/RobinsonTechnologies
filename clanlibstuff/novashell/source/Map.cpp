@@ -6,6 +6,7 @@
 #include "AI/WorldNavManager.h"
 #include "EntCreationUtils.h"
 #include "MaterialManager.h"
+#include "EntCreationUtils.h"
 
 #define C_DEFAULT_THUMBNAIL_WIDTH 8
 #define C_DEFAULT_THUMBNAIL_HEIGHT 8
@@ -303,7 +304,13 @@ MapChunk * Map::GetMapChunk(ScreenID screenID)
 		int x = GetXFromScreenID(screenID);
 		int y = GetYFromScreenID(screenID);
 
-			if (m_chunkMap.size() == 1)
+#ifdef _DEBUG	
+		if (x > 100)
+		{
+			assert(!"Hey!");
+		}
+#endif
+		if (m_chunkMap.size() == 1)
 			{
 				//our only screen, set the world map to this
 				m_mapRect = CL_Rect(x,y,x+1,y+1);
@@ -820,18 +827,7 @@ void Map::ReInitEntities()
 				case C_TILE_TYPE_ENTITY:
 					
 					pEnt = ((TileEntity*)*tileItor)->GetEntity();
-					//we don't want to reinit things attached to the camera because generally those are GUI elements and get screwy
-					//if (pEnt && pEnt->GetAttachEntityID() != C_ENTITY_CAMERA) 
-					{
-						float orientation = pEnt->GetRotation();
-						CL_Vector2 facing = pEnt->GetVectorFacing();
-						pEnt->Kill();
-						pEnt->SetVectorFacing(facing);
-						pEnt->Init();
-						pEnt->SetRotation(orientation);
-						InitEntity(pEnt);
-
-					}
+					ReInitEntity(pEnt);
 
 					break;
 				}
@@ -841,6 +837,7 @@ void Map::ReInitEntities()
 		itor++;
 	}	
 }
+
 
 void Map::RemoveUnusedFileChunks()
 {

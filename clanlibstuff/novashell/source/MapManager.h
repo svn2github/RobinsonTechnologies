@@ -62,6 +62,7 @@ public:
 	void AddToEntityUpdateList(MovingEntity *pEnt);
 	int GetUpdateEntityCount() {return m_entityUpdateList.size();}
 	void PrepareUpdate(float step);
+	bool IsOnEntityUpdateList( MovingEntity *pEnt);
 
 	CL_Signal_v0 sig_map_changed;
 

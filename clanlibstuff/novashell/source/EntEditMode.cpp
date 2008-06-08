@@ -14,6 +14,7 @@
 #include "GlobalScriptFunctionBindings.h"
 #include "Console.h"
 #include "DataEditor.h" //we use a few of its helper functions
+#include "EntCreationUtils.h"
 
 #define C_SCALE_MOD_AMOUNT 0.01f
 
@@ -166,7 +167,7 @@ void EntEditMode::OnSelectSimilar()
 		int operation = TileEditOperation::C_OPERATION_ADD;
 		m_selectedTileList.AddTilesByWorldRectIfSimilar(CL_Vector2(r.left,r.top), CL_Vector2(r.right,r.bottom), operation, g_pMapManager->GetActiveMap()->GetLayerManager().GetEditActiveList(), (*itor)->m_pTile);
 
-			itor++;
+		itor++;
 	}
 	
 }
@@ -1555,14 +1556,16 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 					//initiate a tile move operation
 					SetOperation(C_OP_MOVE);
 					return;
-				} else if (GetTileByWorldPos(g_pMapManager->GetActiveMap(),m_vecDragStart, g_pMapManager->GetActiveMap()->GetLayerManager().GetEditActiveList(), true))
+				} else
 				{
-					//well, heck, why not let them just drag whatever tile they are over?
-
-					ClearSelection();
-					m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, g_pMapManager->GetActiveMap()->GetLayerManager().GetEditActiveList());
-					SetOperation(C_OP_MOVE);
-					return;
+					if (GetTileByWorldPos(g_pMapManager->GetActiveMap(),m_vecDragStart, g_pMapManager->GetActiveMap()->GetLayerManager().GetEditActiveList(), true))
+					{
+						//well, heck, why not let them just drag whatever tile they are over?
+						ClearSelection();
+						m_selectedTileList.AddTileByPoint(m_vecDragStart, TileEditOperation::C_OPERATION_ADD, g_pMapManager->GetActiveMap()->GetLayerManager().GetEditActiveList());
+						SetOperation(C_OP_MOVE);
+						return;
+					}
 				}
 			}
 
@@ -1945,7 +1948,6 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 	
 	if (m_pOriginalEditEnt)
 	{
-		m_pOriginalEditEnt->SetPos(m_collisionEditOldTilePos - m_pOriginalEditEnt->GetVisualOffset());
 		m_pTileWeAreEdittingCollisionOn = m_pOriginalEditEnt->GetTile(); //fix a probably bad pointer, from moving it
 		
 		//also fix our selection box
@@ -1964,9 +1966,18 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 			if (pEnt->GetEntity())
 			{
 
+
+				tile_list t;
+				GetPointersToSimilarTilesOnMap(g_pMapManager->GetActiveMap(), t, pEnt);
+
 				pEnt->GetEntity()->Kill(); //force it to save out its collision info to disk, so when
+				
 				//we reinit all similar tiles, they will use the changed version
-				g_pMapManager->GetActiveMap()->ReInitEntities();
+				//g_pMapManager->GetActiveMap()->ReInitEntities();
+				ReInitTileList(t);
+
+
+
 			} else
 			{
 				assert(!"Huh?");
@@ -2012,6 +2023,13 @@ void EntEditMode::OnDefaultTileHardness()
 		CL_MessageBox::info("Highlighted entity not found, don't try this on something that is moving.", GetApp()->GetGUI());
 		return;
 	}
+
+	if (pTile->GetBit(Tile::e_flippedX) || pTile->GetBit(Tile::e_flippedY))
+	{
+		CL_MessageBox::info("Can't edit tiles that are X or Y flipped currently.  Yes, Seth sucks.", GetApp()->GetGUI());
+		return;
+
+	}
  
 	m_pOriginalEditEnt = 	NULL;
 
@@ -2035,8 +2053,6 @@ void EntEditMode::OnDefaultTileHardness()
 	m_pEntCollisionEditor = (EntCollisionEditor*) GetMyEntityMgr->Add(new EntCollisionEditor);
 	m_slots.connect(m_pEntCollisionEditor->sig_delete, this, &EntEditMode::OnCollisionDataEditEnd);
 
-
-	
 
 	CL_Vector2 vEditPos = pTile->GetPos();
 	CL_Rect rec(pTile->GetWorldRect());
@@ -2532,10 +2548,17 @@ if (m_bDialogIsOpen) return;
 	listData.sort();
 	window.run();	//loop in the menu until quit() is called by hitting a button
 	
+
+
+	
 	//Process GUI here
 
 	if (m_guiResponse == C_GUI_OK  )
 	{
+	
+		tile_list t;
+		GetPointersToSimilarTilesOnMap(g_pMapManager->GetActiveMap(), t, pTile);
+
 		unsigned int flags = 0;
 		
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
@@ -2643,16 +2666,16 @@ if (m_bDialogIsOpen) return;
 			pTileList->SetLayerOfSelection(selectedLayer);
 		}
 
-		g_pMapManager->GetActiveMap()->ReInitEntities();
-
+		//g_pMapManager->GetActiveMap()->ReInitEntities();
 		//update our current selection
 		pTileList->UpdateSelectionFromWorld();
+
+		ReInitTileList(t);
 
 
 
 	} else if (m_guiResponse == C_GUI_CONVERT)
 	{
-		
 		
 		MovingEntity *pEnt = new MovingEntity;
 		TileEntity *pNewTile = new TileEntity;
@@ -2666,8 +2689,6 @@ if (m_bDialogIsOpen) return;
 		pNewTile->SetScale(pTile->GetScale());
 		pNewTile->SetColor(pTile->GetColor());
 
-
-
 		pNewTile->SetLayer(pTile->GetLayer());
 		pEnt->SetImageFromTilePic((TilePic*)pTile);
 		pEnt->SetMainScriptFileName("");
@@ -2676,6 +2697,7 @@ if (m_bDialogIsOpen) return;
 		//now, we could be done, but we can be nice and try to adjust the collision to be centered
 		//instead of how it was
 
+		/*
 		if (pEnt->GetCollisionData()->HasData())
 		{
 			PointList *pLine;
@@ -2705,9 +2727,6 @@ if (m_bDialogIsOpen) return;
 			//move position to match where it was
 			pEnt->SetPos(pEnt->GetPos()+vMoveOffset);
 
-			//cleanup any weirdness
-			pEnt->GetCollisionData()->RecalculateOffsets();
-
 		} else
 		{
 			//still, because entities are centered, we should move it for them
@@ -2716,7 +2735,7 @@ if (m_bDialogIsOpen) return;
 			pEnt->SetPos(pEnt->GetPos()-vOffset);
 
 		}
-
+		*/
 
 		OnDelete(); //kill the old one
 		
@@ -2730,7 +2749,7 @@ if (m_bDialogIsOpen) return;
 		PushUndosIntoUndoOperation();
 
 		g_pMapManager->GetActiveMap()->ReInitCollisionOnTilePics();
-		g_pMapManager->GetActiveMapCache()->Update(0); //force it to rescan nearby tiles so the visual updates now
+		//g_pMapManager->GetActiveMapCache()->Update(0); //force it to rescan nearby tiles so the visual updates now
 		
 		ScheduleSystem(1, ID(), "open_properties_on_selected"); //tell it to open this properties dialog again as soon
 	}

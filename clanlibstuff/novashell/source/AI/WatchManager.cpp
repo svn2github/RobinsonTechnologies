@@ -93,10 +93,33 @@ bool WatchManager::IsEntityOnWatchList(int entID)
 	}
 	return false;
 }
+
 void WatchManager::Render()
 {
 	
 }
+
+void WatchManager::AddWatched()
+{
+	watch_list::iterator itor;
+
+	MovingEntity *pEnt;
+
+	for (itor=m_watchList.begin(); itor != m_watchList.end();)
+	{
+		pEnt = (MovingEntity*)EntityMgr->GetEntityFromID(itor->m_entID);
+
+		if (pEnt)
+		{
+			//force update if it needs it
+			g_pMapManager->AddToEntityUpdateList(pEnt);
+		}
+		
+		itor++;
+	}
+
+}
+
 
 void WatchManager::Update(float step, unsigned int drawID)
 {
@@ -136,11 +159,6 @@ void WatchManager::Update(float step, unsigned int drawID)
 			}
 			continue;
 		}
-
-		
-		//force update if it needs it
-		g_pMapManager->AddToEntityUpdateList(pEnt);
-		
 
 		itor++;
 	}

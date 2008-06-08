@@ -83,7 +83,6 @@ enum
 	unsigned int m_dragVertID; //C_INVALID_VERT if no  vert selected
 	CL_ListBox * m_pListType;
 	CL_Vector2 *m_pSelectedVert;
-	bool m_recalculateOffsetsWhenDone;
 	CL_CheckBox *m_pCheckBoxSnap;
 	CL_CheckBox *m_pCheckBoxClipToImage;
 	CL_Vector2 m_dragStartPos ;

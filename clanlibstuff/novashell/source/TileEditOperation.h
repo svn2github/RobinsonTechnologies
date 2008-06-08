@@ -69,6 +69,7 @@ public:
 	void AddTileToSelection(int operation, bool bPerformDupeCheck, Tile *pTile);
 	selectedTile_list::iterator FindTileByLocation(selectedTile_list &tileList, Tile *pTile);
 	Tile * GetTileAtPos(const CL_Vector2 & pos); //returns tile that is touching this coordinate, doesn't sort
+	void AddTilesToSelection(const TileEditOperation &editList, int operation);
 
 	void AddTilesByWorldRect(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec);
 	void AddTilesByWorldRectIfSimilar(const CL_Vector2 &vecDragStart, const CL_Vector2 &vecDragStop, int operation, const vector<unsigned int> &layerIDVec, Tile *pSrcTile);
@@ -111,7 +112,6 @@ protected:
 	void AddWorldCoordToBounds(const CL_Vector2 &vecWorld);
 	void SetNeedsFullBoundsCheck(bool bNew);
 	void RecomputeBoundsIfNeeded();
-
 	CL_Vector2 m_vecUpLeft, m_vecDownRight;
 	bool m_bNeedsFullBoundsCheck;
 	int m_forceLayerOfNextPaste; //i need an int because I want -1 to signal not active

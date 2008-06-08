@@ -519,8 +519,8 @@ void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
 			GetParentMapChunk()->GetParentMap()->GetNavGraph()->RemoveTileNode((*itor));
 		}
 
-		if (GetParentMapChunk()->GetParentMap()->IsWorldCacheInitted())
-		GetParentMapChunk()->GetParentMap()->GetMyMapCache()->RemoveTileFromList( (*itor) );
+		//if (GetParentMapChunk()->GetParentMap()->IsWorldCacheInitted())
+		//GetParentMapChunk()->GetParentMap()->GetMyMapCache()->RemoveTileFromList( (*itor) );
 		
 	} else
 	{

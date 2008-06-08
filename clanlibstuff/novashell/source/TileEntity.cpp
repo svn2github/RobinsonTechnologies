@@ -152,7 +152,7 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 			if (pSprite->get_angle_yaw() != 0) flippedx = true;
 		
 			pBuf = pSprite->get_frame_pixeldata(pSprite->get_current_frame());
-	
+			
 		}
 		break;
 
@@ -169,6 +169,13 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
    vWorldPos.x -= r.left;
    vWorldPos.y -= r.top;
 
+   //apply scale
+
+   vWorldPos.x /= pTile->GetScale().x;
+   vWorldPos.y /= pTile->GetScale().y;
+
+
+   //LogMsg("FlippedX: %d, flippedY: %d", int(flippedx), int(flippedy));
    
    //if the image is flipped, we need to account for it
 
@@ -182,31 +189,27 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 	   vWorldPos.y = pBuf.get_height()-vWorldPos.y;
    }
 
-   //apply scale
+  //do the actual check
 
-   vWorldPos.x /= pTile->GetScale().x;
-   vWorldPos.y /= pTile->GetScale().y;
+   CL_Surface c(pBuf);
 
-   //do the actual check
+   /*
+   //visuals for debugging:
+   c.draw(0,0);
+   CL_Display::flip(); //show it now
+   Sleep(200);
+	LogMsg("Checking %s, Color is %s", PrintVector(vWorldPos).c_str(), ColorToString(pBuf.get_pixel(vWorldPos.x, vWorldPos.y)).c_str());
+	*/
 
 	pBuf.lock();
    if (pBuf.get_pixel(vWorldPos.x, vWorldPos.y).get_alpha() > 0)
    {
-	 //  LogMsg("Hit at %.2f, %.2f", vWorldPos.x, vWorldPos.y);
+	   //LogMsg("Hit at %.2f, %.2f", vWorldPos.x, vWorldPos.y);
 	   return true;
    } else
    {
-	  // LogMsg("Miss");
+	   //LogMsg("Miss");
    }
 	pBuf.unlock();
-  
-	/*
-	CL_Surface c(pBuf);
-
-	c.draw(0,0);
-	CL_Display::flip(); //show it now
-	Sleep(200);
-	*/
-	
-	return false;
+  	return false;
 }

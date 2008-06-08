@@ -74,6 +74,44 @@ void CollisionData::Load(const string &fileName)
 
     Serialize(helper);
 	SAFE_DELETE(pFile);
+
+	//check it..
+
+	CheckForErrors(fileName, true);
+	
+
+
+}
+
+bool CollisionData::CheckForErrors(string extraText, bool bShow)
+{
+	//check them for errors?
+	bool bOk = true;
+	line_list::iterator listItor = m_lineList.begin();
+	int lineCount = 0;
+	while (listItor != m_lineList.end())
+	{
+		lineCount++;
+		PointList::eVertCheckStatus result = listItor->IsValidBox2DPolygon();
+
+		if (result != PointList::STATUS_OK)
+		{
+			bOk = false;
+			if (bShow)
+			{
+				LogError("Warning: Box2d doesn't like collision line %d in %s. (%s)", lineCount, extraText.c_str(), listItor->ErrorToString(result).c_str());
+			} else
+			{
+				
+			}
+		} else
+		{
+			//LogMsg("%s is ok", extraText.c_str());
+		}
+
+		listItor++;
+	}
+	return bOk;
 }
 
 void CollisionData::SaveIfNeeded()
@@ -180,18 +218,7 @@ void CollisionData::RecalculateCombinedOffsets()
 	*/
 	
 }
-void CollisionData::RecalculateOffsets()
-{
-	return;
-	line_list::iterator listItor = m_lineList.begin();
-   
-	while (listItor != m_lineList.end())
-	{
-		listItor->CalculateOffsets();
-		listItor++;
-	}
-	SetRequestRectRecalculation();
-}
+
 
 
 void CollisionData::RemoveOffsets()
@@ -302,6 +329,8 @@ void CollisionData::Serialize(CL_FileHelper &helper)
 
 				m_lineList.rbegin()->GetPointList()->resize(vecCount);
 				helper.process_array(&m_lineList.rbegin()->GetPointList()->at(0), vecCount);
+
+
 			}
 		}
 		

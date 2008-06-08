@@ -59,7 +59,6 @@ public:
 	void PushUndoOperation(const operation_deque &op);
 	void PopUndoOperation();
 	int GetUndoOpsAvailableCount() {return m_undoDeque.size();};
-	bool IsOnEntityDrawList(MovingEntity *pEnt);
 	
 protected:
 

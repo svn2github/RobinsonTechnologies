@@ -117,6 +117,7 @@ Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerID
 
 	pWorld->GetMyMapCache()->AddTilesByRect(recArea, &tileList, layerIDVec);
 
+	//LogMsg("Got %d tiles", tileList.size());
 	//now we need to sort them
 	g_pLayerManager = &pWorld->GetLayerManager();
 	tileList.sort(compareTileBySortLevelOptimized);
@@ -128,7 +129,6 @@ Tile * GetTileByWorldPos(Map *pWorld, CL_Vector2 v, vector<unsigned int> layerID
 		pTile = (*itor);
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY || pTile->GetType() == C_TILE_TYPE_PIC)
 		{
-
 			if (!bPixelAccurate || PixelAccurateHitDetection(v, pTile))
 			{
 				return pTile;

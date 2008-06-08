@@ -31,7 +31,6 @@ public:
 	line_list * GetLineList() {return &m_lineList;}
 	void Serialize(CL_FileHelper &helper);
 	bool HasData();
-	void RecalculateOffsets();
 	void RemoveOffsets();
 	void Load(const string &fileName);
 	void SetDataChanged(bool bNew) {m_dataChanged = bNew;}
@@ -39,6 +38,7 @@ public:
 	const CL_Vector2 & GetScale() {return m_vecScale;}
 	bool GetDataChanged() {return m_dataChanged;}
 	const CL_Vector2 &GetCombinedOffsets();
+	bool CheckForErrors(string extraText, bool bShow);
 
 protected:
 

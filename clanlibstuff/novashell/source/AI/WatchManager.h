@@ -53,6 +53,7 @@ public:
 	bool IsEntityOnWatchList(int entID);
 	void AddSilently(MovingEntity *pEnt, int timeToWatchMS);
 	void Render();
+	void AddWatched();
 protected:
 
 	watch_list m_watchList;

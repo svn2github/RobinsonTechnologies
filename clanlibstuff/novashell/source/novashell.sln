@@ -54,8 +54,8 @@ Global
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Debug|Win32.Build.0 = Static MTDLL Debug|Win32
-		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Release Debug|Win32.ActiveCfg = Static MTDLL Release|Win32
-		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Release Debug|Win32.Build.0 = Static MTDLL Release|Win32
+		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Release Debug|Win32.ActiveCfg = Static MT Release|Win32
+		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Release Debug|Win32.Build.0 = Static MT Release|Win32
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Release|Win32.ActiveCfg = Static MTDLL Release|Win32
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Release|Win32.Build.0 = Static MTDLL Release|Win32
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Static MT Debug|Win32.ActiveCfg = Static MT Debug|Win32
@@ -68,10 +68,10 @@ Global
 		{975AC3AB-1EC8-4A37-B136-7234981396B2}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
 		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Debug|Win32.Build.0 = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release Debug|Win32.ActiveCfg = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release Debug|Win32.Build.0 = Debug|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release|Win32.ActiveCfg = Release|Win32
-		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release|Win32.Build.0 = Release|Win32
+		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release Debug|Win32.ActiveCfg = Release Debug|Win32
+		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release Debug|Win32.Build.0 = Release Debug|Win32
+		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release|Win32.ActiveCfg = Release Debug|Win32
+		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Release|Win32.Build.0 = Release Debug|Win32
 		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MT Debug|Win32.ActiveCfg = Debug|Win32
 		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MT Debug|Win32.Build.0 = Debug|Win32
 		{7A2DFC3D-516A-471D-A215-BD40E5E5AD9A}.Static MT Release|Win32.ActiveCfg = Release|Win32

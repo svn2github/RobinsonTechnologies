@@ -23,6 +23,17 @@ class PointList
 {
 public:
 
+	enum eVertCheckStatus
+	{
+		STATUS_OK,
+		STATUS_NOT_ENOUGH_VERTS,
+		STATUS_TOO_MANY_VERTS,
+		STATUS_TOO_SKINNY, //linearSlop
+		STATUS_BAD_EDGES, // b2_angularSlop
+		STATUS_RADIUS_LESS  // Your shape has a radius/extent less than b2_toiSlop.
+		
+	};
+
     PointList();
     ~PointList();
 
@@ -46,12 +57,14 @@ public:
 	void RemoveDuplicateVerts(); //cut out any vert that has another vert sitting exactly on it
 	bool GetLineIntersection(const CL_Vector2 &a, const CL_Vector2 &b);
 	bool GetCircleIntersection(const CL_Vector2 &c, float radius);
+	eVertCheckStatus IsValidBox2DPolygon();
+	string ErrorToString(eVertCheckStatus error);
 
 protected:
 
 private:
 	bool BuildBoundingRect(); //returns false if no data is built
-	bool m_bNeedsToRecalculateRect;
+		bool m_bNeedsToRecalculateRect;
 	CL_Rectf m_boundingRect; //cache this info out for speed
 	int m_type;
 	CL_Vector2 m_vecOffset; //offset from our Tile's upper left to the upper left vert

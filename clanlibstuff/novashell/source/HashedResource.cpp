@@ -108,6 +108,7 @@ bool HashedResource::LoadDefaults()
 				{
 					CollisionData col;
 					col.Serialize(helper);
+					col.CheckForErrors(GetCollisionDataFileName(), true);
 					*GetCollisionDataByRect(col.GetRect()) = col;
 				}
 				break;
@@ -132,7 +133,7 @@ bool HashedResource::LoadDefaults()
 	catch(CL_Error error)
 	{
 		LogMsg(error.message.c_str());
-		ShowMessage(error.message, "Error loading collision data for graphic.  Corrupted?");
+		ShowMessage(error.message, "Error loading collision data for graphic.  " + GetCollisionDataFileName() + " Corrupted?");
 		SAFE_DELETE(pFile);
 		return true;
 	}
@@ -328,10 +329,17 @@ void HashedResource::PopulateListBoxWithCollisionData(CL_ListBox *pList)
 			{
 				if (pColVec->at(i)->HasData() )
 				{
+				
+					string extra = "";
+
+					if (!pColVec->at(i)->CheckForErrors("", false))
+					{
+						extra = " Bad!";
+					}
 					//add data from here
 					int index = pList->insert_item(RectToString(pColVec->at(i)->GetRect())
 						+ " has " + CL_String::from_int(pColVec->at(i)->GetLineList()->size())+ " shape(s), (" +
-						CL_String::from_int(pColVec->at(i)->GetVertCount())+" verts)");
+						CL_String::from_int(pColVec->at(i)->GetVertCount())+" verts)" + extra);
 					pList->get_item(index)->user_data = i;
 				}
 			}

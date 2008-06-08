@@ -183,7 +183,7 @@ bool EntMapCache::GenerateThumbnail(ScreenID screenID)
 
 
 	//render out our stuff to it
-	CalculateVisibleList(CL_Rect(0,0,width, height), true);
+	CalculateVisibleList(pWorldChunk->GetRect(), true);
 
 	//ugly, but I need a way for each sprite to know when to use special behavior like ignoring
 	//parallax repositioning when making the thumbnail during its draw phase
@@ -218,6 +218,9 @@ bool compareTileByLayer(const Tile *pA, const Tile *pB)
 
 void EntMapCache::RemoveTileFromList(Tile *pTile)
 {
+	assert(0);
+	
+	/*
 	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 	{
 		MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
@@ -227,15 +230,7 @@ void EntMapCache::RemoveTileFromList(Tile *pTile)
 			{
 				if (m_entityList[i] == pEnt)
 				{
-					/*	
-					if (m_entityList[i])
-					{
-					LogMsg("Removing ent %d from list", m_entityList[i]->ID());
-					} else
-					{
-					LogMsg("Removing NULL tile from list");
-					}
-					*/
+					
 
 					m_entityList[i] = NULL;
 					break;
@@ -243,7 +238,7 @@ void EntMapCache::RemoveTileFromList(Tile *pTile)
 			}
 
 			//also remove from the watch list to avoid a crash there
-			g_watchManager.OnEntityDeleted( pEnt);
+			//g_watchManager.OnEntityDeleted( pEnt);
 
 			/*
 			if (GetGameLogic()->GetShowEntityCollisionData())
@@ -262,9 +257,8 @@ void EntMapCache::RemoveTileFromList(Tile *pTile)
 			}
 			*/
 
-		}
-	}
 
+	/*
 	//next remove  tile from our draw list
 	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
 	{
@@ -274,16 +268,7 @@ void EntMapCache::RemoveTileFromList(Tile *pTile)
 			m_tileLayerDrawList[i] = NULL;
 		}
 	}
-}
-
-bool EntMapCache::IsOnEntityDrawList(MovingEntity *pEnt)
-{
-	for (unsigned int i=0; i < m_entityList.size(); i++)
-	{
-		if (m_entityList[i] == pEnt) return true;
-	}
-
-	return false;
+	*/
 }
 
 void EntMapCache::ProcessPendingEntityMovementAndDeletions()
@@ -405,7 +390,6 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 
 	if (aLayer == bLayer)
 	{
-	
 		if (!g_pLayerManager->GetLayerInfo(pA->GetLayer()).GetDepthSortWithinLayer()) return aLayer < bLayer;
 		//extra checking for depth queuing.  We depth cue by the bottom of the
 		//collision box when possible, it's more accurate than the picture.
@@ -413,6 +397,10 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 
 		if (pCol && pCol->GetLineList()->size() > 0)
 		{
+			
+			aBottom = pA->GetPos().y + (pCol->GetLineList()->begin()->GetRect().bottom);
+
+			/*
 			if (pA->GetType() == C_TILE_TYPE_ENTITY)
 			{
 				aBottom = pA->GetPos().y + (pCol->GetLineList()->begin()->GetRect().get_height()/2);
@@ -420,6 +408,7 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 			{
 				aBottom = pA->GetPos().y + (pCol->GetLineList()->begin()->GetRect().bottom);
 			}
+			*/
 		} else
 		{
 			aBottom = pA->GetWorldRect().bottom;
@@ -428,6 +417,9 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 	
 		if (pCol && pCol->GetLineList()->size() > 0)
 		{
+			
+				bBottom = pB->GetPos().y + (pCol->GetLineList()->begin()->GetRect().bottom);
+			/*
 			if (pB->GetType() == C_TILE_TYPE_ENTITY)
 			{
 				bBottom = pB->GetPos().y + (pCol->GetLineList()->begin()->GetRect().get_height()/2);
@@ -435,6 +427,7 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 			{
 				bBottom = pB->GetPos().y + (pCol->GetLineList()->begin()->GetRect().bottom);
 			}
+			*/
 		} else
 		{
 			bBottom = pB->GetWorldRect().bottom;
@@ -447,17 +440,28 @@ bool compareTileBySortLevelOptimized(Tile *pA, Tile *pB)
 	}
 }
 
-
-
 void EntMapCache::CalculateVisibleList(const CL_Rect &recScreen, bool bMakingThumbnail)
 {
+	CL_Rect viewRect;
 
 	//viewable area in world coords
-	CL_Rect viewRect = GetCamera->GetViewRectWorldInt();
+	if (bMakingThumbnail)
+	{
+		viewRect = recScreen;
+
+	} else
+	{
+		viewRect = GetCamera->GetViewRectWorldInt();
+		viewRect.right += 100;
+
+	}
 	//hack so we don't get shadow popping
 
-	viewRect.right += 100;
-
+	
+	if (viewRect.right > 60000)
+	{
+		assert(0);
+	}
 	m_tileLayerDrawList.clear();
 	ResetPendingEntityMovementAndDeletions();
 	unsigned int renderID = GetApp()->GetUniqueNumber();
@@ -561,6 +565,8 @@ void EntMapCache::CullScreensNotUsedRecently(unsigned int timeRequiredToKeep)
 //break this rect down into chunks to feed into the screens to get tile info
 void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, const vector<unsigned int> &layerIDVect,  bool bWithCollisionOnly /*= false*/, bool bAllowLoadOnDemand /* = false*/, bool bEntitiesOnly)
 {
+
+	assert(recArea.right < 20000);
 	CL_Rect rec(recArea);
 	rec.normalize();
     static int startingX;
@@ -626,8 +632,6 @@ void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, c
 
 void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 {
-	
-	
 	Tile *pTile;
 
 	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)

@@ -486,75 +486,90 @@ CollisionData * TilePic::GetCollisionData()
 
 	m_pCollisionData = GetHashedResourceManager->GetCollisionDataByHashedIDAndRect(m_resourceID, m_rectSrc);
 
+	if (!m_pCollisionData) return NULL;
 	if (GetParentScreen() && m_pCollisionData->GetLineList()->size() > 0)
 	{
-	
+
 		if (m_vecScale != CL_Vector2(1,1))
 		{
 			//we may have to do something custom here
-				//well, this has real data most likely, so let's create our own copy and apply scale to it
-				CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
-				/*
-				CollisionData *pNewCol = new CollisionData();
-				CreateCollisionDataWithTileProperties(this, *pNewCol);
-				*/
-				m_pCollisionData = pNewCol;
-				m_bUsingCustomCollision = true;
-				m_pCollisionData->SetScale(m_vecScale);
-	
+			//well, this has real data most likely, so let's create our own copy and apply scale to it
+			CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
+			/*
+			CollisionData *pNewCol = new CollisionData();
+			CreateCollisionDataWithTileProperties(this, *pNewCol);
+			*/
+			m_pCollisionData = pNewCol;
+			m_bUsingCustomCollision = true;
+			m_pCollisionData->SetScale(m_vecScale);
+
 		}
 
 		//MAKE BODY
 		KillBody();
 
+
+
 		b2BodyDef bd;
 		bd.position = ToPhysicsSpace(GetPos());
 		m_pBody = GetParentScreen()->GetParentMapChunk()->GetParentMap()->GetPhysicsManager()->GetBox2D()->CreateBody(&bd);
-		//bd.userData = this;
-		b2PolygonDef shapeDef;
-
-		CollisionData *pColTemp = m_pCollisionData;
-		CollisionData col;
-		if (UsesTileProperties())
+		if (m_pBody->GetWorld()->GetProxyCount() > b2_maxProxies-10)
 		{
-			CreateCollisionDataWithTileProperties(this, col);
-			pColTemp = &col;
-		}
-		line_list::iterator itor = pColTemp->GetLineList()->begin();
+			LogError("Box2d collision system cannot handle any more objects on this map. (Max is %d)  Ask Seth to fix it.",
+				b2_maxProxies);
 
-		for (; itor != pColTemp->GetLineList()->end(); itor++)
+		} else
 		{
-			PointList * pPointList = &(*itor);
-			CMaterial *pMat = g_materialManager.GetMaterial(pPointList->GetType());
-			if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY )		
+
+			//bd.userData = this;
+			b2PolygonDef shapeDef;
+
+			CollisionData *pColTemp = m_pCollisionData;
+			CollisionData col;
+			if (UsesTileProperties())
 			{
-				continue;
+				CreateCollisionDataWithTileProperties(this, col);
+				pColTemp = &col;
 			}
+			line_list::iterator itor = pColTemp->GetLineList()->begin();
 
-		pPointList->GetAsPolygonDef(&shapeDef);
+			for (; itor != pColTemp->GetLineList()->end(); itor++)
+			{
+				PointList * pPointList = &(*itor);
+				CMaterial *pMat = g_materialManager.GetMaterial(pPointList->GetType());
+				if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_DUMMY )		
+				{
+					continue;
+				}
 
-		ShapeUserData *pShapeUserData;
-		pShapeUserData = new ShapeUserData();
-		pShapeUserData->pOwnerTile = this;
-		pShapeUserData->pOwnerEnt = NULL;
-		pShapeUserData->materialID = pPointList->GetType();
-		shapeDef.userData = pShapeUserData;
+				pPointList->GetAsPolygonDef(&shapeDef);
 
-		
-		if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_NORMAL)
-		{
-			m_pBody->CreateShape(&shapeDef);
-			pShapeUserData = new ShapeUserData(*pShapeUserData);
-			shapeDef.userData = pShapeUserData;
-		}
+				ShapeUserData *pShapeUserData;
+				pShapeUserData = new ShapeUserData();
+				pShapeUserData->pOwnerTile = this;
+				pShapeUserData->pOwnerEnt = NULL;
+				pShapeUserData->materialID = pPointList->GetType();
+				shapeDef.userData = pShapeUserData;
+				shapeDef.isSensor = false;
+				shapeDef.filter.categoryBits = 0x0002; //tilepic category
 
-		shapeDef.isSensor = true;
-		m_pBody->CreateShape(&shapeDef);
+
+				if (pMat->GetType() == CMaterial::C_MATERIAL_TYPE_NORMAL)
+				{
+					m_pBody->CreateShape(&shapeDef);
+				} else
+				{
+					shapeDef.isSensor = true;
+					m_pBody->CreateShape(&shapeDef);
+
+				}
+
+			}
 		}
 
 	}
 
-	
+
 	return m_pCollisionData;
 }
 

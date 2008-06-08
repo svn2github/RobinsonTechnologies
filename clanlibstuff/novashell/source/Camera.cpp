@@ -63,11 +63,20 @@ CL_Rect Camera::GetViewRectWorldInt()
 	CL_Rect r;
 	CL_Vector2 v;
 	v = g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
+	
+	if (v.x > 20000)
+	{
+		assert(0);
+		v = g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(GetScreenX, GetScreenY));
+		
+	}
+	
 	r.right = v.x;
 	r.bottom = v.y;
 
 	r.left = m_vecPos.x;
 	r.top = m_vecPos.y;
+	
 	return r;
 }
 

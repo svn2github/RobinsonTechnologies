@@ -1,12 +1,34 @@
 Known problems: Occasional framerate stutters under dual core processers under vista64?
 
+** The top view RPG examples are currently broken in places...
+** Some examples are missing, will be back later after they are updated
+** There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
+new collision features soon
+** OSX/Linux builds will be coming "soon" (tm)
+** Need to update tutorial pages to use new collision stuff
+
 Changelog
 
-6-6 3008
+6-8 3008
+
+** Note, a lot has changed and there are still some quirks/bugs/issues to be worked out.. you might want to wait for the next version.. 
 
 * Physics engine replaced with Box2D.. this caused a lot of internal changes as old hacks and uglyness was removed, you will need to
 	update any older projects by doing the following:
+	
+	Collision system changed, the new one allows more control over who collides with what.  Internally it uses a 16 bit bitmask, this is
+	hidden from  the user to simply thing as called a "Category", and things can be/listen to multiple categories.
+	
+	Also, "Collision groups" are supported that can override categories.  More in the docs. on those.
+	
+	- SetListenCollision and SetCollision removed, must now use SetCollisionCategory/SetCollisionListenCategory and SetCategory to control things
+	- OnCollision callback changed, is now:  nil function OnCollision(vPosition, vVelocity, vNormal, depth, materialID, entity, state)
+	- OnStaticCollision removed, OnCollision handles all callbacks
+	- You can no longer negate a collision by returning false, OnCollision does not check the return value any more.
+		
+	
 	- Tweak speeds and forces, it's close but a bit different
+	- A good gravity setting for a side scroller map is now 20, not 0.004 like it was
 	- For platformers, change the line type to "Ice no bounce" in most cases, this way there is no friction when jumping and rubbing against things
 	- Use the in-game visual profile editor to center entities correctly, they may be offset
 	- Use the collision editor and move vertices, they may be offset incorrectly
@@ -20,6 +42,11 @@ Changelog
 * FEATURE: Added editor utility menu option to round off tile/entity positions to 1
 * FEATURE: Grid display will start skipping lines if you zoom out too far (3dsmax style), easier on the eyes
 * SetMass() removed.  You must use SetDensity(0) to mean "static" or SenDentity(some num) to set how heavy something is
+* BUGFIX: Pixel accurate collision on flippedX/flippedY things works correctly
+* After clicking ok when editing tile properties, engine only re-inits entities that would be affected, instead of all entities (broken?)
+* When a collision shape is loaded that Box2d doesn't like, errors on the log are generated.
+* The import image display where you can double click a file name to see more properties now also adds "Bad!" when a collision shape is
+	detected, can help you find and delete the problematic ones easier
 
 5-31 2008
 
