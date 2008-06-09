@@ -288,7 +288,7 @@ static float32 DistanceCC(
 }
 
 // This is used for polygon-vs-circle distance.
-struct Point
+struct b2Point
 {
 	b2Vec2 Support(const b2XForm&, const b2Vec2&) const
 	{
@@ -310,7 +310,7 @@ static float32 DistancePC(
 	const b2PolygonShape* polygon, const b2XForm& xf1,
 	const b2CircleShape* circle, const b2XForm& xf2)
 {
-	Point point;
+	b2Point point;
 	point.p = b2Mul(xf2, circle->GetLocalPosition());
 
 	float32 distance = DistanceGeneric(x1, x2, polygon, xf1, &point, b2XForm_identity);
