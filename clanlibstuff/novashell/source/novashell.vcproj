@@ -3453,7 +3453,7 @@
 					Name="Collision"
 					>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Collision\b2BroadPhase.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2BroadPhase.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3481,7 +3481,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Collision\b2CollideCircle.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2CollideCircle.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3509,7 +3509,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Collision\b2CollidePoly.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2CollidePoly.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3537,7 +3537,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Collision\b2Collision.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2Collision.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3565,7 +3565,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Collision\b2Distance.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2Distance.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3593,7 +3593,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Collision\b2PairManager.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2PairManager.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3621,7 +3621,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Collision\b2TimeOfImpact.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2TimeOfImpact.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3652,7 +3652,7 @@
 						Name="Shapes"
 						>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Collision\Shapes\b2CircleShape.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\Shapes\b2CircleShape.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -3680,7 +3680,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Collision\Shapes\b2PolygonShape.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\Shapes\b2PolygonShape.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -3708,7 +3708,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Collision\Shapes\b2Shape.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\Shapes\b2Shape.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -3741,7 +3741,7 @@
 					Name="Common"
 					>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Common\b2BlockAllocator.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2BlockAllocator.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3769,7 +3769,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Common\b2Math.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2Math.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3797,7 +3797,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Common\b2Settings.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2Settings.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3825,7 +3825,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Common\b2StackAllocator.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2StackAllocator.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3857,7 +3857,7 @@
 					Name="Dynamics"
 					>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2Body.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2Body.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3885,7 +3885,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2ContactManager.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2ContactManager.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3913,7 +3913,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2Island.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2Island.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3941,7 +3941,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2World.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2World.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -3969,7 +3969,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2WorldCallbacks.cpp"
+						RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2WorldCallbacks.cpp"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -4000,7 +4000,7 @@
 						Name="Contacts"
 						>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2CircleContact.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2CircleContact.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4028,7 +4028,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2Contact.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2Contact.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4056,7 +4056,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2ContactSolver.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2ContactSolver.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4084,7 +4084,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2PolyAndCircleContact.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2PolyAndCircleContact.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4112,7 +4112,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2PolyContact.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2PolyContact.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4144,7 +4144,7 @@
 						Name="Joints"
 						>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2DistanceJoint.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2DistanceJoint.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4172,7 +4172,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2GearJoint.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2GearJoint.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4200,7 +4200,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2Joint.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2Joint.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4228,7 +4228,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2MouseJoint.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2MouseJoint.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4256,7 +4256,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2PrismaticJoint.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2PrismaticJoint.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4284,7 +4284,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2PulleyJoint.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2PulleyJoint.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -4312,7 +4312,7 @@
 							</FileConfiguration>
 						</File>
 						<File
-							RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2RevoluteJoint.cpp"
+							RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2RevoluteJoint.cpp"
 							>
 							<FileConfiguration
 								Name="Release|Win32"
@@ -5087,115 +5087,119 @@
 				Name="Box2D"
 				>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Common\b2BlockAllocator.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2BlockAllocator.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2Body.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2Body.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Collision\b2BroadPhase.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2BroadPhase.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2CircleContact.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2CircleContact.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Collision\b2Collision.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\Shapes\b2CircleShape.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2Contact.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2Collision.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2ContactManager.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2Contact.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2ContactSolver.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2ContactManager.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2DistanceJoint.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2ContactSolver.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2GearJoint.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2DistanceJoint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2Island.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2GearJoint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2Joint.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2Island.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Common\b2Math.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2Joint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2MouseJoint.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2Math.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2NullContact.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2MouseJoint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Collision\b2PairManager.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2NullContact.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2PolyAndCircleContact.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\b2PairManager.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Contacts\b2PolyContact.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2PolyAndCircleContact.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2PrismaticJoint.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Contacts\b2PolyContact.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2PulleyJoint.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\Shapes\b2PolygonShape.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\Joints\b2RevoluteJoint.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2PrismaticJoint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Common\b2Settings.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2PulleyJoint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Common\b2StackAllocator.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\Joints\b2RevoluteJoint.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2World.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2Settings.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Dynamics\b2WorldCallbacks.h"
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Collision\Shapes\b2Shape.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Common\b2StackAllocator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2World.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\SharedLib\Box2D\Source\Dynamics\b2WorldCallbacks.h"
 					>
 				</File>
 				<File
 					RelativePath="..\..\..\SharedLib\Box2D\Include\Box2D.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Common\Fixed.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\SharedLib\Box2D\Common\jtypes.h"
 					>
 				</File>
 			</Filter>

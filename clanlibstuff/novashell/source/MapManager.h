@@ -11,7 +11,6 @@
 
 #include "Map.h"
 #include "EntMapCache.h"
-#include <hash_map>
 
 //things needed for each world map
 
