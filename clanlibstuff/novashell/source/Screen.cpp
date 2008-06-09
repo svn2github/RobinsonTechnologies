@@ -498,7 +498,7 @@ void Screen::LinkNavGraph()
 	}
 }
 
-void Screen::RemoveTileByItor(tile_list::iterator &itor, unsigned int layer)
+void Screen::RemoveTileByItor(tile_list::iterator itor, unsigned int layer)
 {
 
 	GetParentMapChunk()->SetNeedsThumbnailRefresh(true);

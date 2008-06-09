@@ -61,7 +61,7 @@ public:
 private:
 
   void DeleteTileData();
-  void RemoveTileByItor(tile_list::iterator &itor, unsigned int layer); //the itor will contain the next valid itor after the erase
+  void RemoveTileByItor(tile_list::iterator itor, unsigned int layer); //the itor will contain the next valid itor after the erase
 
   MapChunk *m_pParentMapChunk; //the worldchunk that owns us, not saved, but set when  loaded
   layer_list m_vecLayerList;
