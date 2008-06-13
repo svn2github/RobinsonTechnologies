@@ -82,6 +82,7 @@ Anyway, next use KDevelop to open novashell.kdevelop and you're all set with the
 script/linux_build_all_and_ftp.sh does the work.  Would need editing etc.
 
 
+
 Good luck!
 
 -Seth
