@@ -1,12 +1,10 @@
-
 /* -------------------------------------------------
 * Copyright 2006 Robinson Technologies
 * Programmer(s):  Seth A. Robinson (seth@rtsoft.com): 
 */
 
-
 #ifndef main_HEADER_INCLUDED // include guard
-#define main_HEADER_INCLUDED  // include guard
+#define main_HEADER_INCLUDED // include guard
 
 //stuff for the lua docs
 
@@ -52,17 +50,14 @@ Novashell Getting Started Tutorials <http://www.rtsoft.com/novashell/docs>
 
 */
 
-
-
 #define C_BASE_MAP_PATH "maps"
 
 enum
 {
   C_FONT_GRAY, //it's tiny
   C_FONT_NORMAL, //bigger
-      C_FONT_COUNT
+  C_FONT_COUNT
 };
-
 
 #include <iostream>
 #include <fstream>
@@ -77,8 +72,8 @@ enum
 {
 	C_SOUNDSYSTEM_CLANLIB,
 	C_SOUNDSYSTEM_FMOD
-
 };
+
 enum
 {
 	C_PLATFORM_WINDOWS = 0,
@@ -89,7 +84,6 @@ enum
 //this stream_redirector taken from a snippet taken from Gabriel Fleseriu's post on codeguru
 
 #define C_LOGGING_BUFFER_SIZE (4096*3)
-
 
 class stream_redirector
 {
@@ -154,7 +148,6 @@ public:
 #ifdef WIN32
 	HWND GetHWND() {return m_Hwnd;}
 #endif
-    
 	
 	void OnWindowClose();
     float GetDelta(){return m_delta;}
@@ -211,13 +204,13 @@ public:
 	void AddStartupParm(string parm);
 	int GetScreenSizeX();
 	int GetScreenSizeY();
+
 private:
-    
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
 	void OneTimeDeinit();
     void OneTimeInit();
 	void OnRender();
-   void UpdateLogic();
+	void UpdateLogic();
     void OnLoseFocus();
     void OnGotFocus();
     void SetupMouseClipping();
@@ -282,7 +275,6 @@ private:
 	DataManager m_prefs;
 	ScriptCallbackManager m_videoCallback;
 	bool m_notifyOfScreenChange;
-	
 };
 
 extern App MyApp;
