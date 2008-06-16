@@ -2556,9 +2556,7 @@ if (m_bDialogIsOpen) return;
 	if (m_guiResponse == C_GUI_OK  )
 	{
 	
-		tile_list t;
-		GetPointersToSimilarTilesOnMap(g_pMapManager->GetActiveMap(), t, pTile);
-
+	
 		unsigned int flags = 0;
 		
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
@@ -2668,8 +2666,11 @@ if (m_bDialogIsOpen) return;
 
 		//g_pMapManager->GetActiveMap()->ReInitEntities();
 		//update our current selection
+		
 		pTileList->UpdateSelectionFromWorld();
-
+		
+		tile_list t;
+		GetPointersToSimilarTilesOnMap(g_pMapManager->GetActiveMap(), t, pTile);
 		ReInitTileList(t);
 
 

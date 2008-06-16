@@ -88,7 +88,6 @@ Group: Simple Objects  {
    File: Tag  (TagManager.h)
    File: Zone  (MovingEntity.h)
    File: Joystick  (Joystick.cpp)
-   File: Material  (physics\temp\Contact.h)
    }  # Group: Simple Objects
 
 Group: Effect Objects  {

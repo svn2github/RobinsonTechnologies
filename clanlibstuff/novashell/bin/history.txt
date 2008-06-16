@@ -9,7 +9,12 @@ new collision features soon
 
 Changelog
 
-6-8 3008
+6-16 2008
+
+* BUGFIX: Fixed problem with falling text, the blank dummy image tilepic text uses had been assigned collision data somehow
+* BUGFIX: Fixed serious crash bug dealing with re-initializing entities after editing their properties
+
+6-8 2008
 
 ** Note, a lot has changed and there are still some quirks/bugs/issues to be worked out.. you might want to wait for the next version.. 
 

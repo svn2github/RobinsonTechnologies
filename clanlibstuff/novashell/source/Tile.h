@@ -24,7 +24,9 @@ enum
 	C_TILE_TYPE_BLANK = 0, //used as a place holder in some edit operations
 	C_TILE_TYPE_PIC,
 	C_TILE_TYPE_REFERENCE, //not a real tile, but a ghost pointing to the real one.
-	C_TILE_TYPE_ENTITY
+	C_TILE_TYPE_ENTITY,
+	C_TILE_TYPE_COUNT
+
 };
 
 class Tile

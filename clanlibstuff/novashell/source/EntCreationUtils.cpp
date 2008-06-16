@@ -99,11 +99,12 @@ void ReInitTileList(tile_list &t)
 	{
 		pTile = (*itor);
 
-
+		assert(pTile->GetType() < C_TILE_TYPE_COUNT);
 		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
 		{
 			ReInitEntity(((TileEntity*)pTile)->GetEntity());
 		}
+
 
 		itor++;
 	}
@@ -121,6 +122,7 @@ void GetPointersToSimilarTilesOnMap(Map *pMap, tile_list &t, Tile *pTile)
 
 	while(tItor != t.end() )
 	{
+		assert((*tItor)->GetType() < C_TILE_TYPE_COUNT);
 		if ( !TilesAreSimilar((*tItor), pTile))
 		{
 			//remove this one

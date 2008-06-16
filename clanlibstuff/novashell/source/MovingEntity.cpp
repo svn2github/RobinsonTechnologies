@@ -1580,9 +1580,7 @@ void MovingEntity::RunPostInitIfNeeded()
 		{
 			if (m_pScriptObject->FunctionExists("OnPostInit"))
 				m_pScriptObject->RunFunction("OnPostInit");
-		}
-
-
+		} 
 		m_bHasRunPostInit = true;
 		InitializeBody();
 
@@ -3075,9 +3073,6 @@ void MovingEntity::Update(float step)
 			itor++;
 		}
 	}
-
-	
-
 }
 
 

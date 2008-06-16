@@ -132,6 +132,9 @@ void DumpTable( lua_State *L, const char *pTableName, int tableIndex) //null def
 ScriptObject::ScriptObject()
 {
 	m_bGarbageCollectOnKill = false;
+#ifdef _DEBUG
+	//m_bGarbageCollectOnKill = true;
+#endif
 	m_pLuaState = NULL;
 	m_threadReference = LUA_NOREF;
 	assert(GetScriptManager && "Threads can't be created before the script manager!");
@@ -169,6 +172,7 @@ ScriptObject::~ScriptObject()
 	luaL_unref (GetScriptManager->GetMainState(),LUA_GLOBALSINDEX, m_threadReference);
 	if (m_bGarbageCollectOnKill)
 	{
+		//LogMsg("Forcing GC..");
 		lua_gc(m_pLuaState, LUA_GCCOLLECT, 0);
 	}
 }
