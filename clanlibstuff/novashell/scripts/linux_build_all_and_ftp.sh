@@ -13,7 +13,7 @@ echo Running from $PWD
 sudo mount -a
 sh ./linux_build_clanlib.sh
 cd ../../..
-#svn update
+svn update
 cd clanlibstuff/novashell/scripts
 sh ./linux_build_release.sh
 sh ./linux_media_update.sh
