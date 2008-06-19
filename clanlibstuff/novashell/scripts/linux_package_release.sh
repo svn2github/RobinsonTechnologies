@@ -1,6 +1,6 @@
 #!/bin/bash
 
-packedfilename=novashell_test.tar.gz
+packedfilename=novashell.tar.gz
 
 echo "Packing final release... $packedfilename"
 
@@ -12,7 +12,7 @@ cd ..
 unlink $packedfilenames
 
 mv bin novashell
-tar cvfz $packedfilename novashell/novashell novashell/worlds novashell/base
+tar cvfz $packedfilename novashell/novashell novashell/worlds novashell/base novashell/license.txt novashell/credits.txt novashell/history.txt
 mv novashell bin
 
 if [ -f $packedfilename ] 

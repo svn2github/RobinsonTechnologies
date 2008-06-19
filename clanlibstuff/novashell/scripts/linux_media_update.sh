@@ -2,9 +2,9 @@
 
 #erase the old stuff
 echo Erasing local media directory
-rm -r ../bin/base
-rm -r ../bin/worlds
+sudo rm -R ../bin/base
+sudo rm -R ../bin/worlds
 
 echo Coping media tree from master server
-cp -r /media/projects/clanlibstuff/novashell/bin/base ../bin/base
+cp -r /media/projects/clanlibstuff/novashell/bin/base ../bin
 cp -r /media/projects/clanlibstuff/novashell/bin/worlds ../bin
