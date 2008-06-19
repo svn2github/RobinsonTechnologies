@@ -5212,6 +5212,10 @@
 			RelativePath="..\bin\history.txt"
 			>
 		</File>
+		<File
+			RelativePath="..\readme.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

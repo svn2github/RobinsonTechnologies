@@ -4,10 +4,16 @@ Known problems: Occasional framerate stutters under dual core processers under v
 ** Some examples are missing, will be back later after they are updated
 ** There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
 new collision features soon
-** OSX/Linux builds will be coming "soon" (tm)
 ** Need to update tutorial pages to use new collision stuff
 
+
 Changelog
+
+6-19 2008
+
+* LINUX: Upgraded my ubuntu linux to 8.04, re-worked the linux build, it's easier to build from source now, you just checkout
+everything and run linux_make_novashell.sh.  Gone is the craziness with needing to shuffle directories around
+* LINUX: I'm statically linking to Clanlib now so you must have clanlib 8.X on your system to run the latest linux builds.
 
 6-16 2008
 

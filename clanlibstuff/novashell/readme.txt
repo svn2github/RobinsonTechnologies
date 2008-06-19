@@ -7,7 +7,9 @@ binaries you will need from here:  http://clanlib.org/download-binaries-win32-vc
 
 Make sure the examples work ok and everything compiles.
 
-Check out the Novashell SVN tree somewhere, load clanlibstuff/novashell/source/novashell.sln with VC8.
+Check out the Novashell SVN tree somewhere from svn://rtsoft.com/rtsvn.
+
+Load clanlibstuff/novashell/source/novashell.sln with VC8.
 
 You may get errors about missing projects like "clanCore" or "clanDisplay", you can just ignore and remove these, 
 sometimes I have those projects added for when I debug clanLib and Novashell together.
@@ -58,30 +60,14 @@ it up into a dmg and upload it.  You'd have to edit the scripts involved to get 
 Checkout Clanlib 0.8.1 from SVN from www.clanlib.org.  You'll also need to grab the additional libs clanlib needs, but
 hey, you're a linux guy, you can probably figure out the dependencies.
 
-Next, check out *JUST* the novashell (and sub dirs), then, from inside that directory, check out "SharedLib".
+Run the its automake stuff and do "make install".
 
-So, instead of what the SVN has, ie:
+Next, check out all of rtsvn.  (svn checkout svn://rtsoft.com/rtsvn)
 
-<root checkout>
-		clanlibstuff
-			novashell
-				Misc Novashell dirs
-		SharedLib
+From its root, do:
+sh linux_make_novashell.sh
 
-you have:
-
-novashell
-	Misc Novashell dirs
-	SharedLib
-	
-The reason was I couldn't get KDevelop to let me include sources that weren't part of the projects subtree.. dumb!
-
-Anyway, next use KDevelop to open novashell.kdevelop and you're all set with the IDE and should be able to compile it.
-
--- Updating from SVN/building/packing from the command line (Not required!) 
-script/linux_build_all_and_ftp.sh does the work.  Would need editing etc.
-
-
+That's it!
 
 Good luck!
 
