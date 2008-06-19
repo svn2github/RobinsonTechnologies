@@ -1,3 +1,4 @@
+
 bin_PROGRAMS = novashell
 novashell_SOURCES = AppPrecomp.cpp AppUtils.cpp AppUtils.h BaseGameEntity.cpp \
 						BaseGameEntity.h Brain.cpp Brain.h Camera.cpp Camera.h CameraSetting.cpp CameraSetting.h \
@@ -27,30 +28,38 @@ novashell_SOURCES = AppPrecomp.cpp AppUtils.cpp AppUtils.h BaseGameEntity.cpp \
 						Map.cpp Map.h MapManager.cpp MapManager.h BrainScale.cpp \
 				EffectManagerBindings.cpp EffectManagerBindings.h EffectManager.cpp EffectManager.h \
 			DataEditor.cpp DataEditor.h ScriptCallbackManager.cpp ScriptCallbackManager.h \
-	StateAttack2.cpp StateAttack2.h StateJump.cpp StateJump.h StateRun.cpp StateRun.h \
-	StateSpecial1.cpp StateSpecial1.h StateTurn.cpp StateTurn.h
+	StateAttack2.cpp StateAttack2.h StateJump.cpp StateJump.h StateRun.cpp StateRun.h NovaZip.cpp \
+	StateSpecial1.cpp StateSpecial1.h StateTurn.cpp StateTurn.h PhysicsManager.cpp DebugDraw.cpp \
+	$(top_srcdir)/../../SharedLib/misc/CL_VirtualFileManager.cpp $(top_srcdir)/../../SharedLib/misc/MiscUtils.cpp \
+	$(top_srcdir)/../../SharedLib/misc/CL_SoundManager.cpp
+
 
 # set the include path found by configure
-INCLUDES = -I$(top_srcdir)/SharedLib -I$(top_srcdir)/SharedLib/lua \
-	-I$(top_srcdir)/SharedLib/lua/src -I$(top_srcdir)/SharedLib/luabind -I$(top_srcdir)/SharedLib/misc \
-	-I$(top_srcdir)/SharedLib/linearparticle -I$(top_srcdir)/SharedLib/linearparticle/sources -I$(top_srcdir)/source \
-	-I$(top_srcdir)/source/AI -I$(top_srcdir)/source/GUIStyleBitmap -I$(top_srcdir)/source/physics \
-	-I/usr/local/include/ClanLib-0.8 $(all_includes)
+INCLUDES = -I$(top_srcdir)/../../SharedLib -I$(top_srcdir)/../../SharedLib/lua 	-I$(top_srcdir)/../../SharedLib/lua/src \
+-I$(top_srcdir)/../../SharedLib/luabind -I$(top_srcdir)/../../SharedLib/misc 	-I$(top_srcdir)/source \
+-I$(top_srcdir)/source/AI -I/usr/local/include/ClanLib-0.8 $(all_includes)
 
 # the library search path.
-novashell_LDFLAGS = $(all_libraries)
-novashell_LDADD = $(top_builddir)/source/physics/libphysics.a \
+
+
+novashell_LDFLAGS = $(all_libraries) `pkg-config --cflags --libs clanApp-0.8 clanCore-0.8 clanDisplay-0.8 clanGL-0.8 clanVorbis-0.8 clanGUIStyleSilver-0.8`
+novashell_LDADD =  \
 	$(top_builddir)/source/GUIStyleBitmap/libGuiStyleBitmap.a $(top_builddir)/source/AI/libAI.a \
-	$(top_builddir)/SharedLib/linearparticle/sources/libeffects.a $(top_builddir)/SharedLib/misc/libmisc.a \
-	$(top_builddir)/SharedLib/luabind/src/libluabind.a $(top_builddir)/SharedLib/lua/src/liblualib.a \
-	/usr/local/lib/libclanVorbis.a /usr/local/lib/libclanSound.a /usr/local/lib/libclanGUIStyleSilver.a \
-	/usr/local/lib/libclanGUI.a /usr/local/lib/libclanGL.a /usr/local/lib/libclanDisplay.a \
-	/usr/local/lib/libclanApp.a /usr/local/lib/libclanCore.a /usr/local/lib/libclanSignals.a -lGLU \
-	/usr/lib/libvorbis.a /usr/lib/libpng12.a -lGL -lXi /usr/lib/libogg.a -lpthread -lxml2 -lm \
-	-lbz2 -ldl -lz /usr/lib/libtiff.a /usr/lib/libjpeg.a -lXext -lXt -lX11 -lSM \
-	-lasound -lICE -lXxf86vm -ldl
+	$(top_builddir)/../../SharedLib/linearparticle/sources/libeffects.a \
+	$(top_builddir)/../../SharedLib/luabind/src/libluabind.a \
+	$(top_builddir)/../../SharedLib/lua/src/liblualib.a \
+	$(top_builddir)/../../SharedLib/Box2D/Source/Gen/float/libbox2d.a
+	
 
 
+#/usr/local/lib/libclanVorbis.a /usr/local/lib/libclanSound.a /usr/local/lib/libclanGUIStyleSilver.a \
+#	/usr/local/lib/libclanGUI.a /usr/local/lib/libclanGL.a /usr/local/lib/libclanDisplay.a \
+#	/usr/local/lib/libclanApp.a /usr/local/lib/libclanCore.a /usr/local/lib/libclanSignals.a -lGLU \
+#	/usr/lib/libvorbis.a /usr/lib/libpng12.a
+#/usr/lib/libtiff.a /usr/lib/libjpeg.a
 
+# -lGL -lXi /usr/lib/libogg.a -lpthread -lxml2 -lm \
+#	-lbz2 -ldl -lz -lXext -lXt -lX11 -lSM \
+#	-lasound -lICE -lXxf86vm -ldl
 
-SUBDIRS = GUIStyleBitmap physics AI
+SUBDIRS = GUIStyleBitmap AI

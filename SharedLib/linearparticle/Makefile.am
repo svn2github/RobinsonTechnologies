@@ -1,4 +1,1 @@
-INCLUDES = 
-METASOURCES = AUTO
-
 SUBDIRS = sources

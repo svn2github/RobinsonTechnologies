@@ -15,7 +15,7 @@ class Tile;
 class Map;
 class TileEditOperation;
 
-#include "screen.h"
+#include "Screen.h"
 
 MovingEntity * CreateEntity(Map *pMap, CL_Vector2 vecPos, string scriptFileName);
 BaseGameEntity *  CreateEntitySpecial(const string &EntName, const string &parms);

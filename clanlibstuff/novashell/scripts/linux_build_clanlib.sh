@@ -10,7 +10,7 @@ Pause()
 #sh ./linux_update_clanlib_manually.sh
 
 #first update clanlib
-cd ../../ClanLib-0.8
+cd ../../../ClanLib-0.8
 echo Updating ClanLib from SVN
 sudo svn update
 
@@ -27,4 +27,4 @@ else
 echo "Success!"
 fi 
 
-cd ../novashell/scripts
+cd ../rtsvn/clanlibstuff/novashell/scripts

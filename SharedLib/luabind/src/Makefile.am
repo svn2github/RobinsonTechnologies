@@ -1,5 +1,6 @@
-INCLUDES = -I$(top_srcdir)/SharedLib -I$(top_srcdir)/SharedLib/lua/src \
-	-I$(top_srcdir)/SharedLib/luabind -I/usr/local/include/ClanLib-0.8
+INCLUDES = -I/usr/local/include/ClanLib-0.8 \
+-I../../ -I../../lua -I../../lua/src -I../../../clanlibstuff/novashell/source \
+-I../luabind
 METASOURCES = AUTO
 noinst_LIBRARIES = libluabind.a
 libluabind_a_SOURCES = class.cpp class_info.cpp class_registry.cpp class_rep.cpp\

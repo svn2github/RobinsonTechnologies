@@ -19,7 +19,7 @@
 #ifndef DEBUGDRAW_H
 #define DEBUGDRAW_H
 
-#include "Box2d/Include/Box2D.h"
+#include "Box2D/Include/Box2D.h"
 
 struct b2AABB;
 

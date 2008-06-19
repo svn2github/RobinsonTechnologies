@@ -12,42 +12,37 @@ Pause()
 }
 
 echo Running from $PWD - building $filename
-
-sh ./linux_svn_update.sh
-
 cd ..
-svn update
-make distclean
 echo Setting up for retail build
-mkdir optimized
-#figure out the bin path ourselves
-binoutputdir=$PWD
-
-cd 'optimized'
-
-CXXFLAGS="-O2 -g0" && ../configure --prefix=$binoutputdir
 
 #erase file that was there
 rm -f ../bin/$filename
 
-#actually make it
-make install
+#first go build/update the support libraries
+cd ../../SharedLib
+sh linux_build_libs.sh
+cd ../clanlibstuff/novashell
 
+#actually make it
+aclocal
+automake
+autoconf
+./configure
+make
 
 #success?
 
-if [ -f ../bin/$filename ] 
+if [ -f source/$filename ] 
 then
-
  echo Successfully built it.
-  cd ../bin  
+ mv source/$filename bin/$filename
+  cd bin  
   strip -s $filename
-
+  cd ..
  else
   echo -e "Error building executable! \a"
   Pause
  exit 1;
 fi
-
 #return to the dir from whence we came
-cd ../scripts
+cd scripts
