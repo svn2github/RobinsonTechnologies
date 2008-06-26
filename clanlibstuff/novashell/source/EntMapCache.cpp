@@ -695,23 +695,6 @@ void EntMapCache::RenderGoalAI(CL_GraphicContext *pGC)
 	}
 }
 
-void EntMapCache::RenderCollisionLists(CL_GraphicContext *pGC)
-{
-	Tile *pTile;
-
-	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
-	{
-
-		pTile = m_tileLayerDrawList.at(i);
-		if (!pTile) continue;
-
-		if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-		{
-			MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
-			pEnt->RenderCollisionLists(pGC);
-		}
-	}
-}
 
 void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 {
@@ -1034,7 +1017,7 @@ void EntMapCache::Render(void *pTarget)
 	if (GetGameLogic()->GetShowEntityCollisionData())
 	{
 		//show extra debug stuff
-		RenderCollisionLists(pGC);
+		//RenderCollisionLists(pGC);
 	}
 
 	if (GetGameLogic()->GetShowAI())

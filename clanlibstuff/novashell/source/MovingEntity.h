@@ -91,9 +91,6 @@ public:
   void StopX();
 
   void SetCollisionScale(const CL_Vector2 &vScale);
-  void ApplyGenericMovement(float step);
-  tile_list & GetNearbyTileList(); //note, this may not be valid if you're deleting tiles!  For debug only
-  CL_Rectf & GetLastScanArea(){return m_scanArea;}
   bool IsAtRest() {return m_bIsAtRest;}
   bool IsOnGround() {return m_groundTimer >= GetApp()->GetGameTick();}
   bool IsOnGroundAccurate() {return m_bTouchedAGroundThisFrame;}
@@ -130,7 +127,6 @@ public:
   virtual void  Update(float step);
   virtual void  Render(void *pTarget);
   void ApplyToPhysics(float step);
-  void RenderCollisionLists(CL_GraphicContext *pGC);
   void RenderShadow(void *pTarget);
   BaseGameEntity * CreateClone(TileEntity *pTile);
   void SetIsOnGround(bool bOnGround);
@@ -353,7 +349,7 @@ public:
   uint16 GetCollisionListenBits() {return m_collisionListenBits;}
   void SetCollisionCategories(uint16 mask);
   void SetCollisionListenCategories( uint16 mask );
-
+  void SetCategories( uint16 mask );
   enum ListenCollision
 {
 	//I know I don't have to specify the #'s but it helps me visually keep
@@ -385,8 +381,6 @@ protected:
 
 	void SetDefaults();
 
-	void ProcessCollisionTileList(tile_list &tList, float step);
-	void ProcessCollisionTile(Tile *pTile, float step);
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
 	void ResetEffects();
@@ -400,7 +394,6 @@ protected:
 	void UpdateBodyCollisionMode();
 	void UpdatePosToPhysics();
 	CL_Rectf m_scanArea;
-	tile_list m_nearbyTileList;
 	bool m_bIsAtRest;
 	bool m_bMovedFlag; //if true, we need to update our tile position
 	unsigned int m_groundTimer; //relax when we say they are on the  ground or not to take care of tiny bounces

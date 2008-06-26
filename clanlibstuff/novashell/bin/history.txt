@@ -1,13 +1,24 @@
 Known problems: Occasional framerate stutters under dual core processers under vista64?
 
-** The top view RPG examples are currently broken in places...
-** Some examples are missing, will be back later after they are updated
+** The top view RPG example is currently broken in places...
 ** There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
 new collision features soon
+** The low res platformer example has a problem with the camera bumping around, I've been putting off fixing this because I want do some
+new collision shapes that I think would fix the need to have bumpy blocks
 ** Need to update tutorial pages to use new collision stuff
 
 
 Changelog
+
+6-26 2008
+
+* Added Entity:SetCategories() for completeness
+* Added the examples that were missing before, updated all to run on new engine 
+
+6-22 2008
+
+* After saving collision, verts of all lines are dispalyed, instead of just the first one
+* In collision objects with multiple lines, all are now corrected if possible (like, made convex, etc) instead of just line 0
 
 6-19 2008
 

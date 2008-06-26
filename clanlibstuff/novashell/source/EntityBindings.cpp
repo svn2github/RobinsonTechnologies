@@ -23,11 +23,6 @@ string EntityToString(BaseGameEntity * pEnt)
 }
 
 
-TileList GetNearbyTileListForScript(MovingEntity *pEnt)
-{
-	return TileList(&pEnt->GetNearbyTileList());
-}
-
 
 string DataManagerToString(DataManager * pObj)
 {
@@ -1251,6 +1246,22 @@ category - Which category you want to set, must be a number between 0 and 15. (C
 bOn - If true, this entity is a member of this category, if false, the opposite.
 
 */
+
+.def("SetCategories", &MovingEntity::SetCategories)
+/*
+func: SetCategories
+(code)
+nil SetCategories(number categoryMask)
+(end)
+
+Let's you set all 16 states at once with a single number.  
+Only use this if you know what you are doing, or use the C_CATEGORIES_NONE define to easily turn off all of them.
+
+Parameters:
+
+categoryMask - A single 16 bit number representing each category. 
+*/
+
 
 .def("SetCollisionCategory", &MovingEntity::SetCollisionMask)
 /*
@@ -3015,7 +3026,6 @@ True if this entity has actually been placed on a map.
 	A <Zone> object describing the results.  If the Zone's materialID variable is not <C_MATERIAL_TYPE_NONE>, the zone type was found and contains valid data.
 	*/
 	
-//	.def("GetNearbyTileList", &GetNearbyTileListForScript)
 			
 	];
 

@@ -33,6 +33,8 @@
 #define C_DEFAULT_DESIRED_WALK_SPEED 7
 #define C_DEFAULT_MAX_WALK_SPEED 3000
 
+#define C_DEFAULT_DAMPENING 0.0f //only applied when gravity is 0
+
 Zone g_ZoneEmpty;
 
 class ZoneEmptyInit
@@ -553,7 +555,6 @@ void MovingEntity::SetDefaults()
 	m_bCanRotate = false;
 	SetMaxWalkSpeed(C_DEFAULT_MAX_WALK_SPEED);
 	SetDesiredSpeed(C_DEFAULT_DESIRED_WALK_SPEED);
-	m_nearbyTileList.clear();
 	m_floorMaterialID = -1;
 	m_bUsingSimpleSprite = false;
 	m_fDensity = C_DEFAULT_DENSITY; //default
@@ -1333,10 +1334,7 @@ void MovingEntity::SetAlignment(int origin, CL_Vector2 v)
 //Note, this is NOT safe to use except in the post update functions.  An entity might have
 //been deleted otherwise.
 
-tile_list & MovingEntity::GetNearbyTileList()
-{
-	return m_nearbyTileList;
-}
+
 
 CL_Rect MovingEntity::GetImageClipRect()
 {
@@ -2032,113 +2030,6 @@ void MovingEntity::LastCollisionWasInvalidated()
 	m_floorMaterialID = m_oldFloorMaterialID;
 }
 
-/*
-void MovingEntity::OnCollision(const Vector & N, float &t, Body *pOtherBody, bool *pBoolAllowCollision)
-{
-
-	switch (m_collisionMode)
-	{
-
-	case COLLISION_MODE_NONE:
-		*pBoolAllowCollision = false;
-		return;
-		break;
-
-	case COLLISION_MODE_STATIC_ONLY:
-		if (pOtherBody->GetParentEntity() != 0)
-		{
-			*pBoolAllowCollision = false;
-			return;
-		}
-		break;
-
-
-	case COLLISION_MODE_ENTITIES_ONLY:
-		if (pOtherBody->GetParentEntity() == 0)
-		{
-			//it's static, ignore this collision	
-			*pBoolAllowCollision = false;
-			return;
-		}
-		break;
-
-	case COLLISION_MODE_PLAYER_ONLY:
-		if ( !GetPlayer || pOtherBody->GetParentEntity() != GetPlayer)
-		{
-			//it's not the player...
-			*pBoolAllowCollision = false;
-			return;
-		}
-	}
-
-
-	m_bOldTouchedAGroundThisFrame = m_bTouchedAGroundThisFrame;
-	m_oldFloorMaterialID = m_floorMaterialID;
-
-	if (N.y < -0.7f) //higher # here means allows a stronger angled surface to count as "ground"
-	{
-		//LogMsg("%s Touched ground of some sort", GetName().c_str());
-		m_bTouchedAGroundThisFrame = true;
-		
-		//TODO
-		//m_floorMaterialID = pOtherBody->GetMaterial()->GetID();
-	}
-
-	if (pOtherBody->GetParentEntity() != 0)
-	{
-		switch (GetListenCollision())
-		{
-
-		case LISTEN_COLLISION_NONE:
-			break;
-
-		case LISTEN_COLLISION_PLAYER_ONLY:
-			
-			if ( pOtherBody->GetParentEntity() == GetPlayer)
-			{
-				if (!m_pScriptObject->FunctionExists("OnCollision"))
-				GetScriptManager->SetStrict(false);
-				try {	*pBoolAllowCollision = luabind::call_function<bool>(m_pScriptObject->GetState(), "OnCollision", CL_Vector2(N.x, N.y), t,  pOtherBody->GetMaterial()->GetID(),  pOtherBody->GetParentEntity());
-				} LUABIND_ENT_CATCH("Error while calling OnCollision(Vector2, float, materialID, Entity)");
-				GetScriptManager->SetStrict(true);
-			}
-
-			break;
-
-		case LISTEN_COLLISION_ALL_ENTITIES:
-			if (!m_pScriptObject->FunctionExists("OnCollision"))
-				GetScriptManager->SetStrict(false);
-			try {	*pBoolAllowCollision = luabind::call_function<bool>(m_pScriptObject->GetState(), "OnCollision", CL_Vector2(N.x, N.y), t,  pOtherBody->GetMaterial()->GetID(), pOtherBody->GetParentEntity());
-			} LUABIND_ENT_CATCH("Error while calling OnCollision(Vector2, float, materialID, Entity)");
-			GetScriptManager->SetStrict(true);
-
-			break;
-		default:
-			assert(!"Bad collision listen value");
-		}
-	} else
-	{
-		//it's a wall that touched them
-		switch (m_listenCollisionStatic)
-		{
-		case LISTEN_COLLISION_STATIC_NONE:
-			break;
-
-		case LISTEN_COLLISION_STATIC_ALL:
-			if (!m_pScriptObject->FunctionExists("OnCollisionStatic"))
-				GetScriptManager->SetStrict(false);
-			try {	*pBoolAllowCollision = luabind::call_function<bool>(m_pScriptObject->GetState(), "OnCollisionStatic", CL_Vector2(N.x, N.y), t, pOtherBody->GetMaterial()->GetID());
-			} LUABIND_ENT_CATCH("Error while calling OnCollisionStatic(Vector2, float, materialID)");
-			GetScriptManager->SetStrict(true);
-
-			break;
-		
-		default:
-			assert(!"Unknown collision static type");
-		}
-	}
-}
-*/
 void MovingEntity::SetIsOnGround(bool bOnGround)
 {
 	if (bOnGround)
@@ -2338,144 +2229,6 @@ void MovingEntity::InitCollisionDataBySize(float x, float y)
 	SetDensity(1);
 }
 
-void MovingEntity::ProcessCollisionTile(Tile *pTile, float step)
-{
-
-	/*
-	CollisionData *pCol = pTile->GetCollisionData();
-
-	if (!pCol || pCol->GetLineList()->empty()) return;
-
-	if (pTile == m_pTile) return; //don't process ourself, how much sense would that make?
-
-	//if we are on  their list, we also don't want to process, because processing a pair once is all
-	//that is needed
-
-	if ( pTile->GetType() == C_TILE_TYPE_ENTITY)
-	{
-		static MovingEntity *pEnt;
-		pEnt = ((TileEntity*)pTile)->GetEntity();
-
-		if (pEnt->GetDrawID() == m_drawID)
-		{
-			//he's already been processed and we have to assume he would have processed us too
-			//note, it's possible this could be wrong as they may get their "neighbor list" slightly
-			//differently, but I don't think it's possible for one to miss if they actually DO touch
-			return;
-		}
-
-		//what if the other entity hasn't had a chance to run its init stuff yet?
-
-		pEnt->RunPostInitIfNeeded();
-	}
-	
-	static CollisionData colCustomized;
-	if (pTile->UsesTileProperties())
-	{
-		//we need a customized version
-		CreateCollisionDataWithTileProperties(pTile, colCustomized);
-		pCol = &colCustomized; //replacement version
-	}
-
-	int lineCount = pCol->GetLineList()->size();
-
-	line_list::iterator lineListItor = pCol->GetLineList()->begin();
-	b2Body *pWallBody;
-	while (lineListItor != pCol->GetLineList()->end())
-	{
-		if (lineListItor->HasData() && g_materialManager.GetMaterial(lineListItor->GetType())->GetType()
-			== CMaterial::C_MATERIAL_TYPE_NORMAL)
-		{
-			
-			//static objects will send Null for the custombody, which is ok
-			pWallBody = &lineListItor->GetAsBody(pTile->GetPos(), pTile->GetCustomBody());
-			
-			//examine each line list for suitability
- 		  
-			if (m_pTile->UsesTileProperties())
-			{
-				//OPTIMIZE slow hack to allow X/Y flipping for an entity, redo later?  Depends on if we'll use this much.
-				static CollisionData colMyCustomized;
-				CreateCollisionDataWithTileProperties(m_pTile, colMyCustomized);
-				colMyCustomized.GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
-				
-				
-				//TODO
-				//m_body.Collide(*pWallBody, step);
-
-				//the dangerous thing about Collide is it calls scripts which could replace or remove our collision info!
-				if (m_pCollisionData)
-				{
-					//fix it back from reversed mode
-					m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
-
-				} else
-				{
-					return;
-				}
-				
-				//we're assuming entities only have one collision line, we leave now to avoid a crash if their
-				//collision info was removed or changed in a possible script callback
-				if (pTile->GetType() == C_TILE_TYPE_ENTITY) return;
-
-				
-			} else
-			{
-				//TODO
-				//m_body.Collide(*pWallBody, step);
-
-				//we're assuming entities only have one collision line, we leave now to avoid a crash if their
-				//collision info was removed or changed in a possible script callback
-				if (pTile->GetType() == C_TILE_TYPE_ENTITY) return;
-
-			}
-			
-		} else
-		{
-			//might be a ladder zone or something else we should take note of
-			if (lineListItor->HasData())
-			{
-					//actually add the data
-					static Zone z;
-					z.m_materialID = lineListItor->GetType();
-					z.m_boundingRect = lineListItor->GetRect();
-					z.m_vPos = pTile->GetPos();
-					if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-					{
-						//i send the ID because it's safer than the pointer
-						z.m_entityID = ((TileEntity*)pTile)->GetEntity()->ID();
-						//z.m_vPos += lineListItor->GetOffset();
-						z.m_boundingRect -=  *(CL_Pointf*)& (pCol->GetLineList()->begin()->GetOffset());
-
-					} else
-					{
-						z.m_entityID = 0;
-					}
-					m_zoneVec.push_back(z);
-				
-			}
-		}
-	
-		lineListItor++;
-	}
-
-	*/
-}
-
-
-void MovingEntity::ProcessCollisionTileList(tile_list &tList, float step)
-{
-	if (tList.empty()) return;
-
-	tile_list::iterator listItor = tList.begin();
-
-	while (listItor != tList.end())
-	{
-			ProcessCollisionTile(*listItor, step);
-			listItor++;
-	}
-}
-
 void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 {
 	if (m_pSpriteLastUsed != pSprite)
@@ -2512,48 +2265,6 @@ void MovingEntity::SetSpriteData(CL_Sprite *pSprite)
 	}
 }
 
-void MovingEntity::ApplyGenericMovement(float step)
-{
-/*
-	//schedule tile update if needed
-	m_bMovedFlag = true;
-
-	if (m_collisionMode == COLLISION_MODE_NONE) return;
-
-	if (!m_pCollisionData->GetLineList()->size())
-	{
-		LogError("No collision data in entity %d. (%s)", ID(), GetName().c_str());
-		return;
-	}
-
-	if (!m_pSprite || m_pSprite->get_frame_count() == 0)
-	{
-		throw CL_Error("Error, sprite not valid in entity " + CL_String::from_int(ID()) + " (trying to walk in a direction that doesn't exist maybe?");
-		return;
-	}
-	
-	//scan around us for entities
-
-	m_scanArea = m_pTile->GetWorldColRect();
-	float padding;
-	padding = (max(m_scanArea.get_width(), m_scanArea.get_height()));
-	padding = (float(padding)*0.2f)+8;
-
-	m_scanArea.left -= padding;
-	m_scanArea.top -= padding;
-	m_scanArea.right += padding;
-	m_scanArea.bottom += padding;
-
-	Map *pWorld = m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
-*/
-	//pWorld->GetMyMapCache()->AddTilesByRect(CL_Rect(m_scanArea), &m_nearbyTileList, pWorld->GetLayerManager().GetCollisionList());
-	
-	
-	//m_pCollisionData->GetLineList()->begin()->GetAsBody(CL_Vector2(0,0), &m_body);
-
-	//ProcessCollisionTileList(m_nearbyTileList, step);
-
-}
 
 
 CL_Vector2 MovingEntity::GetVisualOffset()
@@ -2901,17 +2612,6 @@ void MovingEntity::Render(void *pTarget)
 
 }
 
-void MovingEntity::RenderCollisionLists(CL_GraphicContext *pGC)
-{
-	if (GetLastScanArea().get_width() != 0)
-	{
-		DrawRectFromWorldCoordinates(CL_Vector2(GetLastScanArea().left,  GetLastScanArea().top), 
-			CL_Vector2(GetLastScanArea().right, GetLastScanArea().bottom),	CL_Color(0,255,0,255),  pGC);
-	}
-
-	CL_Color col(255,255,0);
-	RenderTileListCollisionData(GetNearbyTileList(), pGC, false, &col);
-}
 
 void MovingEntity::SetTrigger(int triggerType, int typeVar, int triggerBehavior, int behaviorVar)
 {
@@ -2958,8 +2658,6 @@ void MovingEntity::SetRunStringASAP(const string &command)
 
 void MovingEntity::ProcessPendingMoveAndDeletionOperations()
 {
-	
-	m_nearbyTileList.clear();
 
 	if (GetDeleteFlag())
 	{
@@ -3126,6 +2824,14 @@ void MovingEntity::UpdatePhysicsToPos()
 			if (m_customDampening!= -1)
 			{
 				AddForceBurst( -(GetLinearVelocity()*m_customDampening));
+			} else
+			{
+				//default dampening
+				if (GetMap()->GetGravity() == 0)
+				{
+					AddForceBurst( -(GetLinearVelocity()*C_DEFAULT_DAMPENING));
+
+				}
 			}
 			if (m_gravityOverride != C_GRAVITY_OVERRIDE_DISABLED)
 			{
@@ -3174,7 +2880,6 @@ void MovingEntity::PostUpdate(float step)
 				{
 					return; //don't update yet
 				}
-
 			} else
 			{
 				assert(!"Huh?  Our parent was deleted and we weren't notified?");
@@ -3186,14 +2891,12 @@ void MovingEntity::PostUpdate(float step)
 	{
 		UpdatePositionFromParent();
 	} 
-
 	
 	if (m_bRequestsVisibilityNotifications)
 	{
 			SetIsOnScreen(IsOnScreen());
 			g_watchManager.AddEntityToVisibilityList(this);
 	}
-
 
 	HandleContacts();
 	
@@ -3221,9 +2924,7 @@ void MovingEntity::PostUpdate(float step)
 		}
 	}
 
-	m_nearbyTileList.clear();
-
-
+	
 }
 
 
@@ -3440,8 +3141,6 @@ void MovingEntity::OnAttachedEntity(int entID)
 }
 
 
-
-
 void MovingEntity::UpdatePositionFromParent()
 {
 	CL_Vector2 vScaleMod(1,1);
@@ -3497,13 +3196,10 @@ void MovingEntity::UpdatePositionFromParent()
 	{
 		SetPosAndMap(vPos, mapName);
 		//LogMsg(" Ent %d changing to map %s at %u.", ID(),  mapName.c_str(), GetApp()->GetGameTick());
-
 	} else
 	{
 		SetPos(vPos);
-
 	}
-
 
 }
 
@@ -3599,8 +3295,7 @@ void MovingEntity::HandleContacts()
 
 	for (unsigned int i=0; i < m_contacts.size(); i++)
 	{
-		
-
+	
 #ifdef _DEBUG
 	if (m_contacts[i].pOwnerEnt)
 	{
@@ -3616,7 +3311,6 @@ void MovingEntity::HandleContacts()
 #endif
 	if (!m_pScriptObject->FunctionExists("OnCollision"))
 			GetScriptManager->SetStrict(false);
-
 
 	try {	luabind::call_function<void>(m_pScriptObject->GetState(), "OnCollision", FromPhysicsSpace(m_contacts[i].position),
 		*(CL_Vector2*)&m_contacts[i].velocity, 
@@ -3685,6 +3379,11 @@ int MovingEntity::GetCollisionGroup()
 void MovingEntity::SetCollisionGroup( int group )
 {
 	m_filterData.groupIndex = group;
+}
+
+void MovingEntity::SetCategories( uint16 mask )
+{
+	m_filterData.categoryBits = mask;
 }
 
 void MovingEntity::SetCollisionListenCategory( int category, bool bOn )

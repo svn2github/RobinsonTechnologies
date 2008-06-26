@@ -307,10 +307,15 @@ void EntCollisionEditor::OnOk()
 	LogMsg("Final collision edit data:");
 	LogMsg( (string("Offset is ") + PrintVector(m_pCollisionData->GetLineList()->begin()->GetOffset())).c_str());
 
-	m_pCollisionData->GetLineList()->begin()->ComputeConvexHull();
-	m_pCollisionData->GetLineList()->begin()->PrintPoints();
-	m_pCollisionData->CheckForErrors("", true);
+	line_list::iterator itor = m_pCollisionData->GetLineList()->begin();
+	while (itor != m_pCollisionData->GetLineList()->end())
+	{
+		itor->ComputeConvexHull();
+		itor->PrintPoints();
+		itor++;
+	}
 
+	m_pCollisionData->CheckForErrors("", true);
 	//OTE:  Check OnCollisionDataEditEnd in EntEditMode to see what else we do after ending an edit
 	SetDeleteFlag(true);
 
