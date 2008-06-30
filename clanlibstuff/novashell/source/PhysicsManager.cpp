@@ -38,11 +38,63 @@ bool PhysicsManager::Init( Map *pMap )
 	return true;
 }
 
+
+void PhysicsManager::DrawShape(b2Shape* shape, const b2XForm& xf, const b2Color& color, bool core)
+{
+	b2Color coreColor(0.9f, 0.6f, 0.6f);
+
+	switch (shape->GetType())
+	{
+	case e_circleShape:
+		{
+			b2CircleShape* circle = (b2CircleShape*)shape;
+
+			b2Vec2 center = b2Mul(xf, circle->GetLocalPosition());
+			float32 radius = circle->GetRadius();
+			b2Vec2 axis = xf.R.col1;
+
+			m_debugDraw.DrawSolidCircle(center, radius, axis, color);
+
+			if (core)
+			{
+				m_debugDraw.DrawCircle(center, radius - b2_toiSlop, coreColor);
+			}
+		}
+		break;
+
+	case e_polygonShape:
+		{
+			b2PolygonShape* poly = (b2PolygonShape*)shape;
+			int32 vertexCount = poly->GetVertexCount();
+			const b2Vec2* localVertices = poly->GetVertices();
+
+			b2Assert(vertexCount <= b2_maxPolygonVertices);
+			b2Vec2 vertices[b2_maxPolygonVertices];
+
+			for (int32 i = 0; i < vertexCount; ++i)
+			{
+				vertices[i] = b2Mul(xf, localVertices[i]);
+			}
+
+			m_debugDraw.DrawSolidPolygon(vertices, vertexCount, color);
+
+			if (core)
+			{
+				const b2Vec2* localCoreVertices = poly->GetCoreVertices();
+				for (int32 i = 0; i < vertexCount; ++i)
+				{
+					vertices[i] = b2Mul(xf, localCoreVertices[i]);
+				}
+				m_debugDraw.DrawPolygon(vertices, vertexCount, coreColor);
+			}
+		}
+		break;
+	}
+}
+
 void PhysicsManager::SetDrawDebug( bool bNew )
 {
-	
-	return; //disabled for now
-
+	return;
 	uint32 flags = 0;
 
 	if (bNew)
@@ -301,8 +353,18 @@ void PhysicsManager::Update( float step )
 	}
 
 
-		if (m_debugDraw.GetFlags() != 0)
-		CL_Display::flip(-1); //show it now
+		//if (m_debugDraw.GetFlags() != 0)
+		//CL_Display::flip(-1); //show it now
+	} else
+	{
+
+		//if (m_debugDraw.GetFlags() != 0)
+		{
+			//run simulation just to draw the debug stuff
+			m_pWorld->Step(0, 0);
+
+		}
+	
 	}
 
 }

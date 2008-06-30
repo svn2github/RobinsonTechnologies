@@ -242,7 +242,13 @@ void BlitMessage(string msg, int posY )
 
 	if (pFont)
 	{
+		CL_Display::flip(2); //show it now
+
+		//GetGameLogic()->OnRender();
 		
+		//GetApp()->GetBackgroundCanvas()->set_pixeldata(CL_Display::get_front_buffer());
+		//GetApp()->GetBackgroundCanvas()->sync_surface();
+
 		ResetFont(pFont);
 		CL_GlyphBuffer gb;
 		CL_TextStyler ts;
@@ -251,7 +257,9 @@ void BlitMessage(string msg, int posY )
 		gb.set_alignment(origin_center);
 		gb.set_scale(1.5,1.5);
 		gb.draw(GetScreenX/2,posY);
+		
 		CL_Display::flip(2); //show it now
+	
 	}
 }
 
@@ -576,13 +584,14 @@ bool GetTileLineIntersection(const CL_Vector2 &vStart, const CL_Vector2 &vEnd, t
 
 		vTilePos = (*listItor)->GetPos();
 
+		
 		if ((*listItor)->UsesTileProperties() && (*listItor)->GetType() == C_TILE_TYPE_PIC )
 		{
 			//we need a customized version
 			CreateCollisionDataWithTileProperties((*listItor), col);
 			pCol = &col;
 		}
-
+	
 
 		line_list::iterator lineListItor = pCol->GetLineList()->begin();
 

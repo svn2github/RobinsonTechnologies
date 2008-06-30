@@ -359,7 +359,6 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 
 	while (itor != pLineList->end())
 	{
-		
 		CL_Rectf picBounds = pTile->GetBoundsRect();
 		bool bNeedsReverse = false;
 		
@@ -380,16 +379,14 @@ void CreateCollisionDataWithTileProperties(Tile *pTile, CollisionData &colOut)
 			if (pTile->GetBit(Tile::e_flippedX))
 			{
 				p->x = picBounds.right + (-p->x);
-				bNeedsReverse = !bNeedsReverse;
 			}
 
 			if (pTile->GetBit(Tile::e_flippedY))
 			{
 				p->y = picBounds.bottom + (-p->y);
-				bNeedsReverse = !bNeedsReverse;
 			}
-
 		}
+
 		if (bNeedsReverse)
 		{
 			//reverse the winding so box2d won't get mad

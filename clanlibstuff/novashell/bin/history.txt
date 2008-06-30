@@ -1,14 +1,23 @@
-Known problems: Occasional framerate stutters under dual core processers under vista64?
-
-** The top view RPG example is currently broken in places...
 ** There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
 new collision features soon
-** The low res platformer example has a problem with the camera bumping around, I've been putting off fixing this because I want do some
-new collision shapes that I think would fix the need to have bumpy blocks
 ** Need to update tutorial pages to use new collision stuff
 
-
 Changelog
+
+6-30-2008
+
+* Showing collision data is now more accurate
+* Lowres example's camera isn't bumpy anymore (turned on lerping)
+* Added DrawManager object, with DrawLine() function (more to come..)
+
+6-29 2008
+
+* Entity:SetImageByID now properly remembers the former alignment settings
+* Modified the bar.lua to accept a positioning style with illspirit's code
+* BUGFIX:  Fixed problem with 'draw collision' showing incorrect shapes with x flipped objects
+* BUGFIX:  Fixed problem where an entity would get screwed up after a SetPosAndMapByName() call
+* BUGFIX: Screen doesn't jitter while displaying loading message
+* Top RPG example now functions perfectly (I think?), still needs to be finished though.  (want to add a cave area, make a completable quest..)
 
 6-26 2008
 

@@ -495,11 +495,7 @@ CollisionData * TilePic::GetCollisionData()
 			//we may have to do something custom here
 			//well, this has real data most likely, so let's create our own copy and apply scale to it
 			CollisionData *pNewCol = new CollisionData(*m_pCollisionData);
-			/*
-			CollisionData *pNewCol = new CollisionData();
-			CreateCollisionDataWithTileProperties(this, *pNewCol);
-			*/
-			m_pCollisionData = pNewCol;
+				m_pCollisionData = pNewCol;
 			m_bUsingCustomCollision = true;
 			m_pCollisionData->SetScale(m_vecScale);
 
@@ -507,8 +503,6 @@ CollisionData * TilePic::GetCollisionData()
 
 		//MAKE BODY
 		KillBody();
-
-
 
 		b2BodyDef bd;
 		bd.position = ToPhysicsSpace(GetPos());
@@ -520,8 +514,7 @@ CollisionData * TilePic::GetCollisionData()
 
 		} else
 		{
-
-			//bd.userData = this;
+	
 			b2PolygonDef shapeDef;
 
 			CollisionData *pColTemp = m_pCollisionData;

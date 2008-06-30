@@ -20,6 +20,7 @@
 #include "EntWorldDialog.h"
 #include "EffectManager.h"
 #include "NovaZip.h"
+#include "DrawManager.h"
 
 const char C_GAME_TICK_OF_LAST_LOAD_VAR_NAME[]= "_gameTickOfLastLoad";
 
@@ -899,7 +900,7 @@ void GameLogic::Update(float step)
 {
 
 	ResetLastUpdateTimer(); //this is checked to see if we need to show a "please wait, loading" type thing
-
+	g_drawManager.Update(step);
 	if (m_bRestartEngineFlag)
 	{
 		LogMsg("Restarting engine...");

@@ -41,7 +41,6 @@ Timestamp: Last updated mon day
 
 
 File: Overview  (main.h)
-File: About Visual Profiles  (VisualProfile.cpp)
 
 Group: System Objects  {
 
@@ -56,8 +55,8 @@ Group: System Objects  {
    File: TagManager  (TagManager.cpp)
    File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
-   File: Known Issues  (KnownIssues.cpp)
-   File: Material  (Material.h)
+   File: DrawManager  (Material.cpp)
+
    }  # Group: System Objects
 
 Group: Game Objects  {
@@ -88,6 +87,8 @@ Group: Simple Objects  {
    File: Tag  (TagManager.h)
    File: Zone  (MovingEntity.h)
    File: Joystick  (Joystick.cpp)
+   File: Material  (Material.h)
+
    }  # Group: Simple Objects
 
 Group: Effect Objects  {
@@ -98,7 +99,6 @@ Group: Effect Objects  {
    File: EffectExplosion  (EffectExplosion.cpp)
    }  # Group: Effect Objects
 
-File: Global Functions  (GlobalScriptFunctionBindings.cpp)
 
 Group: Brains  {
 
@@ -127,6 +127,12 @@ Group: States  {
    File: Special1  (StateSpecial1.cpp)
    File: Turn  (StateTurn.cpp)
    }  # Group: States
+
+File: Global Functions  (GlobalScriptFunctionBindings.cpp)
+
+File: About Visual Profiles  (VisualProfile.cpp)
+  
+File: Known Issues  (KnownIssues.cpp)
 
 Group: Index  {
 

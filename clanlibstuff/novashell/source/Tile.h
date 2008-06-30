@@ -129,6 +129,7 @@ public:
 	virtual void Serialize(CL_FileHelper &helper);
 	void SaveToMasterCollision(); 
 	void ForceUsingCustomCollisionData();
+	virtual b2Body * GetCustomBody() {return m_pBody;}
 
 	void ReinitCollision();
 	virtual const CL_Rect & GetBoundsRect();

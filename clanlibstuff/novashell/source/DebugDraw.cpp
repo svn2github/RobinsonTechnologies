@@ -20,11 +20,10 @@
 #include "PhysicsManager.h"
 #include "AppUtils.h"
 #include "MapManager.h"
+#include "DrawManager.h"
 
 void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {
-	
-	
 	CL_Vector2 a, b;
 
 	for (int32 i = 0; i < vertexCount; ++i)
@@ -41,15 +40,13 @@ void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
 			b = FromPhysicsSpace(vertices[i+1]);
 
 		}
-		
-		a = g_pMapManager->GetActiveMap()->GetMyMapCache()->WorldToScreen(a);
-		b = g_pMapManager->GetActiveMap()->GetMyMapCache()->WorldToScreen(b);
-
-		LogMsg("Vert %d, originl: %.2f, %.2f, converted: %s", i, vertices[i].x, vertices[i].y, PrintVector(a).c_str());
+	
+		//LogMsg("Vert %d, originl: %.2f, %.2f, converted: %s", i, vertices[i].x, vertices[i].y, PrintVector(a).c_str());
 
 
-		CL_Display::draw_line(a.x, a.y, b.x, b.y, 
-			CL_Color(color.r,color.g, color.b));
+		//CL_Display::draw_line(a.x, a.y, b.x, b.y, 
+		//CL_Color(color.r,color.g, color.b));
+		g_drawManager.DrawLine(a, b, CL_Color(color.r,color.g, color.b), C_TOP_LAYER, DrawManager::C_DRAW_WORLD_COORDS);
 
 	
 	//	CL_Display::draw_rect(CL_Rectf(20,20,200,200), CL_Color::rosybrown);
@@ -99,15 +96,8 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, cons
 
 		}
 
-		a = g_pMapManager->GetActiveMap()->GetMyMapCache()->WorldToScreen(a);
-		b = g_pMapManager->GetActiveMap()->GetMyMapCache()->WorldToScreen(b);
-
 		//LogMsg("Vert %d, originl: %.2f, %.2f, converted: %s", i, vertices[i].x, vertices[i].y, PrintVector(a).c_str());
-
-		CL_Display::draw_line(a.x, a.y, b.x, b.y, 
-			CL_Color::rosybrown);
-
-
+		g_drawManager.DrawLine(a, b, CL_Color(color.r, color.g, color.b), C_TOP_LAYER, DrawManager::C_DRAW_WORLD_COORDS);
 	}
 
 }

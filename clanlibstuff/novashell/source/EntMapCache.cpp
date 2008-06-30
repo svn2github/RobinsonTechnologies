@@ -9,6 +9,7 @@
 #include "AI/WatchManager.h"
 #include "MaterialManager.h"
 #include "State.h"
+#include "DrawManager.h"
 
 #define C_TILE_EDIT_UNDO_LEVEL 20
 
@@ -214,61 +215,6 @@ bool compareTileByLayer(const Tile *pA, const Tile *pB)
 
 	return pLayerManager->GetLayerInfo(pA->GetLayer()).GetSort() <
 		pLayerManager->GetLayerInfo(pB->GetLayer()).GetSort();
-}
-
-void EntMapCache::RemoveTileFromList(Tile *pTile)
-{
-	assert(0);
-	
-	/*
-	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-	{
-		MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
-		if (pEnt)
-		{
-			for (unsigned int i=0; i < m_entityList.size(); i++)
-			{
-				if (m_entityList[i] == pEnt)
-				{
-					
-
-					m_entityList[i] = NULL;
-					break;
-				}
-			}
-
-			//also remove from the watch list to avoid a crash there
-			//g_watchManager.OnEntityDeleted( pEnt);
-
-			/*
-			if (GetGameLogic()->GetShowEntityCollisionData())
-			{
-				for (unsigned int i=0; i < m_entityList.size(); i++)
-				{
-					if (m_entityList[i])
-					{
-						//when debug tools are active, we need to keep the "NearbyTilesList" accurate to avoid
-						//crashes, otherwise it's not needed as it's recreate before use each frame.  However,
-						//when drawing collision outlines, we draw AFTER
-						m_entityList[i]->OnEntityDeleted(pEnt); 
-						break;
-					}
-				}
-			}
-			*/
-
-
-	/*
-	//next remove  tile from our draw list
-	for (unsigned int i=0; i < m_tileLayerDrawList.size(); i++)
-	{
-		if (m_tileLayerDrawList[i] == pTile)
-		{
-			//this is it
-			m_tileLayerDrawList[i] = NULL;
-		}
-	}
-	*/
 }
 
 void EntMapCache::ProcessPendingEntityMovementAndDeletions()
@@ -630,6 +576,8 @@ void EntMapCache::AddTilesByRect(const CL_Rect &recArea, tile_list *pTileList, c
 	}
 }
 
+
+
 void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 {
 	Tile *pTile;
@@ -640,11 +588,31 @@ void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 		pTile = m_tileLayerDrawList.at(i);
 		if (!pTile) continue;
 
-		if (pTile->GetCollisionData())
+		if (pTile->GetCollisionData() && pTile->GetCollisionData()->HasData())
 		{
 			CollisionData *pCol = pTile->GetCollisionData();
+		
+			if (pTile->GetCustomBody())
+			{
+				b2Shape *pShape = pTile->GetCustomBody()->GetShapeList();
+				for (;pShape; pShape = pShape->GetNext())
+				{
+					assert(g_pMapManager->GetActiveMap() == pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap());
+					ShapeUserData *pShapeUserData = (ShapeUserData*)pShape->GetUserData();
+					
+					CL_Color c;
+					c.color = g_materialManager.GetMaterial(pShapeUserData->materialID)->GetColor();
+				
+					g_pMapManager->GetActiveMap()->GetPhysicsManager()->DrawShape(pShape,
+					pTile->GetCustomBody()->GetXForm(), b2Color(c.get_red(), c.get_green(), c.get_blue()),
+					false);
+					
+				}
+			} else
+			{
 			
-			if (pTile->UsesTileProperties())
+			/*
+				if (pTile->UsesTileProperties() && pTile->GetType() == C_TILE_TYPE_PIC)
 			{ 
 				CollisionData col;
 				//we need a customized version
@@ -652,7 +620,13 @@ void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 				RenderVectorCollisionData(pTile->GetPos(), col, pGC, false, NULL);
 			} else
 			{
+			
 				RenderVectorCollisionData(pTile->GetPos(), *pCol, pGC, false, NULL);
+			}
+			*/
+				assert(0);
+
+			
 			}
 		}
 	}
@@ -706,6 +680,7 @@ void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 	int curSort = -99999;
 	LayerManager *pLayerManager = &g_pMapManager->GetActiveMap()->GetLayerManager();
 	int sort;
+	g_drawManager.RenderUpToLayerID(-1, pGC); 
 
 	unsigned int i;
 	for (i=0; i < m_tileLayerDrawList.size(); i++)
@@ -742,6 +717,8 @@ void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 			{
 				pTile->RenderShadow(pGC);
 			}
+			g_drawManager.RenderUpToLayerID(curSort, pGC); 
+
 		}
 	} 
 
@@ -761,6 +738,9 @@ void EntMapCache::RenderViewList(CL_GraphicContext *pGC)
 
 		}
 	}
+
+	g_drawManager.RenderUpToLayerID(99999999, pGC);  //make sure we got everything
+
 }
 
 void EntMapCache::ClearTriggers()
@@ -808,8 +788,7 @@ bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMov
 			if (bIgnoreMovingCreatures && pTile->GetType() == C_TILE_TYPE_ENTITY)
 			{
 				//the path-finding may be building nodes, we don't want it to build an incorrect base path because
-				//the player or monster was sitting in the way.  Somehow we have to figure out a way to ignore
-				//those kinds of things.  For now, assume if it has a visual profile assigned it should be ignored
+				//the player or monster was sitting in the way. 
 
 				if (  ((TileEntity*)(*listItor))->GetEntity()->GetIsCreature())
 				{
@@ -817,12 +796,14 @@ bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMov
 				}
 			}
 			
+			
 			if (pTile->UsesTileProperties() && pTile->GetType() == C_TILE_TYPE_PIC )
 			{
 				//we need a customized version
 				CreateCollisionDataWithTileProperties(pTile, col);
 				pCol = &col;
 			}
+			
 
 			//do we overlap his collision info?
 			//we can't just check GetWorldColRect because it's not accurate enough, let's check each line and do the rect
@@ -873,8 +854,7 @@ bool EntMapCache::IsAreaObstructed(CL_Vector2 pos, float radius, bool bIgnoreMov
 						{
 							return true;
 						}
-						
-
+					
 					}
 				}
 
@@ -980,7 +960,6 @@ void EntMapCache::RenderGrid(CL_GraphicContext *pTarget)
 	{
 		DrawLineFromWorldCoordinates(vPos, vPos + CL_Vector2(0,rWorld.get_height() + vSnap.y), col, pTarget);
 	}
-
 	
 	vPos.x = rWorld.left; //reset this to do another pass for the horizontal lines
 
@@ -1000,7 +979,12 @@ void EntMapCache::Render(void *pTarget)
 	ClearTriggers();
 
 	CL_GraphicContext* pGC = (CL_GraphicContext*)pTarget;
-	
+
+	if (m_bDrawCollisionData)
+	{
+		RenderCollisionOutlines(pGC);
+	}
+
 	RenderViewList(pGC);
 
 	if (GetGameLogic()->GetShowPathfinding())
@@ -1009,10 +993,6 @@ void EntMapCache::Render(void *pTarget)
 			m_pWorld->GetNavGraph()->Render(true, pGC);
 	}
 
-	if (m_bDrawCollisionData)
-	{
-		RenderCollisionOutlines(pGC);
-	}
 
 	if (GetGameLogic()->GetShowEntityCollisionData())
 	{

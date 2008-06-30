@@ -14,6 +14,7 @@
 #include "AI/WatchManager.h"
 #include "EntCreationUtils.h"
 #include "ListBindings.h"
+#include "DrawManager.h"
 
 #ifndef WIN32
 //windows already has this in the precompiled header for speed, I couldn't get that to work on mac..
@@ -567,6 +568,10 @@ myColor = Color(255,255,255,255);
 		.def("GetFromHash", &TagManager::GetFromHash)
 		.def("GetPosFromName", &TagManager::GetPosFromName)
 		.def("RegisterAsWarp", &TagManager::RegisterAsWarp)
+
+		,class_<DrawManager>("DrawManager")
+		.def("DrawLine", &DrawManager::DrawLine)
+
 
 		,class_<Camera>("Camera")
 		

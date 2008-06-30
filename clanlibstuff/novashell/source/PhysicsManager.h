@@ -96,7 +96,7 @@ public:
 	void SetDrawDebug(bool bNew);
 	void Update(float step);
 	void SetGravity(CL_Vector2 vGrav);
-
+	void DrawShape(b2Shape* shape, const b2XForm& xf, const b2Color& color, bool core);
 protected:
 	
 

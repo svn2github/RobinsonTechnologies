@@ -640,14 +640,15 @@ void RenderTileListCollisionData(tile_list &tileList, CL_GraphicContext *pGC, bo
 			}
 				
 		}
-		
-		if ((*itor)->UsesTileProperties())
+	
+		if ((*itor)->UsesTileProperties() && (*itor)->GetType() == C_TILE_TYPE_PIC)
 		{
 			//we need a customized version
 			CreateCollisionDataWithTileProperties((*itor), col);
 			RenderVectorCollisionData(vPos, col, pGC, bRenderVertBoxes, pColorOveride);
 		} else
 		{
+
 			pCol = (*itor)->GetCollisionData();
 			if (pCol)
 			RenderVectorCollisionData(vPos, *pCol, pGC, bRenderVertBoxes, pColorOveride);

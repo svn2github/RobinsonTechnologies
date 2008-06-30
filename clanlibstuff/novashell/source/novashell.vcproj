@@ -387,6 +387,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\DrawManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath="main.cpp"
 				>
 				<FileConfiguration
@@ -1147,10 +1151,6 @@
 				</File>
 				<File
 					RelativePath=".\NovaZip.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\NovaZip.h"
 					>
 				</File>
 				<File
@@ -4651,6 +4651,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\DrawManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\EffectManager.h"
 					>
 				</File>
@@ -4684,6 +4688,10 @@
 				</File>
 				<File
 					RelativePath="MyEntityManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NovaZip.h"
 					>
 				</File>
 				<File

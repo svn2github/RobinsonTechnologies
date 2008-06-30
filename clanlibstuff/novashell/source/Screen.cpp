@@ -330,6 +330,12 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 	while (itor != m_vecLayerList[layerIntVec[i]].end())
 	{
 		pTile = (*itor);
+		
+		if (pTile->GetType() == C_TILE_TYPE_REFERENCE)
+		{
+			pTile = pTile->GetTileWereAReferenceFrom();
+		}
+		
 		if (bEntitiesOnly)
 		{
 			if (pTile->GetType() != C_TILE_TYPE_ENTITY)
@@ -338,10 +344,7 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 				continue;
 			}
 		}
-		if (pTile->GetType() == C_TILE_TYPE_REFERENCE)
-		{
-			pTile = pTile->GetTileWereAReferenceFrom();
-		}
+		
 		
 		if (pTile->GetLastScanID() != scanID)
 		{
@@ -350,6 +353,8 @@ void Screen::GetTilesByRect(const CL_Rect &scanRect, tile_list *pTileList, const
 
 			pTile->SetLastScanID(scanID);
 			//TODO optimize this rect check.  Maybe precalc its box, or circle in the tile itself
+//			assert(m_pParentMapChunk->GetRect().is_overlapped(pTile->GetWorldCombinedRectInt()) && "Tile placed in bad position?");
+			
 			if (scanRect.is_overlapped(pTile->GetWorldCombinedRectInt()))
 			{
 				if (bWithCollisionOnly)

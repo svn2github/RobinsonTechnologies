@@ -23,6 +23,7 @@ using namespace luabind;
 #include "LoopingSoundBindings.h"
 #include "EffectManagerBindings.h"
 #include "EffectManager.h"
+#include "DrawManager.h"
 
 void RegisterLuabindBindings(lua_State *pLuaState)
 {
@@ -44,6 +45,7 @@ void RegisterLuabindBindings(lua_State *pLuaState)
 
 	luabind::globals(pLuaState)["GetGameLogic"] = GetGameLogic();
 	luabind::globals(pLuaState)["GetTagManager"] = &g_TagManager;
+	luabind::globals(pLuaState)["GetDrawManager"] = &g_drawManager;
 	luabind::globals(pLuaState)["GetCamera"] = GetCamera;
 	luabind::globals(pLuaState)["GetInputManager"] = &g_inputManager;
 	luabind::globals(pLuaState)["GetWatchManager"] = &g_watchManager;

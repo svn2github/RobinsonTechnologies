@@ -1189,8 +1189,8 @@ if (!m_pCollisionData || !m_pCollisionData->HasData()) return;
 				ShapeUserData *pShapeUserData = new ShapeUserData();
 				pShapeUserData->pOwnerEnt = this;
 				pShapeUserData->pOwnerTile = NULL;
-				
 				pShapeUserData->materialID = pPointList->GetType();
+
 				shapeDef.userData = pShapeUserData;
 				
 				m_pBody->CreateShape(&shapeDef);
@@ -1203,6 +1203,7 @@ if (!m_pCollisionData || !m_pCollisionData->HasData()) return;
 			pShapeUserData->pOwnerEnt = this;
 			pShapeUserData->pOwnerTile = NULL;
 			pShapeUserData->materialID = pPointList->GetType();
+			
 			shapeDef.userData = pShapeUserData;
 			
 			shapeDef.density = 0;
@@ -1284,11 +1285,11 @@ void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldNa
 #ifdef _DEBUG
 		LogMsg("Warping at end of logic ent %s...", GetName().c_str());
 #endif
-		ForceUpdatingPeriod();
-
+	
 	} else
 	{
-		m_pos = new_pos;
+		//m_pos = new_pos;
+		SetPos(new_pos);
 #ifdef _DEBUG
 		LogMsg("Moving ent %s...", GetName().c_str());
 #endif
@@ -1296,7 +1297,12 @@ void MovingEntity::SetPosAndMap(const CL_Vector2 &new_pos, const string &worldNa
 		{
 			GetCamera->SetInstantUpdateOnNextFrame(true);
 		}
+	
+
 	}
+	
+	ForceUpdatingPeriod();
+
 	m_bMovedFlag = true;
 	
 }
@@ -1423,6 +1429,8 @@ bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 
 	if (m_pSprite && m_pSprite->get_frame_count() != 0)
 	{
+		
+		//also check if a TilePic is set and steal its alignment???
 		m_pSprite->get_alignment(align, x,y);
 	}
 
@@ -2155,7 +2163,7 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 		}
 	}
 
-
+/*
 	PointList pl;
 	PointList *pActiveLine = NULL;
 
@@ -2170,20 +2178,18 @@ void MovingEntity::SetCollisionInfoFromPic(unsigned picID, const CL_Rect &recPic
 		}
 	}
 
-	m_pSprite->set_alignment(origin_center);
-
 	//link to data correctly
 	
 	if (pActiveLine)
 	{
-		InitializeBody();
-		//pActiveLine->GetAsBody(CL_Vector2(0,0), &m_body);
-		
 	} else
 	{
 		SetDensity(0); //immovable
 	}
-	
+	*/
+
+	InitializeBody();
+
 }
 
 void MovingEntity::InitCollisionDataBySize(float x, float y)

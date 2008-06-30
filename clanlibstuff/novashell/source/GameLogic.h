@@ -106,14 +106,14 @@ public:
 	  void OnScreenChanged();
 	  bool IsRetail();
 	  void AddCallbackOnPostLogicUpdate(const string &callbackFunction, int entityID);
+	  void OnRender();
 
 private:
 
 	void OnMouseUp(const CL_InputEvent &key);
 	void OnMouseDown(const CL_InputEvent &key);
 	void Zoom(bool zoomCloser);
-	void OnRender();
-    void OnKeyDown(const CL_InputEvent &key);
+   void OnKeyDown(const CL_InputEvent &key);
 	void OnKeyUp(const CL_InputEvent &key);
 	void RenderGameGUI(bool bDrawMainGUIToo);   
 	void DeleteAllCacheFiles();

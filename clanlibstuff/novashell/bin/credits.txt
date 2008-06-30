@@ -1,14 +1,14 @@
 Programming and design:
 Seth A. Robinson (www.rtsoft.com)
 
-Physics code based on source by:
-Olivier Renault ( http://uk.geocities.com/olivier_rebellion )
-
 Particle system based on source by:
 Wong Chin Foo (LinearParticle)
 
+Box2D physics by Erin Catto  (www.box2d.org)
+
 Pixel art used in the Top View RPG example created by:
 Daniel Cook (www.lostgarden.com)
+
 
 Additional Art:
 Akiko Robinson
@@ -41,4 +41,5 @@ Pleng
 Pekuja
 mikael
 Cobra
+illspirit
 

@@ -10,6 +10,7 @@
 #define LayerManager_HEADER_INCLUDED  // include guard
 
 #define C_LAYER_NONE -1
+#define C_TOP_LAYER 1000
 #define C_LAYER_FILENAME "layer.dat"
 const int C_LAYER_VERSION = 0;
 //some help to name these for generation functions, not really hardcoded though
