@@ -74,10 +74,11 @@ void TagManager::Update(Map *pWorld, MovingEntity *pEnt)
 		while (itorO != pTagList->end())
 		{
 			
-			if (itorO->m_entID == pEnt->ID() 
+			if ( itorO->m_entID == pEnt->ID()
 				||
 				(
-				    (itorO->m_pos == pEnt->GetPos())
+				    (itorO->m_entID == 0)
+				     && (itorO->m_pos == pEnt->GetPos())
 				&&  (itorO->m_pWorld == pWorld)
 				)
 				)

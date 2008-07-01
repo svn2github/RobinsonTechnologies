@@ -2618,6 +2618,14 @@
 				Name="Resource Files"
 				Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 				>
+				<File
+					RelativePath=".\NovaShell.ico"
+					>
+				</File>
+				<File
+					RelativePath=".\novashell.rc"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="GuiBitmap"
@@ -4353,6 +4361,10 @@
 			</File>
 			<File
 				RelativePath="main.h"
+				>
+			</File>
+			<File
+				RelativePath=".\resource.h"
 				>
 			</File>
 			<Filter

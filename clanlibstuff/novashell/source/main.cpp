@@ -940,9 +940,11 @@ int App::main(int argc, char **argv)
 		"	-window\n" \
 		"	-nosound\n" \
 		"	-nomusic\n" \
-		"	-fmodsound (windows only, forces fmod sound system)"
-		"	-clansound (forces Clanlib sound system)\n" \
 		"";
+
+		//		"	-fmodsound (windows only, forces fmod sound system)\n"
+		//		"	-clansound (forces Clanlib sound system)\n" \
+
 
 #ifdef WIN32
 		MessageBox(NULL, message.c_str(), "Command line help", MB_ICONINFORMATION);

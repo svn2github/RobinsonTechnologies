@@ -489,7 +489,7 @@ void EntEditMode::Init()
 
 
 	m_pInputBoxSnapSizeY = new CL_InputBox(CL_String::from_int(int(m_vecSnapSize.y)), m_pWindow->get_client_area());
-	recSize.apply_alignment(origin_top_left, -43, 0);
+	recSize.apply_alignment(origin_top_left, -54, 0);
 	m_pInputBoxSnapSizeY->set_position(recSize);
 
 	m_slots.connect(m_pInputBoxSnapSizeY->sig_return_pressed(), this, &EntEditMode::SnapSizeChanged);

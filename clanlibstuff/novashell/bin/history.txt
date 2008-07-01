@@ -7,6 +7,11 @@ Changelog
 7-1-2008
 
 * Added DrawManager:DrawPixel, DrawManager:DrawRect and DrawManager:DrawFilledRect
+* Added another joystick detection profile (illspirit)
+* Added NS icon for windows mode (thanks to Interference for the original icon)
+* COSMETIC: Grid snap Y label can now be seen again
+* BUGFIX: Cloning a "named" entity multiple times to the exact same place no longer confuses the tagmanager
+
 
 6-30-2008
 
