@@ -247,6 +247,10 @@
 		5D669E5E0B858C3E003EE62C /* MapChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D669E5A0B858C3E003EE62C /* MapChunk.cpp */; };
 		5D67C47E0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
 		5D67C47F0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
+		5D6B95BB0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6B95B90E19EC9E00B67FE8 /* DrawManager.cpp */; };
+		5D6B95BC0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D6B95BA0E19EC9E00B67FE8 /* DrawManager.h */; };
+		5D6B95BD0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6B95B90E19EC9E00B67FE8 /* DrawManager.cpp */; };
+		5D6B95BE0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D6B95BA0E19EC9E00B67FE8 /* DrawManager.h */; };
 		5D7A78190B757D74003C896A /* ListBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78160B757D74003C896A /* ListBindings.cpp */; };
 		5D7A781A0B757D74003C896A /* LoopingSoundBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */; };
 		5D7A781B0B757D74003C896A /* TileBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78180B757D74003C896A /* TileBindings.cpp */; };
@@ -633,6 +637,7 @@
 				5D44FFC10DFCBDF000E4F27D /* b2PrismaticJoint.h in CopyFiles */,
 				5D44FFC30DFCBDF000E4F27D /* b2PulleyJoint.h in CopyFiles */,
 				5D44FFC50DFCBDF000E4F27D /* b2RevoluteJoint.h in CopyFiles */,
+				5D6B95BC0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -698,6 +703,7 @@
 				5D44FFFE0DFCBDF000E4F27D /* b2PrismaticJoint.h in CopyFiles */,
 				5D4400000DFCBDF000E4F27D /* b2PulleyJoint.h in CopyFiles */,
 				5D4400020DFCBDF000E4F27D /* b2RevoluteJoint.h in CopyFiles */,
+				5D6B95BE0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -861,6 +867,8 @@
 		5D669E590B858C3E003EE62C /* Map.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Map.cpp; sourceTree = "<group>"; };
 		5D669E5A0B858C3E003EE62C /* MapChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MapChunk.cpp; sourceTree = "<group>"; };
 		5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalScriptFunctionBindings.cpp; sourceTree = "<group>"; };
+		5D6B95B90E19EC9E00B67FE8 /* DrawManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DrawManager.cpp; sourceTree = "<group>"; };
+		5D6B95BA0E19EC9E00B67FE8 /* DrawManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DrawManager.h; sourceTree = "<group>"; };
 		5D7A78160B757D74003C896A /* ListBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ListBindings.cpp; path = ../source/ListBindings.cpp; sourceTree = SOURCE_ROOT; };
 		5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopingSoundBindings.cpp; path = ../source/LoopingSoundBindings.cpp; sourceTree = SOURCE_ROOT; };
 		5D7A78180B757D74003C896A /* TileBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TileBindings.cpp; path = ../source/TileBindings.cpp; sourceTree = SOURCE_ROOT; };
@@ -1804,6 +1812,8 @@
 		5DCDB81E0A1AE5CA0043DCFA /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				5D6B95B90E19EC9E00B67FE8 /* DrawManager.cpp */,
+				5D6B95BA0E19EC9E00B67FE8 /* DrawManager.h */,
 				5D442B600DFCD25D00E4F27D /* DebugDraw.cpp */,
 				5D442B610DFCD25D00E4F27D /* PhysicsManager.cpp */,
 				5DC0BD2E0BA7E1800004DD83 /* EffectManager.cpp */,
@@ -2111,6 +2121,7 @@
 				5D4400010DFCBDF000E4F27D /* b2RevoluteJoint.cpp in Sources */,
 				5D442B640DFCD25D00E4F27D /* DebugDraw.cpp in Sources */,
 				5D442B650DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */,
+				5D6B95BD0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2322,6 +2333,7 @@
 				5D44FFC40DFCBDF000E4F27D /* b2RevoluteJoint.cpp in Sources */,
 				5D442B620DFCD25D00E4F27D /* DebugDraw.cpp in Sources */,
 				5D442B630DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */,
+				5D6B95BB0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
