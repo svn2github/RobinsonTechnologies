@@ -16,6 +16,7 @@ string VectorToString(const CL_Vector2 * pVec);
 string VectorToStringEx(const CL_Vector2 * pVec);
 string RectToStringEx(const CL_Rect * pR);
 string RectfToStringEx(const CL_Rectf * pR);
+CL_Rectf ConvertWorldRectToScreenRect(CL_Rectf rArea);
 
 void RenderVertexList(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCount, CL_Color &colr, CL_GraphicContext *pGC);
 CL_Vector2 MakeNormal(CL_Vector2 &a, CL_Vector2 &b);
@@ -131,7 +132,6 @@ const NumberType RoundNearest(
 		return (ceil(Intermediate / p_Precision) * p_Precision) + p_Center;
 	}
 }
-
 
 
 #endif                  // include guard

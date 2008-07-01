@@ -960,7 +960,12 @@ void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
 
 		if (GetShowFPS()) 
 		{
-			ResetFont(GetApp()->GetFont(C_FONT_NORMAL));
+			CL_Font *pFont = GetApp()->GetFont(C_FONT_NORMAL);
+			if (!pFont)
+			{
+				pFont = GetApp()->GetConsoleFont();
+			}
+			ResetFont(pFont);
 
 			int tiles = 0;
 			if (g_pMapManager->GetActiveMapCache())
@@ -969,7 +974,7 @@ void GameLogic::RenderGameGUI(bool bDrawMainGUIToo)
 			}
 			static char buff[256];
 			sprintf(buff, "FPS:%d E:%d T:%d: W:%d", GetApp()->GetFPS(),g_pMapManager->GetUpdateEntityCount(),  tiles, g_watchManager.GetWatchCount());
-			GetApp()->GetFont(C_FONT_NORMAL)->draw(GetScreenX-265,0, buff);
+			pFont->draw(GetScreenX-265,0, buff);
 			
 			
 		}

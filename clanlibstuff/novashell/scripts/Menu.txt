@@ -55,8 +55,7 @@ Group: System Objects  {
    File: TagManager  (TagManager.cpp)
    File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
-   File: DrawManager  (Material.cpp)
-
+   File: DrawManager  (DrawManager.cpp)
    }  # Group: System Objects
 
 Group: Game Objects  {
@@ -88,7 +87,6 @@ Group: Simple Objects  {
    File: Zone  (MovingEntity.h)
    File: Joystick  (Joystick.cpp)
    File: Material  (Material.h)
-
    }  # Group: Simple Objects
 
 Group: Effect Objects  {
@@ -98,7 +96,6 @@ Group: Effect Objects  {
    File: EffectBase  (EffectBase.cpp)
    File: EffectExplosion  (EffectExplosion.cpp)
    }  # Group: Effect Objects
-
 
 Group: Brains  {
 
@@ -129,9 +126,7 @@ Group: States  {
    }  # Group: States
 
 File: Global Functions  (GlobalScriptFunctionBindings.cpp)
-
 File: About Visual Profiles  (VisualProfile.cpp)
-  
 File: Known Issues  (KnownIssues.cpp)
 
 Group: Index  {

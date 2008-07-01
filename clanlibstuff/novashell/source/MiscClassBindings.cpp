@@ -571,6 +571,9 @@ myColor = Color(255,255,255,255);
 
 		,class_<DrawManager>("DrawManager")
 		.def("DrawLine", &DrawManager::DrawLine)
+		.def("DrawPixel", &DrawManager::DrawPixel)
+		.def("DrawFilledRect", &DrawManager::DrawFilledRect)
+		.def("DrawRect", &DrawManager::DrawRect)
 
 
 		,class_<Camera>("Camera")

@@ -22,7 +22,10 @@ public:
 	enum eEventType
 	{
 		TYPE_UNKNOWN,
-		TYPE_DRAW_LINE
+		TYPE_DRAW_LINE,
+		TYPE_DRAW_PIXEL,
+		TYPE_DRAW_RECT,
+		TYPE_DRAW_FILLED_RECT
 	};
 
 	void Render( CL_GraphicContext *pGC);
@@ -30,6 +33,7 @@ public:
 	CL_Vector2 m_a,m_b;
 	CL_Color m_color;
 	int m_drawStyle;
+	CL_Rectf m_rect;
 	eEventType m_type;
 };
 
@@ -64,10 +68,14 @@ public:
 	DrawManager();
 	virtual ~DrawManager();
 
+	void Update(float delta);
+
 	//I don't use eDrawStyle directly because I don't want to confuse luabind
 	void DrawLine(CL_Vector2 a, CL_Vector2 b, CL_Color col, int layerID, int drawStyle );
 	void RenderUpToLayerID(int layerID, CL_GraphicContext *pGC);
-	void Update(float delta);
+	void DrawPixel( CL_Vector2 vPos, CL_Color col, int layerID, int drawStyle );
+	void DrawFilledRect( CL_Rectf rArea, CL_Color col, int layerID, int drawStyle );
+	void DrawRect( CL_Rectf rArea, CL_Color col, int layerID, int drawStyle );
 
 private:
 

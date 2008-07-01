@@ -474,6 +474,21 @@ void RenderVertexListRotated(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int 
 	pGC->draw_line(ra.x, ra.y, rb.x, rb.y, colr);
 }
 
+
+CL_Rectf ConvertWorldRectToScreenRect(CL_Rectf rArea)
+{
+	CL_Vector2 vecStart = g_pMapManager->GetActiveMapCache()->WorldToScreen(CL_Vector2(rArea.left, rArea.top));
+	CL_Vector2 vecStop = g_pMapManager->GetActiveMapCache()->WorldToScreen(CL_Vector2(rArea.right, rArea.bottom));
+
+	rArea.left = vecStart.x;
+	rArea.top = vecStart.y;
+	rArea.right = vecStop.x;
+	rArea.bottom = vecStop.y;
+
+	return rArea;
+}
+
+
 void DrawLineFromWorldCoordinates(CL_Vector2 vecStart, CL_Vector2 vecStop, CL_Color borderColor, CL_GraphicContext *pGC)
 {
 	vecStart = g_pMapManager->GetActiveMapCache()->WorldToScreen(vecStart);

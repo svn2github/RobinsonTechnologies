@@ -4,6 +4,10 @@ new collision features soon
 
 Changelog
 
+7-1-2008
+
+* Added DrawManager:DrawPixel, DrawManager:DrawRect and DrawManager:DrawFilledRect
+
 6-30-2008
 
 * Showing collision data is now more accurate
