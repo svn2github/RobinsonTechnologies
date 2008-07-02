@@ -233,7 +233,7 @@ int NavGraphManager::GetClosestSpecialNode(MovingEntity *pEnt, Map *pMap, const 
 	if (result == target_not_found)
 	{
 		delete pCurrentSearch;
-		LogMsg("Unable to locate any connected nodes of type %d", nodeType);
+				LogMsg("Unable to locate any connected nodes of type %d", nodeType);
 		return invalid_node_index; //they can query this object to see it failed
 		*pStatus = NavGraphManager::NO_SPECIAL_NODE_FOUND;
 

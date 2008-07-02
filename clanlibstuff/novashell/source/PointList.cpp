@@ -224,7 +224,7 @@ PointList::eVertCheckStatus PointList::IsValidBox2DPolygon()
 
 	// Create core polygon shape by shifting edges inward.
 	// Also compute the min/max radius for CCD.
-	for (int32 i = 0; i < vertices.size(); ++i)
+	for (int32 i = 0; i < int(vertices.size()); ++i)
 	{
 		int32 i1 = i - 1 >= 0 ? i - 1 : vertices.size() - 1;
 		int32 i2 = i;

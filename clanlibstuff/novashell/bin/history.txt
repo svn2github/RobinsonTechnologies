@@ -4,6 +4,15 @@ new collision features soon
 
 Changelog
 
+7-2 2008
+
+* BUGFIX: Cutting and pasting from the system console won't cut and paste entities in the background
+* COSMETIC: Grid view overlay lines are now lighter, more transparent
+* When "Show Map Pathfinding Data" is enabled, a bunch of extra debug info is now posted to the log, this used to
+	only be available in my private debug builds, but I figure it's useful.
+* BUGFIX: Huge bug with pathfinding fixed, too complicated to explain, but trust me, it was bad
+* Updated the dragon eggs tutorial up to #5.. more to do though.
+
 7-1-2008
 
 * Added DrawManager:DrawPixel, DrawManager:DrawRect and DrawManager:DrawFilledRect
@@ -11,8 +20,6 @@ Changelog
 * Added NS icon for windows mode (thanks to Interference for the original icon)
 * COSMETIC: Grid snap Y label can now be seen again
 * BUGFIX: Cloning a "named" entity multiple times to the exact same place no longer confuses the tagmanager
-
-
 6-30-2008
 
 * Showing collision data is now more accurate

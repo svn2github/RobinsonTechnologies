@@ -937,7 +937,7 @@ void EntMapCache::OnMapChange()
 void EntMapCache::RenderGrid(CL_GraphicContext *pTarget)
 {
 
-	CL_Color col = CL_Color::gray;
+	CL_Color col = CL_Color(255,255,255,36);
 	CL_Vector2 vSnap = CL_Vector2(m_pWorld->GetDefaultTileSizeX(), m_pWorld->GetDefaultTileSizeY());
 	
 	if (vSnap.x <= 1 || vSnap.y <= 1)

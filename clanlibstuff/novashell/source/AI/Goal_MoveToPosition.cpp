@@ -19,10 +19,8 @@ void Goal_MoveToPosition::Activate()
 
   if (bUsePath)
   {
-	#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-		LogMsg("Ent %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
-	#endif
-
+	if (GetGameLogic()->GetShowPathfinding())
+		LogMsg("Entity %d (%s) is calculating a micro path", m_pOwner->ID(), m_pOwner->GetName().c_str());
 
 	  //compute path
 	  if (m_pOwner->GetPathPlanner()->RequestPathToPosition(m_vDestination))
@@ -45,9 +43,9 @@ void Goal_MoveToPosition::Activate()
 
 		  case target_not_found:
 		  
-	#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-			  LogMsg("Goal_MoveToPosition: Couldn't locate target.  ");
-	#endif
+	if (GetGameLogic()->GetShowPathfinding())
+		LogMsg("Entity %d (%s): Goal_MoveToPosition: Couldn't locate target.", m_pOwner->ID(), m_pOwner->GetName().c_str());
+
 			  if (m_pOwner->HandleMessage(Message(C_MSG_TARGET_NOT_FOUND)))
 			  {
 				  //parent signaled that they want to handle it
@@ -58,6 +56,7 @@ void Goal_MoveToPosition::Activate()
 			  bUsePath = false;
 			  break;
 
+			  
 		  case target_found:
 #ifdef C_SHOW_PATHFINDING_DEBUG_INFO
 			  LogMsg("Found it");
@@ -70,8 +69,7 @@ void Goal_MoveToPosition::Activate()
 
 	  } else
 	  {
-		  
-					
+		  //unable to make a path?
 		  //let our parent goal know the situation ...
 		  if (m_pOwner->HandleMessage(Message(C_MSG_PATH_NODES_MISSING)))
 		  {

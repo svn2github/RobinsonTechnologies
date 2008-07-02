@@ -1594,7 +1594,11 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 	}
 
 
-	if (g_Console.IsActive() && !CL_Keyboard::get_keycode(CL_KEY_CONTROL)) return;
+	if (g_Console.IsActive())
+	{
+		if (!CL_Keyboard::get_keycode(CL_KEY_CONTROL)) return;
+		if (key.id == CL_KEY_C || key.id == CL_KEY_V|| key.id == CL_KEY_X) return;
+	}
 
 	switch(key.id)
 	{

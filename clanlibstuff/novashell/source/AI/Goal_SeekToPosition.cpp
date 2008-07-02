@@ -54,7 +54,9 @@ int Goal_SeekToPosition::Process()
   //test to see if the bot has become stuck
   if (isStuck())
   {
-    m_iStatus = failed;
+	  m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK));
+
+	  m_iStatus = failed;
   }
  
   return m_iStatus;
@@ -71,6 +73,10 @@ bool Goal_SeekToPosition::isStuck()const
 
 	if (TimeTaken > m_timeToReachPos)
 	{
+		if (GetGameLogic()->GetShowPathfinding())
+		LogMsg("Entity %d (%s) appears to be stuck (%d MS timeout reached)",m_pOwner->ID(), 
+			m_pOwner->GetName().c_str(), unsigned int (TimeTaken));
+		
 		return true;
 	}
 

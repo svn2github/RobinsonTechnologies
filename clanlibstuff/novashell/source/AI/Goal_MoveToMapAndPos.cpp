@@ -27,10 +27,10 @@ void Goal_MoveToMapAndPos::Activate()
 		//however, if this fails, we'll need it.
 	}
 
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+if (GetGameLogic()->GetShowPathfinding())
 	LogMsg("Ent %d (%s) is calculating a MACRO path.  Cur facing is %s, facing target is %s.", m_pOwner->ID(), m_pOwner->GetName().c_str(),
 		PrintVector(m_pOwner->GetVectorFacing()).c_str(), PrintVector(m_pOwner->GetVectorFacingTarget()).c_str());
-#endif
+
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
@@ -53,10 +53,10 @@ void Goal_MoveToMapAndPos::Activate()
 	
 	if (m_macroPath.m_path.size() == 1)
 	{
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-		LogMsg("Ent %d (%s) can get there without warping actually", m_pOwner->ID(), m_pOwner->GetName().c_str());
+if (GetGameLogic()->GetShowPathfinding())
+		LogMsg("Entity %d (%s) can get there without warping actually", m_pOwner->ID(), m_pOwner->GetName().c_str());
 			
-#endif	//if this happens, it means we CAN actually go directly there without warping.  Possibly the 
+	//if this happens, it means we CAN actually go directly there without warping.  Possibly the 
 		//m_bTriedSimpleWay thing failed.
 
 		assert(m_pDestMap == m_pOwner->GetMap());
@@ -77,10 +77,10 @@ void Goal_MoveToMapAndPos::ProcessNextMapChunk()
 
 	if (!m_macroPath.IsValid())
 	{
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-		LogMsg("Ent %d (%s) is done with micro path, go straight to the right spot",
+if (GetGameLogic()->GetShowPathfinding())
+		LogMsg("Entity %d (%s) is done with micro path, go straight to the right spot",
 		m_pOwner->ID(), m_pOwner->GetName().c_str());
-#endif
+
 
 		//no more macro path, just move to the right spot now and we're done
 		assert(m_pDestMap == m_pOwner->GetMap() && "How this happen?!");
@@ -91,9 +91,9 @@ void Goal_MoveToMapAndPos::ProcessNextMapChunk()
 	
 	int nextNodeID = m_macroPath.m_path.front();
 	
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+if (GetGameLogic()->GetShowPathfinding())
 	LogMsg("%s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
-#endif
+
 
 	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID, true);
 	
@@ -150,11 +150,11 @@ int Goal_MoveToMapAndPos::Process()
 
 				} else
 				{
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+if (GetGameLogic()->GetShowPathfinding())
 					LogMsg("Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
 						m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
-#endif
-					if (pNodeEnt->GetScriptObject())
+
+if (pNodeEnt->GetScriptObject())
 					{
 						if (pNodeEnt->GetScriptObject()->FunctionExists("OnGoalPreWarp"))
 						{
@@ -249,10 +249,9 @@ void Goal_MoveToMapAndPos::LostFocus()
 {
 	m_iStatus = inactive;
 	 
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+if (GetGameLogic()->GetShowPathfinding())
+	LogMsg("Entity %d (%s): Aborting goal_MoveToMapAndPos.. (brain lost focus)", m_pOwner->ID(), m_pOwner->GetName().c_str());
 
-	LogMsg("Ent %d (%s) Aborting goal_Movetomapandpos.. (brain lost focus)", m_pOwner->ID(), m_pOwner->GetName().c_str());
-#endif
 	m_bTriedSimpleWay = false;
     RemoveAllSubgoals();
 }

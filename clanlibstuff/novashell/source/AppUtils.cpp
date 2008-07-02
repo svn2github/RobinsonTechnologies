@@ -756,3 +756,14 @@ bool IsControlKeyDown()
 #endif
 		);
 }
+
+std::string GetEntityNameByID( int id )
+{
+	BaseGameEntity * pEnt = EntityMgr->GetEntityFromID(id);
+	if (pEnt)
+	{
+		return pEnt->GetName();
+	}
+
+	return "";
+}

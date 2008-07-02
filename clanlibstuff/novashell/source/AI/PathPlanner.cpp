@@ -7,10 +7,6 @@
 #include "SearchTerminationPolicies.h"
 #include "../Message.h"
 #include "NodeTypeEnumerations.h"
-//#ifdef _DEBUG
-
-//	#define SHOW_NAVINFO
-//	#define PROFILE_PATHFINDING
 
 //#endif
 #include <cassert>
@@ -392,7 +388,6 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
   //make a note of the target position.
   m_vDestinationPos = TargetPos;
 
-
 #ifdef PROFILE_PATHFINDING
   int timer = GetTickCount();
 #endif
@@ -411,10 +406,8 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
   //or an obstacle.
   if (ClosestNodeToBot == no_closest_node_found)
   { 
-#ifdef SHOW_NAVINFO
-    LogMsg("No closest node to entity found!");
-#endif
-
+	if (GetGameLogic()->GetShowPathfinding())
+		LogMsg("Entity %d (%s): No close by pathfinding nodes found, won't pathfind.", m_pOwner->ID(), m_pOwner->GetName().c_str());
     return false; 
   }
 
@@ -437,10 +430,8 @@ bool PathPlanner::RequestPathToPosition(CL_Vector2 TargetPos)
   //object.
   if (ClosestNodeToTarget == no_closest_node_found)
   { 
-#ifdef SHOW_NAVINFO
-    LogMsg("No closest node to target %d (looking in %s at pos %s)",ClosestNodeToTarget, m_pOwner->GetMap()->GetName().c_str(), PrintVector(TargetPos).c_str());
-#endif
-
+if (GetGameLogic()->GetShowPathfinding())
+    LogMsg("Entity %d (%s): No closest node to target at pos %s",  m_pOwner->ID(), m_pOwner->GetName().c_str(),  PrintVector(TargetPos).c_str());
     return false; 
   }
 

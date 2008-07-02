@@ -38,7 +38,7 @@ void Goal_Approach::Activate()
 	{
 		m_bTriedSimpleWay = true;
 
-		//we don't really need this fancy system?
+		//we don't really need this fancy way, do it the simple way.
 		AddSubgoal(new Goal_MoveToPosition(m_pOwner, m_vDestination));
 		return;
 		//however, if this fails, we'll need it.
@@ -46,9 +46,8 @@ void Goal_Approach::Activate()
 
 	m_bTriedComplexWay = true;
 	
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-	LogMsg("Ent %d (%s) is calculating an Approach MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
-#endif
+if (GetGameLogic()->GetShowPathfinding())
+	LogMsg("Entity %d (%s) is calculating an Approach MACRO path", m_pOwner->ID(), m_pOwner->GetName().c_str());
 
 	//the destination is on a different map or requires a complicated intra-map route.  We need to sketch out a path to get to that map.
 	m_macroPath = g_worldNavManager.FindPathToMapAndPos(m_pOwner, m_pDestMap, m_vDestination);
@@ -57,6 +56,10 @@ void Goal_Approach::Activate()
 	{
 		if (m_macroPath.m_status == MacroPathInfo::NO_NODE_CLOSE)
 		{
+			if (GetGameLogic()->GetShowPathfinding())
+				LogMsg("Entity %d (%s) unable to find any close pathfinding nodes.  Walking towards direction...", m_pOwner->ID(), m_pOwner->GetName().c_str());
+
+	
 			//try our best anyway
 			if (m_pDestMap == m_pOwner->GetMap())
 			{
@@ -115,10 +118,9 @@ void Goal_Approach::ProcessNextMapChunk()
 
 	int nextNodeID = m_macroPath.m_path.front();
 
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
 
+	if (GetGameLogic()->GetShowPathfinding())
 	LogMsg("Approach: %s is going to node %d", m_pOwner->GetName().c_str(), nextNodeID);
-#endif
 
 	MovingEntity *pNodeEnt = g_worldNavManager.ConvertWorldNodeToOwnerEntity(nextNodeID, true);
 
@@ -254,8 +256,11 @@ int Goal_Approach::Process()
 	{
 		if (m_bTriedSimpleWay && m_bTriedComplexWay)
 		{
-			LogMsg("Entity %d (%s) cannot find a path to approach entity %d, aborting",
-				m_pOwner->ID(), m_pOwner->GetName().c_str(), m_targetID);
+			LogMsg("Entity %d (%s) cannot find a path to approach entity %d (%s), aborting",
+				m_pOwner->ID(), m_pOwner->GetName().c_str(), m_targetID, GetEntityNameByID(m_targetID).c_str());
+			
+			m_vDestination = CL_Vector2::ZERO;
+			m_pDestMap = NULL;
 			return m_iStatus;
 		} else
 		{
@@ -291,11 +296,9 @@ int Goal_Approach::Process()
 
 				} else
 				{
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-
+					if (GetGameLogic()->GetShowPathfinding())
 					LogMsg("Approach: Warping %s to %s from %s", m_pOwner->GetName().c_str(), 
 							m_pOwner->GetMap()->GetName().c_str(), pNodeEnt->GetMap()->GetName().c_str());
-#endif
 
 					if (pNodeEnt->GetScriptObject())
 					{
@@ -363,9 +366,8 @@ bool Goal_Approach::HandleMessage(const Message& msg)
 
 		case C_MSG_TARGET_NOT_FOUND:
 
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-			LogMsg("Target wasn't found, restarting");
-#endif
+			if (GetGameLogic()->GetShowPathfinding())
+				LogMsg("Entity %d (%s): Target wasn't found, restarting", m_pOwner->ID(), m_pOwner->GetName().c_str());
 			
 			//if this is the first time the target wasn't found, let's let it keep going, because who knows, it might
 			//find it by luck, just by walking in that direction.
@@ -385,9 +387,8 @@ bool Goal_Approach::HandleMessage(const Message& msg)
 
 		case C_MSG_GOT_STUCK:
 			m_bTriedSimpleWay = false;
-	#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-				LogMsg("Got C_MSG_GOT_STUCK");
-	#endif
+if (GetGameLogic()->GetShowPathfinding())
+			LogMsg("Entity %d (%s): Got C_MSG_GOT_STUCK", m_pOwner->ID(), m_pOwner->GetName().c_str());
 			return true; //signal that we handled it
 			break;
 
@@ -410,18 +411,18 @@ bool Goal_Approach::HandleMessage(const Message& msg)
 void Goal_Approach::Terminate()
 {
 	//we were terminated
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-	LogMsg("Approach of %s to %s (id %d): terminated", m_pOwner->GetName().c_str(),
+if (GetGameLogic()->GetShowPathfinding())
+	LogMsg("Approach of %s to %s (id %d): finished", m_pOwner->GetName().c_str(),
 		PrintVector(m_vDestination).c_str(), m_targetID);
-#endif
+
 }
 
 void Goal_Approach::LostFocus()
 {
 	m_iStatus = inactive;
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
+if (GetGameLogic()->GetShowPathfinding())
 	LogMsg("Approach of %s: LostFocus..", m_pOwner->GetName().c_str());
-#endif
+
 	ReinitializeCompletely();
 	RemoveAllSubgoals();
 }

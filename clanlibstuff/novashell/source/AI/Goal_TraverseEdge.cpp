@@ -87,6 +87,8 @@ int Goal_TraverseEdge::Process()
   //if the bot has become stuck return failure
   if (isStuck())
   {
+	  m_pOwner->HandleMessage(Message(C_MSG_GOT_STUCK));
+
 	  //LogMsg("Retry");
 	  m_iStatus = failed;
   }

@@ -287,11 +287,10 @@ bool MovingEntity::GetApproachPosition(MovingEntity *pEnt, int distance, CL_Vect
 
 		pOutputPos = GetPointOutsideOfRectFromInside(c, vecAngleFromTarget, padding) + this->GetPos();
 
-#ifdef C_SHOW_PATHFINDING_DEBUG_INFO
-
+	if (GetGameLogic()->GetShowPathfinding())
 		LogMsg("Approach of %s: Trying angle %s at pos %s", pEnt->GetName().c_str(), PrintVector(vecAngleFromTarget).c_str(), 
 			PrintVector(pOutputPos).c_str());
-#endif
+
 
 		//found a potential, let's do further checking for more accuracy?
 #ifdef _DEBUG

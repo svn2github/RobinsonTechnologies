@@ -72,7 +72,7 @@ void BrainTopBase::Update(float step)
 {
 	if (!m_pParent->GetBody())
 	{
-		LogMsg("BrainBase (%d): No body?", m_pParent->ID());
+		LogMsg("StandardBase of %d (%s): Entity needs collision information to use StandardBase.", m_pParent->ID(), m_pParent->GetName().c_str());
 		return;
 	}
 	CL_Vector2 curForce = m_pParent->GetLinearVelocity(); //figure out what needs to change to get our desired total force
