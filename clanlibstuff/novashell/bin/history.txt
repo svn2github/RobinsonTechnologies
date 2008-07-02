@@ -12,6 +12,7 @@ Changelog
 	only be available in my private debug builds, but I figure it's useful.
 * BUGFIX: Huge bug with pathfinding fixed, too complicated to explain, but trust me, it was bad
 * Updated the dragon eggs tutorial up to #5.. more to do though.
+* Added a 64X64 icon for vista, hopefully doesn't break XP
 
 7-1-2008
 

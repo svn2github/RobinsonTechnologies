@@ -97,8 +97,13 @@ bool MovingEntity::IsOnScreen()
 
 unsigned int MovingEntity::CalculateTimeToReachPosition(const CL_Vector2 &pos)
 {
-	
-	return (Vec2DDistance(GetPos(), pos) *20) / m_desiredSpeed;
+	//Note: we're doing a very crappy job here, we should take into account acceleration/current speed
+	//and such as well
+	unsigned int timeMS = (Vec2DDistance(GetPos(), pos) * m_desiredSpeed);
+
+	return 100;
+//	LogMsg("Should take %d MS", timeMS);
+	return timeMS;
 }
 
 

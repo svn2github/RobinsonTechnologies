@@ -74,9 +74,9 @@ bool Goal_SeekToPosition::isStuck()const
 	if (TimeTaken > m_timeToReachPos)
 	{
 		if (GetGameLogic()->GetShowPathfinding())
-		LogMsg("Entity %d (%s) appears to be stuck (%d MS timeout reached)",m_pOwner->ID(), 
-			m_pOwner->GetName().c_str(), unsigned int (TimeTaken));
-		
+			LogMsg("Entity %d (%s) appears to be stuck (%.0f MS timeout reached)",m_pOwner->ID(), 
+			m_pOwner->GetName().c_str(), TimeTaken);
+	
 		return true;
 	}
 
