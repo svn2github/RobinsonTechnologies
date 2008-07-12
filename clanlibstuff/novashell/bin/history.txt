@@ -4,6 +4,20 @@ new collision features soon
 
 Changelog
 
+7-12 2008
+
+-- Note: Data format slightly changed, all existing map data will be automatically updated, but be aware you can't go back to an older version.
+
+* BUGFIX: Gravity and dampening are no longer applied to some objects while the game is paused
+* BUGFIX: Fixed my bug in bar.lua (illspirit)
+* FEATURE:  Now shows number of tiles/ents currently selected in editor
+* Docs fixed, C_RAY_DEBUG_MODE should have been C_RAY_DEBUG.  (mikael)
+* FEATURE: Visual Profile Editor changed to Alignment Editor and improved quite a bit, can now modify image offsets and alignment per tilepic/image.
+* FEATURE: In the collision editor, can now move the whole collision shape at once with the arrow keys, very useful for those times where you just
+	need to move it, but don't want to move each vert or make it again.
+* Pathfinding faster
+* Fixed a warp that was partly inside of a solid wall so the ducks weren't pathfinding into one of the cabins in the dink example
+
 7-2 2008
 
 * BUGFIX: Cutting and pasting from the system console won't cut and paste entities in the background

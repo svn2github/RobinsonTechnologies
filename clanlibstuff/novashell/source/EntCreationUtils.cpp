@@ -189,6 +189,7 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 		params1.destY[2] -= bottomOffset;
 		params1.destY[3] -= bottomOffset;
 
+/*	
 		leftOffset *= GetCamera->GetScale().x;
 
 		//same thing with left to right
@@ -196,6 +197,7 @@ void AddShadowToParam1(CL_Surface_DrawParams1 &params1, Tile *pTile)
 		params1.destX[1] -= leftOffset;
 		params1.destX[2] -= leftOffset;
 		params1.destX[3] -= leftOffset;
+		*/
 
 	}
 

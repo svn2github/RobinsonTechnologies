@@ -180,21 +180,9 @@ void TileEditOperation::AddTileToSelection(int operation, bool bPerformDupeCheck
 
 void TileEditOperation::AddWorldCoordToBoundsByTile(Tile *pTile)
 {
-
-	if (pTile->GetType() == C_TILE_TYPE_ENTITY)
-	{
-		TileEntity *pEntTile = (TileEntity*) pTile;
-
-		//special handling to deal with the complicated offsets a sprite can have
-		CL_Rectf r = pTile->GetWorldRect();
-		AddWorldCoordToBounds(CL_Vector2(r.left, r.top)); //this rounds it off to the tile we're on
-		AddWorldCoordToBounds(CL_Vector2(r.right, r.bottom));
-		return;
-	}
-
-	//default handling
-	AddWorldCoordToBounds(pTile->GetPos()); //this rounds it off to the tile we're on
-	AddWorldCoordToBounds(pTile->GetPos() + pTile->GetBoundsSize());
+	CL_Rectf r = pTile->GetWorldRect();
+	AddWorldCoordToBounds(CL_Vector2(r.left, r.top)); //this rounds it off to the tile we're on
+	AddWorldCoordToBounds(CL_Vector2(r.right, r.bottom));
 }	
 
 
@@ -425,7 +413,7 @@ void TileEditOperation::PasteToWorld(CL_Vector2 vecWorld, int pasteOptions, Tile
 	{
 		vecDestTileWorld = vecWorld - vecOffset;
 		vecDestTileWorld += (*itor)->m_pTile->GetPos();
-
+//		vecDestTileWorld += (*itor)->m_pTile->GetBoundsRect();
 		unsigned int layerToUse = (*itor)->m_pTile->GetLayer();
 
 		unsigned int originalLayer = layerToUse;
@@ -603,6 +591,11 @@ void TileEditOperation::ApplyOffset(CL_Vector2 vOffset)
 
 void TileEditOperation::UpdateSelectionFromWorld()
 {
+	if (!g_pMapManager->GetActiveMap() || g_pMapManager->GetActiveMap()->IsKillingMapNow() || !g_pMapManager->GetActiveMap()->IsInitted())
+	{
+		LogMsg("Ignoring UpdateSelectionFromWorld, because we're shutting down.");
+		return;
+	}
 	selectedTile_list::iterator itor = m_selectedTileList.begin();
 	Tile *pTile, *pWorldTile;
 

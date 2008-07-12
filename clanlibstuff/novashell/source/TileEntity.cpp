@@ -118,6 +118,11 @@ b2Body * TileEntity::GetCustomBody()
 	return m_pEntity->GetBody();
 }
 
+void TileEntity::GetAlignment( CL_Origin &origin, int &x, int &y )
+{
+	assert(m_pEntity);
+	m_pEntity->GetAlignment(origin, x, y);
+}
 
 bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 {

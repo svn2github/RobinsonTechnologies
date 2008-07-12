@@ -361,7 +361,7 @@ void PhysicsManager::Update( float step )
 		//if (m_debugDraw.GetFlags() != 0)
 		{
 			//run simulation just to draw the debug stuff
-			m_pWorld->Step(0, 0);
+			//m_pWorld->Step(0, 0);
 
 		}
 	

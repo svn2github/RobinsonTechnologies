@@ -447,7 +447,7 @@ void EntEditMode::Init()
 	pItem = m_pMenu->create_item("Modify Selected/Edit collision data (Toggle) (Ctrl-W)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDefaultTileHardness);
 
-	pItem = m_pMenu->create_item("Modify Selected/Edit visual profile  (Ctrl-Shift-E) (if applicable)");
+	pItem = m_pMenu->create_item("Modify Selected/Edit Image Alignment (Ctrl-Shift-E)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnEditVisualProfile);
 
 	pItem = m_pMenu->create_item("Modify Selected/Scale Down ([)");
@@ -530,6 +530,10 @@ void EntEditMode::OnExternalDialogClose(int entID)
 {
 	m_bDialogIsOpen = false;
 	LogMsg("Closing external dialog");
+
+	//fix any bad selections..
+	
+	m_selectedTileList.UpdateSelectionFromWorld();
 }
 void EntEditMode::OnEditVisualProfile()
 {
@@ -560,6 +564,7 @@ void EntEditMode::OnEditVisualProfile()
 		return;
 	}
 	
+	/*
 	if (pTile->GetType() != C_TILE_TYPE_ENTITY)
 	{
 		CL_MessageBox::info("This option can only be used on entities that have a visual profile attached by script.", GetApp()->GetGUI());
@@ -574,19 +579,22 @@ void EntEditMode::OnEditVisualProfile()
 		return;
 	}
 
+*/
 
-	LogMsg("Editing visual profile %s", pEnt->GetVisualProfile()->GetName().c_str());
+
+	//LogMsg("Editing visual profile %s", pEnt->GetVisualProfile()->GetName().c_str());
 	EntVisualProfileEditor *pEditor = (EntVisualProfileEditor*) GetMyEntityMgr->Add(new EntVisualProfileEditor);
 
-	if (!pEditor || !pEditor->Init(pEnt))
+	m_bDialogIsOpen = true; //this cripples the EntEditMode functionality so we don't
+	//interfere with the new dialog we just opened
+
+	if (!pEditor || !pEditor->Init(pTile))
 	{
 		LogError("Error initializing visual profile editor");
 		return;
 	}
 
-	m_bDialogIsOpen = true; //this cripples the EntEditMode functionality so we don't
-	//interfere with the new dialog we just opened
-
+	
 	//However, we do want to know when it closes so we can change it back
 
 	m_slots.connect(pEditor->sig_delete, this, &EntEditMode::OnExternalDialogClose);
@@ -1977,10 +1985,7 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 				pEnt->GetEntity()->Kill(); //force it to save out its collision info to disk, so when
 				
 				//we reinit all similar tiles, they will use the changed version
-				//g_pMapManager->GetActiveMap()->ReInitEntities();
 				ReInitTileList(t);
-
-
 
 			} else
 			{
@@ -2152,11 +2157,15 @@ void EntEditMode::Render(void *pTarget)
 				}
 			}
 			
+		} else
+		{
+			//multiple tiles selected
+			s += "\n" + CL_String::from_int(m_selectedTileList.m_selectedTileList.size()) +" selected.";
 		}
 		m_pLabelSelection->set_text(s);
 	}
 	
-	if (!m_bHideSelection)
+	if (!m_bHideSelection && !IsDialogOpen(false, true))
 	{
 		while (itor != m_selectedTileList.m_selectedTileList.end())
 		{
@@ -2336,7 +2345,7 @@ if (m_bDialogIsOpen) return;
 	//make GUI here
 	m_bDialogIsOpen = true; //don't let other operations happen until we're done with this
 	
-	CL_Point ptSize(370,450);
+	CL_Point ptSize(370,472);
 	CL_Window window(CL_Rect(0, 0, ptSize.x, ptSize.y), st, 0, GetApp()->GetGUI());
 	window.set_event_passing(false);
 	m_guiResponse = C_GUI_CANCEL; //default
@@ -2399,6 +2408,21 @@ if (m_bDialogIsOpen) return;
 	//add edit button
 	CL_Button buttonEditScript (CL_Point(buttonOpenScript.get_client_x()+buttonOpenScript.get_width(), offsetY), "Edit", window.get_client_area());
 	offsetY+= 20;
+	
+	
+	CL_Button buttonEditAlignment(CL_Point(10, offsetY), "Modify Image Alignment", window.get_client_area() );
+
+	CL_Origin origin;
+	int origin_x, origin_y;
+	pTile->GetAlignment(origin, origin_x, origin_y);
+
+	string originText = CL_String::format("Current: %1 X:%2 Y:%3",
+		OriginToString(origin), origin_x, origin_y);
+	CL_Label labelAlignment (CL_Point(142, offsetY+2), originText, window.get_client_area());
+
+
+	offsetY+= 20;
+
 
 	CL_Label labelData (CL_Point(10, offsetY), "Custom data attached to the object (dbld click to edit):", window.get_client_area());
 	offsetY+= 20;
@@ -2441,6 +2465,7 @@ if (m_bDialogIsOpen) return;
 		{
 			originalLayer = i; //so we can tell if it changed later
 			layerList.set_selected(i, true);
+			layerList.set_top_item(i);
 		}
 	}
 	
@@ -2532,7 +2557,10 @@ if (m_bDialogIsOpen) return;
 	slots.connect(buttonRemoveData.sig_clicked(), &OnPropertiesRemoveData, &listData);
 
 	slots.connect(listData.sig_mouse_dblclk(), &OnPropertiesEditData, &listData);
-	
+
+	slots.connect(buttonEditAlignment.sig_clicked(), this, &EntEditMode::OnEditAlignment);
+
+
 	//populate the listbox
 
 	if (pEnt)
@@ -2781,4 +2809,9 @@ void EntEditMode::GetSettingsFromWorld()
 void EntEditMode::OnMapChange()
 {
 	GetSettingsFromWorld();
+}
+
+void EntEditMode::OnEditAlignment()
+{
+	CL_MessageBox::info("About editing alignment", "To interactively edit the alignment of a tilepic/entity, exit this dialog, highlight it, and hit Ctrl-Shift-E or choose Modify Selected->Edit Image Alignment.", GetApp()->GetGUI());
 }

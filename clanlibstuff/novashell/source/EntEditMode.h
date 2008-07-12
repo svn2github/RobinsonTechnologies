@@ -122,6 +122,7 @@ protected:
 	void OnPropertiesOpenScript();
 	void OnPropertiesEditScript();
 	void OnPropertiesConvert();
+	void OnEditAlignment();
 	void OnExternalDialogClose(int entID);
 	bool MouseIsOverSelection(CL_Point ptMouse);
 	void SetOperation(int op);

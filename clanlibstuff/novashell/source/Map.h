@@ -41,7 +41,7 @@ public:
 typedef std::map<ScreenID, MapChunk*> map_chunk_map;
 
 typedef std::list<unsigned int> tag_hash_list;
-#define C_MAP_FILE_VERSION 2
+#define C_MAP_FILE_VERSION 3
 
 enum
 {
@@ -392,7 +392,7 @@ vDir - A unit vector containing the direction of the ray.
 rayRange - How far the ray can reach.
 raySpread - 0 for a single ray, otherwise will shoot five rays in a spread formation, this distance apart from each one.
 entToIgnore - An <Entity> we should ignore during the check, otherwise nil
-mode - One of the <C_RAY_CONSTANTS>.  Use <C_RAY_DEBUG_MODE> to visually see the rays being shot.
+mode - One of the <C_RAY_CONSTANTS>.  Use <C_RAY_DEBUG> to visually see the rays being shot.
 bIgnoreCreature - If true, creatures are ignored during the check.
 
 Returns:
@@ -459,7 +459,7 @@ The ray will hit only tile pics.
 constant: C_RAY_EVERYTHING
 The ray will hit entities as well as tile pics.
 
-constant: C_RAY_DEBUG_MODE
+constant: C_RAY_DEBUG
 The rays will be visually drawn on the screen, helps to figure out problems.  Slow, so don't leave this on. Hits everything.
 
 */

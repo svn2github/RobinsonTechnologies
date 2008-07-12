@@ -77,7 +77,11 @@ public:
 	int GetGraphNodeID() {return m_graphNodeID;}
 	void SetGraphNodeID(int id) { /*assert(m_graphNodeID == invalid_node_index);*/ m_graphNodeID = id;}
 	CBit32 GetBitField() {return m_bitField;}
-enum
+	virtual void GetAlignment(CL_Origin &origin, int &x, int &y);
+	virtual void SetAlignment(CL_Origin origin, int &x, int &y);
+	void GetBaseAlignment(CL_Origin &origin, int &x, int &y);
+
+	enum
 {
  e_flippedX = D_BIT_0,
  e_flippedY = D_BIT_1,
@@ -111,6 +115,8 @@ protected:
 	CL_Color m_color;
 	bool m_bUsingCustomCollision; //if a tilepic is scaled weird, it needs to create it's own custom collision
 	int m_graphNodeID; //only used if the path_node flag is set.  Not saved.
+	int m_alignX,m_alignY;
+	cl_uint8 m_origin;
 };
 
 class TilePic: public Tile
@@ -122,10 +128,12 @@ public:
 		m_type = C_TILE_TYPE_PIC;
 		m_rot = 0;
 		m_pBody = NULL;
+		m_origin = origin_top_left;
 	}
 	virtual ~TilePic();
 	
 	virtual Tile * CreateClone();
+
 	virtual void Serialize(CL_FileHelper &helper);
 	void SaveToMasterCollision(); 
 	void ForceUsingCustomCollisionData();
@@ -136,8 +144,7 @@ public:
 	//TODO optimize these to be precached?
 
 	virtual CL_Vector2 GetBoundsSize() {return CL_Vector2(m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);}
-	virtual CL_Rectf GetWorldRect() {return CL_Rectf(m_vecPos.x, m_vecPos.y, 
-		m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x, m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y);}
+	virtual CL_Rectf GetWorldRect();
 	virtual void SetScale(const CL_Vector2 &v);
 	virtual CollisionData * GetCollisionData();
 	virtual void Render(CL_GraphicContext *pGC);

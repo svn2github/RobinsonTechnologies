@@ -515,6 +515,7 @@ void VisualProfile::UpdateProfileAnim(CL_DomElement &node)
 
 	node.set_attribute("x", CL_String::from_int(x));
 	node.set_attribute("y", CL_String::from_int(y));
+	
 
 }
 

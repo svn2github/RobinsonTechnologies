@@ -21,12 +21,16 @@ public:
 	EntVisualProfileEditor();
 	virtual ~EntVisualProfileEditor();
 
-	bool Init(MovingEntity *pEnt);
+	bool Init(Tile *pTile);
 	void OnEditorClosed(int entID);
 	virtual void Render(void *pTarget);
 	bool IsDialogOpen();
 	void OnEntityDeleted(int entID);
-
+	void OffsetChanged();
+	void OnOffsetChanged(const string &st)
+	{
+		OffsetChanged();
+	};
 
 protected:
 	
@@ -39,15 +43,19 @@ protected:
 	void ModifyActiveAnim(CL_Point pt);
 
 	void OnChangeAnim();
-	void MoveAnimSelection(int offset);
+	void OnChangeAlignment();
 	
+	void MoveAnimSelection(int offset);
+
 	//GUI
 	CL_SlotContainer m_slots;
 	CL_Window * m_pWindow;
-	CL_ListBox * m_pListAnims;
+	CL_ListBox * m_pListAnims, *m_pListAlignment;
 
-	MovingEntity *m_pEnt; //the object we're working with
-
+	MovingEntity *m_pEnt; //the object we're working with, or null if not an entity
+	TilePic *m_pTilePic; //null if not a tilepic
+	Tile *m_pBaseTile; //in both cases, they do have a base tile we can access
+	CL_InputBox * m_pAlignX, *m_pAlignY;
 private:
 };
 

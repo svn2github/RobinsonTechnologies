@@ -99,10 +99,9 @@ unsigned int MovingEntity::CalculateTimeToReachPosition(const CL_Vector2 &pos)
 {
 	//Note: we're doing a very crappy job here, we should take into account acceleration/current speed
 	//and such as well
-	unsigned int timeMS = (Vec2DDistance(GetPos(), pos) * m_desiredSpeed);
+	unsigned int timeMS = ((Vec2DDistance(GetPos(), pos)*14)  / cl_max(1, (m_desiredSpeed/3)));
 
-	return 100;
-//	LogMsg("Should take %d MS", timeMS);
+    //LogMsg("Should take %d MS", timeMS);
 	return timeMS;
 }
 
@@ -963,6 +962,11 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 	*pNew->GetData() = m_dataManager; //copy our entity specific vars too
 	
 	pNew->SetVectorFacing(m_vecFacing);
+	
+	CL_Origin o;
+	int x,y;
+	GetAlignment(o, x, y);
+	pTile->SetAlignment(o, x , y);
 	pNew->Init();
 	pNew->SetRotation(GetRotation());
 
@@ -975,7 +979,42 @@ CL_Rectf MovingEntity::GetWorldRect()
 	
 	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
+	CL_Origin o;
+	int x,y;
+
+	m_pSprite->get_alignment(o, x, y);
+
+	CL_Vector2 vPos = GetPos();
+	CL_Pointf pt = calc_origin(o, CL_Size(m_pSprite->get_width()*m_pTile->GetScale().x, m_pSprite->get_height() * m_pTile->GetScale().y) );
+
+	vPos.x -= pt.x;
+	vPos.y -= pt.y;
+
+	CL_Rectf r(vPos.x, vPos.y, 
+		vPos.x + m_pSprite->get_width()*m_pTile->GetScale().x, vPos.y + m_pSprite->get_height()* m_pTile->GetScale().y);
+
+
+	//I have no idea why I need this as a special case??? But also too lazy to look into it.
+	if (o == origin_top_left)
+	{
+		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , y* m_pTile->GetScale().y);
+
+	} else
+	{
+		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , -y* m_pTile->GetScale().y);
+
+	}
+
 	
+	/*
+	static CL_Pointf offset;
+	offset = calc_origin(o, r.get_size());
+	r -= offset;
+	r -= offset;
+	r += *(const CL_Pointf*)&(GetVisualOffset());
+*/
+/*
+
 	static CL_Rectf r;
 	r.left = 0;
 	r.top = 0;
@@ -1007,7 +1046,7 @@ CL_Rectf MovingEntity::GetWorldRect()
 	
 		
 	//r += *(const CL_Pointf*)&(GetVisualOffset());
-	
+	*/
 /*
 	CL_Rect c(r);
 	if (c.bottom < -1000 || c.bottom > 1000)
@@ -1029,18 +1068,37 @@ const CL_Rect & MovingEntity::GetBoundsRect()
 	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
 
-	static CL_Rect r;
-	r.left = 0;
-	r.top = 0;
-	r.right = GetSizeX();
-	r.bottom = GetSizeY();
-	static CL_Origin origin;
-	static int x,y;
-	m_pSprite->get_alignment(origin, x, y);
-	static CL_Point offset;
-	offset = calc_origin(origin, r.get_size());
-	r -= offset;
-	return r;
+	CL_Origin o;
+	int x,y;
+
+	m_pSprite->get_alignment(o, x, y);
+
+	CL_Vector2 vPos = CL_Vector2(0,0);
+	CL_Pointf pt = calc_origin(o, CL_Size(m_pSprite->get_width()*m_pTile->GetScale().x, m_pSprite->get_height() * m_pTile->GetScale().y) );
+
+	vPos.x -= pt.x;
+	vPos.y -= pt.y;
+
+	CL_Rectf r(vPos.x, vPos.y, 
+		vPos.x + m_pSprite->get_width()*m_pTile->GetScale().x, vPos.y + m_pSprite->get_height()* m_pTile->GetScale().y);
+
+
+	//I have no idea why I need this as a special case??? But also too lazy to look into it.
+	if (o == origin_top_left)
+	{
+		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , y* m_pTile->GetScale().y);
+
+	} else
+	{
+		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , -y* m_pTile->GetScale().y);
+
+	}
+
+	static CL_Rect rc;
+	rc = CL_Rect(r);
+	return rc;
+
+	
 }
 
 string MovingEntity::ProcessPath(const string &st)
@@ -1325,8 +1383,17 @@ Zone MovingEntity::GetNearbyZoneByPointAndType(const CL_Vector2 &vPos, int matTy
 
 void MovingEntity::GetAlignment(CL_Origin &origin, int &x, int &y)
 {
-	m_pSprite->get_alignment(origin, x, y);
+	if (m_pSprite && m_pSprite->get_frame_count() > 0)
+	{
+		m_pSprite->get_alignment(origin, x, y);
+	} else
+	{
+		assert(m_pTile);
+		m_pTile->GetBaseAlignment(origin, x, y);
+	}
 }
+
+
 
 void MovingEntity::SetAlignment(int origin, CL_Vector2 v)
 {
@@ -1429,15 +1496,17 @@ bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 
 	int x = 0;
 	int y = 0;
-	CL_Origin align = origin_center; //default
+	CL_Origin align;
 
+	GetTile()->GetAlignment(align,x,y);
+
+/*
 	if (m_pSprite && m_pSprite->get_frame_count() != 0)
 	{
-		
 		//also check if a TilePic is set and steal its alignment???
 		m_pSprite->get_alignment(align, x,y);
 	}
-
+*/
 	SAFE_DELETE(m_pSprite);
 
 	m_pSprite = new CL_Sprite();
@@ -1480,7 +1549,10 @@ bool MovingEntity::Init()
 		
 			if (SetImageByID(picID, &picSrcRect))
 			{
-				m_pSprite->set_alignment(origin_center,0,0); //TILE ORIGIN
+				CL_Origin o;
+				int x,y;
+				GetTile()->GetBaseAlignment(o,x,y);
+				m_pSprite->set_alignment(o,x,y); 
 			}
 	}
 
@@ -2378,6 +2450,7 @@ void MovingEntity::Render(void *pTarget)
 	static float yawHold, pitchHold;
 
 	
+
 	CL_Vector2 vVisualPos = GetPos();
 	CL_Vector2 vFinalScale = m_pTile->GetScale();
 
@@ -2809,17 +2882,19 @@ void MovingEntity::UpdatePhysicsToPos()
 		b2Shape *pShape = m_pBody->GetShapeList();
 		if (pShape)
 		{
-				if (
-					pShape->GetFilterData().categoryBits != m_filterData.categoryBits
-					||
-					pShape->GetFilterData().maskBits != m_filterData.maskBits
-					||
-					pShape->GetFilterData().groupIndex != m_filterData.groupIndex
-					)
-				{
-					UpdateBodyFilterData(m_pBody, m_filterData);
-				}
+			if (
+				pShape->GetFilterData().categoryBits != m_filterData.categoryBits
+				||
+				pShape->GetFilterData().maskBits != m_filterData.maskBits
+				||
+				pShape->GetFilterData().groupIndex != m_filterData.groupIndex
+				)
+			{
+				UpdateBodyFilterData(m_pBody, m_filterData);
+			}
 		}
+
+
 		if (!m_pBody->IsStatic()) 
 		{
 			m_angle = m_pBody->GetAngle();
@@ -2831,28 +2906,34 @@ void MovingEntity::UpdatePhysicsToPos()
 
 			}
 
-			if (m_customDampening!= -1)
-			{
-				AddForceBurst( -(GetLinearVelocity()*m_customDampening));
-			} else
-			{
-				//default dampening
-				if (GetMap()->GetGravity() == 0)
-				{
-					AddForceBurst( -(GetLinearVelocity()*C_DEFAULT_DAMPENING));
 
+			if (!UnderPriorityLevel())
+			{
+
+
+				if (m_customDampening!= -1)
+				{
+					AddForceBurst( -(GetLinearVelocity()*m_customDampening));
+				} else
+				{
+					//default dampening
+					if (GetMap()->GetGravity() == 0)
+					{
+						AddForceBurst( -(GetLinearVelocity()*C_DEFAULT_DAMPENING));
+
+					}
+				}
+				if (m_gravityOverride != C_GRAVITY_OVERRIDE_DISABLED)
+				{
+					//remove the real gravity
+					AddForce(-CL_Vector2(0, GetMap()->GetGravity()));
+
+					//add our own
+					AddForce(CL_Vector2(0, m_gravityOverride));
 				}
 			}
-			if (m_gravityOverride != C_GRAVITY_OVERRIDE_DISABLED)
-			{
-				//remove the real gravity
-				AddForce(-CL_Vector2(0, GetMap()->GetGravity()));
 
-				//add our own
-				AddForce(CL_Vector2(0, m_gravityOverride));
-			}
 
-			
 		} else
 		{
 			//put it to sleep, if it is bumped, it will be woken up and accept collisions

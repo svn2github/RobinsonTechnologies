@@ -34,6 +34,7 @@ public:
 	virtual void SetPos(const CL_Vector2 &vecPos);
 	virtual b2Body * GetCustomBody();
 	virtual void RenderShadow(CL_GraphicContext *pGC);
+	virtual void GetAlignment(CL_Origin &origin, int &x, int &y);
 
 protected:
 

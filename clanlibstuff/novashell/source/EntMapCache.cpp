@@ -624,7 +624,7 @@ void EntMapCache::RenderCollisionOutlines(CL_GraphicContext *pGC)
 				RenderVectorCollisionData(pTile->GetPos(), *pCol, pGC, false, NULL);
 			}
 			*/
-				assert(0);
+				//assert(0);
 
 			
 			}
@@ -654,16 +654,21 @@ void EntMapCache::RenderGoalAI(CL_GraphicContext *pGC)
 						
 						//first render some general info about the entity:
 
-						string info = pEnt->GetName() + " ("+ CL_String::from_int(pEnt->ID())+") " +
-						pEnt->GetBrainManager()->GetState()->GetName();
+						if (pEnt->GetBrainManager()->GetState())
+						{
+
 						
-						ResetFont(GetApp()->GetFont(C_FONT_GRAY));
-						CL_Color col = CL_Color(30,255,30);
-						DrawWithShadow(pos.x, pos.y, info, col);
-						
-						pEnt->GetGoalManager()->RenderAtPos(pos);
-						//render any custom debug data a goal wants to
-						pEnt->GetGoalManager()->Render();
+							string info = pEnt->GetName() + " ("+ CL_String::from_int(pEnt->ID())+") " +
+							string(pEnt->GetBrainManager()->GetState()->GetName());
+							
+							ResetFont(GetApp()->GetFont(C_FONT_GRAY));
+							CL_Color col = CL_Color(30,255,30);
+							DrawWithShadow(pos.x, pos.y, info, col);
+							
+							pEnt->GetGoalManager()->RenderAtPos(pos);
+							//render any custom debug data a goal wants to
+							pEnt->GetGoalManager()->Render();
+						}
 					}
 				}
 	}

@@ -178,7 +178,7 @@ void CL_SoundManager::RemoveAllEffects(int soundID)
 
 	if (!pSession)
 	{
-		LogMsg("SoundID %d invalid", soundID);
+		LogMsg("RemoveAllEffects: SoundID %d invalid", soundID);
 		return;
 	}
 
@@ -193,7 +193,7 @@ void CL_SoundManager::AddEffect(int soundID, int effectID, float parmA, float pa
 
 	if (!pSession)
 	{
-		LogMsg("SoundID %d invalid", soundID);
+		LogMsg("AddEffect: SoundID %d invalid", soundID);
 		return;
 	}
 
@@ -225,7 +225,7 @@ void CL_SoundManager::SetSpeedFactor(int soundID, float mod)
 
 	if (!pSession)
 	{
-		LogMsg("SoundID %d invalid", soundID);
+		LogMsg("SetSpeedFactor: SoundID %d invalid", soundID);
 		return;
 	}
 	pSession->m_session.set_speedfactor(mod);

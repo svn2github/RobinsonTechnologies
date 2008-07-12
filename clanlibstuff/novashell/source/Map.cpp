@@ -866,6 +866,8 @@ void Map::RemoveUnusedFileChunks()
 
 void Map::ReInitCollisionOnTilePics()
 {
+	
+	if (!this) return;
 	tile_list tileList;
 	tile_list::iterator tileItor;
 	TilePic *pTilePic;

@@ -39,6 +39,7 @@ public:
 	bool GetDataChanged() {return m_dataChanged;}
 	const CL_Vector2 &GetCombinedOffsets();
 	bool CheckForErrors(string extraText, bool bShow);
+	void ApplyOffsetToAll(const CL_Vector2 &vOffset); //applied to every vertex individually
 
 protected:
 

@@ -371,6 +371,15 @@ void PointList::ApplyScale(const CL_Vector2 &vScale)
 
 }
 
+void PointList::ApplyOffset(const CL_Vector2 &vOffset)
+{
+	for (unsigned int i=0; i < m_points.size(); i++)
+	{
+		m_points[i] += vOffset;
+	}
+	m_bNeedsToRecalculateRect = true;
+}
+
 bool PointList::ComputeConvexHull()
 {
 	m_bNeedsToRecalculateRect = true;

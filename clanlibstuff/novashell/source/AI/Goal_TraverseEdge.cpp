@@ -108,7 +108,7 @@ bool Goal_TraverseEdge::isStuck()const
   if (TimeTaken > m_timeExpected)
   {
 	  if (GetGameLogic()->GetShowPathfinding())
-		  LogMsg("Entity %d (%s) appears to be stuck (%.0f MS timeout reached)",m_pOwner->ID(), 
+		  LogMsg("TraverseEdge: Entity %d (%s) appears to be stuck (%.0f MS timeout reached)",m_pOwner->ID(), 
 		  m_pOwner->GetName().c_str(), TimeTaken);
 
     return true;

@@ -46,6 +46,7 @@ public:
 	void RemoveOffsets();
 	void ApplyScale(const CL_Vector2 &vScale);
 	void PrintPoints(); //debug thing
+	void ApplyOffset(const CL_Vector2 &vOffset);
 
 	//Body & GetAsBody(const CL_Vector2 &vPos, Body *pCustomBody = NULL);
 	
@@ -64,7 +65,7 @@ protected:
 
 private:
 	bool BuildBoundingRect(); //returns false if no data is built
-		bool m_bNeedsToRecalculateRect;
+	bool m_bNeedsToRecalculateRect;
 	CL_Rectf m_boundingRect; //cache this info out for speed
 	int m_type;
 	CL_Vector2 m_vecOffset; //offset from our Tile's upper left to the upper left vert

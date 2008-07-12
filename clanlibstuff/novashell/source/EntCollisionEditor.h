@@ -65,7 +65,8 @@ enum
 	void OnPrevLine();
 	void SetupLineForEdit(int line);
 	void SetClippedDefaultBasedOnLine();
-	
+	void ModifyShapePosition(CL_Point pt);
+
 	//GUI
 	CL_SlotContainer m_slots;
 	CL_Window * m_pWindow;

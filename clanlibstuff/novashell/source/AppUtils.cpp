@@ -22,6 +22,25 @@ void DrawTextBar(int posY, CL_Color barColor, string msg)
 
 }
 
+string OriginToString(CL_Origin o)
+{
+	switch (o)
+	{
+	case origin_top_left: return "top_left";
+	case origin_top_center: return "top_center";
+	case origin_top_right: return "top_right";
+	case origin_center_left: return "center_left";
+	case origin_center: return "center";
+	case origin_center_right: return "center_right";
+	case origin_bottom_left: return "bottom_left";
+	case origin_bottom_center: return "bottom_center";
+	case origin_bottom_right: return "bottom_right";
+	}
+
+assert(!"Bad origin");
+return "top_left";
+}
+
 void DrawBullsEyeWorld(CL_Vector2 vecPos, CL_Color col, int size, CL_GraphicContext *pGC)
 {
 

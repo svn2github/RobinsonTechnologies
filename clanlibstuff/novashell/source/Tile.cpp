@@ -24,6 +24,8 @@ Tile::Tile()
 	m_color = CL_Color(255,255,255);
 	m_bUsingCustomCollision = false;
 	m_graphNodeID = invalid_node_index;
+	m_origin = origin_center;
+	m_alignX = m_alignY = 0;
 
 }
 
@@ -195,6 +197,22 @@ void Tile::SerializeBase(CL_FileHelper &helper)
 	helper.process(m_vecScale);
 	helper.process(*(cl_uint32*)&m_color);
 
+	cl_uint8 ver = GetParentScreen()->GetVersion();
+
+	if (helper.IsWriting() || ver > 2)
+	{
+		CL_Origin o;
+		if (helper.IsWriting())
+		{
+			//get latest data
+			GetAlignment(o, m_alignX, m_alignY);
+			m_origin = o;
+		}
+		helper.process(m_origin);
+		helper.process(m_alignX);
+		helper.process(m_alignY);
+	}
+
 }
 
 //sometimes with blank/placeholders we need copy a blank tile
@@ -212,6 +230,9 @@ Tile * Tile::CopyFromBaseToClone(Tile *pNew)
 	pNew->m_vecPos = m_vecPos;
 	pNew->m_vecScale = m_vecScale;
 	pNew->m_color = m_color;
+	pNew->m_origin = m_origin;
+	pNew->m_alignX = m_alignX;
+	pNew->m_alignY = m_alignY;
 	return pNew;
 }
 
@@ -235,6 +256,27 @@ Tile * Tile::CreateReference(Screen *pScreen)
 
 	m_pEdgeCaseList->push_back(pNew);
 	return pNew;
+}
+
+
+void Tile::GetAlignment(CL_Origin &origin, int &x, int &y)
+{
+	origin = CL_Origin(m_origin);
+	x = m_alignX; 
+	y= m_alignY;
+}
+void Tile::SetAlignment(CL_Origin origin, int &x, int &y)
+{
+	m_origin = origin;
+	m_alignX = x; 
+	m_alignY = y;
+}
+
+void Tile::GetBaseAlignment( CL_Origin &origin, int &x, int &y )
+{
+	origin = CL_Origin(m_origin);
+	x = m_alignX; 
+	y= m_alignY;
 }
 
 void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
@@ -283,13 +325,16 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 		bUseParallax = false;
 	}
 	
+	CL_Rectf worldRect = pTile->GetWorldRect();
+	vecPos = CL_Vector2(worldRect.left, worldRect.top);
+
 	if (bUseParallax)
 	{
-		vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(pTile->GetPos(), 
+		vecPos = pWorldCache->WorldToScreen(pWorldCache->WorldToModifiedWorld(vecPos, 
 		pLayer->GetScrollMod()));
 	} else
 	{
-		vecPos = pWorldCache->WorldToScreen(pTile->GetPos());
+		vecPos = pWorldCache->WorldToScreen(vecPos);
 	}
 	
 	static CL_Rectf rectDest;
@@ -335,8 +380,6 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
 	pSurf->set_color(pTile->GetColor());
-
-	
 	pSurf->draw_subpixel(pTile->m_rectSrc, rectDest, pGC);
 }
 
@@ -355,19 +398,28 @@ void RenderTilePicShadow(TilePic *pTile, CL_GraphicContext *pGC)
 	static CL_Vector2 vecPos;
 
 	static Layer *pLayer;
+	
+	/*
 	static Map *pWorld;
+	
 	pWorld = pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 	static EntMapCache *pWorldCache;
 	pWorldCache = pWorld->GetMyMapCache();
+	*/
+	static CL_Rectf rectDest;
+	rectDest =   ConvertWorldRectToScreenRect(pTile->GetWorldRect());
 	
-	vecPos = pWorldCache->WorldToScreen(pTile->GetPos());
+	/*
+	vecPos = CL_Vector2(worldRect.left, worldRect.top);
+
+	vecPos = pWorldCache->WorldToScreen(vecPos);
 	
 	static CL_Rectf rectDest;
 	rectDest.left = vecPos.x;
 	rectDest.top = vecPos.y;
 	rectDest.right = vecPos.x+ ( float(pTile->m_rectSrc.get_width()) * vecScale.x * pTile->GetScale().x);
 	rectDest.bottom = vecPos.y+ float(pTile->m_rectSrc.get_height()) * vecScale.y* pTile->GetScale().y;
-
+*/
 	if (pTile->GetBit(Tile::e_flippedX))
 	{
 		pSurf->set_angle_yaw(-180);
@@ -417,6 +469,9 @@ void TilePic::KillBody()
 	}
 
 }
+
+
+
 void TilePic::RenderShadow(CL_GraphicContext *pGC)
 {
 		RenderTilePicShadow(this, pGC);
@@ -562,16 +617,30 @@ CollisionData * TilePic::GetCollisionData()
 
 	}
 
-
 	return m_pCollisionData;
 }
 
 const CL_Rect & TilePic::GetBoundsRect()
 {
+	/*
 	static CL_Rect r(0,0,0,0);
 	r.right = m_rectSrc.get_width()*m_vecScale.x;
 	r.bottom = m_rectSrc.get_height()*m_vecScale.y;
 	return r;
+	*/
+
+	CL_Rectf r(0, 0, 
+		m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);
+
+	r.apply_alignment(CL_Origin(m_origin), m_alignX, m_alignY);
+
+	static CL_Pointf offset;
+	offset = calc_origin(CL_Origin(m_origin), r.get_size());
+	r -= offset;
+	r -= offset;
+	static CL_Rect ri;
+	ri = CL_Rect(r);
+	return ri;
 }
 
 Tile * TilePic::CreateClone()
@@ -600,6 +669,22 @@ void TilePic::Serialize(CL_FileHelper &helper)
 	helper.process(m_rot);
 }
 
+CL_Rectf TilePic::GetWorldRect()
+{
+	CL_Rectf r(m_vecPos.x, m_vecPos.y, 
+		m_vecPos.x + m_rectSrc.get_width()*m_vecScale.x, m_vecPos.y + m_rectSrc.get_height()*m_vecScale.y);
+
+	r.apply_alignment(CL_Origin(m_origin), m_alignX, m_alignY);
+
+	static CL_Pointf offset;
+	offset = calc_origin(CL_Origin(m_origin), r.get_size());
+	r -= offset;
+	r -= offset;
+
+	return r;
+	
+
+}
 
 
 

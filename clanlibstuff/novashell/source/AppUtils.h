@@ -16,6 +16,8 @@ string VectorToString(const CL_Vector2 * pVec);
 string VectorToStringEx(const CL_Vector2 * pVec);
 string RectToStringEx(const CL_Rect * pR);
 string RectfToStringEx(const CL_Rectf * pR);
+string OriginToString(CL_Origin o);
+
 CL_Rectf ConvertWorldRectToScreenRect(CL_Rectf rArea);
 string GetEntityNameByID(int id);
 void RenderVertexList(const CL_Vector2 &pos, CL_Vector2 *pVertArray, int vertCount, CL_Color &colr, CL_GraphicContext *pGC);

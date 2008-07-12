@@ -220,6 +220,22 @@ void EntCollisionEditor::OnButtonDown(const CL_InputEvent &key)
 		}
 		break;
 	
+	case CL_KEY_RIGHT:
+		ModifyShapePosition(CL_Point(-1,0));
+		break;
+
+	case CL_KEY_LEFT:
+		ModifyShapePosition(CL_Point(1,0));
+		break;
+	case CL_KEY_UP:
+		ModifyShapePosition(CL_Point(0,1));
+		break;
+
+	case CL_KEY_DOWN:
+		ModifyShapePosition(CL_Point(0,-1));
+		break;
+
+
 	case CL_MOUSE_LEFT:
 		{
 	  	 
@@ -290,7 +306,7 @@ void EntCollisionEditor::OnRadioButtonChange(CL_RadioButton *pSelectedButton)
 		m_pLabel->set_text("Left click to add vertex points.");
 		break;
 	case e_modeAdjust:
-		m_pLabel->set_text("Click and drag verts to move, tap DELETE while dragging\nto remove a vertex.");
+		m_pLabel->set_text("Click and drag verts to move, tap DELETE while dragging\nto remove a vertex.  Use the arrow\nkeys to move everything.");
 		break;
 	}
 }
@@ -603,6 +619,22 @@ void RenderVectorPointList(const CL_Vector2 &vecPos, PointList &pl, CL_GraphicCo
 	
 	a = firstVert;
 	pGC->draw_line(b.x,b.y,a.x,a.y, col);
+
+}
+
+
+
+void EntCollisionEditor::ModifyShapePosition(CL_Point pt)
+{
+
+	int mult = 1;
+
+	if (CL_Keyboard::get_keycode(CL_KEY_SHIFT))
+	{
+		mult = 5; //move much more if shift is pressed
+	}
+
+	m_col.ApplyOffsetToAll(CL_Vector2(-pt.x, -pt.y)*mult);
 
 }
 

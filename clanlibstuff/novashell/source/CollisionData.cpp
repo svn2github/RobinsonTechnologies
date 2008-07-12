@@ -143,6 +143,20 @@ void CollisionData::ApplyScaleToAll(const CL_Vector2 &vScale)
 	SetRequestRectRecalculation();
 }
 
+void CollisionData::ApplyOffsetToAll(const CL_Vector2 &vOffset)
+{
+	line_list::iterator listItor = m_lineList.begin();
+
+	while (listItor != m_lineList.end())
+	{
+		listItor->ApplyOffset(vOffset);
+		listItor++;
+	}
+
+	SetRequestRectRecalculation();
+}
+
+
 const CL_Vector2 & CollisionData::GetCombinedOffsets()
 {
 	assert(m_vecCombinedOffset == CL_Vector2::ZERO);

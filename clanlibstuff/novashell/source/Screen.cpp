@@ -241,6 +241,8 @@ bool Screen::Load()
 				{
 				case C_TILE_TYPE_PIC:
 					pTile = new TilePic();
+					pTile->SetParentScreen(this); //they may need this info during init
+
 					pTile->Serialize(helper);
 					AddTile(pTile);
 					break;
