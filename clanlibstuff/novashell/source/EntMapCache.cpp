@@ -284,6 +284,16 @@ void EntMapCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vec
 				{
 					pTile = pTile->GetTileWereAReferenceFrom();
 				}
+
+				if (pTile->GetType() == C_TILE_TYPE_ENTITY)
+				{
+					if (((TileEntity*)pTile)->GetEntity()->GetDeleteFlag())
+					{
+						tileListItor++;
+						((TileEntity*)pTile)->GetEntity()->ProcessPendingMoveAndDeletionOperations();
+						continue;
+					}
+				}
 				
 				if (pTile->GetLastScanID() != renderID)
 				{
@@ -302,6 +312,7 @@ void EntMapCache::AddSectionToDraw(unsigned int renderID, CL_Rect &viewRect, vec
 						//don't render this						
 					} else
 					{
+						
 						m_tileLayerDrawList.push_back(pTile);
 					}
 

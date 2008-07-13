@@ -397,6 +397,12 @@ void MovingEntity::SetLayerID(int id)
 
 Map * MovingEntity::GetMap()
 {
+	if (!m_pTile->GetParentScreen())
+	{
+		LogError("Can't use GetMap() on Entity %d (%s) yet, it doesn't exist on a map", ID(), GetName().c_str());
+		return NULL;
+	}
+
 	return m_pTile->GetParentScreen()->GetParentMapChunk()->GetParentMap();
 }
 
@@ -427,6 +433,14 @@ void MovingEntity::ClearColorMods()
 void MovingEntity::Kill()
 {
 	//tell any entities that were attached to us that we're dying and to also kill themselves
+	
+
+	if (m_pScriptObject && IsPlaced())
+	{
+		RunFunctionIfExists("OnKill");
+		g_inputManager.RemoveBindingsByEntity(this);
+	}
+
 	if (!m_attachedEntities.empty())
 	{
 		list<int>::iterator itor;
@@ -438,16 +452,11 @@ void MovingEntity::Kill()
 			if (pEnt)
 			{
 				pEnt->SetDeleteFlag(true);
-	
+				pEnt->SetAttach(C_ENTITY_NONE, CL_Vector2(0,0));
+
 			} 
 			itor++;
 		}
-	}
-
-	if (m_pScriptObject && IsPlaced())
-	{
-		RunFunctionIfExists("OnKill");
-		g_inputManager.RemoveBindingsByEntity(this);
 	}
 
 	if (m_bRequestsVisibilityNotifications)
@@ -1514,9 +1523,22 @@ bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 	if (pSrcRect == NULL )
 	{
 		//use default image size
-		imageRect = CL_Rect(0,0, pSurf->get_width()-1, pSurf->get_height()-1);
+		imageRect = CL_Rect(0,0, pSurf->get_width(), pSurf->get_height());
 		pSrcRect = &imageRect;
 	}
+	
+	//check if it's valid
+	if (pSurf->get_width() < pSrcRect->right || pSurf->get_height() < pSrcRect->bottom)
+	{
+		if (pSurf->get_width() < pSrcRect->right)
+		pSrcRect->right = pSurf->get_width();
+		
+
+		if (pSurf->get_height() < pSrcRect->bottom)
+		pSrcRect->bottom = pSurf->get_height();
+		LogMsg("Ent %d (%s) tilePic size illegal, truncated to match the size of image", ID(), GetName().c_str());
+	}
+
 	m_pSprite->add_frame(*pSurf, *pSrcRect);
 	m_pSprite->set_alignment(align,x,y);
 
@@ -1621,7 +1643,11 @@ bool MovingEntity::Init()
 
 
 		}
-		SetSpriteData(m_pVisualProfile->GetSprite(VisualProfile::VISUAL_STATE_IDLE, VisualProfile::FACING_LEFT));
+	}
+
+	if (GetVisualProfile())
+	{
+		SetSpriteByVisualStateAndFacing();
 	}
 	
 	m_bHasRunOnInit = true;
@@ -2950,7 +2976,11 @@ void MovingEntity::UpdatePhysicsToPos()
 void MovingEntity::PostUpdate(float step)
 {
 
-	if (GetDeleteFlag()) return;
+	if (GetDeleteFlag())
+	{
+		LogMsg("Deleted!")	;
+		return;
+	}
 	if (!m_bHasRunOnInit) return;
 
 	UpdatePhysicsToPos();
@@ -3228,6 +3258,9 @@ MovingEntity * MovingEntity::Clone(Map *pMap, CL_Vector2 vecPos)
 
 void MovingEntity::OnAttachedEntity(int entID)
 {
+#ifdef _DEBUG
+	LogMsg("Entity %d (%s) just had %d attached", ID(), GetName().c_str(), entID);
+#endif
 	m_attachedEntities.push_back(entID);
 }
 
@@ -3329,6 +3362,10 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 	m_attachEntID = entityID;
 	m_attachOffset = vOffset;
 
+	if (entityID == C_ENTITY_NONE)
+	{
+		return;
+	}
 	if (entityID == C_ENTITY_CAMERA)
 	{
 		g_watchManager.Add(this, INT_MAX);
@@ -3344,6 +3381,12 @@ void MovingEntity::SetAttach(int entityID, CL_Vector2 vOffset)
 				m_attachEntID);
 		} else
 		{
+			if (!pEnt->GetTile()->GetParentScreen())
+			{
+				LogMsg("Entity %d (%s) can't attach to Entity %d (%s) because it hasn't been played on a real map yet",
+					ID(), GetName().c_str(), pEnt->ID(), pEnt->GetName().c_str());
+				return;
+			}
 			if (GetMap() != pEnt->GetMap())
 			{
 				SetPosAndMap(pEnt->GetPos()+m_attachOffset, pEnt->GetMap()->GetName());

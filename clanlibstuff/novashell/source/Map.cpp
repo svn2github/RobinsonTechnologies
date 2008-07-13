@@ -305,10 +305,12 @@ MapChunk * Map::GetMapChunk(ScreenID screenID)
 		int y = GetYFromScreenID(screenID);
 
 #ifdef _DEBUG	
+		/*
 		if (x > 100)
 		{
 			assert(!"Hey!");
 		}
+		*/
 #endif
 		if (m_chunkMap.size() == 1)
 			{

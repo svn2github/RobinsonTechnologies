@@ -1,8 +1,17 @@
 ** There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
-new collision features soon
+new collision features soon, like true circle shapes
+
 ** Need to update tutorial pages to use new collision stuff
 
 Changelog
+
+7-13 2008
+
+* BUGFIX: Fixed bug crash that would occur if you later changed a tilepic image size to be smaller at a later time (Uhfgood)
+* BUGFIX: Selection rectangle in the editor matches better (Uhfgood)
+* Any attached entities are automatically deleted after the entity's OnKill rather than before
+* SetAttach(C_ENTITY_NONE,Vector(0,0)) will now 'unattach' an entity without giving an error
+* BUGFIX: When an entity is deleted that has things attached to it, they won't go into a 'half deleted' limbo status sometimes (Uhfgood)
 
 7-12 2008
 
