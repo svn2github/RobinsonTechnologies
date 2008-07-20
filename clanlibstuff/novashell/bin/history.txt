@@ -5,6 +5,11 @@ new collision features soon, like true circle shapes
 
 Changelog
 
+7-20
+
+* Cleaned up docs on collision a bit
+* Changes to visual alignment in the alignment editor are now saved to a visual profiles .xml
+
 7-13 2008
 
 * BUGFIX: Fixed bug crash that would occur if you later changed a tilepic image size to be smaller at a later time (Uhfgood)

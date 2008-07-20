@@ -490,6 +490,8 @@ void VisualProfile::UpdateDocumentSpriteFromAnim(CL_DomNode *node, ProfileAnim *
 			
 			cur_element.set_attribute("x", CL_String::from_int(x));
 			cur_element.set_attribute("y", CL_String::from_int(y));
+			cur_element.set_attribute("origin", OriginToString(o));
+
 		}
 	} 
 }
@@ -518,7 +520,6 @@ void VisualProfile::UpdateProfileAnim(CL_DomElement &node)
 	
 
 }
-
 void VisualProfile::UpdateProfile(CL_DomNode *pNode)
 {
 
@@ -542,6 +543,18 @@ void VisualProfile::UpdateProfile(CL_DomNode *pNode)
 		}
 	}
 }
+void VisualProfile::UpdateSprite(CL_DomNode *pNode)
+{
+	CL_DomElement cur_element = pNode->to_element();
+
+	string animName = cur_element.get_attribute("name", "");
+
+	if (!animName.empty())
+	{
+		UpdateDocumentSpriteFromAnim(pNode, &m_animArray[TextToAnimID(animName)]);
+	}
+}
+
 
 
 void VisualProfile::UpdateToDocument(CL_DomDocument &document)
@@ -559,6 +572,20 @@ void VisualProfile::UpdateToDocument(CL_DomDocument &document)
 			//bingo, this is the profile we want to edit
 			UpdateProfile(&domList.item(c));
 
+		}
+	}
+
+
+	//also update sprite information
+
+	domList = domRoot.get_child_nodes();
+	for (int c=0; c < domList.get_length(); c++)
+	{
+		
+		if (domList.item(c).get_node_name() == "sprite")
+		{
+			//update this sprite info?
+			UpdateSprite(&domList.item(c));
 		}
 	}
 	

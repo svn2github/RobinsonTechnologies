@@ -1232,11 +1232,11 @@ func: SetCategory
 nil SetCategory(number category, boolean bOn)
 (end)
 
-By default, an entity is a member of category C_CATEGORY_ENTITY. (Defined as 0 in setup_constants.lua)  These categories are useful for controlling which objects collide (<SetCollisionListenCategory> and what collisions an entity cares about knowing about with <SetListenCategory>.
+By default, an entity is a member of category <C_CATEGORY_ENTITY>. (Defined as 0 in setup_constants.lua)  These categories are useful for controlling which objects collide (<SetCollisionCategory> and what collisions an entity cares about knowing about with <SetCollisionListenCategory>.
 
 (Note, these replace the SetCollision, SetStaticCollision, SetCollisionListen and SetStaticCollisionListen functions from older versions!)
 
-Tilepics are always members of C_CATEGORY_TILEPIC, which is defined as 1 in setup_constants.lua.
+Tilepics are always members of <C_CATEGORY_TILEPIC>, which is defined as 1 in setup_constants.lua.
 
 There are 16 categories from 0 to 15. It's possible to be a member of more than one category at once.
 
@@ -1255,7 +1255,7 @@ nil SetCategories(number categoryMask)
 (end)
 
 Let's you set all 16 states at once with a single number.  
-Only use this if you know what you are doing, or use the C_CATEGORIES_NONE define to easily turn off all of them.
+Only use this if you know what you are doing, or use the <C_CATEGORIES_NONE> define to easily turn off all of them.
 
 Parameters:
 
@@ -1292,7 +1292,7 @@ nil SetCollisionCategories(number categoryMask)
 (end)
 
 Let's you set all 16 states at once with a single number.  
-Only use this if you know what you are doing, or use the C_CATEGORIES_NONE define to easily turn off all of them.
+Only use this if you know what you are doing, or use the <C_CATEGORIES_NONE> define to easily turn off all of them.
 
 Parameters:
 
@@ -1303,10 +1303,10 @@ categoryMask - A single 16 bit number representing each category.
 /*
 func: SetCollisionListenCategory
 (code)
-nil SetCollisionListenMask(number category, boolean bOn)
+nil SetCollisionListenCategory(number category, boolean bOn)
 (end)
 
-Similar to <SetCollisionMask> but rather than affecting what this entity collides with, it controls which collisions you will hear about in a callback.
+Similar to <SetCollisionCategory> but rather than affecting what this entity collides with, it controls which collisions you will hear about in a callback.
 
 By default, all categories are set to off, so no calls to an OnCollision() will be made in this entities script/lua namespace.
 
@@ -1333,7 +1333,7 @@ end
 
 Parameters:
 
-category - Which category mask you want to set, must be a number between 0 and 15. (Check <C_CATEGORY_CONSTANTS> for the predefined ones)
+category - Which category want to set, must be a number between 0 and 15. (Check <C_CATEGORY_CONSTANTS> for the predefined ones)
 bOn - If true, this object will collide with entities of that category type, if false, we will pass through them.
 */
 
@@ -1345,7 +1345,7 @@ nil SetCollisionListenCategories(number categoryMask)
 (end)
 
 Let's you set all 16 states at once with a single number.  
-Only use this if you know what you are doing, or use the C_CATEGORIES_NONE define to easily turn off all of them.
+Only use this if you know what you are doing, or use the <C_CATEGORIES_NONE> define to easily turn off all of them.
 
 Parameters:
 
@@ -1381,7 +1381,7 @@ this:SetCollisionGroup(-1);
 
 Note:
 
-This takes precendence over the <SetCollisionCategory> and <SetCollisionMask> functions.
+This takes precendence over the <SetCollisionCategory> function.
 
 Parameters:
 
@@ -3099,6 +3099,48 @@ OnTriggerEnter(ent) and OnTriggerExit(ent) are called. behavior parm is ignored.
 
 constants: C_TRIGGER_BEHAVIOR_PULSE
 In addition to OnTriggerEnter(ent) and OnTriggerExit(ent) being called, OnTriggerInside(ent) is called at the interval set by behaviorParm.
+
+
+Group: C_CATEGORY_CONSTANTS
+Default constants used with <Entity::SetCategory> or <Entity::SetCollisionCategory> to control turning on and off specific categories. (Setup in setup_constants.lua)
+
+constants: C_CATEGORY_ENTITY
+All entities start as being a member of this.
+
+constants: C_CATEGORY_TILEPIC
+All tilepics are marked as this category.
+
+constants: C_CATEGORY_PLAYER
+A default category setup for your own use.
+
+constants: C_CATEGORY_DAMAGE
+A default category setup for your own use.
+
+constants: C_CATEGORY_PLATFORM
+A default category setup for your own use.
+
+constants: C_CATEGORY_ENEMY
+A default category setup for your own use.
+
+constants: C_CATEGORY_CHARACTER
+A default category setup for your own use.
+
+constants: C_CATEGORY_BULLET
+A default category setup for your own use.
+
+constants: C_CATEGORY_POWER_UP
+A default category setup for your own use.
+
+Group: C_CATEGORIES_CONSTANTS
+Default constants used with <Entity::SetCategories> or <Entity::SetCollisionCategories> to control setting all 16 bits at once. (Setup in setup_constants.lua)
+
+constants: C_CATEGORIES_NONE
+Sets all to off.
+
+constants: C_CATEGORIES_ALL
+Sets all to on.
+
+
 */
 
 

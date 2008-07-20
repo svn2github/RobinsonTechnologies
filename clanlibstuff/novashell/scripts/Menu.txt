@@ -56,7 +56,6 @@ Group: System Objects  {
    File: WatchManager  (AI\WatchManager.cpp)
    File: MaterialManager  (MaterialManager.h)
    File: DrawManager  (DrawManager.cpp)
-   File: we're doing a very crappy job here, we should take into account acceleration/current speed  (MovingEntity.cpp)
    }  # Group: System Objects
 
 Group: Game Objects  {

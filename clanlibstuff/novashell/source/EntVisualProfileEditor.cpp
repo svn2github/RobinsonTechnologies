@@ -475,10 +475,31 @@ void EntVisualProfileEditor::OnChangeAlignment()
 			//CL_MessageBox::info("Can't edit this here yet, you'll have to open the visual profile .xml directly.", GetApp()->GetGUI());
 			return;
 		}
-*/			
+*/		
+
+		CL_Sprite *pSprite = NULL;
+		if (m_pEnt->GetVisualProfile())
+		{
+			pSprite = m_pEnt->GetVisualProfile()->GetSpriteByAnimID(m_pEnt->GetAnimID());
+		} 
 		m_pEnt->GetAlignment(o,x,y);
-		m_pEnt->SetAlignment(m_pListAlignment->get_current_item(),CL_Vector2(x,y));
-	
+
+		if (pSprite)
+		{
+
+			//put it back in
+			pSprite->set_alignment(CL_Origin(m_pListAlignment->get_current_item()),x,y);
+			//update the visuals so we can see the changes
+			m_pEnt->ForceSpriteUpdate(); //otherwise it would ignore the change, thinking it already has it active
+			m_pEnt->SetSpriteData(pSprite);
+
+
+		} else
+		{
+			m_pEnt->SetAlignment(m_pListAlignment->get_current_item(),CL_Vector2(x,y));
+		}
+
+		
 
 		
 	} else
