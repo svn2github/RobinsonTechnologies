@@ -198,12 +198,12 @@ public:
 
 	const string & GetName() {return m_name;}
 	bool IsActive(int stateID); //check if a certain anim state actually has data in it or not
-	int TextToAnimID(const string & stState); //returns -1 if anim id doesn't exist
+	int StateNameToAnimID(const string & stState); //returns -1 if anim id doesn't exist
 	VisualResource * GetParentVisualResource() {return m_pParent;}
 	void UpdateToDocument(CL_DomDocument &document);
     	vector<string> GetListOfActiveAnims();
-	int SpriteToAnimID(const string & stState, bool bShowErrors = false);
-	int SpriteToAnimID(CL_Sprite *pSprite); //compares by memory address
+	int SpriteNameToAnimID(const string & stState, bool bShowErrors = false);
+	int SpriteNameToAnimID(CL_Sprite *pSprite); //compares by memory address
 	string AnimIDToText(int animID){return m_animArray[animID].m_name;}
 	int GetAnimID(int eState, int eFacing);
 	int GetFirstValidAnimIndex();

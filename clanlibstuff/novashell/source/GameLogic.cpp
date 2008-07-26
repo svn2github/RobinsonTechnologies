@@ -102,6 +102,8 @@ void GameLogic::OneTimeModSetup()
 		LogMsg("Command line parms received:");
 	}
 
+	string worldPath = "";
+
 	for (unsigned int i=0; i < GetApp()->GetStartupParms().size(); i++)
 	{
 
@@ -128,7 +130,8 @@ void GameLogic::OneTimeModSetup()
 		if (CL_String::get_extension(p1) == C_WORLD_INFO_EXTENSION)
 		{
 			m_strWorldsDirPath = CL_String::get_path(p1);
-			SetupModPathsFromWorldInfo(p1);
+			worldPath = p1;
+			//SetupModPathsFromWorldInfo(p1);
 		}
 
 		if (CL_String::get_extension(p1) == C_WORLD_ZIP_EXTENSION)
@@ -139,7 +142,7 @@ void GameLogic::OneTimeModSetup()
 			if (nova.InstallWorld(p1, &worldDir))
 			{
 				//m_strWorldsDirPath = CL_String::get_path(p1);
-				SetupModPathsFromWorldInfo(worldDir);
+				worldPath = worldDir;
 			}
 		}
 		
@@ -150,10 +153,17 @@ void GameLogic::OneTimeModSetup()
 		//nova.InstallWorld(GetWorldsDirPath() + "/Dink.novazip");
 #endif
 		
-		
+	
+
+
 	}
 
-	
+	if (!worldPath.empty())
+	{
+		SetupModPathsFromWorldInfo(worldPath);
+	}
+
+
 if (!bSentWorldToInstall)
 {
 	//scan the worlds directory for anything that needs to be installed

@@ -1207,20 +1207,21 @@ bool MovingEntity::SetVisualProfile(string resourceFileName, const string &profi
 void MovingEntity::InitializeBody()
 {
 	
+/*
 	if (!m_bHasRunPostInit)
 	{
 		//don't let the physics start doing crap until the scripts get a chance to do their thing
 		return;
 	}
-	KillBody();
-	
-	
+	*/
+
 	if (!m_pTile->GetParentScreen())
 	{
 		//we're not on a real map yet
 		return;
 	}
-	
+	KillBody();
+
 if (!m_pCollisionData || !m_pCollisionData->HasData()) return;
 
 	//LogMsg("initializing body (%d) (%s) with density %.2f", ID(), m_mainScript.c_str(), m_fDensity);
@@ -2065,7 +2066,7 @@ void MovingEntity::SetAnimByName(const string &name)
 	if (GetVisualProfile())
 	{
 		//LogMsg("Setting brain %s", name.c_str());
-		m_animID = GetVisualProfile()->TextToAnimID(name);
+		m_animID = GetVisualProfile()->StateNameToAnimID(name);
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
 	}
 }

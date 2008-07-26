@@ -5,6 +5,12 @@ new collision features soon, like true circle shapes
 
 Changelog
 
+7-26
+
+* BUGFIX: Fixed issue where double clicking a .novashell could sometimes mount map paths from other worlds incorrectly
+* BUGFIX: Fixed possible crash in visual alignment editor when closing it
+* BUGFIX: You no longer have to 'run' the game at least once cycle for the "view collision shapes" debug thing to work right, was confusing
+
 7-20
 
 * Cleaned up docs on collision a bit

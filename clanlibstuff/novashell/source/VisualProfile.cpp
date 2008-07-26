@@ -324,7 +324,7 @@ CL_Sprite * VisualProfile::GetSprite(int eState, int eFacing)
 	return m_animArray[animID].m_pSprite;
 }
 
-int VisualProfile::TextToAnimID(const string & stState)
+int VisualProfile::StateNameToAnimID(const string & stState)
 {
 	//check to see if it exists
 	for (unsigned int i=0; i < m_animArray.size(); i++)
@@ -340,7 +340,7 @@ int VisualProfile::TextToAnimID(const string & stState)
 }
 
 
-int VisualProfile::SpriteToAnimID(const string & stState, bool bShowErrors)
+int VisualProfile::SpriteNameToAnimID(const string & stState, bool bShowErrors)
 {
 	//check to see if it exists
 	for (unsigned int i=0; i < m_animArray.size(); i++)
@@ -358,7 +358,7 @@ int VisualProfile::SpriteToAnimID(const string & stState, bool bShowErrors)
 	return -1;
 }
 
-int VisualProfile::SpriteToAnimID(CL_Sprite *pSprite)
+int VisualProfile::SpriteNameToAnimID(CL_Sprite *pSprite)
 {
 	//check to see if it exists
 	for (unsigned int i=0; i < m_animArray.size(); i++)
@@ -486,6 +486,11 @@ void VisualProfile::UpdateDocumentSpriteFromAnim(CL_DomNode *node, ProfileAnim *
 		{
 			CL_Origin o;
 			int x,y;
+			
+			if (!anim->m_pSprite)
+			{
+				continue;
+			}
 			anim->m_pSprite->get_alignment(o, x,y);
 			
 			cur_element.set_attribute("x", CL_String::from_int(x));
@@ -551,7 +556,12 @@ void VisualProfile::UpdateSprite(CL_DomNode *pNode)
 
 	if (!animName.empty())
 	{
-		UpdateDocumentSpriteFromAnim(pNode, &m_animArray[TextToAnimID(animName)]);
+		int id = SpriteNameToAnimID(animName);
+		if (id != -1)
+		{
+			UpdateDocumentSpriteFromAnim(pNode, &m_animArray[id]);
+
+		}
 	}
 }
 
