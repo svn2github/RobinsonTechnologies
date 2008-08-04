@@ -20,7 +20,7 @@ rm -f ../bin/$filename
 
 #first go build/update the support libraries
 cd ../../SharedLib
-#sh linux_build_libs.sh
+sh linux_build_libs.sh
 cd ../clanlibstuff/novashell
 
 #actually make it
