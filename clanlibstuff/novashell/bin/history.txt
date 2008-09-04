@@ -5,11 +5,18 @@ new collision features soon, like true circle shapes
 
 Changelog
 
+8-31
+
+* Memory leak fixed dealing with .ogg playback (clanlib)
+* Bug fixed with the editor not opening paths that mixed / and \ (patch by bullno1)
+
+
 7-26
 
 * BUGFIX: Fixed issue where double clicking a .novashell could sometimes mount map paths from other worlds incorrectly
 * BUGFIX: Fixed possible crash in visual alignment editor when closing it
 * BUGFIX: You no longer have to 'run' the game at least once cycle for the "view collision shapes" debug thing to work right, was confusing
+* Updated the tutorials, now all are up to date
 
 7-20
 

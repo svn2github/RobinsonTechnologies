@@ -10,7 +10,7 @@
 #include "Console.h"
 #include "AI/WorldNavManager.h"
 #include "DataEditor.h"
-
+#include <algorithm>
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -577,7 +577,7 @@ void OpenScriptForEditing(string scriptName)
 		//prepend the full path
 		file = CL_Directory::get_current() + "/"+file;
 	}
-	
+	std::replace(file.begin(),file.end(),'\\','/');
 	open_file(GetApp()->GetHWND(), file.c_str());
 #elif __APPLE__
 	
