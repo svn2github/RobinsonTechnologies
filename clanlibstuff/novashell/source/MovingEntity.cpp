@@ -1250,6 +1250,12 @@ if (!m_pCollisionData || !m_pCollisionData->HasData()) return;
 				continue;
 			}
 
+
+			if (pPointList->IsValidBox2DPolygon() != PointList::STATUS_OK)
+			{
+				continue;
+			}
+
 			b2PolygonDef shapeDef;
 
 			pPointList->GetAsPolygonDef(&shapeDef);
@@ -1266,6 +1272,7 @@ if (!m_pCollisionData || !m_pCollisionData->HasData()) return;
 				shapeDef.userData = pShapeUserData;
 				
 				m_pBody->CreateShape(&shapeDef);
+				
 				m_pBody->SetMassFromShapes();
 
 			}

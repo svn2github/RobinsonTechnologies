@@ -5,20 +5,25 @@ new collision features soon, like true circle shapes
 
 Changelog
 
-8-31
+10-2 2008
+
+* BUGFIX:  Scaling down an entity with collision to 0.0 can no longer cause a crash, this was Box2D rejecting the collision vector shape as invalid.  Now, it will just
+	silently not add the shape in this case instead.  Because shapes are checked initially and you are warned if bad, this silent fail should be ok. (MogwaiX)
+
+8-31 2008
 
 * Memory leak fixed dealing with .ogg playback (clanlib)
 * Bug fixed with the editor not opening paths that mixed / and \ (patch by bullno1)
 
 
-7-26
+7-26 2008
 
 * BUGFIX: Fixed issue where double clicking a .novashell could sometimes mount map paths from other worlds incorrectly
 * BUGFIX: Fixed possible crash in visual alignment editor when closing it
 * BUGFIX: You no longer have to 'run' the game at least once cycle for the "view collision shapes" debug thing to work right, was confusing
 * Updated the tutorials, now all are up to date
 
-7-20
+7-20 2008
 
 * Cleaned up docs on collision a bit
 * Changes to visual alignment in the alignment editor are now saved to a visual profiles .xml
