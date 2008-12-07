@@ -332,7 +332,7 @@ void EntEditMode::ScaleSelection(CL_Vector2 vMod, bool bBigMovement)
 	}
 	
 	TileEditOperation temp = m_selectedTileList; //copy whatever is highlighted
-	OnDelete();
+	OnDelete(&m_selectedTileList);
 		temp.ApplyScaleMod(vMod);
 		temp.SetIgnoreParallaxOnNextPaste();
 	OnPaste(temp, temp.GetUpperLeftPos());
@@ -399,7 +399,7 @@ void EntEditMode::Init()
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnCopy);
 
 	pItem = m_pMenu->create_item("Edit/Delete (DELETE)");
-	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDelete);
+	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDeleteSimple);
 
 	pItem = m_pMenu->create_item("Edit/Deselect (Ctrl+D)");
 	m_slots.connect(pItem->sig_clicked(), this, &EntEditMode::OnDeselect);
@@ -1086,16 +1086,16 @@ void EntEditMode::OnUndo()
 	ClearSelection();
 }
 
-void EntEditMode::OnDelete()
+void EntEditMode::OnDelete(TileEditOperation *pTileOperation)
 {
 	
 	KillContextMenu();
 
-	if (m_selectedTileList.IsEmpty()) return;
+	if (pTileOperation->IsEmpty()) return;
 	//delete selection
 	Tile blankTile; 
-	AddToUndo(&m_selectedTileList);
-	m_selectedTileList.FillSelection(&blankTile);
+	AddToUndo(pTileOperation);
+	pTileOperation->FillSelection(&blankTile);
 	ClearSelection();
 }
 
@@ -1104,7 +1104,7 @@ void EntEditMode::OnCut()
 	KillContextMenu();
 
 	OnCopy();
-	OnDelete();
+	OnDeleteSimple();
 	PushUndosIntoUndoOperation();
 
 }
@@ -1204,7 +1204,7 @@ void EntEditMode::OffsetSelectedItems(CL_Vector2 vOffset, bool bBigMovement)
 
 	if (bBigMovement) vOffset *= 10;
 	TileEditOperation temp = m_selectedTileList; //copy whatever is highlighted
-	OnDelete();
+	OnDeleteSimple();
 	temp.ApplyOffset(vOffset);
 	temp.SetIgnoreParallaxOnNextPaste();
 	OnPaste(temp, temp.GetUpperLeftPos());
@@ -1736,7 +1736,7 @@ void EntEditMode::onButtonDown(const CL_InputEvent &key)
 		break;
 
     case CL_KEY_DELETE:
-			OnDelete();
+			OnDeleteSimple();
 			PushUndosIntoUndoOperation();
 
 		break;
@@ -2656,6 +2656,14 @@ if (m_bDialogIsOpen) return;
 			flags = flags | TileEditOperation::eBitScale;
 		}
 
+
+		if (pEnt && pTileList->m_selectedTileList.size() == 1)
+		{
+			Tile blankTile; 
+			AddToUndo(pTileList);
+			pTileList->FillSelection(&blankTile);
+		}
+
 		//run through and copy these properties to all the valid tiles in the selection
 		pTileList->CopyTilePropertiesToSelection(pTile, flags);
 
@@ -2666,10 +2674,13 @@ if (m_bDialogIsOpen) return;
 			{
 				pEnt->SetName(inputName.get_text());
 			}
-
+		
 			CL_Vector2 vNewPos = StringToVector(inputPos.get_text());
 			if (vNewPos != pEnt->GetPos())
 			{
+				//special handling because it changes position as well
+
+				//delete the old stuff and put it in the undo buffer
 				pEnt->SetPos(vNewPos);
 			}
 
@@ -2684,9 +2695,11 @@ if (m_bDialogIsOpen) return;
 			pTileList->SetForceLayerOfNextPaste(selectedLayer);
 			//LogMsg("Changing layer to %d", layerList.get_item(selectedLayer)->user_data);
 		}
-		
+	
+
 		pTileList->SetIgnoreParallaxOnNextPaste();
 		
+
 		//paste our selection, this helps by creating an undo for us
 		OnPaste(*pTileList, pTileList->GetUpperLeftPos());
 		PushUndosIntoUndoOperation();
@@ -2704,8 +2717,6 @@ if (m_bDialogIsOpen) return;
 		tile_list t;
 		GetPointersToSimilarTilesOnMap(g_pMapManager->GetActiveMap(), t, pTile);
 		ReInitTileList(t);
-
-
 
 	} else if (m_guiResponse == C_GUI_CONVERT)
 	{
@@ -2727,50 +2738,7 @@ if (m_bDialogIsOpen) return;
 		pEnt->SetMainScriptFileName("");
 		pEnt->Init();
 		
-		//now, we could be done, but we can be nice and try to adjust the collision to be centered
-		//instead of how it was
-
-		/*
-		if (pEnt->GetCollisionData()->HasData())
-		{
-			PointList *pLine;
-
-			CL_Rectf r = pEnt->GetBoundsRect();
-			CL_Vector2 vOffset = CL_Vector2(-r.get_width()/2, -r.get_height()/2);
-			CL_Vector2 vMoveOffset = CL_Vector2::ZERO;
-
-			line_list::iterator listItor;
-
-			//for each line...
-
-			for (listItor = pEnt->GetCollisionData()->GetLineList()->begin(); 
-				listItor != pEnt->GetCollisionData()->GetLineList()->end(); listItor++)
-			{
-				pLine = &(*listItor);
-				
-				vMoveOffset = pLine->GetOffset();
-				
-				pLine->RemoveOffsets();
-				pLine->SetOffset(vOffset);
-				pLine->CalculateOffsets();
-		
-				break; //actually, only process the first one
-			}
-
-			//move position to match where it was
-			pEnt->SetPos(pEnt->GetPos()+vMoveOffset);
-
-		} else
-		{
-			//still, because entities are centered, we should move it for them
-			CL_Rectf r = pEnt->GetBoundsRect();
-			CL_Vector2 vOffset = CL_Vector2(-r.get_width()/2, -r.get_height()/2);
-			pEnt->SetPos(pEnt->GetPos()-vOffset);
-
-		}
-		*/
-
-		OnDelete(); //kill the old one
+		OnDeleteSimple(); //kill the old one
 		
 		m_selectedTileList.ClearSelection();
 		m_selectedTileList.AddTileToSelection(TileEditOperation::C_OPERATION_ADD,
@@ -2814,4 +2782,9 @@ void EntEditMode::OnMapChange()
 void EntEditMode::OnEditAlignment()
 {
 	CL_MessageBox::info("About editing alignment", "To interactively edit the alignment of a tilepic/entity, exit this dialog, highlight it, and hit Ctrl-Shift-E or choose Modify Selected->Edit Image Alignment.", GetApp()->GetGUI());
+}
+
+void EntEditMode::OnDeleteSimple()
+{
+	OnDelete(&m_selectedTileList);
 }

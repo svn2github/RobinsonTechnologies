@@ -41,7 +41,8 @@ protected:
 	void onButtonDown(const CL_InputEvent &key);
 	void onButtonUp(const CL_InputEvent &key);
 	void DrawActiveBrush(CL_GraphicContext *pGC);
-	void OnDelete();
+	void OnDelete(TileEditOperation *pTileOperation);
+	void OnDeleteSimple();
 	void OnCopy();
 	void OnCut();
 	void OnPaste(TileEditOperation &editOperation, CL_Vector2 vecWorld, bool bSelectPasted = false);

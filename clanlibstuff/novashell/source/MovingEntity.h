@@ -470,7 +470,7 @@ protected:
 	float m_gravityOverride;
 	int m_blendMode;
 	bool m_bIsCreature;
-	float m_accel; //how fast we can acellerate
+	float m_accel; //how fast we can accelerate
 	bool m_bUsingTilePicCollision;
 	L_EffectManager m_effectManager;
 	int m_visualStateOverride; 
@@ -480,6 +480,7 @@ protected:
 	vector<ContactPoint> m_contacts;
 	b2FilterData m_filterData; //shared between all shapes
 	uint16 m_collisionListenBits;
+	bool m_bSetAnimByName; //when an ent is initted, we'll only do SetSpriteByStateAndDir or whatever it is if the script didn't do a SetAnimByName
 	
 };
 

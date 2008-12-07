@@ -1,9 +1,15 @@
 ** There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
 new collision features soon, like true circle shapes
 
-** Need to update tutorial pages to use new collision stuff
-
 Changelog
+
+12-7 2008
+
+* BUGFIX: Small fix so Entity::SetSpriteByVisualStateAndFacing() is no longer automatically called when an entity inits if Entity::SetAnimByName() was used.
+ (this fixes it so barrels don't show their break anim when already broken for a second, but as before, ducks still correctly reflect their
+ directional sprite even right after being initialized) (erikharrison)
+* BUGFIX: Setting the position X/Y from the tile properties dialog no longer sometimes (always?) create a duplicate copy
+
 
 10-2 2008
 

@@ -1569,6 +1569,7 @@ bool MovingEntity::SetImageByID(unsigned int picID, CL_Rect *pSrcRect)
 
 bool MovingEntity::Init()
 {
+	m_bSetAnimByName = false;
 	assert(!m_pSprite);
 
 	unsigned int picID = CL_String::to_int(m_dataManager.Get(C_ENT_TILE_PIC_ID_KEY));
@@ -1653,7 +1654,7 @@ bool MovingEntity::Init()
 		}
 	}
 
-	if (GetVisualProfile())
+	if (GetVisualProfile() && !m_bSetAnimByName)
 	{
 		SetSpriteByVisualStateAndFacing();
 	}
@@ -2072,9 +2073,10 @@ void MovingEntity::SetAnimByName(const string &name)
 {
 	if (GetVisualProfile())
 	{
-		//LogMsg("Setting brain %s", name.c_str());
+		//LogMsg("Setting anim %s", name.c_str());
 		m_animID = GetVisualProfile()->StateNameToAnimID(name);
 		SetSpriteData(GetVisualProfile()->GetSpriteByAnimID(m_animID));
+		m_bSetAnimByName = true;
 	}
 }
 string MovingEntity::GetAnimName()

@@ -11,14 +11,24 @@ Check out the Novashell SVN tree somewhere from svn://rtsoft.com/rtsvn.
 
 Load clanlibstuff/novashell/source/novashell.sln with VC8.
 
-You may get errors about missing projects like "clanCore" or "clanDisplay", you can just ignore and remove these, 
+You may get errors about missing projects like "clanCore" or "clanDisplay", you can just ignore and remove these projects, 
 sometimes I have those projects added for when I debug clanLib and Novashell together.
 
 You may need to add the path to Clanlib's libs (or put them in SharedLib/lib and SharedLib/include where it expects
 them), but otherwise it should compile ok, as everything else uses relative paths and is included.
 (LinearParticle, Lua, etc)
 
-You should be able to click build from inside VS 2005 and have everything build, then copy the .exe over
+Oops:  One more thing, you will need to grab the boost libraries.  Novashell (well, luabind, really) requires a few of its headers,
+it doesn't need any libraries compiled so this is easy.
+
+Boost download:  http://www.boost.org/users/download/#releases
+
+(Currently it's at Version 1.37.0, don't download the Jam one, download the one under it)
+
+After you download it, drag the "boost" directory out of the zip and into your novashell source directory, or someplace else
+and just add its parent directory as an include path in the vs project settings.
+
+You should now be able to click build from inside VS 2005 and have everything build, then copy the .exe over
 to a novashell install to try it.
 
 Note:  Build Static MT Release or Static MT Debug.  Ignore the other ones...
