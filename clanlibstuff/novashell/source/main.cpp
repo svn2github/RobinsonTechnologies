@@ -103,8 +103,8 @@ App::App()
 	m_baseGameSpeed = 10;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-	m_engineVersion = 0.32f;
-	m_engineVersionString = "0.32";
+	m_engineVersion = 0.33f;
+	m_engineVersionString = "0.33";
 	m_notifyOfScreenChange = false;
 
 	m_pSetup_sound = NULL;
@@ -1192,6 +1192,11 @@ int App::GetScreenSizeY()
 	return m_WindowDescription.get_size().height;
 }
 
+CL_Vector2 App::GetScreenSize()
+{
+	return CL_Vector2(m_WindowDescription.get_size().width, m_WindowDescription.get_size().height);
+}
+
 //lua natural docs stuff
 /*
 Object: App
@@ -1253,6 +1258,13 @@ boolean GetCursorVisible()
 (end)
 
 Returns: True if the system cursor is currently visible.
+
+func: GetScreenSize
+(code)
+Vector2 GetScreenSize()
+(end)
+
+Returns a <Vector2> object with the current screen size.
 
 func: SetScreenSize
 (code)

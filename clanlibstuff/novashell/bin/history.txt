@@ -1,8 +1,29 @@
-** There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
+Known issues:
+
+* There are some minor issues with the treeworld player getting stuck on blocks, I've been putting it off beause I want to experiment with some
 new collision features soon, like true circle shapes
+* Toggling to windowed mode can cause the mouse clicks to be like 20 pixels off on the Y under some circumstances on vista
+
 
 Changelog
 
+2-7- 2009
+
+* Added GetCenterScreenVector() to 
+* Added script command Vector2 GetApp:GetScreenSize()
+* "(giving entity %d (%s) the default script so you can see it to delete it)" error no longer shown, if you create an entity from script that doesn't
+	have a script assigned, it's assumed you did it on purpose and will set an image or something later on your own
+* Added function DeleteEntityByIDIfExists(id) to misc_utils.lua	
+* Now ignores .psd and .max files when scanning for images in map directories, was annoying to get a has conflict error with them
+* Gives clear error message if you try to use the editor without GetGameLogic:InitGameGUI() having been run in the startup scripts, instead of crashing	
+* Added system/slideshow.lua, useful for showing a sequence of images, such as intro splash screens.	
+* Added script object functions Rectf:IsInside(Vector2) and Rect:IsInside(Vector2)
+* Entity specific input bindings are now properly removed even if an entity was never placed on the map
+* Sending "nil" for the destination map to Entity:Clone() now means the active map, not the same map that the source is on
+* Using the script command ShowMessage() now pauses the game and doesn't allow normal input
+* If you use the FadeIn brain, it now always takes effect instantly, instead of flicking the image at regular alpha first sometimes
+* Added gui/mouse_button.lua, can turn an entity into a nice button, grows and wiggles on mouse-over, script to run when clicked can be set in its data properties
+	
 12-7 2008
 
 * BUGFIX: Small fix so Entity::SetSpriteByVisualStateAndFacing() is no longer automatically called when an entity inits if Entity::SetAnimByName() was used.

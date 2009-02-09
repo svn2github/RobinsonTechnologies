@@ -43,6 +43,8 @@ bool HashedResourceManager::ScanPathForResources(const string &stPath)
 					if (fileExtension == "dat") continue; //not an image, skip it
 					if (fileExtension == "chunk") continue; //not an image, skip it
 					if (fileExtension == "txt") continue; //not an image, skip it
+					if (fileExtension == "psd") continue; //not an image, skip it
+					if (fileExtension == "max") continue; //not an image, skip it
 					//note, I build this whole path because .get_filename includes a backslash in the middle instead of
 					//a forward slash which screws up the addgraphic function
 					if (!AddGraphic(stPath+file+string("/")+scanPic.get_name()))

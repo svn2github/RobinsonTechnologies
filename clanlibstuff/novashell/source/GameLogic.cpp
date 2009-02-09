@@ -585,6 +585,11 @@ bool GameLogic::ToggleEditMode() //returns true if the it just turned ON the edi
 			return NULL;
 		} 
 
+		if (!GetApp()->GetFont(C_FONT_GRAY))
+		{
+			ShowMessage("Oops", "Can't use the editor, GetGameLogic:InitGameGUI was not called from the game_start.lua, need this for the fonts.");
+			return NULL;
+		}
 		//take the focus off the player
 		GetCamera->SetEntTracking(0);
 		pEnt = (EntEditor *) m_myEntityManager.Add( new EntEditor);
@@ -1097,6 +1102,7 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle)
 {
 	CL_GUIManager *pStyle = GetApp()->GetGUI();
 
+	GetGameLogic()->SetGamePaused(true);
 
 	if (!bForceClassicStyle && GetGameLogic()->GetGameGUI())
 	{
@@ -1104,6 +1110,8 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle)
 			GetGameLogic()->SetShowMessageActive(true, &m); //so it knows not to send mouse clicks to the engine while
 			m.run();
 			GetGameLogic()->SetShowMessageActive(false);
+			GetGameLogic()->SetGamePaused(false);
+			GetApp()->ClearTimingAfterLongPause();
 			return;
 	}
 	
@@ -1113,6 +1121,9 @@ void ShowMessage(string title, string msg, bool bForceClassicStyle)
 	//we're showing this
 	message.run();
 	GetGameLogic()->SetShowMessageActive(false);
+	GetGameLogic()->SetGamePaused(false);
+	GetApp()->ClearTimingAfterLongPause();
+
 }
 
 

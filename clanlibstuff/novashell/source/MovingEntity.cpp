@@ -438,8 +438,9 @@ void MovingEntity::Kill()
 	if (m_pScriptObject && IsPlaced())
 	{
 		RunFunctionIfExists("OnKill");
-		g_inputManager.RemoveBindingsByEntity(this);
 	}
+
+	g_inputManager.RemoveBindingsByEntity(this);
 
 	if (!m_attachedEntities.empty())
 	{
@@ -985,7 +986,6 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 
 CL_Rectf MovingEntity::GetWorldRect()
 {
-	
 	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
 	CL_Origin o;
@@ -1014,60 +1014,6 @@ CL_Rectf MovingEntity::GetWorldRect()
 
 	}
 
-	
-	/*
-	static CL_Pointf offset;
-	offset = calc_origin(o, r.get_size());
-	r -= offset;
-	r -= offset;
-	r += *(const CL_Pointf*)&(GetVisualOffset());
-*/
-/*
-
-	static CL_Rectf r;
-	r.left = 0;
-	r.top = 0;
-	r.right = GetSizeX();
-	r.bottom = GetSizeY();
-	
-	static CL_Origin origin;
-	static int x,y;
-	
-	
-	m_pSprite->get_alignment(origin, x, y);
-	x =  float(x) * m_pTile->GetScale().x;
-	y =  float(y) * m_pTile->GetScale().y;
-
-	if (origin == origin_center)
-	{
-		y = -y;
-	}
-	
-	r -= CL_Pointf(-x,y);
-
-
-	static CL_Pointf offset;
-
-	offset = calc_origin(origin, r.get_size());
-
-	r -= offset;
-	r += *(const CL_Pointf*)&(GetPos());
-	
-		
-	//r += *(const CL_Pointf*)&(GetVisualOffset());
-	*/
-/*
-	CL_Rect c(r);
-	if (c.bottom < -1000 || c.bottom > 1000)
-	{
-		LogMsg("BEFORE:  rect is %s. Pos is %s.  Visual offset is %s",  PrintRect(r).c_str(), VectorToString(&GetPos()).c_str(),
-			VectorToString(&GetVisualOffset()).c_str());
-
-		LogMsg("AFTER:  rect is %s.  Size X is %d.  ScaleX is %.2f.  Offset is %.2f, %.2f", PrintRectInt(c).c_str(), GetSizeX(),
-			m_pTile->GetScale().x, offset.x, offset.y);
-	}
-*/
-	
 	return r;
 }
 
@@ -1634,7 +1580,7 @@ bool MovingEntity::Init()
 			
 			if (m_mainScript.empty())
 			{
-				LogError("(giving entity %d (%s) the default script so you can see it to delete it)", ID(), GetName().c_str());
+				//LogError("(giving entity %d (%s) the default script so you can see it to delete it)", ID(), GetName().c_str());
 			} else
 			{
 				LogError("No visual profile was set in script %s's init!  Maybe it had a syntax error, go check the log. (trying to load default)", m_mainScript.c_str());
@@ -2988,7 +2934,6 @@ void MovingEntity::PostUpdate(float step)
 
 	if (GetDeleteFlag())
 	{
-		LogMsg("Deleted!")	;
 		return;
 	}
 	if (!m_bHasRunOnInit) return;
@@ -3257,8 +3202,12 @@ MovingEntity * MovingEntity::Clone(Map *pMap, CL_Vector2 vecPos)
 	pNewEnt->SetPos(vecPos);
 	if (!pMap)
 	{
-		//use our own active map, none was specific
-		pMap = GetMap();
+		//use the active map, none was specific
+		pMap = g_pMapManager->GetActiveMap();
+		if (!pMap)
+		{
+			pMap = GetMap();
+		}
 	}
 	
 	pMap->AddTile(pNew);

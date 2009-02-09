@@ -204,6 +204,7 @@ public:
 	void AddStartupParm(string parm);
 	int GetScreenSizeX();
 	int GetScreenSizeY();
+	CL_Vector2 GetScreenSize();
 
 private:
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
@@ -221,6 +222,7 @@ private:
 	int GetAverageDelta();
 	void LoadPrefs();
 	void SavePrefs();
+	
 	CL_ResourceManager * m_pResourceManager;
     CL_ResourceManager * m_pGUIResourceManager;
     CL_DisplayWindow * m_pWindow;

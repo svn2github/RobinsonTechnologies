@@ -538,6 +538,9 @@ void InputManager::SetMousePos(const CL_Vector2 &pos)
 //returns true if handled, false if not
 bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 {
+	if (GetGameLogic()->GetShowMessageActive()) return false;
+
+	
 	ScriptKeyMap::iterator itor = m_map.find(key.id);
 	if (itor == m_map.end()) return false; //we don't have it
 

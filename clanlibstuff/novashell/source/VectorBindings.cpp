@@ -27,6 +27,16 @@ CL_Rectf CalculateCombinedRectf(CL_Rectf *r, const CL_Rectf &r2)
 	return CombineRects(*r, r2);
 }
 
+bool RectfIsInside(CL_Rectf *r, const CL_Vector2 &v)
+{
+	return r->is_inside(CL_Pointf(v.x, v.y));
+}
+
+bool RectIsInside(CL_Rect *r, const CL_Vector2 &v)
+{
+	return r->is_inside(CL_Point(v.x, v.y));
+}
+
 void luabindVector(lua_State *pState)
 {
 
@@ -312,9 +322,22 @@ Group: Member Functions
 
 			True if the two rectangles overlap at all.
 			*/
-
 			.def("IsOverlapped", &CL_Rect::is_overlapped)
 
+			/*
+			func: IsInside
+			(code)
+			boolean IsInside(Vector2 v)
+			(end)
+
+			Returns:
+
+			True if the vector is located inside the rectangle.
+			*/
+			.def("IsInside", &RectIsInside)
+
+
+		
 			/*
 			func: CalculateUnion
 			(code)
@@ -457,8 +480,22 @@ Group: Member Functions
 
 			True if the two Rectfangles overlap at all.
 			*/
-
 			.def("IsOverlapped", &CL_Rectf::is_overlapped)
+
+		
+			/*
+			func: IsInside
+			(code)
+			boolean IsInside(Vector2 v)
+			(end)
+
+			Returns:
+
+			True if the vector is located inside the rectangle.
+			*/
+			.def("IsInside", &RectfIsInside)
+
+	
 
 			/*
 			func: CalculateUnion

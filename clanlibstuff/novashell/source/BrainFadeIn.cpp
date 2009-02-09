@@ -15,6 +15,7 @@ BrainFadeIn::BrainFadeIn(MovingEntity * pParent):Brain(pParent)
 
 	m_fadeOutTimeMS = 1000;
 	m_timeCreated = GetApp()->GetGameTick();
+	m_pParent->AddColorModAlpha( -255);
 
 }
 

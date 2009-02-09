@@ -2827,7 +2827,7 @@ If you clone an entity with a name, such as "Gun", the new entity created may be
 
 Parameters:
 
-map - The <Map> that the new entity should be created on or nil to use the Entity's <Map>.
+map - The <Map> that the new entity should be created on or nil to use the active <Map>.
 vPos - The position the new entity should be created on.
 
 Returns:
