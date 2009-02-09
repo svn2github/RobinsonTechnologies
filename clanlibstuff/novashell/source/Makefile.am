@@ -49,7 +49,6 @@ novashell_LDADD =  \
 	$(top_builddir)/../../SharedLib/luabind/src/libluabind.a \
 	$(top_builddir)/../../SharedLib/lua/src/liblualib.a \
 	$(top_builddir)/../../SharedLib/Box2D/Source/Gen/float/libbox2d.a
-	
 
 
 #/usr/local/lib/libclanVorbis.a /usr/local/lib/libclanSound.a /usr/local/lib/libclanGUIStyleSilver.a \
