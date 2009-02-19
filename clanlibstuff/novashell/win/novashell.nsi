@@ -101,6 +101,9 @@ SectionIn RO
   File /r "..\bin\base"
   File /r "..\bin\worlds"
 
+  File /r "..\bin\packaging\mac"
+
+
 AccessControl::GrantOnFile "$INSTDIR" "(S-1-5-32-545)" "GenericRead + GenericWrite + DeleteChild"
 
 CreateDirectory "$SMPROGRAMS\${_TITLE_}"

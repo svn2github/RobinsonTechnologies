@@ -7,22 +7,8 @@ cd ..
 SET C_FILENAME=NovashellInstaller.exe
 
 //delete our installer too
-del %C_TARGET_EXE% > NUL
+del %C_FILENAME% > NUL
 
-call vnet.bat
-set C_TARGET_EXE=bin\game.exe
-
-REM erase it so we know it got built right
-del %C_TARGET_EXE% > NUL
-
-REM Compile everything 
-devenv source\novashell.sln /build "Static MT Release"
-
-REM make it smaller
-REM upx.exe %C_TARGET_EXE%
-
-REM Make sure the file compiled ok
-if not exist %C_TARGET_EXE% beeper.exe /p
 
 //installer
 
@@ -42,7 +28,6 @@ SET C_TEXT_VERSION=%C_TEXT_VERSION_TEMP% Alpha
 REM done with temp var, kill it
 SET C_TEXT_VERSION_TEMP=
 echo Building installer: %C_FILENAME% %C_TEXT_VERSION%
-
 
 cd win
 ..\..\..\util\NSIS\makensis.exe novashell.nsi
