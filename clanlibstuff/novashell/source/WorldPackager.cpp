@@ -280,7 +280,10 @@ void WorldPackager::Scan(string dir, bool bIsBase, string targetDir, int recursi
 			if (bIgnoreFile) continue;
 			//put it in our target folder, but with the relative pathing required by its internal tree
 			string zipName = targetDir + scanner.get_pathname().substr(originalDir.length()+1, (scanner.get_pathname().length()+1) - originalDir.length());
-			m_zip.add_file(scanner.get_pathname(), zipName, true);
+			int startingIndex = 0;
+			StringReplace("\\", "/", zipName);
+			if (zipName[0] == '/') startingIndex = 1; //skip the first slash
+			m_zip.add_file(scanner.get_pathname(), &zipName.c_str()[startingIndex], true);
 
 		} else
 		{

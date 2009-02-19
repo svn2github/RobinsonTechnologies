@@ -80,7 +80,6 @@ NovaZip::~NovaZip()
 {
 }
 
-
 bool NovaZip::InstallWorld( string fileName, string *pWorldDirOut )
 {
 	*pWorldDirOut = "";
@@ -127,7 +126,6 @@ bool NovaZip::InstallWorld( string fileName, string *pWorldDirOut )
 	{
 		return false;
 	}
-
 
 	//got the go ahead
 	string deleteDir = GetApp()->GetBaseDirectory() +GetGameLogic()->GetWorldsDirPath() + "/"+modInfo.m_stDirName;
