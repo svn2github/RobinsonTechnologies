@@ -1677,7 +1677,12 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	s += pFileName;
 
 	StringReplace("\\", "/", s);
-	g_VFManager.LocateFile(s);
+	if (!g_VFManager.LocateFile(s))
+	{
+		//try again
+		s = ChangeFileExtension(s, ".luac");
+		g_VFManager.LocateFile(s);
+	}
 
 	if (!m_pScriptObject->Load(s.c_str()))
 	{

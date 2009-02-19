@@ -34,10 +34,12 @@ protected:
 	void ConvertFilesToIgnore(string fileList);
 	void PackageWindowsVersion(string outputFile, string locationOfWinExe);
 	void PackageNovaZipVersion(string outputFile);
+	void PackageMacVersion(string outputFile, string locationOfMacFiles);
 private:
 	eButtonPushed m_buttonPushed;
 	CL_Zip_Archive m_zip;
 	bool m_bRetail;
+	string m_appDirName;
 
 	vector<string> m_fileExtensionsToIgnore;
 	

@@ -236,15 +236,29 @@ bool WriteLuac(lua_State *pLuaState, string const &outputFile)
 
 int LoadAndCreateBinaryIfNeeded(lua_State *pLuaState, const char *pFileName)
 {
-	string outputFile = ChangeFileExtension(pFileName, ".luac");
 	bool bRequestNewBinary = false;
+
+	if (pFileName[strlen(pFileName)-1] == 'c')
+	{
+		//we don't have a source file I guess, don't bother checking to see if we have to compile it
+		return luaL_loadfile(pLuaState, pFileName);
+	} 
+	
+	string outputFile = string(pFileName)+"c";
 
 	if (FileExists(pFileName))
 	{
-		//is our compiled version up to date?
-		if (GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(pFileName))
+		if (!FileExists(outputFile))
 		{
-			bRequestNewBinary = true;		
+			bRequestNewBinary = true;
+		} else
+		{
+			//is our compiled version up to date?
+			if (GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(pFileName))
+			{
+				bRequestNewBinary = true;		
+			}
+
 		}
 	}
 	int ret;
@@ -421,7 +435,7 @@ bool ScriptManager::CompileLuaIfNeeded(string filename)
 	if (FileExists(filename))
 	{
 		//is our compiled version up to date?
-		if (GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(filename))
+		if (!FileExists(outputFile) || GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(filename))
 		{
 			lua_State *pLuaState = luaL_newstate();
 			int ret = luaL_loadfile(pLuaState, filename.c_str());
@@ -484,6 +498,7 @@ void ScriptManager::SetGlobalBool(const char * pGlobalName, bool value)
 void ScriptManager::LoadMainScript(const char *pScriptName)
 {
 	int result = LoadAndCreateBinaryIfNeeded(m_pMainState, pScriptName);
+	ShowLUAMessagesIfNeeded(m_pMainState, result);
 	if (result == 0) result = lua_pcall(m_pMainState, 0,LUA_MULTRET,0);
 	ShowLUAMessagesIfNeeded(m_pMainState, result);
 }

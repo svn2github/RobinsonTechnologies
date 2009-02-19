@@ -220,8 +220,12 @@ bool RunScript(const string &scriptName)
 
 	if (!g_VFManager.LocateFile(fileName))
 	{
-		LogError("Unable to locate script file %s.", fileName.c_str());
-		return false;
+		fileName = ChangeFileExtension(fileName, ".luac");
+		if (!g_VFManager.LocateFile(fileName))
+		{
+			LogError("Unable to locate script file %s.", fileName.c_str());
+			return false;
+		}
 	}
 
 	GetScriptManager->LoadMainScript(fileName.c_str());

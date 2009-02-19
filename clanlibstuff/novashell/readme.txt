@@ -1,8 +1,8 @@
-** To build Novashell **
+** To build Novashell from source **
 
 ** WINDOWS **
 
-Install or checkout Clanlib 0.8.1 or newer from www.clanlib.org.  Also download the related precompiled
+Install or checkout Clanlib 0.8.3 or latest svn  Also download the related precompiled
 binaries you will need from here:  http://clanlib.org/download-binaries-win32-vc80.html
 
 Make sure the examples work ok and everything compiles.
@@ -35,10 +35,11 @@ Note:  Build Static MT Release or Static MT Debug.  Ignore the other ones...
 
 --- TO GET WINDOWS BUILD SCRIPTS/ETC WORKING (not required!)
 
-The .bat file novashell/scripts/MakeReleaseBetaInstaller.bat is a script that will build the game,
- create the docs, create an installer and FTP it to my site.  
- 
- To use this, you would need to do the following:
+The .bat file novashell/scripts/win_build.bat is a script that will build the game.
+The .bat file novashell/scripts/win_package.bat is a script that will create the installer, build the docs and
+ftp everything to my site.
+
+ To use these, you would need to do the following:
  
   * Add <checkoutdir>util to your system path
   * Install NSIS 2.35+ in <checkoutdir>util/NSIS
@@ -55,7 +56,7 @@ SET _FTP_PASS_= password
 
 ** OSX **
 
-Checkout Clanlib 0.8.1 from SVN from www.clanlib.org.  Also download the related precompiled
+Checkout Clanlib 0.8.3+from SVN from www.clanlib.org.  Also download the related precompiled
 binaries you will need from here: http://clanlib.org/download-binaries-osx-gcc40-universal.html
 
 After checking out the Novashell SVN tree, open clanlibstuff/novashell/mac/novashell.xcodeproj, you may need to
@@ -67,7 +68,7 @@ it up into a dmg and upload it.  You'd have to edit the scripts involved to get 
 
 ** LINUX **
 
-Checkout Clanlib 0.8.1 from SVN from www.clanlib.org.  You'll also need to grab the additional libs clanlib needs, but
+Checkout Clanlib 0.8.3 from SVN from www.clanlib.org.  You'll also need to grab the additional libs clanlib needs, but
 hey, you're a linux guy, you can probably figure out the dependencies.
 
 Run the its automake stuff and do "make install".
@@ -76,6 +77,27 @@ Next, check out all of rtsvn.  (svn checkout svn://rtsoft.com/rtsvn)
 
 From its root, do:
 sh linux_make_novashell.sh
+
+
+Linux troubleshooting:
+
+Ok, for anyone getting this error with novashell in linux:
+
+"./novashell: error while loading shared libraries: libclanApp-0.8.so.1: cannot open shared object file: No such file or directory"
+
+It might be because your clanlib stuff is in usr/local/lib instead of usr/lib.
+
+To fix this, from the shell prompt, right before running novashell, do this:
+
+export LD_LIBRARY_PATH=/usr/local/lib
+
+(to check that it 'took', you can view it like this)
+
+echo $LD_LIBRARY_PATH
+
+(you should see it say: /user/local/lib )
+
+Novashell should now be able to find the clanlib library stuff.
 
 That's it!
 

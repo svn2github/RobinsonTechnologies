@@ -91,7 +91,7 @@ bool WorldPackager::Init()
 	if (checkWinStandAlone.is_checked())
 	{
 		string outputFile = GetGameLogic()->GetActiveWorldName()+"_Win.zip";
-		
+		m_appDirName = GetGameLogic()->GetActiveWorldName();
 		string locationOfWinExe = "packaging/win/game.exe";
 	
 		#ifdef _WINDOWS
@@ -107,6 +107,26 @@ bool WorldPackager::Init()
 		PackageWindowsVersion(outputFile, locationOfWinExe);
 	}
 
+
+	if (checkMacStandAlone.is_checked())
+	{
+		string outputFile = GetGameLogic()->GetActiveWorldName()+"_Mac.zip";
+		m_appDirName = GetGameLogic()->GetActiveWorldName()+".app";
+		string locationOfMacFiles = "packaging/mac/";
+
+#ifdef __APPLE__
+		locationOfMacFiles = "../"; //just reuse the real files, saves on installer size
+#endif
+
+		if (!FileExists(locationOfMacFiles + "MacOS/novashell"))
+		{
+			CL_MessageBox::info("It looks like this version of Novashell is missing the stuff to make a mac version. (packaging/mac dir is missing)", GetApp()->GetGUI());
+			return true;
+		}
+
+		PackageMacVersion(outputFile, locationOfMacFiles);
+	}
+
 	return true; //success
 }
 
@@ -115,19 +135,40 @@ void WorldPackager::PackageWindowsVersion(string outputFile, string locationOfWi
 	LogMsg("Creating windows version...");
 	UpdateScreen();
 
-	Scan("base", true, "base/"); //special case for the base library
+	Scan("base", true, m_appDirName+"/base/"); //special case for the base library
 
-	string worldDestinationDir = "worlds/";
+	string worldDestinationDir = m_appDirName+"/worlds/";
 	ScanWorlds(worldDestinationDir); //add all world files
 
 	//add files into the base directory
-	m_zip.add_file(locationOfWinExe, "game.exe", true);
+	m_zip.add_file(locationOfWinExe,  m_appDirName+"/game.exe", true);
 	LogMsg("Creating %s...", outputFile.c_str());
 	UpdateScreen();
 	m_zip.save(outputFile);
 	m_zip = CL_Zip_Archive(); //clear it out
 }
 
+void WorldPackager::PackageMacVersion(string outputFile, string locationOfMacFiles)
+{
+	LogMsg("Creating mac version...");
+	UpdateScreen();
+
+	Scan("base", true,  m_appDirName+"/Contents/Resources/base/"); //special case for the base library
+	Scan(locationOfMacFiles+"MacOS", true, m_appDirName+"/Contents/MacOS/");
+	Scan(locationOfMacFiles+"Frameworks", true, m_appDirName+"/Contents/Frameworks/");
+	m_zip.add_file(locationOfMacFiles+"Info.plist", m_appDirName+"/Contents/Info.plist", true);
+	m_zip.add_file(locationOfMacFiles+"PkgInfo", m_appDirName+"/Contents/PkgInfo", true);
+
+	string worldDestinationDir = m_appDirName+"/Contents/Resources/worlds/";
+	ScanWorlds(worldDestinationDir); //add all world files
+
+	//add files into the base directory
+	
+	LogMsg("Creating %s...", outputFile.c_str());
+	UpdateScreen();
+	m_zip.save(outputFile);
+	m_zip = CL_Zip_Archive(); //clear it out
+}
 
 void WorldPackager::PackageNovaZipVersion(string outputFile)
 {

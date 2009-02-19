@@ -1151,8 +1151,13 @@ bool RunGlobalScriptFromTopMountedDir(const char *pName)
 
 	if (!g_VFManager.LocateFile(fileName))
 	{
-		//couldn't find it
-		return false;
+		fileName = ChangeFileExtension(fileName, ".luac");
+
+		if (!g_VFManager.LocateFile(fileName))
+		{
+			//couldn't find it
+			return false;
+		}
 	}
 
 	//run a global script to init anything that needs doing

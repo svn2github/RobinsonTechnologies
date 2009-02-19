@@ -12,7 +12,7 @@ cd ..
 unlink $packedfilenames
 
 mv bin novashell
-tar cvfz $packedfilename novashell/novashell novashell/worlds novashell/base novashell/license.txt novashell/credits.txt novashell/history.txt
+tar cvfz $packedfilename novashell/novashell novashell/worlds novashell/base novashell/packaging novashell/license.txt novashell/credits.txt novashell/history.txt
 mv novashell bin
 
 if [ -f $packedfilename ] 
