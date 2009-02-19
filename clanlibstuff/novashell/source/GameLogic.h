@@ -93,7 +93,7 @@ public:
 	  void ClearModPaths() {m_modPaths.clear(); GetApp()->SetWindowTitle(GetApp()->GetDefaultTitle());}
 	  void AddModPath(string s);
 	  const string & GetWorldsDirPath() {return m_strWorldsDirPath;}
-	  const string & GetActiveWorldName();
+	  const string & GetActiveWorldName() {return m_activeWorldName;}
 	  void InitGameGUI(string xmlFile); //don't make this const, we modify it in place
 	  void OneTimeModSetup();
 	  CL_StyleManager_Bitmap * GetGUIStyle() {return m_pGUIStyle;}
@@ -107,6 +107,7 @@ public:
 	  bool IsRetail();
 	  void AddCallbackOnPostLogicUpdate(const string &callbackFunction, int entityID);
 	  void OnRender();
+	  vector<string> GetModPaths();
 
 private:
 

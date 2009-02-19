@@ -9,6 +9,22 @@
 #include <luabind/luabind.hpp>
 #include <luabind/operator.hpp>
 #endif
+extern "C"  {
+
+#include "lua.h"
+#include "lauxlib.h"
+
+#include "ldo.h"
+#include "lfunc.h"
+#include "lmem.h"
+#include "lobject.h"
+#include "lopcodes.h"
+#include "lstring.h"
+#include "lundump.h"
+
+}
+
+
 
 using namespace luabind;
 
@@ -184,11 +200,79 @@ void ScriptObject::SetGlobal(const string& key, int value)
 	lua_settable(m_pLuaState, LUA_GLOBALSINDEX);
 }
 
+static int writer(lua_State* L, const void* p, size_t size, void* u)
+{
+	return (fwrite(p,size,1,(FILE*)u)!=1) && (size!=0);
+}
+
+
+#define toproto(L,i) (clvalue(L->top+(i))->l.p)
+
+bool WriteLuac(lua_State *pLuaState, string const &outputFile)
+{
+
+	Proto* f;
+
+	FILE* D=  fopen(outputFile.c_str(),"wb");
+	if (D==NULL)
+	{
+		LogError("Unable to open %d", outputFile.c_str());
+		return false;
+	}
+
+	f=toproto(pLuaState,-1);
+
+	bool stripping = true;
+	luaU_dump(pLuaState,f,writer,D,stripping);
+	if (ferror(D))
+	{
+		LogError("Can't write %s", outputFile.c_str());
+	}
+	fclose(D);
+	return true;
+}
+
+
+
+int LoadAndCreateBinaryIfNeeded(lua_State *pLuaState, const char *pFileName)
+{
+	string outputFile = ChangeFileExtension(pFileName, ".luac");
+	bool bRequestNewBinary = false;
+
+	if (FileExists(pFileName))
+	{
+		//is our compiled version up to date?
+		if (GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(pFileName))
+		{
+			bRequestNewBinary = true;		
+		}
+	}
+	int ret;
+	if (bRequestNewBinary)
+	{
+		ret = luaL_loadfile(pLuaState, pFileName);
+		if (ret == 0)
+		{
+			//no errors, let's output the binary form as well for next time
+			WriteLuac(pLuaState, outputFile);
+		}
+
+	} else
+	{
+		ret = luaL_loadfile(pLuaState, outputFile.c_str());
+
+	}
+
+	return ret;
+
+}
 
 
 bool ScriptObject::Load(const char *pFileName)
 {
-	int result = luaL_loadfile(m_pLuaState, pFileName);
+	
+	int result = LoadAndCreateBinaryIfNeeded(m_pLuaState, pFileName);
+	
 	if (result == 0) result = lua_pcall(m_pLuaState, 0,0,0);
 
 	switch (result)
@@ -212,13 +296,6 @@ bool ScriptObject::Load(const char *pFileName)
 		ShowLUAMessagesIfNeeded(m_pLuaState, result);
 		return false;
 	}
-		
-	#ifdef _DEBUG
-	//lua_gc(GetScriptManager->GetMainState(), LUA_GCCOLLECT, NULL);
-	
-
-	#endif
-	
 	return true; //success
 }
 
@@ -336,21 +413,37 @@ void  ScriptManager::UpdateAfterScreenChange(bool bActuallyChanged)
 	}
 }
 
+//returns true if the script was actually recompiled
+bool ScriptManager::CompileLuaIfNeeded(string filename)
+{
+	string outputFile = ChangeFileExtension(filename, ".luac");
+	
+	if (FileExists(filename))
+	{
+		//is our compiled version up to date?
+		if (GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(filename))
+		{
+			lua_State *pLuaState = luaL_newstate();
+			int ret = luaL_loadfile(pLuaState, filename.c_str());
+			if (ret == 0)
+			{
+				//no errors, let's output the binary form as well for next time
+				WriteLuac(pLuaState, outputFile);
+			}
+			lua_close(pLuaState);
+			return true; //actually compiled something
+		}
+	} else
+	{
+		LogError("CompileLuaIfNeeded: File %s is missing", filename.c_str());
+	}
+
+	return false; //nothing was compiled
+}
 
 void ScriptManager::SetStrict(bool bStrict)
 {
 	SetGlobalBool("g_allowStrict", bStrict);
-	
-	/*
-	if (bStrict)
-	{
-		LogMsg("Setting strict to true");
-	} else
-	{
-		LogMsg("Setting strict to false");
-
-	}
-	*/
 }
 
 void ScriptManager::SetGlobal(const char * pGlobalName, int value)
@@ -358,7 +451,6 @@ void ScriptManager::SetGlobal(const char * pGlobalName, int value)
 	lua_pushstring(m_pMainState, pGlobalName);
 	lua_pushnumber(m_pMainState, (lua_Integer)value);
 	lua_settable(m_pMainState, LUA_GLOBALSINDEX);
-
 }
 
 bool ScriptManager::VariableExists(const char *pFuncName)
@@ -391,7 +483,8 @@ void ScriptManager::SetGlobalBool(const char * pGlobalName, bool value)
 
 void ScriptManager::LoadMainScript(const char *pScriptName)
 {
-	int result = luaL_dofile(m_pMainState, pScriptName);
+	int result = LoadAndCreateBinaryIfNeeded(m_pMainState, pScriptName);
+	if (result == 0) result = lua_pcall(m_pMainState, 0,LUA_MULTRET,0);
 	ShowLUAMessagesIfNeeded(m_pMainState, result);
 }
 void ScriptManager::RunFunction(const char *pFuncName)
@@ -524,4 +617,5 @@ int luaPrintError(lua_State *L)
 	return 0;
 
 }
+
 

@@ -1,4 +1,6 @@
 #include "MiscUtils.h"
+#include <sys/stat.h>
+#include <time.h>
 
 float RadiansToDegrees(float rad)
 {
@@ -366,4 +368,24 @@ CL_Rect CombineRects(const CL_Rect &a, const CL_Rect &b)
 	r.right = max(a.right, b.right);
 	r.bottom = max(a.bottom, b.bottom);
 	return r;
+}
+
+//use like this:
+// string datVersion = ChangeFileExtension("crap.txt", "dat"); //now datVersion == "crap.dat";
+string ChangeFileExtension(const string &input, const string &extension)
+{
+	int n = input.find_last_of(".");
+	if (n == string::npos) return input + "." + extension;
+	//otherwise..
+	return input.substr(0, n)+extension;
+}
+
+time_t GetLastModifiedDateFromFile(string fileName)
+{
+	struct tm* clock;				// create a time structure
+	struct stat attrib;			// create a file attribute structure
+	stat(fileName.c_str(), &attrib);		// get the attributes of afile.txt
+	clock = gmtime(&(attrib.st_mtime));	// Get the last modified time and put it into the time structure
+	if (clock == 0) return 0;
+	return mktime(clock);
 }

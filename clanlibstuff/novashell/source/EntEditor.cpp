@@ -10,6 +10,7 @@
 #include "Console.h"
 #include "AI/WorldNavManager.h"
 #include "DataEditor.h"
+#include "WorldPackager.h"
 #include <algorithm>
 
 #ifdef __APPLE__
@@ -920,6 +921,9 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	pItem = m_pMenu->create_item("File/Restart Engine (Ctrl+Shift+R)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnRestart);
 
+	pItem = m_pMenu->create_item("File/World Packaging & Distribution");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnWorldPackage);
+
 	pItem = m_pMenu->create_toggle_item("Mode/Map Info");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnChooseScreenMode);
 	m_modeCheckBoxArray[e_modeMap] = static_cast<CL_MenuItem*>(pItem->get_data());
@@ -1072,11 +1076,16 @@ if (GetGameLogic()->GetUserProfileName().empty())
 
 	OnToggleEditMode(); //turn on the edit submode
 
-	BuildLayerControlBox();
-
+	
 #ifndef _DEBUG
 	//these slow down my debug too much
 	BuildWorldListBox();
+	BuildLayerControlBox();
+
+#endif
+
+#ifdef _DEBUG
+	//OnWorldPackage();
 #endif
 
 	return true;
@@ -1689,4 +1698,12 @@ void EntEditor::OnPreferences()
 		GetApp()->Data());
 
 	GetApp()->BuildCommandLineParms();
+}
+
+void EntEditor::OnWorldPackage()
+{
+	WorldPackager w;
+
+	w.Init();
+
 }

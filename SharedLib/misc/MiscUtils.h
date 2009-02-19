@@ -52,6 +52,7 @@ inline bool   RandBool()
 unsigned int HashString(const char *str);
 int random(int range);
 int random_range(int rangeMin, int rangeMax);
+time_t GetLastModifiedDateFromFile(string fileName);
 
 inline float frandom(float x=1.0f)
 {
@@ -82,6 +83,7 @@ void LogError(const char *lpFormat, ...);
 
 float RadiansToDegrees(float rad);
 float DegreesToRadians(float deg);
+string ChangeFileExtension(const string &input, const string &extension);
 
 //clamps the first argument between the second two
 template <class T, class U, class V>
@@ -105,7 +107,6 @@ inline void Clamp(T& arg, const U& minVal, const V& maxVal)
 class CL_FileHelper
 {
 public:
-
 
 	CL_FileHelper(CL_InputSource *pInput)
 	{
@@ -513,7 +514,9 @@ private:
 
 class CL_PixelBuffer;
 
+
 //if you send NULL for the color it uses a special fast version (to clear to black)
 void ClearPixelBuffer(CL_PixelBuffer* pPixelBuffer, CL_Color color);
 
 #endif // MiscUtils_h__
+

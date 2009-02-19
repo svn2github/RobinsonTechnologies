@@ -56,6 +56,7 @@ private:
     void OnGenerateLarge();
     void SimpleGenerateInit();
     bool SimpleGenerateStep();
+	void OnWorldPackage();
 
 	void OnClearMap();
 	void OnExit();

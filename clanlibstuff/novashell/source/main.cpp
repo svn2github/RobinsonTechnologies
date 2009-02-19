@@ -365,9 +365,7 @@ void App::OneTimeInit()
 	//hack for multi monitor problem and the game starting and then alt-tabbing back for some reason
 	SetActiveWindow(m_Hwnd);
 #endif
-
 	g_inputManager.OneTimeInit();
-
 }
        
 bool App::SetScreenSize(int x, int y)
@@ -918,6 +916,10 @@ int App::main(int argc, char **argv)
 	
 	for (int i=1; i < argc; i++)
 	{
+		if (i == 2)
+		{
+			m_originalParms += " ";
+		}
 		m_originalParms += argv[i];
 	}
 

@@ -40,7 +40,7 @@ public:
 
 	lua_State * GetState() {return m_pLuaState;}
 	void SetGarbageCollectOnKill(bool bGarbageCollectOnKill){m_bGarbageCollectOnKill = bGarbageCollectOnKill;}
-
+	
 protected:
 
 	lua_State* m_pLuaState;
@@ -71,7 +71,7 @@ public:
 
 	lua_State * GetMainState() {return m_pMainState;}
 	void UpdateAfterScreenChange(bool bActuallyChanged);
-
+	bool CompileLuaIfNeeded(string filename);
 protected:
 
 lua_State * m_pMainState;

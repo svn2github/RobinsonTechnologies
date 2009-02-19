@@ -106,7 +106,6 @@ void GameLogic::OneTimeModSetup()
 
 	for (unsigned int i=0; i < GetApp()->GetStartupParms().size(); i++)
 	{
-
 		LogMsg("	%s", GetApp()->GetStartupParms().at(i).c_str());
 		string p1 = GetApp()->GetStartupParms().at(i);
 		string p2;
@@ -146,15 +145,6 @@ void GameLogic::OneTimeModSetup()
 			}
 		}
 		
-#ifdef _DEBUG
-		//NovaZip nova;
-		//nova.InstallWorld("/Users/Seth/Desktop/Dink.novazip");
-		//nova.InstallWorld(GetWorldsDirPath() + "/Dink7zip.novazip");
-		//nova.InstallWorld(GetWorldsDirPath() + "/Dink.novazip");
-#endif
-		
-	
-
 
 	}
 
@@ -529,11 +519,23 @@ bool GameLogic::Init()
 		//now save everything, nothing will have changes except tagcache data
 		m_worldManager.SaveAllMaps();
 
-	
 		SetRestartEngineFlag(true);
 		return true;
 	}
 
+#ifdef _DEBUG
+	//NovaZip nova;
+	//nova.InstallWorld("/Users/Seth/Desktop/Dink.novazip");
+	//nova.InstallWorld(GetWorldsDirPath() + "/Dink7zip.novazip");
+	//nova.InstallWorld(GetWorldsDirPath() + "/Dink.novazip");
+
+	CL_Zip_Archive z;
+	z.add_file("readme.txt");
+	z.save("crap.zip");
+
+
+
+#endif
 	
 	if (! RunGlobalScriptFromTopMountedDir("game_start.lua"))
 	{
@@ -1083,6 +1085,11 @@ void GameLogic::SetShowMessageActive( bool bNew, CL_Window *pMsgWindow )
 {
 	m_bShowingMessageWindow = bNew;
 	m_pShowMessageWindow = pMsgWindow;
+}
+
+vector<string> GameLogic::GetModPaths()
+{
+	return m_modPaths;
 }
 
 void MoveCameraToPlayer()

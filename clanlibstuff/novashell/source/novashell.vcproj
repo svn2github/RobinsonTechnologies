@@ -1169,6 +1169,14 @@
 					RelativePath=".\AI\WatchManager.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\WorldPackager.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\WorldPackager.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Script"
