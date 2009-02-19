@@ -47,5 +47,10 @@ cp -R /Volumes/PROJECTS/clanlibstuff/novashell/bin/base build/Default/novashell.
 #copy the worlds we want over
 cp -R /Volumes/PROJECTS/clanlibstuff/novashell/bin/worlds build/Default/novashell.app/Contents/Resources
 
+#copy our binaries to the windows server
+cp -R ./build/Default/novashell.app/Contents/MacOS /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac
+
+cp -R ./build/Default/novashell.app/Contents/Frameworks /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac
+
 cd ../scripts
 

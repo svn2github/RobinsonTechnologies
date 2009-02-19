@@ -261,6 +261,8 @@
 		5D7A78210B757D9B003C896A /* StatePain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A781F0B757D9B003C896A /* StatePain.cpp */; };
 		5D7A78230B757DC0003C896A /* BrainForceVisual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */; };
 		5D7A78240B757DC0003C896A /* BrainForceVisual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */; };
+		5D7E6E4A0F4CFD260087B781 /* WorldPackager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7E6E490F4CFD260087B781 /* WorldPackager.cpp */; };
+		5D7E6E4B0F4CFD260087B781 /* WorldPackager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7E6E490F4CFD260087B781 /* WorldPackager.cpp */; };
 		5D8105070AD6207B004605B8 /* Goal_Approach.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8105030AD6207B004605B8 /* Goal_Approach.cpp */; };
 		5D8105090AD6207B004605B8 /* Goal_Say.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8105050AD6207B004605B8 /* Goal_Say.cpp */; };
 		5D81050B0AD6207B004605B8 /* Goal_Approach.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8105030AD6207B004605B8 /* Goal_Approach.cpp */; };
@@ -716,7 +718,7 @@
 		5D0A99930DA50B7E0072BDB0 /* StateSpecial1.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateSpecial1.cpp; sourceTree = "<group>"; };
 		5D0A99940DA50B7E0072BDB0 /* StateTurn.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateTurn.cpp; sourceTree = "<group>"; };
 		5D130AB60A2BD7B400475F87 /* app.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = app.icns; sourceTree = "<group>"; };
-		5D130AC60A2BD86100475F87 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		5D130AC60A2BD86100475F87 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D1A384E0A382D48005FF1C0 /* BrainManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainManager.cpp; sourceTree = "<group>"; };
 		5D1A384F0A382D48005FF1C0 /* BrainManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrainManager.h; sourceTree = "<group>"; };
 		5D1A38500A382D48005FF1C0 /* BrainShake.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainShake.cpp; sourceTree = "<group>"; };
@@ -874,6 +876,7 @@
 		5D7A78180B757D74003C896A /* TileBindings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TileBindings.cpp; path = ../source/TileBindings.cpp; sourceTree = SOURCE_ROOT; };
 		5D7A781F0B757D9B003C896A /* StatePain.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StatePain.cpp; sourceTree = "<group>"; };
 		5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainForceVisual.cpp; sourceTree = "<group>"; };
+		5D7E6E490F4CFD260087B781 /* WorldPackager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldPackager.cpp; sourceTree = "<group>"; };
 		5D8105030AD6207B004605B8 /* Goal_Approach.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_Approach.cpp; path = AI/Goal_Approach.cpp; sourceTree = "<group>"; };
 		5D8105040AD6207B004605B8 /* Goal_Approach.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_Approach.h; path = AI/Goal_Approach.h; sourceTree = "<group>"; };
 		5D8105050AD6207B004605B8 /* Goal_Say.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Goal_Say.cpp; path = AI/Goal_Say.cpp; sourceTree = "<group>"; };
@@ -1812,6 +1815,7 @@
 		5DCDB81E0A1AE5CA0043DCFA /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				5D7E6E490F4CFD260087B781 /* WorldPackager.cpp */,
 				5D6B95B90E19EC9E00B67FE8 /* DrawManager.cpp */,
 				5D6B95BA0E19EC9E00B67FE8 /* DrawManager.h */,
 				5D442B600DFCD25D00E4F27D /* DebugDraw.cpp */,
@@ -1883,9 +1887,11 @@
 		20286C28FDCF999611CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C0E91AC908A95435008D54AB /* Build configuration list for PBXProject "novashell" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 20286C29FDCF999611CA2CEA /* novashell */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8D0C4E890486CD37000505A6 /* novashell_debug */,
 				5DCDB2030A19FEAA0043DCFA /* novashell_release */,
@@ -2122,6 +2128,7 @@
 				5D442B640DFCD25D00E4F27D /* DebugDraw.cpp in Sources */,
 				5D442B650DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */,
 				5D6B95BD0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */,
+				5D7E6E4B0F4CFD260087B781 /* WorldPackager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2334,6 +2341,7 @@
 				5D442B620DFCD25D00E4F27D /* DebugDraw.cpp in Sources */,
 				5D442B630DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */,
 				5D6B95BB0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */,
+				5D7E6E4A0F4CFD260087B781 /* WorldPackager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
