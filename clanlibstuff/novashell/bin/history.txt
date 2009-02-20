@@ -5,6 +5,13 @@ new collision features soon, like true circle shapes
 
 * If you run vista, it's recommended that you don't use the Aero theme, or at least use Aero Basic, otherwise it you may get a poor framerate
 
+2-20
+
+* Improved the Package & Distribute dialog, has more options, some fixes, done I guess
+* FEATURE: If command_line.txt exists in the directory, the contents will be added to the start-up command line that is processed.
+  (both prefs.dat command lines parms and real command line parms will take precedence)
+* Added "-fullscreen" command-line parm, useful to force fullscreen mode when something else has specified windowed mode
+
 2-19 2009
 
 * Engine now runs compiled lua files (.luac) (it will create the .luac from .lua automatically if needed (it compares filedates), and if available)

@@ -1085,7 +1085,7 @@ if (GetGameLogic()->GetUserProfileName().empty())
 #endif
 
 #ifdef _DEBUG
-	//OnWorldPackage();
+	OnWorldPackage();
 #endif
 
 	return true;

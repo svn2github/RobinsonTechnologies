@@ -23,12 +23,13 @@ bool WorldPackager::Init()
 	}
 	
 	CL_SlotContainer slots;
-
-	CL_Point ptSize(370,300);
+	CL_Point ptSize(630,450);
+	int indent = 20;
+	int buttonOffsetX = 10;
+	int width = ptSize.x - (indent+buttonOffsetX)*2;
 	CL_Window window(CL_Rect(0, 0, ptSize.x, ptSize.y), "World Packaging & Distribution", CL_Window::close_button, GetApp()->GetGUI());
 	window.set_event_passing(false);
 	window.set_position( (GetScreenX-ptSize.x)/2, C_EDITOR_MAIN_MENU_BAR_HEIGHT);
-	int buttonOffsetX = 10;
 
 	CL_Button buttonCancel (CL_Point(buttonOffsetX+200,ptSize.y-45), "Cancel", window.get_client_area());
 	CL_Button buttonOk (CL_Point(buttonOffsetX+100,ptSize.y-45), "Package", window.get_client_area());
@@ -38,7 +39,7 @@ bool WorldPackager::Init()
 	slots.connect(buttonOk.sig_clicked(), this, &WorldPackager::OnPackage, &window);
 
 	//check boxes
-	int checkX = buttonOffsetX;
+	int checkX = buttonOffsetX+indent;
 	int checkY = ptSize.y - 80;
 	
 	CL_CheckBox checkWinStandAlone (CL_Point(checkX,checkY),"Build Windows Standalone", window.get_client_area());
@@ -50,16 +51,39 @@ bool WorldPackager::Init()
 	CL_CheckBox checkNovaworld (CL_Point(checkX,checkY),"Build .novazip", window.get_client_area());
 	checkNovaworld.set_checked(true); checkY -= 30;
 	
-	CL_Label label1(CL_Point(checkX, checkY), "Output Options:", window.get_client_area()); checkY -= 30;
+	CL_Label label1(CL_Point(buttonOffsetX, checkY), "Output Options:", window.get_client_area()); checkY -= 30;
+
+	checkY -= 10;
+	m_commandLine = string("-res 1024 768");
+	CL_InputBox commandLine (CL_Rect(0,0, width, 24), m_commandLine, window.get_client_area());
+	commandLine.set_position(checkX, checkY); checkY -= 20;
+
+	CL_Label label4(CL_Point(checkX, checkY), "Extra Commandline parms:", window.get_client_area()); checkY -= 30;
+
 
 	CL_CheckBox checkRetail (CL_Point(checkX,checkY),"Retail (doesn't include .lua source or allow the editor to function)", window.get_client_area());
 	checkRetail.set_checked(true); checkY -= 30;
-	CL_Label label2(CL_Point(checkX, checkY), "Build Options:", window.get_client_area()); checkY -= 30;
 
-	CL_InputBox filesToIgnore (CL_Rect(0,0, 300, 24), "*.psd *.sfx *.bak *.max", window.get_client_area());
-	filesToIgnore.set_position(checkX, checkY); checkY -= 30;
+	CL_CheckBox checkWindowed (CL_Point(checkX,checkY),"Start in a window", window.get_client_area());
+	checkY -= 30;
 
-	CL_Label label3(CL_Point(checkX, checkY), "File Extensions to ignore:", window.get_client_area()); checkY -= 30;
+	CL_InputBox filesToIgnore (CL_Rect(0,0, width, 24), "*.psd *.sfk *.sfl Thumbs.db *.bak *.max", window.get_client_area());
+	filesToIgnore.set_position(checkX, checkY); checkY -= 20;
+	CL_Label label3(CL_Point(checkX, checkY), "File Extensions to ignore while compressing:", window.get_client_area()); checkY -= 30;
+
+
+	CL_Label label2(CL_Point(buttonOffsetX, checkY), "Build Options:", window.get_client_area()); checkY -= 30;
+
+	
+	checkY -= 40;
+
+	CL_Label label5(CL_Point(buttonOffsetX, checkY), 
+		"This utility packages your game into ready to play formats for both Windows and OSX.\n\n" \
+		".novazip - Anyone who already has novashell installed can just double click this to install and play your world.\n" \
+		"Windows .zip - Makes a stand-alone zipped file that is ready to play on any Windows system.\n" \
+		"Mac .zip - Makes a universal-binary based stand-alone zipped .app file that is ready to play on any OSX 10.4+ system."
+	
+		, window.get_client_area()); checkY -= 30;
 
 	window.run();	//loop in the menu until quit() is called by hitting a button
 
@@ -71,7 +95,24 @@ bool WorldPackager::Init()
 		return true;
 	}
 	
+	CL_String::trim_whitespace(m_commandLine);
+	if (!m_commandLine.empty()) m_commandLine += " ";
+	
 	m_bRetail = checkRetail.is_checked();
+
+	//add extra parms
+
+	if (checkWindowed.is_checked()) m_commandLine += "-window ";
+	if (m_bRetail) m_commandLine += "-retail ";
+	m_commandLine += GetGameLogic()->GetActiveWorldName()+"." + string(C_WORLD_INFO_EXTENSION);
+	
+
+	m_commandLineTemp = "temp.tmp";
+
+	RemoveFile(m_commandLineTemp);
+	add_text(m_commandLine.c_str(), m_commandLineTemp.c_str());
+
+
 	window.quit();
 
 	ConvertFilesToIgnore(filesToIgnore.get_text());
@@ -87,6 +128,8 @@ bool WorldPackager::Init()
 		string outputFile = GetGameLogic()->GetActiveWorldName()+".novazip";
 		PackageNovaZipVersion(outputFile);
 	}
+
+	
 
 	if (checkWinStandAlone.is_checked())
 	{
@@ -107,7 +150,6 @@ bool WorldPackager::Init()
 		PackageWindowsVersion(outputFile, locationOfWinExe);
 	}
 
-
 	if (checkMacStandAlone.is_checked())
 	{
 		string outputFile = GetGameLogic()->GetActiveWorldName()+"_Mac.zip";
@@ -127,6 +169,12 @@ bool WorldPackager::Init()
 		PackageMacVersion(outputFile, locationOfMacFiles);
 	}
 
+	LogMsg("***********");
+	LogMsg("Finished building stuff.  Output directory is %s.", GetApp()->GetBaseDirectory().c_str());
+	
+
+	RemoveFile(m_commandLineTemp);
+
 	return true; //success
 }
 
@@ -142,6 +190,9 @@ void WorldPackager::PackageWindowsVersion(string outputFile, string locationOfWi
 
 	//add files into the base directory
 	m_zip.add_file(locationOfWinExe,  m_appDirName+"/game.exe", true);
+
+	m_zip.add_file(m_commandLineTemp,  m_appDirName+"/command_line.txt", true);
+
 	LogMsg("Creating %s...", outputFile.c_str());
 	UpdateScreen();
 	m_zip.save(outputFile);
@@ -158,6 +209,8 @@ void WorldPackager::PackageMacVersion(string outputFile, string locationOfMacFil
 	Scan(locationOfMacFiles+"Frameworks", true, m_appDirName+"/Contents/Frameworks/");
 	m_zip.add_file(locationOfMacFiles+"Info.plist", m_appDirName+"/Contents/Info.plist", true);
 	m_zip.add_file(locationOfMacFiles+"PkgInfo", m_appDirName+"/Contents/PkgInfo", true);
+	m_zip.add_file(locationOfMacFiles+"Resources/app.icns", m_appDirName+"/Contents/Resources/app.icns", true);
+	m_zip.add_file(m_commandLineTemp, m_appDirName+"/Contents/Resources/command_line.txt", true);
 
 	string worldDestinationDir = m_appDirName+"/Contents/Resources/worlds/";
 	ScanWorlds(worldDestinationDir); //add all world files
@@ -172,20 +225,18 @@ void WorldPackager::PackageMacVersion(string outputFile, string locationOfMacFil
 
 void WorldPackager::PackageNovaZipVersion(string outputFile)
 {
-
 	LogMsg("Creating .novazip version...");
 	UpdateScreen();
 
-	ScanWorlds("/"); //add all world files
+	ScanWorlds("/", true); //add all world files
 
 	LogMsg("Creating %s...", outputFile.c_str());
 	UpdateScreen();
 	m_zip.save(outputFile);
 	m_zip = CL_Zip_Archive(); //clear it out
-
 }
 
-bool WorldPackager::ScanWorlds(string destinationDirectory)
+bool WorldPackager::ScanWorlds(string destinationDirectory, bool bIsNovaZip)
 {
 	vector<string> modPaths = GetGameLogic()->GetModPaths();
 
@@ -193,13 +244,12 @@ bool WorldPackager::ScanWorlds(string destinationDirectory)
 	{
 		LogMsg("Scanning %s...", modPaths[i].c_str());
 		UpdateScreen();
-		Scan(modPaths[i], false, destinationDirectory+CL_String::get_filename(modPaths[i])+"/");
+		Scan(modPaths[i], false, destinationDirectory+CL_String::get_filename(modPaths[i])+"/", 0, "", bIsNovaZip);
 	}
 
 	LogMsg("");
 	return true;
 }
-
 
 void WorldPackager::ConvertFilesToIgnore(string fileList)
 {
@@ -209,10 +259,10 @@ void WorldPackager::ConvertFilesToIgnore(string fileList)
 	{
 		if (words[i][0] == '*' && words[i][1] == '.')
 		{
-			m_fileExtensionsToIgnore.push_back(words[i].substr(2, words[i].length()-2));
+			m_fileExtensionsToIgnore.push_back(CL_String::to_lower(words[i].substr(2, words[i].length()-2)));
 		} else
 		{
-			LogMsg("Warning: Don't know how to ignore file extension %s, Seth made this parser dumb", words[i].c_str());
+			m_filesToIgnore.push_back(CL_String::to_lower(words[i]));
 		}
 	}
 }
@@ -236,7 +286,7 @@ bool WorldPackager::UpdateLuaFiles()
 	return true;
 }
 
-void WorldPackager::Scan(string dir, bool bIsBase, string targetDir, int recursionDepth, string originalDir)
+void WorldPackager::Scan(string dir, bool bIsBase, string targetDir, int recursionDepth, string originalDir, bool bIsNovaZip)
 {
 	CL_DirectoryScanner scanner;
 	scanner.scan(dir, "*");
@@ -250,10 +300,22 @@ void WorldPackager::Scan(string dir, bool bIsBase, string targetDir, int recursi
 	if (!bIsBase && recursionDepth == 0)
 	{
 		//some hackish things to put the .novashell file one folder up
-		string novaInfoDir = targetDir.substr(0, targetDir.length()-1);
-		m_zip.add_file(dir+".novashell", CL_String::get_path(novaInfoDir)+"/"+CL_String::get_filename(dir)+".novashell", true);
+		int startingIndex = 0;
+		StringReplace("\\", "/", targetDir);
+		if (targetDir[0] == '/') startingIndex = 1; //skip the first slash
+	
+		string novaInfoDir = targetDir.substr(startingIndex, targetDir.length()-1);
+		
+		if (bIsNovaZip)
+		{
+			m_zip.add_file(dir+"."+string(C_WORLD_INFO_EXTENSION), CL_String::get_filename(dir)+"."+string(C_WORLD_INFO_EXTENSION), true);
+		} else
+		{
+			m_zip.add_file(dir+"."+string(C_WORLD_INFO_EXTENSION), CL_String::get_path(novaInfoDir)+"/"+CL_String::get_filename(dir)+"."+string(C_WORLD_INFO_EXTENSION), true);
+		}
 	}
 
+	string fileName;
 	while (scanner.next())
 	{
 		std::string file = scanner.get_name();
@@ -276,6 +338,21 @@ void WorldPackager::Scan(string dir, bool bIsBase, string targetDir, int recursi
 					break;
 				}
 			}
+			
+			if (!bIgnoreFile)
+			{
+				fileName = CL_String::to_lower(scanner.get_name());
+
+				for (unsigned int i=0; i < m_filesToIgnore.size(); i++)
+				{
+					if (fileName == m_filesToIgnore[i])
+					{
+						bIgnoreFile = true;
+						break;
+					}
+				}
+			}
+
 
 			if (bIgnoreFile) continue;
 			//put it in our target folder, but with the relative pathing required by its internal tree

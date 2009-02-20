@@ -261,6 +261,10 @@ void App::OneTimeInit()
 		{
 			bFullscreen = false;
 		}
+		if (CL_String::compare_nocase(p1,"-full") || CL_String::compare_nocase(p1,"-fullscreen") )
+		{
+			bFullscreen = true;
+		}
 
 		if (CL_String::compare_nocase(p1, "-resolution") || CL_String::compare_nocase(p1, "-res") )
 		{
@@ -779,6 +783,21 @@ void App::SavePrefs()
 void App::BuildCommandLineParms()
 {
 	m_startupParms.clear();
+	
+	
+	string fName = "command_line.txt";
+
+	if (FileExists(fName))
+	{
+		CL_InputSource_File input(fName);
+		vector<string> v =CL_String::tokenize( GetNextLineFromFile(&input), " ", true);
+
+		for (unsigned int i=0; i < v.size(); i++)
+		{
+			m_startupParms.push_back(v[i]);
+		}
+	}
+
 	vector<string> v =CL_String::tokenize(m_prefs.Get("command_line_parms"), " ", true);
 	for (unsigned int i=0; i < v.size(); i++)
 	{
@@ -940,6 +959,7 @@ int App::main(int argc, char **argv)
 		"	MyWorld.novashell\n" \
 		"	-resolution <desired screen width> <desired screen height>\n" \
 		"	-window\n" \
+		"	-fullscreen\n" \
 		"	-nosound\n" \
 		"	-nomusic\n" \
 		"";

@@ -27,8 +27,8 @@ public:
 	};
 protected:
  
-	bool ScanWorlds(string destinationDirectory);
-	void Scan(string dir, bool bIsBase, string targetDir, int recursionDepth = 0, string originalDir = "");
+	bool ScanWorlds(string destinationDirectory, bool bIsNovaZip = false);
+	void Scan(string dir, bool bIsBase, string targetDir, int recursionDepth = 0, string originalDir = "", bool bIsNovaZip = false);
 	void CompileAllLuaFilesRecursively(string dir);
 	bool UpdateLuaFiles();
 	void ConvertFilesToIgnore(string fileList);
@@ -40,8 +40,10 @@ private:
 	CL_Zip_Archive m_zip;
 	bool m_bRetail;
 	string m_appDirName;
+	string m_commandLine, m_commandLineTemp;
 
 	vector<string> m_fileExtensionsToIgnore;
+	vector<string> m_filesToIgnore;
 	
 };
 
