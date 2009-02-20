@@ -396,6 +396,7 @@ bool GameLogic::SetUserProfileName(const string &name)
 	
 	//set as new save/load path, with fallback still on the default path
 	g_VFManager.MountDirectoryPath(m_strUserProfilePathWithName);
+	GetScriptManager->CompileAllLuaFilesRecursively(m_strUserProfilePathWithName);
 	m_worldManager.ScanMaps(m_strBaseMapPath);
 
 	//load globals
@@ -449,7 +450,8 @@ bool GameLogic::Init()
 	GetApp()->OnGameReset();
 	g_VFManager.Reset();
 	g_VFManager.MountDirectoryPath(CL_Directory::get_current()+"/base");
-	
+	GetScriptManager->CompileAllLuaFilesRecursively(CL_Directory::get_current()+"/base");
+
 	m_activeWorldName = "base";
 	ClearScreen();
 	CL_Display::flip(2); //show it now
@@ -463,6 +465,8 @@ bool GameLogic::Init()
 			m_modPaths[i] = modInfoFile;
 			LogMsg("Mounting world path %s.", m_modPaths[i].c_str());
 			g_VFManager.MountDirectoryPath(m_modPaths[i]);
+			GetScriptManager->CompileAllLuaFilesRecursively(m_modPaths[i]);
+
 			m_activeWorldName = CL_String::get_filename(m_modPaths[i]);
 		}
 
@@ -529,11 +533,9 @@ bool GameLogic::Init()
 	//nova.InstallWorld(GetWorldsDirPath() + "/Dink7zip.novazip");
 	//nova.InstallWorld(GetWorldsDirPath() + "/Dink.novazip");
 
-	CL_Zip_Archive z;
-	z.add_file("readme.txt");
-	z.save("crap.zip");
-
-
+	//CL_Zip_Archive z;
+	//z.add_file("readme.txt");
+	//z.save("crap.zip");
 
 #endif
 	
@@ -1146,22 +1148,24 @@ void ScheduleSystem(unsigned int deliveryMS, unsigned int targetID,const char * 
 
 bool RunGlobalScriptFromTopMountedDir(const char *pName)
 {
-	string fileName = GetGameLogic()->GetScriptRootDir()+"/";
-	fileName += pName;
+	string s = GetGameLogic()->GetScriptRootDir()+"/";
+	s += pName;
 
-	if (!g_VFManager.LocateFile(fileName))
+	StringReplace("\\", "/", s);
+	if (s[s.length()-1] == 'a') s+="c"; //try to grab the compiled version first
+	if (!g_VFManager.LocateFile(s))
 	{
-		fileName = ChangeFileExtension(fileName, ".luac");
-
-		if (!g_VFManager.LocateFile(fileName))
+		//try again
+		s = s.substr(0, s.length()-1); //cut the .c off and try again
+		if (!g_VFManager.LocateFile(s))
 		{
-			//couldn't find it
 			return false;
 		}
 	}
 
+
 	//run a global script to init anything that needs doing
-	GetScriptManager->LoadMainScript( fileName.c_str());
+	GetScriptManager->LoadMainScript( s.c_str());
 	return true;
 }
 

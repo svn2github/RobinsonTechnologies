@@ -105,14 +105,10 @@ bool WorldPackager::Init()
 	if (checkWindowed.is_checked()) m_commandLine += "-window ";
 	if (m_bRetail) m_commandLine += "-retail ";
 	m_commandLine += GetGameLogic()->GetActiveWorldName()+"." + string(C_WORLD_INFO_EXTENSION);
-	
-
 	m_commandLineTemp = "temp.tmp";
 
 	RemoveFile(m_commandLineTemp);
 	add_text(m_commandLine.c_str(), m_commandLineTemp.c_str());
-
-
 	window.quit();
 
 	ConvertFilesToIgnore(filesToIgnore.get_text());
@@ -123,17 +119,31 @@ bool WorldPackager::Init()
 	LogMsg("World path is %s", GetGameLogic()->GetWorldsDirPath().c_str());
 	LogMsg("Active world is %s", GetGameLogic()->GetActiveWorldName().c_str());
 
+	string outputDir = "";
+
+	if (GetGameLogic()->GetWorldsDirPath() == "worlds")
+	{
+		//they are compressing a game from the novashell internal world directory
+		if (GetApp()->GetPlatform() == C_PLATFORM_OSX)
+		{
+			outputDir = "../../"; //build stuff out of our original .app thing
+		}
+	} else
+	{
+		//external novashell directory I guess
+		outputDir = GetGameLogic()->GetWorldsDirPath()+"/";
+
+	}
+
 	if (checkNovaworld.is_checked())
 	{
-		string outputFile = GetGameLogic()->GetActiveWorldName()+".novazip";
+		string outputFile = outputDir+GetGameLogic()->GetActiveWorldName()+".novazip";
 		PackageNovaZipVersion(outputFile);
 	}
 
-	
-
 	if (checkWinStandAlone.is_checked())
 	{
-		string outputFile = GetGameLogic()->GetActiveWorldName()+"_Win.zip";
+		string outputFile = outputDir+GetGameLogic()->GetActiveWorldName()+"_Win.zip";
 		m_appDirName = GetGameLogic()->GetActiveWorldName();
 		string locationOfWinExe = "packaging/win/game.exe";
 	
@@ -152,7 +162,7 @@ bool WorldPackager::Init()
 
 	if (checkMacStandAlone.is_checked())
 	{
-		string outputFile = GetGameLogic()->GetActiveWorldName()+"_Mac.zip";
+		string outputFile = outputDir+GetGameLogic()->GetActiveWorldName()+"_Mac.zip";
 		m_appDirName = GetGameLogic()->GetActiveWorldName()+".app";
 		string locationOfMacFiles = "packaging/mac/";
 
@@ -170,9 +180,8 @@ bool WorldPackager::Init()
 	}
 
 	LogMsg("***********");
-	LogMsg("Finished building stuff.  Output directory is %s.", GetApp()->GetBaseDirectory().c_str());
-	
-
+	if (outputDir.empty()) outputDir = GetApp()->GetBaseDirectory();
+	LogMsg("Finished building stuff.  Output directory is %s.", outputDir.c_str());
 	RemoveFile(m_commandLineTemp);
 
 	return true; //success
@@ -273,13 +282,13 @@ bool WorldPackager::UpdateLuaFiles()
 	LogMsg("");
 	UpdateScreen();
 
-	CompileAllLuaFilesRecursively("base");
+	GetScriptManager->CompileAllLuaFilesRecursively("base");
 
 	vector<string> modPaths = GetGameLogic()->GetModPaths();
 	
 	for (unsigned int i=0; i < modPaths.size(); i++)
 	{
-		CompileAllLuaFilesRecursively(modPaths[i]);
+		GetScriptManager->CompileAllLuaFilesRecursively(modPaths[i]);
 		UpdateScreen();
 	}
 	
@@ -372,40 +381,6 @@ void WorldPackager::Scan(string dir, bool bIsBase, string targetDir, int recursi
 	}	
 }
 
-
-void WorldPackager::CompileAllLuaFilesRecursively(string dir)
-{
-	CL_DirectoryScanner scanner;
-	scanner.scan(dir, "*");
-	string fileExtension;
-
-	while (scanner.next())
-	{
-		std::string file = scanner.get_name();
-		if (!scanner.is_directory())
-		{
-			fileExtension = CL_String::get_extension(scanner.get_name());
-			if (fileExtension == "lua")
-			{
-				//compile it if need be
-				if (GetScriptManager->CompileLuaIfNeeded(scanner.get_pathname()))
-				{
-					//compiled it
-					LogMsg("Updated binary version of %s", scanner.get_pathname().c_str());
-					UpdateScreen();
-				} else
-				{
-					//didn't need to compile it
-				}
-			}
-		} else
-		{
-			//it's a directory, deal with it
-			if (scanner.get_name()[0] == '.') continue;
-			CompileAllLuaFilesRecursively(dir+"/"+scanner.get_name());
-		}
-	}
-}
 
 void WorldPackager::UpdateScreen()
 {

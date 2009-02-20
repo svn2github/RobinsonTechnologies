@@ -205,12 +205,10 @@ static int writer(lua_State* L, const void* p, size_t size, void* u)
 	return (fwrite(p,size,1,(FILE*)u)!=1) && (size!=0);
 }
 
-
 #define toproto(L,i) (clvalue(L->top+(i))->l.p)
 
 bool WriteLuac(lua_State *pLuaState, string const &outputFile)
 {
-
 	Proto* f;
 
 	FILE* D=  fopen(outputFile.c_str(),"wb");
@@ -232,19 +230,37 @@ bool WriteLuac(lua_State *pLuaState, string const &outputFile)
 	return true;
 }
 
-
-
 int LoadAndCreateBinaryIfNeeded(lua_State *pLuaState, const char *pFileName)
 {
 	bool bRequestNewBinary = false;
+	string outputFile;
 
 	if (pFileName[strlen(pFileName)-1] == 'c')
 	{
-		//we don't have a source file I guess, don't bother checking to see if we have to compile it
+		if (!GetGameLogic()->IsRetail())
+		{
+			//we should check to see if there is a source file too
+			outputFile = pFileName;
+			outputFile = outputFile.substr(0, outputFile.length()-1);
+
+			if (FileExists(outputFile))
+			{
+				if (GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(pFileName))
+				{
+					int ret = luaL_loadfile(pLuaState, outputFile.c_str());
+					if (ret == 0)
+					{
+						//no errors, let's output the binary form as well for next time
+						WriteLuac(pLuaState, pFileName);
+					}
+					return ret;
+				}
+			}
+		}
 		return luaL_loadfile(pLuaState, pFileName);
 	} 
 	
-	string outputFile = string(pFileName)+"c";
+	outputFile = string(pFileName)+"c";
 
 	if (FileExists(pFileName))
 	{
@@ -633,4 +649,37 @@ int luaPrintError(lua_State *L)
 
 }
 
+
+void ScriptManager::CompileAllLuaFilesRecursively(string dir)
+{
+	CL_DirectoryScanner scanner;
+	scanner.scan(dir, "*");
+	string fileExtension;
+
+	while (scanner.next())
+	{
+		std::string file = scanner.get_name();
+		if (!scanner.is_directory())
+		{
+			fileExtension = CL_String::get_extension(scanner.get_name());
+			if (fileExtension == "lua")
+			{
+				//compile it if need be
+				if (GetScriptManager->CompileLuaIfNeeded(scanner.get_pathname()))
+				{
+					//compiled it
+					LogMsg("Updated binary version of %s", scanner.get_pathname().c_str());
+				} else
+				{
+					//didn't need to compile it
+				}
+			}
+		} else
+		{
+			//it's a directory, deal with it
+			if (scanner.get_name()[0] == '.') continue;
+			CompileAllLuaFilesRecursively(dir+"/"+scanner.get_name());
+		}
+	}
+}
 

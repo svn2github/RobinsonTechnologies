@@ -29,7 +29,6 @@ protected:
  
 	bool ScanWorlds(string destinationDirectory, bool bIsNovaZip = false);
 	void Scan(string dir, bool bIsBase, string targetDir, int recursionDepth = 0, string originalDir = "", bool bIsNovaZip = false);
-	void CompileAllLuaFilesRecursively(string dir);
 	bool UpdateLuaFiles();
 	void ConvertFilesToIgnore(string fileList);
 	void PackageWindowsVersion(string outputFile, string locationOfWinExe);

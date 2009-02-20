@@ -8,7 +8,8 @@ new collision features soon, like true circle shapes
 2-20
 
 * Improved the Package & Distribute dialog, has more options, some fixes, done I guess
-* FEATURE: If command_line.txt exists in the directory, the contents will be added to the start-up command line that is processed.
+* FEATURE: If command_line.txt exists in the directory, the contents will be added to the 
+start-up command line that is processed.
   (both prefs.dat command lines parms and real command line parms will take precedence)
 * Added "-fullscreen" command-line parm, useful to force fullscreen mode when something else has specified windowed mode
 

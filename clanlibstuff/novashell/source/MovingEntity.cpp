@@ -1677,11 +1677,15 @@ bool MovingEntity::LoadScript(const char *pFileName)
 	s += pFileName;
 
 	StringReplace("\\", "/", s);
+	if (s[s.length()-1] == 'a') s+="c"; //try to grab the compiled version first
 	if (!g_VFManager.LocateFile(s))
 	{
 		//try again
-		s = ChangeFileExtension(s, ".luac");
-		g_VFManager.LocateFile(s);
+		s = s.substr(0, s.length()-1); //cut the .c off and try again
+		if (!g_VFManager.LocateFile(s))
+		{
+			return false;
+		}
 	}
 
 	if (!m_pScriptObject->Load(s.c_str()))

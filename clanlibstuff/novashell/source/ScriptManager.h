@@ -72,6 +72,7 @@ public:
 	lua_State * GetMainState() {return m_pMainState;}
 	void UpdateAfterScreenChange(bool bActuallyChanged);
 	bool CompileLuaIfNeeded(string filename);
+	void CompileAllLuaFilesRecursively(string dir);
 protected:
 
 lua_State * m_pMainState;
