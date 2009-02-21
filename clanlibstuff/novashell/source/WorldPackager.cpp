@@ -166,10 +166,6 @@ bool WorldPackager::Init()
 		m_appDirName = GetGameLogic()->GetActiveWorldName()+".app";
 		string locationOfMacFiles = "packaging/mac/";
 
-#ifdef __APPLE__
-		locationOfMacFiles = "../"; //just reuse the real files, saves on installer size
-#endif
-
 		if (!FileExists(locationOfMacFiles + "MacOS/novashell"))
 		{
 			CL_MessageBox::info("It looks like this version of Novashell is missing the stuff to make a mac version. (packaging/mac dir is missing)", GetApp()->GetGUI());
@@ -214,8 +210,18 @@ void WorldPackager::PackageMacVersion(string outputFile, string locationOfMacFil
 	UpdateScreen();
 
 	Scan("base", true,  m_appDirName+"/Contents/Resources/base/"); //special case for the base library
-	Scan(locationOfMacFiles+"MacOS", true, m_appDirName+"/Contents/MacOS/");
-	Scan(locationOfMacFiles+"Frameworks", true, m_appDirName+"/Contents/Frameworks/");
+	
+	string locationOfMacBinaries = locationOfMacFiles;
+
+#ifdef __APPLE__
+	locationOfMacBinaries = "../"; //just reuse the real files, saves on installer size
+#endif
+
+
+	Scan(locationOfMacBinaries+"MacOS", true, m_appDirName+"/Contents/MacOS/");
+	Scan(locationOfMacBinaries+"Frameworks", true, m_appDirName+"/Contents/Frameworks/");
+	
+	
 	m_zip.add_file(locationOfMacFiles+"Info.plist", m_appDirName+"/Contents/Info.plist", true);
 	m_zip.add_file(locationOfMacFiles+"PkgInfo", m_appDirName+"/Contents/PkgInfo", true);
 	m_zip.add_file(locationOfMacFiles+"Resources/app.icns", m_appDirName+"/Contents/Resources/app.icns", true);
