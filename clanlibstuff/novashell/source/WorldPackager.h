@@ -33,7 +33,7 @@ protected:
 	void ConvertFilesToIgnore(string fileList);
 	void PackageWindowsVersion(string outputFile, string locationOfWinExe);
 	void PackageNovaZipVersion(string outputFile);
-	void PackageMacVersion(string outputFile, string locationOfMacFiles);
+	void PackageMacVersion(string outputFile, string locationOfMacFiles, string locationOfMacBinaries);
 private:
 	eButtonPushed m_buttonPushed;
 	CL_Zip_Archive m_zip;

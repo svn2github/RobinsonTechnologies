@@ -153,11 +153,12 @@ bool WorldPackager::Init()
 
 		if (!FileExists(locationOfWinExe))
 		{
-			CL_MessageBox::info("It looks like this version of Novashell is missing the stuff to make a windows version. (packaging/win dir is missing)", GetApp()->GetGUI());
-			return true;
+			CL_MessageBox::info("It looks like this version of Novashell is missing the stuff to make a windows version. (packaging/win/game.exe is missing)", GetApp()->GetGUI());
+			LogMsg("Aborting making windows version.\n");
+		} else
+		{
+			PackageWindowsVersion(outputFile, locationOfWinExe);
 		}
-
-		PackageWindowsVersion(outputFile, locationOfWinExe);
 	}
 
 	if (checkMacStandAlone.is_checked())
@@ -166,18 +167,26 @@ bool WorldPackager::Init()
 		m_appDirName = GetGameLogic()->GetActiveWorldName()+".app";
 		string locationOfMacFiles = "packaging/mac/";
 
-		if (!FileExists(locationOfMacFiles + "MacOS/novashell"))
+		string locationOfMacBinaries = locationOfMacFiles;
+
+#ifdef __APPLE__
+		locationOfMacBinaries = "../"; //just reuse the real files, saves on installer size
+#endif
+
+		if (!FileExists(locationOfMacBinaries + "MacOS/novashell"))
 		{
 			CL_MessageBox::info("It looks like this version of Novashell is missing the stuff to make a mac version. (packaging/mac dir is missing)", GetApp()->GetGUI());
-			return true;
+			LogMsg("Aborting making mac version, unable to find %s.\n", (locationOfMacBinaries + "MacOS/novashell").c_str());
+			
+		} else
+		{
+			PackageMacVersion(outputFile, locationOfMacFiles, locationOfMacBinaries);
 		}
-
-		PackageMacVersion(outputFile, locationOfMacFiles);
 	}
 
 	LogMsg("***********");
 	if (outputDir.empty()) outputDir = GetApp()->GetBaseDirectory();
-	LogMsg("Finished building stuff.  Output directory is %s.", outputDir.c_str());
+	LogMsg("Finished.  Output directory is %s.", outputDir.c_str());
 	RemoveFile(m_commandLineTemp);
 
 	return true; //success
@@ -202,22 +211,16 @@ void WorldPackager::PackageWindowsVersion(string outputFile, string locationOfWi
 	UpdateScreen();
 	m_zip.save(outputFile);
 	m_zip = CL_Zip_Archive(); //clear it out
+	LogMsg("Successfully built windows version.\n");
 }
 
-void WorldPackager::PackageMacVersion(string outputFile, string locationOfMacFiles)
+void WorldPackager::PackageMacVersion(string outputFile, string locationOfMacFiles, string locationOfMacBinaries)
 {
 	LogMsg("Creating mac version...");
 	UpdateScreen();
 
 	Scan("base", true,  m_appDirName+"/Contents/Resources/base/"); //special case for the base library
 	
-	string locationOfMacBinaries = locationOfMacFiles;
-
-#ifdef __APPLE__
-	locationOfMacBinaries = "../"; //just reuse the real files, saves on installer size
-#endif
-
-
 	Scan(locationOfMacBinaries+"MacOS", true, m_appDirName+"/Contents/MacOS/");
 	Scan(locationOfMacBinaries+"Frameworks", true, m_appDirName+"/Contents/Frameworks/");
 	
@@ -236,6 +239,8 @@ void WorldPackager::PackageMacVersion(string outputFile, string locationOfMacFil
 	UpdateScreen();
 	m_zip.save(outputFile);
 	m_zip = CL_Zip_Archive(); //clear it out
+
+	LogMsg("Successfully built mac version.\n");
 }
 
 void WorldPackager::PackageNovaZipVersion(string outputFile)
@@ -249,6 +254,8 @@ void WorldPackager::PackageNovaZipVersion(string outputFile)
 	UpdateScreen();
 	m_zip.save(outputFile);
 	m_zip = CL_Zip_Archive(); //clear it out
+	LogMsg("Successfully built .novazip version.\n");
+
 }
 
 bool WorldPackager::ScanWorlds(string destinationDirectory, bool bIsNovaZip)
