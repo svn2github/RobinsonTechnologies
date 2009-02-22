@@ -126,7 +126,7 @@ bool WorldPackager::Init()
 		//they are compressing a game from the novashell internal world directory
 		if (GetApp()->GetPlatform() == C_PLATFORM_OSX)
 		{
-			outputDir = "../../"; //build stuff out of our original .app thing
+			outputDir = "../../../"; //build stuff out of our original .app thing
 		}
 	} else
 	{
@@ -159,6 +159,7 @@ bool WorldPackager::Init()
 		{
 			PackageWindowsVersion(outputFile, locationOfWinExe);
 		}
+
 	}
 
 	if (checkMacStandAlone.is_checked())
