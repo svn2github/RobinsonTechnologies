@@ -51,6 +51,7 @@ void DrawBullsEyeWorld(CL_Vector2 vecPos, CL_Color col, int size, CL_GraphicCont
 void DrawTextBar(int posY, CL_Color barColor, string msg);
 
 string SimplifyNumberString(string num);
+float SinGamePulseByMS(int ms);
 
 typedef cl_uint32 CL_DWORD_PTR; //note, for a 64 bit compiler we'll need to make sure this is 64 bits somehow...
 

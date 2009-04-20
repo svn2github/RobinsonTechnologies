@@ -90,11 +90,11 @@ public:
 	const char * GetStateByName();
 	Brain * GetBrainBase(){return m_pBrainBase;}
 	void SetBrainBase(Brain *pBrain);
+	void Render(void *pTarget);
 
 protected:
 
 	void Sort(); 
-
 private:
 
 	MovingEntity *m_pParent;

@@ -23,7 +23,7 @@ it doesn't need any libraries compiled so this is easy.
 
 Boost download:  http://www.boost.org/users/download/#releases
 
-(Currently it's at Version 1.37.0, don't download the Jam one, download the one under it)
+(Currently it's at Version 1.38.0, don't download the Jam one, download the one under it)
 
 After you download it, drag the "boost" directory out of the zip and into your novashell source directory, or someplace else
 and just add its parent directory as an include path in the vs project settings.

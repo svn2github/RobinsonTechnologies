@@ -57,7 +57,7 @@ string GetNextLineFromFile(CL_InputSource *pInput)
 
 int random(int range)
 {
-	return static_cast<int>(double(rand()) / RAND_MAX * range);
+	return static_cast<int>(double(rand()) / (RAND_MAX+1) * range);
 }
 
 int random_range(int rangeMin, int rangeMax)
@@ -388,4 +388,11 @@ time_t GetLastModifiedDateFromFile(string fileName)
 	clock = gmtime(&(attrib.st_mtime));	// Get the last modified time and put it into the time structure
 	if (clock == 0) return 0;
 	return mktime(clock);
+}
+
+//returns a range of -1 to 1 with the cycle matching the MS sent in, based on a sin wave
+float SinPulseByMS(int ms)
+{
+	int tick = CL_System::get_time() %ms;
+	return (float)(sin (   (float(tick)/float(ms))  *M_PI*2   ));
 }

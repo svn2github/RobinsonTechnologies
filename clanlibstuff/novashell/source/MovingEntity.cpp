@@ -547,6 +547,7 @@ std::string MovingEntity::HandleMessageString( const string &msg )
 void MovingEntity::SetDefaults()
 {
 	assert(!m_pBody);
+	m_bSizeOverride = false;
 	m_filterData.categoryBits = 0x0001;
 	m_filterData.maskBits = 0xFFFF;
 	m_filterData.groupIndex = 0;
@@ -986,6 +987,11 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 
 CL_Rectf MovingEntity::GetWorldRect()
 {
+	
+	return GetBoundsRectf()+CL_Pointf(GetPos().x, GetPos().y);
+
+
+	/*
 	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
 	CL_Origin o;
@@ -1015,13 +1021,25 @@ CL_Rectf MovingEntity::GetWorldRect()
 	}
 
 	return r;
+	*/
 }
 
-const CL_Rect & MovingEntity::GetBoundsRect()
+CL_Rectf MovingEntity::GetBoundsRectf()
 {
-	
 	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
+
+	int sizeX, sizeY;
+
+	if (m_bSizeOverride)
+	{
+		sizeX = m_ptSizeOverride.x;
+		sizeY = m_ptSizeOverride.y;
+	} else
+	{
+		sizeX = m_pSprite->get_width();
+		sizeY = m_pSprite->get_height();
+	}
 
 	CL_Origin o;
 	int x,y;
@@ -1029,31 +1047,33 @@ const CL_Rect & MovingEntity::GetBoundsRect()
 	m_pSprite->get_alignment(o, x, y);
 
 	CL_Vector2 vPos = CL_Vector2(0,0);
-	CL_Pointf pt = calc_origin(o, CL_Size(m_pSprite->get_width()*m_pTile->GetScale().x, m_pSprite->get_height() * m_pTile->GetScale().y) );
+	CL_Pointf pt = calc_origin(o, CL_Size(sizeX*m_pTile->GetScale().x, sizeY * m_pTile->GetScale().y) );
 
 	vPos.x -= pt.x;
 	vPos.y -= pt.y;
 
 	CL_Rectf r(vPos.x, vPos.y, 
-		vPos.x + m_pSprite->get_width()*m_pTile->GetScale().x, vPos.y + m_pSprite->get_height()* m_pTile->GetScale().y);
+		vPos.x + sizeX*m_pTile->GetScale().x, vPos.y + sizeY* m_pTile->GetScale().y);
 
 
 	//I have no idea why I need this as a special case??? But also too lazy to look into it.
 	if (o == origin_top_left)
 	{
 		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , y* m_pTile->GetScale().y);
-
 	} else
 	{
 		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , -y* m_pTile->GetScale().y);
-
 	}
 
-	static CL_Rect rc;
-	rc = CL_Rect(r);
-	return rc;
+	return r;
+}
 
+const CL_Rect & MovingEntity::GetBoundsRect()
+{
 	
+	static CL_Rect rc;
+	rc = CL_Rect(GetBoundsRectf());
+	return rc;
 }
 
 string MovingEntity::ProcessPath(const string &st)
@@ -2440,11 +2460,8 @@ void MovingEntity::Render(void *pTarget)
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	static float yawHold, pitchHold;
 
-	
-
 	CL_Vector2 vVisualPos = GetPos();
 	CL_Vector2 vFinalScale = m_pTile->GetScale();
-
 		
 	if (!m_bLockedScale)
 	{
@@ -2552,8 +2569,7 @@ void MovingEntity::Render(void *pTarget)
 
 		if (m_bLockedScale && m_attachEntID != 0)
 		{
-			
-			
+						
 			bool bRootIsCam;
 			
 			CL_Vector2 vTemp = GetRawScreenPosition(bRootIsCam);
@@ -2683,6 +2699,7 @@ void MovingEntity::Render(void *pTarget)
 		m_pFont->set_alpha(oldAlpha);
 		m_pFont->set_alignment(originTemp, offsetX, offsetY);
 	}
+	m_brainManager.Render(pTarget);
 
 }
 
@@ -3511,4 +3528,11 @@ void MovingEntity::SetCollisionCategories( uint16 mask )
 void MovingEntity::SetCollisionListenCategories( uint16 mask )
 {
 	m_collisionListenBits = mask;
+}
+
+void MovingEntity::SetSizeOverride( bool bActive, CL_Vector2 v )
+{
+	m_bSizeOverride = bActive;
+	m_ptSizeOverride.x = v.x;
+	m_ptSizeOverride.y = v.y;
 }

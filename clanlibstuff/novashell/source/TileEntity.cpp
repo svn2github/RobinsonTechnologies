@@ -139,8 +139,11 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 	{
 	case C_TILE_TYPE_ENTITY:
 		{
-			const CL_Sprite *pSprite = ((TileEntity*)pTile)->GetEntity()->GetSprite();
+			MovingEntity *pEnt = ((TileEntity*)pTile)->GetEntity();
+			const CL_Sprite *pSprite = pEnt->GetSprite();
 			
+			if (pEnt->GetSizeOverride()) return true; //we've played with its size, would not be wise to fool with its internal bitmap data...
+
 			if (!pSprite || pSprite->get_frame_count() == 0)
 			{
 				assert(!"Huh?");
@@ -156,6 +159,7 @@ bool PixelAccurateHitDetection(CL_Vector2 vWorldPos, Tile *pTile)
 			if (pSprite->get_angle_pitch() != 0) flippedy = true;
 			if (pSprite->get_angle_yaw() != 0) flippedx = true;
 		
+			
 			pBuf = pSprite->get_frame_pixeldata(pSprite->get_current_frame());
 			
 		}

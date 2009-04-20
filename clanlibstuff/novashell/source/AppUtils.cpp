@@ -786,3 +786,11 @@ std::string GetEntityNameByID( int id )
 
 	return "";
 }
+
+//returns a range of -1 to 1 with the cycle matching the MS sent in, based on a sin wave
+//Like GamePulseByMS, but pauses with the game as it uses the game clock
+float SinGamePulseByMS(int ms)
+{
+	int tick = GetApp()->GetGameTick() %ms;
+	return (float)(sin (   (float(tick)/float(ms))  *M_PI*2   ));
+}

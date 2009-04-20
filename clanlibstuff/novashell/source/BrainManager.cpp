@@ -346,6 +346,24 @@ void BrainManager::Update(float step)
 
 }
 
+
+void BrainManager::Render(void *pTarget)
+{
+
+	brain_vector::iterator itor = m_brainVec.begin();
+	while (itor != m_brainVec.end())
+	{
+		if ( !(*itor)->GetDeleteFlag())
+		{
+			(*itor)->Render(pTarget);
+		}
+
+		itor++;
+	}
+
+
+}
+
 void BrainManager::PostUpdate(float step)
 {
 

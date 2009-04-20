@@ -5,7 +5,23 @@ new collision features soon, like true circle shapes
 
 * If you run vista, it's recommended that you don't use the Aero theme, or at least use Aero Basic, otherwise it you may get a poor framerate
 
-2-20
+Changelog
+
+4-20 2009
+
+* BUGFIX: Serious bug fixed with detecting if a script needed to be freshly compiled or not
+* Random is now seeded with current time
+* Improvements to bar.lua, can work if attached to a tilepic as the BG already
+* Partially done Conway's game of life example to test mixing custom C++ behaviors
+* Added my DoomWall LD brain so I can build a mac version easier.. uh.. maybe I'll add it as an example later, it's a cool game
+
+4-16 2009
+
+* Brain's now have a hook to Render
+* Added EmptySkeleton V2, uses the newer GUI scripts, easier to understand and use
+
+
+2-20 2009
 
 * Improved the Package & Distribute dialog, has more options, some fixes, done I guess
 * FEATURE: If command_line.txt exists in the directory, the contents will be added to the 
@@ -19,7 +35,7 @@ start-up command line that is processed.
 * Fixed problem with windows command line parms getting passed without spaces between them
 * Added File->Package & Distribute option, this allows you to make stand-alone win/osx or .novashell files with one-click (not quite finished)
 
-Changelog
+
 
 2-7- 2009
 

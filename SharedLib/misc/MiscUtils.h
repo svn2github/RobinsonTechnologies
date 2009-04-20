@@ -517,6 +517,7 @@ class CL_PixelBuffer;
 
 //if you send NULL for the color it uses a special fast version (to clear to black)
 void ClearPixelBuffer(CL_PixelBuffer* pPixelBuffer, CL_Color color);
+float SinPulseByMS(int ms);
 
 #endif // MiscUtils_h__
 

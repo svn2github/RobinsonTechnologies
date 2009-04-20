@@ -43,6 +43,8 @@ public:
 	virtual unsigned int GetKeys(){return 0;}
 	void SetDeleteFlag(bool bFlag) {m_bDeleteFlag = bFlag;}
 	bool GetDeleteFlag() {return m_bDeleteFlag;}
+	virtual void Render(void *pTarget) {};
+	MovingEntity * GetParent() {return m_pParent;}
 
 protected:
 

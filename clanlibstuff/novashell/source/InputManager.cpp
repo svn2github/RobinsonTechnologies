@@ -145,6 +145,7 @@ InputManager::~InputManager()
 
 void InputManager::OneTimeInit()
 {
+	
 	//we have to wait for CL to initialize before calling this one
 	
 	//setup the CL callback for joystick stuff
@@ -675,6 +676,7 @@ Valid input name examples: *a*, *b*, *c*, *3*, *4*, *f1*, *control*, *mouse_midd
 
 In addition, the following can be appended to the inputName (for non joystick keys:
 
+return - The Enter key, don't ask me why it's called return in Clanlib, did they write it on a Commodore 64?
 control - The control key must be held down also.  "control,r" means Ctrl-R must be pressed.
 shift - The shift key must be held down also. "shift,r" means Shift-R must be pressed.
 alt - The alt/option key must be held down also. "shift,r" means Shift-R must be pressed.

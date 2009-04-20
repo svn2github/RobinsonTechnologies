@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc;..\..\..\SharedLib\include\ClanLib"
+				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc;..\..\..\SharedLib\include\ClanLib;C:\pro\boost_1_34_1"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CLANLIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -149,7 +149,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc"
+				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc;C:\pro\boost_1_34_1"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CLANLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -751,6 +751,26 @@
 						RelativePath=".\BrainTopSeek.h"
 						>
 					</File>
+					<Filter
+						Name="Custom"
+						>
+						<File
+							RelativePath=".\BrainDoomWall.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\BrainDoomWall.h"
+							>
+						</File>
+						<File
+							RelativePath=".\BrainLife.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\BrainLife.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="States"

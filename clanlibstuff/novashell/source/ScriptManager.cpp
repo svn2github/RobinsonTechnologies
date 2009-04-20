@@ -245,7 +245,7 @@ int LoadAndCreateBinaryIfNeeded(lua_State *pLuaState, const char *pFileName)
 
 			if (FileExists(outputFile))
 			{
-				if (GetLastModifiedDateFromFile(outputFile) < GetLastModifiedDateFromFile(pFileName))
+				if (GetLastModifiedDateFromFile(outputFile) > GetLastModifiedDateFromFile(pFileName))
 				{
 					int ret = luaL_loadfile(pLuaState, outputFile.c_str());
 					if (ret == 0)

@@ -629,8 +629,7 @@ const CL_Rect & TilePic::GetBoundsRect()
 	return r;
 	*/
 
-	CL_Rectf r(0, 0, 
-		m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);
+	CL_Rectf r(0, 0, m_rectSrc.get_width()*m_vecScale.x, m_rectSrc.get_height()*m_vecScale.y);
 
 	r.apply_alignment(CL_Origin(m_origin), m_alignX, m_alignY);
 

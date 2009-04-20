@@ -72,8 +72,8 @@ public:
   CL_Vector2 GetPosSafe() {return m_pos;}
   void  SetPos(const CL_Vector2 &new_pos);
   void SetPosAndMap(const CL_Vector2 &new_pos, const string &worldName);
-  int GetSizeX(){ if (m_pSprite->get_current_frame() == -1) return 0; return int(m_pSprite->get_width() * m_pTile->GetScale().x); };
-  int GetSizeY(){ if (m_pSprite->get_current_frame() == -1) return 0; return int(m_pSprite->get_height() * m_pTile->GetScale().y); };
+  int GetSizeX(){ if (m_bSizeOverride) return m_ptSizeOverride.x; if (m_pSprite->get_current_frame() == -1) return 0; return int(m_pSprite->get_width() * m_pTile->GetScale().x); };
+  int GetSizeY(){ if (m_bSizeOverride) return m_ptSizeOverride.y; if (m_pSprite->get_current_frame() == -1) return 0; return int(m_pSprite->get_height() * m_pTile->GetScale().y); };
   CL_Vector2 GetScale() {return m_pTile->GetScale();}
   void SetScale(const CL_Vector2 &vScale);
   CL_Vector2 GetCollisionScale();
@@ -81,6 +81,10 @@ public:
   CL_Rectf GetWorldCollisionRect();
   virtual CL_Rectf GetWorldRect();
   const CL_Rect & GetBoundsRect();
+  CL_Rectf GetBoundsRectf();
+  void SetSizeOverride( bool bActive, CL_Vector2 v);
+  bool GetSizeOverride() {return m_bSizeOverride;}
+
   PhysicsManager * GetPhysicsManager() {return GetMap()->GetPhysicsManager();}
 
   float GetBoundingCollisionRadius();
@@ -380,7 +384,6 @@ enum ListenStaticCollision
 protected:
 
 	void SetDefaults();
-
 	void RotateTowardsFacingTarget(float step);
 	void SetIsOnScreen(bool bNew);
 	void ResetEffects();
@@ -393,6 +396,7 @@ protected:
 	void UpdatePhysicsToPos();
 	void UpdateBodyCollisionMode();
 	void UpdatePosToPhysics();
+
 	CL_Rectf m_scanArea;
 	bool m_bIsAtRest;
 	bool m_bMovedFlag; //if true, we need to update our tile position
@@ -481,6 +485,8 @@ protected:
 	b2FilterData m_filterData; //shared between all shapes
 	uint16 m_collisionListenBits;
 	bool m_bSetAnimByName; //when an ent is initted, we'll only do SetSpriteByStateAndDir or whatever it is if the script didn't do a SetAnimByName
+	bool m_bSizeOverride; //if true, we are forcing how big the engine things we are
+	CL_Point m_ptSizeOverride;
 	
 };
 
