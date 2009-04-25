@@ -7,6 +7,62 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D0211460FA33D9100D79AE9 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0211390FA33D9100D79AE9 /* ClanApp.framework */; };
+		5D0211470FA33D9100D79AE9 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02113A0FA33D9100D79AE9 /* ClanCore.framework */; };
+		5D0211480FA33D9100D79AE9 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02113B0FA33D9100D79AE9 /* ClanDisplay.framework */; };
+		5D0211490FA33D9100D79AE9 /* ClanGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02113C0FA33D9100D79AE9 /* ClanGL.framework */; };
+		5D02114A0FA33D9100D79AE9 /* ClanGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02113D0FA33D9100D79AE9 /* ClanGUI.framework */; };
+		5D02114B0FA33D9100D79AE9 /* ClanGUIStyleSilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02113E0FA33D9100D79AE9 /* ClanGUIStyleSilver.framework */; };
+		5D02114C0FA33D9200D79AE9 /* ClanLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D02113F0FA33D9100D79AE9 /* ClanLib.framework */; };
+		5D02114D0FA33D9200D79AE9 /* ClanSound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0211400FA33D9100D79AE9 /* ClanSound.framework */; };
+		5D02114E0FA33D9200D79AE9 /* ClanVorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0211410FA33D9100D79AE9 /* ClanVorbis.framework */; };
+		5D02114F0FA33D9200D79AE9 /* libjpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0211420FA33D9100D79AE9 /* libjpeg.framework */; };
+		5D0211500FA33D9200D79AE9 /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0211430FA33D9100D79AE9 /* libpng.framework */; };
+		5D0211510FA33D9200D79AE9 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0211440FA33D9100D79AE9 /* Ogg.framework */; };
+		5D0211520FA33D9200D79AE9 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0211450FA33D9100D79AE9 /* Vorbis.framework */; };
+		5D0212D10FA33D9C00D79AE9 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0211390FA33D9100D79AE9 /* ClanApp.framework */; };
+		5D0212D20FA33D9C00D79AE9 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D02113A0FA33D9100D79AE9 /* ClanCore.framework */; };
+		5D0212D30FA33D9C00D79AE9 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D02113B0FA33D9100D79AE9 /* ClanDisplay.framework */; };
+		5D0212D40FA33D9C00D79AE9 /* ClanGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D02113C0FA33D9100D79AE9 /* ClanGL.framework */; };
+		5D0212D50FA33D9C00D79AE9 /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D02113D0FA33D9100D79AE9 /* ClanGUI.framework */; };
+		5D0212D60FA33D9C00D79AE9 /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D02113E0FA33D9100D79AE9 /* ClanGUIStyleSilver.framework */; };
+		5D0212D70FA33D9C00D79AE9 /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D02113F0FA33D9100D79AE9 /* ClanLib.framework */; };
+		5D0212D80FA33D9C00D79AE9 /* ClanSound.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0211400FA33D9100D79AE9 /* ClanSound.framework */; };
+		5D0212D90FA33D9C00D79AE9 /* ClanVorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0211410FA33D9100D79AE9 /* ClanVorbis.framework */; };
+		5D0212DA0FA33D9C00D79AE9 /* libjpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0211420FA33D9100D79AE9 /* libjpeg.framework */; };
+		5D0212DB0FA33D9C00D79AE9 /* libpng.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0211430FA33D9100D79AE9 /* libpng.framework */; };
+		5D0212DC0FA33D9C00D79AE9 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0211440FA33D9100D79AE9 /* Ogg.framework */; };
+		5D0212DD0FA33D9C00D79AE9 /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0211450FA33D9100D79AE9 /* Vorbis.framework */; };
+		5D0212EB0FA347ED00D79AE9 /* ClanLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212DE0FA347ED00D79AE9 /* ClanLib.framework */; };
+		5D0212EC0FA347ED00D79AE9 /* ClanGUIStyleSilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212DF0FA347ED00D79AE9 /* ClanGUIStyleSilver.framework */; };
+		5D0212ED0FA347ED00D79AE9 /* ClanGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E00FA347ED00D79AE9 /* ClanGUI.framework */; };
+		5D0212EE0FA347ED00D79AE9 /* ClanGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E10FA347ED00D79AE9 /* ClanGL.framework */; };
+		5D0212EF0FA347ED00D79AE9 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E20FA347ED00D79AE9 /* Ogg.framework */; };
+		5D0212F00FA347ED00D79AE9 /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E30FA347ED00D79AE9 /* libpng.framework */; };
+		5D0212F10FA347ED00D79AE9 /* libjpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E40FA347ED00D79AE9 /* libjpeg.framework */; };
+		5D0212F20FA347ED00D79AE9 /* ClanVorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E50FA347ED00D79AE9 /* ClanVorbis.framework */; };
+		5D0212F30FA347ED00D79AE9 /* ClanSound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E60FA347ED00D79AE9 /* ClanSound.framework */; };
+		5D0212F40FA347ED00D79AE9 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E70FA347ED00D79AE9 /* Vorbis.framework */; };
+		5D0212F50FA347ED00D79AE9 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E80FA347ED00D79AE9 /* ClanDisplay.framework */; };
+		5D0212F60FA347ED00D79AE9 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212E90FA347ED00D79AE9 /* ClanCore.framework */; };
+		5D0212F70FA347EE00D79AE9 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0212EA0FA347ED00D79AE9 /* ClanApp.framework */; };
+		5D02146C0FA347F800D79AE9 /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212DE0FA347ED00D79AE9 /* ClanLib.framework */; };
+		5D02146D0FA347F800D79AE9 /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212DF0FA347ED00D79AE9 /* ClanGUIStyleSilver.framework */; };
+		5D02146E0FA347F800D79AE9 /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E00FA347ED00D79AE9 /* ClanGUI.framework */; };
+		5D02146F0FA347F800D79AE9 /* ClanGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E10FA347ED00D79AE9 /* ClanGL.framework */; };
+		5D0214700FA347F800D79AE9 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E20FA347ED00D79AE9 /* Ogg.framework */; };
+		5D0214710FA347F800D79AE9 /* libpng.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E30FA347ED00D79AE9 /* libpng.framework */; };
+		5D0214720FA347F800D79AE9 /* libjpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E40FA347ED00D79AE9 /* libjpeg.framework */; };
+		5D0214730FA347F800D79AE9 /* ClanVorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E50FA347ED00D79AE9 /* ClanVorbis.framework */; };
+		5D0214740FA347F800D79AE9 /* ClanSound.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E60FA347ED00D79AE9 /* ClanSound.framework */; };
+		5D0214750FA347F800D79AE9 /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E70FA347ED00D79AE9 /* Vorbis.framework */; };
+		5D0214760FA347F800D79AE9 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E80FA347ED00D79AE9 /* ClanDisplay.framework */; };
+		5D0214770FA347F800D79AE9 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212E90FA347ED00D79AE9 /* ClanCore.framework */; };
+		5D0214780FA347F800D79AE9 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D0212EA0FA347ED00D79AE9 /* ClanApp.framework */; };
+		5D0216F10FA3509700D79AE9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0216EF0FA3509700D79AE9 /* Carbon.framework */; };
+		5D0216F20FA3509700D79AE9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0216F00FA3509700D79AE9 /* OpenGL.framework */; };
+		5D0216F30FA3509700D79AE9 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0216EF0FA3509700D79AE9 /* Carbon.framework */; };
+		5D0216F40FA3509700D79AE9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D0216F00FA3509700D79AE9 /* OpenGL.framework */; };
 		5D0A99950DA50B7E0072BDB0 /* StateAttack2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99900DA50B7E0072BDB0 /* StateAttack2.cpp */; };
 		5D0A99960DA50B7E0072BDB0 /* StateJump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99910DA50B7E0072BDB0 /* StateJump.cpp */; };
 		5D0A99970DA50B7E0072BDB0 /* StateRun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A99920DA50B7E0072BDB0 /* StateRun.cpp */; };
@@ -33,150 +89,72 @@
 		5D2F67220A86F4D800419CA6 /* StateTopWalk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67160A86F4D800419CA6 /* StateTopWalk.cpp */; };
 		5D2F67250A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */; };
 		5D2F67270A86F4FA00419CA6 /* BrainTopBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D2F67230A86F4FA00419CA6 /* BrainTopBase.cpp */; };
-		5D4400000DFCBDF000E4F27D /* b2PulleyJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF860DFCBDF000E4F27D /* b2PulleyJoint.h */; };
 		5D4400010DFCBDF000E4F27D /* b2RevoluteJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF870DFCBDF000E4F27D /* b2RevoluteJoint.cpp */; };
-		5D4400020DFCBDF000E4F27D /* b2RevoluteJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF880DFCBDF000E4F27D /* b2RevoluteJoint.h */; };
 		5D442B620DFCD25D00E4F27D /* DebugDraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D442B600DFCD25D00E4F27D /* DebugDraw.cpp */; };
 		5D442B630DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D442B610DFCD25D00E4F27D /* PhysicsManager.cpp */; };
 		5D442B640DFCD25D00E4F27D /* DebugDraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D442B600DFCD25D00E4F27D /* DebugDraw.cpp */; };
 		5D442B650DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D442B610DFCD25D00E4F27D /* PhysicsManager.cpp */; };
 		5D44FF890DFCBDF000E4F27D /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF470DFCBDF000E4F27D /* b2BroadPhase.cpp */; };
-		5D44FF8A0DFCBDF000E4F27D /* b2BroadPhase.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF480DFCBDF000E4F27D /* b2BroadPhase.h */; };
 		5D44FF8B0DFCBDF000E4F27D /* b2CollideCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF490DFCBDF000E4F27D /* b2CollideCircle.cpp */; };
 		5D44FF8C0DFCBDF000E4F27D /* b2CollidePoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4A0DFCBDF000E4F27D /* b2CollidePoly.cpp */; };
 		5D44FF8D0DFCBDF000E4F27D /* b2Collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4B0DFCBDF000E4F27D /* b2Collision.cpp */; };
-		5D44FF8E0DFCBDF000E4F27D /* b2Collision.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF4C0DFCBDF000E4F27D /* b2Collision.h */; };
 		5D44FF8F0DFCBDF000E4F27D /* b2Distance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4D0DFCBDF000E4F27D /* b2Distance.cpp */; };
 		5D44FF900DFCBDF000E4F27D /* b2PairManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4E0DFCBDF000E4F27D /* b2PairManager.cpp */; };
-		5D44FF910DFCBDF000E4F27D /* b2PairManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF4F0DFCBDF000E4F27D /* b2PairManager.h */; };
 		5D44FF920DFCBDF000E4F27D /* b2TimeOfImpact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF500DFCBDF000E4F27D /* b2TimeOfImpact.cpp */; };
 		5D44FF930DFCBDF000E4F27D /* b2CircleShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF520DFCBDF000E4F27D /* b2CircleShape.cpp */; };
-		5D44FF940DFCBDF000E4F27D /* b2CircleShape.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF530DFCBDF000E4F27D /* b2CircleShape.h */; };
 		5D44FF950DFCBDF000E4F27D /* b2PolygonShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF540DFCBDF000E4F27D /* b2PolygonShape.cpp */; };
-		5D44FF960DFCBDF000E4F27D /* b2PolygonShape.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF550DFCBDF000E4F27D /* b2PolygonShape.h */; };
 		5D44FF970DFCBDF000E4F27D /* b2Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF560DFCBDF000E4F27D /* b2Shape.cpp */; };
-		5D44FF980DFCBDF000E4F27D /* b2Shape.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF570DFCBDF000E4F27D /* b2Shape.h */; };
 		5D44FF990DFCBDF000E4F27D /* b2BlockAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF590DFCBDF000E4F27D /* b2BlockAllocator.cpp */; };
-		5D44FF9A0DFCBDF000E4F27D /* b2BlockAllocator.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF5A0DFCBDF000E4F27D /* b2BlockAllocator.h */; };
 		5D44FF9B0DFCBDF000E4F27D /* b2Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF5B0DFCBDF000E4F27D /* b2Math.cpp */; };
-		5D44FF9C0DFCBDF000E4F27D /* b2Math.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF5C0DFCBDF000E4F27D /* b2Math.h */; };
 		5D44FF9D0DFCBDF000E4F27D /* b2Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF5D0DFCBDF000E4F27D /* b2Settings.cpp */; };
-		5D44FF9E0DFCBDF000E4F27D /* b2Settings.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF5E0DFCBDF000E4F27D /* b2Settings.h */; };
 		5D44FF9F0DFCBDF000E4F27D /* b2StackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF5F0DFCBDF000E4F27D /* b2StackAllocator.cpp */; };
-		5D44FFA00DFCBDF000E4F27D /* b2StackAllocator.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF600DFCBDF000E4F27D /* b2StackAllocator.h */; };
-		5D44FFA10DFCBDF000E4F27D /* Fixed.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF610DFCBDF000E4F27D /* Fixed.h */; };
-		5D44FFA20DFCBDF000E4F27D /* jtypes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF620DFCBDF000E4F27D /* jtypes.h */; };
 		5D44FFA30DFCBDF000E4F27D /* b2Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF640DFCBDF000E4F27D /* b2Body.cpp */; };
-		5D44FFA40DFCBDF000E4F27D /* b2Body.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF650DFCBDF000E4F27D /* b2Body.h */; };
 		5D44FFA50DFCBDF000E4F27D /* b2ContactManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF660DFCBDF000E4F27D /* b2ContactManager.cpp */; };
-		5D44FFA60DFCBDF000E4F27D /* b2ContactManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF670DFCBDF000E4F27D /* b2ContactManager.h */; };
 		5D44FFA70DFCBDF000E4F27D /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF680DFCBDF000E4F27D /* b2Island.cpp */; };
-		5D44FFA80DFCBDF000E4F27D /* b2Island.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF690DFCBDF000E4F27D /* b2Island.h */; };
 		5D44FFA90DFCBDF000E4F27D /* b2World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF6A0DFCBDF000E4F27D /* b2World.cpp */; };
-		5D44FFAA0DFCBDF000E4F27D /* b2World.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF6B0DFCBDF000E4F27D /* b2World.h */; };
 		5D44FFAB0DFCBDF000E4F27D /* b2WorldCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF6C0DFCBDF000E4F27D /* b2WorldCallbacks.cpp */; };
-		5D44FFAC0DFCBDF000E4F27D /* b2WorldCallbacks.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF6D0DFCBDF000E4F27D /* b2WorldCallbacks.h */; };
 		5D44FFAD0DFCBDF000E4F27D /* b2CircleContact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF6F0DFCBDF000E4F27D /* b2CircleContact.cpp */; };
-		5D44FFAE0DFCBDF000E4F27D /* b2CircleContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF700DFCBDF000E4F27D /* b2CircleContact.h */; };
 		5D44FFAF0DFCBDF000E4F27D /* b2Contact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF710DFCBDF000E4F27D /* b2Contact.cpp */; };
-		5D44FFB00DFCBDF000E4F27D /* b2Contact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF720DFCBDF000E4F27D /* b2Contact.h */; };
 		5D44FFB10DFCBDF000E4F27D /* b2ContactSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF730DFCBDF000E4F27D /* b2ContactSolver.cpp */; };
-		5D44FFB20DFCBDF000E4F27D /* b2ContactSolver.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF740DFCBDF000E4F27D /* b2ContactSolver.h */; };
-		5D44FFB30DFCBDF000E4F27D /* b2NullContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF750DFCBDF000E4F27D /* b2NullContact.h */; };
 		5D44FFB40DFCBDF000E4F27D /* b2PolyAndCircleContact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF760DFCBDF000E4F27D /* b2PolyAndCircleContact.cpp */; };
-		5D44FFB50DFCBDF000E4F27D /* b2PolyAndCircleContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF770DFCBDF000E4F27D /* b2PolyAndCircleContact.h */; };
 		5D44FFB60DFCBDF000E4F27D /* b2PolyContact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF780DFCBDF000E4F27D /* b2PolyContact.cpp */; };
-		5D44FFB70DFCBDF000E4F27D /* b2PolyContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF790DFCBDF000E4F27D /* b2PolyContact.h */; };
 		5D44FFB80DFCBDF000E4F27D /* b2DistanceJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF7B0DFCBDF000E4F27D /* b2DistanceJoint.cpp */; };
-		5D44FFB90DFCBDF000E4F27D /* b2DistanceJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF7C0DFCBDF000E4F27D /* b2DistanceJoint.h */; };
 		5D44FFBA0DFCBDF000E4F27D /* b2GearJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF7D0DFCBDF000E4F27D /* b2GearJoint.cpp */; };
-		5D44FFBB0DFCBDF000E4F27D /* b2GearJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF7E0DFCBDF000E4F27D /* b2GearJoint.h */; };
 		5D44FFBC0DFCBDF000E4F27D /* b2Joint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF7F0DFCBDF000E4F27D /* b2Joint.cpp */; };
-		5D44FFBD0DFCBDF000E4F27D /* b2Joint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF800DFCBDF000E4F27D /* b2Joint.h */; };
 		5D44FFBE0DFCBDF000E4F27D /* b2MouseJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF810DFCBDF000E4F27D /* b2MouseJoint.cpp */; };
-		5D44FFBF0DFCBDF000E4F27D /* b2MouseJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF820DFCBDF000E4F27D /* b2MouseJoint.h */; };
 		5D44FFC00DFCBDF000E4F27D /* b2PrismaticJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF830DFCBDF000E4F27D /* b2PrismaticJoint.cpp */; };
-		5D44FFC10DFCBDF000E4F27D /* b2PrismaticJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF840DFCBDF000E4F27D /* b2PrismaticJoint.h */; };
 		5D44FFC20DFCBDF000E4F27D /* b2PulleyJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF850DFCBDF000E4F27D /* b2PulleyJoint.cpp */; };
-		5D44FFC30DFCBDF000E4F27D /* b2PulleyJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF860DFCBDF000E4F27D /* b2PulleyJoint.h */; };
 		5D44FFC40DFCBDF000E4F27D /* b2RevoluteJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF870DFCBDF000E4F27D /* b2RevoluteJoint.cpp */; };
-		5D44FFC50DFCBDF000E4F27D /* b2RevoluteJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF880DFCBDF000E4F27D /* b2RevoluteJoint.h */; };
 		5D44FFC60DFCBDF000E4F27D /* b2BroadPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF470DFCBDF000E4F27D /* b2BroadPhase.cpp */; };
-		5D44FFC70DFCBDF000E4F27D /* b2BroadPhase.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF480DFCBDF000E4F27D /* b2BroadPhase.h */; };
 		5D44FFC80DFCBDF000E4F27D /* b2CollideCircle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF490DFCBDF000E4F27D /* b2CollideCircle.cpp */; };
 		5D44FFC90DFCBDF000E4F27D /* b2CollidePoly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4A0DFCBDF000E4F27D /* b2CollidePoly.cpp */; };
 		5D44FFCA0DFCBDF000E4F27D /* b2Collision.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4B0DFCBDF000E4F27D /* b2Collision.cpp */; };
-		5D44FFCB0DFCBDF000E4F27D /* b2Collision.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF4C0DFCBDF000E4F27D /* b2Collision.h */; };
 		5D44FFCC0DFCBDF000E4F27D /* b2Distance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4D0DFCBDF000E4F27D /* b2Distance.cpp */; };
 		5D44FFCD0DFCBDF000E4F27D /* b2PairManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF4E0DFCBDF000E4F27D /* b2PairManager.cpp */; };
-		5D44FFCE0DFCBDF000E4F27D /* b2PairManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF4F0DFCBDF000E4F27D /* b2PairManager.h */; };
 		5D44FFCF0DFCBDF000E4F27D /* b2TimeOfImpact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF500DFCBDF000E4F27D /* b2TimeOfImpact.cpp */; };
 		5D44FFD00DFCBDF000E4F27D /* b2CircleShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF520DFCBDF000E4F27D /* b2CircleShape.cpp */; };
-		5D44FFD10DFCBDF000E4F27D /* b2CircleShape.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF530DFCBDF000E4F27D /* b2CircleShape.h */; };
 		5D44FFD20DFCBDF000E4F27D /* b2PolygonShape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF540DFCBDF000E4F27D /* b2PolygonShape.cpp */; };
-		5D44FFD30DFCBDF000E4F27D /* b2PolygonShape.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF550DFCBDF000E4F27D /* b2PolygonShape.h */; };
 		5D44FFD40DFCBDF000E4F27D /* b2Shape.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF560DFCBDF000E4F27D /* b2Shape.cpp */; };
-		5D44FFD50DFCBDF000E4F27D /* b2Shape.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF570DFCBDF000E4F27D /* b2Shape.h */; };
 		5D44FFD60DFCBDF000E4F27D /* b2BlockAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF590DFCBDF000E4F27D /* b2BlockAllocator.cpp */; };
-		5D44FFD70DFCBDF000E4F27D /* b2BlockAllocator.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF5A0DFCBDF000E4F27D /* b2BlockAllocator.h */; };
 		5D44FFD80DFCBDF000E4F27D /* b2Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF5B0DFCBDF000E4F27D /* b2Math.cpp */; };
-		5D44FFD90DFCBDF000E4F27D /* b2Math.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF5C0DFCBDF000E4F27D /* b2Math.h */; };
 		5D44FFDA0DFCBDF000E4F27D /* b2Settings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF5D0DFCBDF000E4F27D /* b2Settings.cpp */; };
-		5D44FFDB0DFCBDF000E4F27D /* b2Settings.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF5E0DFCBDF000E4F27D /* b2Settings.h */; };
 		5D44FFDC0DFCBDF000E4F27D /* b2StackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF5F0DFCBDF000E4F27D /* b2StackAllocator.cpp */; };
-		5D44FFDD0DFCBDF000E4F27D /* b2StackAllocator.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF600DFCBDF000E4F27D /* b2StackAllocator.h */; };
-		5D44FFDE0DFCBDF000E4F27D /* Fixed.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF610DFCBDF000E4F27D /* Fixed.h */; };
-		5D44FFDF0DFCBDF000E4F27D /* jtypes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF620DFCBDF000E4F27D /* jtypes.h */; };
 		5D44FFE00DFCBDF000E4F27D /* b2Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF640DFCBDF000E4F27D /* b2Body.cpp */; };
-		5D44FFE10DFCBDF000E4F27D /* b2Body.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF650DFCBDF000E4F27D /* b2Body.h */; };
 		5D44FFE20DFCBDF000E4F27D /* b2ContactManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF660DFCBDF000E4F27D /* b2ContactManager.cpp */; };
-		5D44FFE30DFCBDF000E4F27D /* b2ContactManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF670DFCBDF000E4F27D /* b2ContactManager.h */; };
 		5D44FFE40DFCBDF000E4F27D /* b2Island.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF680DFCBDF000E4F27D /* b2Island.cpp */; };
-		5D44FFE50DFCBDF000E4F27D /* b2Island.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF690DFCBDF000E4F27D /* b2Island.h */; };
 		5D44FFE60DFCBDF000E4F27D /* b2World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF6A0DFCBDF000E4F27D /* b2World.cpp */; };
-		5D44FFE70DFCBDF000E4F27D /* b2World.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF6B0DFCBDF000E4F27D /* b2World.h */; };
 		5D44FFE80DFCBDF000E4F27D /* b2WorldCallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF6C0DFCBDF000E4F27D /* b2WorldCallbacks.cpp */; };
-		5D44FFE90DFCBDF000E4F27D /* b2WorldCallbacks.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF6D0DFCBDF000E4F27D /* b2WorldCallbacks.h */; };
 		5D44FFEA0DFCBDF000E4F27D /* b2CircleContact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF6F0DFCBDF000E4F27D /* b2CircleContact.cpp */; };
-		5D44FFEB0DFCBDF000E4F27D /* b2CircleContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF700DFCBDF000E4F27D /* b2CircleContact.h */; };
 		5D44FFEC0DFCBDF000E4F27D /* b2Contact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF710DFCBDF000E4F27D /* b2Contact.cpp */; };
-		5D44FFED0DFCBDF000E4F27D /* b2Contact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF720DFCBDF000E4F27D /* b2Contact.h */; };
 		5D44FFEE0DFCBDF000E4F27D /* b2ContactSolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF730DFCBDF000E4F27D /* b2ContactSolver.cpp */; };
-		5D44FFEF0DFCBDF000E4F27D /* b2ContactSolver.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF740DFCBDF000E4F27D /* b2ContactSolver.h */; };
-		5D44FFF00DFCBDF000E4F27D /* b2NullContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF750DFCBDF000E4F27D /* b2NullContact.h */; };
 		5D44FFF10DFCBDF000E4F27D /* b2PolyAndCircleContact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF760DFCBDF000E4F27D /* b2PolyAndCircleContact.cpp */; };
-		5D44FFF20DFCBDF000E4F27D /* b2PolyAndCircleContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF770DFCBDF000E4F27D /* b2PolyAndCircleContact.h */; };
 		5D44FFF30DFCBDF000E4F27D /* b2PolyContact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF780DFCBDF000E4F27D /* b2PolyContact.cpp */; };
-		5D44FFF40DFCBDF000E4F27D /* b2PolyContact.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF790DFCBDF000E4F27D /* b2PolyContact.h */; };
 		5D44FFF50DFCBDF000E4F27D /* b2DistanceJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF7B0DFCBDF000E4F27D /* b2DistanceJoint.cpp */; };
-		5D44FFF60DFCBDF000E4F27D /* b2DistanceJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF7C0DFCBDF000E4F27D /* b2DistanceJoint.h */; };
 		5D44FFF70DFCBDF000E4F27D /* b2GearJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF7D0DFCBDF000E4F27D /* b2GearJoint.cpp */; };
-		5D44FFF80DFCBDF000E4F27D /* b2GearJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF7E0DFCBDF000E4F27D /* b2GearJoint.h */; };
 		5D44FFF90DFCBDF000E4F27D /* b2Joint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF7F0DFCBDF000E4F27D /* b2Joint.cpp */; };
-		5D44FFFA0DFCBDF000E4F27D /* b2Joint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF800DFCBDF000E4F27D /* b2Joint.h */; };
 		5D44FFFB0DFCBDF000E4F27D /* b2MouseJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF810DFCBDF000E4F27D /* b2MouseJoint.cpp */; };
-		5D44FFFC0DFCBDF000E4F27D /* b2MouseJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF820DFCBDF000E4F27D /* b2MouseJoint.h */; };
 		5D44FFFD0DFCBDF000E4F27D /* b2PrismaticJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF830DFCBDF000E4F27D /* b2PrismaticJoint.cpp */; };
-		5D44FFFE0DFCBDF000E4F27D /* b2PrismaticJoint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D44FF840DFCBDF000E4F27D /* b2PrismaticJoint.h */; };
 		5D44FFFF0DFCBDF000E4F27D /* b2PulleyJoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D44FF850DFCBDF000E4F27D /* b2PulleyJoint.cpp */; };
-		5D4684450B99265C00BC8CE7 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682D90B99265C00BC8CE7 /* ClanApp.framework */; };
-		5D4684460B99265D00BC8CE7 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682DA0B99265C00BC8CE7 /* ClanCore.framework */; };
-		5D4684470B99265D00BC8CE7 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682DB0B99265C00BC8CE7 /* ClanDisplay.framework */; };
-		5D4684480B99265D00BC8CE7 /* ClanGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682DC0B99265C00BC8CE7 /* ClanGL.framework */; };
-		5D4684490B99265D00BC8CE7 /* ClanGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682DD0B99265C00BC8CE7 /* ClanGUI.framework */; };
-		5D46844A0B99265D00BC8CE7 /* ClanGUIStyleSilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682DE0B99265C00BC8CE7 /* ClanGUIStyleSilver.framework */; };
-		5D46844B0B99265D00BC8CE7 /* ClanLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682DF0B99265C00BC8CE7 /* ClanLib.framework */; };
-		5D46844C0B99265D00BC8CE7 /* ClanSound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682E00B99265C00BC8CE7 /* ClanSound.framework */; };
-		5D46844D0B99265D00BC8CE7 /* ClanVorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4682E10B99265C00BC8CE7 /* ClanVorbis.framework */; };
-		5D46844E0B99266800BC8CE7 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682D90B99265C00BC8CE7 /* ClanApp.framework */; };
-		5D46844F0B99266800BC8CE7 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682DA0B99265C00BC8CE7 /* ClanCore.framework */; };
-		5D4684500B99266800BC8CE7 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682DB0B99265C00BC8CE7 /* ClanDisplay.framework */; };
-		5D4684510B99266800BC8CE7 /* ClanGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682DC0B99265C00BC8CE7 /* ClanGL.framework */; };
-		5D4684520B99266800BC8CE7 /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682DD0B99265C00BC8CE7 /* ClanGUI.framework */; };
-		5D4684530B99266800BC8CE7 /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682DE0B99265C00BC8CE7 /* ClanGUIStyleSilver.framework */; };
-		5D4684540B99266800BC8CE7 /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682DF0B99265C00BC8CE7 /* ClanLib.framework */; };
-		5D4684550B99266800BC8CE7 /* ClanSound.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682E00B99265C00BC8CE7 /* ClanSound.framework */; };
-		5D4684560B99266800BC8CE7 /* ClanVorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4682E10B99265C00BC8CE7 /* ClanVorbis.framework */; };
 		5D58A7BF0A15832C005974C1 /* lapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A79F0A15832C005974C1 /* lapi.c */; };
 		5D58A7C00A15832C005974C1 /* lauxlib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A00A15832C005974C1 /* lauxlib.c */; };
 		5D58A7C10A15832C005974C1 /* lbaselib.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7A10A15832C005974C1 /* lbaselib.c */; };
@@ -248,9 +226,7 @@
 		5D67C47E0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
 		5D67C47F0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D67C47D0B5E0B3E00BE8FF6 /* GlobalScriptFunctionBindings.cpp */; };
 		5D6B95BB0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6B95B90E19EC9E00B67FE8 /* DrawManager.cpp */; };
-		5D6B95BC0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D6B95BA0E19EC9E00B67FE8 /* DrawManager.h */; };
 		5D6B95BD0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D6B95B90E19EC9E00B67FE8 /* DrawManager.cpp */; };
-		5D6B95BE0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D6B95BA0E19EC9E00B67FE8 /* DrawManager.h */; };
 		5D7A78190B757D74003C896A /* ListBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78160B757D74003C896A /* ListBindings.cpp */; };
 		5D7A781A0B757D74003C896A /* LoopingSoundBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78170B757D74003C896A /* LoopingSoundBindings.cpp */; };
 		5D7A781B0B757D74003C896A /* TileBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D7A78180B757D74003C896A /* TileBindings.cpp */; };
@@ -293,6 +269,10 @@
 		5D8109350AD6220E004605B8 /* window_Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8109210AD6220D004605B8 /* window_Bitmap.cpp */; };
 		5D869C620D695F07000A7433 /* DataEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D869C610D695F07000A7433 /* DataEditor.cpp */; };
 		5D869C630D695F07000A7433 /* DataEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D869C610D695F07000A7433 /* DataEditor.cpp */; };
+		5D86B7CC0F9C30570047E0C1 /* BrainDoomWall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D86B7CA0F9C30570047E0C1 /* BrainDoomWall.cpp */; };
+		5D86B7CD0F9C30570047E0C1 /* BrainLife.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D86B7CB0F9C30570047E0C1 /* BrainLife.cpp */; };
+		5D86B7CE0F9C30570047E0C1 /* BrainDoomWall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D86B7CA0F9C30570047E0C1 /* BrainDoomWall.cpp */; };
+		5D86B7CF0F9C30570047E0C1 /* BrainLife.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D86B7CB0F9C30570047E0C1 /* BrainLife.cpp */; };
 		5D87774A0A15555400363BAA /* AppUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776D80A15555400363BAA /* AppUtils.cpp */; };
 		5D87774C0A15555400363BAA /* BaseGameEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */; };
 		5D87774E0A15555400363BAA /* Brain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DC0A15555400363BAA /* Brain.cpp */; };
@@ -356,9 +336,7 @@
 		5D8778850A1555F600363BAA /* CL_VirtualFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87781D0A1555F600363BAA /* CL_VirtualFileManager.cpp */; };
 		5D87788A0A1555F600363BAA /* MiscUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8778220A1555F600363BAA /* MiscUtils.cpp */; };
 		5D93BD040D8A37A300801A5D /* ScriptCallbackManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D93BD020D8A37A300801A5D /* ScriptCallbackManager.cpp */; };
-		5D93BD050D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D93BD030D8A37A300801A5D /* ScriptCallbackManager.h */; };
 		5D93BD060D8A37A300801A5D /* ScriptCallbackManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D93BD020D8A37A300801A5D /* ScriptCallbackManager.cpp */; };
-		5D93BD070D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D93BD030D8A37A300801A5D /* ScriptCallbackManager.h */; };
 		5D9682860A5DF79A0015B20A /* BrainColorFlash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827D0A5DF79A0015B20A /* BrainColorFlash.cpp */; };
 		5D9682870A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D96827E0A5DF79A0015B20A /* BrainFadeOutAndDelete.cpp */; };
 		5D9682890A5DF79A0015B20A /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D9682800A5DF79A0015B20A /* State.cpp */; };
@@ -383,72 +361,30 @@
 		5DC0BD310BA7E1800004DD83 /* EffectManagerBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD2F0BA7E1800004DD83 /* EffectManagerBindings.cpp */; };
 		5DC0BD320BA7E1800004DD83 /* EffectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD2E0BA7E1800004DD83 /* EffectManager.cpp */; };
 		5DC0BD330BA7E1800004DD83 /* EffectManagerBindings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD2F0BA7E1800004DD83 /* EffectManagerBindings.cpp */; };
-		5DC0BD4B0BA7E1D80004DD83 /* L_Defination.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD340BA7E1D80004DD83 /* L_Defination.h */; };
 		5DC0BD4C0BA7E1D80004DD83 /* L_DroppingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD350BA7E1D80004DD83 /* L_DroppingEffect.cpp */; };
-		5DC0BD4D0BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD360BA7E1D80004DD83 /* L_DroppingEffect.h */; };
 		5DC0BD4E0BA7E1D80004DD83 /* L_EffectEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD370BA7E1D80004DD83 /* L_EffectEmitter.cpp */; };
-		5DC0BD4F0BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD380BA7E1D80004DD83 /* L_EffectEmitter.h */; };
 		5DC0BD500BA7E1D80004DD83 /* L_EffectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD390BA7E1D80004DD83 /* L_EffectManager.cpp */; };
-		5DC0BD510BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3A0BA7E1D80004DD83 /* L_EffectManager.h */; };
 		5DC0BD520BA7E1D80004DD83 /* L_ExplosionEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3B0BA7E1D80004DD83 /* L_ExplosionEffect.cpp */; };
-		5DC0BD530BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3C0BA7E1D80004DD83 /* L_ExplosionEffect.h */; };
 		5DC0BD540BA7E1D80004DD83 /* L_MotionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3D0BA7E1D80004DD83 /* L_MotionController.cpp */; };
-		5DC0BD550BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3E0BA7E1D80004DD83 /* L_MotionController.h */; };
 		5DC0BD560BA7E1D80004DD83 /* L_Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3F0BA7E1D80004DD83 /* L_Particle.cpp */; };
-		5DC0BD570BA7E1D80004DD83 /* L_Particle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD400BA7E1D80004DD83 /* L_Particle.h */; };
 		5DC0BD580BA7E1D80004DD83 /* L_ParticleEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD410BA7E1D80004DD83 /* L_ParticleEffect.cpp */; };
-		5DC0BD590BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD420BA7E1D80004DD83 /* L_ParticleEffect.h */; };
 		5DC0BD5A0BA7E1D80004DD83 /* L_ParticleMem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD430BA7E1D80004DD83 /* L_ParticleMem.cpp */; };
-		5DC0BD5B0BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD440BA7E1D80004DD83 /* L_ParticleMem.h */; };
 		5DC0BD5C0BA7E1D80004DD83 /* L_ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD450BA7E1D80004DD83 /* L_ParticleSystem.cpp */; };
-		5DC0BD5D0BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD460BA7E1D80004DD83 /* L_ParticleSystem.h */; };
 		5DC0BD5E0BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD470BA7E1D80004DD83 /* L_ShootingEffect.cpp */; };
-		5DC0BD5F0BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD480BA7E1D80004DD83 /* L_ShootingEffect.h */; };
 		5DC0BD600BA7E1D80004DD83 /* L_Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD490BA7E1D80004DD83 /* L_Vector.cpp */; };
-		5DC0BD610BA7E1D80004DD83 /* L_Vector.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD4A0BA7E1D80004DD83 /* L_Vector.h */; };
-		5DC0BD620BA7E1D80004DD83 /* L_Defination.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD340BA7E1D80004DD83 /* L_Defination.h */; };
 		5DC0BD630BA7E1D80004DD83 /* L_DroppingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD350BA7E1D80004DD83 /* L_DroppingEffect.cpp */; };
-		5DC0BD640BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD360BA7E1D80004DD83 /* L_DroppingEffect.h */; };
 		5DC0BD650BA7E1D80004DD83 /* L_EffectEmitter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD370BA7E1D80004DD83 /* L_EffectEmitter.cpp */; };
-		5DC0BD660BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD380BA7E1D80004DD83 /* L_EffectEmitter.h */; };
 		5DC0BD670BA7E1D80004DD83 /* L_EffectManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD390BA7E1D80004DD83 /* L_EffectManager.cpp */; };
-		5DC0BD680BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3A0BA7E1D80004DD83 /* L_EffectManager.h */; };
 		5DC0BD690BA7E1D80004DD83 /* L_ExplosionEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3B0BA7E1D80004DD83 /* L_ExplosionEffect.cpp */; };
-		5DC0BD6A0BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3C0BA7E1D80004DD83 /* L_ExplosionEffect.h */; };
 		5DC0BD6B0BA7E1D80004DD83 /* L_MotionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3D0BA7E1D80004DD83 /* L_MotionController.cpp */; };
-		5DC0BD6C0BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD3E0BA7E1D80004DD83 /* L_MotionController.h */; };
 		5DC0BD6D0BA7E1D80004DD83 /* L_Particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD3F0BA7E1D80004DD83 /* L_Particle.cpp */; };
-		5DC0BD6E0BA7E1D80004DD83 /* L_Particle.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD400BA7E1D80004DD83 /* L_Particle.h */; };
 		5DC0BD6F0BA7E1D80004DD83 /* L_ParticleEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD410BA7E1D80004DD83 /* L_ParticleEffect.cpp */; };
-		5DC0BD700BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD420BA7E1D80004DD83 /* L_ParticleEffect.h */; };
 		5DC0BD710BA7E1D80004DD83 /* L_ParticleMem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD430BA7E1D80004DD83 /* L_ParticleMem.cpp */; };
-		5DC0BD720BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD440BA7E1D80004DD83 /* L_ParticleMem.h */; };
 		5DC0BD730BA7E1D80004DD83 /* L_ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD450BA7E1D80004DD83 /* L_ParticleSystem.cpp */; };
-		5DC0BD740BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD460BA7E1D80004DD83 /* L_ParticleSystem.h */; };
 		5DC0BD750BA7E1D80004DD83 /* L_ShootingEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD470BA7E1D80004DD83 /* L_ShootingEffect.cpp */; };
-		5DC0BD760BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD480BA7E1D80004DD83 /* L_ShootingEffect.h */; };
 		5DC0BD770BA7E1D80004DD83 /* L_Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0BD490BA7E1D80004DD83 /* L_Vector.cpp */; };
-		5DC0BD780BA7E1D80004DD83 /* L_Vector.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DC0BD4A0BA7E1D80004DD83 /* L_Vector.h */; };
 		5DC415F20A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
 		5DC415F40A1B33AA00E9A026 /* AppPrecomp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */; };
-		5DCC34AB0A1C86A200886F30 /* libjpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34A70A1C86A200886F30 /* libjpeg.framework */; };
-		5DCC34AC0A1C86A200886F30 /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34A80A1C86A200886F30 /* libpng.framework */; };
-		5DCC34AD0A1C86A200886F30 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34A90A1C86A200886F30 /* Ogg.framework */; };
-		5DCC34AE0A1C86A200886F30 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34AA0A1C86A200886F30 /* Vorbis.framework */; };
-		5DCC34AF0A1C86A200886F30 /* libjpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34A70A1C86A200886F30 /* libjpeg.framework */; };
-		5DCC34B00A1C86A200886F30 /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34A80A1C86A200886F30 /* libpng.framework */; };
-		5DCC34B10A1C86A200886F30 /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34A90A1C86A200886F30 /* Ogg.framework */; };
-		5DCC34B20A1C86A200886F30 /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCC34AA0A1C86A200886F30 /* Vorbis.framework */; };
-		5DCC34CA0A1C86B200886F30 /* libjpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34A70A1C86A200886F30 /* libjpeg.framework */; };
-		5DCC34CB0A1C86B200886F30 /* libpng.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34A80A1C86A200886F30 /* libpng.framework */; };
-		5DCC34CC0A1C86B200886F30 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34A90A1C86A200886F30 /* Ogg.framework */; };
-		5DCC34CD0A1C86B200886F30 /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34AA0A1C86A200886F30 /* Vorbis.framework */; };
-		5DCC34CE0A1C86D200886F30 /* libjpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34A70A1C86A200886F30 /* libjpeg.framework */; };
-		5DCC34CF0A1C86D200886F30 /* libpng.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34A80A1C86A200886F30 /* libpng.framework */; };
-		5DCC34D00A1C86D200886F30 /* Ogg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34A90A1C86A200886F30 /* Ogg.framework */; };
-		5DCC34D10A1C86D200886F30 /* Vorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DCC34AA0A1C86A200886F30 /* Vorbis.framework */; };
-		5DCDB1F90A19FA810043DCFA /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */; };
-		5DCDB1FA0A19FA810043DCFA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F80A19FA810043DCFA /* OpenGL.framework */; };
 		5DCDB2100A19FEAA0043DCFA /* AppUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776D80A15555400363BAA /* AppUtils.cpp */; };
 		5DCDB2110A19FEAA0043DCFA /* BaseGameEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */; };
 		5DCDB2120A19FEAA0043DCFA /* Brain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D8776DC0A15555400363BAA /* Brain.cpp */; };
@@ -541,35 +477,6 @@
 		5DCDB2730A19FEAA0043DCFA /* lvm.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BC0A15832C005974C1 /* lvm.c */; };
 		5DCDB2740A19FEAA0043DCFA /* lzio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BD0A15832C005974C1 /* lzio.c */; };
 		5DCDB2750A19FEAA0043DCFA /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D58A7BE0A15832C005974C1 /* print.c */; };
-		5DCDB2810A19FEAA0043DCFA /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */; };
-		5DCDB2820A19FEAA0043DCFA /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCDB1F80A19FA810043DCFA /* OpenGL.framework */; };
-		5DD105A60AF25BE900C448F3 /* ClanVorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105990AF25BE800C448F3 /* ClanVorbis.framework */; };
-		5DD105A70AF25BE900C448F3 /* ClanSound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD1059E0AF25BE800C448F3 /* ClanSound.framework */; };
-		5DD105A80AF25BE900C448F3 /* ClanGUIStyleSilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD1059F0AF25BE800C448F3 /* ClanGUIStyleSilver.framework */; };
-		5DD105A90AF25BE900C448F3 /* ClanGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A00AF25BE800C448F3 /* ClanGUI.framework */; };
-		5DD105AA0AF25BE900C448F3 /* ClanGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A10AF25BE800C448F3 /* ClanGL.framework */; };
-		5DD105AB0AF25BE900C448F3 /* ClanLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A20AF25BE800C448F3 /* ClanLib.framework */; };
-		5DD105AC0AF25BE900C448F3 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A30AF25BE800C448F3 /* ClanApp.framework */; };
-		5DD105AD0AF25BE900C448F3 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A40AF25BE800C448F3 /* ClanCore.framework */; };
-		5DD105AE0AF25BE900C448F3 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */; };
-		5DD105AF0AF25BE900C448F3 /* ClanVorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105990AF25BE800C448F3 /* ClanVorbis.framework */; };
-		5DD105B00AF25BE900C448F3 /* ClanSound.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD1059E0AF25BE800C448F3 /* ClanSound.framework */; };
-		5DD105B10AF25BE900C448F3 /* ClanGUIStyleSilver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD1059F0AF25BE800C448F3 /* ClanGUIStyleSilver.framework */; };
-		5DD105B20AF25BE900C448F3 /* ClanGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A00AF25BE800C448F3 /* ClanGUI.framework */; };
-		5DD105B30AF25BE900C448F3 /* ClanGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A10AF25BE800C448F3 /* ClanGL.framework */; };
-		5DD105B40AF25BE900C448F3 /* ClanLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A20AF25BE800C448F3 /* ClanLib.framework */; };
-		5DD105B50AF25BE900C448F3 /* ClanApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A30AF25BE800C448F3 /* ClanApp.framework */; };
-		5DD105B60AF25BE900C448F3 /* ClanCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A40AF25BE800C448F3 /* ClanCore.framework */; };
-		5DD105B70AF25BE900C448F3 /* ClanDisplay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */; };
-		5DD105B80AF25BF500C448F3 /* ClanVorbis.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105990AF25BE800C448F3 /* ClanVorbis.framework */; };
-		5DD105B90AF25BF500C448F3 /* ClanSound.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD1059E0AF25BE800C448F3 /* ClanSound.framework */; };
-		5DD105BA0AF25BF500C448F3 /* ClanGUIStyleSilver.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD1059F0AF25BE800C448F3 /* ClanGUIStyleSilver.framework */; };
-		5DD105BB0AF25BF500C448F3 /* ClanGUI.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A00AF25BE800C448F3 /* ClanGUI.framework */; };
-		5DD105BC0AF25BF500C448F3 /* ClanGL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A10AF25BE800C448F3 /* ClanGL.framework */; };
-		5DD105BD0AF25BF500C448F3 /* ClanLib.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A20AF25BE800C448F3 /* ClanLib.framework */; };
-		5DD105BE0AF25BF500C448F3 /* ClanApp.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A30AF25BE800C448F3 /* ClanApp.framework */; };
-		5DD105BF0AF25BF500C448F3 /* ClanCore.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A40AF25BE800C448F3 /* ClanCore.framework */; };
-		5DD105C00AF25BF500C448F3 /* ClanDisplay.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */; };
 		5DD4D5400B4B5B47009E3C24 /* BrainFadeIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */; };
 		5DD4D5410B4B5B47009E3C24 /* BrainFadeIn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */; };
 		5DEB6E210B168AEF00D74729 /* BrainBob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DEB6E200B168AEF00D74729 /* BrainBob.cpp */; };
@@ -583,63 +490,19 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5D46844E0B99266800BC8CE7 /* ClanApp.framework in CopyFiles */,
-				5D46844F0B99266800BC8CE7 /* ClanCore.framework in CopyFiles */,
-				5D4684500B99266800BC8CE7 /* ClanDisplay.framework in CopyFiles */,
-				5D4684510B99266800BC8CE7 /* ClanGL.framework in CopyFiles */,
-				5D4684520B99266800BC8CE7 /* ClanGUI.framework in CopyFiles */,
-				5D4684530B99266800BC8CE7 /* ClanGUIStyleSilver.framework in CopyFiles */,
-				5D4684540B99266800BC8CE7 /* ClanLib.framework in CopyFiles */,
-				5D4684550B99266800BC8CE7 /* ClanSound.framework in CopyFiles */,
-				5D4684560B99266800BC8CE7 /* ClanVorbis.framework in CopyFiles */,
-				5DCC34CA0A1C86B200886F30 /* libjpeg.framework in CopyFiles */,
-				5DCC34CB0A1C86B200886F30 /* libpng.framework in CopyFiles */,
-				5DCC34CC0A1C86B200886F30 /* Ogg.framework in CopyFiles */,
-				5DCC34CD0A1C86B200886F30 /* Vorbis.framework in CopyFiles */,
-				5DC0BD4B0BA7E1D80004DD83 /* L_Defination.h in CopyFiles */,
-				5DC0BD4D0BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */,
-				5DC0BD4F0BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */,
-				5DC0BD510BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */,
-				5DC0BD530BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */,
-				5DC0BD550BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */,
-				5DC0BD570BA7E1D80004DD83 /* L_Particle.h in CopyFiles */,
-				5DC0BD590BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */,
-				5DC0BD5B0BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */,
-				5DC0BD5D0BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */,
-				5DC0BD5F0BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */,
-				5DC0BD610BA7E1D80004DD83 /* L_Vector.h in CopyFiles */,
-				5D93BD050D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */,
-				5D44FF8A0DFCBDF000E4F27D /* b2BroadPhase.h in CopyFiles */,
-				5D44FF8E0DFCBDF000E4F27D /* b2Collision.h in CopyFiles */,
-				5D44FF910DFCBDF000E4F27D /* b2PairManager.h in CopyFiles */,
-				5D44FF940DFCBDF000E4F27D /* b2CircleShape.h in CopyFiles */,
-				5D44FF960DFCBDF000E4F27D /* b2PolygonShape.h in CopyFiles */,
-				5D44FF980DFCBDF000E4F27D /* b2Shape.h in CopyFiles */,
-				5D44FF9A0DFCBDF000E4F27D /* b2BlockAllocator.h in CopyFiles */,
-				5D44FF9C0DFCBDF000E4F27D /* b2Math.h in CopyFiles */,
-				5D44FF9E0DFCBDF000E4F27D /* b2Settings.h in CopyFiles */,
-				5D44FFA00DFCBDF000E4F27D /* b2StackAllocator.h in CopyFiles */,
-				5D44FFA10DFCBDF000E4F27D /* Fixed.h in CopyFiles */,
-				5D44FFA20DFCBDF000E4F27D /* jtypes.h in CopyFiles */,
-				5D44FFA40DFCBDF000E4F27D /* b2Body.h in CopyFiles */,
-				5D44FFA60DFCBDF000E4F27D /* b2ContactManager.h in CopyFiles */,
-				5D44FFA80DFCBDF000E4F27D /* b2Island.h in CopyFiles */,
-				5D44FFAA0DFCBDF000E4F27D /* b2World.h in CopyFiles */,
-				5D44FFAC0DFCBDF000E4F27D /* b2WorldCallbacks.h in CopyFiles */,
-				5D44FFAE0DFCBDF000E4F27D /* b2CircleContact.h in CopyFiles */,
-				5D44FFB00DFCBDF000E4F27D /* b2Contact.h in CopyFiles */,
-				5D44FFB20DFCBDF000E4F27D /* b2ContactSolver.h in CopyFiles */,
-				5D44FFB30DFCBDF000E4F27D /* b2NullContact.h in CopyFiles */,
-				5D44FFB50DFCBDF000E4F27D /* b2PolyAndCircleContact.h in CopyFiles */,
-				5D44FFB70DFCBDF000E4F27D /* b2PolyContact.h in CopyFiles */,
-				5D44FFB90DFCBDF000E4F27D /* b2DistanceJoint.h in CopyFiles */,
-				5D44FFBB0DFCBDF000E4F27D /* b2GearJoint.h in CopyFiles */,
-				5D44FFBD0DFCBDF000E4F27D /* b2Joint.h in CopyFiles */,
-				5D44FFBF0DFCBDF000E4F27D /* b2MouseJoint.h in CopyFiles */,
-				5D44FFC10DFCBDF000E4F27D /* b2PrismaticJoint.h in CopyFiles */,
-				5D44FFC30DFCBDF000E4F27D /* b2PulleyJoint.h in CopyFiles */,
-				5D44FFC50DFCBDF000E4F27D /* b2RevoluteJoint.h in CopyFiles */,
-				5D6B95BC0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */,
+				5D0212D10FA33D9C00D79AE9 /* ClanApp.framework in CopyFiles */,
+				5D0212D20FA33D9C00D79AE9 /* ClanCore.framework in CopyFiles */,
+				5D0212D30FA33D9C00D79AE9 /* ClanDisplay.framework in CopyFiles */,
+				5D0212D40FA33D9C00D79AE9 /* ClanGL.framework in CopyFiles */,
+				5D0212D50FA33D9C00D79AE9 /* ClanGUI.framework in CopyFiles */,
+				5D0212D60FA33D9C00D79AE9 /* ClanGUIStyleSilver.framework in CopyFiles */,
+				5D0212D70FA33D9C00D79AE9 /* ClanLib.framework in CopyFiles */,
+				5D0212D80FA33D9C00D79AE9 /* ClanSound.framework in CopyFiles */,
+				5D0212D90FA33D9C00D79AE9 /* ClanVorbis.framework in CopyFiles */,
+				5D0212DA0FA33D9C00D79AE9 /* libjpeg.framework in CopyFiles */,
+				5D0212DB0FA33D9C00D79AE9 /* libpng.framework in CopyFiles */,
+				5D0212DC0FA33D9C00D79AE9 /* Ogg.framework in CopyFiles */,
+				5D0212DD0FA33D9C00D79AE9 /* Vorbis.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,69 +512,53 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5DD105B80AF25BF500C448F3 /* ClanVorbis.framework in CopyFiles */,
-				5DD105B90AF25BF500C448F3 /* ClanSound.framework in CopyFiles */,
-				5DD105BA0AF25BF500C448F3 /* ClanGUIStyleSilver.framework in CopyFiles */,
-				5DD105BB0AF25BF500C448F3 /* ClanGUI.framework in CopyFiles */,
-				5DD105BC0AF25BF500C448F3 /* ClanGL.framework in CopyFiles */,
-				5DD105BD0AF25BF500C448F3 /* ClanLib.framework in CopyFiles */,
-				5DD105BE0AF25BF500C448F3 /* ClanApp.framework in CopyFiles */,
-				5DD105BF0AF25BF500C448F3 /* ClanCore.framework in CopyFiles */,
-				5DD105C00AF25BF500C448F3 /* ClanDisplay.framework in CopyFiles */,
-				5DCC34CE0A1C86D200886F30 /* libjpeg.framework in CopyFiles */,
-				5DCC34CF0A1C86D200886F30 /* libpng.framework in CopyFiles */,
-				5DCC34D00A1C86D200886F30 /* Ogg.framework in CopyFiles */,
-				5DCC34D10A1C86D200886F30 /* Vorbis.framework in CopyFiles */,
-				5DC0BD620BA7E1D80004DD83 /* L_Defination.h in CopyFiles */,
-				5DC0BD640BA7E1D80004DD83 /* L_DroppingEffect.h in CopyFiles */,
-				5DC0BD660BA7E1D80004DD83 /* L_EffectEmitter.h in CopyFiles */,
-				5DC0BD680BA7E1D80004DD83 /* L_EffectManager.h in CopyFiles */,
-				5DC0BD6A0BA7E1D80004DD83 /* L_ExplosionEffect.h in CopyFiles */,
-				5DC0BD6C0BA7E1D80004DD83 /* L_MotionController.h in CopyFiles */,
-				5DC0BD6E0BA7E1D80004DD83 /* L_Particle.h in CopyFiles */,
-				5DC0BD700BA7E1D80004DD83 /* L_ParticleEffect.h in CopyFiles */,
-				5DC0BD720BA7E1D80004DD83 /* L_ParticleMem.h in CopyFiles */,
-				5DC0BD740BA7E1D80004DD83 /* L_ParticleSystem.h in CopyFiles */,
-				5DC0BD760BA7E1D80004DD83 /* L_ShootingEffect.h in CopyFiles */,
-				5DC0BD780BA7E1D80004DD83 /* L_Vector.h in CopyFiles */,
-				5D93BD070D8A37A300801A5D /* ScriptCallbackManager.h in CopyFiles */,
-				5D44FFC70DFCBDF000E4F27D /* b2BroadPhase.h in CopyFiles */,
-				5D44FFCB0DFCBDF000E4F27D /* b2Collision.h in CopyFiles */,
-				5D44FFCE0DFCBDF000E4F27D /* b2PairManager.h in CopyFiles */,
-				5D44FFD10DFCBDF000E4F27D /* b2CircleShape.h in CopyFiles */,
-				5D44FFD30DFCBDF000E4F27D /* b2PolygonShape.h in CopyFiles */,
-				5D44FFD50DFCBDF000E4F27D /* b2Shape.h in CopyFiles */,
-				5D44FFD70DFCBDF000E4F27D /* b2BlockAllocator.h in CopyFiles */,
-				5D44FFD90DFCBDF000E4F27D /* b2Math.h in CopyFiles */,
-				5D44FFDB0DFCBDF000E4F27D /* b2Settings.h in CopyFiles */,
-				5D44FFDD0DFCBDF000E4F27D /* b2StackAllocator.h in CopyFiles */,
-				5D44FFDE0DFCBDF000E4F27D /* Fixed.h in CopyFiles */,
-				5D44FFDF0DFCBDF000E4F27D /* jtypes.h in CopyFiles */,
-				5D44FFE10DFCBDF000E4F27D /* b2Body.h in CopyFiles */,
-				5D44FFE30DFCBDF000E4F27D /* b2ContactManager.h in CopyFiles */,
-				5D44FFE50DFCBDF000E4F27D /* b2Island.h in CopyFiles */,
-				5D44FFE70DFCBDF000E4F27D /* b2World.h in CopyFiles */,
-				5D44FFE90DFCBDF000E4F27D /* b2WorldCallbacks.h in CopyFiles */,
-				5D44FFEB0DFCBDF000E4F27D /* b2CircleContact.h in CopyFiles */,
-				5D44FFED0DFCBDF000E4F27D /* b2Contact.h in CopyFiles */,
-				5D44FFEF0DFCBDF000E4F27D /* b2ContactSolver.h in CopyFiles */,
-				5D44FFF00DFCBDF000E4F27D /* b2NullContact.h in CopyFiles */,
-				5D44FFF20DFCBDF000E4F27D /* b2PolyAndCircleContact.h in CopyFiles */,
-				5D44FFF40DFCBDF000E4F27D /* b2PolyContact.h in CopyFiles */,
-				5D44FFF60DFCBDF000E4F27D /* b2DistanceJoint.h in CopyFiles */,
-				5D44FFF80DFCBDF000E4F27D /* b2GearJoint.h in CopyFiles */,
-				5D44FFFA0DFCBDF000E4F27D /* b2Joint.h in CopyFiles */,
-				5D44FFFC0DFCBDF000E4F27D /* b2MouseJoint.h in CopyFiles */,
-				5D44FFFE0DFCBDF000E4F27D /* b2PrismaticJoint.h in CopyFiles */,
-				5D4400000DFCBDF000E4F27D /* b2PulleyJoint.h in CopyFiles */,
-				5D4400020DFCBDF000E4F27D /* b2RevoluteJoint.h in CopyFiles */,
-				5D6B95BE0E19EC9E00B67FE8 /* DrawManager.h in CopyFiles */,
+				5D02146C0FA347F800D79AE9 /* ClanLib.framework in CopyFiles */,
+				5D02146D0FA347F800D79AE9 /* ClanGUIStyleSilver.framework in CopyFiles */,
+				5D02146E0FA347F800D79AE9 /* ClanGUI.framework in CopyFiles */,
+				5D02146F0FA347F800D79AE9 /* ClanGL.framework in CopyFiles */,
+				5D0214700FA347F800D79AE9 /* Ogg.framework in CopyFiles */,
+				5D0214710FA347F800D79AE9 /* libpng.framework in CopyFiles */,
+				5D0214720FA347F800D79AE9 /* libjpeg.framework in CopyFiles */,
+				5D0214730FA347F800D79AE9 /* ClanVorbis.framework in CopyFiles */,
+				5D0214740FA347F800D79AE9 /* ClanSound.framework in CopyFiles */,
+				5D0214750FA347F800D79AE9 /* Vorbis.framework in CopyFiles */,
+				5D0214760FA347F800D79AE9 /* ClanDisplay.framework in CopyFiles */,
+				5D0214770FA347F800D79AE9 /* ClanCore.framework in CopyFiles */,
+				5D0214780FA347F800D79AE9 /* ClanApp.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5D0211390FA33D9100D79AE9 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
+		5D02113A0FA33D9100D79AE9 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
+		5D02113B0FA33D9100D79AE9 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
+		5D02113C0FA33D9100D79AE9 /* ClanGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGL.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanGL.framework"; sourceTree = SOURCE_ROOT; };
+		5D02113D0FA33D9100D79AE9 /* ClanGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUI.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanGUI.framework"; sourceTree = SOURCE_ROOT; };
+		5D02113E0FA33D9100D79AE9 /* ClanGUIStyleSilver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUIStyleSilver.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanGUIStyleSilver.framework"; sourceTree = SOURCE_ROOT; };
+		5D02113F0FA33D9100D79AE9 /* ClanLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanLib.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanLib.framework"; sourceTree = SOURCE_ROOT; };
+		5D0211400FA33D9100D79AE9 /* ClanSound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanSound.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanSound.framework"; sourceTree = SOURCE_ROOT; };
+		5D0211410FA33D9100D79AE9 /* ClanVorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanVorbis.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/ClanVorbis.framework"; sourceTree = SOURCE_ROOT; };
+		5D0211420FA33D9100D79AE9 /* libjpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libjpeg.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/libjpeg.framework"; sourceTree = SOURCE_ROOT; };
+		5D0211430FA33D9100D79AE9 /* libpng.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libpng.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/libpng.framework"; sourceTree = SOURCE_ROOT; };
+		5D0211440FA33D9100D79AE9 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/Ogg.framework"; sourceTree = SOURCE_ROOT; };
+		5D0211450FA33D9100D79AE9 /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Development/Vorbis.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212DE0FA347ED00D79AE9 /* ClanLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanLib.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanLib.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212DF0FA347ED00D79AE9 /* ClanGUIStyleSilver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUIStyleSilver.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanGUIStyleSilver.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E00FA347ED00D79AE9 /* ClanGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUI.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanGUI.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E10FA347ED00D79AE9 /* ClanGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGL.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanGL.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E20FA347ED00D79AE9 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/Ogg.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E30FA347ED00D79AE9 /* libpng.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libpng.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/libpng.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E40FA347ED00D79AE9 /* libjpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libjpeg.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/libjpeg.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E50FA347ED00D79AE9 /* ClanVorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanVorbis.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanVorbis.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E60FA347ED00D79AE9 /* ClanSound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanSound.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanSound.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E70FA347ED00D79AE9 /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/Vorbis.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E80FA347ED00D79AE9 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212E90FA347ED00D79AE9 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
+		5D0212EA0FA347ED00D79AE9 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-1.0/Frameworks/Deployment/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
+		5D0216EF0FA3509700D79AE9 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		5D0216F00FA3509700D79AE9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		5D0A99900DA50B7E0072BDB0 /* StateAttack2.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateAttack2.cpp; sourceTree = "<group>"; };
 		5D0A99910DA50B7E0072BDB0 /* StateJump.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateJump.cpp; sourceTree = "<group>"; };
 		5D0A99920DA50B7E0072BDB0 /* StateRun.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StateRun.cpp; sourceTree = "<group>"; };
@@ -791,15 +638,6 @@
 		5D44FF860DFCBDF000E4F27D /* b2PulleyJoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = b2PulleyJoint.h; sourceTree = "<group>"; };
 		5D44FF870DFCBDF000E4F27D /* b2RevoluteJoint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = b2RevoluteJoint.cpp; sourceTree = "<group>"; };
 		5D44FF880DFCBDF000E4F27D /* b2RevoluteJoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = b2RevoluteJoint.h; sourceTree = "<group>"; };
-		5D4682D90B99265C00BC8CE7 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682DA0B99265C00BC8CE7 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682DB0B99265C00BC8CE7 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682DC0B99265C00BC8CE7 /* ClanGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGL.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanGL.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682DD0B99265C00BC8CE7 /* ClanGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUI.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanGUI.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682DE0B99265C00BC8CE7 /* ClanGUIStyleSilver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUIStyleSilver.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanGUIStyleSilver.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682DF0B99265C00BC8CE7 /* ClanLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanLib.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanLib.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682E00B99265C00BC8CE7 /* ClanSound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanSound.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanSound.framework"; sourceTree = SOURCE_ROOT; };
-		5D4682E10B99265C00BC8CE7 /* ClanVorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanVorbis.framework; path = "../../../../dev/ClanLib-0.8/build/Development/ClanVorbis.framework"; sourceTree = SOURCE_ROOT; };
 		5D58A79F0A15832C005974C1 /* lapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lapi.c; sourceTree = "<group>"; };
 		5D58A7A00A15832C005974C1 /* lauxlib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lauxlib.c; sourceTree = "<group>"; };
 		5D58A7A10A15832C005974C1 /* lbaselib.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = lbaselib.c; sourceTree = "<group>"; };
@@ -894,6 +732,8 @@
 		5D8109200AD6220D004605B8 /* stylemanager_Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = stylemanager_Bitmap.cpp; path = GUIStyleBitmap/stylemanager_Bitmap.cpp; sourceTree = "<group>"; };
 		5D8109210AD6220D004605B8 /* window_Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = window_Bitmap.cpp; path = GUIStyleBitmap/window_Bitmap.cpp; sourceTree = "<group>"; };
 		5D869C610D695F07000A7433 /* DataEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DataEditor.cpp; sourceTree = "<group>"; };
+		5D86B7CA0F9C30570047E0C1 /* BrainDoomWall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrainDoomWall.cpp; sourceTree = "<group>"; };
+		5D86B7CB0F9C30570047E0C1 /* BrainLife.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrainLife.cpp; sourceTree = "<group>"; };
 		5D8776D80A15555400363BAA /* AppUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AppUtils.cpp; sourceTree = "<group>"; };
 		5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BaseGameEntity.cpp; sourceTree = "<group>"; };
 		5D8776DB0A15555400363BAA /* BaseGameEntity.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BaseGameEntity.h; sourceTree = "<group>"; };
@@ -1084,12 +924,6 @@
 		5DC0BD4A0BA7E1D80004DD83 /* L_Vector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = L_Vector.h; path = ../../../SharedLib/linearparticle/sources/L_Vector.h; sourceTree = SOURCE_ROOT; };
 		5DC415F00A1B33AA00E9A026 /* AppPrecomp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AppPrecomp.cpp; path = ../source/AppPrecomp.cpp; sourceTree = SOURCE_ROOT; };
 		5DC415F10A1B33AA00E9A026 /* appPrecomp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = appPrecomp.h; path = ../source/appPrecomp.h; sourceTree = SOURCE_ROOT; };
-		5DCC34A70A1C86A200886F30 /* libjpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libjpeg.framework; path = "../../../../dev/Clanlib-0.8/Frameworks/libjpeg.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC34A80A1C86A200886F30 /* libpng.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libpng.framework; path = "../../../../dev/Clanlib-0.8/Frameworks/libpng.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC34A90A1C86A200886F30 /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = "../../../../dev/Clanlib-0.8/Frameworks/Ogg.framework"; sourceTree = SOURCE_ROOT; };
-		5DCC34AA0A1C86A200886F30 /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = "../../../../dev/Clanlib-0.8/Frameworks/Vorbis.framework"; sourceTree = SOURCE_ROOT; };
-		5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
-		5DCDB1F80A19FA810043DCFA /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /Developer/SDKs/MacOSX10.4u.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
 		5DCDB2860A19FEAA0043DCFA /* novashell.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DCFC4990AC7368D00B9147B /* Goal_Delay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_Delay.h; path = AI/Goal_Delay.h; sourceTree = "<group>"; };
 		5DCFC49A0AC7368D00B9147B /* Goal_MoveToPosition.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_MoveToPosition.h; path = AI/Goal_MoveToPosition.h; sourceTree = "<group>"; };
@@ -1099,15 +933,6 @@
 		5DCFC49E0AC7368D00B9147B /* Goal_Types.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal_Types.h; path = AI/Goal_Types.h; sourceTree = "<group>"; };
 		5DCFC49F0AC7368D00B9147B /* Goal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Goal.h; path = AI/Goal.h; sourceTree = "<group>"; };
 		5DCFC4A00AC7368D00B9147B /* GraphAlgorithms.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = GraphAlgorithms.h; path = AI/GraphAlgorithms.h; sourceTree = "<group>"; };
-		5DD105990AF25BE800C448F3 /* ClanVorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanVorbis.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanVorbis.framework"; sourceTree = SOURCE_ROOT; };
-		5DD1059E0AF25BE800C448F3 /* ClanSound.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanSound.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanSound.framework"; sourceTree = SOURCE_ROOT; };
-		5DD1059F0AF25BE800C448F3 /* ClanGUIStyleSilver.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUIStyleSilver.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanGUIStyleSilver.framework"; sourceTree = SOURCE_ROOT; };
-		5DD105A00AF25BE800C448F3 /* ClanGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGUI.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanGUI.framework"; sourceTree = SOURCE_ROOT; };
-		5DD105A10AF25BE800C448F3 /* ClanGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanGL.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanGL.framework"; sourceTree = SOURCE_ROOT; };
-		5DD105A20AF25BE800C448F3 /* ClanLib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanLib.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanLib.framework"; sourceTree = SOURCE_ROOT; };
-		5DD105A30AF25BE800C448F3 /* ClanApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanApp.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanApp.framework"; sourceTree = SOURCE_ROOT; };
-		5DD105A40AF25BE800C448F3 /* ClanCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanCore.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanCore.framework"; sourceTree = SOURCE_ROOT; };
-		5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ClanDisplay.framework; path = "../../../../dev/ClanLib-0.8/build/Deployment/ClanDisplay.framework"; sourceTree = SOURCE_ROOT; };
 		5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainFadeIn.cpp; sourceTree = "<group>"; };
 		5DEB6E200B168AEF00D74729 /* BrainBob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BrainBob.cpp; sourceTree = "<group>"; };
 		8D0C4E970486CD37000505A6 /* novashell_debug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = novashell_debug.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1118,21 +943,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DCDB2810A19FEAA0043DCFA /* CoreAudio.framework in Frameworks */,
-				5DCDB2820A19FEAA0043DCFA /* OpenGL.framework in Frameworks */,
-				5DCC34AF0A1C86A200886F30 /* libjpeg.framework in Frameworks */,
-				5DCC34B00A1C86A200886F30 /* libpng.framework in Frameworks */,
-				5DCC34B10A1C86A200886F30 /* Ogg.framework in Frameworks */,
-				5DCC34B20A1C86A200886F30 /* Vorbis.framework in Frameworks */,
-				5DD105A60AF25BE900C448F3 /* ClanVorbis.framework in Frameworks */,
-				5DD105A70AF25BE900C448F3 /* ClanSound.framework in Frameworks */,
-				5DD105A80AF25BE900C448F3 /* ClanGUIStyleSilver.framework in Frameworks */,
-				5DD105A90AF25BE900C448F3 /* ClanGUI.framework in Frameworks */,
-				5DD105AA0AF25BE900C448F3 /* ClanGL.framework in Frameworks */,
-				5DD105AB0AF25BE900C448F3 /* ClanLib.framework in Frameworks */,
-				5DD105AC0AF25BE900C448F3 /* ClanApp.framework in Frameworks */,
-				5DD105AD0AF25BE900C448F3 /* ClanCore.framework in Frameworks */,
-				5DD105AE0AF25BE900C448F3 /* ClanDisplay.framework in Frameworks */,
+				5D0212EB0FA347ED00D79AE9 /* ClanLib.framework in Frameworks */,
+				5D0212EC0FA347ED00D79AE9 /* ClanGUIStyleSilver.framework in Frameworks */,
+				5D0212ED0FA347ED00D79AE9 /* ClanGUI.framework in Frameworks */,
+				5D0212EE0FA347ED00D79AE9 /* ClanGL.framework in Frameworks */,
+				5D0212EF0FA347ED00D79AE9 /* Ogg.framework in Frameworks */,
+				5D0212F00FA347ED00D79AE9 /* libpng.framework in Frameworks */,
+				5D0212F10FA347ED00D79AE9 /* libjpeg.framework in Frameworks */,
+				5D0212F20FA347ED00D79AE9 /* ClanVorbis.framework in Frameworks */,
+				5D0212F30FA347ED00D79AE9 /* ClanSound.framework in Frameworks */,
+				5D0212F40FA347ED00D79AE9 /* Vorbis.framework in Frameworks */,
+				5D0212F50FA347ED00D79AE9 /* ClanDisplay.framework in Frameworks */,
+				5D0212F60FA347ED00D79AE9 /* ClanCore.framework in Frameworks */,
+				5D0212F70FA347EE00D79AE9 /* ClanApp.framework in Frameworks */,
+				5D0216F10FA3509700D79AE9 /* Carbon.framework in Frameworks */,
+				5D0216F20FA3509700D79AE9 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1140,30 +965,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5DCDB1F90A19FA810043DCFA /* CoreAudio.framework in Frameworks */,
-				5DCDB1FA0A19FA810043DCFA /* OpenGL.framework in Frameworks */,
-				5DCC34AB0A1C86A200886F30 /* libjpeg.framework in Frameworks */,
-				5DCC34AC0A1C86A200886F30 /* libpng.framework in Frameworks */,
-				5DCC34AD0A1C86A200886F30 /* Ogg.framework in Frameworks */,
-				5DCC34AE0A1C86A200886F30 /* Vorbis.framework in Frameworks */,
-				5DD105AF0AF25BE900C448F3 /* ClanVorbis.framework in Frameworks */,
-				5DD105B00AF25BE900C448F3 /* ClanSound.framework in Frameworks */,
-				5DD105B10AF25BE900C448F3 /* ClanGUIStyleSilver.framework in Frameworks */,
-				5DD105B20AF25BE900C448F3 /* ClanGUI.framework in Frameworks */,
-				5DD105B30AF25BE900C448F3 /* ClanGL.framework in Frameworks */,
-				5DD105B40AF25BE900C448F3 /* ClanLib.framework in Frameworks */,
-				5DD105B50AF25BE900C448F3 /* ClanApp.framework in Frameworks */,
-				5DD105B60AF25BE900C448F3 /* ClanCore.framework in Frameworks */,
-				5DD105B70AF25BE900C448F3 /* ClanDisplay.framework in Frameworks */,
-				5D4684450B99265C00BC8CE7 /* ClanApp.framework in Frameworks */,
-				5D4684460B99265D00BC8CE7 /* ClanCore.framework in Frameworks */,
-				5D4684470B99265D00BC8CE7 /* ClanDisplay.framework in Frameworks */,
-				5D4684480B99265D00BC8CE7 /* ClanGL.framework in Frameworks */,
-				5D4684490B99265D00BC8CE7 /* ClanGUI.framework in Frameworks */,
-				5D46844A0B99265D00BC8CE7 /* ClanGUIStyleSilver.framework in Frameworks */,
-				5D46844B0B99265D00BC8CE7 /* ClanLib.framework in Frameworks */,
-				5D46844C0B99265D00BC8CE7 /* ClanSound.framework in Frameworks */,
-				5D46844D0B99265D00BC8CE7 /* ClanVorbis.framework in Frameworks */,
+				5D0211460FA33D9100D79AE9 /* ClanApp.framework in Frameworks */,
+				5D0211470FA33D9100D79AE9 /* ClanCore.framework in Frameworks */,
+				5D0211480FA33D9100D79AE9 /* ClanDisplay.framework in Frameworks */,
+				5D0211490FA33D9100D79AE9 /* ClanGL.framework in Frameworks */,
+				5D02114A0FA33D9100D79AE9 /* ClanGUI.framework in Frameworks */,
+				5D02114B0FA33D9100D79AE9 /* ClanGUIStyleSilver.framework in Frameworks */,
+				5D02114C0FA33D9200D79AE9 /* ClanLib.framework in Frameworks */,
+				5D02114D0FA33D9200D79AE9 /* ClanSound.framework in Frameworks */,
+				5D02114E0FA33D9200D79AE9 /* ClanVorbis.framework in Frameworks */,
+				5D02114F0FA33D9200D79AE9 /* libjpeg.framework in Frameworks */,
+				5D0211500FA33D9200D79AE9 /* libpng.framework in Frameworks */,
+				5D0211510FA33D9200D79AE9 /* Ogg.framework in Frameworks */,
+				5D0211520FA33D9200D79AE9 /* Vorbis.framework in Frameworks */,
+				5D0216F30FA3509700D79AE9 /* Carbon.framework in Frameworks */,
+				5D0216F40FA3509700D79AE9 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1182,6 +998,7 @@
 		20286C29FDCF999611CA2CEA /* novashell */ = {
 			isa = PBXGroup;
 			children = (
+				20286C2AFDCF999611CA2CEA /* Sources */,
 				20286C32FDCF999611CA2CEA /* Frameworks */,
 				20286C2CFDCF999611CA2CEA /* Resources */,
 				195DF8CFFE9D517E11CA2CBB /* Products */,
@@ -1214,18 +1031,38 @@
 		20286C32FDCF999611CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				20286C2AFDCF999611CA2CEA /* Sources */,
-				5D4682D80B9925CE00BC8CE7 /* Development */,
-				5DCC34A60A1C866D00886F30 /* Misc */,
-				5DCDB5E10A1A00150043DCFA /* Release */,
-				5DCC34A10A1C865500886F30 /* System */,
+				5D0216EF0FA3509700D79AE9 /* Carbon.framework */,
+				5D0216F00FA3509700D79AE9 /* OpenGL.framework */,
+				5D0211380FA33D4C00D79AE9 /* Development Frameworks */,
+				5DCDB5E10A1A00150043DCFA /* Deployment Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5D0211380FA33D4C00D79AE9 /* Development Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5D0211390FA33D9100D79AE9 /* ClanApp.framework */,
+				5D02113A0FA33D9100D79AE9 /* ClanCore.framework */,
+				5D02113B0FA33D9100D79AE9 /* ClanDisplay.framework */,
+				5D02113C0FA33D9100D79AE9 /* ClanGL.framework */,
+				5D02113D0FA33D9100D79AE9 /* ClanGUI.framework */,
+				5D02113E0FA33D9100D79AE9 /* ClanGUIStyleSilver.framework */,
+				5D02113F0FA33D9100D79AE9 /* ClanLib.framework */,
+				5D0211400FA33D9100D79AE9 /* ClanSound.framework */,
+				5D0211410FA33D9100D79AE9 /* ClanVorbis.framework */,
+				5D0211420FA33D9100D79AE9 /* libjpeg.framework */,
+				5D0211430FA33D9100D79AE9 /* libpng.framework */,
+				5D0211440FA33D9100D79AE9 /* Ogg.framework */,
+				5D0211450FA33D9100D79AE9 /* Vorbis.framework */,
+			);
+			name = "Development Frameworks";
 			sourceTree = "<group>";
 		};
 		5D1A384D0A382D17005FF1C0 /* Brains */ = {
 			isa = PBXGroup;
 			children = (
+				5DD5EE8D0FA2F961005B98E8 /* Custom */,
 				5D253BE60B97FA420005D295 /* BrainScale.cpp */,
 				5D7A78220B757DC0003C896A /* BrainForceVisual.cpp */,
 				5DD4D53F0B4B5B47009E3C24 /* BrainFadeIn.cpp */,
@@ -1363,22 +1200,6 @@
 				5D44FF880DFCBDF000E4F27D /* b2RevoluteJoint.h */,
 			);
 			path = Joints;
-			sourceTree = "<group>";
-		};
-		5D4682D80B9925CE00BC8CE7 /* Development */ = {
-			isa = PBXGroup;
-			children = (
-				5D4682D90B99265C00BC8CE7 /* ClanApp.framework */,
-				5D4682DA0B99265C00BC8CE7 /* ClanCore.framework */,
-				5D4682DB0B99265C00BC8CE7 /* ClanDisplay.framework */,
-				5D4682DC0B99265C00BC8CE7 /* ClanGL.framework */,
-				5D4682DD0B99265C00BC8CE7 /* ClanGUI.framework */,
-				5D4682DE0B99265C00BC8CE7 /* ClanGUIStyleSilver.framework */,
-				5D4682DF0B99265C00BC8CE7 /* ClanLib.framework */,
-				5D4682E00B99265C00BC8CE7 /* ClanSound.framework */,
-				5D4682E10B99265C00BC8CE7 /* ClanVorbis.framework */,
-			);
-			name = Development;
 			sourceTree = "<group>";
 		};
 		5D5BCA8E0AB5503B004C08CE /* AI */ = {
@@ -1707,43 +1528,23 @@
 			name = lua;
 			sourceTree = "<group>";
 		};
-		5DCC34A10A1C865500886F30 /* System */ = {
-			isa = PBXGroup;
-			children = (
-				5DCDB1F70A19FA810043DCFA /* CoreAudio.framework */,
-				5DCDB1F80A19FA810043DCFA /* OpenGL.framework */,
-			);
-			name = System;
-			sourceTree = "<group>";
-		};
-		5DCC34A60A1C866D00886F30 /* Misc */ = {
-			isa = PBXGroup;
-			children = (
-				5DCC34A70A1C86A200886F30 /* libjpeg.framework */,
-				5DCC34A80A1C86A200886F30 /* libpng.framework */,
-				5DCC34A90A1C86A200886F30 /* Ogg.framework */,
-				5DCC34AA0A1C86A200886F30 /* Vorbis.framework */,
-			);
-			name = Misc;
-			sourceTree = "<group>";
-		};
 		5DCDB01D0A19ADF70043DCFA /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				5D5BCA8E0AB5503B004C08CE /* AI */,
+				5D1A384D0A382D17005FF1C0 /* Brains */,
+				5D9682980A5DF7A80015B20A /* States */,
 				5D869C610D695F07000A7433 /* DataEditor.cpp */,
 				5D669E560B858C18003EE62C /* EntMapCache.cpp */,
 				5D8105120AD620CA004605B8 /* EntChoiceDialog.cpp */,
 				5D6605890ABFCECE00892168 /* EntCreationUtils.cpp */,
 				5D66058A0ABFCECE00892168 /* EntWorldDialog.cpp */,
-				5D5BCA8E0AB5503B004C08CE /* AI */,
-				5D9682980A5DF7A80015B20A /* States */,
 				5D9682850A5DF79A0015B20A /* Trigger.cpp */,
 				5D8777360A15555400363BAA /* TileEditOperation.cpp */,
 				5D8776FA0A15555400363BAA /* GeneratorDink.cpp */,
 				5D8776FD0A15555400363BAA /* GeneratorSimple.cpp */,
 				5D8776DA0A15555400363BAA /* BaseGameEntity.cpp */,
 				5D8776DB0A15555400363BAA /* BaseGameEntity.h */,
-				5D1A384D0A382D17005FF1C0 /* Brains */,
 				5D8776EA0A15555400363BAA /* EntChooseScreenMode.cpp */,
 				5D8776EB0A15555400363BAA /* EntChooseScreenMode.h */,
 				5D8776EC0A15555400363BAA /* EntCollisionEditor.cpp */,
@@ -1779,20 +1580,24 @@
 			name = Script;
 			sourceTree = "<group>";
 		};
-		5DCDB5E10A1A00150043DCFA /* Release */ = {
+		5DCDB5E10A1A00150043DCFA /* Deployment Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5DD105990AF25BE800C448F3 /* ClanVorbis.framework */,
-				5DD1059E0AF25BE800C448F3 /* ClanSound.framework */,
-				5DD1059F0AF25BE800C448F3 /* ClanGUIStyleSilver.framework */,
-				5DD105A00AF25BE800C448F3 /* ClanGUI.framework */,
-				5DD105A10AF25BE800C448F3 /* ClanGL.framework */,
-				5DD105A20AF25BE800C448F3 /* ClanLib.framework */,
-				5DD105A30AF25BE800C448F3 /* ClanApp.framework */,
-				5DD105A40AF25BE800C448F3 /* ClanCore.framework */,
-				5DD105A50AF25BE800C448F3 /* ClanDisplay.framework */,
+				5D0212DE0FA347ED00D79AE9 /* ClanLib.framework */,
+				5D0212DF0FA347ED00D79AE9 /* ClanGUIStyleSilver.framework */,
+				5D0212E00FA347ED00D79AE9 /* ClanGUI.framework */,
+				5D0212E10FA347ED00D79AE9 /* ClanGL.framework */,
+				5D0212E20FA347ED00D79AE9 /* Ogg.framework */,
+				5D0212E30FA347ED00D79AE9 /* libpng.framework */,
+				5D0212E40FA347ED00D79AE9 /* libjpeg.framework */,
+				5D0212E50FA347ED00D79AE9 /* ClanVorbis.framework */,
+				5D0212E60FA347ED00D79AE9 /* ClanSound.framework */,
+				5D0212E70FA347ED00D79AE9 /* Vorbis.framework */,
+				5D0212E80FA347ED00D79AE9 /* ClanDisplay.framework */,
+				5D0212E90FA347ED00D79AE9 /* ClanCore.framework */,
+				5D0212EA0FA347ED00D79AE9 /* ClanApp.framework */,
 			);
-			name = Release;
+			name = "Deployment Frameworks";
 			sourceTree = "<group>";
 		};
 		5DCDB81D0A1AE5080043DCFA /* Data */ = {
@@ -1838,6 +1643,15 @@
 				5D87773E0A15555400363BAA /* VisualProfileManager.cpp */,
 			);
 			name = Managers;
+			sourceTree = "<group>";
+		};
+		5DD5EE8D0FA2F961005B98E8 /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				5D86B7CA0F9C30570047E0C1 /* BrainDoomWall.cpp */,
+				5D86B7CB0F9C30570047E0C1 /* BrainLife.cpp */,
+			);
+			name = Custom;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2129,6 +1943,8 @@
 				5D442B650DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */,
 				5D6B95BD0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */,
 				5D7E6E4B0F4CFD260087B781 /* WorldPackager.cpp in Sources */,
+				5D86B7CE0F9C30570047E0C1 /* BrainDoomWall.cpp in Sources */,
+				5D86B7CF0F9C30570047E0C1 /* BrainLife.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2342,6 +2158,8 @@
 				5D442B630DFCD25D00E4F27D /* PhysicsManager.cpp in Sources */,
 				5D6B95BB0E19EC9E00B67FE8 /* DrawManager.cpp in Sources */,
 				5D7E6E4A0F4CFD260087B781 /* WorldPackager.cpp in Sources */,
+				5D86B7CC0F9C30570047E0C1 /* BrainDoomWall.cpp in Sources */,
+				5D86B7CD0F9C30570047E0C1 /* BrainLife.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2366,10 +2184,22 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../dev/ClanLib-0.8/build/Deployment\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../../../dev/ClanLib-0.8/MacOSX\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../../../../dev/ClanLib-0.8/build/Deployment\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks/Deployment\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks/Deployment\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/MacOSX\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks/Deployment\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -2410,10 +2240,20 @@
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_2)",
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../dev/ClanLib-0.8/MacOSX\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(SRCROOT)/../../../../dev/ClanLib-0.8/build/Deployment\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_3 = "\"$(SRCROOT)/../../../../dev/ClanLib-0.8/build/Development\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks/Development\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/MacOSX\"";
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../../dev/ClanLib-1.0/Frameworks/Development\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;

@@ -11,6 +11,17 @@ Pause()
 
 echo Packing release
 cd ../mac
+
+#update our mac app with mac distribution stuff and the latest windows binaries
+mkdir build/Default/novashell.app/Contents/Resources/packaging
+mkdir build/Default/novashell.app/Contents/Resources/packaging/mac
+cp -R /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac/Resources build/Default/novashell.app/Contents/Resources/packaging/mac
+cp /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac/Info.plist build/Default/novashell.app/Contents/Resources/packaging/mac
+cp /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac/Pkginfo build/Default/novashell.app/Contents/Resources/packaging/mac
+
+cp -R /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/win build/Default/novashell.app/Contents/Resources/packaging
+
+
 mkdir dist
 
 #clean out the old one
@@ -18,6 +29,7 @@ rm -R ./dist/novashell.app
 #copy in the new one
 echo Copying files to dist folder
 cp -R build/Default/novashell.app ./dist
+
 
 rm ./novashell.dmg
 #hdiutil internet-enable -yes novashell.dmg

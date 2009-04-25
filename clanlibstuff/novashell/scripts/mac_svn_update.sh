@@ -13,7 +13,7 @@ Pause()
 #sh mac_update_clanlib_manually.sh
 
 echo Updating Clanlib from SVN
-cd ~/dev/ClanLib-0.8
+cd ~/dev/ClanLib-1.0
 svn update
 
 echo Building clanlib...
