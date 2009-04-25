@@ -57,12 +57,12 @@ string GetNextLineFromFile(CL_InputSource *pInput)
 
 int random(int range)
 {
-	return static_cast<int>(double(rand()) / (RAND_MAX+1) * range);
+	return static_cast<int>(double(rand()) / (RAND_MAX) * range);
 }
 
 int random_range(int rangeMin, int rangeMax)
 {
-	return static_cast<int>(double(rand()) / RAND_MAX * (rangeMax-rangeMin)+rangeMin);
+	return static_cast<int>(double(rand()) / RAND_MAX * (rangeMax+1-rangeMin)+rangeMin);
 }
 
 

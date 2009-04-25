@@ -1,3 +1,8 @@
+** Novashell notes **
+
+* LINUX: Doesn't work with Syngergy mouse/keyboard controller very well...
+
+
 ** To build Novashell from source **
 
 ** WINDOWS **

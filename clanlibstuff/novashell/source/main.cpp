@@ -397,6 +397,7 @@ void App::OneTimeInit()
 	SetActiveWindow(m_Hwnd);
 #endif
 	g_inputManager.OneTimeInit();
+
 }
        
 bool App::SetScreenSize(int x, int y)
