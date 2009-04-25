@@ -29,7 +29,8 @@ novashell_SOURCES = AppPrecomp.cpp AppUtils.cpp AppUtils.h BaseGameEntity.cpp \
 				EffectManagerBindings.cpp EffectManagerBindings.h EffectManager.cpp EffectManager.h \
 			DataEditor.cpp DataEditor.h ScriptCallbackManager.cpp ScriptCallbackManager.h \
 	StateAttack2.cpp StateAttack2.h StateJump.cpp StateJump.h StateRun.cpp StateRun.h NovaZip.cpp \
-	StateSpecial1.cpp StateSpecial1.h StateTurn.cpp StateTurn.h PhysicsManager.cpp DebugDraw.cpp DrawManager.cpp WorldPackager.cpp \
+	StateSpecial1.cpp StateSpecial1.h StateTurn.cpp StateTurn.h PhysicsManager.cpp DebugDraw.cpp DrawManager.cpp \
+	BrainDoomWall.cpp BrainLife.cpp WorldPackager.cpp \
 	$(top_srcdir)/../../SharedLib/misc/CL_VirtualFileManager.cpp $(top_srcdir)/../../SharedLib/misc/MiscUtils.cpp \
 	$(top_srcdir)/../../SharedLib/misc/CL_SoundManager.cpp
 
