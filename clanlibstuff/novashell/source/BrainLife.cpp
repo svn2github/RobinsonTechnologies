@@ -26,7 +26,7 @@ void BrainLife::OnRemove()
 }
 void BrainLife::OnAdd()
 {
-	m_gridSizeSide = 200;
+	m_gridSizeSide = 100;
 	m_cellSize = 10;
 	m_gridSizeTotal = m_gridSizeSide*m_gridSizeSide;
 	m_grid.clear();
@@ -36,7 +36,7 @@ void BrainLife::OnAdd()
 	m_thinkSpeedMS = 1;
 
 	m_thinkTimer = 50;
-	AddRandomCells(1500);
+	AddRandomCells(700);
 
 }
 
@@ -84,10 +84,7 @@ void BrainLife::Update(float step)
 
 			}
 		}
-		
-
 	}
-
 }
 
 

@@ -2,7 +2,7 @@
 
 ** WINDOWS **
 
-Install or checkout Clanlib 0.8.3 or latest svn  Also download the related precompiled
+Install or checkout Clanlib 1.0.x (not 2.0) from the latest svn  Also download the related precompiled
 binaries you will need from here:  http://clanlib.org/download-binaries-win32-vc80.html
 
 Make sure the examples work ok and everything compiles.
@@ -56,7 +56,7 @@ SET _FTP_PASS_= password
 
 ** OSX **
 
-Checkout Clanlib 0.8.3+from SVN from www.clanlib.org.  Also download the related precompiled
+Checkout Clanlib 1.0.x from SVN from www.clanlib.org.  Also download the related precompiled
 binaries you will need from here: http://clanlib.org/download-binaries-osx-gcc40-universal.html
 
 After checking out the Novashell SVN tree, open clanlibstuff/novashell/mac/novashell.xcodeproj, you may need to
@@ -68,7 +68,7 @@ it up into a dmg and upload it.  You'd have to edit the scripts involved to get 
 
 ** LINUX **
 
-Checkout Clanlib 0.8.3 from SVN from www.clanlib.org.  You'll also need to grab the additional libs clanlib needs, but
+Checkout Clanlib 1.0.0 from SVN from www.clanlib.org.  You'll also need to grab the additional libs clanlib needs, but
 hey, you're a linux guy, you can probably figure out the dependencies.
 
 Run the its automake stuff and do "make install".

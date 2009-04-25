@@ -37,12 +37,12 @@ novashell_SOURCES = AppPrecomp.cpp AppUtils.cpp AppUtils.h BaseGameEntity.cpp \
 # set the include path found by configure
 INCLUDES = -I$(top_srcdir)/../../SharedLib -I$(top_srcdir)/../../SharedLib/lua 	-I$(top_srcdir)/../../SharedLib/lua/src \
 -I$(top_srcdir)/../../SharedLib/luabind -I$(top_srcdir)/../../SharedLib/misc 	-I$(top_srcdir)/source \
--I$(top_srcdir)/source/AI -I/usr/local/include/ClanLib-0.8 $(all_includes)
+-I$(top_srcdir)/source/AI -I/usr/local/include/ClanLib-1.0 $(all_includes)
 
 # the library search path.
 
 
-novashell_LDFLAGS = $(all_libraries) `pkg-config --cflags --libs clanApp-0.8 clanCore-0.8 clanDisplay-0.8 clanGL-0.8 clanVorbis-0.8 clanGUIStyleSilver-0.8`
+novashell_LDFLAGS = $(all_libraries) `pkg-config --cflags --libs clanApp-1.0 clanCore-1.0 clanDisplay-1.0 clanGL-1.0 clanVorbis-1.0 clanGUIStyleSilver-1.0`
 novashell_LDADD =  \
 	$(top_builddir)/source/GUIStyleBitmap/libGuiStyleBitmap.a $(top_builddir)/source/AI/libAI.a \
 	$(top_builddir)/../../SharedLib/linearparticle/sources/libeffects.a \
