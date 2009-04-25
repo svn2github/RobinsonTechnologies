@@ -24,6 +24,7 @@ public:
 	virtual void Update(float step);
 	virtual const char * GetName() {return "Life";};
 	virtual Brain * CreateInstance(MovingEntity *pParent) {return new BrainLife(pParent);}
+	virtual void HandleMsg(const string &msg);
 
 	virtual void Render(void *pTarget);
 	virtual void OnAdd(); //called once when brain is inserted
@@ -36,6 +37,7 @@ private:
 
 	int GetCellIndex(int x, int y) {return y*m_gridSizeSide+x;}
 	void AddRandomCells(int count);
+	void Init(int gridSizeSide, int cellSize);
 
 	vector<bool> m_grid;
 	vector<bool> m_gridBack; //think of it like a video flipping chain?

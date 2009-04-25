@@ -26,18 +26,21 @@ void BrainLife::OnRemove()
 }
 void BrainLife::OnAdd()
 {
-	m_gridSizeSide = 100;
-	m_cellSize = 10;
+	m_pParent->SetAlignment(origin_top_left, CL_Vector2(0,0));
+	m_thinkSpeedMS = 1;
+	Init(100, 10);
+	
+}
+
+void BrainLife::Init(int gridSizeSide, int cellSize)
+{
+	m_gridSizeSide = gridSizeSide;
+	m_cellSize = cellSize;
 	m_gridSizeTotal = m_gridSizeSide*m_gridSizeSide;
 	m_grid.clear();
 	m_grid.resize(m_gridSizeTotal, false);
-	m_pParent->SetAlignment(origin_top_left, CL_Vector2(0,0));
 	m_pParent->SetSizeOverride(true, CL_Vector2(m_gridSizeSide*m_cellSize,m_gridSizeSide*m_cellSize));
-	m_thinkSpeedMS = 1;
-
-	m_thinkTimer = 50;
-	AddRandomCells(700);
-
+	m_thinkTimer = GetApp()->GetGameTick() + m_thinkSpeedMS;
 }
 
 void BrainLife::Update(float step)
@@ -138,3 +141,42 @@ void BrainLife::AddRandomCells(int count)
 		m_grid[GetCellIndex(x,y)] = true;
 	}
 }
+
+
+void BrainLife::HandleMsg(const string &msg)
+{
+	vector<string> messages = CL_String::tokenize(msg, ";",true);
+
+	for (unsigned int i=0; i < messages.size(); i++)
+	{
+		vector<string> words = CL_String::tokenize(messages[i], "=",true);
+		
+			if (words[0] == "init")
+			{
+				Init(CL_String::to_int(words[1]), CL_String::to_int(words[2]));
+
+			} else
+				if (words[0] == "add_random")
+				{
+					
+					AddRandomCells(CL_String::to_int(words[1]));
+
+				} else
+					if (words[0] == "set_cell")
+					{
+						m_grid[GetCellIndex(CL_String::to_int(words[1]), CL_String::to_int(words[2]))] = CL_String::to_bool( words[3]);
+
+					} else
+						if (words[0] == "set_update_ms")
+						{
+							m_thinkSpeedMS = CL_String::to_int(words[1]);
+							m_thinkTimer = GetApp()->GetGameTick()+m_thinkSpeedMS;
+
+						} else
+
+					{
+						LogMsg("Brain %s doesn't understand keyword %s", GetName(), words[0].c_str());
+					}
+	}
+}
+
