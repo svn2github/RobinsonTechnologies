@@ -155,6 +155,31 @@ unsigned int App::GetUniqueNumber()
 	return ++m_uniqueNum;
 }
 
+
+CL_Vector2 GetOriginalScreenSizeOfOS()
+{
+	CL_Vector2 vScreenSize(0,0);
+
+#ifdef _WIN32
+
+	RECT desktop;  
+	// Get a handle to the desktop window  
+	const HWND hDesktop = GetDesktopWindow();  
+	// Get the size of screen to the variable desktop  
+	GetWindowRect(hDesktop, &desktop);  
+	vScreenSize.x = desktop.right;  
+	vScreenSize.y = desktop.bottom;  
+#endif
+
+#ifdef __APPLE__
+
+	??!!
+
+#endif
+
+		return vScreenSize;
+}
+
 void App::OneTimeDeinit()
 {
 	SavePrefs();
@@ -222,6 +247,7 @@ bool App::VidModeIsSupported(CL_Size vidMode, int bit)
 void App::OneTimeInit()
 {
     //initialize our main window
+	m_originalScreensize = GetOriginalScreenSizeOfOS();
 
 	bool bFullscreen = !CL_String::to_bool(m_prefs.Get("start_in_windowed_mode"));
 	
@@ -1220,6 +1246,23 @@ CL_Vector2 App::GetScreenSize()
 	return CL_Vector2(m_WindowDescription.get_size().width, m_WindowDescription.get_size().height);
 }
 
+bool App::GetIsWindowed()
+{
+	return !CL_Display::is_fullscreen();
+	
+}
+
+void App::SetIsWindowed( bool bNew )
+{
+	if (bNew != App::GetIsWindowed())
+	{
+		RequestToggleFullscreen();
+	}
+}
+
+
+
+
 //lua natural docs stuff
 /*
 Object: App
@@ -1289,6 +1332,7 @@ Vector2 GetScreenSize()
 
 Returns a <Vector2> object with the current screen size.
 
+
 func: SetScreenSize
 (code)
 boolean SetScreenSize(number x, number y);
@@ -1304,6 +1348,29 @@ y - The desired screen height
 Returns:
 
 True on success.  Except it doesn't detect errors yet, so I guess always true.
+
+func: GetPreLaunchScreenSize
+(code)
+Vector2 GetPreLaunchScreenSize()
+(end)
+
+Returns a <Vector2> object with the size of the screen before novashell was launched. Returns 0,0 if unsupported on the current OS.
+
+func: GetIsWindowed
+(code)
+boolean GetIsWindowed()
+(end)
+
+Returns:
+
+Returns true if the screen is currently in windowed mode
+
+func: SetIsWindowed
+(code)
+nil SetIsWindowed(boolean bWindowed)
+(end)
+
+Changes the video resolution to full screen or windowed mode.  Up to you to make sure the video card can handle it currently...
 
 func: ParmExists
 (code)

@@ -241,8 +241,9 @@ Section "Uninstall"
 MessageBox MB_YESNO "Would you like to also delete pres, all world data and saved games? (warning: if you made changes or added worlds, they will be deleted)" IDNO skip_it 
 RMDir /r "$INSTDIR\worlds"
 RMDir /r "$INSTDIR\profiles"
+Delete "$INSTDIR\prefs.dat"
+
 RMDir "$INSTDIR"
- Delete "$INSTDIR\prefs.dat"
 skip_it:
 
   ;start of restore script

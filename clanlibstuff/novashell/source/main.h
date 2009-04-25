@@ -158,6 +158,9 @@ public:
 	Camera * GetMyCamera() {return m_pCamera;}
 	void RequestAppExit();
 	void RequestToggleFullscreen();
+	bool GetIsWindowed();
+	void SetIsWindowed(bool bNew);
+
 	unsigned int GetUniqueNumber(); //it will start at 1
 	float GetGameSpeed() {return m_baseGameSpeed;}
 	float GetGameLogicSpeed() {return m_baseLogicMhz;}
@@ -183,6 +186,7 @@ public:
 	eVideoRefresh GetRefreshType() {return m_videoflipStyle;}
 	bool ActivateVideoRefresh(bool bFullscreen);
 	bool SetScreenSize(int x, int y);
+	
 	int GetFPS() {if (m_pFrameRate) return m_pFrameRate->get_fps(); else return 0;};
 
 	bool GetRenderedGameGUI() {return m_bRenderedGameGUI;}
@@ -205,6 +209,7 @@ public:
 	int GetScreenSizeX();
 	int GetScreenSizeY();
 	CL_Vector2 GetScreenSize();
+	CL_Vector2 GetPrelaunchScreenSize() {return m_originalScreensize; }
 
 private:
 	void SetSoundSystem(int soundSystem) {m_soundSystem = soundSystem;}
@@ -277,6 +282,7 @@ private:
 	DataManager m_prefs;
 	ScriptCallbackManager m_videoCallback;
 	bool m_notifyOfScreenChange;
+	CL_Vector2 m_originalScreensize;
 };
 
 extern App MyApp;

@@ -498,6 +498,12 @@ myColor = Color(255,255,255,255);
 		.def("GetSimulationSpeedMod", &App::GetSimulationSpeedMod)
 		.def("SetScreenSize", &App::SetScreenSize)
 		.def("GetScreenSize", &App::GetScreenSize)
+		.def("GetPreLaunchScreenSize", &App::GetPrelaunchScreenSize)
+
+		.def("GetIsWindowed", &App::GetIsWindowed)
+		.def("SetIsWindowed", &App::SetIsWindowed)
+
+
 		.def("GetEngineVersion", &App::GetEngineVersion)
 		.def("GetEngineVersionAsString", &App::GetEngineVersionAsString)
 		.def("SetWindowTitle", &App::SetWindowTitle)

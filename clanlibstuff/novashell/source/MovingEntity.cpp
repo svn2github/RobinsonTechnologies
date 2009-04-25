@@ -1056,14 +1056,17 @@ CL_Rectf MovingEntity::GetBoundsRectf()
 		vPos.x + sizeX*m_pTile->GetScale().x, vPos.y + sizeY* m_pTile->GetScale().y);
 
 
+	r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , -y* m_pTile->GetScale().y);
+	//r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , -y* m_pTile->GetScale().y);
+	/*
 	//I have no idea why I need this as a special case??? But also too lazy to look into it.
 	if (o == origin_top_left)
 	{
-		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , y* m_pTile->GetScale().y);
 	} else
 	{
 		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , -y* m_pTile->GetScale().y);
 	}
+	*/
 
 	return r;
 }

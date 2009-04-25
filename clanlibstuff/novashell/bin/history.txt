@@ -7,6 +7,16 @@ new collision features soon, like true circle shapes
 
 Changelog
 
+4-25
+
+* Added Vector2 App:GetPreLaunchScreenSize()
+* Added GetIsScreenWindowed()
+* Added SetIsScreenWindowed()
+* SERIOUS CHANGE: A clanlib bug with alignment in its CL_Surface broke every Novashell .xml that used the upper-left alignment - all Y's had
+to be reversed.  Using a text editor it was pretty easy to fix all the examples, but keep this in mind if something you made before isn't aligning
+right.
+* Now setup to use ClanLib V1.00, which is the new name for 0.8.x
+
 4-20 2009
 
 * BUGFIX: Serious bug fixed with detecting if a script needed to be freshly compiled or not

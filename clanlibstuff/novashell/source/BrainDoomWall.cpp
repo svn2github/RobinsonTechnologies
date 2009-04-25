@@ -234,8 +234,8 @@ void BrainDoomWall::SetupForCustomRender()
 {
 	CL_Display::flush();
 	
-	glEnable(GL_DEPTH_TEST);				// Enables Depth Testing
-	glClear(GL_DEPTH_BUFFER_BIT);		// Clear The Screen And The Depth Buffer
+	glEnable(GL_DEPTH_TEST);				
+	glClear(GL_DEPTH_BUFFER_BIT);		
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 
