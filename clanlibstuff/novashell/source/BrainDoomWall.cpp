@@ -39,8 +39,8 @@ void BrainDoomWall::ChangeRandomCells(int count, bool bNew)
 		//x = random_range(m_gridSizeSide);
 		//y = random(m_gridSizeSide);
 
-		x = random_range(1, m_gridSizeSide-1);
-		y = random_range(1, m_gridSizeSide-1);
+		x = random_range(1, m_gridSizeSide-2);
+		y = random_range(1, m_gridSizeSide-2);
 		m_grid[GetCellIndex(x,y)] = bNew;
 	}
 }
@@ -161,7 +161,7 @@ void BrainDoomWall::CountShapeCells()
 	}
 }
 
-void RenderCube(float x, float y, float z, float size, CL_Color col = CL_Color(255,255,255,255))
+void RenderCube(float x, float y, float z, float size, CL_Color col = CL_Color(255,255,255,255), bool *bEdgeInfo=NULL)
 {
 	size /= 2;
 
@@ -212,7 +212,28 @@ void RenderCube(float x, float y, float z, float size, CL_Color col = CL_Color(2
 			}
 		}
 	
-	glDrawArrays(GL_QUADS, 0, 4*6);
+	
+	if (bEdgeInfo && col.get_alpha() == 255)
+	{
+		const int topOffset = 4*2;
+		const int bottompOffset = 4*3;
+		const int rightOffset = 4*4;
+		const int leftOffset = 4*5;
+
+		glDrawArrays(GL_QUADS, 0, 4*2); //first just draw the top and bottom
+
+		//only render the sides that need it, to stop zfighting and allow stuff to look cooler
+		if (bEdgeInfo[0]) glDrawArrays(GL_QUADS, topOffset, 4); //first just draw the top and bottom
+		if (bEdgeInfo[1]) glDrawArrays(GL_QUADS, bottompOffset, 4); //first just draw the top and bottom
+		if (bEdgeInfo[2]) glDrawArrays(GL_QUADS, rightOffset, 4); //first just draw the top and bottom
+		if (bEdgeInfo[3]) glDrawArrays(GL_QUADS, leftOffset, 4); //first just draw the top and bottom
+	} else
+	{
+		glDrawArrays(GL_QUADS, 0, 4*6);
+	}
+
+	
+	
 	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
 	glEnable(GL_TEXTURE_2D);
 	glDisableClientState(GL_NORMAL_ARRAY);	
@@ -327,6 +348,19 @@ void BrainDoomWall::HandleMsg(const string &msg)
 	}
 }
 
+bool BrainDoomWall::BlockExistsAt(int x, int y)
+{
+	return (IsValidGridCoord(x,y) && m_grid[GetCellIndex(x,y)]);
+}
+
+void BrainDoomWall::ComputeEdgeDataForBlock(int x, int y, bool *bEdgeData)
+{
+	bEdgeData[0] = !BlockExistsAt(x,y-1);  //top
+	bEdgeData[1] = !BlockExistsAt(x,y+1);  //bottom
+	bEdgeData[2] = !BlockExistsAt(x+1,y); //right
+	bEdgeData[3] = !BlockExistsAt(x-1,y); //left
+}
+
 void BrainDoomWall::RenderWall(CL_Color c, float explodePercent)
 {
 	for (int x=0; x < m_gridSizeSide; x++)
@@ -337,7 +371,9 @@ void BrainDoomWall::RenderWall(CL_Color c, float explodePercent)
 			{
 				if (explodePercent == 0)
 				{
-					RenderCube(x*m_cellSize, y*m_cellSize, 0, m_cellSize, c);
+					bool bEdgeData[4];
+					ComputeEdgeDataForBlock(x,y, bEdgeData);
+					RenderCube(x*m_cellSize, y*m_cellSize, 0, m_cellSize, c, bEdgeData);
 				} else
 				{
 					//special way to explode...
@@ -634,7 +670,8 @@ std::string BrainDoomWall::HandleAskMsg( const string &msg )
 		
 			if (words[0] == "destroy_highlighted")
 		{
-			if (m_grid[GetCellIndex(m_highlight.x, m_highlight.y)])
+
+			if (m_grid.size() > 0 && m_grid[GetCellIndex(m_highlight.x, m_highlight.y)])
 			{
 				//let's do it
 				m_grid[GetCellIndex(m_highlight.x, m_highlight.y)] = false;

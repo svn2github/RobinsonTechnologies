@@ -55,9 +55,9 @@ void BrainLife::Update(float step)
 		m_thinkTimer = GetApp()->GetGameTick()+m_thinkSpeedMS;
 		int neighbors;
 		m_gridBack = m_grid;
-		for (int x=1; x < m_gridSizeSide-1; x++)
+		for (int x=1; x < m_gridSizeSide-2; x++)
 		{
-			for (int y=1; y < m_gridSizeSide-1; y++)
+			for (int y=1; y < m_gridSizeSide-2; y++)
 			{
 				neighbors = 0;
 				

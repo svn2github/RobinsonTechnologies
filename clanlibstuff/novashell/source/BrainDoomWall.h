@@ -53,6 +53,9 @@ void RenderPlay();
 void RenderWon();
 void RenderShape(CL_Color c);
 void RenderLose();
+void ComputeEdgeDataForBlock(int x, int y, bool *bEdgeData);
+bool BlockExistsAt(int x, int y);
+
 enum eMode
 {
 	MODE_PLAY,
