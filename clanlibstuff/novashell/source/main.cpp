@@ -173,7 +173,12 @@ CL_Vector2 GetOriginalScreenSizeOfOS()
 
 #ifdef __APPLE__
 
-	??!!
+	int w, h;
+	// screen width & height
+	w = CGDisplayPixelsWide(kCGDirectMainDisplay );
+	h = CGDisplayPixelsHigh(kCGDirectMainDisplay );
+
+	return CL_Vector2(w,h);
 
 #endif
 
@@ -248,7 +253,7 @@ void App::OneTimeInit()
 {
     //initialize our main window
 	m_originalScreensize = GetOriginalScreenSizeOfOS();
-
+	LogMsg("Original screensize detected as %.2f X %.2f", m_originalScreensize.x, m_originalScreensize.y);
 	bool bFullscreen = !CL_String::to_bool(m_prefs.Get("start_in_windowed_mode"));
 	
 	CL_Size vidMode = CL_Size(1024, 768);
