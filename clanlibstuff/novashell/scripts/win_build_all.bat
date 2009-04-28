@@ -18,4 +18,5 @@ if not exist %C_TARGET_EXE% beeper.exe /p
 
 REM Copy to the packing dir, not used for windows, but OSX/Linux want the exe here
 copy %C_TARGET_EXE% bin\packaging\win
-cd script
+cd scripts
+call DeleteGarbageFiles.bat

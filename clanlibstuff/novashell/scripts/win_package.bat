@@ -1,7 +1,7 @@
 REM ** Make sure american code page is used, otherwise the %DATE environmental var might be wrong
 CHCP 437
 
-call DeleteGarbageFiles.bat
+
 
 cd ..
 SET C_FILENAME=NovashellInstaller.exe

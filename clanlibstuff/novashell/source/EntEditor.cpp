@@ -935,6 +935,9 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	pItem = m_pMenu->create_item("Options/Map Properties");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::MapOptionsDialog);
 
+	pItem = m_pMenu->create_item("Options/World Global Properties");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGameGlobalProperties);
+
 	pItem = m_pMenu->create_item("Options/Profile Global Properties");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnWorldProperties);
 
@@ -1680,30 +1683,45 @@ void EntEditor::OnWorldProperties()
 	}
 	
 	DataEditor d;
-	d.Init("User Profile Global Properties", "This data area is global and automatically saved and loaded with the game.\r\n"\
+	
+	m_bDialogOpen = true;
+	d.Init("User Profile Global Properties", "This data area is global and automatically saved and loaded with the player profile.\r\n"\
 		"\r\nTo read or write this data by script, use GetGameLogic:Data() to return this as a DataManager object.\r\n"
 		"\r\nKey names starting with an underscore mean the engine needs these for its own use.",
 		GetGameLogic()->Data());
+	m_bDialogOpen = false;
 }
 
+void EntEditor::OnGameGlobalProperties()
+{
+m_bDialogOpen = true;
+	DataEditor d;
+	d.Init("World Global Properties", "This data area is global and automatically saved and loaded with the game.\r\n"\
+		"\r\nTo read or write this data by script, use GetGameLogic:WorldData() to return this as a DataManager object.\r\n"
+		"\r\nKey names starting with an underscore mean the engine needs these for its own use.",
+		GetGameLogic()->WorldData());
+	m_bDialogOpen = false;
+}
 
 void EntEditor::OnPreferences()
 {
-	
+	m_bDialogOpen = true;
 	DataEditor d;
 	d.Init("Novashell System Preferences", "This data is stored in the prefs.dat file.\r\n"\
-		"\r\nBy editing values, you can set the default video mode.\r\n" \
+		"\r\nBy editing values, you can set the default video mode. (or desktop for the desktop's size)\r\n" \
 		"\r\nParms starting with linux_, osx_, or windows_ mean they are only applicable to that particular system.\r\n" \
 		"\r\nValid command_line_parms are -nosound, -nomusic, MyWorld.novashell, etc.",
 		GetApp()->Data());
-
+	m_bDialogOpen = false;
 	GetApp()->BuildCommandLineParms();
 }
 
 void EntEditor::OnWorldPackage()
 {
+	m_bDialogOpen = true;
 	WorldPackager w;
 
 	w.Init();
+	m_bDialogOpen = false;
 
 }

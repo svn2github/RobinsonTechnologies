@@ -7,6 +7,17 @@ new collision features soon, like true circle shapes
 
 Changelog
 
+4-28
+
+* FEATURE: "-res desktop" will set the screen size to the current desktop size, I wanted this for my mindwall game so it would be HD or widescreen 
+if the user's monitor supported it without needing to ask them
+* FEATURE: Added a new kind of database that is persistent, loaded/saved with the active world, but not connected to a player profile.  Accessed by GetGameLogic:GetWorldData()
+* Any custom command-line parms when using the world builder are now saved along with the world, in the WorldData() database
+* BUGFIX: Now properly handles more than 2 command-line parms (win)
+* BUGFIX: Scripted editor hotkeys from editor.lua are no longer active while typing text in a few places, was annoying
+* Changed build process so .loac versions of script aren't included
+* BUGFIX OSX: Fixed endian issues with precompiled lua files (sfreddaway & CheshireWhiskers)
+
 4-25
 
 * Added Vector2 App:GetPreLaunchScreenSize()

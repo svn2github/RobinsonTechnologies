@@ -262,9 +262,6 @@ MapInfo * MapManager::GetMapInfoByName(const string &stName)
 }
 void MapManager::UnloadMapByName(const string &stName)
 {
-
-
-	
 	map_info_list::iterator itor =m_mapInfoList.begin();
 	bool bMapChanged = false;
 	

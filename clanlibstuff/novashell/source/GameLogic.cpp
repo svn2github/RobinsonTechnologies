@@ -31,6 +31,7 @@ const char C_GAME_TICK_OF_LAST_LOAD_VAR_NAME[]= "_gameTickOfLastLoad";
 #endif
 
 #define C_PROFILE_DAT_FILENAME "profile.dat"
+#define C_GLOBAL_DAT_FILENAME "worlddata.dat"
 
 #define C_TIME_TO_WAIT_BEFORE_SHOWING_LOADING_MESSAGE_MS 500
 const unsigned int C_PROFILE_DAT_VERSION = 0;
@@ -270,6 +271,46 @@ void GameLogic::LoadGlobals()
 	GetApp()->SetGameTick(0);
 }
 
+void GameLogic::SaveWorldData()
+{
+	if (GetActiveWorldName() == "base") return; //we don't care about the base
+	
+		//save out our globals
+		CL_OutputSource *pSource = g_VFManager.PutFileRaw(GetPathToActiveWorld()+"/"+C_GLOBAL_DAT_FILENAME );
+		if (pSource)
+		{
+			CL_FileHelper helper(pSource);
+			helper.process_const(C_PROFILE_DAT_VERSION);
+			m_worldData.Serialize(helper);
+			SAFE_DELETE(pSource);
+		} else
+		{
+			LogMsg("Error saving worlddata.dat");
+		}
+	
+}
+
+
+void GameLogic::LoadWorldData()
+{
+
+	m_worldData.Clear();
+	
+		CL_InputSource *pSource = g_VFManager.GetFileRaw(GetPathToActiveWorld()+"/"+C_GLOBAL_DAT_FILENAME  );
+		if (pSource)
+		{
+			CL_FileHelper helper(pSource);
+
+			unsigned int version;
+			helper.process(version);
+			m_worldData.Serialize(helper);
+			SAFE_DELETE(pSource);
+			return;
+		}
+	
+	//if we got here, let's init the defaults
+
+}
 void GameLogic::ClearScreen()
 {
 	if (g_pMapManager->GetActiveMap())
@@ -438,7 +479,7 @@ bool GameLogic::Init()
 
 	LogMsg("");
 	LogMsg("Initializing GameLogic...");
-
+	m_pathToActiveWorld.clear();
 
 	assert(!g_pMapManager->GetActiveMap());
 	GetApp()->SetCursorVisible(true); //the default condition
@@ -466,12 +507,14 @@ bool GameLogic::Init()
 			LogMsg("Mounting world path %s.", m_modPaths[i].c_str());
 			g_VFManager.MountDirectoryPath(m_modPaths[i]);
 			GetScriptManager->CompileAllLuaFilesRecursively(m_modPaths[i]);
-
+			m_pathToActiveWorld = modInfoFile;
 			m_activeWorldName = CL_String::get_filename(m_modPaths[i]);
 		}
 
 	}
 	
+	LoadWorldData();
+
 	m_worldManager.ScanMaps(m_strBaseMapPath);
 	m_pPlayer = NULL;
 	//calculate our user profile base path, later, this could be in the windows user dir or whatever is correct
@@ -819,6 +862,7 @@ void GameLogic::Kill()
 
 	
 	m_worldManager.Kill();
+	SaveWorldData();
 	SaveGlobals();
 	g_EffectManager.Reset();
 	m_myEntityManager.Kill();
@@ -1393,11 +1437,28 @@ func: Data
 DataManager Data()
 (end)
 
-This let's you access a global <DataManager> that is automatically saved and loaded with the game.
+This let's you access a global <DataManager> that is automatically saved and loaded with the game per user profile.
 
 Note:
 
 Never use <DataManager::Clear> on this, the save-load game system uses it to store certain things as well, such as the game time.
+
+Returns:
+
+A global <DataManager> object to store/retrieve anything you wish per profile.
+*/
+
+/*
+func: WorldData
+(code)
+DataManager WorldData()
+(end)
+
+This let's you access a global <DataManager> that is automatically saved and loaded with the game.
+
+Note:
+
+Unlike <DataManager::Data> because it is shared between profiles.  Useful for specifying global game tweaking variables that will never change for instance.
 
 Returns:
 

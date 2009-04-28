@@ -76,6 +76,7 @@ public:
 	  void HandleMessageString(const string &msg);
 	  void ClearAllMapsFromMemory();
 	  DataManager * Data() {return &m_data;}
+	  DataManager * WorldData() {return &m_worldData;}
 	  void SetShowMessageActive(bool bNew, CL_Window *pMsgWindow = false);
 	  bool GetShowMessageActive() {return m_bShowingMessageWindow;}
 	  void SetShowFPS(bool bNew) {m_bShowFPS = bNew;}
@@ -118,6 +119,9 @@ private:
 	void OnKeyUp(const CL_InputEvent &key);
 	void RenderGameGUI(bool bDrawMainGUIToo);   
 	void DeleteAllCacheFiles();
+	void SaveWorldData();
+	void LoadWorldData();
+	string GetPathToActiveWorld() {return m_pathToActiveWorld;}
 	MyEntityManager m_myEntityManager;
     CL_SlotContainer m_slots;
 
@@ -134,12 +138,13 @@ private:
 	bool m_bParallaxActive;
 	bool m_bMakingThumbnail; //if true we're in the middle of making a thumbnail
 	string m_strScriptRootDir;
-	DataManager m_data; //to store global variables controlled by Lua
+	DataManager m_data; //to store global variables controlled by Lua per profile
+	DataManager m_worldData; //to store global variables controlled per game
 	bool m_bShowingMessageWindow;
 	bool m_bShowFPS;
 	bool m_bShowGrid;
 	bool m_bRestartEngineFlag;
-	int m_gameMode;
+
 	CL_Slot m_playerDestroyedSlot;
 	bool m_bShowPathfinding;
 	bool m_bShowAI;
@@ -149,6 +154,7 @@ private:
 	bool m_bRebuildCacheData;
 	string m_rebuildUserName;
 	unsigned int m_lastUpdateTime;
+	
 
 	CL_ResourceManager * m_pGUIResources;
 	CL_StyleManager_Bitmap * m_pGUIStyle;
@@ -156,6 +162,7 @@ private:
 	CL_Window *m_pShowMessageWindow;
 
 	ScriptCallbackManager m_postLogicUpdateCallback;
+	string m_pathToActiveWorld;
 
 };
 

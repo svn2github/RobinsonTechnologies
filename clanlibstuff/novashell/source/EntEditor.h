@@ -124,6 +124,7 @@ private:
 	void SetAllLayersActive(bool bNew);
 	void OnSetScreenSize();
 	void PopulateResolutionList();
+	void OnGameGlobalProperties();
 	CL_Label *m_pLabel;
     CL_Menu *m_pMenu;
     CL_Button *m_pButton;

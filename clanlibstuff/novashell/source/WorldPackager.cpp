@@ -4,6 +4,10 @@
 #include "EntEditor.h"
 #include "Console.h"
 
+#define C_PACKER_KEY_COMMAND_LINE "_PACKER_COMMAND_LINE"
+#define C_PACKER_COMMAND_LINE_DEFAULT "-res 1024 768"
+
+
 WorldPackager::WorldPackager()
 {
 	m_buttonPushed = NONE;
@@ -54,7 +58,15 @@ bool WorldPackager::Init()
 	CL_Label label1(CL_Point(buttonOffsetX, checkY), "Output Options:", window.get_client_area()); checkY -= 30;
 
 	checkY -= 10;
-	m_commandLine = string("-res 1024 768");
+
+	if ( GetGameLogic()->WorldData()->Exists(C_PACKER_KEY_COMMAND_LINE))
+	{
+		m_commandLine = GetGameLogic()->WorldData()->Get(C_PACKER_KEY_COMMAND_LINE);
+	} else
+	{
+		m_commandLine = C_PACKER_COMMAND_LINE_DEFAULT;
+	}
+		
 	CL_InputBox commandLine (CL_Rect(0,0, width, 24), m_commandLine, window.get_client_area());
 	commandLine.set_position(checkX, checkY); checkY -= 20;
 
@@ -132,7 +144,6 @@ bool WorldPackager::Init()
 	{
 		//external novashell directory I guess
 		outputDir = GetGameLogic()->GetWorldsDirPath()+"/";
-
 	}
 
 	if (checkNovaworld.is_checked())
@@ -190,6 +201,11 @@ bool WorldPackager::Init()
 	LogMsg("Finished.  Output directory is %s.", outputDir.c_str());
 	RemoveFile(m_commandLineTemp);
 
+	if (m_commandLine != C_PACKER_COMMAND_LINE_DEFAULT)
+	{
+		//go ahead and save this for later
+		GetGameLogic()->WorldData()->Set(C_PACKER_KEY_COMMAND_LINE, m_commandLine);
+	}
 	return true; //success
 }
 

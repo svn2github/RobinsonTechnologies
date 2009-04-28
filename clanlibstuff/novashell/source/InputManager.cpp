@@ -567,7 +567,7 @@ bool InputManager::HandleEvent(const CL_InputEvent &key, bool bKeyDown)
 		case C_INPUT_EDITOR_ONLY:
 			if (!bEditorOpen) continue;
 			
-			bool IsDialogOpen();
+			
 			if (GetGameLogic()->IsEditorDialogOpen())
 			{
 					//with a dialog open we don't want to run crazy code right now..

@@ -264,6 +264,19 @@ void App::OneTimeInit()
 	{
 		vidMode.width = CL_String::to_int(v[0]);
 		vidMode.height = CL_String::to_int(v[1]);
+	} else if (v.size() == 1)
+	{
+
+		if (v[0] == "desktop")
+		{
+			if (m_originalScreensize != CL_Vector2(0,0))
+			{
+				vidMode = CL_Size(m_originalScreensize.x, m_originalScreensize.y);
+			} else
+			{
+					LogMsg("Ignoring desktop parm, we don't support it on this OS yet");
+			}
+		}
 	} else
 	{
 		LogMsg("Don't understand a default_screen_resolution of \"%s\", ignoring.", res.c_str());
@@ -305,7 +318,20 @@ void App::OneTimeInit()
 				LogError("Ignored -resolution parm, format incorrect (should be -resolution 640 480)");
 			} else
 			{
-				vidMode = CL_Size(CL_String::to_int(p2), CL_String::to_int(p3));
+				if (p2 == "desktop")
+				{
+					if (m_originalScreensize != CL_Vector2(0,0))
+					{
+						vidMode = CL_Size(m_originalScreensize.x, m_originalScreensize.y);
+					} else
+					{
+						LogMsg("Ignoring desktop parm, we don't support it on this OS yet");
+					}
+					
+				} else
+				{
+					vidMode = CL_Size(CL_String::to_int(p2), CL_String::to_int(p3));
+				}
 			}
 		}
 	}
@@ -968,7 +994,7 @@ int App::main(int argc, char **argv)
 	
 	for (int i=1; i < argc; i++)
 	{
-		if (i == 2)
+		if (i > 1)
 		{
 			m_originalParms += " ";
 		}
@@ -990,7 +1016,7 @@ int App::main(int argc, char **argv)
 		
 		"Useful parms:\n\n" \
 		"	MyWorld.novashell\n" \
-		"	-resolution <desired screen width> <desired screen height>\n" \
+		"	-res <desired screen width> <desired screen height> (or desktop for current desktop res)\n" \
 		"	-window\n" \
 		"	-fullscreen\n" \
 		"	-nosound\n" \
