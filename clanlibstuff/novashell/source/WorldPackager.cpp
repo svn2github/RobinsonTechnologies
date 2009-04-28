@@ -106,7 +106,15 @@ bool WorldPackager::Init()
 		CL_MessageBox::info("Um, you'd have to check one of the output options to actually do anything.\n\nIf an option is grayed out, that means support for building that isn't available on this platform yet.", GetApp()->GetGUI());
 		return true;
 	}
-	
+
+	m_commandLine = commandLine.get_text();
+
+	if (m_commandLine != C_PACKER_COMMAND_LINE_DEFAULT)
+	{
+		//go ahead and save this for later
+		GetGameLogic()->WorldData()->Set(C_PACKER_KEY_COMMAND_LINE, m_commandLine);
+	}
+
 	CL_String::trim_whitespace(m_commandLine);
 	if (!m_commandLine.empty()) m_commandLine += " ";
 	
@@ -201,11 +209,7 @@ bool WorldPackager::Init()
 	LogMsg("Finished.  Output directory is %s.", outputDir.c_str());
 	RemoveFile(m_commandLineTemp);
 
-	if (m_commandLine != C_PACKER_COMMAND_LINE_DEFAULT)
-	{
-		//go ahead and save this for later
-		GetGameLogic()->WorldData()->Set(C_PACKER_KEY_COMMAND_LINE, m_commandLine);
-	}
+	
 	return true; //success
 }
 
