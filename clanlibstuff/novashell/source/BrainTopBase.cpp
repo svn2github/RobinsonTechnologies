@@ -16,7 +16,7 @@ BrainTopBase::BrainTopBase(MovingEntity * pParent):Brain(pParent)
 	SetSort(100); //always run last
 
 	m_controlFilter = CL_Vector2(1,1); //full control
-	m_airControlFilter = CL_Vector2(-1,-1); //full control
+	m_airControlFilter = CL_Vector2(-1,-1);
 }
 
 BrainTopBase::~BrainTopBase()

@@ -101,6 +101,7 @@ void b2Shape::CreateProxy(b2BroadPhase* broadPhase, const b2XForm& transform)
 	// You are creating a shape outside the world box.
 	b2Assert(inRange);
 
+
 	if (inRange)
 	{
 		m_proxyId = broadPhase->CreateProxy(aabb, this);

@@ -2461,9 +2461,9 @@ if (m_bDialogIsOpen) return;
 	{
 		int index = layerList.insert_item(layerMan.GetLayerInfo(layerVec[i]).GetName());
 		layerList.get_item(i)->user_data = layerVec[i];
-		if (pTile->GetLayer() == i)
+		if (pTile->GetLayer() == layerVec[i])
 		{
-			originalLayer = i; //so we can tell if it changed later
+			originalLayer = layerVec[i]; //so we can tell if it changed later
 			layerList.set_selected(i, true);
 			layerList.set_top_item(i);
 		}
@@ -2687,7 +2687,7 @@ if (m_bDialogIsOpen) return;
 			PropertiesSetDataManagerFromListBox(pEnt->GetData(), listData);
 		}
 
-		int selectedLayer = layerList.get_current_item();
+		int selectedLayer = layerVec[layerList.get_current_item()];
 		if (selectedLayer == -1) selectedLayer = originalLayer;
 	
 		if ( selectedLayer != originalLayer)

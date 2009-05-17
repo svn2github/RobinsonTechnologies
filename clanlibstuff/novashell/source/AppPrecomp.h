@@ -51,8 +51,6 @@ using namespace std;
 #include <vector>
 #include <map>
 
-
-
 #pragma warning (disable:4244)
 #endif
 

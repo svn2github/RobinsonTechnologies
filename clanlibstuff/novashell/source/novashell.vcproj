@@ -149,7 +149,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc;C:\pro\boost_1_34_1"
+				AdditionalIncludeDirectories="..\..\..\SharedLib\include;.\;..\..\..\SharedLib\;..\..\..\SharedLib\lua\src;..\..\..\SharedLib\luabind;..\..\..\SharedLib\FMOD\inc;C:\pro\boost_1_34_1;..\..\..\SharedLib\include\Clanlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CLANLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

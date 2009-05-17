@@ -45,7 +45,6 @@ for (i = 1; i <= top; i++) {
 	}
 //now print all globals?
 
-
 }
 //LogMsg("--------------- Lua Stack Dump Finished ---------------\n");
 }
