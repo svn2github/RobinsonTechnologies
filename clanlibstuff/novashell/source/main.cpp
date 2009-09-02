@@ -9,7 +9,7 @@
 #include "AI/WatchManager.h"
 #include "EntEditMode.h"
 #include "EntEditor.h"
-
+ 
 #define C_PREFS_DAT_FILENAME "prefs.dat"
 
 #define C_DELTA_HISTORY_BUFFER_SIZE 1
@@ -313,7 +313,7 @@ void App::OneTimeInit()
 
 		if (CL_String::compare_nocase(p1, "-resolution") || CL_String::compare_nocase(p1, "-res") )
 		{
-			if (p2.empty() || p3.empty())
+			if (p2.empty() && p3.empty())
 			{
 				LogError("Ignored -resolution parm, format incorrect (should be -resolution 640 480)");
 			} else
@@ -1016,7 +1016,7 @@ int App::main(int argc, char **argv)
 		
 		"Useful parms:\n\n" \
 		"	MyWorld.novashell\n" \
-		"	-res <desired screen width> <desired screen height> (or desktop for current desktop res)\n" \
+		"	-res <desired screen width> <desired screen height> (or use '-res desktop' for current desktop res)\n" \
 		"	-window\n" \
 		"	-fullscreen\n" \
 		"	-nosound\n" \

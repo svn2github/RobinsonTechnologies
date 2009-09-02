@@ -275,7 +275,9 @@ void GameLogic::SaveWorldData()
 {
 	if (GetActiveWorldName() == "base") return; //we don't care about the base
 	
-		//save out our globals
+		
+	
+	//save out our globals
 		CL_OutputSource *pSource = g_VFManager.PutFileRaw(GetPathToActiveWorld()+"/"+C_GLOBAL_DAT_FILENAME );
 		if (pSource)
 		{

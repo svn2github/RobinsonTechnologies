@@ -2,7 +2,7 @@
 #include "BrainDoomWall.h"
 #include "MovingEntity.h"
 
-BrainDoomWall registryInstanceBrainDoomWall(NULL); //self register ourselves i nthe brain registry
+BrainDoomWall registryInstanceBrainDoomWall(NULL); //self register ourselves in the brain registry
 
 BrainDoomWall::BrainDoomWall(MovingEntity * pParent):Brain(pParent)
 {

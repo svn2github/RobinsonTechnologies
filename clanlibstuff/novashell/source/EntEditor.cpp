@@ -861,6 +861,7 @@ void EntEditor::PopulateResolutionList()
 		m_pResListBox->insert_item("1440 by 900 pixels");
 		m_pResListBox->insert_item("1600 by 1200 pixels");
 		m_pResListBox->insert_item("1680 by 1050 pixels");
+		m_pResListBox->insert_item("1920 by 1080 pixels");
 		m_pResListBox->insert_item("1920 by 1200 pixels");
 
 	}
@@ -1027,7 +1028,7 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnDumpWorldNavStatistics);
 
 	pItem = m_pMenu->create_item("Display/ ");
-	pItem = m_pMenu->create_item("Display/(Grave aka backtick aka Unshifted-Tilde to toggle the System Console");
+	pItem = m_pMenu->create_item("Display/(backtick to toggle the System Console");
 	pItem->enable(false);
 
 

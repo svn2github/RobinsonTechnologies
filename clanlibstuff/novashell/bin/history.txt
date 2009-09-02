@@ -13,6 +13,20 @@ the one sending the double-click event, hrm.  Will have to think about that late
 
 Changelog
 
+9-1-2009
+
+* "-res desktop" parm works better from the command line (win)
+* Xbox controller's little pad by the regular stick now also sends left/right/up/down button signals, I added this so mind wall players
+  could use either control (win)
+* Timing code improved, should run smoother (win)
+* Vista style virtualization is disabled in the manifest, was getting some odd problems with it.  This means if you build a novashell app
+with an installer, you need to make sure the installer marks the directories it installs as modified by the owner to work right. (win)
+
+5-24
+
+* Adjusted GUI so it's easier to change the screen res from a smaller one to a larger one
+
+
 5-17
 
 * BUGFIX:  Customized layer lists now work properly when moving entities from layer to layer in the editor (Pleng)

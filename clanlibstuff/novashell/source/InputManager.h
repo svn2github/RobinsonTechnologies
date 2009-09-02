@@ -94,12 +94,14 @@ public:
 
 	string m_name; //we cache it because clanlib seems to forget??
 	StickData m_stick[2];
+	//JoyDirection * GetJoyDir(int dir) {return &m_Dir[DIR_COUNT];}
 
 private:
 
 	
 	int m_joyID;
 	JoyDirection m_Dir[DIR_COUNT];
+	
 };
 
 class InputManager

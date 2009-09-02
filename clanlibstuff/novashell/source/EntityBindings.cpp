@@ -1414,7 +1414,7 @@ A density is not the total weight/mass of an object, it's a more like the weight
 
 Note:
 
-Setting density to 0 is a special case that means "Immovable" and saves processor time.
+Setting density to 0 is a special case that means "Immovable" and saves processor time.  Note, if two things have a density of 0, they will never generate collisions with each other, as they are both immovable.
 
 Parameters:
 

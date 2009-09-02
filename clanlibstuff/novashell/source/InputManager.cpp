@@ -27,7 +27,7 @@ StickData::StickData()
 
 void InputManager::on_joystick_down(const CL_InputEvent &key, int joyID)
 {
-//	LogMsg("Joy %d: Button %d pressed", joyID, key.id);
+	//LogMsg("Joy %d: Button %d pressed", joyID, key.id);
 	CL_InputEvent k;
 	k.id = (joyID*C_JOYSTICK_ID_MULT) +key.id;
 	g_inputManager.HandleEvent(k, true);
@@ -72,10 +72,41 @@ void InputManager::on_joystick_move(const CL_InputEvent &key, int joyID)
 		m_joyInfo[joyID].m_stick[1].m_vec.x = key.axis_pos;
 
 	} else if (key.id == m_joyInfo[joyID].m_stick[1].m_axis[1])
-
 	{
 		m_joyInfo[joyID].m_stick[1].m_vec.y = key.axis_pos;
 
+	} else if (key.id == 32)
+	{
+		//hack for xbox secondary control pad
+			CL_InputEvent k;
+			JoystickInfo::eDirs dir = JoystickInfo::UP;
+		
+			switch (int(key.axis_pos))
+			{
+			case 0: dir = JoystickInfo::UP; break;
+			case 90: dir = JoystickInfo::RIGHT; break;
+			case 180: dir = JoystickInfo::DOWN; break;
+			case 270: dir = JoystickInfo::LEFT; break;
+			case -1000:
+				//just shut them all off?
+				
+				m_joyInfo[joyID].UpdateAxis(JoystickInfo::UP, 0);
+				m_joyInfo[joyID].UpdateAxis(JoystickInfo::RIGHT, 0);
+				m_joyInfo[joyID].UpdateAxis(JoystickInfo::DOWN, 0);
+				m_joyInfo[joyID].UpdateAxis(JoystickInfo::LEFT, 0);
+				
+
+				return;
+				break;
+			default:
+				//probably a diagonal or -1000 to signal they stopped touching it
+				return;
+			}
+			
+			m_joyInfo[joyID].UpdateAxis(dir, 1);
+			m_joyInfo[joyID].UpdateAxis(dir, 0);
+
+	
 	}
 }
 
