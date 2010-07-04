@@ -484,6 +484,7 @@ myColor = Color(255,255,255,255);
 		.def("ClearModPaths", &GameLogic::ClearModPaths)
 		.def("AddModPath", &GameLogic::AddModPath)
 		.def("Data", &GameLogic::Data)
+		.def("WorldData", &GameLogic::WorldData)
 		.def("InitGameGUI", &GameLogic::InitGameGUI)
 		.def("__tostring", &GameLogicToString)
 		.def("AddCallbackOnPostLogicUpdate", &GameLogic::AddCallbackOnPostLogicUpdate)

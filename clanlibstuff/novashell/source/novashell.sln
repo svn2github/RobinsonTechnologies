@@ -16,6 +16,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanGUI", "C:\pro\ClanLibSV
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanCore", "C:\pro\ClanLibSVN\Development\ClanLib-1.0\Sources\clanCore.vcproj", "{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clanSound", "C:\pro\ClanLibSVN\Development\ClanLib-1.0\Sources\clanSound.vcproj", "{E148C073-4544-4DD8-9783-2478B63BCCD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -97,6 +99,20 @@ Global
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Static MTDLL Debug|Win32.Build.0 = Static MTDLL Debug|Win32
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Static MTDLL Release|Win32.ActiveCfg = Static MTDLL Release|Win32
 		{6D88EC57-4B69-45F3-99A2-0C951D80B5B7}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Debug|Win32.Build.0 = Static MTDLL Debug|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Release Debug|Win32.ActiveCfg = Static MTDLL Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Release Debug|Win32.Build.0 = Static MTDLL Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Release|Win32.ActiveCfg = Static MTDLL Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Release|Win32.Build.0 = Static MTDLL Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MT Debug|Win32.ActiveCfg = Static MT Debug|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MT Debug|Win32.Build.0 = Static MT Debug|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MT Release|Win32.ActiveCfg = Static MT Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MT Release|Win32.Build.0 = Static MT Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MTDLL Debug|Win32.ActiveCfg = Static MTDLL Debug|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MTDLL Debug|Win32.Build.0 = Static MTDLL Debug|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MTDLL Release|Win32.ActiveCfg = Static MTDLL Release|Win32
+		{E148C073-4544-4DD8-9783-2478B63BCCD8}.Static MTDLL Release|Win32.Build.0 = Static MTDLL Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,7 +20,7 @@ void BrainColorFade::ColorData::SetColorTarget(short target, int startingColor)
 	m_bActive = true;
 }
 
-BrainColorFade registryInstanceBrainColorFade(NULL); //self register ourselves i nthe brain registry
+BrainColorFade registryInstanceBrainColorFade(NULL); //self register ourselves in the brain registry
 
 BrainColorFade::BrainColorFade(MovingEntity * pParent):Brain(pParent)
 {

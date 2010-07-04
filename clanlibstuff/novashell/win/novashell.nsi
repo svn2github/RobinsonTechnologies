@@ -20,6 +20,8 @@
 !define MUI_ICON "novashell.ico" 
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\classic-uninstall.ico"
 
+RequestExecutionLevel admin
+
 OutFile "..\$%C_FILENAME%"
 
 !define MUI_WELCOMEFINISHPAGE_BITMAP "welcome_side.bmp"

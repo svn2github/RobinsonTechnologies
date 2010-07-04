@@ -104,10 +104,8 @@ void DrawLineWithArrowWorld(CL_Vector2 from, CL_Vector2 to, double size, CL_Colo
 double GetAngleBetweenVectorFacings(CL_Vector2 v1, CL_Vector2 v2)
 {
 	double dot = v1.dot(v2);
-
 	//clamp to rectify any rounding errors
 	Clamp(dot, -1, 1);
-
 	//determine the angle between the heading vector and the target
 	return acos(dot);
 }

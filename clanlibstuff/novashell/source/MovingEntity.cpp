@@ -987,41 +987,7 @@ BaseGameEntity * MovingEntity::CreateClone(TileEntity *pTile)
 
 CL_Rectf MovingEntity::GetWorldRect()
 {
-	
 	return GetBoundsRectf()+CL_Pointf(GetPos().x, GetPos().y);
-
-
-	/*
-	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
-	//by caching this info out with a changed flag or something
-	CL_Origin o;
-	int x,y;
-
-	m_pSprite->get_alignment(o, x, y);
-
-	CL_Vector2 vPos = GetPos();
-	CL_Pointf pt = calc_origin(o, CL_Size(m_pSprite->get_width()*m_pTile->GetScale().x, m_pSprite->get_height() * m_pTile->GetScale().y) );
-
-	vPos.x -= pt.x;
-	vPos.y -= pt.y;
-
-	CL_Rectf r(vPos.x, vPos.y, 
-		vPos.x + m_pSprite->get_width()*m_pTile->GetScale().x, vPos.y + m_pSprite->get_height()* m_pTile->GetScale().y);
-
-
-	//I have no idea why I need this as a special case??? But also too lazy to look into it.
-	if (o == origin_top_left)
-	{
-		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , y* m_pTile->GetScale().y);
-
-	} else
-	{
-		r.apply_alignment(origin_top_left,- (x*m_pTile->GetScale().x) , -y* m_pTile->GetScale().y);
-
-	}
-
-	return r;
-	*/
 }
 
 CL_Rectf MovingEntity::GetBoundsRectf()
