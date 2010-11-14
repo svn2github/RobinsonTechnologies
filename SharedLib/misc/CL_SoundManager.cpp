@@ -102,6 +102,9 @@ void CL_SoundManager::SetPaused(int soundID, bool bPaused)
 
 SoundResource * CL_SoundManager::LocateSound(const char *pFname)
 {
+
+	//OPTIMIZE: Why are hitting the disk before checking for an existing buffer?  (Speeder)
+
 	if (!m_bInitted) return NULL;
 
 	string fileName = pFname;

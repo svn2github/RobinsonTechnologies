@@ -100,7 +100,8 @@ public:
 		eBitCastShadow = D_BIT_4,
 		eBitScript = D_BIT_5,
 		eBitSortShadow = D_BIT_6,
-		eBitPathNode = D_BIT_7
+		eBitPathNode = D_BIT_7,
+		eBitLinearFilter = D_BIT_8
 
 	};
 

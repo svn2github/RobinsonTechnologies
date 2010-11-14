@@ -87,7 +87,7 @@ public:
 		byte_this = 0;
 	};
 
-	void set_bit(unsigned char d_bit, bool b_status)
+	void set_bit(unsigned int d_bit, bool b_status)
 	{
 		if (b_status)
 		{
@@ -102,7 +102,7 @@ public:
 	};
 
 
-	bool get_bit(unsigned char d_bit)
+	bool get_bit(unsigned int d_bit)
 	{
 		if (byte_this & d_bit) return true; else return false;
 	};

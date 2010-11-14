@@ -90,7 +90,8 @@ public:
  e_notPersistent = D_BIT_4, //if true, won't be saved to disk
  e_castShadow = D_BIT_5,
  e_sortShadow = D_BIT_6,
- e_pathNode = D_BIT_7
+ e_pathNode = D_BIT_7,
+ e_linearFilter = D_BIT_8 // if true, will use linear filter when scaling
 
  //can add more bits here, up to D_BIT_31
 };

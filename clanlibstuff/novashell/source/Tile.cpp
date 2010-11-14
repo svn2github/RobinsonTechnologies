@@ -376,8 +376,21 @@ void RenderTilePic(TilePic *pTile, CL_GraphicContext *pGC)
 	rectDest.top = RoundNearest(rectDest.top, 1.0f);
 	rectDest.left = RoundNearest(rectDest.left, 1.0f);
 	
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+	CL_OpenGLState state(pGC);
+	state.set_active();
+	clBindTexture(CL_TEXTURE_2D, pSurf->get_handle());
+
+	// Check out whether the Use Linear Filter flag is set.
+	if (pTile->GetBit(Tile::e_linearFilter))
+	{
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_LINEAR);
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_LINEAR);
+	}
+	else
+	{
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+	}
 
 	pSurf->set_color(pTile->GetColor());
 	pSurf->draw_subpixel(pTile->m_rectSrc, rectDest, pGC);

@@ -281,8 +281,9 @@ bool HashedResource::LoadImage()
 	}
 
 	m_pImage = new CL_Surface(p);
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
-	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+	// Commented out due to the Linear Filter change
+//	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+//	clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 	return m_pImage != NULL;
 }
 

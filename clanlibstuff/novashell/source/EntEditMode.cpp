@@ -2495,6 +2495,12 @@ if (m_bDialogIsOpen) return;
 	 string originalScale = VectorToString(&pTile->GetScale());
 	 CL_InputBox inputScale(rPos, originalScale, window.get_client_area());
 
+	 offsetY += 20;
+
+	// Marcio
+	CL_CheckBox linearFilter(CL_Point(rightSideBarStartingX,offsetY),"Use Linear Filter", window.get_client_area());
+	linearFilter.set_checked(pTile->GetBit(Tile::e_linearFilter));
+
 	
 	if (pTile->GetType() == C_TILE_TYPE_PIC && tilesSelected == 1)
 	{
@@ -2630,6 +2636,12 @@ if (m_bDialogIsOpen) return;
 			flags = flags | TileEditOperation::eBitPathNode;
 		}
 
+		if (linearFilter.is_checked() != pTile->GetBit(Tile::e_linearFilter))
+		{
+			pTile->SetBit(Tile::e_linearFilter, linearFilter.is_checked());
+			flags = flags | TileEditOperation::eBitLinearFilter;
+		}
+
 		if (inputColor.get_text() != originalColor)
 		{
 			pTile->SetColor(StringToColor(inputColor.get_text()));
@@ -2730,6 +2742,7 @@ if (m_bDialogIsOpen) return;
 		pNewTile->SetBit(Tile::e_castShadow, pTile->GetBit(Tile::e_castShadow));
 		pNewTile->SetBit(Tile::e_sortShadow, pTile->GetBit(Tile::e_sortShadow));
 		pNewTile->SetBit(Tile::e_pathNode, pTile->GetBit(Tile::e_pathNode));
+		pNewTile->SetBit(Tile::e_linearFilter, pTile->GetBit(Tile::e_linearFilter));
 		pNewTile->SetScale(pTile->GetScale());
 		pNewTile->SetColor(pTile->GetColor());
 
