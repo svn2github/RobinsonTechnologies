@@ -2670,6 +2670,29 @@ Returns:
 The text that was set with <SetText>.
 */
 
+.def("SetFont", (void(MovingEntity::*)(const std::string&))&MovingEntity::SetFont)
+.def("SetFont", (void(MovingEntity::*)(int))&MovingEntity::SetFont)
+
+/*
+func: SetFont
+(code)
+nil SetFont(string resourceID)
+nil SetFont(number fontID)
+(end)
+
+Set the font to be used by the entity.
+
+You can use the resourceID directly from the resource file or you can use the fontID loaded by GameLogic::InitGameGUI(string xmlFile).
+
+Parameters:
+
+string version
+resourceID - the value of the name property of the font tag in a resource file.
+
+number version
+fontID - A valid fontID or one of the <C_FONT_CONSTANTS>.
+*/
+
 
 .def("GetTextBounds", &MovingEntity::GetTextBounds)
 

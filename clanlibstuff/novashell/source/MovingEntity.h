@@ -302,6 +302,8 @@ public:
   void OnWatchListTimeout(bool bIsOnScreen);
   int PlaySoundPositioned(const string &fName);
   int PlaySound(const string &fName);
+  void SetFont(const string &resource_id);
+  void SetFont(int font_id);
   void SetText(const string &text);
   string GetText() {return m_text;}
   CL_Vector2 GetTextBounds();

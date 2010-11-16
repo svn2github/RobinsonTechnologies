@@ -635,6 +635,20 @@ Goal_Think * MovingEntity::GetGoalManager()
 	return (m_pGoalManager = new Goal_Think(this, "Base"));
 }
 
+void MovingEntity::SetFont(const string &resource_id)
+{
+		SAFE_DELETE(m_pFont);
+		m_pFont = new CL_Font(resource_id, GetGameLogic()->GetGUIStyle()->get_resources());
+		if (m_pFont) m_pFont->set_alignment(origin_center,0,0);
+}
+
+void MovingEntity::SetFont(int font_id)
+{
+		SAFE_DELETE(m_pFont);
+		m_pFont = new CL_Font(*GetApp()->GetFont(font_id));
+		if (m_pFont) m_pFont->set_alignment(origin_center,0,0);
+}
+
 void MovingEntity::SetText(const string &text)
 {
 	m_text = text;
