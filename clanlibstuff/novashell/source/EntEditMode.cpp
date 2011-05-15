@@ -81,7 +81,18 @@ void EntEditMode::OnMouseMove(const CL_InputEvent &key)
 {
 	CL_Vector2 mouseWorldPos =g_pMapManager->GetActiveMapCache()->ScreenToWorld(CL_Vector2(key.mouse_pos.x,key.mouse_pos.y));
 	char stTemp[256];
-	sprintf(stTemp, "Mouse Pos: X: %.1f Y: %.1f", mouseWorldPos.x, mouseWorldPos.y);
+	
+	if (m_pCheckBoxSnap->is_checked())
+	{
+		CL_Vector2 vTemp = g_pMapManager->GetActiveMap()->SnapWorldCoords(mouseWorldPos, m_vecSnapSize);
+		sprintf(stTemp, "Mouse Pos: X: %.1f Y: %.1f", vTemp.x, vTemp.y);
+
+	} else
+	{
+		sprintf(stTemp, "Mouse Pos: X: %.1f Y: %.1f", mouseWorldPos.x, mouseWorldPos.y);
+
+	}
+	
 	m_pLabelMain->set_text(stTemp);
 
 	RefreshActiveBrush(key.mouse_pos);
@@ -1980,12 +1991,15 @@ void EntEditMode::OnCollisionDataEditEnd(int id)
 
 
 				tile_list t;
+			
 				GetPointersToSimilarTilesOnMap(g_pMapManager->GetActiveMap(), t, pEnt);
 
+				
 				pEnt->GetEntity()->Kill(); //force it to save out its collision info to disk, so when
 				
 				//we reinit all similar tiles, they will use the changed version
 				ReInitTileList(t);
+				ReInitEntity(pEnt->GetEntity());
 
 			} else
 			{
@@ -2498,7 +2512,7 @@ if (m_bDialogIsOpen) return;
 	 offsetY += 20;
 
 	// Marcio
-	CL_CheckBox linearFilter(CL_Point(rightSideBarStartingX,offsetY),"Use Linear Filter", window.get_client_area());
+	CL_CheckBox linearFilter(CL_Point(rightSideBarStartingX,offsetY),"Use smoothing", window.get_client_area());
 	linearFilter.set_checked(pTile->GetBit(Tile::e_linearFilter));
 
 	

@@ -85,6 +85,15 @@ float RadiansToDegrees(float rad);
 float DegreesToRadians(float deg);
 string ChangeFileExtension(const string &input, const string &extension);
 
+//convert any base type to a string (like int or float)
+template< class C>
+std::string toString(C value)
+{
+	std::ostringstream o;
+	o << value;
+	return o.str();
+}
+
 //clamps the first argument between the second two
 template <class T, class U, class V>
 inline void Clamp(T& arg, const U& minVal, const V& maxVal)

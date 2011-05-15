@@ -125,6 +125,8 @@ private:
 	void OnSetScreenSize();
 	void PopulateResolutionList();
 	void OnGameGlobalProperties();
+	void OnExportXML();
+	void OnMapUserProperties();
 	CL_Label *m_pLabel;
     CL_Menu *m_pMenu;
     CL_Button *m_pButton;

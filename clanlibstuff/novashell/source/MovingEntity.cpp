@@ -1009,6 +1009,11 @@ CL_Rectf MovingEntity::GetBoundsRectf()
 	//OPTIMIZE:  This is called many times during a frame PER entity, we can probably get a big speed increase
 	//by caching this info out with a changed flag or something
 
+	if (!m_pSprite)
+	{
+		return CL_Rectf(0,0,32,32); //no sprite set yet...
+	}
+
 	int sizeX, sizeY;
 
 	if (m_bSizeOverride)
@@ -2407,7 +2412,6 @@ float MovingEntity::GetRotation()
 	return m_angle;
 }
 
-
 CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
 {
 
@@ -2426,11 +2430,11 @@ CL_Vector2 MovingEntity::GetRawScreenPosition(bool &bRootIsCam)
 	}
 	MovingEntity *pEnt = (MovingEntity*) EntityMgr->GetEntityFromID(m_attachEntID);
 	return pEnt->GetRawScreenPosition(bRootIsCam)+m_attachOffset;
-	
 }
+
 void MovingEntity::Render(void *pTarget)
 {
-	
+	if (!m_pSprite) return;
 	m_lastVisibilityNotificationID = g_watchManager.GetVisibilityID();
 
 	if (m_pSprite->get_current_frame() == -1)
@@ -2438,7 +2442,6 @@ void MovingEntity::Render(void *pTarget)
 		LogError("Sprite %d (%s) has no valid sprite frame assigned.  Don't set 1 frame anims to ping pong? Turn looping on?", ID(), GetName().c_str());
 		return;
 	}
-
 	
 	CL_GraphicContext *pGC = (CL_GraphicContext *)pTarget;
 	static float yawHold, pitchHold;
@@ -2552,7 +2555,6 @@ void MovingEntity::Render(void *pTarget)
 
 		if (m_bLockedScale && m_attachEntID != 0)
 		{
-						
 			bool bRootIsCam;
 			
 			CL_Vector2 vTemp = GetRawScreenPosition(bRootIsCam);
@@ -2562,8 +2564,24 @@ void MovingEntity::Render(void *pTarget)
 			}
 		}
 
-		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
-		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+		CL_OpenGLState state(pGC);
+		state.set_active();
+		clBindTexture(CL_TEXTURE_2D, m_pSprite->get_frame_surface(m_pSprite->get_current_frame()).get_handle());
+
+		// Check out whether the Use Linear Filter flag is set.
+		if (GetTile()->GetBit(Tile::e_linearFilter))
+		{
+			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_LINEAR);
+			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_LINEAR);
+		}
+		else
+		{
+			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+			clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
+		}
+
+//		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MAG_FILTER, CL_NEAREST);
+//		clTexParameteri(CL_TEXTURE_2D, CL_TEXTURE_MIN_FILTER, CL_NEAREST);
 
 		m_pSprite->set_scale(vFinalScale.x, vFinalScale.y);
 		//do the real blit

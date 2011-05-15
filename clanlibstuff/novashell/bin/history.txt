@@ -13,6 +13,16 @@ the one sending the double-click event, hrm.  Will have to think about that late
 
 Changelog
 
+5-15-2011
+
+* Added generic "per map" DataManager for user data. Can't be accessed by script yet
+* Added XML map export.  Basically, the reason for this update is so I could use Novashell's editor instead of Ogmo for a simple flash game I'm playing with
+* "Mouse pos" X/Y display now reflects the current snap mode, if enabled
+* Changed "Use linear filtering" to "Use smoothing", easier to understand for most people
+* BUGFIX: Linear/smoothing settings are now respected by entities, not just tilepics
+* OSX build stuff updated.. dropped support for PPC OSX, it's intel only OSX now
+* BUGFIX: Doesn't crash after deleting all collsion data (Abraao Isvi Oliveira)
+
 9-1-2009
 
 * "-res desktop" parm works better from the command line (win)

@@ -12,6 +12,8 @@
 #define C_LAYER_NONE -1
 #define C_TOP_LAYER 1000
 #define C_LAYER_FILENAME "layer.dat"
+#define C_MAP_DB_FILENAME "userdb.dat" //generic per-map db for user data
+
 const int C_LAYER_VERSION = 0;
 //some help to name these for generation functions, not really hardcoded though
 enum

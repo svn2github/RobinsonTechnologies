@@ -103,9 +103,10 @@ App::App()
 	m_baseGameSpeed = 10;
 	m_baseLogicMhz = 1000.0f / 75.0f;
 	m_simulationSpeedMod = 1.0f; //2.0 would double the game speed
-	m_engineVersion = 0.81f;
-	m_engineVersionString = "0.81";
+	m_engineVersion = 0.82f;
+	m_engineVersionString = "0.82";
 	m_notifyOfScreenChange = false;
+
 
 	m_pSetup_sound = NULL;
 	m_pSetup_vorbis = NULL;

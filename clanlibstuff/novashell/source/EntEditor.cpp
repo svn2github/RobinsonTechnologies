@@ -12,6 +12,7 @@
 #include "DataEditor.h"
 #include "WorldPackager.h"
 #include <algorithm>
+#include "MapExportXML.h"
 
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -456,6 +457,16 @@ void EntEditor::OnSaveMap()
 
 	BlitMessage("Saving " + g_pMapManager->GetActiveMap()->GetName());
 	g_pMapManager->GetActiveMap()->ForceSaveNow();
+}
+
+void EntEditor::OnExportXML()
+{
+	m_bDialogOpen = true;
+	MapExportXML w;
+
+	w.Init();
+	m_bDialogOpen = false;
+
 }
 
 void EntEditor::OnExit()
@@ -913,6 +924,9 @@ if (GetGameLogic()->GetUserProfileName().empty())
 	pItem = m_pMenu->create_item("File/Save Active Map Now (Ctrl+S)");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnSaveMap);
 
+	pItem = m_pMenu->create_item("File/Export Map/Export as .xml (roughly Ogmo .eol format)");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnExportXML);
+
 	pItem = m_pMenu->create_item("File/Revert Changes On Active Map");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnRevertChanges);
 
@@ -935,6 +949,9 @@ if (GetGameLogic()->GetUserProfileName().empty())
 
 	pItem = m_pMenu->create_item("Options/Map Properties");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::MapOptionsDialog);
+
+	pItem = m_pMenu->create_item("Options/Map User Properties");
+	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnMapUserProperties);
 
 	pItem = m_pMenu->create_item("Options/World Global Properties");
 	m_slot.connect(pItem->sig_clicked(),this, &EntEditor::OnGameGlobalProperties);
@@ -1701,6 +1718,22 @@ m_bDialogOpen = true;
 		"\r\nTo read or write this data by script, use GetGameLogic:WorldData() to return this as a DataManager object.\r\n"
 		"\r\nKey names starting with an underscore mean the engine needs these for its own use.",
 		GetGameLogic()->WorldData());
+	m_bDialogOpen = false;
+}
+
+void EntEditor::OnMapUserProperties()
+{
+	if (!g_pMapManager->GetActiveMap())
+	{
+		CL_MessageBox::info("Load/create a map first.", GetApp()->GetGUI());
+		return;
+	}
+	m_bDialogOpen = true;
+	DataEditor d;
+	d.Init("Map User Properties", "This data area is automatically saved and loaded with the current map.\r\n"\
+		"\r\nTo read or write this data by script, guilt Seth into making a way to access its DataManager object.\r\n"
+		"\r\nKey names starting with an underscore mean the engine needs these for its own use.",
+		g_pMapManager->GetActiveMap()->GetDB());
 	m_bDialogOpen = false;
 }
 

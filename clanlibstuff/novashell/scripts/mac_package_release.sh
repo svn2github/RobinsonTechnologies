@@ -10,16 +10,16 @@ Pause()
 }
 
 echo Packing release
-cd ../mac
+cd /Volumes/projects/clanlibstuff/novashell/mac
 
 #update our mac app with mac distribution stuff and the latest windows binaries
-mkdir build/Default/novashell.app/Contents/Resources/packaging
-mkdir build/Default/novashell.app/Contents/Resources/packaging/mac
-cp -R /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac/Resources build/Default/novashell.app/Contents/Resources/packaging/mac
-cp /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac/Info.plist build/Default/novashell.app/Contents/Resources/packaging/mac
-cp /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/mac/Pkginfo build/Default/novashell.app/Contents/Resources/packaging/mac
+mkdir ~/build/Default/novashell.app/Contents/Resources/packaging
+mkdir ~/build/Default/novashell.app/Contents/Resources/packaging/mac
+cp -R /Volumes/projects/clanlibstuff/novashell/bin/packaging/mac/Resources ~/build/Default/novashell.app/Contents/Resources/packaging/mac
+cp /Volumes/projects/clanlibstuff/novashell/bin/packaging/mac/Info.plist ~/build/Default/novashell.app/Contents/Resources/packaging/mac
+cp /Volumes/projects/clanlibstuff/novashell/bin/packaging/mac/Pkginfo ~/build/Default/novashell.app/Contents/Resources/packaging/mac
 
-cp -R /Volumes/PROJECTS/clanlibstuff/novashell/bin/packaging/win build/Default/novashell.app/Contents/Resources/packaging
+cp -R /Volumes/projects/clanlibstuff/novashell/bin/packaging/win ~/build/Default/novashell.app/Contents/Resources/packaging
 
 
 mkdir dist
@@ -28,7 +28,7 @@ mkdir dist
 rm -R ./dist/novashell.app
 #copy in the new one
 echo Copying files to dist folder
-cp -R build/Default/novashell.app ./dist
+cp -R ~/build/Default/novashell.app ./dist
 
 
 rm ./novashell.dmg
@@ -40,3 +40,4 @@ make
 echo Done
 sh ../scripts/linux_upload.sh novashell.dmg
 cd ../scripts
+Pause

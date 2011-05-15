@@ -9,5 +9,7 @@ Pause()
     stty icanon
 }
 
+cd /Volumes/projects/clanlibstuff/novashell/scripts
 sh ./mac_build_release.sh
 sh ./mac_package_release.sh
+Pause

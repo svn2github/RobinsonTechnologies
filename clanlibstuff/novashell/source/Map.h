@@ -144,7 +144,8 @@ public:
 	PhysicsManager * GetPhysicsManager() {return &m_physicsManager;}
 	Zone GetZoneByRectAndType(const CL_Rectf rectInput, int matType);
 	Zone GetZoneByPointAndType(const CL_Vector2 &vPos, int matType);
-	
+	DataManager * GetDB() {return &m_db;} //generic user db
+
 private:
 
 	bool TestCoordPacker(int x, int y);
@@ -214,6 +215,7 @@ private:
 	CL_Rectf m_worldBounds; //the exact size of the map
 	bool m_bNeedToComputeBounds;
 	PhysicsManager m_physicsManager;
+	DataManager m_db; //generic database per map for user data
 
 };
 

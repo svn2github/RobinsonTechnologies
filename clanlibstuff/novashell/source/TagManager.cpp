@@ -126,9 +126,7 @@ void TagManager::Update(Map *pWorld, MovingEntity *pEnt)
 		   pObject->m_tagName = pEnt->GetName();
 	  // LogMsg("Added new (%d)",pEnt->ID());
 	   }
-		
 	}
-
 
 	pObject->m_pos = pEnt->GetPos();
 	pObject->m_pWorld = pWorld;
@@ -147,7 +145,6 @@ TagObject * TagManager::GetFromHash(unsigned int hashID)
 	}
 
 	//there may be more than one, for now return the "top one"
-
 	return & (*itor->second.rbegin());
 }
 

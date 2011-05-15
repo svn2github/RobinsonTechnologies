@@ -486,6 +486,7 @@ EntMapCache * MapManager::GetActiveMapCache()
 {
 	return m_pActiveMapCache;
 }
+
 Map* MapManager::GetActiveMap()
 {
   return m_pActiveMap;

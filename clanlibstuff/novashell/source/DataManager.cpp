@@ -1,5 +1,6 @@
 #include "AppPrecomp.h"
 #include "DataManager.h"
+#include "GameLogic.h"
 
 string DataObject::Get()
 {
@@ -230,7 +231,6 @@ void DataManager::Serialize(CL_FileHelper &helper)
 	if (helper.IsWriting())
 	{
 		helper.process(version);
-
 	}
 
 	helper.process(size); //load or write it, depends
@@ -266,11 +266,44 @@ void DataManager::Serialize(CL_FileHelper &helper)
 			m_data[o.m_key] = o;
 		}
 	}
-
-	
 }
 
+void DataManager::Save( string filename )
+{
+	//save out our globals
+	CL_OutputSource *pSource = g_VFManager.PutFile(filename);
 
+	if (pSource)
+	{
+		CL_FileHelper helper(pSource);
+		Serialize(helper);
+		SAFE_DELETE(pSource);
+	}
+
+}
+
+void DataManager::Load( string filename )
+{
+	CL_InputSource *pFile = g_VFManager.GetFile(filename);
+
+	if (!pFile)
+	{
+		return; //nothing to load
+	}
+	try
+	{
+	CL_FileHelper helper(pFile); //will autodetect if we're loading or saving
+	Serialize(helper);
+	} catch(CL_Error error)
+	{
+		LogMsg(error.message.c_str());
+		ShowMessage(error.message.c_str(), "Error loading database.  Corrupted?");
+		SAFE_DELETE(pFile);
+		return;
+	}
+	SAFE_DELETE(pFile);
+
+}
 
 
 /*

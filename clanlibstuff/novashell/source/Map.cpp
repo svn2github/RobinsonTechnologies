@@ -129,6 +129,7 @@ void Map::Kill()
     }
     m_chunkMap.clear();
 	m_physicsManager.Kill();
+	m_db.Clear();
 	SAFE_DELETE(m_pNavGraphManager);
 	m_bKillingMap = false;
 
@@ -422,6 +423,7 @@ bool Map::Load(string dirPath)
 	Init();
 
 
+	m_db.Load(m_strDirPath + C_MAP_DB_FILENAME);
 	m_layerManager.Load(m_strDirPath+C_LAYER_FILENAME);
 	
 	GetGameLogic()->ShowLoadingMessage();
@@ -593,6 +595,8 @@ bool Map::Save(bool bSaveTagCacheAlso)
 	assert(m_strDirPath[m_strDirPath.length()-1] == '/' && "Save needs a path with an ending backslash on it");
 
 	g_VFManager.CreateDir(m_strDirPath); //creates the dir if needed in the last mounted file tree
+
+	m_db.Save(m_strDirPath + C_MAP_DB_FILENAME);
 
 	m_layerManager.Save(m_strDirPath+C_LAYER_FILENAME);
 	bool bScreenDataWasModified = false;
@@ -938,6 +942,7 @@ void RemoveWorldFiles(const string &path)
 	RemoveFile(path+C_TAGCACHE_FILENAME);
 	RemoveFile(path+C_MAP_DAT_FILENAME);
 	RemoveFile(path+C_LAYER_FILENAME);
+	RemoveFile(path+C_MAP_DB_FILENAME);
 }
 
 void Map::SetMyMapCache(EntMapCache *pWorldCache)
@@ -1029,6 +1034,9 @@ Zone Map::GetZoneByPointAndType(const CL_Vector2 &vPos, int matType)
 	
 };
 
+//mode:  0, normal
+//mode 1, include editor only images
+
 CL_Rectf Map::ComputeWorldRect(int reserved)
 {
 	tile_list tileList;
@@ -1056,10 +1064,24 @@ CL_Rectf Map::ComputeWorldRect(int reserved)
 			for (tileItor = tileList.begin(); tileItor != tileList.end(); tileItor++)
 			{
 
-				if (m_layerManager.GetLayerInfo( (*tileItor)->GetLayer()).RequiresParallax()
-					|| m_layerManager.GetLayerInfo( (*tileItor)->GetLayer()).GetShowInEditorOnly())
+
+				if (reserved == 0)
 				{
-					continue;
+
+				
+					if (m_layerManager.GetLayerInfo( (*tileItor)->GetLayer()).RequiresParallax()
+						|| m_layerManager.GetLayerInfo( (*tileItor)->GetLayer()).GetShowInEditorOnly())
+					{
+						continue;
+					}
+				} else
+				{
+					if (m_layerManager.GetLayerInfo( (*tileItor)->GetLayer()).RequiresParallax())
+					
+					{
+						continue;
+					}
+
 				}
 
 				tileType = (*tileItor)->GetType();
@@ -1077,9 +1099,7 @@ CL_Rectf Map::ComputeWorldRect(int reserved)
 					break;
 
 					//pTilePic = ((TilePic*)*tileItor);
-
 				}
-
 
 				if (bFirst)
 				{
