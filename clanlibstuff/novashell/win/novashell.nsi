@@ -102,9 +102,9 @@ SectionIn RO
   SetOutPath "$INSTDIR"
   File /r "..\bin\base"
   File /r "..\bin\worlds"
-
+SetOutPath "$INSTDIR\packaging"
   File /r "..\bin\packaging\mac"
-
+SetOutPath "$INSTDIR"
 
 AccessControl::GrantOnFile "$INSTDIR" "(S-1-5-32-545)" "GenericRead + GenericWrite + DeleteChild"
 

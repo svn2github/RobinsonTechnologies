@@ -13,6 +13,16 @@ the one sending the double-click event, hrm.  Will have to think about that late
 
 Changelog
 
+5-17-2011
+
+* A number of tweaks and improvements to the XML exporter:
+  * Now exports tilesizex/tilesizey as reported by the grid settings
+  * Reports layer sort level
+  * Gives filename of tileset per layer, guesses by looking at the first tile it finds of the layer
+  * adds "collision=yes" parm if layer is marked with collision
+  * BUGFIX: A blank path no longer causes a crash
+  * Spaces are changed to underscores in layer names when exporting .xml
+
 5-15-2011
 
 * Added generic "per map" DataManager for user data. Can't be accessed by script yet

@@ -3,6 +3,7 @@
 #include "GameLogic.h"
 #include "EntEditor.h"
 #include "Console.h"
+#include "HashedResource.h"
 
 #define C_EXPORT_XML_PATH "_EXPORT_XML_PATH"
 #define C_EXPORT_XML_FILENAME "_EXPORT_XML_FILENAME"
@@ -59,10 +60,13 @@ bool MapExportXML::Init()
 	{
 		m_path = m_pWorldDB->Get(C_EXPORT_XML_PATH);
 		StringReplace("\\", "/", m_path);
-		if (m_path[m_path.size()-1] == '/')
+		
+		
+		if (m_path.size() > 0)
+		if (m_path[m_path.size()-1] != '/')
 		{
 			//remove trailing slash
-			m_path = CL_String::left(m_path, m_path.size()-1);
+			m_path += "/";
 		}
 	} else
 	{
@@ -106,16 +110,25 @@ bool MapExportXML::Init()
 	m_path = pathLine.get_text();
 	m_filename = FileNameLine.get_text();
 
-	StringReplace("\\", "/", m_path);
-	if (m_path[m_path.size()-1] == '/')
-	{
-		//remove trailing slash
-		m_path = CL_String::left(m_path, m_path.size()-1);
-	}
+	
 
 	//go ahead and save this for later
 	m_pWorldDB->Set(C_EXPORT_XML_PATH, m_path);
 	m_pMapDB->Set(C_EXPORT_XML_FILENAME, m_filename);
+	
+	if (m_path == "" || m_path[0] == '.')
+	{
+		m_path = GetGameLogic()->GetWorldsDirPath()+"/"+m_path;
+	}
+
+	StringReplace("\\", "/", m_path);
+	if (m_path.size() > 0)
+		if (m_path[m_path.size()-1] != '/')
+		{
+			//remove trailing slash
+			m_path += "/";
+		}
+	
 	m_pMap->SetModified(true); //insure that this will be saved
 
 	g_Console.SetOnScreen(true);
@@ -125,7 +138,7 @@ bool MapExportXML::Init()
 
 	ExportMap();
 	LogMsg("***********");
-	LogMsg("Map exported to %s.", (m_path + "/" + m_filename).c_str());
+	LogMsg("Map exported to %s.", (m_path + m_filename).c_str());
 
 	return true; //success
 }
@@ -197,26 +210,58 @@ void MapExportXML::ExportLayer(Layer &lay, int layerID, CL_Rect &worldArea)
 	layersToInclude.push_back(layerID);
 
 	
+	string layerName = lay.GetName();
+	StringReplace(" ", "_", layerName);
+
 	g_pMapManager->GetActiveMapCache()->AddTilesByRect(worldArea, &tileList, layersToInclude);
 
 	if (tileList.empty())
 	{
-		LogMsg("Ignoring layer %s, it's empty", lay.GetName().c_str());
+		LogMsg("Ignoring layer %s, it's empty", layerName.c_str());
 		return;
 	}
 	
 	if (lay.GetHasCollisionData())
 	{
-		LogMsg("Exporting tile layer %s as collision (noticed its has collision flag)", lay.GetName().c_str());
+		LogMsg("Exporting tile layer %s as collision (noticed its has collision flag)", layerName.c_str());
 	} else
 	{
-		LogMsg("Exporting tile layer %s as tiles/objects", lay.GetName().c_str());
+		LogMsg("Exporting tile layer %s as tiles/objects", layerName.c_str());
 	}
 
+	//try both ways?
 	string extraData = GetExtraXMLParmsFromDB(*m_pMap->GetDB(), "export_layer_parm_"+lay.GetName(), false);
-	StartGroup(lay.GetName()+extraData);
+	if (lay.GetName() != layerName)
+		extraData += GetExtraXMLParmsFromDB(*m_pMap->GetDB(), "export_layer_parm_"+layerName, false);
+
+	if (lay.GetHasCollisionData())
+	{
+		extraData += " collision=\"yes\"";
+	}
+
+	extraData += " tilesizex=\""+toString(g_pMapManager->GetActiveMap()->GetDefaultTileSizeX())+"\"";
+	extraData += " tilesizey=\""+toString(g_pMapManager->GetActiveMap()->GetDefaultTileSizeY())+"\"";
+
+	extraData += " sort=\""+toString(lay.GetSort())+"\"";
+
 
 	tile_list::iterator itor = tileList.begin();
+
+	if (itor != tileList.end())
+	{
+		Tile *pTile = (*itor);
+		if (pTile->GetType() == C_TILE_TYPE_PIC)
+		{	
+			
+			TilePic *pTilePic = (TilePic*)pTile;
+			HashedResource *pHashedResource = GetHashedResourceManager->GetResourceClassByHashedID(pTilePic->m_resourceID);
+			extraData += " filename=\""+CL_String::get_filename(pHashedResource->m_strFilename)+"\"";
+		}
+
+	}
+
+	StartGroup(layerName+extraData);
+
 	while (itor != tileList.end())
 	{
 		Tile *pTile = (*itor);
@@ -274,26 +319,26 @@ void MapExportXML::ExportLayer(Layer &lay, int layerID, CL_Rect &worldArea)
 
 		itor++;
 	}
-	EndGroup(lay.GetName());
+	EndGroup(layerName);
 
 }
 
 void MapExportXML::ExportMap()
 {
 	//delete old file
-	RemoveFile(m_path+"/"+m_filename);
+	RemoveFile(m_path+m_filename);
 
-	if (FileExists(m_path+"/"+m_filename))
+	if (FileExists(m_path+m_filename))
 	{
 		LogError("Unable to delete old %s.. another app is using it? Oh well, adding to it I guess.", (m_path+"/"+m_filename).c_str());
 	}
 
 	//make sure we can write here
-	FILE *fp = fopen( (m_path+"/"+m_filename).c_str(), "wb");
+	FILE *fp = fopen( (m_path+m_filename).c_str(), "wb");
 	if (!fp)
 	{
 		LogError("Unable to create the file %s. Incorrect path or we don't have access to write there.  Try ../../../%s instead maybe.",
-			(m_path+"/"+m_filename).c_str(), m_filename.c_str());
+			(m_path+m_filename).c_str(), m_filename.c_str());
 		return;
 	}
 	fclose(fp);
@@ -344,7 +389,7 @@ void MapExportXML::Add(string line)
 	
 	line = indent + line + "\r\n";
 
-add_text( line.c_str(), (m_path+"/"+m_filename).c_str());
+add_text( line.c_str(), (m_path+m_filename).c_str());
 }
 
 void MapExportXML::StartGroup(string name)
