@@ -13,6 +13,10 @@ the one sending the double-click event, hrm.  Will have to think about that late
 
 Changelog
 
+10-22-2011
+
+* Fixed to work with latest radeon driver, instead of just get a white screen
+
 5-17-2011
 
 * A number of tweaks and improvements to the XML exporter:
