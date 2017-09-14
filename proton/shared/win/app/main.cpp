@@ -29,6 +29,7 @@
 //If this is uncommented, the app won't suspend/resume when losing focus in windows, but always runs.
 //(You should probably add it up as a preprocessor compiler define if you need it, instead of uncommenting it here)
 //#define RT_RUNS_IN_BACKGROUND
+extern bool g_bUseBorderlessFullscreenOnWindows;
 
 uint32 g_timerID = 0;
 bool g_winAllowFullscreenToggle = true;
@@ -53,6 +54,7 @@ void InitVideoSize()
 #endif
 
 	AddVideoMode("Windows", 1024, 768, PLATFORM_ID_WINDOWS);
+	AddVideoMode("WindowsDink", 640, 480, PLATFORM_ID_WINDOWS);
 	AddVideoMode("Windows Wide", 1280, 800, PLATFORM_ID_WINDOWS);
 	
 #ifndef RT_WEBOS
@@ -80,6 +82,12 @@ void InitVideoSize()
 	AddVideoMode("iPhone4 Landscape", 960,640, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //force orientation for emulation so it's not sideways););
 	AddVideoMode("iPhone5", 640, 1136, PLATFORM_ID_IOS);
 	AddVideoMode("iPhone5 Landscape", 1136,640, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //force orientation for emulation so it's not sideways););
+	AddVideoMode("iPhone5 Landscape", 1136,640, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //force orientation for emulation so it's not sideways););
+	AddVideoMode("iPhone7 Landscape", 1334,750, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //force orientation for emulation so it's not sideways););
+	AddVideoMode("iPhone7 Plus Landscape", 1920,1080, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //But before downsampling it's 2208x1242?
+
+	
+	
 	AddVideoMode("iPad HD", 768*2, 1024*2, PLATFORM_ID_IOS);
 	AddVideoMode("iPad HD Landscape", 1024*2,768*2 , PLATFORM_ID_IOS,  ORIENTATION_PORTRAIT);
 	
@@ -113,9 +121,9 @@ void InitVideoSize()
 	AddVideoMode("Nexus 7B Visible", 1920, 1104, PLATFORM_ID_ANDROID);
 	AddVideoMode("Nexus 5 Visible Landscape", 1794, 1080, PLATFORM_ID_ANDROID); //also Experia Z
 	AddVideoMode("Android HD", 1920, 1080, PLATFORM_ID_ANDROID); //Not sure which device, but some are this
-	AddVideoMode("Galaxy Note 4", 2560, 1440, PLATFORM_ID_ANDROID); //Not sure which device, but some are this
-	AddVideoMode("Galaxy Note 5", 3840, 2160, PLATFORM_ID_ANDROID); //Not sure which device, but some are this
-	AddVideoMode("LG G4 Visible Landscape",2392 , 1440, PLATFORM_ID_ANDROID); //Not sure which device, but some are this
+	AddVideoMode("Galaxy Note 4", 2560, 1440, PLATFORM_ID_ANDROID); 
+	AddVideoMode("Galaxy Note 5", 3840, 2160, PLATFORM_ID_ANDROID);
+	AddVideoMode("LG G4 Visible Landscape",2392 , 1440, PLATFORM_ID_ANDROID);
 
 	//RIM Playbook OS/BBX/BB10/Whatever they name it to next week
 	AddVideoMode("Playbook", 600,1024, PLATFORM_ID_BBX);
@@ -124,8 +132,7 @@ void InitVideoSize()
 	AddVideoMode("Flash", 640, 480, PLATFORM_ID_FLASH);
 
 	//WORK: Change device emulation here
-	//string desiredVideoMode = "iPhone5 Landscape"; //name needs to match one of the ones defined above
-	string desiredVideoMode = "iPhone5 Landscape"; 
+	string desiredVideoMode = "iPhone Landscape"; 
  	SetVideoModeByName(desiredVideoMode);
 	GetBaseApp()->OnPreInitVideo(); //gives the app level code a chance to override any of these parms if it wants to
 }
@@ -586,8 +593,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			// Respond to the message:				
 			int Width = LOWORD( lParam );
 			int Height = HIWORD( lParam ); 
-			
-		
+				
 			if (Width != GetPrimaryGLX() || Height != GetPrimaryGLY())
 			{
 				
@@ -1018,7 +1024,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	
 		break;
 	case WM_EXITSIZEMOVE:
+#ifdef _DEBUG
 		//LogMsg("Exit size move");
+#endif
 		CheckWindowLagTimer();
 		if (g_timerID)
 		{
@@ -1229,9 +1237,53 @@ void CenterWindow(HWND hWnd)
 
 bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio)
 {
+
+	bool bMustDestroyWindow = false;
+
+	ResetOrthoFlag();
+
 	LogMsg("Setting native video mode to %d, %d - Fullscreen: %d  Aspect Ratio: %.2f", width, height, int(bFullscreen), aspectRatio);
 	g_winVideoScreenY = height;
 	g_winVideoScreenX = width;
+
+	if (!g_bUseBorderlessFullscreenOnWindows)
+	{
+
+		if (bFullscreen != g_bIsFullScreen)
+		{
+			bMustDestroyWindow = true;
+		}
+
+		if (bFullscreen)
+		{
+			DEVMODE dmScreenSettings;                   // Device Mode
+			memset(&dmScreenSettings, 0, sizeof(dmScreenSettings));       // Makes Sure Memory's Cleared
+			dmScreenSettings.dmSize = sizeof(dmScreenSettings);       // Size Of The Devmode Structure
+			dmScreenSettings.dmPelsWidth = width;            // Selected Screen Width
+			dmScreenSettings.dmPelsHeight = height;           // Selected Screen Height
+			dmScreenSettings.dmBitsPerPel = 32;             // Selected Bits Per Pixel
+			dmScreenSettings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
+			// Try To Set Selected Mode And Get Results.  NOTE: CDS_FULLSCREEN Gets Rid Of Start Bar.
+			if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+			{
+				char message[512];
+
+				sprintf(message, "Your video card can't do %dx%d fullscreen.\nChange to a standard resolution before doing this.", width, height);
+				MessageBox(NULL, message, GetAppName(), MB_OK | MB_ICONEXCLAMATION);
+				bFullscreen = false;
+				ChangeDisplaySettings(NULL, 0);
+			}
+
+		}
+		else
+		{
+
+			//put back windowed mode?
+			ChangeDisplaySettings(NULL, 0);
+		}
+
+	}
 
 	// EGL variables
 #ifndef C_GL_MODE
@@ -1304,7 +1356,7 @@ bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio)
 		RECT clientRect;
 		GetClientRect(g_hWnd, &clientRect);
 	
-		if (clientRect.right != width || clientRect.bottom != height)
+		if (clientRect.right != width || clientRect.bottom != height || bMustDestroyWindow)
 		{
 			//we'll need to actually recreate this
 			DestroyWindow(g_hWnd);
@@ -1462,9 +1514,6 @@ assert(!g_hDC);
 	InitMultiTouch();
 #endif
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), GetOrientation());
-
-	//UpdateWindow(g_hWnd);
-	//RedrawWindow(0, 0, 0, RDW_ALLCHILDREN|RDW_INVALIDATE|RDW_UPDATENOW);
 	return true;
 }
 
@@ -1644,6 +1693,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, TCHAR *lpCmdLin
 #ifdef RT_FLASH_TEST
 	GLFlashAdaptor_Initialize();
 #endif
+
 
 	if (!InitVideo(GetPrimaryGLX(), GetPrimaryGLY(), g_bIsFullScreen, 0))
 	{

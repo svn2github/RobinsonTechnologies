@@ -631,11 +631,14 @@ void PrepareForGL()
 	if (NeedsOrthoSet()) return; //not needed
 
 	g_globalBatcher.Flush();
+	CHECK_GL_ERROR();
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
+	CHECK_GL_ERROR();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
+	CHECK_GL_ERROR();
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);   
 	CHECK_GL_ERROR();

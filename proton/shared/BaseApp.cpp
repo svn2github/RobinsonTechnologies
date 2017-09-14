@@ -15,6 +15,7 @@ Entity * GetEntityRoot()
 RenderBatcher g_globalBatcher;
 bool g_isLoggerInitted = false;
 bool g_isBaseAppInitted = false;
+bool g_bUseBorderlessFullscreenOnWindows = true; //extern and change yourself if needed, done this way to stay compatible with old stuff.  (true was old default behavior)
 
 bool IsBaseAppInitted()
 {
@@ -667,14 +668,34 @@ void BaseApp::OnFullscreenToggleRequest()
 
 	if (g_bIsFullScreen)
 	{
+		if (savex == 0)
+		{
+			savex = GetPrimaryGLX();
+			savey = GetPrimaryGLY();
+		}
+
 		GetBaseApp()->SetVideoMode(savex, savey, false);
 
 	} else
 	{
-		savex = GetPrimaryGLX();
-		savey = GetPrimaryGLY();
+		if (!g_bUseBorderlessFullscreenOnWindows)
+		{
+			//use current rez and fullscreen it
 
-		GetBaseApp()->SetVideoMode(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), true);
+			savex = GetPrimaryGLX();
+			savey = GetPrimaryGLY();
+			GetBaseApp()->SetVideoMode(savex, savey, true);
+
+		}
+		else
+		{
+			//fake fullscreen using borderless window of current resolution (more compatible)
+
+			savex = GetPrimaryGLX();
+			savey = GetPrimaryGLY();
+			GetBaseApp()->SetVideoMode(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), true);
+
+		}
 
 	}
 #endif
