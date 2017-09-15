@@ -45,6 +45,7 @@ bool g_bMouseIsInsideArea = true;
 vector<VideoModeEntry> g_videoModes;
 void AddVideoMode(string name, int x, int y, ePlatformID platformID, eOrientationMode forceOrientation = ORIENTATION_DONT_CARE);
 void SetVideoModeByName(string name);
+bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio);
 
 
 void InitVideoSize()
@@ -132,7 +133,7 @@ void InitVideoSize()
 	AddVideoMode("Flash", 640, 480, PLATFORM_ID_FLASH);
 
 	//WORK: Change device emulation here
-	string desiredVideoMode = "iPhone Landscape"; 
+	string desiredVideoMode = "Windows"; 
  	SetVideoModeByName(desiredVideoMode);
 	GetBaseApp()->OnPreInitVideo(); //gives the app level code a chance to override any of these parms if it wants to
 }
@@ -510,8 +511,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 	case WM_ACTIVATE:
 		{
-			return true;
+			break;
 		}
+
+	case WM_ACTIVATEAPP:
+	{
+//		LogMsg("Got WM_ACTIVATEAPP (%d)", (int)wParam);
+		if (wParam == 0)
+		{
+			if (g_bIsFullScreen && !g_bUseBorderlessFullscreenOnWindows)
+			{
+				LogMsg("Alt tabbed or clicked out of the fullscreen window");
+				ShowWindow(g_hWnd, SW_MINIMIZE);
+			}
+		}
+		break;
+	}
+
+
 
 	case WM_KILLFOCUS:
 #ifndef RT_RUNS_IN_BACKGROUND
@@ -522,6 +539,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		g_bHasFocus = false;
 #endif
+
+		LogMsg("App lost focus");
 		break;
 
 	case WM_SETFOCUS:
@@ -532,6 +551,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		g_bHasFocus = true;
 #endif
+		LogMsg("App got focus");
 		break;
 
 	case WM_SIZING:
@@ -596,7 +616,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				
 			if (Width != GetPrimaryGLX() || Height != GetPrimaryGLY())
 			{
-				
+				if (Width == 0 && Height == 0)
+				{
+					//we're actually being minimized
+					Width = GetPrimaryGLX();
+					Height = GetPrimaryGLY();
+					
+					//break;
+				}
 				//LogMsg("Got new size: %d, %d", Width, Height);
 				GetBaseApp()->KillOSMessagesByType(OSMessage::MESSAGE_SET_VIDEO_MODE);
 				GetBaseApp()->SetVideoMode(Width, Height, false, 0);
@@ -1238,7 +1265,7 @@ void CenterWindow(HWND hWnd)
 bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio)
 {
 
-	bool bMustDestroyWindow = false;
+	bool bDoingNativeFullScreenToggle = false;
 
 	ResetOrthoFlag();
 
@@ -1251,7 +1278,7 @@ bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio)
 
 		if (bFullscreen != g_bIsFullScreen)
 		{
-			bMustDestroyWindow = true;
+			bDoingNativeFullScreenToggle = true;
 		}
 
 		if (bFullscreen)
@@ -1356,16 +1383,19 @@ bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio)
 		RECT clientRect;
 		GetClientRect(g_hWnd, &clientRect);
 	
-		if (clientRect.right != width || clientRect.bottom != height || bMustDestroyWindow)
+		if (clientRect.right != width || clientRect.bottom != height || bDoingNativeFullScreenToggle)
 		{
 			//we'll need to actually recreate this
 			DestroyWindow(g_hWnd);
 			g_hWnd = NULL;
 		}
+
 	}
 
 	if (!g_hWnd)
 	{
+
+		assert(sRect.right - sRect.left != 0);
 		bCenterWindow = true;
 
 		g_hWnd = CreateWindowEx(

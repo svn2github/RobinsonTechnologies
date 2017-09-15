@@ -625,7 +625,7 @@ string RTFont::GetNextLine(const CL_Vec2f &textBounds, char **pCur, float scale,
 #ifdef _DEBUG 
 		if ( (*pCur)[text.length()] == '\r')
 		 {
-			 assert(!"Don't have backslash r's (hex 0d in your strings!");
+			 //assert(!"Don't have backslash r's (hex 0d in your strings!");
 		 }
 #endif
 
