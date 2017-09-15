@@ -54,8 +54,8 @@ public:
 	void Kill();
 	void FillColor(glColorBytes color);
 	byte * GetPixelData() {return m_pPixels;}
-	bool LoadFile(string fName, eColorKeyType colorKey, bool addBasePath = true);
-	bool LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int inputSize = 0, bool bAddAlphaChannelIfNotPowerOfTwo =false );
+	bool LoadFile(string fName, eColorKeyType colorKey, bool addBasePath = true, bool bApplyCheckerboardFix = false);
+	bool LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int inputSize = 0, bool bAddAlphaChannelIfNotPowerOfTwo =false, bool bApplyCheckerboardFix =false );
 	void Blit(int dstX, int dstY, SoftSurface *pSrc, int srcX = 0, int srcY = 0, int srcWidth = 0, int srcHeight = 0); //paste an image over ours
 	Surface * CreateGLTexture();
 	unsigned int GetSizeInBytes() {return m_memUsed;}
@@ -110,7 +110,7 @@ public:
 	void SetColorKeyType(eColorKeyType colorKey) {m_colorKeyType = colorKey;}
 	eColorKeyType GetColorKeyType() {return m_colorKeyType;}
 	glColorBytes GetColorKeyColor();
-	int GetColorKeyPaletteIndex() {return m_colorKeyPaletteIndex;} //used for 8 bit palettes that have a color key
+	int GetColorKeyPaletteIndex() { return m_colorKeyPaletteIndex; } //used for 8 bit palettes that have a color key
 	glColorBytes * GetPalette() {return m_palette;}
 	int GetPaletteColorCount() {return m_paletteColors;}
 	bool IsPaletteTheSame(glColorBytes *palette, int colorCount);
@@ -162,7 +162,9 @@ private:
 	int RGBAToPalette(const glColorBytes &color);
 	bool RLE8BitDecompress(byte *pDst, byte *pSrc, int dstSize, int srcSize);
 	void PreMultiplyAlpha();
+	void ConvertCheckboardToAlpha(glColorBytes * pImg);
 	bool LoadBMPTexture(byte *pMem);
+	bool LoadBMPTextureCheckerBoardFix(byte *pMem);
 	bool LoadRTTexture(byte *pMem);
 	void BlitRGBFromRGBA( int dstX, int dstY, SoftSurface *pSrc, int srcX /*= 0*/, int srcY /*= 0*/, int srcWidth /*= 0*/, int srcHeight /*= 0*/ );
 	void BlitRGBFromRGB( int dstX, int dstY, SoftSurface *pSrc, int srcX /*= 0*/, int srcY /*= 0*/, int srcWidth /*= 0*/, int srcHeight /*= 0*/ );

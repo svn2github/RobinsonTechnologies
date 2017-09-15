@@ -113,13 +113,13 @@ void SoftSurface::FillColor( glColorBytes color )
 	}
 }
 
-bool SoftSurface::LoadFile( string fName, eColorKeyType colorKey, bool addBasePath)
+bool SoftSurface::LoadFile( string fName, eColorKeyType colorKey, bool addBasePath, bool bApplyCheckerboardFix)
 {
 
 	FileInstance f(fName, addBasePath);
 	if (!f.IsLoaded()) return false;
 
-	return LoadFileFromMemory(f.GetAsBytes(), colorKey);
+	return LoadFileFromMemory(f.GetAsBytes(), colorKey, 0, false, bApplyCheckerboardFix);
 }
 
 bool SoftSurface::SetPaletteFromBMP(const string fName, eColorKeyType colorKey)
@@ -181,6 +181,531 @@ glColorBytes SoftSurface::GetColorKeyColor()
 
 	return glColorBytes(0,0,0,255);
 }
+
+
+//Special version that can modified checkerboard patterns to 32 bit shadows instead.  Changes by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
+
+bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
+{
+
+	//BMPFileHeader *pBmpHeader = (BMPFileHeader*)&pMem[0];
+	//LogMsg("Loading bmp...");
+
+	BMPImageHeader *pBmpImageInfo = (BMPImageHeader*)&pMem[14];
+	//get around alignment issues
+	BMPImageHeader bmpImageInfoCopy;
+	memcpy(&bmpImageInfoCopy, &pMem[14], sizeof(BMPImageHeader));
+
+	if (sizeof(BMPImageHeader) != 40)
+	{
+		LogMsg("SERIOUS ERROR: BMPImageHeader structure should be 40 bytes.  Packing set wrong in this compiler.");
+	}
+
+	unsigned short offsetToImageData;
+	//LogMsg("mem cpy of image data pointer");
+
+	memcpy(&offsetToImageData, &pMem[10], 2);
+	byte *pPixelData = &pMem[offsetToImageData];
+
+	m_width = bmpImageInfoCopy.Width;
+	m_height = bmpImageInfoCopy.Height;
+
+	uint16 bitCount;
+	bitCount = bmpImageInfoCopy.BitCount;
+
+	//m_width = pBmpImageInfo->Width;
+	//m_height = pBmpImageInfo->Height;
+	m_bytesPerPixel = bitCount / 8;
+	int srcBytesPerPixel = m_bytesPerPixel;
+
+	if (m_width == 0 || m_height == 0) return false;
+	//note, yes, bmps are stored upside down, but so do our gl textures so we don't flip the Y
+
+	switch (srcBytesPerPixel)
+	{
+	case 0: //1 bit
+
+		m_surfaceType = SURFACE_RGBA;
+		m_bytesPerPixel = 4;
+		break;
+
+	case 1:
+
+		m_surfaceType = SURFACE_RGBA;
+		m_bytesPerPixel = 4;
+		break;
+
+	case 2:
+		m_surfaceType = SURFACE_RGBA;
+		m_bytesPerPixel = 4;
+		break;
+
+	case 3:
+
+		m_surfaceType = SURFACE_RGBA;
+		m_bytesPerPixel = 4;
+
+		break;
+
+	case 4:
+		m_surfaceType = SURFACE_RGBA;
+		m_bytesPerPixel = 4;
+		break;
+
+	default:
+		LogError("Don't handle %d bit bmps yet", pBmpImageInfo->BitCount);
+		assert(0);
+		return false;
+
+	}
+
+	switch (bmpImageInfoCopy.Compression)
+	{
+	case BMP_COMPRESSION_NONE:
+		break;
+
+	case BMP_COMPRESSION_RLE8:
+		break;
+
+	default:
+
+		LogError("Don't handle this kind of compressed bitmap yet");
+		assert(0);
+		return false;
+	}
+
+
+	m_usedPitch = m_width * m_bytesPerPixel;
+	m_pitchOffset = 0;
+
+	while ((m_usedPitch + m_pitchOffset) % 4) { m_pitchOffset++; } //what's needed to pad it to a 32 byte boundry
+
+	int dataSize = (m_usedPitch + m_pitchOffset)*m_height;
+
+	m_pPixels = new byte[dataSize*m_bytesPerPixel];
+	if (!m_pPixels) return false;
+	if (m_height < 0)
+	{
+		LogError("BMP loader does not support top-down bitmaps yet");
+		SAFE_DELETE_ARRAY(m_pPixels);
+		return false;
+	}
+
+	if (srcBytesPerPixel == 0)
+	{
+		//convert 1 bit to 32
+#ifdef _DEBUG
+
+		LogMsg("0 bit, or whatever");
+#endif
+		int colors = 2;
+
+		if (bmpImageInfoCopy.ColorsUsed != 0)
+		{
+			//looks like they don't use all the colors available
+			colors = bmpImageInfoCopy.ColorsUsed;
+		}
+
+		assert(bmpImageInfoCopy.Compression == BMP_COMPRESSION_NONE);
+
+		//load the palette info.  Note:  Bitmaps are BGR format
+		byte *pPaletteData = (byte*)pBmpImageInfo + sizeof(BMPImageHeader);
+		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
+
+		glColorBytes *pImg = (glColorBytes*)m_pPixels;
+
+		int srcUsedPitch = m_width / 8;
+		int srcPitchOffset = 0;
+		while ((srcUsedPitch + srcPitchOffset) % 4) { srcPitchOffset++; } //what's needed to pad it to a 32 byte boundry
+		int totalPitch = srcUsedPitch + srcPitchOffset;
+
+		for (int y = 0; y < m_height; y++)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				//first calculate the byte where the bit we want would be in.. fast?  No, but so what, who even uses 1-bit bmps!
+				byte *pByte = &pPixelData[(m_height - y - 1)*totalPitch + (x / 8)];
+				byte colorIndex = 0;
+
+				if (*pByte & 1 << (x % 8)) //first figuring out which bit we want (the x%8 figures it out) from pByte, then shifting and getting it
+				{
+					colorIndex = 1;
+				}
+
+				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(m_palette[colorIndex]);
+			}
+		}
+
+		ConvertCheckboardToAlpha(pImg);
+
+		if (GetSurfaceType() == SURFACE_RGBA)
+		{
+			if (GetAutoPremultiplyAlpha() && !GetHasPremultipliedAlpha())
+			{
+				PreMultiplyAlpha();
+			}
+		}
+
+
+		//memset(pImg, 600, m_bytesPerPixel*GetWidth()*GetHeight());
+	}
+	else if (srcBytesPerPixel == 1)
+	{
+		//load the palette info.  Note:  Bitmaps are BGR format
+		int colors = 256;
+		if (bmpImageInfoCopy.ColorsUsed != 0)
+		{
+			//looks like they don't use all the colors available
+			colors = bmpImageInfoCopy.ColorsUsed;
+		}
+		byte *pPaletteData = (byte*)pBmpImageInfo + sizeof(BMPImageHeader);
+		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
+		if (bmpImageInfoCopy.Compression == BMP_COMPRESSION_RLE8)
+		{
+#ifdef _DEBUG
+			LogMsg("RLE");
+#endif
+			byte* lTempData = new byte[bmpImageInfoCopy.Size];
+
+			if (!RLE8BitDecompress(m_pPixels, pPixelData, dataSize, bmpImageInfoCopy.Size))
+			{
+				LogError("Error decompressing RLE bitmap");
+				SAFE_DELETE_ARRAY(m_pPixels);
+				m_surfaceType = SURFACE_NONE;
+				return false;
+			}
+
+			delete[] lTempData;
+
+			// TODO
+		}
+		else
+		{
+
+			glColorBytes *pImg = (glColorBytes*)m_pPixels;
+
+			int srcUsedPitch = m_width * srcBytesPerPixel;
+			int srcPitchOffset = 0;
+			while ((srcUsedPitch + srcPitchOffset) % 4) { srcPitchOffset++; } //what's needed to pad it to a 32 byte boundry
+			int totalPitch = srcUsedPitch + srcPitchOffset;
+
+			for (int y = 0; y < m_height; y++)
+			{
+				for (int x = 0; x < m_width; x++)
+				{
+					byte pByte = pPixelData[((m_height - y - 1)*totalPitch) + x * 1];
+					pImg[y*m_width + x] = m_palette[pByte];
+				}
+			}
+			ConvertCheckboardToAlpha(pImg);
+		}
+
+	}
+	else if (srcBytesPerPixel == 2)
+	{
+		//convert 16 bit to 32
+		//LogMsg("16 bit");
+
+		glColorBytes *pImg = (glColorBytes*)m_pPixels;
+
+		int srcUsedPitch = m_width * srcBytesPerPixel;
+		int srcPitchOffset = 0;
+		while ((srcUsedPitch + srcPitchOffset) % 2) { srcPitchOffset++; } //what's needed to pad it to a 16 bit boundry
+		int totalPitch = srcUsedPitch + srcPitchOffset;
+
+		for (int y = 0; y < m_height; y++)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				byte *pByte = &pPixelData[(m_height - y - 1)*totalPitch + x * 2];
+
+				uint16 color = *(uint16*)pByte;
+				uint8 red = (color >> 10) & 31;
+				uint8 green = (color >> 5) & 31;
+				uint8 blue = (color) & 31;
+
+				red <<= 3;
+				green <<= 3;
+				blue <<= 3;
+
+				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(red, green, blue, 255));
+			}
+		}
+
+		ConvertCheckboardToAlpha(pImg);
+
+		if (GetAutoPremultiplyAlpha() && !GetHasPremultipliedAlpha())
+		{
+			PreMultiplyAlpha();
+		}
+
+		//memset(pImg, 600, m_bytesPerPixel*GetWidth()*GetHeight());
+	}
+	else if (srcBytesPerPixel == 3)
+	{
+		//convert 24 bit bmp to 32 bit rgba
+#ifdef _DEBUG
+		//LogMsg("24 bit");
+#endif
+
+		glColorBytes *pImg = (glColorBytes*)m_pPixels;
+
+		int srcUsedPitch = m_width * srcBytesPerPixel;
+		int srcPitchOffset = 0;
+		while ((srcUsedPitch + srcPitchOffset) % 4) { srcPitchOffset++; } //what's needed to pad it to a 32 byte boundry
+		int totalPitch = srcUsedPitch + srcPitchOffset;
+
+		for (int y = 0; y < m_height; y++)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				byte *pSrc = &pPixelData[((m_height - y - 1)*totalPitch) + x * 3];
+				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[2], pSrc[1], pSrc[0], 255));
+			}
+		}
+
+		ConvertCheckboardToAlpha(pImg);
+
+		if (GetAutoPremultiplyAlpha() && !GetHasPremultipliedAlpha())
+		{
+			PreMultiplyAlpha();
+		}
+
+
+	}
+	else if (srcBytesPerPixel == 4)
+	{
+		//convert 32 bit bmp to 32 bit rgba
+#ifdef _DEBUG
+
+		LogMsg("32 bit");
+#endif
+		glColorBytes *pImg = (glColorBytes*)m_pPixels;
+
+		int srcUsedPitch = m_width * srcBytesPerPixel;
+		int srcPitchOffset = 0;
+		while ((srcUsedPitch + srcPitchOffset) % 4) { srcPitchOffset++; } //what's needed to pad it to a 32 byte boundry
+		int totalPitch = srcUsedPitch + srcPitchOffset;
+
+		for (int y = 0; y < m_height; y++)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				byte *pSrc = &pPixelData[(m_height - y - 1)*totalPitch + x * 4];
+				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[2], pSrc[1], pSrc[0], pSrc[3]));
+			}
+		}
+
+		ConvertCheckboardToAlpha(pImg);
+
+		if (GetAutoPremultiplyAlpha() && !GetHasPremultipliedAlpha())
+		{
+			PreMultiplyAlpha();
+		}
+
+		//memset(pImg, 600, m_bytesPerPixel*GetWidth()*GetHeight());
+	}
+	else
+	{
+		assert(!"Unhandled");
+	}
+
+	if (m_bytesPerPixel == 4 && GetAutoPremultiplyAlpha() && !GetHasPremultipliedAlpha())
+	{
+		SetHasPremultipliedAlpha(true);
+	}
+
+	if (GetColorKeyType() != COLOR_KEY_NONE)
+	{
+		m_bUsesAlpha = true;
+	}
+
+	assert(GetWidth() && GetHeight());
+
+	IncreaseMemCounter(dataSize);
+	return true;
+}
+
+//ConvertCheckboardToAlpha by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
+void SoftSurface::ConvertCheckboardToAlpha(glColorBytes * pImg)
+{
+
+	// Checkboard check - pass 1 - change white pixels
+	const auto lWhite = glColorBytes(0, 0, 0, 0);
+	const auto lBlack = glColorBytes(0, 0, 0, 255);
+	const auto lGray_1 = glColorBytes(0, 0, 0, 32);
+	const auto lGray_2 = glColorBytes(0, 0, 0, 64);
+	const auto lGray_3 = glColorBytes(0, 0, 0, 96);
+	const auto lGray_4 = glColorBytes(0, 0, 0, 128);
+
+	SetUsesAlpha(true);
+
+	for (int y = 0; y < m_height; y++)
+	{
+		for (int x = 0; x < m_width; x++)
+		{
+			auto& lThisPixel = pImg[y*m_width + x];
+			auto test = glColorBytes(20, 0, 0, 0);
+			
+			if (lThisPixel.a == 0)
+			{
+				do
+				{
+					// Count black pixels surrounding the white pixel
+					int lBlackPixelCount = 0;
+					int lPretendBlackPixelCount = 0;
+
+					// Top
+					if (y > 0)
+					{
+						auto& lTopPixel = pImg[(y - 1)*m_width + x];
+						if (lTopPixel.Compare(lBlack))
+						{
+							lBlackPixelCount += 1;
+						}
+						else if (lTopPixel.a != 0)
+						{
+							// Onto the next pixel
+							break;
+						}
+					}
+					else
+					{
+						// Pretend like edge is black
+						lPretendBlackPixelCount += 1;
+					}
+
+					// Left
+					if (x > 0)
+					{
+						auto& lLeftPixel = pImg[(y)*m_width + (x - 1)];
+						if (lLeftPixel.Compare(lBlack))
+						{
+							lBlackPixelCount += 1;
+						}
+						else if (lLeftPixel.a != 0)
+						{
+							// Onto the next pixel
+							break;
+						}
+					}
+					else
+					{
+						// Pretend like edge is black
+						lPretendBlackPixelCount += 1;
+					}
+
+					// Down
+					if (y < (m_height - 1))
+					{
+						auto& lDownPixel = pImg[(y + 1)*m_width + (x)];
+						if (lDownPixel.Compare(lBlack))
+						{
+							lBlackPixelCount += 1;
+						}
+						else if (lDownPixel.a != 0)
+						{
+							// Onto the next pixel
+							break;
+						}
+					}
+					else
+					{
+						// Pretend like edge is black
+						lPretendBlackPixelCount += 1;
+					}
+
+					// Right
+					if (x < (m_width - 1))
+					{
+						auto& lRightPixel = pImg[(y)*m_width + (x + 1)];
+						if (lRightPixel.Compare(lBlack))
+						{
+							lBlackPixelCount += 1;
+						}
+						else if (lRightPixel.a != 0)
+						{
+							// Onto the next pixel
+							break;
+						}
+					}
+					else
+					{
+						// Pretend like edge is black
+						lPretendBlackPixelCount += 1;
+					}
+
+				
+				
+					if (lBlackPixelCount > 0)
+					{
+						lBlackPixelCount += lPretendBlackPixelCount;
+						if (lBlackPixelCount == 1)
+						{
+							memcpy(&pImg[(y)*m_width + (x)], &lGray_1, sizeof(glColorBytes));
+						}
+						else if (lBlackPixelCount == 2)
+						{
+							memcpy(&pImg[(y)*m_width + (x)], &lGray_2, sizeof(glColorBytes));
+						}
+						else if (lBlackPixelCount == 3)
+						{
+							memcpy(&pImg[(y)*m_width + (x)], &lGray_3, sizeof(glColorBytes));
+						}
+						else if (lBlackPixelCount == 4)
+						{
+							memcpy(&pImg[(y)*m_width + (x)], &lGray_4, sizeof(glColorBytes));
+						}
+					}
+					
+				} while (0);
+			}
+		}
+	}
+
+	
+	// Checkboard check - phase 2 - change black pixels
+	for (int y = 0; y < m_height; y++)
+	{
+		for (int x = 0; x < m_width; x++)
+		{
+			if (pImg[y*m_width + x].Compare(lBlack))
+			{
+				//int lBlack = 0;
+				// Convert black to alpha if surrounded by white / grays
+
+				if ((y == 0 ||
+					pImg[(y - 1)*m_width + x].a == 0 ||
+					pImg[(y - 1)*m_width + x].Compare(lGray_1) ||
+					pImg[(y - 1)*m_width + x].Compare(lGray_2) ||
+					pImg[(y - 1)*m_width + x].Compare(lGray_3) ||
+					pImg[(y - 1)*m_width + x].Compare(lGray_4)) &&
+					(x == 0 ||
+						pImg[(y)*m_width + (x - 1)].a == 0 ||
+						pImg[(y)*m_width + (x - 1)].Compare(lGray_1) ||
+						pImg[(y)*m_width + (x - 1)].Compare(lGray_2) ||
+						pImg[(y)*m_width + (x - 1)].Compare(lGray_3) ||
+						pImg[(y)*m_width + (x - 1)].Compare(lGray_4)) &&
+						(y == m_height - 1 ||
+							pImg[(y + 1)*m_width + x].a == 0 ||
+							pImg[(y + 1)*m_width + x].Compare(lGray_1) ||
+							pImg[(y + 1)*m_width + x].Compare(lGray_2) ||
+							pImg[(y + 1)*m_width + x].Compare(lGray_3) ||
+							pImg[(y + 1)*m_width + x].Compare(lGray_4)) &&
+							(x == m_width - 1 ||
+								pImg[(y)*m_width + (x + 1)].a == 0 ||
+								pImg[(y)*m_width + (x + 1)].Compare(lGray_1) ||
+								pImg[(y)*m_width + (x + 1)].Compare(lGray_2) ||
+								pImg[(y)*m_width + (x + 1)].Compare(lGray_3) ||
+								pImg[(y)*m_width + (x + 1)].Compare(lGray_4)))
+				{
+					memcpy(&pImg[(y)*m_width + (x)], &lGray_4, sizeof(glColorBytes));
+				}
+			}
+		}
+	}
+}
+
 
 bool SoftSurface::LoadBMPTexture(byte *pMem)
 {
@@ -571,7 +1096,7 @@ bool SoftSurface::LoadRTTexture(byte *pMem)
 	return true;
 }
 
-bool SoftSurface::LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int inputSize, bool bAddAlphaChannelIfPadded)
+bool SoftSurface::LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int inputSize, bool bAddAlphaChannelIfPadded, bool bApplyCheckerboardFix)
 {
 	
 	Kill();
@@ -602,7 +1127,14 @@ bool SoftSurface::LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int in
 	} else if (strncmp((char*)pMem, "BM", 2) == 0)
 	{
 		//we've got a bitmap on our hands it looks like
-		return LoadBMPTexture(pMem);
+		if (bApplyCheckerboardFix)
+		{
+			return LoadBMPTextureCheckerBoardFix(pMem);
+		}
+		else
+		{
+			return LoadBMPTexture(pMem);
+		}
 	} else if (strncmp((char*)pMem, C_RTFILE_TEXTURE_HEADER, 6) == 0)
 	{
 		return LoadRTTexture(pMem);
@@ -860,7 +1392,37 @@ void SoftSurface::BlitRGBAFromRGBA( int dstX, int dstY, SoftSurface *pSrc, int s
 					//blank!
 				} else
 				{
-					memcpy(pDestImage, pSrcImage, m_bytesPerPixel);
+					if (pSrcImage[3] == 255)
+					{
+						//simple overwrite
+						memcpy(pDestImage, pSrcImage, m_bytesPerPixel);
+					}
+					else
+					{
+						static float srcAlpha;
+						static float destAlpha;
+
+						//complex mix
+						srcAlpha = (float)pSrcImage[3] / 255.0f;
+						destAlpha = (float)pDestImage[3] / 255.0f;
+
+						static float c;
+						destAlpha -= srcAlpha;
+
+						//OPTIMIZE: This could be sped up a lot...
+						static float tempDest;
+						static float tempSrc;
+
+						for (int i = 0; i < 4; i++)
+						{
+							tempDest = ((float)pDestImage[i] / 255.0f) * destAlpha;
+							tempSrc = ((float)pSrcImage[i] / 255.0f) * srcAlpha;
+							c = ((float)pDestImage[i] / 255.0f) * destAlpha + ((float)pSrcImage[i] / 255.0f) * srcAlpha;
+							if (c > 1.0f) c = 1.0f;
+							pDestImage[i] = (byte)(c * 255.0f);
+						}
+					}
+				
 				}
 				
 				pDestImage +=m_bytesPerPixel;
