@@ -80,6 +80,8 @@ bool SoftSurface::Init( int sizex, int sizey, eSurfaceType type )
 void SoftSurface::FillColor( glColorBytes color )
 {
 	
+	SetModified(true);
+
 	if (m_surfaceType == SURFACE_RGBA)
 	{
 		glColorBytes *pSurf = (glColorBytes*)m_pPixels;
