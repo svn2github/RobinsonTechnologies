@@ -312,7 +312,6 @@ void NetHTTP::Update()
 
 					}
 				}
-
 			}
 			
 			if (m_expectedFileBytes == 0)

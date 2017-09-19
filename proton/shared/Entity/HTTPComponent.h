@@ -13,6 +13,41 @@
 #include "Component.h"
 #include "Network/NetHTTP.h"
 
+/* 
+example of usage.  OnError or OnFinish will be called
+
+EntityComponent *pComp = pMenu->AddComponent(new HTTPComponent);
+
+VariantList vPostData;
+
+vPostData.m_variant[0].Set("version");
+vPostData.m_variant[1].Set(toString(GetApp()->GetVersion()));
+pComp->GetFunction("AddPostData")->sig_function(&vPostData);
+
+vPostData.m_variant[0].Set("build");
+vPostData.m_variant[1].Set(toString(GetApp()->GetBuild()));
+pComp->GetFunction("AddPostData")->sig_function(&vPostData);
+
+vPostData.m_variant[0].Set("platform");
+vPostData.m_variant[1].Set(toString(GetEmulatedPlatformID()));
+pComp->GetFunction("AddPostData")->sig_function(&vPostData);
+
+VariantList v;
+
+string url = "www.dinknetwork.com";
+uint32 port = 80;
+//GetApp()->GetServerInfo(url, port);
+
+v.m_variant[0].Set(url);
+v.m_variant[1].Set(port);
+v.m_variant[2].Set("api");
+v.m_variant[3].Set(uint32(NetHTTP::END_OF_DATA_SIGNAL_HTTP)); //need this for it to detect a disconnect instead of the weird RTsoft symbol
+pComp->GetFunction("Init")->sig_function(&v);
+pComp->GetFunction("OnError")->sig_function.connect(&OnDownloadError);
+pComp->GetFunction("OnFinish")->sig_function.connect(&OnDownloadHTTPFinish);
+
+
+*/
 class HTTPComponent: public EntityComponent
 {
 public:

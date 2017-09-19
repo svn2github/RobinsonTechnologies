@@ -14,7 +14,7 @@ Here is the basic flow of usage:
 
 NetHTTP myNet;
 
-myNet.Setup("rtsoft.com", 80, "prey/getscores.php");
+myNet.Setup("rtsoft.com", 80, "prey/getscores.php", NetHTTP::END_OF_DATA_SIGNAL_HTTP);
 
 //also add any number of "post" data pieces that you want the .php to handle:
 

@@ -77,7 +77,14 @@ void HTTPComponent::InitAndStart(VariantList *pVList)
 		m_netHTTP.Reset();
 	}
 
-	m_netHTTP.Setup(pVList->m_variant[0].GetString(),pVList->m_variant[1].GetUINT32(),  pVList->m_variant[2].GetString());
+	NetHTTP::eEndOfDataSignal endOfDataSignal = NetHTTP::END_OF_DATA_SIGNAL_RTSOFT_MARKER;
+	if (pVList->Get(3).GetType() == Variant::TYPE_UINT32)
+	{
+		//fourth parm holds the end of data type, but we'll have to cast it
+		endOfDataSignal = (NetHTTP::eEndOfDataSignal)pVList->Get(3).GetUINT32();
+	}
+
+	m_netHTTP.Setup(pVList->m_variant[0].GetString(),pVList->m_variant[1].GetUINT32(),  pVList->m_variant[2].GetString(), endOfDataSignal);
 	m_state = STATE_CHECKING_CONNECTION;
 
 	PrepareConnection(NULL);
