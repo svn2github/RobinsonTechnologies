@@ -1296,10 +1296,22 @@ bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio)
 			{
 				char message[512];
 
-				sprintf(message, "Your video card can't do %dx%d fullscreen.\nChange to a standard resolution before doing this.", width, height);
-				MessageBox(NULL, message, GetAppName(), MB_OK | MB_ICONEXCLAMATION);
-				bFullscreen = false;
-				ChangeDisplaySettings(NULL, 0);
+				//try again
+				//sprintf(message, "Your video card can't do %dx%d fullscreen.\nTrying 1024X768...", width, height);
+				//MessageBox(NULL, message, GetAppName(), MB_OK | MB_ICONEXCLAMATION);
+				g_winVideoScreenY = height = 768;
+				g_winVideoScreenX = width = 1024;
+				dmScreenSettings.dmPelsWidth = g_winVideoScreenX;            // Selected Screen Width
+				dmScreenSettings.dmPelsHeight = g_winVideoScreenY;           // Selected Screen Height
+
+				if (ChangeDisplaySettings(&dmScreenSettings, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+				{
+					sprintf(message, "Your video card can't do %dx%d fullscreen.\nChange to a standard resolution before doing this.", width, height);
+					MessageBox(NULL, message, GetAppName(), MB_OK | MB_ICONEXCLAMATION);
+					bFullscreen = false;
+					ChangeDisplaySettings(NULL, 0);
+				}
+			
 			}
 
 		}
