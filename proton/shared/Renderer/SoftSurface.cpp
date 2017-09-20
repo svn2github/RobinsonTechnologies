@@ -5,6 +5,8 @@
 #include "BaseApp.h" //only needed for the memory statistics counter
 #include "JPGSurfaceLoader.h"
 
+
+
 SoftSurface::SoftSurface()
 {
 	m_pPixels = NULL;
@@ -528,186 +530,160 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 	return true;
 }
 
+const int g_fCheckerboardFixAlphaLimit = 128;
+
 //ConvertCheckboardToAlpha by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
 void SoftSurface::ConvertCheckboardToAlpha(glColorBytes * pImg)
 {
-
-	// Checkboard check - pass 1 - change white pixels
-	const auto lWhite = glColorBytes(0, 0, 0, 0);
-	const auto lBlack = glColorBytes(0, 0, 0, 255);
-	const auto lGray_1 = glColorBytes(0, 0, 0, 32);
-	const auto lGray_2 = glColorBytes(0, 0, 0, 64);
-	const auto lGray_3 = glColorBytes(0, 0, 0, 96);
-	const auto lGray_4 = glColorBytes(0, 0, 0, 128);
-
 	SetUsesAlpha(true);
 
-	for (int y = 0; y < m_height; y++)
+	// Goal: Find a 'checkerboard'-like pixel (a solid pixel that has transparent pixels at top/bottom/left/right)
+	// Then, make this pixel transparent, and add this pixel's color into the surrounding pixels, and make the
+	// adjacent pixel somewhat visible.
+	if (m_height > 1 && m_width > 1)
 	{
-		for (int x = 0; x < m_width; x++)
+		for (int y = 0; y < m_height; y++)
 		{
-			auto& lThisPixel = pImg[y*m_width + x];
-			auto test = glColorBytes(20, 0, 0, 0);
-			
-			if (lThisPixel.a == 0)
+			for (int x = 0; x < m_width; x++)
 			{
-				do
+				auto& lThisPixel = pImg[y*m_width + x];
+
+				// Find a solid pixel
+				if (IsCheckerboardSolidShadowPixel(pImg, x, y, lThisPixel))
 				{
-					// Count black pixels surrounding the white pixel
-					int lBlackPixelCount = 0;
-					int lPretendBlackPixelCount = 0;
+					// Make this pixel transparent
+					lThisPixel.a = g_fCheckerboardFixAlphaLimit;
+					// 'Darken' the pixel, otherwise it looks suuuper bright.
+					lThisPixel.r /= 2;
+					lThisPixel.g /= 2;
+					lThisPixel.b /= 2;
 
-					// Top
-					if (y > 0)
-					{
-						auto& lTopPixel = pImg[(y - 1)*m_width + x];
-						if (lTopPixel.Compare(lBlack))
-						{
-							lBlackPixelCount += 1;
-						}
-						else if (lTopPixel.a != 0)
-						{
-							// Onto the next pixel
-							break;
-						}
-					}
-					else
-					{
-						// Pretend like edge is black
-						lPretendBlackPixelCount += 1;
-					}
+					auto lTopPixel = (y == 0 ? nullptr : &pImg[(y - 1)*m_width + x]);
+					auto lLeftPixel = (x == 0 ? nullptr : &pImg[y*m_width + (x - 1)]);
+					auto lBottomPixel = (y == (m_height - 1) ? nullptr : &pImg[(y + 1)*m_width + x]);
+					auto lRightPixel = (x == (m_width - 1) ? nullptr : &pImg[y*m_width + x + 1]);
 
-					// Left
-					if (x > 0)
-					{
-						auto& lLeftPixel = pImg[(y)*m_width + (x - 1)];
-						if (lLeftPixel.Compare(lBlack))
-						{
-							lBlackPixelCount += 1;
-						}
-						else if (lLeftPixel.a != 0)
-						{
-							// Onto the next pixel
-							break;
-						}
-					}
-					else
-					{
-						// Pretend like edge is black
-						lPretendBlackPixelCount += 1;
-					}
-
-					// Down
-					if (y < (m_height - 1))
-					{
-						auto& lDownPixel = pImg[(y + 1)*m_width + (x)];
-						if (lDownPixel.Compare(lBlack))
-						{
-							lBlackPixelCount += 1;
-						}
-						else if (lDownPixel.a != 0)
-						{
-							// Onto the next pixel
-							break;
-						}
-					}
-					else
-					{
-						// Pretend like edge is black
-						lPretendBlackPixelCount += 1;
-					}
-
-					// Right
-					if (x < (m_width - 1))
-					{
-						auto& lRightPixel = pImg[(y)*m_width + (x + 1)];
-						if (lRightPixel.Compare(lBlack))
-						{
-							lBlackPixelCount += 1;
-						}
-						else if (lRightPixel.a != 0)
-						{
-							// Onto the next pixel
-							break;
-						}
-					}
-					else
-					{
-						// Pretend like edge is black
-						lPretendBlackPixelCount += 1;
-					}
-
-				
-				
-					if (lBlackPixelCount > 0)
-					{
-						lBlackPixelCount += lPretendBlackPixelCount;
-						if (lBlackPixelCount == 1)
-						{
-							memcpy(&pImg[(y)*m_width + (x)], &lGray_1, sizeof(glColorBytes));
-						}
-						else if (lBlackPixelCount == 2)
-						{
-							memcpy(&pImg[(y)*m_width + (x)], &lGray_2, sizeof(glColorBytes));
-						}
-						else if (lBlackPixelCount == 3)
-						{
-							memcpy(&pImg[(y)*m_width + (x)], &lGray_3, sizeof(glColorBytes));
-						}
-						else if (lBlackPixelCount == 4)
-						{
-							memcpy(&pImg[(y)*m_width + (x)], &lGray_4, sizeof(glColorBytes));
-						}
-					}
-					
-				} while (0);
-			}
-		}
-	}
-
-	
-	// Checkboard check - phase 2 - change black pixels
-	for (int y = 0; y < m_height; y++)
-	{
-		for (int x = 0; x < m_width; x++)
-		{
-			if (pImg[y*m_width + x].Compare(lBlack))
-			{
-				//int lBlack = 0;
-				// Convert black to alpha if surrounded by white / grays
-
-				if ((y == 0 ||
-					pImg[(y - 1)*m_width + x].a == 0 ||
-					pImg[(y - 1)*m_width + x].Compare(lGray_1) ||
-					pImg[(y - 1)*m_width + x].Compare(lGray_2) ||
-					pImg[(y - 1)*m_width + x].Compare(lGray_3) ||
-					pImg[(y - 1)*m_width + x].Compare(lGray_4)) &&
-					(x == 0 ||
-						pImg[(y)*m_width + (x - 1)].a == 0 ||
-						pImg[(y)*m_width + (x - 1)].Compare(lGray_1) ||
-						pImg[(y)*m_width + (x - 1)].Compare(lGray_2) ||
-						pImg[(y)*m_width + (x - 1)].Compare(lGray_3) ||
-						pImg[(y)*m_width + (x - 1)].Compare(lGray_4)) &&
-						(y == m_height - 1 ||
-							pImg[(y + 1)*m_width + x].a == 0 ||
-							pImg[(y + 1)*m_width + x].Compare(lGray_1) ||
-							pImg[(y + 1)*m_width + x].Compare(lGray_2) ||
-							pImg[(y + 1)*m_width + x].Compare(lGray_3) ||
-							pImg[(y + 1)*m_width + x].Compare(lGray_4)) &&
-							(x == m_width - 1 ||
-								pImg[(y)*m_width + (x + 1)].a == 0 ||
-								pImg[(y)*m_width + (x + 1)].Compare(lGray_1) ||
-								pImg[(y)*m_width + (x + 1)].Compare(lGray_2) ||
-								pImg[(y)*m_width + (x + 1)].Compare(lGray_3) ||
-								pImg[(y)*m_width + (x + 1)].Compare(lGray_4)))
-				{
-					memcpy(&pImg[(y)*m_width + (x)], &lGray_4, sizeof(glColorBytes));
+					FadeCheckerboardAlphaPixel(lTopPixel, lThisPixel);
+					FadeCheckerboardAlphaPixel(lLeftPixel, lThisPixel);
+					FadeCheckerboardAlphaPixel(lRightPixel, lThisPixel);
+					FadeCheckerboardAlphaPixel(lBottomPixel, lThisPixel);
 				}
 			}
 		}
 	}
 }
 
+//IsCheckerboardAlphaShadowPixel by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
+bool SoftSurface::IsCheckerboardAlphaShadowPixel(const glColorBytes * aPixel)
+{
+	return (aPixel == nullptr || aPixel->a < g_fCheckerboardFixAlphaLimit);
+}
+
+//IsCheckerboardSolidShadowPixel by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
+bool SoftSurface::IsCheckerboardSolidShadowPixel(glColorBytes * pImg, int x, int y, const glColorBytes & aPixel)
+{
+	bool lResult = false;
+	// Find a solid pixel
+	if (aPixel.a == 255)
+	{
+		auto lTopPixel = (y == 0 ? nullptr : &pImg[(y - 1)*m_width + x]);
+		bool lTopPixelAlpha = IsCheckerboardAlphaShadowPixel(lTopPixel);
+		auto lLeftPixel = (x == 0 ? nullptr : &pImg[y*m_width + (x - 1)]);
+		bool lLeftPixelAlpha = IsCheckerboardAlphaShadowPixel(lLeftPixel);
+		auto lBottomPixel = (y == (m_height - 1) ? nullptr : &pImg[(y + 1)*m_width + x]);
+		bool lBottomPixelAlpha = IsCheckerboardAlphaShadowPixel(lBottomPixel);
+		auto lRightPixel = (x == (m_width - 1) ? nullptr : &pImg[y*m_width + x + 1]);
+		bool lRightPixelAlpha = IsCheckerboardAlphaShadowPixel(lRightPixel);
+
+		auto lAdjacentAlphaPixelCount = 0;
+		if (lTopPixelAlpha)
+		{
+			lAdjacentAlphaPixelCount += 1;
+		}
+		if (lLeftPixelAlpha)
+		{
+			lAdjacentAlphaPixelCount += 1;
+		}
+		if (lBottomPixelAlpha)
+		{
+			lAdjacentAlphaPixelCount += 1;
+		}
+		if (lRightPixelAlpha)
+		{
+			lAdjacentAlphaPixelCount += 1;
+		}
+
+		if (lAdjacentAlphaPixelCount == 4)
+		{
+			// If we're surrounded by alpha pixels, that means that we're a shadow pixel!
+			lResult = true;
+		}
+		else if (lAdjacentAlphaPixelCount == 3)
+		{
+			// Let's imagine where a shadow meets a sprite:
+			// P = Sprite
+			// X = Shadow
+			// 
+			//   ABCDEFGHIJKL
+			// 1   PPPPPPPPP
+			// 2  PPPPPPPPPP
+			// 3  X X X X X X
+			// 4 X X X X X X
+			//
+			// We would want all pixels on row 3 to be identified as shadow pixels.
+			// But, the 'P' pixels at B2 and K2 should not.
+			// 
+			// We can do this by checking to see if we have any kiddy-corner shadow pixels.
+			auto lTopLeftPixel = ((y == 0 || x == 0)? nullptr : &pImg[(y - 1)*m_width + (x - 1)]);
+			auto lTopLeftPixelAlpha = (lTopLeftPixel == nullptr || lTopLeftPixel->a != 255);
+			auto lTopRightPixel = ((y == 0 || x == (m_width - 1)) ? nullptr : &pImg[(y - 1)*m_width + (x + 1 )]);
+			auto lTopRightPixelAlpha = (lTopRightPixel == nullptr || lTopRightPixel->a != 255);
+			auto lBottomLeftPixel = ((y == (m_height - 1) || x == 0) ? nullptr : &pImg[(y + 1)*m_width + (x - 1)]);
+			auto lBottomLeftPixelAlpha = (lBottomLeftPixel == nullptr || lBottomLeftPixel->a != 255);
+			auto lBottomRightPixel = ((y == (m_height - 1) || x == (m_width - 1)) ? nullptr : &pImg[(y + 1)*m_width + (x + 1)]);
+			auto lBottomRightPixelAlpha = (lBottomRightPixel == nullptr || lBottomRightPixel->a != 255);
+
+			int lKiddyCornerAlphaPixelCount = 0;
+			if (lTopPixelAlpha && !lTopLeftPixelAlpha && !lTopRightPixelAlpha)
+			{
+				lResult = true;
+			}
+			else if (lLeftPixelAlpha && !lTopLeftPixelAlpha && !lBottomLeftPixelAlpha)
+			{
+				lResult = true;
+			}
+			else if (lRightPixelAlpha && !lTopRightPixelAlpha && !lBottomRightPixelAlpha)
+			{
+				lResult = true;
+			}
+			else if (lBottomPixelAlpha && !lBottomLeftPixelAlpha && !lBottomRightPixelAlpha)
+			{
+				lResult = true;
+			}
+		}
+	}
+	return lResult;
+}
+
+//FadeCheckerboardAlphaPixel by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
+void SoftSurface::FadeCheckerboardAlphaPixel(glColorBytes * aDestination, const glColorBytes & aSource)
+{
+	static const glColorBytes lTransparentBlack(0, 0, 0, 0);
+
+	// Add this color to adjacent pixels
+	if (aDestination != nullptr && aDestination->a < g_fCheckerboardFixAlphaLimit)
+	{
+		// If transparent, make sure 'black' transparent.
+		if (aDestination->a == 0)
+		{
+			memcpy(aDestination, &lTransparentBlack, sizeof(lTransparentBlack));
+		}
+		aDestination->r += aSource.r / 4;
+		aDestination->g += aSource.g / 4;
+		aDestination->b += aSource.b / 4;
+		aDestination->a += 32;
+	}
+}
 
 bool SoftSurface::LoadBMPTexture(byte *pMem)
 {

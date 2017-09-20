@@ -163,6 +163,9 @@ private:
 	bool RLE8BitDecompress(byte *pDst, byte *pSrc, int dstSize, int srcSize);
 	void PreMultiplyAlpha();
 	void ConvertCheckboardToAlpha(glColorBytes * pImg);
+	bool IsCheckerboardAlphaShadowPixel(const glColorBytes * aPixel);
+	bool IsCheckerboardSolidShadowPixel(glColorBytes * pImg, int x, int y, const glColorBytes & aPixel);
+	void FadeCheckerboardAlphaPixel(glColorBytes * aDestination, const glColorBytes& aSource);
 	bool LoadBMPTexture(byte *pMem);
 	bool LoadBMPTextureCheckerBoardFix(byte *pMem);
 	bool LoadRTTexture(byte *pMem);
