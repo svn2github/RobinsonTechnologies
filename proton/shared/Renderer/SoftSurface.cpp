@@ -17,6 +17,7 @@ SoftSurface::SoftSurface()
 	m_bHasPremultipliedAlpha = false;
 	m_originalHeight = m_originalWidth = 0;
 	m_height = m_width = 0;
+	m_customColorKey = glColorBytes(0, 0, 0, 0);
 }
 
 SoftSurface::~SoftSurface()
@@ -66,6 +67,7 @@ bool SoftSurface::Init( int sizex, int sizey, eSurfaceType type )
 }
 	
 	int dataSize = sizex*sizey*m_bytesPerPixel;
+	assert(!m_pPixels);
 	m_pPixels = new byte[dataSize];
 	m_usedPitch = sizex*m_bytesPerPixel;
 	m_pitchOffset = 0;
@@ -129,7 +131,7 @@ bool SoftSurface::LoadFile( string fName, eColorKeyType colorKey, bool addBasePa
 bool SoftSurface::SetPaletteFromBMP(const string fName, eColorKeyType colorKey)
 {
 	
-	m_colorKeyType = colorKey;
+	SetColorKeyType(colorKey);
 
 	assert(GetSurfaceType() == SURFACE_PALETTE_8BIT && "Load a palette requires an 8 bit surface!");
 
@@ -167,6 +169,11 @@ bool SoftSurface::SetPaletteFromBMP(const string fName, eColorKeyType colorKey)
 	return true; //success
 }
 
+void SoftSurface::SetColorKeyType(eColorKeyType colorKey)
+{
+	m_colorKeyType = colorKey;
+}
+
 glColorBytes SoftSurface::GetColorKeyColor()
 {
 	switch (GetColorKeyType())
@@ -180,6 +187,9 @@ glColorBytes SoftSurface::GetColorKeyColor()
 	case COLOR_KEY_MAGENTA:
 		return glColorBytes(255,0,255,0);
 
+	case COLOR_KEY_CUSTOM:
+		return m_customColorKey;
+
         default:;
 	}
 
@@ -187,6 +197,32 @@ glColorBytes SoftSurface::GetColorKeyColor()
 }
 
 
+void SoftSurface::CheckDinkColorKey()
+{
+	if (m_colorKeyType == COLOR_KEY_WHITE)
+	{
+		if (m_paletteColors == 256 && this->GetPalette()[255].Compare(glColorBytes(252, 252, 252, 255)))
+		{
+			m_colorKeyPaletteIndex = 255;
+
+			/*
+			if (GetSurfaceType() == SURFACE_PALETTE_8BIT)
+			{
+			}
+			else
+			{
+
+				//let this count for white, especially for Dink
+				m_customColorKey = glColorBytes(252, 252, 252, 255);
+				m_colorKeyPaletteIndex = 255;
+				SetColorKeyType(COLOR_KEY_CUSTOM);
+				SetUsesAlpha(true);
+			}
+			*/
+		}
+	}
+
+}
 //Special version that can modified checkerboard patterns to 32 bit shadows instead.  Changes by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
 
 bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
@@ -285,6 +321,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 	while ((m_usedPitch + m_pitchOffset) % 4) { m_pitchOffset++; } //what's needed to pad it to a 32 byte boundry
 
 	int dataSize = (m_usedPitch + m_pitchOffset)*m_height;
+	assert(!m_pPixels);
 
 	m_pPixels = new byte[dataSize*m_bytesPerPixel];
 	if (!m_pPixels) return false;
@@ -316,6 +353,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 		byte *pPaletteData = (byte*)pBmpImageInfo + sizeof(BMPImageHeader);
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
+	
 		glColorBytes *pImg = (glColorBytes*)m_pPixels;
 
 		int srcUsedPitch = m_width / 8;
@@ -366,9 +404,6 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 		if (bmpImageInfoCopy.Compression == BMP_COMPRESSION_RLE8)
 		{
-#ifdef _DEBUG
-			LogMsg("RLE");
-#endif
 			byte* lTempData = new byte[bmpImageInfoCopy.Size];
 
 			if (!RLE8BitDecompress(m_pPixels, pPixelData, dataSize, bmpImageInfoCopy.Size))
@@ -393,12 +428,25 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 			while ((srcUsedPitch + srcPitchOffset) % 4) { srcPitchOffset++; } //what's needed to pad it to a 32 byte boundry
 			int totalPitch = srcUsedPitch + srcPitchOffset;
 
+			CheckDinkColorKey();
+
+			byte pByte;
+
 			for (int y = 0; y < m_height; y++)
 			{
 				for (int x = 0; x < m_width; x++)
 				{
-					byte pByte = pPixelData[((m_height - y - 1)*totalPitch) + x * 1];
-					pImg[y*m_width + x] = m_palette[pByte];
+					pByte = pPixelData[((m_height - y - 1)*totalPitch) + x * 1];
+					
+					if ( int(pByte) == m_colorKeyPaletteIndex)
+					{
+						//transparent
+						pImg[y*m_width + x] = glColorBytes(0,0,0,0);
+					}
+					else
+					{
+						pImg[y*m_width + x] = m_palette[pByte];
+					}
 				}
 			}
 			ConvertCheckboardToAlpha(pImg);
@@ -780,7 +828,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 	while ((m_usedPitch+m_pitchOffset)%4) {m_pitchOffset++;} //what's needed to pad it to a 32 byte boundry
 
 	int dataSize = (m_usedPitch+m_pitchOffset)*m_height;
-
+	assert(!m_pPixels);
 	m_pPixels = new byte[dataSize*m_bytesPerPixel];
 	if (!m_pPixels) return false;
 	if (m_height < 0)
@@ -850,10 +898,6 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 	
 		if (bmpImageInfoCopy.Compression == BMP_COMPRESSION_RLE8)
 		{
-#ifdef _DEBUG
-			LogMsg("RLE");
-#endif
-
 			if (!RLE8BitDecompress(m_pPixels, pPixelData, dataSize,bmpImageInfoCopy.Size))
 			{
 				LogError("Error decompressing RLE bitmap");
@@ -887,7 +931,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 
 		int srcUsedPitch = m_width * srcBytesPerPixel;
 		int srcPitchOffset = 0;
-		while ((srcUsedPitch+srcPitchOffset)%2) {srcPitchOffset++;} //what's needed to pad it to a 16 byte boundry
+		while ((srcUsedPitch+srcPitchOffset)%4) {srcPitchOffset++;} //what's needed to pad it to a 16 byte boundry
 		int totalPitch = srcUsedPitch+srcPitchOffset;
 
 		for (int y=0; y < m_height; y++)
@@ -906,6 +950,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 				blue <<= 3;
 
 				pImg[y*m_width+x] = GetFinalRGBAColorWithColorKey(glColorBytes(red, green, blue, 255));
+				
 			}
 		}
 
@@ -1145,6 +1190,7 @@ bool SoftSurface::RLE8BitDecompress(byte *pDst, byte *pSrc, int dstSize, int ima
 	int x = 0;
 	int y = 0;
 
+	
 	while(1)
 	{
 		// Stay on even bytes
@@ -1161,9 +1207,36 @@ bool SoftSurface::RLE8BitDecompress(byte *pDst, byte *pSrc, int dstSize, int ima
 		{
 			for(iCount=0;iCount!=bOpCode;iCount++)
 			{
-				SetPixel(x,y, bVal);
+				//unoptimized.. but this is done very rarely in Dink
+
+
+				if (x >= m_width) //this should never happen but it does on one test bitmap.  I'm not sure why.  This stops it from crashing.  I can't see a visual problem, maybe something
+					//to do with packing on this
+				{
+					x = 0;
+					//y++; //don't do this...
+				}
+
+				if (GetSurfaceType() == SURFACE_RGBA)
+				{
+					if (bVal == m_colorKeyPaletteIndex)
+					{
+						//transparent pixel
+						SetPixel(x, y, glColorBytes(0, 0, 0, 0));
+					}
+					else
+					{
+						SetPixel(x, y, GetPalette()[bVal]);
+					}
+				}
+				else
+				{
+					assert(GetSurfaceType() != SURFACE_RGB);
+					SetPixel(x, y, bVal);
+				}
 				//pDst[iIndex]=bVal;
 				x++;
+
 			}
 		}
 		else // Absolute Mode (Opcode=0), various options
@@ -1176,6 +1249,13 @@ bool SoftSurface::RLE8BitDecompress(byte *pDst, byte *pSrc, int dstSize, int ima
 				break;
 
 			case 1:  // EOF, STOP!
+				
+				if (GetSurfaceType() == SURFACE_RGBA)
+				{
+					//flip surface
+					FlipY();
+				}
+				
 				return true;
 				break;
 
@@ -1192,7 +1272,26 @@ bool SoftSurface::RLE8BitDecompress(byte *pDst, byte *pSrc, int dstSize, int ima
 			default: // Copy the next 'bVal' bytes directly to the image
 				for(iCount=bVal;iCount!=0;iCount--)
 				{
-					SetPixel(x,y, pSrc[iPos]);
+					//unoptimized.. but this is done very rarely in Dink
+					
+						if (GetSurfaceType() == SURFACE_RGBA)
+						{
+							if (iPos == m_colorKeyPaletteIndex)
+							{
+								//transparent pixel
+								SetPixel(x, y,glColorBytes(0,0,0,0));
+							}
+							else
+							{
+								SetPixel(x, y, GetPalette()[pSrc[iPos]]);
+							}
+					}
+						else
+						{
+							assert(GetSurfaceType() != SURFACE_RGB);
+							SetPixel(x, y, pSrc[iPos]);
+						}
+					
 					++iPos;
 					x++;
 				}
@@ -1256,6 +1355,8 @@ void SoftSurface::LoadPaletteDataFromBMPMemory(byte *pPaletteData, int colors)
 	{
 		SetUsesAlpha(true);
 	}
+
+	CheckDinkColorKey();
 
 }
 
@@ -1360,6 +1461,22 @@ void SoftSurface::BlitRGBAFromRGBA( int dstX, int dstY, SoftSurface *pSrc, int s
 		}
 	} else
 	{
+	
+		/*
+		//if we need color keying here to work this would probably do it by replacing below:
+
+		glColorBytes colorKey= GetColorKeyColor();
+		bool bUsingColorKey = GetColorKeyType() != COLOR_KEY_NONE;
+
+		for (int y=0; y < srcHeight; y++)
+		{
+		for (int x=0; x < srcWidth; x++)
+		{
+		if (pSrcImage[3] == 0 || (bUsingColorKey && colorKey.Compare(*(glColorBytes*)pSrcImage)))
+
+		*/
+
+		
 		//slower way that supports transparency
 		for (int y=0; y < srcHeight; y++)
 		{

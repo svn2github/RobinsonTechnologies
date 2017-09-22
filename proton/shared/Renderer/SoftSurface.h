@@ -38,7 +38,8 @@ public:
 		COLOR_KEY_NONE,
 		COLOR_KEY_BLACK,
 		COLOR_KEY_WHITE,
-		COLOR_KEY_MAGENTA
+		COLOR_KEY_MAGENTA,
+		COLOR_KEY_CUSTOM
 	};
 
 	eSurfaceType GetSurfaceType() {return m_surfaceType;}
@@ -57,6 +58,8 @@ public:
 	bool LoadFile(string fName, eColorKeyType colorKey, bool addBasePath = true, bool bApplyCheckerboardFix = false);
 	bool LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int inputSize = 0, bool bAddAlphaChannelIfNotPowerOfTwo =false, bool bApplyCheckerboardFix =false );
 	void Blit(int dstX, int dstY, SoftSurface *pSrc, int srcX = 0, int srcY = 0, int srcWidth = 0, int srcHeight = 0); //paste an image over ours
+	void SetCustomColorKey(glColorBytes color) { m_customColorKey = color; }
+
 	Surface * CreateGLTexture();
 	unsigned int GetSizeInBytes() {return m_memUsed;}
 	void SetAutoPremultiplyAlpha(bool bYes) {m_bAutoPremultiplyAlpha = bYes;} //will convert to pre multiplied alpha ASAP, during the next copy to 32 bit surface in the case of 8 bit images
@@ -75,7 +78,7 @@ public:
 	void SetPixel( int x, int y, byte color )
 	{
 		assert(m_surfaceType == SURFACE_PALETTE_8BIT);
-
+		assert(x < m_width && y < m_height);
 		m_pPixels[ ( (y)*(m_usedPitch+m_pitchOffset)+x)] = color;
 	}
 
@@ -107,7 +110,7 @@ public:
 
 	int GetPitch() {return m_usedPitch+m_pitchOffset;}
 	bool SetPaletteFromBMP(const string fName, eColorKeyType colorKey);
-	void SetColorKeyType(eColorKeyType colorKey) {m_colorKeyType = colorKey;}
+	void SetColorKeyType(eColorKeyType colorKey);
 	eColorKeyType GetColorKeyType() {return m_colorKeyType;}
 	glColorBytes GetColorKeyColor();
 	int GetColorKeyPaletteIndex() { return m_colorKeyPaletteIndex; } //used for 8 bit palettes that have a color key
@@ -127,6 +130,7 @@ public:
 
 private:
 
+	void CheckDinkColorKey();
 	void BlitRGBAFrom8Bit( int dstX, int dstY, SoftSurface *pSrc, int srcX /*= 0*/, int srcY /*= 0*/, int srcWidth /*= 0*/, int srcHeight /*= 0*/ );
 	void BlitRGBAFromRGBA( int dstX, int dstY, SoftSurface *pSrc, int srcX /*= 0*/, int srcY /*= 0*/, int srcWidth /*= 0*/, int srcHeight /*= 0*/ );
 	
@@ -187,6 +191,7 @@ private:
 	int m_memUsed;
 	bool m_bAutoPremultiplyAlpha;
 	bool m_bHasPremultipliedAlpha;
+	glColorBytes m_customColorKey;
 
 	//used only for RTTEX textures
 	int m_originalWidth,m_originalHeight;

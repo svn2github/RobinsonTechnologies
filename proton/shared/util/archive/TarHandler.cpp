@@ -139,27 +139,26 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 							}
 						}
 					}
-					
-					//open the file for writing
-					m_fpOut = fopen( (m_destPath+m_tarHeader.name).c_str(), "wb");
-#ifdef _DEBUG
-					LogMsg("Writing %s...", (m_destPath+m_tarHeader.name).c_str());
 
-					/*
-					if (string(m_tarHeader.name).find("ds-i8-03.bmp") != string::npos)
+#ifdef _DEBUG
+					LogMsg("Writing %s...", (m_destPath + m_tarHeader.name).c_str());
+
+
+					if (string(m_tarHeader.name).find("s1-rob.c") != string::npos)
 					{
 						assert(!"Woah!");
-
-
 					}
-					*/
 #endif				
+
+
+					//open the file for writing
+					m_fpOut = fopen( (m_destPath+m_tarHeader.name).c_str(), "wb");
 					if (!m_fpOut)
 					{
 						OnBZIPError(BZ_IO_ERROR);
 						return true;
 					}
-					WriteBZipStream(pData+amountToRead, size-amountToRead);
+					return WriteBZipStream(pData+amountToRead, size-amountToRead);
 
 				}
 			}
@@ -188,6 +187,11 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 					
 					m_bytesNeededToReachBlock = headerSize-(m_totalBytesWritten%headerSize);
 					
+					if (amountToRead == 0)
+					{
+						//special case for 0 byte files
+						pData += 512;
+					}
 					if (m_bytesNeededToReachBlock == 0 || m_bytesNeededToReachBlock == 512)
 					{
 						m_tarState = TAR_STATE_FILLING_HEADER;
@@ -196,7 +200,7 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 						m_tarState = TAR_STATE_READING_BLANK_PART;
 					}
 					
-					WriteBZipStream(pData+amountToRead, size-amountToRead);
+					return WriteBZipStream(pData+amountToRead, size-amountToRead);
 				}
 			}
 			
@@ -210,7 +214,7 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 
 				m_bytesNeededToReachBlock -= amountToRead;
 				if (m_bytesNeededToReachBlock == 0) m_tarState = TAR_STATE_FILLING_HEADER;
-				WriteBZipStream(pData+amountToRead, size-amountToRead);
+				return WriteBZipStream(pData+amountToRead, size-amountToRead);
 			}
 
 		break;
@@ -331,6 +335,9 @@ bool TarHandler::OpenFile( const string &fName, const string &destPath )
 	m_destPath = destPath;
 	int headerSize = sizeof(tar_header);
 
+#ifdef _DEBUG
+	//int fileSize = GetFileSize(fName.c_str());
+#endif
 	m_fp = fopen(fName.c_str(), "rb");
 	m_fpOut = NULL;
 	m_bzf = NULL;
