@@ -47,6 +47,12 @@ void AddVideoMode(string name, int x, int y, ePlatformID platformID, eOrientatio
 void SetVideoModeByName(string name);
 bool InitVideo(int width, int height, bool bFullscreen, float aspectRatio);
 
+#ifdef RT_RUNS_IN_BACKGROUND
+bool g_bAppCanRunInBackground = true;
+#else
+bool g_bAppCanRunInBackground = false;
+#endif
+
 
 void InitVideoSize()
 {
@@ -531,26 +537,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 	case WM_KILLFOCUS:
-#ifndef RT_RUNS_IN_BACKGROUND
-		if (g_bHasFocus && IsBaseAppInitted() && g_hWnd)
+		if (!g_bAppCanRunInBackground)
 		{
-			GetBaseApp()->OnEnterBackground();
+			if (g_bHasFocus && IsBaseAppInitted() && g_hWnd)
+			{
+				GetBaseApp()->OnEnterBackground();
+			}
+
+			g_bHasFocus = false;
 		}
-
-		g_bHasFocus = false;
-#endif
-
 		LogMsg("App lost focus");
 		break;
 
 	case WM_SETFOCUS:
-#ifndef RT_RUNS_IN_BACKGROUND
+	if (!g_bAppCanRunInBackground || !g_bHasFocus)
+		{
 		if (!g_bHasFocus && IsBaseAppInitted() && g_hWnd)
 		{
 			GetBaseApp()->OnEnterForeground();
 		}
 		g_bHasFocus = true;
-#endif
+	}
+
 		LogMsg("App got focus");
 		break;
 
