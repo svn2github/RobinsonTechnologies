@@ -144,9 +144,10 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 					LogMsg("Writing %s...", (m_destPath + m_tarHeader.name).c_str());
 
 
-					if (string(m_tarHeader.name).find("s1-rob.c") != string::npos)
-					{
-						assert(!"Woah!");
+					//if (string(m_tarHeader.name).find("rock.c") != string::npos)
+						if (string(m_tarHeader.name).find("s1-rob.c") != string::npos)
+						{
+						//assert(!"Woah!");
 					}
 #endif				
 
@@ -187,9 +188,9 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 					
 					m_bytesNeededToReachBlock = headerSize-(m_totalBytesWritten%headerSize);
 					
-					if (amountToRead == 0)
+					if (amountToRead == 0 && m_bytesNeededToReachBlock == 512 && pData[1] == 0)
 					{
-						//special case for 0 byte files
+						//Next is a null, so that can't be a filename.  For some reason it's making us pad 512 bytes to get to the next header even though it could possibly start right now
 						pData += 512;
 					}
 					if (m_bytesNeededToReachBlock == 0 || m_bytesNeededToReachBlock == 512)
