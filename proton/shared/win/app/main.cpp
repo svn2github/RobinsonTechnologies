@@ -1959,7 +1959,7 @@ void AddText(const char *tex ,const char *filename)
 		fclose(fp);
 	}
 }
-
+#ifndef RT_CUSTOM_LOGMSG
 void LogMsg ( const char* traceStr, ... )
 {
 	va_list argsVA;
@@ -1984,7 +1984,7 @@ void LogMsg ( const char* traceStr, ... )
 	}
 
 }
-
+#endif
 //used only by arduboy sim
 
 

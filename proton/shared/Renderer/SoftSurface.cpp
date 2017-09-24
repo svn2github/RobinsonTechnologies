@@ -462,7 +462,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 
 		int srcUsedPitch = m_width * srcBytesPerPixel;
 		int srcPitchOffset = 0;
-		while ((srcUsedPitch + srcPitchOffset) % 2) { srcPitchOffset++; } //what's needed to pad it to a 16 bit boundry
+		while ((srcUsedPitch + srcPitchOffset) % 4) { srcPitchOffset++; } //what's needed to pad it to a 32 bit boundry
 		int totalPitch = srcUsedPitch + srcPitchOffset;
 
 		for (int y = 0; y < m_height; y++)
@@ -931,7 +931,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 
 		int srcUsedPitch = m_width * srcBytesPerPixel;
 		int srcPitchOffset = 0;
-		while ((srcUsedPitch+srcPitchOffset)%4) {srcPitchOffset++;} //what's needed to pad it to a 16 byte boundry
+		while ((srcUsedPitch+srcPitchOffset)%4) {srcPitchOffset++;} //what's needed to pad it to a 32 byte boundry
 		int totalPitch = srcUsedPitch+srcPitchOffset;
 
 		for (int y=0; y < m_height; y++)
