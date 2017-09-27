@@ -53,7 +53,7 @@ Entity * CreateTextButtonEntity(Entity *pParentEnt, string name, float x, float 
  *
  * \return The newly created \c Entity or \c NULL if the creation failed for any reason.
  */
-Entity * CreateOverlayEntity(Entity *pParentEnt, string name, string fileName, float x, float y);
+Entity * CreateOverlayEntity(Entity *pParentEnt, string name, string fileName, float x, float y, bool bAddBasePath = true);
 /**
  * Like \c CreateOverlayEntity() but additionally adds a \c TouchHandlerComponent and a
  * \c Button2DComponent to the created \c Entity too.

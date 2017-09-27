@@ -506,6 +506,8 @@ string StripWhiteSpace(const string & s)
 
 string GetFileNameFromString(const string &path)
 {
+	if (path.empty()) return "";
+
 	for (size_t i=path.size()-1; i > 0; i--)
 	{
 		if (path[i] == '/' || path[i] == '\\')

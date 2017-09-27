@@ -2,7 +2,7 @@
  
 #include "EntityUtils.h"
 
-Entity * CreateOverlayEntity(Entity *pParentEnt, string name, string fileName, float x, float y)
+Entity * CreateOverlayEntity(Entity *pParentEnt, string name, string fileName, float x, float y, bool bAddBasePath)
 {
 	Entity *pEnt = NULL;
 	
@@ -20,6 +20,10 @@ Entity * CreateOverlayEntity(Entity *pParentEnt, string name, string fileName, f
 		return NULL;
 	}
 	EntityComponent *pComp = pEnt->AddComponent(new OverlayRenderComponent());
+	if (!bAddBasePath)
+	{
+		pComp->GetVar("dontAddBasePath")->Set((uint32)!bAddBasePath);
+	}
 	pComp->GetVar("fileName")->Set(fileName); //local to component
 	pEnt->GetVar("pos2d")->Set(x,y);  //shared with whole entity
 
