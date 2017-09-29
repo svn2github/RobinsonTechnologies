@@ -143,7 +143,9 @@ void HTTPComponent::OnUpdate(VariantList *pVList)
 	{
 		//all done! send a pointer to us, and the data we made
 		if (this == 0) LogMsg("We got probs");
+#ifdef _DEBUG
 		LogMsg("Downloaded %d bytes", m_netHTTP.GetDownloadedBytes());
+#endif
 		m_state = STATE_FINISHED;
 		if (m_netHTTP.GetDownloadedData())
 		{

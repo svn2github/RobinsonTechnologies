@@ -127,6 +127,7 @@ public:
 	void WriteBMPOut(string fileName);
 	void FillAlphaBit(unsigned char alpha);
 	void Scale(int newX, int newY); //does simple linear scaling
+	void SetForceBlackAndWhiteOnBmpPalettes(bool bNew) { m_bForceBlackAndWhiteOnBmpPalettes = bNew; }
 
 private:
 
@@ -192,6 +193,7 @@ private:
 	bool m_bAutoPremultiplyAlpha;
 	bool m_bHasPremultipliedAlpha;
 	glColorBytes m_customColorKey;
+	bool m_bForceBlackAndWhiteOnBmpPalettes; //applicable to 8 bit bmp loading only
 
 	//used only for RTTEX textures
 	int m_originalWidth,m_originalHeight;

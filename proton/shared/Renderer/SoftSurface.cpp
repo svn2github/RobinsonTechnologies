@@ -18,6 +18,7 @@ SoftSurface::SoftSurface()
 	m_originalHeight = m_originalWidth = 0;
 	m_height = m_width = 0;
 	m_customColorKey = glColorBytes(0, 0, 0, 0);
+	m_bForceBlackAndWhiteOnBmpPalettes = false;
 }
 
 SoftSurface::~SoftSurface()
@@ -736,9 +737,6 @@ void SoftSurface::FadeCheckerboardAlphaPixel(glColorBytes * aDestination, const 
 bool SoftSurface::LoadBMPTexture(byte *pMem)
 {
 
-	//BMPFileHeader *pBmpHeader = (BMPFileHeader*)&pMem[0];
-//LogMsg("Loading bmp...");
-
 	BMPImageHeader *pBmpImageInfo = (BMPImageHeader*)&pMem[14];
 	//get around alignment issues
 	BMPImageHeader bmpImageInfoCopy;
@@ -1335,6 +1333,14 @@ void SoftSurface::LoadPaletteDataFromBMPMemory(byte *pPaletteData, int colors)
 	m_paletteColors = colors;
 	m_colorKeyPaletteIndex = -1;
 	
+
+	if (m_bForceBlackAndWhiteOnBmpPalettes)
+	{
+		//force black and white in index 255 and 0, Photoshop doesn't, but Windows' bitmap loader does
+		m_palette[0] = glColorBytes(255, 255, 255, 255);
+		m_palette[255] = glColorBytes(0, 0, 0, 255);
+	}
+
 	for (int i=0; i < colors; i++)
 	{
 		m_palette[i] = glColorBytes(pPaletteData[2],pPaletteData[1],pPaletteData[0], 255);
@@ -1350,6 +1356,9 @@ void SoftSurface::LoadPaletteDataFromBMPMemory(byte *pPaletteData, int colors)
 
 		pPaletteData += 4; //skip three bytes to the next set of colors.. oh, and 1 byte filler (?)
 	}
+
+
+
 
 	if (m_colorKeyPaletteIndex != -1)
 	{
