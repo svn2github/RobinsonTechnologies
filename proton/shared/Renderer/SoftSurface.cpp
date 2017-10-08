@@ -229,7 +229,10 @@ void SoftSurface::CheckDinkColorKey()
 bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 {
 
-	//BMPFileHeader *pBmpHeader = (BMPFileHeader*)&pMem[0];
+#ifdef _DEBUG
+//	BMPFileHeader *pBmpHeader = (BMPFileHeader*)&pMem[0];
+#endif
+	
 	//LogMsg("Loading bmp...");
 
 	BMPImageHeader *pBmpImageInfo = (BMPImageHeader*)&pMem[14];
@@ -351,7 +354,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 		assert(bmpImageInfoCopy.Compression == BMP_COMPRESSION_NONE);
 
 		//load the palette info.  Note:  Bitmaps are BGR format
-		byte *pPaletteData = (byte*)pBmpImageInfo + sizeof(BMPImageHeader);
+		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
 	
@@ -401,7 +404,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 			//looks like they don't use all the colors available
 			colors = bmpImageInfoCopy.ColorsUsed;
 		}
-		byte *pPaletteData = (byte*)pBmpImageInfo + sizeof(BMPImageHeader);
+		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 		if (bmpImageInfoCopy.Compression == BMP_COMPRESSION_RLE8)
 		{
@@ -854,7 +857,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 		assert(bmpImageInfoCopy.Compression == BMP_COMPRESSION_NONE);
 
 		//load the palette info.  Note:  Bitmaps are BGR format
-		byte *pPaletteData = (byte*)pBmpImageInfo+sizeof(BMPImageHeader);
+		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
 		glColorBytes *pImg = (glColorBytes*)m_pPixels;
@@ -917,7 +920,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 
 		//load the palette info.  Note:  Bitmaps are BGR format
 
-		byte *pPaletteData = (byte*)pBmpImageInfo+sizeof(BMPImageHeader);
+		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
 	}else if (srcBytesPerPixel == 2)

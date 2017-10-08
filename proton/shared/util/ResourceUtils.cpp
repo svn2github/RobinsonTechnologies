@@ -477,7 +477,7 @@ int GetFileSize(const string &fName)
 	FILE * file;
 	int fileSizeBytes = -1;
 	file = fopen(fName.c_str(),"r");
-	if(file > 0)
+	if(file)
 	{
 		fseek(file, 0, SEEK_END);
 		fileSizeBytes = ftell(file);
