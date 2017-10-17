@@ -56,7 +56,7 @@ void UnderlineRenderComponent::OnRender(VariantList *pVList)
 		//vFinalPos -= GetAlignmentOffset(*m_pSize2d, eAlignment(*m_pAlignment));
 		uint32 color = ColorCombine(*m_pColor, *m_pColorMod, *m_pAlpha);
 
-		DrawLine(color, vFinalPos.x, vFinalPos.y+ m_pSize2d->y+1, vFinalPos.x + m_pSize2d->x, vFinalPos.y+ m_pSize2d->y+1, 1.0f);
+		DrawLine(color, vFinalPos.x, vFinalPos.y+ m_pSize2d->y+1, vFinalPos.x + m_pSize2d->x, vFinalPos.y+ m_pSize2d->y+1, 2.0f);
 	
 		if (*m_pRotation != 0)
 		{

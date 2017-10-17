@@ -343,7 +343,7 @@ void DrawRect(CL_Vec2f &vPos, CL_Vec2f &vSize, uint32 color, float lineWidth)
 
 //old way using GL_LINES, but doesn't work on the Flash target
 
-#if !defined(PLATFORM_FLASH) && !defined(PLATFORM_HTML5)
+#if !defined(PLATFORM_FLASH) && !defined(PLATFORM_HTML5) && !defined(PLATFORM_ANDROID)
 void  DrawLine( GLuint rgba,   float ax, float ay, float bx, float by, float lineWidth )
 {
 	SetupOrtho();

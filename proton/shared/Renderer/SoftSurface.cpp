@@ -4,7 +4,7 @@
 #include "bitmap.h"
 #include "BaseApp.h" //only needed for the memory statistics counter
 #include "JPGSurfaceLoader.h"
-
+#include "stdio.h"
 
 
 SoftSurface::SoftSurface()
@@ -228,13 +228,6 @@ void SoftSurface::CheckDinkColorKey()
 
 bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 {
-
-#ifdef _DEBUG
-//	BMPFileHeader *pBmpHeader = (BMPFileHeader*)&pMem[0];
-#endif
-	
-	//LogMsg("Loading bmp...");
-
 	BMPImageHeader *pBmpImageInfo = (BMPImageHeader*)&pMem[14];
 	//get around alignment issues
 	BMPImageHeader bmpImageInfoCopy;
@@ -357,7 +350,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
-	
+
 		glColorBytes *pImg = (glColorBytes*)m_pPixels;
 
 		int srcUsedPitch = m_width / 8;
@@ -441,11 +434,11 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 				for (int x = 0; x < m_width; x++)
 				{
 					pByte = pPixelData[((m_height - y - 1)*totalPitch) + x * 1];
-					
-					if ( int(pByte) == m_colorKeyPaletteIndex)
+
+					if (int(pByte) == m_colorKeyPaletteIndex)
 					{
 						//transparent
-						pImg[y*m_width + x] = glColorBytes(0,0,0,0);
+						pImg[y*m_width + x] = glColorBytes(0, 0, 0, 0);
 					}
 					else
 					{
@@ -581,6 +574,196 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 	IncreaseMemCounter(dataSize);
 	return true;
 }
+
+#ifdef RT_PNG_SUPPORT
+void ReadDataFromInputStream(png_structp png_ptr, png_bytep outBytes,
+	png_size_t byteCountToRead)
+{
+	png_voidp io_ptr = png_get_io_ptr(png_ptr);
+	if (io_ptr == NULL)
+		return;   
+	std::pair<unsigned char*, int>& inputStream = *(std::pair<unsigned char*, int>*)io_ptr;
+	int length = 0;
+	if (byteCountToRead > inputStream.second)
+	{
+		length = inputStream.second;
+	}
+	else
+	{
+		length = byteCountToRead;
+	}
+	memcpy(outBytes, inputStream.first, length);
+	inputStream.first += length;
+	inputStream.second -= length;
+}
+
+bool SoftSurface::LoadPNGTextureCheckerBoardFix(byte *pMem, int inputSize)
+{
+	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+	if (!png_ptr)
+	{
+		LogError("png_create_read_struct failed");
+		return false;
+	}
+
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr)
+	{
+		LogError("png_create_info_struct failed");
+		return false;
+	}
+
+	if (setjmp(png_jmpbuf(png_ptr)))
+	{
+		LogError("Error during init_io");
+		return false;
+	}
+
+	// 8 = skip past png header
+	std::pair<unsigned char*, int> lPair = std::make_pair(pMem + 8, inputSize - 8);
+	png_set_read_fn(png_ptr, &lPair, ReadDataFromInputStream);
+	png_set_sig_bytes(png_ptr, 8);
+
+	png_read_info(png_ptr, info_ptr);
+
+	m_width = png_get_image_width(png_ptr, info_ptr);
+	m_height = png_get_image_height(png_ptr, info_ptr);
+	auto color_type = png_get_color_type(png_ptr, info_ptr);
+	auto bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	m_bytesPerPixel = 4;
+	m_usedPitch = m_width * m_bytesPerPixel;
+	m_pitchOffset = 0;
+
+	png_read_update_info(png_ptr, info_ptr);
+
+	/* read file */
+	if (setjmp(png_jmpbuf(png_ptr)))
+	{
+		LogError("Error during read_image");
+		return false;
+	}
+	
+	m_pPixels = new byte[m_width*m_height*m_bytesPerPixel];
+	glColorBytes *pImg = (glColorBytes*)m_pPixels;
+
+	png_bytep* row_pointers = new png_bytep[m_height];
+	for (int y = 0; y<m_height; y++)
+		row_pointers[y] = new png_byte[png_get_rowbytes(png_ptr, info_ptr)];
+
+	png_read_image(png_ptr, row_pointers);
+
+	switch (color_type)
+	{
+	case PNG_COLOR_TYPE_PALETTE:
+	{
+		m_surfaceType = SURFACE_RGBA;
+		LoadPaletteDataFromPNG(png_ptr, info_ptr);
+		CheckDinkColorKey();
+
+		for (unsigned int y = 0; y < m_height; y++)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				auto& pByte = row_pointers[y][x];
+				if (int(pByte) == m_colorKeyPaletteIndex)
+				{
+					//transparent
+					pImg[y*m_width + x] = glColorBytes(0, 0, 0, 0);
+				}
+				else
+				{
+					pImg[y*m_width + x] = m_palette[pByte];
+				}
+			}
+		}
+
+		break;
+	}
+	case PNG_COLOR_TYPE_RGB:
+	{
+		m_surfaceType = SURFACE_RGBA;
+		CheckDinkColorKey();
+		for (unsigned int y = 0; y < m_height; y++)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				byte *pSrc = &row_pointers[y][x * 3];
+				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[0], pSrc[1], pSrc[2], 255));
+			}
+		}
+		break;
+	}
+	case PNG_COLOR_TYPE_RGB_ALPHA:
+	{
+		m_surfaceType = SURFACE_RGBA;
+		CheckDinkColorKey();
+		for (unsigned int y = 0; y < m_height; y++)
+		{
+			for (int x = 0; x < m_width; x++)
+			{
+				byte *pSrc = &row_pointers[y][x * 4];
+				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[0], pSrc[1], pSrc[2], pSrc[3]));
+			}
+		}
+		break;
+	}
+	default:
+		LogError("Unsupported PNG ColorType enum value.\n");
+		for (int y = 0; y < m_height; y++)
+			delete[] row_pointers[y];
+		delete[] row_pointers;
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		return false;
+	}
+	for (int y = 0; y < m_height; y++)
+		delete[] row_pointers[y];
+	delete[] row_pointers;
+	
+	//png_read_image(png_ptr, (png_bytepp)m_pPixels);
+	ConvertCheckboardToAlpha(pImg);
+	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+
+	m_bUsesAlpha = true;
+
+	assert(GetWidth() && GetHeight());
+
+	IncreaseMemCounter(m_width*m_height*m_bytesPerPixel);
+	return true;
+}
+
+
+void SoftSurface::LoadPaletteDataFromPNG(png_structp png_ptr, png_infop info_ptr)
+{
+	png_color* pngPalette;
+	png_get_PLTE(png_ptr, info_ptr, &pngPalette, &m_paletteColors);
+	glColorBytes colorKeyColor = GetColorKeyColor();
+	SetUsesAlpha(false);
+	m_colorKeyPaletteIndex = -1;
+
+	for (int i = 0; i < m_paletteColors; i++)
+	{
+		m_palette[i] = glColorBytes(pngPalette[i].red, pngPalette[i].green, pngPalette[i].blue, 255);
+
+		if (GetColorKeyType() != COLOR_KEY_NONE)
+		{
+			if (m_palette[i].r == colorKeyColor.r && m_palette[i].g == colorKeyColor.g && m_palette[i].b == colorKeyColor.b)
+			{
+				m_palette[i] = glColorBytes(0, 0, 0, 0); //transparent and black
+				if (m_colorKeyPaletteIndex == -1) m_colorKeyPaletteIndex = i; //set the first instance of this color found as the "color key index"
+			}
+		}
+	}
+
+	if (m_colorKeyPaletteIndex != -1)
+	{
+		SetUsesAlpha(true);
+	}
+
+	CheckDinkColorKey();
+
+}
+#endif
 
 const int g_fCheckerboardFixAlphaLimit = 128;
 
@@ -1129,25 +1312,31 @@ bool SoftSurface::LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int in
 	if (*((uint16*)pMem) == C_JPG_HEADER_MARKER)
 	{
 		//it's a jpg file.  Do we have the proper encoder?
-		#if defined(RT_JPG_SUPPORT)
+#if defined(RT_JPG_SUPPORT)
 
 		JPGSurfaceLoader loader;
 		if (!loader.LoadFromMem(pMem, inputSize, this, bAddAlphaChannelIfPadded))
 		{
 			LogError("Error loading jpg from memory chunk");
 			return false;
-		} else
+		}
+		else
 		{
 			//LogMsg("Loaded jpg!");
 			return true;
 		}
-		#else
+#else
 		LogError("Can't open .jpg files unless RT_JPG_SUPPORT is defined and");
 		LogError("we're compiled with the LibJPeg files included. Check RTSimpleApp for an example of how to do this.");
-		assert(!"Not compiled with jpg support! Need it to load this image...!") ;
+		assert(!"Not compiled with jpg support! Need it to load this image...!");
 		return false;
-		#endif
+#endif
 
+#ifdef RT_PNG_SUPPORT
+	} else if (png_sig_cmp(pMem, 0, 8) == 0)
+	{
+		return LoadPNGTextureCheckerBoardFix(pMem, inputSize);
+#endif
 	} else if (strncmp((char*)pMem, "BM", 2) == 0)
 	{
 		//we've got a bitmap on our hands it looks like
@@ -1371,6 +1560,7 @@ void SoftSurface::LoadPaletteDataFromBMPMemory(byte *pPaletteData, int colors)
 	CheckDinkColorKey();
 
 }
+
 
 void SoftSurface::BlitRGBAFrom8Bit( int dstX, int dstY, SoftSurface *pSrc, int srcX /*= 0*/, int srcY /*= 0*/, int srcWidth /*= 0*/, int srcHeight /*= 0*/ )
 {
