@@ -74,7 +74,9 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 	if (size == 0) return true;
 
 	int headerSize = sizeof(tar_header);
-	//LogMsg("Writing %d..", size);
+#ifdef _DEBUG
+	LogMsg("Writing %d..", size);
+#endif
 	switch(m_tarState)
 	{
 		case TAR_STATE_FILLING_HEADER:
@@ -82,6 +84,11 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 				int amountToRead = rt_min(size, headerSize-m_tarHeaderBytesRead);
 				memcpy( &m_tarHeader.name[0]+m_tarHeaderBytesRead, pData, amountToRead);
 
+				if (string(m_tarHeader.magic) != string("ustar"))
+				{
+					//bad header.  We probably need to push it forward by 512 bytes for some reason
+					return WriteBZipStream(pData+512, size-512);
+				}
 				m_tarHeaderBytesRead += amountToRead;
 				m_totalBytesWritten += amountToRead;
 
@@ -144,10 +151,9 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 					LogMsg("Writing %s...", (m_destPath + m_tarHeader.name).c_str());
 
 
-					//if (string(m_tarHeader.name).find("rock.c") != string::npos)
-						if (string(m_tarHeader.name).find("s1-rob.c") != string::npos)
+						if (string(m_tarHeader.name).find("hard.dat") != string::npos)
 						{
-						//assert(!"Woah!");
+							LogMsg("Found");
 					}
 #endif				
 
@@ -170,6 +176,9 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 				assert(m_fpOut);
 
 				int amountToRead = rt_min(size, m_tarFileOutBytesLeft);
+				
+				//assert(amountToRead != 0);
+
 				int bytesRead = fwrite(pData, 1, amountToRead,  m_fpOut);
 				m_totalBytesWritten += amountToRead;
 
@@ -187,12 +196,7 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 					m_fpOut = NULL;
 					
 					m_bytesNeededToReachBlock = headerSize-(m_totalBytesWritten%headerSize);
-					
-					if (amountToRead == 0 && m_bytesNeededToReachBlock == 512 && pData[1] == 0)
-					{
-						//Next is a null, so that can't be a filename.  For some reason it's making us pad 512 bytes to get to the next header even though it could possibly start right now
-						pData += 512;
-					}
+
 					if (m_bytesNeededToReachBlock == 0 || m_bytesNeededToReachBlock == 512)
 					{
 						m_tarState = TAR_STATE_FILLING_HEADER;

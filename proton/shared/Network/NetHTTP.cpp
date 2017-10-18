@@ -335,7 +335,7 @@ void NetHTTP::Update()
 					case END_OF_DATA_SIGNAL_RTSOFT_MARKER:
 						{
 							bool bFoundMarker = CheckCharVectorForString(m_netSocket.GetBuffer(), C_END_DOWNLOAD_MARKER_STRING);
-							if (bFoundMarker)
+							if (bFoundMarker || m_netSocket.WasDisconnected())
 							{
 								FinishDownload();
 								return;
