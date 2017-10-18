@@ -84,7 +84,7 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 				int amountToRead = rt_min(size, headerSize-m_tarHeaderBytesRead);
 				memcpy( &m_tarHeader.name[0]+m_tarHeaderBytesRead, pData, amountToRead);
 
-				if (string(m_tarHeader.magic) != string("ustar"))
+				if (strncmp(m_tarHeader.magic, "ustar", 5) != 0)
 				{
 					//bad header.  We probably need to push it forward by 512 bytes for some reason
 					return WriteBZipStream(pData+512, size-512);
@@ -177,7 +177,7 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 
 				int amountToRead = rt_min(size, m_tarFileOutBytesLeft);
 				
-				//assert(amountToRead != 0);
+				assert(amountToRead != 0);
 
 				int bytesRead = fwrite(pData, 1, amountToRead,  m_fpOut);
 				m_totalBytesWritten += amountToRead;
@@ -196,6 +196,17 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 					m_fpOut = NULL;
 					
 					m_bytesNeededToReachBlock = headerSize-(m_totalBytesWritten%headerSize);
+
+
+					tar_header * pHeader = (tar_header *)pData;
+
+					if (amountToRead == 0 && m_bytesNeededToReachBlock == 512 && pData[1] == 0)
+				//	if (amountToRead == 0)
+					{
+						//Next is a null, so that can't be a filename.  For some reason it's making us pad 512 bytes to get to the next header even though it could possibly start right now
+						pData += 512;
+					}
+
 
 					if (m_bytesNeededToReachBlock == 0 || m_bytesNeededToReachBlock == 512)
 					{
