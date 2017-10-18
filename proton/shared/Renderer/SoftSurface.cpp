@@ -597,7 +597,7 @@ void ReadDataFromInputStream(png_structp png_ptr, png_bytep outBytes,
 	inputStream.second -= length;
 }
 
-bool SoftSurface::LoadPNGTextureCheckerBoardFix(byte *pMem, int inputSize)
+bool SoftSurface::LoadPNGTexture(byte *pMem, int inputSize, bool bApplyCheckerBoardFix)
 {
 	png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
@@ -721,7 +721,12 @@ bool SoftSurface::LoadPNGTextureCheckerBoardFix(byte *pMem, int inputSize)
 	delete[] row_pointers;
 	
 	//png_read_image(png_ptr, (png_bytepp)m_pPixels);
-	ConvertCheckboardToAlpha(pImg);
+	
+	if (bApplyCheckerBoardFix)
+	{
+		ConvertCheckboardToAlpha(pImg);
+	}
+	
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 
 	m_bUsesAlpha = true;
@@ -1335,7 +1340,7 @@ bool SoftSurface::LoadFileFromMemory( byte *pMem, eColorKeyType colorKey, int in
 #ifdef RT_PNG_SUPPORT
 	} else if (png_sig_cmp(pMem, 0, 8) == 0)
 	{
-		return LoadPNGTextureCheckerBoardFix(pMem, inputSize);
+		return LoadPNGTexture(pMem, inputSize, bApplyCheckerboardFix);
 #endif
 	} else if (strncmp((char*)pMem, "BM", 2) == 0)
 	{
@@ -1857,6 +1862,8 @@ void SoftSurface::Blit8BitFrom8Bit( int dstX, int dstY, SoftSurface *pSrc, int s
 
 void SoftSurface::FlipY()
 {
+	if (m_surfaceType == SURFACE_NONE) return;
+
 	byte *pData = GetPixelData();
 	byte *pDataReverse;
 	byte *pTmp = new byte[GetPitch()];

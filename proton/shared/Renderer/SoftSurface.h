@@ -179,7 +179,7 @@ private:
 	bool LoadBMPTexture(byte *pMem);
 	bool LoadBMPTextureCheckerBoardFix(byte *pMem);
 #ifdef RT_PNG_SUPPORT
-	bool LoadPNGTextureCheckerBoardFix(byte *pMem, int inputSize);
+	bool LoadPNGTexture(byte *pMem, int inputSize, bool bApplyCheckerBoardFix);
 	void LoadPaletteDataFromPNG(png_structp png_ptr, png_infop info_ptr);
 	void ParseRGBA(const png_structp& png_ptr, const png_infop& info_ptr);
 #endif
