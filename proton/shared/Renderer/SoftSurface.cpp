@@ -635,7 +635,30 @@ bool SoftSurface::LoadPNGTexture(byte *pMem, int inputSize, bool bApplyCheckerBo
 	m_usedPitch = m_width * m_bytesPerPixel;
 	m_pitchOffset = 0;
 
+	// Convert from palette image to RGB image
+	if (color_type == PNG_COLOR_TYPE_PALETTE)
+		png_set_palette_to_rgb(png_ptr);
+
+	// Convert from weird gray bits to bytes
+	if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+		png_set_gray_1_2_4_to_8(png_ptr);
+
+	// Not sure; this was recommended at http://www.libpng.org/pub/png/libpng-1.2.5-manual.html
+	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) 
+		png_set_tRNS_to_alpha(png_ptr);
+
+	// Downgrade from 16-bit png to 8-bit png
+	if (bit_depth == 16)
+		png_set_strip_16(png_ptr);
+
+	// Read the new info, after trying to 'normalize' the png to RGB / RGBA as much as possible.
 	png_read_update_info(png_ptr, info_ptr);
+
+	m_width = png_get_image_width(png_ptr, info_ptr);
+	m_height = png_get_image_height(png_ptr, info_ptr);
+	color_type = png_get_color_type(png_ptr, info_ptr);
+	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	m_usedPitch = m_width * m_bytesPerPixel;
 
 	/* read file */
 	if (setjmp(png_jmpbuf(png_ptr)))
@@ -655,56 +678,66 @@ bool SoftSurface::LoadPNGTexture(byte *pMem, int inputSize, bool bApplyCheckerBo
 
 	switch (color_type)
 	{
-	case PNG_COLOR_TYPE_PALETTE:
+	case PNG_COLOR_TYPE_GRAY:
 	{
-		m_surfaceType = SURFACE_RGBA;
-		LoadPaletteDataFromPNG(png_ptr, info_ptr);
-		CheckDinkColorKey();
-
-		for (unsigned int y = 0; y < m_height; y++)
+		if (bit_depth == 8)
 		{
-			for (int x = 0; x < m_width; x++)
+			m_surfaceType = SURFACE_RGBA;
+			CheckDinkColorKey();
+			for (unsigned int y = 0; y < m_height; y++)
 			{
-				auto& pByte = row_pointers[y][x];
-				if (int(pByte) == m_colorKeyPaletteIndex)
+				for (int x = 0; x < m_width; x++)
 				{
-					//transparent
-					pImg[y*m_width + x] = glColorBytes(0, 0, 0, 0);
-				}
-				else
-				{
-					pImg[y*m_width + x] = m_palette[pByte];
+					byte pSrc = row_pointers[y][x];
+					pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc, pSrc, pSrc, 255));
 				}
 			}
 		}
-
+		else
+		{
+			LogError("Unsupported PNG bit_depth (must be 8).\n");
+		}
 		break;
 	}
 	case PNG_COLOR_TYPE_RGB:
 	{
-		m_surfaceType = SURFACE_RGBA;
-		CheckDinkColorKey();
-		for (unsigned int y = 0; y < m_height; y++)
+		if (bit_depth == 8)
 		{
-			for (int x = 0; x < m_width; x++)
+			m_surfaceType = SURFACE_RGBA;
+			CheckDinkColorKey();
+			for (unsigned int y = 0; y < m_height; y++)
 			{
-				byte *pSrc = &row_pointers[y][x * 3];
-				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[0], pSrc[1], pSrc[2], 255));
+				for (int x = 0; x < m_width; x++)
+				{
+					byte *pSrc = &row_pointers[y][x * 3];
+					pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[0], pSrc[1], pSrc[2], 255));
+				}
 			}
+		}
+		else
+		{
+			LogError("Unsupported PNG bit_depth (must be 8).\n");
 		}
 		break;
 	}
 	case PNG_COLOR_TYPE_RGB_ALPHA:
 	{
-		m_surfaceType = SURFACE_RGBA;
-		CheckDinkColorKey();
-		for (unsigned int y = 0; y < m_height; y++)
+		if (bit_depth == 8)
 		{
-			for (int x = 0; x < m_width; x++)
+			m_surfaceType = SURFACE_RGBA;
+			CheckDinkColorKey();
+			for (unsigned int y = 0; y < m_height; y++)
 			{
-				byte *pSrc = &row_pointers[y][x * 4];
-				pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[0], pSrc[1], pSrc[2], pSrc[3]));
+				for (int x = 0; x < m_width; x++)
+				{
+					byte *pSrc = &row_pointers[y][x * 4];
+					pImg[y*m_width + x] = GetFinalRGBAColorWithColorKey(glColorBytes(pSrc[0], pSrc[1], pSrc[2], pSrc[3]));
+				}
 			}
+		}
+		else
+		{
+			LogError("Unsupported PNG bit_depth (must be 8).\n");
 		}
 		break;
 	}
@@ -732,7 +765,7 @@ bool SoftSurface::LoadPNGTexture(byte *pMem, int inputSize, bool bApplyCheckerBo
 	m_bUsesAlpha = true;
 
 	assert(GetWidth() && GetHeight());
-
+	assert(m_surfaceType == SURFACE_RGBA);
 	IncreaseMemCounter(m_width*m_height*m_bytesPerPixel);
 	return true;
 }
