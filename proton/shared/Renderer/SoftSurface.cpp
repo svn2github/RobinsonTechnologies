@@ -629,8 +629,8 @@ bool SoftSurface::LoadPNGTexture(byte *pMem, int inputSize, bool bApplyCheckerBo
 
 	m_width = png_get_image_width(png_ptr, info_ptr);
 	m_height = png_get_image_height(png_ptr, info_ptr);
-	auto color_type = png_get_color_type(png_ptr, info_ptr);
-	auto bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+	png_byte color_type = png_get_color_type(png_ptr, info_ptr);
+	png_byte bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 	m_bytesPerPixel = 4;
 	m_usedPitch = m_width * m_bytesPerPixel;
 	m_pitchOffset = 0;
@@ -819,7 +819,7 @@ void SoftSurface::ConvertCheckboardToAlpha(glColorBytes * pImg)
 		{
 			for (int x = 0; x < m_width; x++)
 			{
-				auto& lThisPixel = pImg[y*m_width + x];
+				glColorBytes & lThisPixel = pImg[y*m_width + x];
 
 				// Find a solid pixel
 				if (IsCheckerboardSolidShadowPixel(pImg, x, y, lThisPixel))
@@ -831,10 +831,10 @@ void SoftSurface::ConvertCheckboardToAlpha(glColorBytes * pImg)
 					lThisPixel.g /= 2;
 					lThisPixel.b /= 2;
 
-					auto lTopPixel = (y == 0 ? nullptr : &pImg[(y - 1)*m_width + x]);
-					auto lLeftPixel = (x == 0 ? nullptr : &pImg[y*m_width + (x - 1)]);
-					auto lBottomPixel = (y == (m_height - 1) ? nullptr : &pImg[(y + 1)*m_width + x]);
-					auto lRightPixel = (x == (m_width - 1) ? nullptr : &pImg[y*m_width + x + 1]);
+					glColorBytes *lTopPixel = (y == 0 ? NULL : &pImg[(y - 1)*m_width + x]);
+					glColorBytes *lLeftPixel = (x == 0 ? NULL : &pImg[y*m_width + (x - 1)]);
+					glColorBytes *lBottomPixel = (y == (m_height - 1) ? NULL : &pImg[(y + 1)*m_width + x]);
+					glColorBytes *lRightPixel = (x == (m_width - 1) ? NULL : &pImg[y*m_width + x + 1]);
 
 					FadeCheckerboardAlphaPixel(lTopPixel, lThisPixel);
 					FadeCheckerboardAlphaPixel(lLeftPixel, lThisPixel);
@@ -849,7 +849,7 @@ void SoftSurface::ConvertCheckboardToAlpha(glColorBytes * pImg)
 //IsCheckerboardAlphaShadowPixel by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
 bool SoftSurface::IsCheckerboardAlphaShadowPixel(const glColorBytes * aPixel)
 {
-	return (aPixel == nullptr || aPixel->a < g_fCheckerboardFixAlphaLimit);
+	return (aPixel == NULL || aPixel->a < g_fCheckerboardFixAlphaLimit);
 }
 
 //IsCheckerboardSolidShadowPixel by Dan Walma released under CC0 ( http://www.dinknetwork.com/forum.cgi?MID=200849#200860 )
@@ -859,16 +859,16 @@ bool SoftSurface::IsCheckerboardSolidShadowPixel(glColorBytes * pImg, int x, int
 	// Find a solid pixel
 	if (aPixel.a == 255)
 	{
-		auto lTopPixel = (y == 0 ? nullptr : &pImg[(y - 1)*m_width + x]);
+		glColorBytes* lTopPixel = (y == 0 ? NULL : &pImg[(y - 1)*m_width + x]);
 		bool lTopPixelAlpha = IsCheckerboardAlphaShadowPixel(lTopPixel);
-		auto lLeftPixel = (x == 0 ? nullptr : &pImg[y*m_width + (x - 1)]);
+		glColorBytes* lLeftPixel = (x == 0 ? NULL : &pImg[y*m_width + (x - 1)]);
 		bool lLeftPixelAlpha = IsCheckerboardAlphaShadowPixel(lLeftPixel);
-		auto lBottomPixel = (y == (m_height - 1) ? nullptr : &pImg[(y + 1)*m_width + x]);
+		glColorBytes* lBottomPixel = (y == (m_height - 1) ? NULL : &pImg[(y + 1)*m_width + x]);
 		bool lBottomPixelAlpha = IsCheckerboardAlphaShadowPixel(lBottomPixel);
-		auto lRightPixel = (x == (m_width - 1) ? nullptr : &pImg[y*m_width + x + 1]);
+		glColorBytes* lRightPixel = (x == (m_width - 1) ? NULL : &pImg[y*m_width + x + 1]);
 		bool lRightPixelAlpha = IsCheckerboardAlphaShadowPixel(lRightPixel);
 
-		auto lAdjacentAlphaPixelCount = 0;
+		int lAdjacentAlphaPixelCount = 0;
 		if (lTopPixelAlpha)
 		{
 			lAdjacentAlphaPixelCount += 1;
@@ -907,14 +907,14 @@ bool SoftSurface::IsCheckerboardSolidShadowPixel(glColorBytes * pImg, int x, int
 			// But, the 'P' pixels at B2 and K2 should not.
 			// 
 			// We can do this by checking to see if we have any kiddy-corner shadow pixels.
-			auto lTopLeftPixel = ((y == 0 || x == 0)? nullptr : &pImg[(y - 1)*m_width + (x - 1)]);
-			auto lTopLeftPixelAlpha = (lTopLeftPixel == nullptr || lTopLeftPixel->a != 255);
-			auto lTopRightPixel = ((y == 0 || x == (m_width - 1)) ? nullptr : &pImg[(y - 1)*m_width + (x + 1 )]);
-			auto lTopRightPixelAlpha = (lTopRightPixel == nullptr || lTopRightPixel->a != 255);
-			auto lBottomLeftPixel = ((y == (m_height - 1) || x == 0) ? nullptr : &pImg[(y + 1)*m_width + (x - 1)]);
-			auto lBottomLeftPixelAlpha = (lBottomLeftPixel == nullptr || lBottomLeftPixel->a != 255);
-			auto lBottomRightPixel = ((y == (m_height - 1) || x == (m_width - 1)) ? nullptr : &pImg[(y + 1)*m_width + (x + 1)]);
-			auto lBottomRightPixelAlpha = (lBottomRightPixel == nullptr || lBottomRightPixel->a != 255);
+			glColorBytes* lTopLeftPixel = ((y == 0 || x == 0)? NULL : &pImg[(y - 1)*m_width + (x - 1)]);
+			bool lTopLeftPixelAlpha = (lTopLeftPixel == NULL || lTopLeftPixel->a != 255);
+			glColorBytes* lTopRightPixel = ((y == 0 || x == (m_width - 1)) ? NULL : &pImg[(y - 1)*m_width + (x + 1 )]);
+			bool lTopRightPixelAlpha = (lTopRightPixel == NULL || lTopRightPixel->a != 255);
+			glColorBytes* lBottomLeftPixel = ((y == (m_height - 1) || x == 0) ? NULL : &pImg[(y + 1)*m_width + (x - 1)]);
+			bool lBottomLeftPixelAlpha = (lBottomLeftPixel == NULL || lBottomLeftPixel->a != 255);
+			glColorBytes* lBottomRightPixel = ((y == (m_height - 1) || x == (m_width - 1)) ? NULL : &pImg[(y + 1)*m_width + (x + 1)]);
+			bool lBottomRightPixelAlpha = (lBottomRightPixel == NULL || lBottomRightPixel->a != 255);
 
 			int lKiddyCornerAlphaPixelCount = 0;
 			if (lTopPixelAlpha && !lTopLeftPixelAlpha && !lTopRightPixelAlpha)
@@ -944,7 +944,7 @@ void SoftSurface::FadeCheckerboardAlphaPixel(glColorBytes * aDestination, const 
 	static const glColorBytes lTransparentBlack(0, 0, 0, 0);
 
 	// Add this color to adjacent pixels
-	if (aDestination != nullptr && aDestination->a < g_fCheckerboardFixAlphaLimit)
+	if (aDestination != NULL && aDestination->a < g_fCheckerboardFixAlphaLimit)
 	{
 		// If transparent, make sure 'black' transparent.
 		if (aDestination->a == 0)

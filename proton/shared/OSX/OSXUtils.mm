@@ -23,6 +23,7 @@ const char * GetAppName();
 
 using namespace std;
 
+#ifndef RT_CUSTOM_LOGMSG
 void LogMsg(const char *lpFormat, ...)
 {
 	
@@ -41,6 +42,7 @@ void LogMsg(const char *lpFormat, ...)
 		
 } 
 
+#endif
 
 string GetMacAddress()
 {
