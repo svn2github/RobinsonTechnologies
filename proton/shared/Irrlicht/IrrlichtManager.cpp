@@ -60,8 +60,7 @@ void IrrlichtManager::Kill()
 
 bool IrrlichtManager::Init(irr::IEventReceiver *pEventReceiver)
 {
-	LogMsg("initting irrlicht");
-
+	
 	bool bStencilBuffer = false;
 	E_DRIVER_TYPE driverType = video::EDT_OGLES1;
 
@@ -70,7 +69,19 @@ bool IrrlichtManager::Init(irr::IEventReceiver *pEventReceiver)
 	bStencilBuffer = true;
 #endif
 	
-	m_pDevice = createDevice( driverType, dimension2d<u32>(GetPrimaryGLX(), GetPrimaryGLY()), 16, false, bStencilBuffer, false, pEventReceiver);
+	int initWidth = GetPrimaryGLX();
+	int initHeight = GetPrimaryGLY();
+
+	if (GetLockedLandscape())
+	{
+
+		initWidth = rt_max(GetPrimaryGLX(), GetPrimaryGLY());
+		initHeight = rt_min(GetPrimaryGLX(), GetPrimaryGLY());
+	}
+
+	LogMsg("initting irrlicht with screen size %d, %d", initWidth, initHeight);
+ 
+	m_pDevice = createDevice( driverType, dimension2d<u32>(initWidth,initHeight), 16, false, bStencilBuffer, false, pEventReceiver);
   
 	if (!m_pDevice)
 	{

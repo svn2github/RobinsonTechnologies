@@ -126,11 +126,11 @@ CGRect iOS7StyleScreenBounds();
         {
             if (interfaceOrientation == UIInterfaceOrientationPortrait)
             {
-                interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
+                interfaceOrientation = (UIDeviceOrientation) UIInterfaceOrientationLandscapeLeft;
             }
             if (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown)
             {
-                interfaceOrientation = UIInterfaceOrientationLandscapeRight;
+                interfaceOrientation = (UIDeviceOrientation) UIInterfaceOrientationLandscapeRight;
             }
         }
      

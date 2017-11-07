@@ -17,6 +17,8 @@
 #define IsDroidSize (GetScreenSizeX() == 854 || GetScreenSizeY() ==  480)
 #define IsIphoneSize ((GetScreenSizeX() == 320 && GetScreenSizeY() ==  480)|| (GetScreenSizeX() == 480 && GetScreenSizeY() ==  320))
 #define IsIphone4Size ((GetScreenSizeX() == 640 && GetScreenSizeY() ==  960)|| (GetScreenSizeX() == 960 && GetScreenSizeY() ==  640))
+#define IsIphoneXSize ((GetScreenSizeX() == 2436 && GetScreenSizeY() ==  1125)|| (GetScreenSizeX() == 1125 && GetScreenSizeY() ==  2436))
+#define IsRunningOnIphoneX ((GetPrimaryGLX() == 2436 && GetPrimaryGLY() ==  1125)|| (GetPrimaryGLX() == 1125 && GetPrimaryGLY() ==  2436))
 #define IsIPADSize ((GetScreenSizeX() == 1024 && GetScreenSizeY() ==  768)|| (GetScreenSizeY() == 1024 && GetScreenSizeX() ==  768))
 #define IsXoomSize ((GetScreenSizeX() == 1280 && GetScreenSizeY() ==  800)|| (GetScreenSizeX() == 800 && GetScreenSizeY() ==  1280))
 #define IsPlaybookSize ((GetScreenSizeX() == 1024 && GetScreenSizeY() ==  600)|| (GetScreenSizeX() == 600 && GetScreenSizeY() ==  1024))

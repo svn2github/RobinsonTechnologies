@@ -596,7 +596,7 @@ void SetupScreenInfo(int x, int y, int orientation)
 	SetupOriginalScreenSize(GetPrimaryGLX(), GetPrimaryGLY());
 
 #ifdef _DEBUG
-		LogMsg("Setting screen info to %d, %d, mode %d.  Original is %d, %d", x, y, orientation, GetOriginalScreenSizeX(), GetOriginalScreenSizeY());
+		//LogMsg("Setting screen info to %d, %d, mode %d.  Original is %d, %d", x, y, orientation, GetOriginalScreenSizeX(), GetOriginalScreenSizeY());
 #endif
 
 		g_screenSizeX = x;

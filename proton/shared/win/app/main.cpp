@@ -92,12 +92,12 @@ void InitVideoSize()
 	AddVideoMode("iPhone5 Landscape", 1136,640, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //force orientation for emulation so it's not sideways););
 	AddVideoMode("iPhone7 Landscape", 1334,750, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //force orientation for emulation so it's not sideways););
 	AddVideoMode("iPhone7 Plus Landscape", 1920,1080, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //But before downsampling it's 2208x1242?
-
-	
-	
+	AddVideoMode("iPhoneX Landscape", 2436,1125, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT); //force orientation for emulation so it's not sideways););
 	AddVideoMode("iPad HD", 768*2, 1024*2, PLATFORM_ID_IOS);
 	AddVideoMode("iPad HD Landscape", 1024*2,768*2 , PLATFORM_ID_IOS,  ORIENTATION_PORTRAIT);
-	
+	AddVideoMode("iPhone 5.5 Retina Landscape", 2208, 1242, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT);
+	AddVideoMode("iPhone 12.9 Retina Landscape", 2732, 2048, PLATFORM_ID_IOS, ORIENTATION_PORTRAIT);
+
 	//Palm er, I mean HP. These should use the Debug WebOS build config in MSVC for the best results, it will
 	//use their funky SDL version
 	AddVideoMode("Pre", 320, 480, PLATFORM_ID_WEBOS);
@@ -139,8 +139,8 @@ void InitVideoSize()
 	AddVideoMode("Flash", 640, 480, PLATFORM_ID_FLASH);
 
 	//WORK: Change device emulation here
-	string desiredVideoMode = "Windows"; 
- 	SetVideoModeByName(desiredVideoMode);
+	string desiredVideoMode = "Windows";
+	SetVideoModeByName(desiredVideoMode);
 	GetBaseApp()->OnPreInitVideo(); //gives the app level code a chance to override any of these parms if it wants to
 }
 
