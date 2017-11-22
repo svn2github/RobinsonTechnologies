@@ -167,6 +167,10 @@ int mod(int a, int b)
 
 int Random(int range)
 {
+	if(range == 0)
+	{
+		return 0;
+	}
 	return rand()%range;
 }
 
