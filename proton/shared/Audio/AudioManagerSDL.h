@@ -14,7 +14,12 @@
 
 #if defined RT_WEBOS || defined RT_USE_SDL_AUDIO
 
+#ifdef PLATFORM_HTML5
+//Emscripten only supports SDL1's mixer
+#include "SDL/SDL_mixer.h"
+#else
 #include "SDL2/SDL_mixer.h"
+#endif
 
 class SoundObject;
 

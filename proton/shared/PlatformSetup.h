@@ -33,7 +33,7 @@
 #endif
 
 #ifdef PLATFORM_HTML5
-	#include "HTML5/PlatformSetupHTML5.h"
+	#include "html5/PlatformSetupHTML5.h"
 #endif
 
 #ifdef RT_WEBOS_ARM

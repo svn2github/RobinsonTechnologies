@@ -1,8 +1,46 @@
-call ../app_info_setup.bat
+:Set below to DEBUG=1 for debug mode builds - slower but way easier to see problems. Disables the ASYNC stuff as that doesn't seem to play
+:well with the rest
 
-
-:Set below to DEBUG=1 for debug mode builds - slower but way easier to see problems
 SET DEBUG=0
+
+:Set to 1, this causes some internal build changes, and the CustomMainFullTemplate.html to be copied to <AppName>.html instead of the default emscripten one
+:Set to 0, you can easily see LogMsg's as they appear in the text window under the app area, so that might be better for debugging
+
+SET USE_HTML5_CUSTOM_MAIN=0
+
+set CURPATH=%cd%
+cd ..
+call app_info_setup.bat
+:um, why does the emsdk_env.bat not fully work unless I'm in the emscripten dir?  Whatever, we'll move there and then back
+cd %EMSCRIPTEN_ROOT%
+call emsdk_env.bat
+:Move back to original directory
+cd %CURPATH%
+
+
+where /q emsdk_env.bat
+
+if ERRORLEVEL 1 (
+    ECHO You need the environmental EMSCRIPTEN_ROOT set.  This should be set in setup_base.bat in proton's main dir, then called from app_info_setup.bat.
+     beeper
+     pause
+     exit
+) 
+
+where /q sed
+
+if ERRORLEVEL 1 (
+    ECHO You need the utility sed in your path if you want insert.bat to work. Install tortoisegit, I think it comes with that.
+     beeper
+     pause
+     exit
+) 
+
+:Oh, we better build our media just in case
+cd ../media
+call update_media.bat
+cd ../html5
+
 
 SET SHARED=..\..\shared
 
@@ -54,7 +92,6 @@ set PARTICLE_SRC=%PPATH%/L_Defination.cpp %PPATH%/L_DroppingEffect.cpp %PPATH%/L
 %PPATH%/L_ParticleEffect.cpp %PPATH%/L_ParticleMem.cpp %PPATH%/L_ParticleSystem.cpp %PPATH%/L_ShootingEffect.cpp %PPATH%/L_EffectManager.cpp
 
 
-
 REM **************************************** ZLIB SOURCE CODE FILES
 set ZLIB_SRC=%ZLIBPATH%/deflate.c %ZLIBPATH%/gzio.c %ZLIBPATH%/infback.c %ZLIBPATH%/inffast.c %ZLIBPATH%/inflate.c %ZLIBPATH%/inftrees.c %ZLIBPATH%/trees.c %ZLIBPATH%/uncompr.c %ZLIBPATH%/zutil.c %ZLIBPATH%/adler32.c %ZLIBPATH%/compress.c %ZLIBPATH%/crc32.c
 
@@ -63,19 +100,26 @@ set APP_SRC=%APP%\App.cpp %APP%\Component\ParticleTestComponent.cpp %APP%\GUI\De
 %APP%\GUI\AboutMenu.cpp %APP%\GUI\TouchTestMenu.cpp %APP%\Component\TouchTestComponent.cpp
 REM **************************************** END SOURCE
 
-
-:unused so far: -s USE_GLFW=3 -s TOTAL_MEMORY=67108864 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1
+:unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DNDEBUG -DC_GL_MODE -s LEGACY_GL_EMULATION=1 --memory-init-file 0 -Wno-switch
+SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -Wno-switch -s WASM=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=32MB
 
-:unused:   -s FULL_ES2=1
+:unused:   -s FULL_ES2=1 --emrun
+
+IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
+:add this define so we'll manually call mainf from the html later instead of it being auto
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -DRT_HTML5_USE_CUSTOM_MAIN -s EXPORTED_FUNCTIONS=['_mainf'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
+SET FINAL_EXTENSION=js
+) else (
+SET FINAL_EXTENSION=html
+)
 
 IF %DEBUG% EQU 0 (
 echo Compiling in release mode
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -O2 
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -O2 -DNDEBUG -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED 
 ) else (
 echo Compiling in debug mode
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 -s SAFE_HEAP=1
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 -s SAFE_HEAP=1 
 )
 
 SET INCLUDE_DIRS=-I%SHARED% -I%APP% -I../../shared/util/boost -I../../shared/ClanLib-2.0/Sources -I../../shared/Network/enet/include ^
@@ -83,17 +127,27 @@ SET INCLUDE_DIRS=-I%SHARED% -I%APP% -I../../shared/util/boost -I../../shared/Cla
 
 :compile some libs into a separate thing, otherwise our list of files is too long and breaks stuff
 
-del %APP_NAME%.js
+del %APP_NAME%.js*
 del %APP_NAME%.html
+del %APP_NAME%.wasm*
+del %APP_NAME%.data
+
+del %APP_NAME%.mem
 del temp.bc
 
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 %ZLIB_SRC% %JPG_SRC% %PARTICLE_SRC% -o temp.bc
 
-
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
-%APP_SRC% %SRC% %COMPONENT_SRC% %ZLIB_SRC% %JPG_SRC% %PARTICLE_SRC% temp.bc ^
---embed-file ../bin/interface@interface/ --embed-file ../bin/audio@audio/ -o %APP_NAME%.html
+%APP_SRC% %SRC% %COMPONENT_SRC% temp.bc ^
+--preload-file ../bin/interface@interface/ --preload-file ../bin/audio@audio/ -o %APP_NAME%.%FINAL_EXTENSION%
+
+REM Make sure the file compiled ok
+if not exist %APP_NAME%.js beeper.exe /p
+
+IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
+sed 's/RTTemplateName/%APP_NAME%/g' CustomMainFullTemplate.html > %APP_NAME%.html
+) 
 
 
 IF "%1" == "nopause" (

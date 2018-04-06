@@ -20,6 +20,7 @@ int g_winVideoScreenY = 0;
 Uint32 g_nextFrameTick = 0;
 Uint32 g_frameDelayMS = 0;
 
+
 int GetPrimaryGLX() 
 {
 	return g_winVideoScreenX;
@@ -32,19 +33,179 @@ int GetPrimaryGLY()
 
 
 
+class TouchInfo
+{
+public:
+
+	TouchInfo()
+	{
+		m_nativeTouchID = 0;
+		m_bUsed = false;
+	}
+
+	int m_nativeTouchID;
+	bool m_bUsed;
+};
+
+//a little something to map random #s into #s between 0 and 12, which is how proton wants to track touches
+class TouchManager
+{
+public:
+	int OnDown(int nativeTouchID);
+	int OnUp(int nativeTouchID);
+	int OnMove(int nativeTouchID);
+	int TouchesActive();
+
+private:
+	int FindExistingNativeTouch(int nativeTouchID);
+	int AddNewTouch(int nativeTouchID);
+
+	void Clear()
+	{
+		for (int i=0; i < C_MAX_TOUCHES_AT_ONCE; i++)
+		{
+			m_touch[i].m_bUsed = false;
+			m_touch[i].m_nativeTouchID = 0;
+		}
+	}
+
+	TouchInfo m_touch[C_MAX_TOUCHES_AT_ONCE];
+};
+
+int TouchManager::TouchesActive()
+{
+
+	int active = 0;
+	for (int i=0; i < C_MAX_TOUCHES_AT_ONCE; i++)
+	{
+		if (m_touch[i].m_bUsed)
+		{
+			active++;	
+		}
+	}
+	return active;
+}
+
+int TouchManager::FindExistingNativeTouch(int nativeTouchID)
+{
+	for (int i=0; i < C_MAX_TOUCHES_AT_ONCE; i++)
+	{
+		if (m_touch[i].m_bUsed && m_touch[i].m_nativeTouchID == nativeTouchID) return i;
+	}
+	return -1; //touch doesn't exist
+}
+
+int TouchManager::AddNewTouch(int nativeTouchID)
+{
+	for (int i=0; i < C_MAX_TOUCHES_AT_ONCE; i++)
+	{
+
+		if (!m_touch[i].m_bUsed)
+		{
+			//this will work
+			m_touch[i].m_bUsed = true;
+			m_touch[i].m_nativeTouchID = nativeTouchID;
+			return i;
+		}
+	}
+
+	LogMsg("Touch of HTML touchIDs.. we must not be getting the touch ending events somewhere.  Clearing all of them...");
+	Clear();
+	return AddNewTouch(nativeTouchID);
+}
+
+int TouchManager::OnDown(int nativeTouchID)
+{
+	int protonTouch = FindExistingNativeTouch(nativeTouchID);
+	if (protonTouch != -1) 
+	{
+		LogMsg("Why does touch %d already exist?", nativeTouchID);
+		return protonTouch;
+	}
+	//make new touch
+	return AddNewTouch(nativeTouchID);
+}
+
+int TouchManager::OnUp(int nativeTouchID)
+{
+	int protonTouch = FindExistingNativeTouch(nativeTouchID);
+	if (protonTouch != -1) 
+	{
+		m_touch[protonTouch].m_bUsed = false;
+		return protonTouch;
+	}
+
+	LogMsg("Couldn't remove touch %d", nativeTouchID);
+	return 0; //couldn't find it
+}
+
+int TouchManager::OnMove(int nativeTouchID)
+{
+	int protonTouch = FindExistingNativeTouch(nativeTouchID);
+	if (protonTouch != -1) 
+	{
+		return protonTouch; //found it
+	}
+
+	LogMsg("Can't find touch %d to move.. faking it", nativeTouchID);
+	return 0; //couldn't find it
+}
+
+
+TouchManager g_touchManager;
+
 
 EM_BOOL on_canvassize_changed(int eventType, const void *reserved, void *userData)
 {
+	//old way
+	/*
 	int w, h, fs;
 	emscripten_get_canvas_size(&w, &h, &fs);
+	*/
+	
+	//new way
+	int w, h, fs;
+	EMSCRIPTEN_RESULT r = emscripten_get_canvas_element_size("#canvas", &w, &h); 
+	if (r != EMSCRIPTEN_RESULT_SUCCESS) 
+	{
+		LogMsg("Error getting canvas size of #canvas");
+		return 0;
+		/* handle error */ 
+	}
+
+	/*
+	//iOS won't allow this I think
+	EmscriptenFullscreenChangeEvent e; 
+	r = emscripten_get_fullscreen_status(&e); 
+	if (r != EMSCRIPTEN_RESULT_SUCCESS)
+	{
+		LogMsg("Error with emscripten_get_fullscreen_status");
+
+	}
+	fs = e.isFullscreen; 
+	*/
+
+	
 	double cssW, cssH;
 	emscripten_get_element_css_size(0, &cssW, &cssH);
 	LogMsg("Resized: RTT: %dx%d, CSS : %02gx%02g\n", w, h, cssW, cssH);
+
+
+
+	emscripten_set_canvas_size(int(cssW), int(cssH));
+
+	LogMsg("on_canvassize_changed Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
+	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
+	GetBaseApp()->OnScreenSizeChange();
+
+
 	return 0;
 }
 
 void requestFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteringMode)
 {
+
+	#ifndef RT_HTML5_USE_CUSTOM_MAIN
 	EmscriptenFullscreenStrategy s;
 	memset(&s, 0, sizeof(s));
 	s.scaleMode = scaleMode;
@@ -52,19 +213,25 @@ void requestFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteri
 	s.filteringMode = filteringMode;
 	s.canvasResizedCallback = on_canvassize_changed;
 	int ret = emscripten_request_fullscreen_strategy(0, 1, &s);
+	#endif
 
 }
 
 
 void enterSoftFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteringMode)
 {
+	
 	EmscriptenFullscreenStrategy s;
 	memset(&s, 0, sizeof(s));
 	s.scaleMode = scaleMode;
 	s.canvasResolutionScaleMode = canvasResolutionScaleMode;
 	s.filteringMode = filteringMode;
+	
+	#ifndef RT_HTML5_USE_CUSTOM_MAIN
 	s.canvasResizedCallback = on_canvassize_changed;
+	#endif
 	int ret = emscripten_enter_soft_fullscreen(0, &s);
+	
 	
 }
 
@@ -281,9 +448,54 @@ void SDLEventLoop()
 #endif
 			break;
 		
+/*
+		case SDL_FINGERDOWN:
+		case SDL_FINGERUP:
+		case SDL_FINGERMOTION:
+			{
+				if ((int)ev.tfinger.touchId == -1)
+				{
+					//not a real touch.  Ignoring
+					LogMsg("Not a real touch (%d), ignoring", (int)ev.tfinger.touchId);
+					continue;
+
+				}
+				float xPos = (float)GetPrimaryGLX()*ev.tfinger.x;
+				float yPos = (float)GetPrimaryGLY()*ev.tfinger.y;
+			    
+				int touchID = (int)ev.tfinger.fingerId;
+
+				ConvertCoordinatesIfRequired(xPos, yPos);
+
+				if (ev.type == SDL_FINGERDOWN)
+				{
+					touchID = g_touchManager.OnDown(touchID);
+
+					LogMsg("The Finger %d (real touchID: %d, Proton touch %d) down at %.2f, %.2f", (int)ev.tfinger.fingerId, (int)ev.tfinger.touchId, touchID, xPos, yPos);
+					GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, xPos, yPos, touchID);
+				} else if (ev.type == SDL_FINGERUP)
+				{
+					touchID = g_touchManager.OnUp(touchID);
+
+					LogMsg("The Finger %d (real touchID: %d, Proton touch %d) up at %.2f, %.2f", (int)ev.tfinger.fingerId, (int)ev.tfinger.touchId, touchID, xPos, yPos);
+					GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, xPos, yPos, touchID);
+				} else if (ev.type == SDL_FINGERMOTION)
+				{
+					touchID = g_touchManager.OnMove(touchID);
+
+					LogMsg("The Finger %d (real touchID: %d, Proton touch %d) move at %.2f, %.2f", (int)ev.tfinger.fingerId, (int)ev.tfinger.touchId, touchID, xPos, yPos);
+					GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, xPos, yPos, touchID);
+				}
+				break;
+			}
+
+
 		case SDL_MOUSEBUTTONDOWN:
 		{
 		
+			LogMsg("Mouse down %d - : "+(int)ev.button.which);
+			if (ev.button.which == SDL_TOUCH_MOUSEID) continue; //don't care, this will get handled by the touch handler
+			LogMsg("Mouse down handled.");
 			float xPos = ev.button.x;
 			float yPos = ev.button.y;
 			ConvertCoordinatesIfRequired(xPos, yPos);
@@ -293,6 +505,8 @@ void SDLEventLoop()
 		
 		case SDL_MOUSEBUTTONUP:
 		{
+			if (ev.button.which == SDL_TOUCH_MOUSEID) continue; //don't care, this will get handled by the touch handler
+			LogMsg("Mouse up handled.");
 			float xPos = ev.button.x;
 			float yPos = ev.button.y;
 			ConvertCoordinatesIfRequired(xPos, yPos);
@@ -302,6 +516,10 @@ void SDLEventLoop()
 	
 		case SDL_MOUSEMOTION:
 		{
+			if (ev.motion.which == SDL_TOUCH_MOUSEID) continue; //don't care, this will get handled by the touch handler
+		
+			LogMsg("Mouse move handled. (which is %d)", (int)ev.motion.which);
+
 			float xPos = ev.motion.x;
 			float yPos = ev.motion.y;
 			ConvertCoordinatesIfRequired(xPos, yPos);
@@ -310,6 +528,7 @@ void SDLEventLoop()
 			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, xPos, yPos, SDL_BUTTON_LEFT);
 			break;
 		}
+*/
 
 		case SDL_KEYDOWN:
 		{
@@ -350,7 +569,7 @@ void SDLEventLoop()
 			int vKey = ConvertSDLKeycodeToProtonVirtualKey(ev.key.keysym.sym);
 			GetMessageManager()->SendGUI(MESSAGE_TYPE_GUI_CHAR_RAW, (float)vKey, (float)VIRTUAL_KEY_PRESS);
 
-			if (vKey >= SDLK_SPACE && vKey <= SDLK_DELETE || vKey == SDLK_BACKSPACE || vKey == SDLK_RETURN)
+			if ( (vKey >= SDLK_SPACE && vKey <= SDLK_DELETE) || vKey == SDLK_BACKSPACE || vKey == SDLK_RETURN)
 			{
 				signed char key = vKey;
 
@@ -387,9 +606,34 @@ void MainEventLoop()
 	static int oldWidth = GetScreenSizeX();
 	static int oldHeight = GetScreenSizeY();
 
+	
 	int width, height, isfs;
+	
+	/*
 	emscripten_get_canvas_size(&width, &height, &isfs);
 	
+	*/
+
+	
+	EMSCRIPTEN_RESULT r = emscripten_get_canvas_element_size("#canvas", &width, &height); 
+	if (r != EMSCRIPTEN_RESULT_SUCCESS) 
+	{
+		LogMsg("Error getting canvas size of #canvas");
+		
+		/* handle error */ 
+	}
+
+	/*
+	EmscriptenFullscreenChangeEvent e; 
+	r = emscripten_get_fullscreen_status(&e); 
+	if (r != EMSCRIPTEN_RESULT_SUCCESS) 
+		LogMsg("Error with emscripten_get_fullscreen_status");
+
+	}
+    isfs = e.isFullscreen; 
+
+	*/
+
 	if (oldWidth != width || oldHeight != height)
 	{
 		LogMsg("Canvas: %d, %d, %d", width, height, isfs);
@@ -445,7 +689,29 @@ void MainEventLoop()
 				//GetBaseApp()->SetVideoMode(Width, Height, false, 0);
 				//int isInFullscreen = EM_ASM_INT_V(return !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement));
 				int width, height, isFullscreen;
+				
+				/*
 				emscripten_get_canvas_size(&width, &height, &isFullscreen);
+				*/
+
+				EMSCRIPTEN_RESULT r = emscripten_get_canvas_element_size("#canvas", &width, &height); 
+				if (r != EMSCRIPTEN_RESULT_SUCCESS) 
+				{
+					LogMsg("Error getting canvas size of #canvas");
+
+					/* handle error */ 
+				}
+				EmscriptenFullscreenChangeEvent e; 
+				r = emscripten_get_fullscreen_status(&e); 
+				if (r != EMSCRIPTEN_RESULT_SUCCESS) /* handle error */ 
+				{
+					LogMsg("Error with emscripten_get_fullscreen_status");
+
+				}
+				isFullscreen = e.isFullscreen; 
+
+
+
 				LogMsg("Is full screen is %d - Width: %d Height: %d", isFullscreen, width, height);
 
 				static bool bIsSoftFullscreen = false;
@@ -501,36 +767,254 @@ void CheckWindowsMessages()
 	SDLEventLoop();
 }
 
+static inline const char *emscripten_event_type_to_string(int eventType) {
+	const char *events[] = { "(invalid)", "(none)", "keypress", "keydown", "keyup", "click", "mousedown", "mouseup", "dblclick", "mousemove", "wheel", "resize", 
+		"scroll", "blur", "focus", "focusin", "focusout", "deviceorientation", "devicemotion", "orientationchange", "fullscreenchange", "pointerlockchange", 
+		"visibilitychange", "touchstart", "touchend", "touchmove", "touchcancel", "gamepadconnected", "gamepaddisconnected", "beforeunload", 
+		"batterychargingchange", "batterylevelchange", "webglcontextlost", "webglcontextrestored", "mouseenter", "mouseleave", "mouseover", "mouseout", "(invalid)" };
+	++eventType;
+	if (eventType < 0) eventType = 0;
+	if (eventType >= sizeof(events)/sizeof(events[0])) eventType = sizeof(events)/sizeof(events[0])-1;
+	return events[eventType];
+}
+
+
+
+const char *emscripten_result_to_string(EMSCRIPTEN_RESULT result) {
+	if (result == EMSCRIPTEN_RESULT_SUCCESS) return "EMSCRIPTEN_RESULT_SUCCESS";
+	if (result == EMSCRIPTEN_RESULT_DEFERRED) return "EMSCRIPTEN_RESULT_DEFERRED";
+	if (result == EMSCRIPTEN_RESULT_NOT_SUPPORTED) return "EMSCRIPTEN_RESULT_NOT_SUPPORTED";
+	if (result == EMSCRIPTEN_RESULT_FAILED_NOT_DEFERRED) return "EMSCRIPTEN_RESULT_FAILED_NOT_DEFERRED";
+	if (result == EMSCRIPTEN_RESULT_INVALID_TARGET) return "EMSCRIPTEN_RESULT_INVALID_TARGET";
+	if (result == EMSCRIPTEN_RESULT_UNKNOWN_TARGET) return "EMSCRIPTEN_RESULT_UNKNOWN_TARGET";
+	if (result == EMSCRIPTEN_RESULT_INVALID_PARAM) return "EMSCRIPTEN_RESULT_INVALID_PARAM";
+	if (result == EMSCRIPTEN_RESULT_FAILED) return "EMSCRIPTEN_RESULT_FAILED";
+	if (result == EMSCRIPTEN_RESULT_NO_DATA) return "EMSCRIPTEN_RESULT_NO_DATA";
+	return "Unknown EMSCRIPTEN_RESULT!";
+}
+
 void UpdateHTML5Screen()
 {
 	SDL_GL_SwapBuffers();
 	LogMsg("Did SDL_GL_SwapBuffers()");
 }
 
-int main(int argc, char *argv[])
+
+EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userData)
 {
-	if (argc > 1) 
+	printf("%s, detail: %ld, document.body.client size: (%d,%d), window.inner size: (%d,%d), scrollPos: (%d, %d)\n",
+		emscripten_event_type_to_string(eventType), e->detail, e->documentBodyClientWidth, e->documentBodyClientHeight,
+		e->windowInnerWidth, e->windowInnerHeight, e->scrollTop, e->scrollLeft);
+
+	#ifdef RT_HTML5_USE_CUSTOM_MAIN
+	double cssW, cssH;
+	emscripten_get_element_css_size(0, &cssW, &cssH);
+
+	g_winVideoScreenX = cssW;
+	g_winVideoScreenY = cssH;
+
+	//emscripten_set_canvas_size(int(cssW), int(cssH));
+
+	LogMsg("Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
+	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
+	GetBaseApp()->OnScreenSizeChange();
+#endif
+
+
+	return 0;
+}
+
+#define TEST_RESULT(x) if (ret != EMSCRIPTEN_RESULT_SUCCESS) printf("%s returned %s.\n", #x, emscripten_result_to_string(ret));
+
+
+
+EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userData)
+{
+
+	/*
+	LogMsg("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, movement: (%ld,%ld), canvas: (%ld,%ld), target: (%ld, %ld)\n",
+		emscripten_event_type_to_string(eventType), e->screenX, e->screenY, e->clientX, e->clientY,
+		e->ctrlKey ? " CTRL" : "", e->shiftKey ? " SHIFT" : "", e->altKey ? " ALT" : "", e->metaKey ? " META" : "", 
+		e->button, e->buttons, e->movementX, e->movementY, e->canvasX, e->canvasY, e->targetX, e->targetY);
+
+		*/
+
+	switch (eventType)
 	{
+	case EMSCRIPTEN_EVENT_MOUSEDOWN:
+	case EMSCRIPTEN_EVENT_MOUSEUP:
+	case EMSCRIPTEN_EVENT_MOUSEMOVE:
+
+		float xPos = e->canvasX;
+		float yPos = e->canvasY;
+		ConvertCoordinatesIfRequired(xPos, yPos);
+
+		switch (eventType)
+		{
+		case EMSCRIPTEN_EVENT_MOUSEDOWN:
+			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, xPos, yPos, e->button);
+			break;
+		case EMSCRIPTEN_EVENT_MOUSEUP:
+			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, xPos, yPos, e->button);
+			break;
+		case EMSCRIPTEN_EVENT_MOUSEMOVE:
+			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, xPos, yPos, e->button);
+			break;
+
+		}
+		break;
+
 	}
 	
+	return 0;
+}
+
+EM_BOOL wheel_callback(int eventType, const EmscriptenWheelEvent *e, void *userData)
+{
+	LogMsg("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, canvas: (%ld,%ld), target: (%ld, %ld), delta:(%g,%g,%g), deltaMode:%lu\n",
+		emscripten_event_type_to_string(eventType), e->mouse.screenX, e->mouse.screenY, e->mouse.clientX, e->mouse.clientY,
+		e->mouse.ctrlKey ? " CTRL" : "", e->mouse.shiftKey ? " SHIFT" : "", e->mouse.altKey ? " ALT" : "", e->mouse.metaKey ? " META" : "", 
+		e->mouse.button, e->mouse.buttons, e->mouse.canvasX, e->mouse.canvasY, e->mouse.targetX, e->mouse.targetY,
+		(float)e->deltaX, (float)e->deltaY, (float)e->deltaZ, e->deltaMode);
+
+	GetMessageManager()->SendGUIEx2(MESSAGE_TYPE_GUI_MOUSEWHEEL, (float)e->deltaY, 0, 0, 0); //last parm is "winkey modifers"...
+
+	return 0;
+}
+
+EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userData)
+{
+
+	/*
+	LogMsg("%s, numTouches: %d %s%s%s%s\n",
+		emscripten_event_type_to_string(eventType), e->numTouches,
+		e->ctrlKey ? " CTRL" : "", e->shiftKey ? " SHIFT" : "", e->altKey ? " ALT" : "", e->metaKey ? " META" : "");
+	
+	*/
+
+
+	for(int i = 0; i < e->numTouches; ++i)
+	{
+
+		const EmscriptenTouchPoint *t = &e->touches[i];
+		
+		/*
+		LogMsg("  %ld: screen: (%ld,%ld), client: (%ld,%ld), page: (%ld,%ld), isChanged: %d, onTarget: %d, canvas: (%ld, %ld)\n",
+			t->identifier, t->screenX, t->screenY, t->clientX, t->clientY, t->pageX, t->pageY, t->isChanged, t->onTarget, t->canvasX, t->canvasY);
+
+			*/
+
+		float xPos = (float)t->canvasX;
+		float yPos = (float)t->canvasY;
+
+		int touchID = (int)t->identifier;
+
+		ConvertCoordinatesIfRequired(xPos, yPos);
+
+		switch(eventType)
+		{
+
+		case EMSCRIPTEN_EVENT_TOUCHSTART:
+
+			static bool bFirstTime = true;
+			if (bFirstTime)
+			{
+				//unlock audio on iOS
+				LogMsg("Unlocking audio");
+				GetAudioManager()->Play("audio/blank.wav");
+				bFirstTime = false;
+				//GetBaseApp()->OnScreenSizeChange();
+
+			} 
+
+			touchID = g_touchManager.OnDown(touchID);
+			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, xPos, yPos, touchID);
+			break;
+
+
+		case EMSCRIPTEN_EVENT_TOUCHEND:
+			touchID = g_touchManager.OnUp(touchID);
+			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, xPos, yPos, touchID);
+			break;
+
+		case EMSCRIPTEN_EVENT_TOUCHMOVE:
+			touchID = g_touchManager.OnMove(touchID);
+			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_MOVE, xPos, yPos, touchID);
+			break;
+
+		case EMSCRIPTEN_EVENT_TOUCHCANCEL:
+
+			LogMsg("Got touch cancel?");
+			touchID = g_touchManager.OnUp(touchID);
+			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, xPos, yPos, touchID);
+			break;
+
+		}
+	}
+
+	return 0;
+}
+
+
+void ForceEmscriptenResize()
+{
+
+	double cssW, cssH;
+	EMSCRIPTEN_RESULT r;
+
+	emscripten_get_element_css_size(0, &cssW, &cssH);
+
+
+}
+void mainHTML()
+{
+	
+	int w, h, fs;
 	srand( (unsigned)time(NULL) );
 	RemoveFile("log.txt", false);
+	double cssW, cssH;
+	EMSCRIPTEN_RESULT r;
+
+	emscripten_get_element_css_size(0, &cssW, &cssH);
+	
+	r = emscripten_get_canvas_element_size("#canvas", &w, &h); 
+	if (r != EMSCRIPTEN_RESULT_SUCCESS) 
+	{
+		LogMsg("Error getting canvas size of #canvas");
+		goto cleanup;
+		/* handle error */ 
+	}
+	LogMsg("Init: RTT size: %dx%d, CS: %02gx%02g\n", w, h, cssW, cssH);
+#ifdef RT_HTML5_USE_CUSTOM_MAIN
+	g_winVideoScreenX = cssW;
+	g_winVideoScreenY = cssH;
+
+
+	//enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_STDDEF, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
+	
+#else
 	g_winVideoScreenX = 480;
 	g_winVideoScreenY = 320;
+
+#endif
+	//emscripten_run_script("Module[\"requestFullScreen\"](false,false);"); for security reasons browsers won't let you do this from a non-button
+	//bIsSoftFullscreen = true;
+
+	EmscriptenFullscreenChangeEvent e; 
 	
 	GetBaseApp()->OnPreInitVideo(); //gives the app level code a chance to override any of these parms if it wants to
 	SetForcedOrientation(ORIENTATION_DONT_CARE);
 
+	LogMsg("Setting up joystick");
+
+	SDL_JoystickEventState(SDL_IGNORE);
+	
 	if (!InitSDL())
 	{
 		LogMsg("Couldn't init SDL: %s", SDL_GetError());
 		goto cleanup;
 	}
 
-	LogMsg("Setting up joystick");
-
-	SDL_JoystickEventState(SDL_IGNORE);
-	
 	LogMsg("Setting up screen");
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
 	
@@ -541,14 +1025,65 @@ int main(int argc, char *argv[])
 		goto cleanup;
 	}
 
+
+#ifdef RT_HTML5_USE_CUSTOM_MAIN
+	enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_STDDEF, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
+
+	//re-get this stuff, it's likely changed slightly
+
+	emscripten_get_element_css_size(0, &cssW, &cssH);
+	g_winVideoScreenX = cssW;
+	g_winVideoScreenY = cssH;
+
+	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
+
+#endif
+
 	GetBaseApp()->OnScreenSizeChange();
 
-	int w, h, fs;
-	emscripten_get_canvas_size(&w, &h, &fs);
-	double cssW, cssH;
-	emscripten_get_element_css_size(0, &cssW, &cssH);
-	LogMsg("Init: RTT size: %dx%d, CS: %02gx%02g\n", w, h, cssW, cssH);
+
+	r = emscripten_get_fullscreen_status(&e); 
+	if (r != EMSCRIPTEN_RESULT_SUCCESS) /* handle error */ 
+	{
+		LogMsg("Error with emscripten_get_fullscreen_status");
+	}
+
+	fs = e.isFullscreen; 
+
+	EMSCRIPTEN_RESULT ret;
+	ret = emscripten_set_resize_callback(0, 0, 1, uievent_callback);
+
+
+	ret = emscripten_set_mousedown_callback(0, 0, 1, mouse_callback);
+	TEST_RESULT(emscripten_set_mousedown_callback);
+	ret = emscripten_set_mouseup_callback(0, 0, 1, mouse_callback);
+	TEST_RESULT(emscripten_set_mouseup_callback);
+	ret = emscripten_set_mousemove_callback(0, 0, 1, mouse_callback);
+	TEST_RESULT(emscripten_set_mousemove_callback);
+	ret = emscripten_set_wheel_callback(0, 0, 1, wheel_callback);
+	TEST_RESULT(emscripten_set_wheel_callback);
+
+
+	//touch events
+	ret = emscripten_set_touchstart_callback(0, 0, 1, touch_callback);
+	TEST_RESULT(emscripten_set_touchstart_callback);
+	ret = emscripten_set_touchend_callback(0, 0, 1, touch_callback);
+	TEST_RESULT(emscripten_set_touchend_callback);
+	ret = emscripten_set_touchmove_callback(0, 0, 1, touch_callback);
+	TEST_RESULT(emscripten_set_touchmove_callback);
+	ret = emscripten_set_touchcancel_callback(0, 0, 1, touch_callback);
+	TEST_RESULT(emscripten_set_touchcancel_callback);
+
+
+
+/*
+	ret = emscripten_set_click_callback(0, 0, 1, mouse_callback);
+	TEST_RESULT(emscripten_set_click_callback);
+	ret = emscripten_set_dblclick_callback(0, 0, 1, mouse_callback);
+	TEST_RESULT(emscripten_set_dblclick_callback);
+
 	
+*/
 
 #ifndef RT_EMTERPRETER_ENABLED
 	emscripten_set_main_loop(MainEventLoop, 0, 1);
@@ -557,6 +1092,7 @@ int main(int argc, char *argv[])
 	{
 		MainEventLoop();
 		emscripten_sleep(1);
+		//emscripten_sleep_with_yield(1); //not compatible unless the ASYNC stuff is enabled
 	}
 #endif
 
@@ -571,5 +1107,31 @@ cleanup:
 	}
 
 	SDL_Quit();
+	
+}
+
+
+//old way
+//int main(int argc, char *argv[])
+
+
+#ifdef RT_HTML5_USE_CUSTOM_MAIN
+
+extern "C" 
+{
+//new way that gives more flexibility on when it starts, but must now be manually called by the html.  See RTBareBones example's html or https://lyceum-allotments.github.io/2016/06/emscripten-and-sdl2-tutorial-part-7-get-naked-owl/
+	void mainf()
+	{
+		mainHTML();
+	}
+}
+
+#else
+int main()
+{
+	mainHTML();
 	return 0;
 }
+#endif
+
+

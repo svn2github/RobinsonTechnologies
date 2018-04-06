@@ -209,6 +209,7 @@ else
 	m_varDB.Load("save.dat", &bFileExisted);
  
 	//preload audio
+	GetAudioManager()->Preload("audio/blank.wav");
 	GetAudioManager()->Preload("audio/click.wav");
 	//GetAudioManager()->Preload("audio/techno.mp3");
 	return true;

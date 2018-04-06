@@ -567,7 +567,7 @@ string ReplaceWithLargeInFileNameAndOSSpecific(const string &fName)
 
 string ReplaceMP3( const string &fName)
 {
-	if (GetEmulatedPlatformID() != PLATFORM_ID_ANDROID && GetEmulatedPlatformID() != PLATFORM_ID_HTML5)
+	if (GetEmulatedPlatformID() != PLATFORM_ID_ANDROID)
 	{
 #ifndef _CONSOLE
 		if (!GetAudioManager() || !GetAudioManager()->PreferOGG())

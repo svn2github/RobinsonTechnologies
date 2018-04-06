@@ -4,7 +4,12 @@
 
 #if defined RT_WEBOS || defined RT_USE_SDL_AUDIO
 
+#ifdef PLATFORM_HTML5
+//Emscripten only supports SDL1's mixer
+#include "SDL/SDL_mixer.h"
+#else
 #include "SDL2/SDL_mixer.h"
+#endif
 
 #define NUM_CHANNELS 64
 
@@ -60,12 +65,19 @@ AudioManagerSDL::~AudioManagerSDL()
 
 AudioHandle AudioManagerSDL::Play( const string fileName )
 {
-	LogMsg("Playing %s", fileName.c_str());
+	//LogMsg("Playing %s", fileName.c_str());
 	assert(!"huh?");
 	return AUDIO_HANDLE_BLANK;
 }
 
+#ifdef PLATFORM_HTML5
+//Actually I guess we could support SDL2 if we wanted with emscripten, just haven't tried it
+#include <SDL/SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
+
+
 
 bool AudioManagerSDL::Init()
 {
@@ -301,17 +313,21 @@ void AudioManagerSDL::Preload( string fName, bool bLooping /*= false*/, bool bIs
 
 		//assert(! (GetFileExtension(fName) == "mp3" || GetFileExtension(fName) == "ogg") && "SDL mixer doesn't support mp3/ogg for non music playback though");
 	
+#ifndef PLATFORM_HTML5 //html5's emscripten version does let the browser play mp3.  Safari on ios can't play ogg though
 		if (GetFileExtension(fName) == "mp3")
 		{
 			fName = ModifyFileExtension(fName, "ogg");
 			StringReplace("/mp3", "/ogg", fName);
 		} 
+#endif
 
 		string basePath;
 		if (bAddBasePath)
 		{
 			basePath = GetBaseAppPath();
 		}
+
+		//LogMsg("Playing sfx %s", (basePath+fName).c_str());
 
 		pObject->m_pSound = Mix_LoadWAV( (basePath+fName).c_str());
 		if (!pObject->m_pSound)
@@ -381,11 +397,13 @@ AudioHandle AudioManagerSDL::Play( string fName, bool bLooping /*= false*/, bool
 		LogMsg("Stopped music, now playing as %s", (basePath+fName).c_str());
 #endif
 
+#ifndef PLATFORM_HTML5 //html5's emscripten version does let the browser play mp3.  Safari on ios can't play ogg though
 		if (GetFileExtension(fName) == "mp3")
 		{
 			fName = ModifyFileExtension(fName, "ogg");
 			StringReplace("/mp3", "/ogg", fName);
 		}
+#endif
 
 		m_pMusicChannel = Mix_LoadMUS( (basePath+fName).c_str());
 
