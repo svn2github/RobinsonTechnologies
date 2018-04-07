@@ -20,7 +20,6 @@ rsync -avzr --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r  -e "ssh" WebLoaderData %_FTP_USER
 
 :Let's go ahead an open a browser to test it
 start http://www.%_FTP_SITE_%/%WEB_SUB_DIR%/%APP_NAME%.html
-exit
 
 :Old way, non ssh
 REM get our ftp logon info

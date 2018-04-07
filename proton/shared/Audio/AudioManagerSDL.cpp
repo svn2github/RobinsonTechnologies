@@ -640,4 +640,38 @@ void AudioManagerSDL::SetPriority( AudioHandle soundID, int priority )
 {
 
 }
+
+
+void AudioManagerSDL::Suspend()
+{
+	LogMsg("Pausing SDL audio");
+	SDL_PauseAudio(1); //seems to do nothing on chrome webgl
+
+	SetMusicEnabled(false);
+
+	/*
+	if (m_pMusicChannel)
+	{
+		m_pMusicChannel->setPaused(true);
+	}
+	*/
+}
+
+void AudioManagerSDL::Resume()
+{
+	LogMsg("Unpausing SDL audio");
+	
+	SDL_PauseAudio(0);
+
+	SetMusicEnabled(true);
+
+	/*
+	if (m_pMusicChannel)
+	{
+		m_pMusicChannel->setPaused(false);
+	}
+	*/
+
+}
+
 #endif

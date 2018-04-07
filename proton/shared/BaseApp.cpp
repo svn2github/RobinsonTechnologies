@@ -614,6 +614,7 @@ void BaseApp::SetAllowScreenDimming(bool bAllowDimming)
     
 	GetBaseApp()->AddOSMessage(o);
 }
+
 void BaseApp::SetFPSLimit(float fps) 
 {
 	if (fps >= 0.0f)

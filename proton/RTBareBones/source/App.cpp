@@ -49,6 +49,8 @@ App::~App()
 {
 }
 
+
+
 bool App::Init()
 {
 	
@@ -64,6 +66,8 @@ bool App::Init()
 		//SetLockedLandscape( true); //if we don't allow portrait mode for this game
 		//SetManualRotationMode(true); //don't use manual, it may be faster (33% on a 3GS) but we want iOS's smooth rotations
 	}
+
+
 
 	LogMsg("The Save path is %s", GetSavePath().c_str());
 	LogMsg("Region string is %s", GetRegionString().c_str());
@@ -384,6 +388,7 @@ bool App::OnPreInitVideo()
 #if defined (_DEBUG) && defined(WINAPI)
 	SetupScreenInfo(1024, 768, ORIENTATION_DONT_CARE);
 #endif
+	
 	//g_winVideoScreenY = 768;
 	return true; //no error
 }

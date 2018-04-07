@@ -52,10 +52,11 @@ public:
 	virtual void SetPan(AudioHandle soundID, float pan); //0 is normal stereo, -1 is all left, +1 is all right
 	virtual void SetVol(AudioHandle soundID, float vol);
 	virtual void SetPriority(AudioHandle soundID, int priority);
+	virtual void Suspend();
+	virtual void Resume();
 	virtual uint32 GetPos( AudioHandle soundID );
 	virtual void SetPos( AudioHandle soundID, uint32 posMS );
 	virtual void SetMusicVol(float vol);
-
 private:
 	SoundObject * GetSoundObjectByFileName(string fName);
 	bool DeleteSoundObjectByFileName(string fName);

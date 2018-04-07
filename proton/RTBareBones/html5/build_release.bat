@@ -6,7 +6,7 @@ SET DEBUG=0
 :Set to 1, this causes some internal build changes, and the CustomMainFullTemplate.html to be copied to <AppName>.html instead of the default emscripten one
 :Set to 0, you can easily see LogMsg's as they appear in the text window under the app area, so that might be better for debugging
 
-SET USE_HTML5_CUSTOM_MAIN=1
+SET USE_HTML5_CUSTOM_MAIN=0
 
 
 set CURPATH=%cd%

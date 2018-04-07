@@ -20,7 +20,6 @@ int g_winVideoScreenY = 0;
 Uint32 g_nextFrameTick = 0;
 Uint32 g_frameDelayMS = 0;
 
-
 int GetPrimaryGLX() 
 {
 	return g_winVideoScreenX;
@@ -30,8 +29,6 @@ int GetPrimaryGLY()
 {
 	return g_winVideoScreenY;
 }
-
-
 
 class TouchInfo
 {
@@ -190,21 +187,16 @@ EM_BOOL on_canvassize_changed(int eventType, const void *reserved, void *userDat
 	emscripten_get_element_css_size(0, &cssW, &cssH);
 	LogMsg("Resized: RTT: %dx%d, CSS : %02gx%02g\n", w, h, cssW, cssH);
 
-
-
 	emscripten_set_canvas_size(int(cssW), int(cssH));
 
 	LogMsg("on_canvassize_changed Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
 	GetBaseApp()->OnScreenSizeChange();
-
-
 	return 0;
 }
 
 void requestFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteringMode)
 {
-
 	#ifndef RT_HTML5_USE_CUSTOM_MAIN
 	EmscriptenFullscreenStrategy s;
 	memset(&s, 0, sizeof(s));
@@ -216,7 +208,6 @@ void requestFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteri
 	#endif
 
 }
-
 
 void enterSoftFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteringMode)
 {
@@ -231,8 +222,6 @@ void enterSoftFullscreen(int scaleMode, int canvasResolutionScaleMode, int filte
 	s.canvasResizedCallback = on_canvassize_changed;
 	#endif
 	int ret = emscripten_enter_soft_fullscreen(0, &s);
-	
-	
 }
 
 bool InitSDLScreen()
@@ -285,28 +274,8 @@ int initSDL_GLES()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);	// Force this to be version 1
 #endif
 
-
-/*
-	EM_ASM(
-		SDL.defaults.copyOnLock = false;
-	SDL.defaults.discardOnLock = true;
-	SDL.defaults.opaqueFrontBuffer = false;
-	);
-	*/
-
 	InitSDLScreen();
-
-	
-	//for full screen with buggy coordinates
-	//enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_ASPECT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_NONE, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
-
-	//another version without the zoom
-	//enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_NONE, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
-
-
-	//LogMsg((const char*)glGetString(GL_VERSION));
-
-	
+		
 	// This sets the "caption" for whatever the window is. On windows, it's the window
 	// title. On the palm, this functionality does not exist and the function is ignored.
 	SDL_WM_SetCaption(GetAppName(), NULL);
@@ -327,19 +296,6 @@ bool InitSDL()
 		return false;
 	}
 	
-
-	/*
-		if (glfwInit() != GL_TRUE) {
-			printf("glfwInit() failed\n");
-			return GL_FALSE;
-		}
-
-		if (glfwOpenWindow(GetPrimaryGLX(), GetPrimaryGLY(), 8, 8, 8, 8, 16, 0, GLFW_WINDOW) != GL_TRUE) {
-			printf("glfwOpenWindow() failed\n");
-			return false;
-		}
-*/
-		
 	glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -592,6 +548,7 @@ void SDLEventLoop()
 		}
 	}
 }
+
 void Sleep(long ms)
 {
 	#ifdef RT_EMTERPRETER_ENABLED
@@ -599,40 +556,20 @@ void Sleep(long ms)
 	#endif
 }
 
-
 void MainEventLoop()
 {
 
 	static int oldWidth = GetScreenSizeX();
 	static int oldHeight = GetScreenSizeY();
-
 	
 	int width, height, isfs;
 	
-	/*
-	emscripten_get_canvas_size(&width, &height, &isfs);
-	
-	*/
-
 	
 	EMSCRIPTEN_RESULT r = emscripten_get_canvas_element_size("#canvas", &width, &height); 
 	if (r != EMSCRIPTEN_RESULT_SUCCESS) 
 	{
 		LogMsg("Error getting canvas size of #canvas");
-		
-		/* handle error */ 
 	}
-
-	/*
-	EmscriptenFullscreenChangeEvent e; 
-	r = emscripten_get_fullscreen_status(&e); 
-	if (r != EMSCRIPTEN_RESULT_SUCCESS) 
-		LogMsg("Error with emscripten_get_fullscreen_status");
-
-	}
-    isfs = e.isFullscreen; 
-
-	*/
 
 	if (oldWidth != width || oldHeight != height)
 	{
@@ -710,8 +647,6 @@ void MainEventLoop()
 				}
 				isFullscreen = e.isFullscreen; 
 
-
-
 				LogMsg("Is full screen is %d - Width: %d Height: %d", isFullscreen, width, height);
 
 				static bool bIsSoftFullscreen = false;
@@ -732,6 +667,7 @@ void MainEventLoop()
 
 				}
 			break;
+
 		case OSMessage::MESSAGE_SET_ACCELEROMETER_UPDATE_HZ:
 			if( SDL_NumJoysticks() > 0 )
 			{
@@ -756,10 +692,8 @@ void MainEventLoop()
 			break;
 		}
 	}
-
 	
 	SDL_GL_SwapBuffers();
-
 }
 
 void CheckWindowsMessages()
@@ -777,8 +711,6 @@ static inline const char *emscripten_event_type_to_string(int eventType) {
 	if (eventType >= sizeof(events)/sizeof(events[0])) eventType = sizeof(events)/sizeof(events[0])-1;
 	return events[eventType];
 }
-
-
 
 const char *emscripten_result_to_string(EMSCRIPTEN_RESULT result) {
 	if (result == EMSCRIPTEN_RESULT_SUCCESS) return "EMSCRIPTEN_RESULT_SUCCESS";
@@ -798,7 +730,6 @@ void UpdateHTML5Screen()
 	SDL_GL_SwapBuffers();
 	LogMsg("Did SDL_GL_SwapBuffers()");
 }
-
 
 EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userData)
 {
@@ -825,7 +756,6 @@ EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userDa
 }
 
 #define TEST_RESULT(x) if (ret != EMSCRIPTEN_RESULT_SUCCESS) printf("%s returned %s.\n", #x, emscripten_result_to_string(ret));
-
 
 
 EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userData)
@@ -882,6 +812,43 @@ EM_BOOL wheel_callback(int eventType, const EmscriptenWheelEvent *e, void *userD
 	return 0;
 }
 
+EM_BOOL focus_callback(int eventType, const EmscriptenFocusEvent* event, void* userData)
+{
+	
+	if (event)
+	{
+		switch (eventType)
+		{
+			case EMSCRIPTEN_EVENT_BLUR:
+			{
+				LogMsg("Got blur");
+				GetBaseApp()->OnEnterBackground();
+				//s_ctx.m_eventQueue.postSuspendEvent(s_defaultWindow, Suspend::DidSuspend);
+				return true;
+			}
+			case EMSCRIPTEN_EVENT_FOCUS:
+			{
+				LogMsg("Got generic focus");
+				GetBaseApp()->OnEnterForeground();
+
+				return true;
+			}
+			case EMSCRIPTEN_EVENT_FOCUSIN:
+			{
+				LogMsg("focus in");
+				return true;
+			}
+			case EMSCRIPTEN_EVENT_FOCUSOUT:
+			{
+				LogMsg("focus out");
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userData)
 {
 
@@ -891,7 +858,6 @@ EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userD
 		e->ctrlKey ? " CTRL" : "", e->shiftKey ? " SHIFT" : "", e->altKey ? " ALT" : "", e->metaKey ? " META" : "");
 	
 	*/
-
 
 	for(int i = 0; i < e->numTouches; ++i)
 	{
@@ -955,7 +921,6 @@ EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userD
 	return 0;
 }
 
-
 void ForceEmscriptenResize()
 {
 
@@ -963,9 +928,8 @@ void ForceEmscriptenResize()
 	EMSCRIPTEN_RESULT r;
 
 	emscripten_get_element_css_size(0, &cssW, &cssH);
-
-
 }
+
 void mainHTML()
 {
 	
@@ -1074,6 +1038,18 @@ void mainHTML()
 	ret = emscripten_set_touchcancel_callback(0, 0, 1, touch_callback);
 	TEST_RESULT(emscripten_set_touchcancel_callback);
 
+
+	//focus events
+	ret = emscripten_set_blur_callback(0, 0, true, focus_callback);
+	TEST_RESULT(emscripten_set_blur_callback);
+
+	ret = emscripten_set_focus_callback(0, 0, true, focus_callback);
+	TEST_RESULT(emscripten_set_focus_callback);
+
+	ret = emscripten_set_focusin_callback(0, 0, true, focus_callback);
+	TEST_RESULT(emscripten_set_focusin_callback);
+	ret = emscripten_set_focusout_callback(0, 0, true, focus_callback);
+	TEST_RESULT(emscripten_set_focusout_callback);
 
 
 /*
