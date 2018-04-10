@@ -101,11 +101,9 @@ void LogDisplayComponent::OnTextChanged(Variant *pDataObject)
 void LogDisplayComponent::AddLine(VariantList *pVList)
 {
 	InitInternalConsoleIfNeeded();
-
 	//word wrap it into lines if needed
 	CL_Vec2f enclosedSize2d;
 	GetBaseApp()->GetFont(eFont(*m_pFontID))->MeasureTextAndAddByLinesIntoDeque(*m_pSize2d, pVList->Get(0).GetString(), &m_queuedLines, *m_pFontScale, enclosedSize2d);
-
 }
 
 void LogDisplayComponent::OnTextAdded()

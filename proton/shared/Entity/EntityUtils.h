@@ -349,6 +349,7 @@ bool EntityRetinaRemapIfNeeded(Entity *pEnt, bool bAdjustPosition = true, bool b
  * To respect the the opposite axis, bPreserveOtherAxis can be set to true.
  */
 void EntitySetScaleBySize(Entity *pEnt, CL_Vec2f vDestSize, bool bPreserveAspectRatio = false, bool bPreserveOtherAxis = false);
+void EntitySetScaleBySizeAndAspectMode(Entity *pEnt, CL_Vec2f vDestSize, eAspect aspectMode);
 void EntityScaleiPad(Entity *pEnt, bool bPerserveAspectRatio); //on ipad size does nothing, on anything else it scales to fit the same screen ratio.
 void EntityAdjustScaleSoPhysicalSizeMatches(Entity *pEnt, int ppiToMatch = C_IPAD_PPI, float powerMult = 1.0f); //so a 1 inch button on ipad1 is also 1 inch on a retina iphone or anything else.  powerMult 0.5 means weaken the changes by half
 EntityComponent * AddHotKeyToButton(Entity *pEnt, uint32 keycode);
@@ -369,6 +370,7 @@ Entity * SetTextEntityByName(const string &entityName, string text, Entity *pRoo
 //helpers for the lazy.. the reason I don't return a const pointer to the value is I tend to want to operate on the return vars right away.. -Seth
 CL_Vec2f GetSize2DEntity(Entity *pEnt);
 void SetSize2DEntity(Entity *pEnt, const CL_Vec2f &vSize);
+CL_Vec2f GetImageSize2DEntity(Entity *pEnt); //reads the raw image size of the image if this ent has an OverlayRenderComponent in it
 CL_Vec2f GetPos2DEntity(Entity *pEnt);
 void SetPos2DEntity(Entity *pEnt, const CL_Vec2f &vPos);
 CL_Vec2f GetScale2DEntity(Entity *pEnt);

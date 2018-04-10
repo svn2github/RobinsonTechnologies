@@ -336,7 +336,8 @@ public:
      */
     boost::signal<void (VariantList*)> m_sig_hardware;
     
-    
+	boost::signal<void(void)> m_sig_onScreenSizeChanged;
+
     /**
      * Signal to notify that it's time to release surfaces.
      * Sent for example when the app goes to background.

@@ -218,6 +218,7 @@ void BaseApp::OnScreenSizeChange()
 #endif
 	
 	GenerateSetPerspectiveFOV(C_APP_FOV, GetScreenSizeXf()/ GetScreenSizeYf(),0.1f,500.0f);
+	m_sig_onScreenSizeChanged();
 }
 
 void BaseApp::SetConsoleVisible( bool bNew )

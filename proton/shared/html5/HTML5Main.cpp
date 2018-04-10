@@ -187,7 +187,14 @@ EM_BOOL on_canvassize_changed(int eventType, const void *reserved, void *userDat
 	emscripten_get_element_css_size(0, &cssW, &cssH);
 	LogMsg("Resized: RTT: %dx%d, CSS : %02gx%02g\n", w, h, cssW, cssH);
 
-	emscripten_set_canvas_size(int(cssW), int(cssH));
+	r = emscripten_set_canvas_element_size("#canvas",
+		int(cssW), int(cssH));
+	if (r != EMSCRIPTEN_RESULT_SUCCESS)
+	{
+		LogMsg("Error setting canvas size of #canvas");
+		/* handle error */
+	}
+
 
 	LogMsg("on_canvassize_changed Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
@@ -744,7 +751,6 @@ EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userDa
 	g_winVideoScreenX = cssW;
 	g_winVideoScreenY = cssH;
 
-	//emscripten_set_canvas_size(int(cssW), int(cssH));
 
 	LogMsg("Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);

@@ -28,6 +28,16 @@ enum eAlignment
 	ALIGNMENT_RIGHT_CENTER,
 };
 
+enum eAspect
+{
+	ASPECT_NONE,
+	ASPECT_WIDTH_CONTROLS_HEIGHT,
+	ASPECT_HEIGHT_CONTROLS_WIDTH,
+	ASPECT_FIT,
+	
+};
+
+
 
 //forces 32 bit version, useful for some 64 bit builds that broke things.  Should probably template these but whatever.
 
