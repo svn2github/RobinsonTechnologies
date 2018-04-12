@@ -20,6 +20,10 @@ int g_winVideoScreenY = 0;
 Uint32 g_nextFrameTick = 0;
 Uint32 g_frameDelayMS = 0;
 
+bool g_touchesReceived = 0;
+
+int GetTouchesReceived() {return g_touchesReceived;}
+
 int GetPrimaryGLX() 
 {
 	return g_winVideoScreenX;
@@ -99,6 +103,7 @@ int TouchManager::AddNewTouch(int nativeTouchID)
 
 		if (!m_touch[i].m_bUsed)
 		{
+			g_touchesReceived++;
 			//this will work
 			m_touch[i].m_bUsed = true;
 			m_touch[i].m_nativeTouchID = nativeTouchID;
@@ -766,7 +771,6 @@ EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userDa
 
 #define TEST_RESULT(x) if (ret != EMSCRIPTEN_RESULT_SUCCESS) printf("%s returned %s.\n", #x, emscripten_result_to_string(ret));
 
-
 EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userData)
 {
 
@@ -780,6 +784,7 @@ EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userD
 
 	switch (eventType)
 	{
+
 	case EMSCRIPTEN_EVENT_MOUSEDOWN:
 	case EMSCRIPTEN_EVENT_MOUSEUP:
 	case EMSCRIPTEN_EVENT_MOUSEMOVE:
@@ -858,6 +863,7 @@ EM_BOOL focus_callback(int eventType, const EmscriptenFocusEvent* event, void* u
 	return false;
 }
 
+
 EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userData)
 {
 
@@ -902,10 +908,12 @@ EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userD
 
 			touchID = g_touchManager.OnDown(touchID);
 			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, xPos, yPos, touchID);
+			LogMsg("Sending touch down");
 			break;
 
 
 		case EMSCRIPTEN_EVENT_TOUCHEND:
+			LogMsg("Got touch up");
 			touchID = g_touchManager.OnUp(touchID);
 			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, xPos, yPos, touchID);
 			break;

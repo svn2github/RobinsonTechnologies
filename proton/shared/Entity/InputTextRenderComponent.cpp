@@ -3,6 +3,11 @@
 #include "InputTextRenderComponent.h"
 #include "BaseApp.h"
 
+#ifdef PLATFORM_HTML5
+#include "html5/SharedJSLIB.h";
+int GetTouchesReceived();
+#endif
+
 InputTextRenderComponent::InputTextRenderComponent()
 {
 	SetName("InputTextRender");
@@ -162,6 +167,8 @@ void InputTextRenderComponent::OnFontChanged(Variant *pDataObject)
 
 void InputTextRenderComponent::ActivateKeyboard(VariantList *pVList)
 {
+
+
 	if (GetIsUsingNativeUI())
 	{
 		if (GetEntityWithNativeUIFocus() == GetParent())
@@ -226,7 +233,30 @@ void InputTextRenderComponent::ActivateKeyboard(VariantList *pVList)
     v.Get(0).Set((float)MESSAGE_TYPE_HW_KEYBOARD_INPUT_STARTING);
     GetBaseApp()->m_sig_hardware(&v);
     
-    
+
+
+#ifdef PLATFORM_HTML5
+	
+	//do we use the annoying javascript "prompt" command to grab text?  Only if we know this is a touch screen...
+	if (GetTouchesReceived() > 0)
+	{
+		char *pInput = JLIB_EnterString("Enter text:", m_pText->c_str());
+
+		if (pInput)
+		{
+			SetLastStringInput(pInput);
+			free(pInput);
+		} else
+		{
+			LogMsg("ignoring bad input");
+		}
+		
+		
+		SetIsUsingNativeUI(false);
+	}
+#endif
+
+
 }
 
 void InputTextRenderComponent::OnLosingNativeGUIFocus(VariantList *pVList)
@@ -244,6 +274,7 @@ void InputTextRenderComponent::OnEnterForeground(VariantList *pVList)
 	if (GetEntityWithNativeUIFocus() == GetParent())
 	{
 	//added for android
+
 
 #ifdef _DEBUG
 		LogMsg("InputTextRenderComponent::OnEnterForeground - Re-opening on keyboard");

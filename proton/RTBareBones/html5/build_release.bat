@@ -123,7 +123,7 @@ del temp.bc
 
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 %SRC% %APP_SRC% %COMPONENT_SRC% %ZLIB_SRC% ^
---preload-file ../bin/interface@interface/ -o %APP_NAME%.%FINAL_EXTENSION%
+--preload-file ../bin/interface@interface/  --js-library %SHARED%\html5\SharedJSLIB.js -o %APP_NAME%.%FINAL_EXTENSION%
 
 REM Make sure the file compiled ok
 if not exist %APP_NAME%.js beeper.exe /p

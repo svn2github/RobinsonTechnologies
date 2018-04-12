@@ -10,6 +10,7 @@
 #include "PlatformSetup.h"
 #include <sys/stat.h> //for mkdir
 #include <emscripten/emscripten.h>
+#include "html5/SharedJSLIB.h"
 
 #ifndef _CONSOLE 
 	//if console is defined, we might be a linux command line server or something, we don't know what GL/GLES stuff
@@ -87,8 +88,11 @@ void LaunchEmail(string subject, string content)
 
 void LaunchURL(string url)
 {
+	
 	LogMsg("LaunchURL: %s", url.c_str());
-	emscripten_run_script(string("window.open(\""+url+"\", '_blank');").c_str());
+	JLIB_Test(url.c_str());
+
+//	emscripten_run_script(string("window.open(\""+url+"\", '_blank');").c_str());
 }
 
 string GetClipboardText()

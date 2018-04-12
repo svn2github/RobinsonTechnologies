@@ -33,6 +33,13 @@ void AboutMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 
 		OneTimeBobEntity(pEntClicked, -20, 5, 250);
 		//let's have the logo bob as well, I mean, it's easy to do
+
+		return;
+	}
+
+	if (pEntClicked->GetName() == "twitter")
+	{
+		LaunchURL("https://twitter.com/rtsoft");
 		return;
 	}
 
@@ -77,11 +84,25 @@ void AboutMenuAddScrollContent(Entity *pParent)
 	y += pEnt->GetVar("size2d")->GetVector2().y; //move our Y position down the exact size of the text
 	y += spacerY; //don't forget our spacer
 
+	
+
 	//add an image
 	pEnt = CreateOverlayButtonEntity(pParent, "plogo", "interface/proton-128.rttex", x, y);
 	pEnt->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
+	y += pEnt->GetVar("size2d")->GetVector2().y; //move our Y position down 
+	y += spacerY;
 
 	//do something if someone clicks it
+
+	//add a clickable URL
+	Entity *pButton;
+	pButton = CreateTextButtonEntity(pParent, "twitter", iPhoneMapX(x), y, "`$Tap here for the RTsoft twitter page", true);
+	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
+	//To work in HTML5 right:
+	SetButtonStyleEntity(pButton, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH);
+	y += pButton->GetVar("size2d")->GetVector2().y;
+	
+
 
 	//automatically calculate the total size of this entity with all its children for the scroll bars, do this at the end
 	VariantList vList(pParent->GetParent());

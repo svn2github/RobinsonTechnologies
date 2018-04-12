@@ -6868,6 +6868,14 @@
 					RelativePath="..\..\shared\html5\PlatformSetupHTML5.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\shared\html5\SharedJSLIB.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\shared\html5\SharedJSLIB.js"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="linux"

@@ -144,7 +144,7 @@ call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 %APP_SRC% %SRC% %COMPONENT_SRC% temp.bc ^
---preload-file ../bin/interface@interface/ --preload-file ../bin/audio@audio/ -o %APP_NAME%.%FINAL_EXTENSION%
+--preload-file ../bin/interface@interface/ --preload-file ../bin/audio@audio/ --js-library %SHARED%\html5\SharedJSLIB.js -o %APP_NAME%.%FINAL_EXTENSION%
 
 REM Make sure the file compiled ok
 if not exist %APP_NAME%.js beeper.exe /p
