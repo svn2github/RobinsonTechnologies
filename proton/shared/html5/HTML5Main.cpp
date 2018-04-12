@@ -184,17 +184,20 @@ EM_BOOL on_canvassize_changed(int eventType, const void *reserved, void *userDat
 
 	
 	double cssW, cssH;
-	emscripten_get_element_css_size(0, &cssW, &cssH);
+	r = emscripten_get_element_css_size("#canvas", &cssW, &cssH);
 	LogMsg("Resized: RTT: %dx%d, CSS : %02gx%02g\n", w, h, cssW, cssH);
 
-	r = emscripten_set_canvas_element_size("#canvas",
-		int(cssW), int(cssH));
 	if (r != EMSCRIPTEN_RESULT_SUCCESS)
 	{
-		LogMsg("Error setting canvas size of #canvas");
+		LogMsg("Error emscripten_get_element_css_size #canvas");
 		/* handle error */
 	}
 
+	/*
+	r = emscripten_set_canvas_element_size("#canvas",
+		int(cssW), int(cssH));
+		*/
+	
 
 	LogMsg("on_canvassize_changed Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
@@ -228,7 +231,7 @@ void enterSoftFullscreen(int scaleMode, int canvasResolutionScaleMode, int filte
 	#ifndef RT_HTML5_USE_CUSTOM_MAIN
 	s.canvasResizedCallback = on_canvassize_changed;
 	#endif
-	int ret = emscripten_enter_soft_fullscreen(0, &s);
+	int ret = emscripten_enter_soft_fullscreen("#canvas", &s);
 }
 
 bool InitSDLScreen()
@@ -580,7 +583,7 @@ void MainEventLoop()
 
 	if (oldWidth != width || oldHeight != height)
 	{
-		LogMsg("Canvas: %d, %d, %d", width, height, isfs);
+		LogMsg("MainEventLoop: Canvas: %d, %d, %d", width, height, isfs);
 		oldWidth = width;
 		oldHeight = height;
 
@@ -895,8 +898,6 @@ EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userD
 				LogMsg("Unlocking audio");
 				GetAudioManager()->Play("audio/blank.wav");
 				bFirstTime = false;
-				//GetBaseApp()->OnScreenSizeChange();
-
 			} 
 
 			touchID = g_touchManager.OnDown(touchID);
@@ -929,10 +930,8 @@ EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userD
 
 void ForceEmscriptenResize()
 {
-
 	double cssW, cssH;
 	EMSCRIPTEN_RESULT r;
-
 	emscripten_get_element_css_size(0, &cssW, &cssH);
 }
 
@@ -945,7 +944,13 @@ void mainHTML()
 	double cssW, cssH;
 	EMSCRIPTEN_RESULT r;
 
-	emscripten_get_element_css_size(0, &cssW, &cssH);
+	r = emscripten_get_element_css_size("#canvas", &cssW, &cssH);
+	if (r != EMSCRIPTEN_RESULT_SUCCESS)
+	{
+		LogMsg("Error emscripten_get_element_css_size #canvas");
+		/* handle error */
+	}
+
 	
 	r = emscripten_get_canvas_element_size("#canvas", &w, &h); 
 	if (r != EMSCRIPTEN_RESULT_SUCCESS) 
@@ -958,10 +963,7 @@ void mainHTML()
 #ifdef RT_HTML5_USE_CUSTOM_MAIN
 	g_winVideoScreenX = cssW;
 	g_winVideoScreenY = cssH;
-
-
 	//enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_STDDEF, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
-	
 #else
 	g_winVideoScreenX = 480;
 	g_winVideoScreenY = 320;
@@ -995,13 +997,14 @@ void mainHTML()
 		goto cleanup;
 	}
 
-
 #ifdef RT_HTML5_USE_CUSTOM_MAIN
-	enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_STDDEF, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
+	//enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_STDDEF, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
 
 	//re-get this stuff, it's likely changed slightly
 
-	emscripten_get_element_css_size(0, &cssW, &cssH);
+	emscripten_get_element_css_size("#canvas", &cssW, &cssH);
+	
+	LogMsg("Detected canvas size of %d, %d", (int)cssW, (int)cssH);
 	g_winVideoScreenX = cssW;
 	g_winVideoScreenY = cssH;
 
@@ -1010,7 +1013,6 @@ void mainHTML()
 #endif
 
 	GetBaseApp()->OnScreenSizeChange();
-
 
 	r = emscripten_get_fullscreen_status(&e); 
 	if (r != EMSCRIPTEN_RESULT_SUCCESS) /* handle error */ 

@@ -7,6 +7,10 @@ SET DEBUG=0
 :Set to 0, you can easily see LogMsg's as they appear in the text window under the app area, so that might be better for debugging
 
 SET USE_HTML5_CUSTOM_MAIN=1
+:If 1, set one of these as well:
+
+SET CUSTOM_TEMPLATE=CustomMain3-2AspectRatioTemplate.html
+:SET CUSTOM_TEMPLATE=CustomMainFullTemplate.html
 
 set CURPATH=%cd%
 cd ..
@@ -102,7 +106,7 @@ REM **************************************** END SOURCE
 
 :unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -Wno-switch -s WASM=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=32MB
+SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -Wno-switch -s WASM=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=16MB -Wno-c++11-compat-deprecated-writable-strings -Wno-shift-negative-value -s ALLOW_MEMORY_GROWTH=1
 
 :unused:   -s FULL_ES2=1 --emrun
 
@@ -146,7 +150,7 @@ REM Make sure the file compiled ok
 if not exist %APP_NAME%.js beeper.exe /p
 
 IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
-sed 's/RTTemplateName/%APP_NAME%/g' CustomMainFullTemplate.html > %APP_NAME%.html
+sed 's/RTTemplateName/%APP_NAME%/g' %CUSTOM_TEMPLATE% > %APP_NAME%.html
 ) 
 
 

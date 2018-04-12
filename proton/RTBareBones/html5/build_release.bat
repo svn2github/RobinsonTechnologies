@@ -6,7 +6,11 @@ SET DEBUG=0
 :Set to 1, this causes some internal build changes, and the CustomMainFullTemplate.html to be copied to <AppName>.html instead of the default emscripten one
 :Set to 0, you can easily see LogMsg's as they appear in the text window under the app area, so that might be better for debugging
 
-SET USE_HTML5_CUSTOM_MAIN=0
+SET USE_HTML5_CUSTOM_MAIN=1
+:If 1, set one of these as well:
+
+SET CUSTOM_TEMPLATE=CustomMain3-2AspectRatioTemplate.html
+:SET CUSTOM_TEMPLATE=CustomMainFullTemplate.html
 
 
 set CURPATH=%cd%
@@ -77,10 +81,13 @@ REM **************************************** APP SOURCE CODE FILES
 set APP_SRC=%APP%\App.cpp
 REM **************************************** END SOURCE
 
-:unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED
+:unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -Wno-switch -s WASM=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=32MB
+:-Wno-c++11-compat-deprecated-writable-strings -Wno-shift-negative-value
 
+SET CUSTOM_FLAGS=-DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s WASM=1 -s LEGACY_GL_EMULATION=1 -s TOTAL_MEMORY=16MB -Wno-c++11-compat-deprecated-writable-strings -Wno-shift-negative-value -s ALLOW_MEMORY_GROWTH=1
+
+SET SECOND_CUSTOM_FLAGS=-
 :unused:   -s FULL_ES2=1 --emrun
 
 IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
@@ -93,11 +100,13 @@ SET FINAL_EXTENSION=html
 
 IF %DEBUG% EQU 0 (
 echo Compiling in release mode
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -O2 -DNDEBUG -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED 
+: -DRT_EMTERPRETER_ENABLED 
+SET CUSTOM_FLAGSS=%CUSTOM_FLAGS% -O2 -DNDEBUG -DPLATFORM_HTML5 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED 
 ) else (
 echo Compiling in debug mode
 SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 -s SAFE_HEAP=1 
 )
+
 
 SET INCLUDE_DIRS=-I%SHARED% -I%APP% -I../../shared/util/boost -I../../shared/ClanLib-2.0/Sources -I../../shared/Network/enet/include ^
 -I%ZLIBPATH%
@@ -119,11 +128,9 @@ call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 REM Make sure the file compiled ok
 if not exist %APP_NAME%.js beeper.exe /p
 
-
 IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
-sed 's/RTTemplateName/%APP_NAME%/g' CustomMainFullTemplate.html > %APP_NAME%.html
+sed 's/RTTemplateName/%APP_NAME%/g' %CUSTOM_TEMPLATE% > %APP_NAME%.html
 ) 
-
 
 IF "%1" == "nopause" (
 echo no pause wanted

@@ -195,6 +195,13 @@ bool AudioManagerSDL::Init()
 	SDL_PauseAudio(0);
 
 	LogMsg("SDL2_mixer initted using %s", SDL_GetCurrentAudioDriver());
+	
+	
+#ifdef PLATFORM_HTML5
+	LogMsg("Preloading audio/blank.wav, an audio sample MUST exist here, we use it on the first tap to get around locked audio on iOS");
+	Preload("audio/blank.wav");
+	
+#endif
 	return true;
 }
 
@@ -327,7 +334,7 @@ void AudioManagerSDL::Preload( string fName, bool bLooping /*= false*/, bool bIs
 			basePath = GetBaseAppPath();
 		}
 
-		//LogMsg("Playing sfx %s", (basePath+fName).c_str());
+//		LogMsg("Preloading sfx %s", (basePath+fName).c_str());
 
 		pObject->m_pSound = Mix_LoadWAV( (basePath+fName).c_str());
 		if (!pObject->m_pSound)
@@ -336,6 +343,7 @@ void AudioManagerSDL::Preload( string fName, bool bLooping /*= false*/, bool bIs
 			delete pObject;
 			return;
 		}
+		
 #ifdef _DEBUG
 		LogMsg("Caching out %s", fName.c_str());
 #endif
@@ -352,7 +360,7 @@ AudioHandle AudioManagerSDL::Play( string fName, bool bLooping /*= false*/, bool
 
 
 #ifdef _DEBUG
-	//LogMsg("********** AudioSDL: Thinking of playing %s, music=%d", fName.c_str(), int(bIsMusic));
+	LogMsg("********** AudioSDL: Thinking of playing %s, music=%d", fName.c_str(), int(bIsMusic));
 #endif
 
 	if (!GetSoundEnabled() && !bIsMusic) return AUDIO_HANDLE_BLANK;
@@ -457,8 +465,9 @@ if (!m_pMusicChannel)
 		}
 	}
 
+
 #ifdef _DEBUG
-	//LogMsg("AudioSDL: Playing sfx %s", fName.c_str());
+	LogMsg("AudioSDL: Playing sfx %s", fName.c_str());
 #endif
 
 	//play it
@@ -647,7 +656,10 @@ void AudioManagerSDL::Suspend()
 	LogMsg("Pausing SDL audio");
 	SDL_PauseAudio(1); //seems to do nothing on chrome webgl
 
-	SetMusicEnabled(false);
+	if (GetMusicEnabled())
+	{
+		StopMusic();
+	}
 
 	/*
 	if (m_pMusicChannel)
@@ -663,8 +675,13 @@ void AudioManagerSDL::Resume()
 	
 	SDL_PauseAudio(0);
 
-	SetMusicEnabled(true);
-
+	if (GetMusicEnabled())
+	{
+		SetMusicEnabled(false); 
+		//sort of a hack so the song will restart
+		SetMusicEnabled(true);
+	}
+	
 	/*
 	if (m_pMusicChannel)
 	{

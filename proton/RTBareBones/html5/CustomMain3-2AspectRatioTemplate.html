@@ -23,12 +23,19 @@
         background: #444;
       }
       #gameContainer {
-        width: 100vw;
+        width: 50vw;
         height: 100vh;
       }
       canvas.emscripten {
-        width: 100%;
-        height: 100%;
+         width: 100vw; 
+		    height: 66.66vw; /* height:width ratio = 9/16 = .5625  */
+		    #background: black;
+		    max-height: 100vh;
+		    max-width: 150.00vh; /* 16/9 = 1.778 */
+		    margin: auto;
+		    position: absolute;
+		    top:0;bottom:0; /* vertical center */
+		    left:0;right:0; /* horizontal center */
         display: block;
       }
 
@@ -123,43 +130,39 @@
   
   //Uncomment below to disable webassembly loading
   //UnityLoader.SystemInfo.hasWasm = false;
-
-        
+   
         var Module = 
         {
-        	
         	setStatus: function(text) 
-  	{
-        	
-        	
-      console.log('SetStatus: ' + text) 
-      const progress = document.querySelector("#loader .progress");
-     
-      if (!Module.progress)
-      {
-      	//set it up
-      progress.style.display = "block";
-      Module.progress = progress.querySelector(".full");
-      loader.querySelector(".spinner").style.display = "none";
-      Module.progress.style.transform = `scaleX(${0})`;
-       } else
-     	{
+			  	{
+			      console.log('SetStatus: ' + text) 
+			      const progress = document.querySelector("#loader .progress");
+			     
+			      if (!Module.progress)
+			      {
+			      	//set it up
+			      progress.style.display = "block";
+			      Module.progress = progress.querySelector(".full");
+			      loader.querySelector(".spinner").style.display = "none";
+			      Module.progress.style.transform = `scaleX(${0})`;
+			       } else
+			     	{
 				//continue it     		
-	 				var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
-	 				if (m) 
-	 					{
-	 						loader.querySelector(".loadingtext").innerHTML = "Loading stuff...";
-		 					 var cur = parseInt(m[2])*100;
-		           var progressMax = parseInt(m[4])*100;
-		           console.log('cur: ' + cur+' max: '+progressMax) ;
-		           Module.progress.style.transform = `scaleX(${cur/progressMax})`;
-		        } else
-		       	{
-	         		//done loading
-	         		 UpdateText(); //will show index 0
-	     			   loader.style.display = "none";
-	     			   loader.querySelector(".spinner").style.display = "block";
-	    			}
+		 				var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+		 				if (m) 
+		 					{
+		 						loader.querySelector(".loadingtext").innerHTML = "Loading stuff...";
+			 					 var cur = parseInt(m[2])*100;
+			           var progressMax = parseInt(m[4])*100;
+			           console.log('cur: ' + cur+' max: '+progressMax) ;
+			           Module.progress.style.transform = `scaleX(${cur/progressMax})`;
+			        } else
+			       	{
+		         		//done loading
+		         		 UpdateText(); //will show index 0
+		     			   loader.style.display = "none";
+		     			   loader.querySelector(".spinner").style.display = "block";
+		    			}
       	}
      	},
         	  print: function(text) {console.log('>> ' + text) },
@@ -205,8 +208,6 @@
           var script = document.createElement('script');
           script.src = appName+".js";
           document.body.appendChild(script);
-
-
 
 
   var textIntervalHandle;
