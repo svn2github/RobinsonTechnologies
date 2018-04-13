@@ -81,11 +81,13 @@ void NetHTTP::Reset(bool bClearPostdata)
 
 void NetHTTP::Setup( string serverName, int port, string query, eEndOfDataSignal eodSignal )
 {
-	if (!IsInString(serverName, "://"))
+	if (!IsInString(serverName, "://") && (port == 80 || port == 443))
 	{
 		//add http so it won't freak later
-		serverName = "http://"+serverName;
+		serverName = "https://"+serverName;
+		port = 443;
 	}
+	
 	m_endOfDataSignal = eodSignal;
 	m_serverName = serverName;
 	m_port = port;
@@ -119,18 +121,26 @@ bool NetHTTP::AddPostData( const string &name, const byte *pData, int len/*=-1*/
 	}
 
 	//at this stage we need to encode it for safe html transfer, before we get the length
-/*
-	URLEncoder encoder;
 
-	encoder.encodeData((const byte*)name.c_str(), name.length(), m_postData);
-	m_postData += '=';
+		//at this stage we need to encode it for safe html transfer, before we get the length
+		URLEncoder encoder;
 
-	if (len == -1) len = strlen((const char*) pData);
+		if (!name.empty())
+		{
+		encoder.encodeData((const byte*)name.c_str(), name.length(), m_postData);
+		m_postData += '=';
+		if (len == -1) len = strlen((const char*) pData);
 
-	encoder.encodeData(pData, len, m_postData);
-*/
+		encoder.encodeData(pData, len, m_postData);
+		} else
+		{
+		//it's put data.  No name for it
+		m_contentType = "put";
+		m_postData = string((char*)pData);
+		}
 
-	m_postData += name+'='+string((char*)pData);
+
+	//m_postData += name+'='+string((char*)pData);
 
 
 #ifdef _DEBUG
@@ -171,7 +181,9 @@ bool NetHTTP::Start()
 
 	
 #ifdef _DEBUG
-LogMsg("Opening %s on port %d with postdata of %s", m_serverName.c_str(), m_port, m_postData.c_str());
+LogMsg("Opening %s on port %d.  Postdata has %d chars", m_serverName.c_str(), m_port, m_postData.length());
+
+//LogMsg("Opening %s on port %d with postdata of %s", m_serverName.c_str(), m_port, m_postData.c_str());
 #endif
 
 	string header, stCommand;
@@ -189,7 +201,7 @@ LogMsg("Opening %s on port %d with postdata of %s", m_serverName.c_str(), m_port
 	m_emscriptenWgetHandle = emscripten_async_wget2_data( finalURL.c_str(), stCommand.c_str(), m_postData.c_str(), this, 1, NetHTTP::onLoaded, NetHTTP::onError, NetHTTP::onProgress);
 
 #ifdef _DEBUG
-	LogMsg("Final URL is %s.  Postdata is %s.  Handle is %d", finalURL.c_str(), m_postData.c_str(), m_emscriptenWgetHandle);
+	LogMsg("Final URL is %s.   Handle is %d", finalURL.c_str(),  m_emscriptenWgetHandle);
 #endif
 
 	return true;

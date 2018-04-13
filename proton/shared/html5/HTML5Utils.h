@@ -12,5 +12,6 @@
 #include "../PlatformEnums.h"
 
 const char * GetAppName();
+int GetTouchesReceived(); //actually located in HTML5Main.cpp, but that doesn't have an .h soo..
 
 #endif // HTML5Utils_h__

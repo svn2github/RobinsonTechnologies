@@ -244,7 +244,10 @@ void InputTextRenderComponent::ActivateKeyboard(VariantList *pVList)
 
 		if (pInput)
 		{
-			SetLastStringInput(pInput);
+			string temp = pInput;
+
+			TruncateString(temp, *m_pInputLengthMax);
+			SetLastStringInput(temp);
 			free(pInput);
 		} else
 		{
