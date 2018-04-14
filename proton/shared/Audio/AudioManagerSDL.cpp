@@ -576,6 +576,9 @@ void AudioManagerSDL::StopMusic()
 	}
 	m_pMusicChannel = NULL;
 	m_lastMusicID = AUDIO_HANDLE_BLANK;
+
+	m_lastMusicFileName = "";//don't care anymore
+
 }
 
 void AudioManagerSDL::FadeOutMusic(unsigned int duration)
@@ -658,7 +661,18 @@ void AudioManagerSDL::Suspend()
 
 	if (GetMusicEnabled())
 	{
-		StopMusic();
+		//StopMusic();
+		if (m_pMusicChannel)
+		{
+#ifdef _DEBUG
+			LogMsg("Also halting the music channel");
+#endif
+
+			Mix_HaltMusic();
+			Mix_FreeMusic(m_pMusicChannel);
+		}
+		m_pMusicChannel = NULL;
+		m_lastMusicID = AUDIO_HANDLE_BLANK;
 	}
 
 	/*
@@ -677,9 +691,11 @@ void AudioManagerSDL::Resume()
 
 	if (GetMusicEnabled())
 	{
-		SetMusicEnabled(false); 
-		//sort of a hack so the song will restart
-		SetMusicEnabled(true);
+		if (!m_lastMusicFileName.empty())
+		{
+			Play(m_lastMusicFileName, GetLastMusicLooping(), true);
+
+		}
 	}
 	
 	/*
