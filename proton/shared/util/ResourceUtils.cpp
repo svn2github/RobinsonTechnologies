@@ -5,7 +5,11 @@
 #ifndef C_NO_ZLIB
 #include <zlib.h>
 #endif
- 
+
+#ifdef PLATFORM_HTML5
+#include "html5/HTML5Utils.h"
+#endif
+
 bool IsPowerOf2(int n) { return (!(n & (n - 1))); }
 
 bool SaveToFile(const string &str, FILE *fp)
@@ -552,11 +556,18 @@ string ReplaceWithLargeInFileNameAndOSSpecific(const string &fName)
 
 	string final = fName;
 	
+#ifdef PLATFORM_HTML5
+	if (GetTouchesReceived() > 0)
+	{
+		//treat it like a big iphone, as it's a touch screen
+		StringReplace("iphone", "large", final);
+	}
+#endif
+
 	if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS
 		|| GetEmulatedPlatformID() == PLATFORM_ID_OSX|| GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
 	{
 		StringReplace("iphone", "win", final);
-
 	} else
 	{
 		//default, just large

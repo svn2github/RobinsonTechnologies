@@ -625,13 +625,9 @@ void MainEventLoop()
 			break;
 
 		case OSMessage::MESSAGE_SET_FPS_LIMIT:
-			if (m.m_x == 0.0f)
-			{
-				g_frameDelayMS = 0;
-			} else
-			{
-				g_frameDelayMS = (int)(1000.0f / m.m_x);
-			}
+			
+			g_frameDelayMS = int(m.m_x);
+			
 			break;
 
 		case OSMessage::MESSAGE_SET_VIDEO_MODE:
@@ -1078,12 +1074,42 @@ void mainHTML()
 */
 
 #ifndef RT_EMTERPRETER_ENABLED
+	//warning, FPS limiting isn't going to respect what is set in SetFPS later...
 	emscripten_set_main_loop(MainEventLoop, 0, 1);
 #else
+
+
 	while(1)
 	{
+		//our main loop
+		static float fpsTimer = 0;
+
 		MainEventLoop();
-		emscripten_sleep(1);
+	
+	
+		//respect the FPS limit delay if needed
+		bool bRanSleep = false;
+
+		if (g_frameDelayMS != 0)
+		{
+			while (fpsTimer > GetSystemTimeAccurate())
+			{
+				bRanSleep = true;
+				emscripten_sleep(1);
+				//Sleep(0);
+			}
+
+						//this should be 1000 not lower, but without this SetFPS(60) results in 55
+			fpsTimer = float(GetSystemTimeAccurate()) + (850.0f / (float(g_frameDelayMS)));
+		}
+
+		if (!bRanSleep)
+		{
+			//this must be run at least once per frame, even if we don't need the delay
+			emscripten_sleep(1);
+		}
+
+		
 		//emscripten_sleep_with_yield(1); //not compatible unless the ASYNC stuff is enabled
 	}
 #endif

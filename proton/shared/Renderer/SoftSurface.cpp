@@ -290,7 +290,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 		break;
 
 	default:
-		LogError("Don't handle %d bit bmps yet", pBmpImageInfo->BitCount);
+		LogError("Don't handle %d bit bmps yet", bmpImageInfoCopy.BitCount);
 		assert(0);
 		return false;
 
@@ -347,7 +347,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 		assert(bmpImageInfoCopy.Compression == BMP_COMPRESSION_NONE);
 
 		//load the palette info.  Note:  Bitmaps are BGR format
-		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
+		byte *pPaletteData = (byte*)pBmpImageInfo + bmpImageInfoCopy.Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
 
@@ -397,7 +397,7 @@ bool SoftSurface::LoadBMPTextureCheckerBoardFix(byte *pMem)
 			//looks like they don't use all the colors available
 			colors = bmpImageInfoCopy.ColorsUsed;
 		}
-		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
+		byte *pPaletteData = (byte*)pBmpImageInfo + bmpImageInfoCopy.Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 		if (bmpImageInfoCopy.Compression == BMP_COMPRESSION_RLE8)
 		{
@@ -1022,7 +1022,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 		break;
 
 	default:
-		LogError("Don't handle %d bit bmps yet", pBmpImageInfo->BitCount);
+		LogError("Don't handle %d bit bmps yet", bmpImageInfoCopy.BitCount);
 		assert(0);
 		return false;
 
@@ -1078,7 +1078,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 		assert(bmpImageInfoCopy.Compression == BMP_COMPRESSION_NONE);
 
 		//load the palette info.  Note:  Bitmaps are BGR format
-		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
+		byte *pPaletteData = (byte*)pBmpImageInfo + bmpImageInfoCopy.Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
 		glColorBytes *pImg = (glColorBytes*)m_pPixels;
@@ -1141,7 +1141,7 @@ bool SoftSurface::LoadBMPTexture(byte *pMem)
 
 		//load the palette info.  Note:  Bitmaps are BGR format
 
-		byte *pPaletteData = (byte*)pBmpImageInfo + pBmpImageInfo->Size;
+		byte *pPaletteData = (byte*)pBmpImageInfo + bmpImageInfoCopy.Size;
 		LoadPaletteDataFromBMPMemory(pPaletteData, colors);
 
 	}else if (srcBytesPerPixel == 2)
