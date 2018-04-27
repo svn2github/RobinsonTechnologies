@@ -904,12 +904,12 @@ EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userD
 
 			touchID = g_touchManager.OnDown(touchID);
 			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, xPos, yPos, touchID);
-			LogMsg("Sending touch down");
+			//LogMsg("Sending touch down");
 			break;
 
 
 		case EMSCRIPTEN_EVENT_TOUCHEND:
-			LogMsg("Got touch up");
+			//LogMsg("Got touch up");
 			touchID = g_touchManager.OnUp(touchID);
 			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_END, xPos, yPos, touchID);
 			break;
