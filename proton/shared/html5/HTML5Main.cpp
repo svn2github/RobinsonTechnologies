@@ -792,6 +792,17 @@ EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userD
 		switch (eventType)
 		{
 		case EMSCRIPTEN_EVENT_MOUSEDOWN:
+			{
+				static bool bFirstTime = true;
+				if (bFirstTime)
+				{
+					//unlock audio on iOS
+					LogMsg("Unlocking audio");
+					GetAudioManager()->Play("audio/blank.wav");
+					bFirstTime = false;
+				} 
+			}
+
 			GetMessageManager()->SendGUIEx(MESSAGE_TYPE_GUI_CLICK_START, xPos, yPos, e->button);
 			break;
 		case EMSCRIPTEN_EVENT_MOUSEUP:
