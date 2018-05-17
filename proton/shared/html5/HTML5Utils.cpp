@@ -90,7 +90,7 @@ void LaunchURL(string url)
 {
 	
 	LogMsg("LaunchURL: %s", url.c_str());
-	JLIB_Test(url.c_str());
+	JLIB_OpenURL(url.c_str());
 
 //	emscripten_run_script(string("window.open(\""+url+"\", '_blank');").c_str());
 }

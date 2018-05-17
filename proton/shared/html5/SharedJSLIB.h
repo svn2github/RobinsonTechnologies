@@ -4,8 +4,9 @@
 
 	extern "C" 
 	{
-		extern void JLIB_Test(const char * URLStr);
+		extern void JLIB_OpenURL(const char * URLStr);
 		extern char * JLIB_EnterString(const char * message, const char * defaultText);
+		extern char * JLIB_GetURL();
 	}
 
 #endif

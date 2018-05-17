@@ -18,7 +18,14 @@ JLIB_EnterString: function(message, defaultText)
 },
 
 
-JLIB_Test: function(URLStr) 
+JLIB_GetURL: function ()
+{
+    //console.log("Querystring: "+decodeURIComponent(window.location.href));
+    var ptr  = allocate(intArrayFromString(decodeURIComponent(window.location.href)), 'i8', ALLOC_NORMAL);
+    return ptr;
+},
+
+JLIB_OpenURL: function (URLStr)
   {
    var url = Pointer_stringify(URLStr);
   
@@ -44,7 +51,7 @@ JLIB_Test: function(URLStr)
 	    el.addEventListener('touchend', OpenPopup, false);
 	  } else
 	  {
-	     console.log("Can't find a canvas element. Is it called #canvas instead or something?  Check RTJavaUtils.jslib.  Calling without popup safety.");
+	     console.log("Can't find a canvas element. Is it called #canvas instead or something?  Check SharedJSLIB.js.  Calling without popup safety.");
 	     window.open(url);
 	  }
    
