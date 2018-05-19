@@ -152,7 +152,11 @@ bool g_bIsFullScreen = false;
 int g_fpsLimit = 0; //0 for no fps limit (default)  Use MESSAGE_SET_FPS_LIMIT to set
 bool g_bIsMinimized = false;
 
-
+void SetPrimaryScreenSize(int width, int height)
+{
+	g_winVideoScreenX = width;
+	g_winVideoScreenY = height;
+}
 void AddVideoMode(string name, int x, int y, ePlatformID platformID, eOrientationMode forceOrientation)
 {
 	g_videoModes.push_back(VideoModeEntry(name, x, y, platformID, forceOrientation));
