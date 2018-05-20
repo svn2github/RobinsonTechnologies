@@ -47,20 +47,26 @@ bool AudioManagerFMOD::Init()
 	/*
 	Create a System object and initialize
 	*/
+
+	LogMsg("Creating FMOD system...");
 	result = FMOD::System_Create(&system);
 	ERRCHECK(result);
+	LogMsg("Getting version...");
 
 	result = system->getVersion(&version);
 	ERRCHECK(result);
 
+	
 	if (version < FMOD_VERSION)
 	{
 		LogMsg("FMOD lib version %08x doesn't match header version %08x", version, FMOD_VERSION);
 		return false;
 	}
+	LogMsg("Initting FMOD...");
 
 	result = system->init(32, FMOD_INIT_NORMAL, extradriverdata);
 	ERRCHECK(result);
+	LogMsg("FMOD initted");
 	return true;
 }
 
