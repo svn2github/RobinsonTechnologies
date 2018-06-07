@@ -32,7 +32,9 @@ void UnpackArchiveComponent::OnAdd(Entity *pEnt)
 	m_pSrcFileName = &GetVar("sourceFileName")->GetString();
 	m_pDestDirectory = &GetVar("destDirectory")->GetString();
 	m_pDeleteSourceOnFinish = &GetVar("deleteSourceOnFinish")->GetUINT32();
+	m_pLimitToSingleSubdir = &GetVar("limitToSingleSubdir")->GetUINT32(); //only useful for Dink smallwood's DMODs probably
 
+	
 	//register ourselves to render if the parent does
 	GetParent()->GetFunction("OnUpdate")->sig_function.connect(1, boost::bind(&UnpackArchiveComponent::OnUpdate, this, _1));
 }
@@ -57,6 +59,7 @@ void UnpackArchiveComponent::OnUpdate(VariantList *pVList)
 	{
 		case TarHandler::STATE_NONE:
 			//need to start it up
+			m_tarHandler.SetLimitOutputToSingleSubDir(*m_pLimitToSingleSubdir != 0);
 			m_tarHandler.OpenFile(*m_pSrcFileName, *m_pDestDirectory);
 			break;
 

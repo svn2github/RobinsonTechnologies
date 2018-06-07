@@ -62,9 +62,17 @@ bool AudioManagerFMOD::Init()
 		LogMsg("FMOD lib version %08x doesn't match header version %08x", version, FMOD_VERSION);
 		return false;
 	}
-	LogMsg("Initting FMOD...");
+	
+#ifdef PLATFORM_HTML5
+	//helps with stuttering
+	system->setDSPBufferSize(2048, 2);
 
-	result = system->init(32, FMOD_INIT_NORMAL, extradriverdata);
+#endif
+
+	
+	LogMsg("Initting FMOD...");
+	//extradriverdata
+	result = system->init(1024, FMOD_INIT_NORMAL, extradriverdata);
 	ERRCHECK(result);
 	LogMsg("FMOD initted");
 	return true;

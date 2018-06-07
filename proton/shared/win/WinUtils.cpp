@@ -717,5 +717,20 @@ bool GetLastWriteDateOfFile(int *monthOut, int *dayOut, int *yearOut, int *hourO
 }
 
 
+int GetTouchesReceived()
+{
+	return 0; //uh, not accurate
+}
+bool IsStillLoadingPersistentData()
+{
+	return false;
+}
+bool IsStillSavingPersistentData()
+{
+	return false;
+}
+void SyncPersistentData()
+{
+}
 
 #endif

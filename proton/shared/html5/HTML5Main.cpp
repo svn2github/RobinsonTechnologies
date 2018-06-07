@@ -12,7 +12,7 @@ bool g_bAppFinished = false;
 SDL_Surface *g_screen = NULL;
 SDL_Joystick *g_pSDLJoystick = NULL;
 CL_Vec3f g_accelHold = CL_Vec3f(0,0,0);
-
+bool g_bRanInit = false;
 bool g_isInForeground = true;
 
 int g_winVideoScreenX = 0;
@@ -603,8 +603,29 @@ void MainEventLoop()
 
 	SDLEventLoop();
 
-	GetBaseApp()->Update();
-	GetBaseApp()->Draw();
+	if (!g_bRanInit && IsStillLoadingPersistentData())
+	{
+		LogMsg("waiting...");
+	
+	}
+	else
+	{
+
+		if (!g_bRanInit)
+		{
+			LogMsg("Initting BaseApp");
+			if (!GetBaseApp()->Init())
+			{
+				LogError("Couldn't initialize game. Yeah.\n\nDid everything unzip right?");
+				
+			}
+			g_bRanInit = true;
+		}
+
+
+		GetBaseApp()->Update();
+		GetBaseApp()->Draw();
+	}
 
 	while (!GetBaseApp()->GetOSMessages()->empty())
 	{
@@ -723,7 +744,8 @@ static inline const char *emscripten_event_type_to_string(int eventType) {
 	return events[eventType];
 }
 
-const char *emscripten_result_to_string(EMSCRIPTEN_RESULT result) {
+const char *emscripten_result_to_string(EMSCRIPTEN_RESULT result)
+{
 	if (result == EMSCRIPTEN_RESULT_SUCCESS) return "EMSCRIPTEN_RESULT_SUCCESS";
 	if (result == EMSCRIPTEN_RESULT_DEFERRED) return "EMSCRIPTEN_RESULT_DEFERRED";
 	if (result == EMSCRIPTEN_RESULT_NOT_SUPPORTED) return "EMSCRIPTEN_RESULT_NOT_SUPPORTED";
@@ -950,6 +972,83 @@ void ForceEmscriptenResize()
 	emscripten_get_element_css_size(0, &cssW, &cssH);
 }
 
+bool IsStillLoadingPersistentData()
+{
+	return EM_ASM_INT({ 
+		return Module.waitingFileReadSync;
+		}) == 1;
+}
+
+bool IsStillSavingPersistentData()
+{
+	return EM_ASM_INT({
+		return Module.waitingFileWriteSync;
+		}) == 1;
+}
+
+void SyncPersistentData()
+{
+	if (IsStillLoadingPersistentData())
+	{
+		LogMsg("Ignoring SyncUserSaveData(), we're still loading our initial persistent data!");
+		return;
+	}
+	EM_ASM(
+		//Module.print("Start File write sync..");
+	Module.waitingFileWriteSync = 1;
+	FS.syncfs(false, function(err) 
+	{
+		assert(!err);
+		//Module.print("End File write sync..");
+		Module.waitingFileWriteSync = 0;
+	});
+	);
+}
+
+void LoadInitialSyncData()
+{
+	EM_ASM(
+	//Module.print("start file load sync..");
+	Module.waitingFileReadSync = 1;
+
+	//populate our persistent data directories with existing persistent source data 
+	//first parameter = "true" mean synchronize from Indexed Db to 
+	//Emscripten file system,
+	// "false" mean synchronize from Emscripten file system to Indexed Db
+	//second parameter = function called when data are synchronized
+
+	FS.syncfs(true, function(err)
+	{
+		if (err)
+		{
+			Module.print("Uh oh, syncfs error: " + err);
+		}
+		//Module.print("end file load sync..");
+		Module.waitingFileReadSync = 0;
+	});
+
+	);
+}
+void AddPersistentFileFolder(string folderName) //should start with a slash
+{
+	//remove ending slash
+	if (folderName[folderName.length() - 1] == '/')
+	{
+		folderName = folderName.substr(0, folderName.length() - 1);
+	}
+
+	EM_ASM_({
+
+		var pSaveDir = Pointer_stringify($0);
+	//Module.print("Creating save dir "+pSaveDir);
+
+	//create your directory where we keep our persistent data
+	FS.mkdir(pSaveDir);
+	//mount persistent directory as IDBFS
+	FS.mount(IDBFS, {}, pSaveDir);
+	}, folderName.c_str());
+}
+
 void mainHTML()
 {
 	
@@ -1005,12 +1104,18 @@ void mainHTML()
 	LogMsg("Setting up screen");
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
 	
-	LogMsg("Initting BaseApp");
-	if (!GetBaseApp()->Init())
-	{
-		LogError("Couldn't initialize game. Yeah.\n\nDid everything unzip right?");
-		goto cleanup;
-	}
+	LogMsg("Setting up persistent file system");
+	
+	//setup some java vars
+	EM_ASM(
+		Module.waitingFileReadSync = 0;
+	Module.waitingFileWriteSync = 0;
+
+	);
+
+	AddPersistentFileFolder(GetSavePath());
+	AddPersistentFileFolder(GetAppCachePath());
+	LoadInitialSyncData();
 
 #ifdef RT_HTML5_USE_CUSTOM_MAIN
 	//enterSoftFullscreen(EMSCRIPTEN_FULLSCREEN_SCALE_DEFAULT, EMSCRIPTEN_FULLSCREEN_CANVAS_SCALE_STDDEF, EMSCRIPTEN_FULLSCREEN_FILTERING_NEAREST);
@@ -1089,38 +1194,58 @@ void mainHTML()
 	emscripten_set_main_loop(MainEventLoop, 0, 1);
 #else
 
-
+	
 	while(1)
 	{
 		//our main loop
 		static float fpsTimer = 0;
 
-		MainEventLoop();
-	
-	
-		//respect the FPS limit delay if needed
-		bool bRanSleep = false;
-
-		if (g_frameDelayMS != 0)
+		
+		if (!g_bRanInit && IsStillLoadingPersistentData())
 		{
-			while (fpsTimer > GetSystemTimeAccurate())
+			LogMsg("waiting...");
+			emscripten_sleep(100);
+			
+		}
+		else
+		{
+			if (!g_bRanInit)
 			{
-				bRanSleep = true;
-				emscripten_sleep(1);
-				//Sleep(0);
+				LogMsg("Initting BaseApp");
+				if (!GetBaseApp()->Init())
+				{
+					LogError("Couldn't initialize game. Yeah.\n\nDid everything unzip right?");
+					goto cleanup;
+				}
+				g_bRanInit = true;
 			}
 
-						//this should be 1000 not lower, but without this SetFPS(60) results in 55
-			fpsTimer = float(GetSystemTimeAccurate()) + (850.0f / (float(g_frameDelayMS)));
-		}
+			MainEventLoop();
 
-		if (!bRanSleep)
-		{
-			//this must be run at least once per frame, even if we don't need the delay
-			emscripten_sleep(1);
-		}
 
-		
+			//respect the FPS limit delay if needed
+			bool bRanSleep = false;
+
+			if (g_frameDelayMS != 0)
+			{
+				while (fpsTimer > GetSystemTimeAccurate())
+				{
+					bRanSleep = true;
+					emscripten_sleep(1);
+					//Sleep(0);
+				}
+
+				//this should be 1000 not lower, but without this SetFPS(60) results in 55
+				fpsTimer = float(GetSystemTimeAccurate()) + (850.0f / (float(g_frameDelayMS)));
+			}
+
+			if (!bRanSleep)
+			{
+				//this must be run at least once per frame, even if we don't need the delay
+				emscripten_sleep(1);
+			}
+
+		}
 		//emscripten_sleep_with_yield(1); //not compatible unless the ASYNC stuff is enabled
 	}
 #endif
@@ -1129,6 +1254,7 @@ void mainHTML()
 	GetBaseApp()->Kill();
 
 cleanup:
+
 	if (g_pSDLJoystick)
 	{
 		SDL_JoystickClose(g_pSDLJoystick);
@@ -1136,7 +1262,6 @@ cleanup:
 	}
 
 	SDL_Quit();
-	
 }
 
 

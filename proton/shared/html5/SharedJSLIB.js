@@ -10,7 +10,7 @@ JLIB_EnterString: function(message, defaultText)
 	
 	if (person == null) return 0;
 	
-	 console.log("Got "+person);
+	 //console.log("Got "+person);
 	 
 	 // Create a pointer using the 'Glue' method and the String value
     var ptr  = allocate(intArrayFromString(person), 'i8', ALLOC_NORMAL);

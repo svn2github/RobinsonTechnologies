@@ -12,6 +12,9 @@
 #include <emscripten/emscripten.h>
 #include "html5/SharedJSLIB.h"
 
+const char g_html_save_persistent_prefix[] = "/proton_html_save_"; //in emscripten, the persistent "user data" is going to be this prefix + GetAppName(), so apps on the same site won't share the same dir 
+const char g_html_cache_persistent_prefix[] = "/proton_html_cache_"; //in emscripten, the persistent "user data" is going to be this prefix + GetAppName(), so apps on the same site won't share the same dir 
+
 #ifndef _CONSOLE 
 	//if console is defined, we might be a linux command line server or something, we don't know what GL/GLES stuff
 	//is and don't use BaseApp
@@ -69,7 +72,15 @@ string GetBaseAppPath()
 
 string GetSavePath()
 {
-	return "";
+	static string savePath;
+	if (savePath.empty())
+	{
+		//one time setup
+		savePath = string(g_html_save_persistent_prefix) + GetAppName() + "/";
+		StringReplace(" ", "_", savePath);
+	}
+	
+	return savePath;
 }
 
 
@@ -78,8 +89,14 @@ string GetSavePath()
 
 string GetAppCachePath()
 {
-	
-	return ""; //invalid
+	static string cachePath;
+	if (cachePath.empty())
+	{
+		//one time setup
+		cachePath = string(g_html_cache_persistent_prefix) + GetAppName() + "/";
+		StringReplace(" ", "_", cachePath);
+	}
+	return cachePath; //this means this stuff is persistent too, keep that in mind!
 }
 
 void LaunchEmail(string subject, string content)
@@ -343,7 +360,10 @@ void CreateDirectoryRecursively(string basePath, string path)
 	{
 		path += tok[i].c_str();
 		//LogMsg("Creating %s%s", basePath.c_str(), path.c_str());
-		RTCreateDirectory(basePath+path);
+		if (!RTCreateDirectory(basePath + path))
+		{
+			//LogMsg("Error creating %s", (basePath + path).c_str());
+		}
 		path += "/";
 	}
 }

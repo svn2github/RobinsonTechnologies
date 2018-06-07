@@ -7,6 +7,7 @@ TarHandler::TarHandler()
 	m_fpOut = NULL;
 	m_state = STATE_NONE;
 	m_pBzipBuffer = NULL;
+	m_bLimitOutputToSingleSubDir = false;
 	
 }
 
@@ -77,76 +78,97 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 #ifdef _DEBUG
 	LogMsg("Writing %d..", size);
 #endif
-	switch(m_tarState)
+	switch (m_tarState)
 	{
-		case TAR_STATE_FILLING_HEADER:
+	case TAR_STATE_FILLING_HEADER:
+	{
+		int amountToRead = rt_min(size, headerSize - m_tarHeaderBytesRead);
+		memcpy(&m_tarHeader.name[0] + m_tarHeaderBytesRead, pData, amountToRead);
+
+		if (strncmp(m_tarHeader.magic, "ustar", 5) != 0)
+		{
+			//bad header.  We probably need to push it forward by 512 bytes for some reason
+			return WriteBZipStream(pData + 512, size - 512);
+		}
+		m_tarHeaderBytesRead += amountToRead;
+		m_totalBytesWritten += amountToRead;
+
+		assert(m_tarHeaderBytesRead <= sizeof(tar_header));
+		if (m_tarHeaderBytesRead == sizeof(tar_header))
+		{
+			m_tarFileOutBytesLeft = oct_to_int(m_tarHeader.size);
+
+			//note:  files can be 0 size, so we can't check by that..
+			if ( /*m_tarFileOutBytesLeft == 0 ||*/ m_tarHeader.name[0] == 0)
 			{
-				int amountToRead = rt_min(size, headerSize-m_tarHeaderBytesRead);
-				memcpy( &m_tarHeader.name[0]+m_tarHeaderBytesRead, pData, amountToRead);
-
-				if (strncmp(m_tarHeader.magic, "ustar", 5) != 0)
+				m_tarState = TAR_STATE_FINISHED;
+				if (m_fpOut)
 				{
-					//bad header.  We probably need to push it forward by 512 bytes for some reason
-					return WriteBZipStream(pData+512, size-512);
+					fclose(m_fpOut);
+					m_fpOut = NULL;
 				}
-				m_tarHeaderBytesRead += amountToRead;
-				m_totalBytesWritten += amountToRead;
+				return true;
+			}
 
-				assert(m_tarHeaderBytesRead <= sizeof(tar_header));
-				if (m_tarHeaderBytesRead == sizeof(tar_header))
+			//finished reading header, setup to switch to file writing
+			m_tarHeaderBytesRead = 0;
+			m_tarState = TAR_STATE_WRITING_FILE;
+			if (m_bForceLowerCaseFileNames)
+			{
+				ToLowerCase(m_tarHeader.name);
+			}
+
+			CreateDirectoryRecursively(m_destPath, GetPathFromString(m_tarHeader.name));
+
+			//this is some extra info Dink might want
+			if (m_firstDirCreated.empty())
+			{
+				m_firstDirCreated = m_tarHeader.name;
+
+				//isolate just the first directory
+
+
+				for (unsigned int i = 0; i < m_firstDirCreated.length(); i++)
 				{
-					m_tarFileOutBytesLeft = oct_to_int(m_tarHeader.size);
-
-					//note:  files can be 0 size, so we can't check by that..
-					if ( /*m_tarFileOutBytesLeft == 0 ||*/ m_tarHeader.name[0] == 0)
+					if (m_firstDirCreated[i] == '/' || m_firstDirCreated[i] == '\\')
 					{
-						m_tarState = TAR_STATE_FINISHED;
-						if (m_fpOut)
+						if (m_firstDirCreated[i + 1] != 0)
 						{
-							fclose(m_fpOut);
-							m_fpOut = NULL;
+							//well, this must be the cutoff point
+							m_firstDirCreated = m_firstDirCreated.substr(0, i);
 						}
-						return true;
+						break;
 					}
 
-					//finished reading header, setup to switch to file writing
-					m_tarHeaderBytesRead = 0;
-					m_tarState = TAR_STATE_WRITING_FILE;
-					if (m_bForceLowerCaseFileNames)
+					if (i == m_firstDirCreated.length() - 1)
 					{
-						ToLowerCase(m_tarHeader.name);
+						//couldn't find it. ignore this file, they shouldn't be writing in the base.
+						m_firstDirCreated.clear();
 					}
-					
-					CreateDirectoryRecursively(m_destPath, GetPathFromString(m_tarHeader.name));
-					
-					//this is some extra info Dink might want
-					if (m_firstDirCreated.empty())
+				}
+			}
+
+
+			string slashFixed = m_tarHeader.name;
+			StringReplace("\\", "/", slashFixed);
+
+			if (m_bLimitOutputToSingleSubDir && !m_firstDirCreated.empty())
+			{
+				//require that this file also goes into m_firstDirCreated
+				string expectedStart = m_firstDirCreated + "/";
+				if (expectedStart.length() > strlen(m_tarHeader.name)
+					|| string(m_tarHeader.name).substr(0, expectedStart.length()) != expectedStart)
 					{
-						m_firstDirCreated = m_tarHeader.name;
-
-						//isolate just the first directory
-
-
-						for (unsigned int i=0; i < m_firstDirCreated.length(); i++)
-						{
-							if (m_firstDirCreated[i] == '/' || m_firstDirCreated[i] == '\\')
-							{
-								if (m_firstDirCreated[i+1] != 0)
-								{
-									//well, this must be the cutoff point
-									m_firstDirCreated = m_firstDirCreated.substr(0,i);
-								}
-								break;
-							}
-
-							if (i == m_firstDirCreated.length()-1)
-							{
-								//couldn't find it. ignore this file, they shouldn't be writing in the base.
-								m_firstDirCreated.clear();
-							}
-						}
+						LogMsg("This archive tries to write to more than one subdir.  Weird");
+						return false;
 					}
+			}
 
+					if (IsInString(slashFixed, "/..") || IsInString(slashFixed, "../") || slashFixed[0] == '/')
+					{
+						LogMsg("This archive may be trying to write to a sketchy place, we don't trust it. If anyone actually needs this, we could add an option to allow it...");
+						return false;
+					}
 #ifdef _DEBUG
 					LogMsg("Writing %s...", (m_destPath + m_tarHeader.name).c_str());
 
@@ -177,7 +199,8 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 
 				int amountToRead = rt_min(size, m_tarFileOutBytesLeft);
 				
-				assert(amountToRead != 0);
+				//well, 0 byte files are legal so I guess we don't need to freak and assert here
+				//assert(amountToRead != 0);
 
 				int bytesRead = fwrite(pData, 1, amountToRead,  m_fpOut);
 				m_totalBytesWritten += amountToRead;
@@ -376,4 +399,9 @@ bool TarHandler::ProcessChunk()
 	}
 
 	return true; //still processing
+}
+
+void TarHandler::SetLimitOutputToSingleSubDir(bool bLimitIt)
+{
+	m_bLimitOutputToSingleSubDir = bLimitIt;
 }

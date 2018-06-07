@@ -175,7 +175,6 @@ void SetPreferSDCardForStorage(bool bNew)
 string GetSavePath()
 {
 
-
 	if (g_preferSDCardForUserStorage)
 	{
 		string storageDir = GetAppCachePath();
@@ -1330,4 +1329,21 @@ bool IsDirectoryDateNewerThan(string dir, int day, int month, int year)
 	if (my_tm->tm_mday > day) return true;
 
 	return true;
+}
+
+
+int GetTouchesReceived()
+{
+	return 0; //uh, not accurate
+}
+bool IsStillLoadingPersistentData()
+{
+	return false;
+}
+bool IsStillSavingPersistentData()
+{
+	return false;
+}
+void SyncPersistentData()
+{
 }

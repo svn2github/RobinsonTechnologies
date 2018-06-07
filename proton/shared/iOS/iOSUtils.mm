@@ -732,3 +732,19 @@ void ForceVideoUpdate()
 {
 //    LogMsg("TODO..video update");
 }
+
+int GetTouchesReceived()
+{
+	return 0; //uh, not accurate
+}
+bool IsStillLoadingPersistentData()
+{
+	return false;
+}
+bool IsStillSavingPersistentData()
+{
+	return false;
+}
+void SyncPersistentData()
+{
+}

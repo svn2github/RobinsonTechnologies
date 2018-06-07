@@ -555,3 +555,20 @@ void GetDateAndTime(int *monthOut, int *dayOut, int *yearOut, int *hourOut, int 
 	*minOut = today.tm_min;
 	*secOut = today.tm_sec;
 }
+
+
+int GetTouchesReceived()
+{
+	return 0; //uh, not accurate
+}
+bool IsStillLoadingPersistentData()
+{
+	return false;
+}
+bool IsStillSavingPersistentData()
+{
+	return false;
+}
+void SyncPersistentData()
+{
+}

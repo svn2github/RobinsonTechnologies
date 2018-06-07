@@ -168,5 +168,10 @@ void ForceVideoUpdate(); //force an early gl flip or whatever, sometimes useful.
 std::string GetDateAndTimeAsString(); //only supported on linux and win
 void GetDateAndTime(int *monthOut, int *dayOut, int *yearOut, int *hourOut, int *minOut, int *secOut); 
 
+int GetTouchesReceived(); //applicable to HTML5 only right now
+bool IsStillLoadingPersistentData(); //applicable to HTML5 only right now
+bool IsStillSavingPersistentData(); //applicable to HTML5 only right now
+void SyncPersistentData(); //applicable to HTML5 only right now
+
 #endif // platformenums_h__
 #endif

@@ -43,6 +43,8 @@ private:
 	string *m_pSrcFileName;
 	string *m_pDestDirectory;
 	uint32 *m_pDeleteSourceOnFinish;
+	uint32 *m_pLimitToSingleSubdir;
+
 	TarHandler m_tarHandler; 
 };
 

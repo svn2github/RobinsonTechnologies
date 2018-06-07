@@ -70,6 +70,7 @@ public:
 	int GetTotalBytes() { return 0;} //uh, I guess we actually don't know
 	int GetBytesWritten() {return m_totalBytesWritten;}
 	string GetFirstDirCreated() {return m_firstDirCreated;}
+	void SetLimitOutputToSingleSubDir(bool bLimitIt);
 
 private:
 
@@ -80,7 +81,8 @@ private:
 	
 	FILE *m_fp;
 	string m_destPath;
-	
+	bool m_bLimitOutputToSingleSubDir;
+
 	BZFILE* m_bzf;;
 	int   m_bzerr, m_bzerr_dummy, m_ret, m_nread, m_streamNo, m_i;
 	byte   * m_pBzipBuffer;
