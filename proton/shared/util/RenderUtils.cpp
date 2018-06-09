@@ -596,7 +596,8 @@ void SetupScreenInfo(int x, int y, int orientation)
 	SetupOriginalScreenSize(GetPrimaryGLX(), GetPrimaryGLY());
 
 #ifdef _DEBUG
-		//LogMsg("Setting screen info to %d, %d, mode %d.  Original is %d, %d", x, y, orientation, GetOriginalScreenSizeX(), GetOriginalScreenSizeY());
+	//	LogMsg("Setting screen info to %d, %d, mode %d.  Original is %d, %d. Fake X is %d", x, y, orientation, GetOriginalScreenSizeX(), GetOriginalScreenSizeY(),
+	//		GetFakePrimaryScreenSizeX());
 #endif
 
 		g_screenSizeX = x;
@@ -1050,6 +1051,11 @@ rtRectf ConvertFakeScreenRectToReal(rtRectf r)
 
 	float fakeX = (float)GetFakePrimaryScreenSizeX();
 	float fakeY = (float)GetFakePrimaryScreenSizeY();
+
+#ifdef _DEBUG
+//	LogMsg("ConvertFakeScreenRectToReal:  Primary: %d, %d, Fake: %d, %d", GetPrimaryGLX(), GetPrimaryGLY(),
+//		GetFakePrimaryScreenSizeX(), GetFakePrimaryScreenSizeY());
+#endif
 
 	if(GetBaseApp()->GetManualRotationMode() && InLandscapeGUIMode())
 	{

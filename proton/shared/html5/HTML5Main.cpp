@@ -203,10 +203,10 @@ EM_BOOL on_canvassize_changed(int eventType, const void *reserved, void *userDat
 		int(cssW), int(cssH));
 		*/
 	
-
 	LogMsg("on_canvassize_changed Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
+	
+	//Um, g_winVideoScreenX aren't actually being set here, isn't that bug? Looks like it's set elsewhere though
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
-	GetBaseApp()->OnScreenSizeChange();
 	return 0;
 }
 
@@ -226,7 +226,7 @@ void requestFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteri
 
 void enterSoftFullscreen(int scaleMode, int canvasResolutionScaleMode, int filteringMode)
 {
-	
+	LogMsg("*** Entering enterSoftFullscreen");
 	EmscriptenFullscreenStrategy s;
 	memset(&s, 0, sizeof(s));
 	s.scaleMode = scaleMode;
@@ -244,7 +244,7 @@ bool InitSDLScreen()
 	//Uint32 videoFlags = SDL_HWSURFACE;
 	//SDL_OPENGL;
 	//Uint32 videoFlags = SDL_SWSURFACE;
-	Uint32 videoFlags = SDL_OPENGL;
+	Uint32 videoFlags = SDL_OPENGL | SDL_RESIZABLE;
 
 	g_screen = SDL_SetVideoMode(GetPrimaryGLX() , GetPrimaryGLY(), 32, videoFlags);
 
@@ -770,20 +770,49 @@ EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userDa
 		emscripten_event_type_to_string(eventType), e->detail, e->documentBodyClientWidth, e->documentBodyClientHeight,
 		e->windowInnerWidth, e->windowInnerHeight, e->scrollTop, e->scrollLeft);
 
-	#ifdef RT_HTML5_USE_CUSTOM_MAIN
+#ifdef RT_HTML5_USE_CUSTOM_MAIN
 	double cssW, cssH;
-	emscripten_get_element_css_size(0, &cssW, &cssH);
+	emscripten_get_element_css_size("#canvas", &cssW, &cssH);
+	//ResetOrthoFlag();
 
 	g_winVideoScreenX = cssW;
 	g_winVideoScreenY = cssH;
+	emscripten_set_canvas_element_size("#canvas",
+		int(cssW), int(cssH));
+	
+	/*
+	emscripten_set_canvas_element_size(0,
+		int(cssW), int(cssH));
 
+	
+	InitSDLScreen();
+	
+	//emscripten_set_canvas_size(int(g_winVideoScreenX), int(g_winVideoScreenY));
+
+	//emscripten_webgl_get_drawing_buffer_size
+	//emscripten_set_resize_callback(nullptr, nullptr, false, uievent_callback);
+	if (emscripten_webgl_get_current_context() == 0)
+	{
+		LogMsg("There is no context");
+}
+	else
+	{
+		EMSCRIPTEN_RESULT res;
+		int drawingBufferWidth = -1;
+		int drawingBufferHeight = -1;
+		res = emscripten_webgl_get_drawing_buffer_size(emscripten_webgl_get_current_context(), &drawingBufferWidth, &drawingBufferHeight);
+		LogMsg("WebGL drawingBuffer size is %d, %d", drawingBufferWidth, drawingBufferHeight);
+	}
 
 	LogMsg("Changing size to %d, %d", g_winVideoScreenX, g_winVideoScreenY);
+	//GetBaseApp()->InitializeGLDefaults();
+	*/
+
+	glViewport(0, 0, GetPrimaryGLX(), GetPrimaryGLY());
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
 	GetBaseApp()->OnScreenSizeChange();
 #endif
-
-
+	
 	return 0;
 }
 
@@ -844,11 +873,13 @@ EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userD
 
 EM_BOOL wheel_callback(int eventType, const EmscriptenWheelEvent *e, void *userData)
 {
+/*
 	LogMsg("%s, screen: (%ld,%ld), client: (%ld,%ld),%s%s%s%s button: %hu, buttons: %hu, canvas: (%ld,%ld), target: (%ld, %ld), delta:(%g,%g,%g), deltaMode:%lu\n",
 		emscripten_event_type_to_string(eventType), e->mouse.screenX, e->mouse.screenY, e->mouse.clientX, e->mouse.clientY,
 		e->mouse.ctrlKey ? " CTRL" : "", e->mouse.shiftKey ? " SHIFT" : "", e->mouse.altKey ? " ALT" : "", e->mouse.metaKey ? " META" : "", 
 		e->mouse.button, e->mouse.buttons, e->mouse.canvasX, e->mouse.canvasY, e->mouse.targetX, e->mouse.targetY,
 		(float)e->deltaX, (float)e->deltaY, (float)e->deltaZ, e->deltaMode);
+		*/
 
 	GetMessageManager()->SendGUIEx2(MESSAGE_TYPE_GUI_MOUSEWHEEL, (float)e->deltaY, 0, 0, 0); //last parm is "winkey modifers"...
 
@@ -1029,6 +1060,10 @@ void LoadInitialSyncData()
 
 	);
 }
+
+#ifdef _DEBUG
+///#define RT_FAKE_PERSISTENCE
+#endif
 void AddPersistentFileFolder(string folderName) //should start with a slash
 {
 	//remove ending slash
@@ -1037,6 +1072,10 @@ void AddPersistentFileFolder(string folderName) //should start with a slash
 		folderName = folderName.substr(0, folderName.length() - 1);
 	}
 
+#ifdef RT_FAKE_PERSISTENCE
+	CreateDirectoryRecursively("", folderName);
+	LogMsg("RT_FAKE_PERSISTENCE is defined, creating fake folder %s", folderName.c_str());
+#else
 	EM_ASM_({
 
 		var pSaveDir = Pointer_stringify($0);
@@ -1047,6 +1086,8 @@ void AddPersistentFileFolder(string folderName) //should start with a slash
 	//mount persistent directory as IDBFS
 	FS.mount(IDBFS, {}, pSaveDir);
 	}, folderName.c_str());
+
+#endif
 }
 
 void mainHTML()
@@ -1113,8 +1154,13 @@ void mainHTML()
 
 	);
 
+	
+	
+	
 	AddPersistentFileFolder(GetSavePath());
 	AddPersistentFileFolder(GetAppCachePath());
+	
+	
 	LoadInitialSyncData();
 
 #ifdef RT_HTML5_USE_CUSTOM_MAIN
@@ -1131,8 +1177,6 @@ void mainHTML()
 	SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
 
 #endif
-
-	GetBaseApp()->OnScreenSizeChange();
 
 	r = emscripten_get_fullscreen_status(&e); 
 	if (r != EMSCRIPTEN_RESULT_SUCCESS) /* handle error */ 

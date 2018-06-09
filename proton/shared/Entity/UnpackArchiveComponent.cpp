@@ -54,13 +54,19 @@ void UnpackArchiveComponent::OnUpdate(VariantList *pVList)
 {
 	if (m_pSrcFileName->empty()) return;
 
-
 	switch (m_tarHandler.GetState())
 	{
 		case TarHandler::STATE_NONE:
 			//need to start it up
 			m_tarHandler.SetLimitOutputToSingleSubDir(*m_pLimitToSingleSubdir != 0);
-			m_tarHandler.OpenFile(*m_pSrcFileName, *m_pDestDirectory);
+#ifdef _DEBUG
+	//		LogMsg("Opening Tar %s", m_pSrcFileName->c_str());
+#endif
+			if (m_tarHandler.OpenFile(*m_pSrcFileName, *m_pDestDirectory) == false)
+			{
+				VariantList vList(this, uint32(m_tarHandler.GetError()));
+				GetFunction("OnError")->sig_function(&vList);
+			}
 			break;
 
 		case TarHandler::STATE_BZIPPING:

@@ -966,6 +966,32 @@ void Surface::CopyFromScreen()
 	delete [] pBuff;
 }
 
+//used in debugging
+void Surface::FillRandomCrap()
+{
+		int width = GetWidth();
+		int height = GetHeight();
+		int bytesPerPixel = 4;
+
+		byte *pBuf = new byte[width*height*bytesPerPixel];
+
+		glColorBytes *pPixel = (glColorBytes*)pBuf;
+		
+		for (int i = 0; i < width*height; i++)
+		{
+			//*pPixel = color;
+			pPixel->a = 255;
+			pPixel->r = Random(255);
+			pPixel->g = Random(255);
+			pPixel->b = Random(255);
+
+			pPixel++;
+		}
+
+		UpdateSurfaceRect(rtRect(0, 0, width, height), pBuf);
+		delete[] pBuf;
+	
+}
 
 void Surface::FillColor(glColorBytes color)
 {
@@ -1148,6 +1174,13 @@ void Surface::OnLoadSurfaces()
 				LogMsg("Recreating surface of %d, %d", m_originalWidth, m_originalHeight);
 	#endif
 				InitBlankSurface(m_originalWidth, m_originalHeight);
+			}
+			else
+			{
+			#ifdef _DEBUG	
+				LogMsg("Not restoring surface, it has no originalWidth data");
+			#endif	
+
 			}
 			break;
                 

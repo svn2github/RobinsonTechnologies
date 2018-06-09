@@ -57,7 +57,7 @@ void TarHandler::OnBZIPError(int error)
 {
 	m_state = STATE_ERROR;
 	m_error = error;
-	LogError("Error %d", error);
+	LogError("TarHandler: Error %d", error);
 }
 
 
@@ -68,7 +68,6 @@ int oct_to_int(char *oct)
 	sscanf(oct, "%o", &i);
 	return i;
 }
-
 
 bool TarHandler::WriteBZipStream(byte *pData, int size)
 {
@@ -171,12 +170,6 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 					}
 #ifdef _DEBUG
 					LogMsg("Writing %s...", (m_destPath + m_tarHeader.name).c_str());
-
-
-						if (string(m_tarHeader.name).find("hard.dat") != string::npos)
-						{
-							LogMsg("Found");
-					}
 #endif				
 
 
@@ -275,7 +268,7 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 
 bool TarHandler::uncompressStream ( FILE *zStream)
 {
-	
+
 		if (!m_bzf)
 		{
 			if (!m_pBzipBuffer)
@@ -283,7 +276,6 @@ bool TarHandler::uncompressStream ( FILE *zStream)
 				m_pBzipBuffer = new byte[C_BZIP_BUFFER_SIZE];
 				if (!m_pBzipBuffer)
 				{
-				 
 					OnBZIPError(BZ_MEM_ERROR);
 					return false;
 				}
@@ -296,15 +288,31 @@ bool TarHandler::uncompressStream ( FILE *zStream)
 			}
 			if (ferror(zStream)) goto errhandler_io;
 		
+			//LogMsg("Doing BZ2_bzReadOpen");
 			m_bzf = BZ2_bzReadOpen (&m_bzerr, zStream, 0, (int)true, m_bzipReservedBuffer, m_bzipnUnused);
-			if (m_bzf == NULL || m_bzerr != BZ_OK) goto errhandler;
+			if (m_bzf == NULL || m_bzerr != BZ_OK)
+			{
+				LogMsg("Got an error %d", m_bzerr);
+				goto errhandler;
+			}
+
+			
 			m_streamNo++;
 		}
-
+		//LogMsg("Doing BZ2_bzRead..");
 			m_nread = BZ2_bzRead ( &m_bzerr, m_bzf, m_pBzipBuffer, C_BZIP_BUFFER_SIZE );
+			
+#ifdef _DEBUG
+			m_bzerr = -4;
+#endif
+			//LogMsg("Read %d bytes.  It returned %d", m_nread, m_bzerr);
+			
+			
 			if (m_bzerr == BZ_DATA_ERROR_MAGIC) goto trycat;
 			if ((m_bzerr == BZ_OK || m_bzerr == BZ_STREAM_END) && m_nread > 0)
 			{
+				//LogMsg("Launching another level of WriteBZipStream");
+
 				if (!WriteBZipStream(m_pBzipBuffer, m_nread)) goto errhandler_io;
 			}
 	
@@ -375,9 +383,15 @@ bool TarHandler::OpenFile( const string &fName, const string &destPath )
 	int headerSize = sizeof(tar_header);
 
 #ifdef _DEBUG
-	//int fileSize = GetFileSize(fName.c_str());
+	int fileSize = GetFileSize(fName.c_str());
+	LogMsg("File is %s, has a size of %d, writing to %s", fName.c_str(), fileSize, destPath.c_str());
 #endif
 	m_fp = fopen(fName.c_str(), "rb");
+	
+	if (!m_fp)
+	{
+		LogMsg("TarHandler::OpenFile: Couldn't find file %s", fName.c_str());
+	}
 	m_fpOut = NULL;
 	m_bzf = NULL;
 	m_bzipnUnused = 0;
@@ -391,7 +405,7 @@ bool TarHandler::ProcessChunk()
 	switch (m_state)
 	{
 	case STATE_BZIPPING:
-		uncompressStream ( m_fp);
+		return uncompressStream ( m_fp);
 		break;
 
 	default:
