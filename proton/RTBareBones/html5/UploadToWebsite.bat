@@ -14,6 +14,7 @@ del %APP_NAME%.js.orig.js
 del temp.bc
 :SSH transfer, this assumes you have ssh and valid keys setup already
 
+ssh %_FTP_USER_%@%_FTP_SITE_% "mkdir ~/www/%WEB_SUB_DIR%"
 ssh %_FTP_USER_%@%_FTP_SITE_% "rm -rf ~/www/%WEB_SUB_DIR%/WebLoaderData"
 rsync -avzr --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r  -e "ssh" %APP_NAME%*.* %_FTP_USER_%@%_FTP_SITE_%:www/%WEB_SUB_DIR%
 rsync -avzr --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r  -e "ssh" WebLoaderData %_FTP_USER_%@%_FTP_SITE_%:www/%WEB_SUB_DIR%

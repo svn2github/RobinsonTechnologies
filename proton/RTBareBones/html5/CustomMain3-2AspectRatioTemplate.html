@@ -23,8 +23,8 @@
         background: #444;
       }
       #gameContainer {
-        width: 50vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
       }
       canvas.emscripten {
          width: 100vw; 
@@ -135,7 +135,7 @@
         {
         	setStatus: function(text) 
 			  	{
-			      console.log('SetStatus: ' + text) 
+			     //console.log('SetStatus: ' + text) 
 			      const progress = document.querySelector("#loader .progress");
 			     
 			      if (!Module.progress)
@@ -154,7 +154,7 @@
 		 						loader.querySelector(".loadingtext").innerHTML = "Loading stuff...";
 			 					 var cur = parseInt(m[2])*100;
 			           var progressMax = parseInt(m[4])*100;
-			           console.log('cur: ' + cur+' max: '+progressMax) ;
+			           //console.log('cur: ' + cur+' max: '+progressMax) ;
 			           Module.progress.style.transform = `scaleX(${cur/progressMax})`;
 			        } else
 			       	{

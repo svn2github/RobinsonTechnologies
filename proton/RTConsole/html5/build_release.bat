@@ -1,4 +1,9 @@
+IMPORTANT:  Don't use this, the html5 dir from RTBareBones or RTSimpleApp use a new format which is much better and I'm too lazy to update this project so far
+
 call ../app_info_setup.bat
+
+:Your root emscripten dir should be in the path so this works:
+call emsdk_env.bat
 
 SET SHARED=..\..\shared
 
