@@ -11,6 +11,7 @@
 #define HTML5Utils_h__
 #include "../PlatformEnums.h"
 const char * GetAppName();
-
+void HTMLDownloadFileFromFileSystem(std::string sourceFile, std::string fileToWrite);
+void HTMLUploadFileToFileSystem();
 
 #endif // HTML5Utils_h__

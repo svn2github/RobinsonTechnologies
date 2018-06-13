@@ -223,7 +223,7 @@ eDeviceMemoryClass GetDeviceMemoryClass()
 	if (IsIphone4()) return C_DEVICE_MEMORY_CLASS_3;
 	
 	//default
-	return C_DEVICE_MEMORY_CLASS_1;
+	return C_DEVICE_MEMORY_CLASS_4;
 }
 
 

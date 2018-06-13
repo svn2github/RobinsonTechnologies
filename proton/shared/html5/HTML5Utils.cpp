@@ -112,6 +112,47 @@ void LaunchURL(string url)
 //	emscripten_run_script(string("window.open(\""+url+"\", '_blank');").c_str());
 }
 
+void HTMLDownloadFileFromFileSystem(string sourceFile, string fileToWrite)
+{
+	string command = "saveFileFromMemoryFSToDisk('" + sourceFile + "','" + fileToWrite + "')";
+	emscripten_run_script(command.c_str());
+}
+
+void HTMLUploadFileToFileSystem()
+{
+	LogMsg("Click");
+	JLIB_OnClickSomethingByID("uploader"); //hope this exists in your html file
+}
+
+extern "C" 
+{
+
+	void PROTON_SystemMessage(int x, float y, char * str)
+	{
+		string message = "";
+		//LogMsg("Got system message! int: %d, float: %f message: %s", x, y, str);
+
+		//actually send the message
+		OSMessage o;
+		o.m_type = (OSMessage::eMessageType)x;
+		o.m_string = str; //make a copy
+
+		GetBaseApp()->AddOSMessage(o);
+
+		SAFE_FREE(str);
+	}
+
+	void PROTON_GUIMessage(int x, float y, char * str)
+	{
+		string message = "";
+		//LogMsg("Got system message! int: %d, float: %f message: %s", x, y, str);
+
+		//actually send the message
+		GetMessageManager()->SendGUIStringEx((eMessageType)x, y, 0,0, str, 0);
+		SAFE_FREE(str);
+	}
+}
+
 string GetClipboardText()
 {
 	return "";
@@ -175,7 +216,7 @@ bool IsIPAD()
 
 eDeviceMemoryClass GetDeviceMemoryClass()
 {
-	return C_DEVICE_MEMORY_CLASS_1;
+	return C_DEVICE_MEMORY_CLASS_4;
 }
 
 int GetYOffset()

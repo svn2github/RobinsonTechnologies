@@ -20,7 +20,7 @@ int g_winVideoScreenY = 0;
 Uint32 g_nextFrameTick = 0;
 Uint32 g_frameDelayMS = 0;
 
-bool g_touchesReceived = 0;
+int g_touchesReceived = 0;
 
 int GetTouchesReceived() {return g_touchesReceived;}
 
@@ -1030,7 +1030,7 @@ void SyncPersistentData()
 	FS.syncfs(false, function(err) 
 	{
 		assert(!err);
-		//Module.print("End File write sync..");
+		Module.print("Synced save files.");
 		Module.waitingFileWriteSync = 0;
 	});
 	);
@@ -1060,6 +1060,32 @@ void LoadInitialSyncData()
 
 	);
 }
+
+/*
+For this to work, you need https://github.com/eligrey/FileSaver.js
+
+ and this in your main HTML:
+
+ //stuff for file saving
+ <script src="FileSaver.js"> </script>
+
+ <script>
+ function saveFileFromMemoryFSToDisk(memoryFSname,localFSname)     // This can be called by C++ code
+ {
+	 var data=FS.readFile(memoryFSname);
+	 var blob;
+	 var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+	 if(isSafari) {
+	 blob = new Blob([data.buffer], {type: "application/octet-stream"});
+	 } else {
+	 blob = new Blob([data.buffer], {type: "application/octet-binary"});
+	 }
+	 saveAs(blob, localFSname);
+ }
+ </script>
+
+*/
+
 
 #ifdef _DEBUG
 ///#define RT_FAKE_PERSISTENCE

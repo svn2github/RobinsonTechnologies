@@ -66,9 +66,7 @@ bool AudioManagerFMOD::Init()
 #ifdef PLATFORM_HTML5
 	//helps with stuttering
 	system->setDSPBufferSize(1024*4, 2);
-
 #endif
-
 	
 	LogMsg("Initting FMOD...");
 	//extradriverdata

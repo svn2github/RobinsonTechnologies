@@ -160,7 +160,7 @@ bool IsIPAD()
 
 eDeviceMemoryClass GetDeviceMemoryClass()
 {
-	C_DEVICE_MEMORY_CLASS_3;
+	C_DEVICE_MEMORY_CLASS_4;
 }
 
 unsigned int GetSystemTimeTick()

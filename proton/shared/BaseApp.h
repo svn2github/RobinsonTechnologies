@@ -119,10 +119,10 @@ struct OSMessage
 		// Apps flyer
 		MESSAGE_IAP_ITEM_DETAILS, // Used to get the item information
 		MESSAGE_APPSFLYER_LOG_PURCHASE, //used to log purchase
-
+		MESSAGE_FLURRY_START_TIMED_EVENT,
+		MESSAGE_FLURRY_STOP_TIMED_EVENT,
+	
         MESSAGE_USER = 1000,
-        MESSAGE_FLURRY_START_TIMED_EVENT,
-        MESSAGE_FLURRY_STOP_TIMED_EVENT
     };
     
     enum eParmKeyboardType

@@ -199,7 +199,8 @@ enum eMessageType
     MESSAGE_TYPE_TAPJOY_NO_CONTENT_TO_PRESENT, //still loading so can't show?  Unsure
 
 	MESSAGE_TYPE_IAP_ITEM_INFO_RESULT, // IAP info result
-    
+    MESSAGE_TYPE_HTML5_GOT_UPLOAD,
+
     MESSAGE_USER = 1000, //users can add their own messages starting here
     
 };

@@ -268,7 +268,6 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 
 bool TarHandler::uncompressStream ( FILE *zStream)
 {
-
 		if (!m_bzf)
 		{
 			if (!m_pBzipBuffer)
@@ -295,24 +294,18 @@ bool TarHandler::uncompressStream ( FILE *zStream)
 				LogMsg("Got an error %d", m_bzerr);
 				goto errhandler;
 			}
-
 			
 			m_streamNo++;
 		}
+
 		//LogMsg("Doing BZ2_bzRead..");
 			m_nread = BZ2_bzRead ( &m_bzerr, m_bzf, m_pBzipBuffer, C_BZIP_BUFFER_SIZE );
-			
-#ifdef _DEBUG
-			m_bzerr = -4;
-#endif
 			//LogMsg("Read %d bytes.  It returned %d", m_nread, m_bzerr);
-			
 			
 			if (m_bzerr == BZ_DATA_ERROR_MAGIC) goto trycat;
 			if ((m_bzerr == BZ_OK || m_bzerr == BZ_STREAM_END) && m_nread > 0)
 			{
 				//LogMsg("Launching another level of WriteBZipStream");
-
 				if (!WriteBZipStream(m_pBzipBuffer, m_nread)) goto errhandler_io;
 			}
 	

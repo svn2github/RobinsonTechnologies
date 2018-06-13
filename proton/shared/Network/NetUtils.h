@@ -26,4 +26,6 @@ char *Base64Encode(const char *data, size_t input_length,size_t *output_length);
 void DecToHexString ( uint32 value, byte * pOut, int16 charArrayMaxSize);
 void GetSimpleGUID(uint32 *guid); //makes GUID by using date and whatever current rand() seed is, along with some weird stuff
 string GetSimpleGUIDAsString(); //makes GUID by using date and whatever current rand() seed is, along with some weird stuff
+unsigned char * base64_decode(const unsigned char *src, size_t len,
+	size_t *out_len);
 #endif // NetUtils_h__

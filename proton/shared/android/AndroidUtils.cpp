@@ -437,7 +437,7 @@ float GetDeviceOSVersion()
 
 eDeviceMemoryClass GetDeviceMemoryClass()
 {
-	return C_DEVICE_MEMORY_CLASS_2;
+	return C_DEVICE_MEMORY_CLASS_4;
 }
 
 

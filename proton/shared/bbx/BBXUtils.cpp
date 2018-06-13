@@ -139,7 +139,7 @@ bool IsIPAD()
 
 eDeviceMemoryClass GetDeviceMemoryClass()
 {
-	return C_DEVICE_MEMORY_CLASS_3;
+	return C_DEVICE_MEMORY_CLASS_4;
 }
 
 
