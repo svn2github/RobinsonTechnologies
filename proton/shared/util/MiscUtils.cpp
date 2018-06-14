@@ -219,8 +219,9 @@ char *StringReverse(char *str)
 	return str;
 }
 
-string RemoveTrailingBackslash(string st)
+string RemoveTrailingBackslash(const string &path)
 {
+	string st = path;
 	if (st.empty()) return st;
 
 	while(st[st.size()-1] == '/' || st[st.size()-1] == '\\' )

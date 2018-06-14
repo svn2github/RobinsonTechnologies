@@ -102,7 +102,7 @@ std::string TrimLeft (const std::string & s, const std::string & t = RT_UTIL_SPA
 std::string TrimRight (const std::string & s, const std::string & t = RT_UTIL_SPACES);
 std::string GetFileNameFromString(const std::string &path);
 std::string GetPathFromString(const std::string &path);
-std::string RemoveTrailingBackslash(std::string st);
+std::string RemoveTrailingBackslash(const std::string &path);
 std::string GetFileExtension(std::string fileName);
 std::string ModifyFileExtension(const std::string fileName, const std::string extension);
 void TruncateString(std::string &input, size_t len);

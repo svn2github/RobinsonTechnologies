@@ -23,14 +23,18 @@ var saveAs=saveAs||function(e){"use strict";if("undefined"==typeof navigator||!/
  
 	reader.onloadend = (e) => 
 	{ 
+		
+		var fileName = document.querySelector('input[type=file]').files[0].name;
+		
     //let base64String = reader.result.split(',').pop();
-     console.log('Got uploaded file, processing it');
+     console.log('Got uploaded file '+fileName+', processing it');
     
     // Create a pointer using the 'Glue' method and the String value
     
     var data = new Uint8Array(reader.result);
 
-		var outFileName = "proton_temp.tmp";
+		var outFileName = "proton_temp.tmp"; //we use a temp file because we don't actually want to overwrite something we need
+	
 		
 		try
 		{
@@ -48,7 +52,7 @@ var saveAs=saveAs||function(e){"use strict";if("undefined"==typeof navigator||!/
     //void_systemMessage(53,0, outFileName);
    
      void_guiMessage = Module.cwrap('PROTON_GUIMessage', null, ['number', 'number', 'string'])
-     void_guiMessage(53,0, outFileName);
+     void_guiMessage(53,0, fileName);
     //53 is MESSAGE_TYPE_HTML5_GOT_UPLOAD
  };
  
@@ -86,7 +90,7 @@ var saveAs=saveAs||function(e){"use strict";if("undefined"==typeof navigator||!/
   	{
         	
         	
-      console.log('SetStatus: ' + text) 
+      //console.log('SetStatus: ' + text) 
       const progress = document.querySelector("#loader .progress");
      
       if (!Module.progress)
@@ -105,7 +109,7 @@ var saveAs=saveAs||function(e){"use strict";if("undefined"==typeof navigator||!/
 	 						loader.querySelector(".loadingtext").innerHTML = "Loading stuff...";
 		 					 var cur = parseInt(m[2])*100;
 		           var progressMax = parseInt(m[4])*100;
-		           console.log('cur: ' + cur+' max: '+progressMax) ;
+		           //console.log('cur: ' + cur+' max: '+progressMax) ;
 		           Module.progress.style.transform = `scaleX(${cur/progressMax})`;
 		        } else
 		       	{

@@ -724,7 +724,25 @@ void MainEventLoop()
 			break;
 		}
 	}
+	static float fpsTimer = 0;
+
+
+	if (g_frameDelayMS != 0)
+	{
+		
 	
+		while (fpsTimer > GetSystemTimeAccurate())
+		{
+			//emscripten_sleep(1);
+			//Sleep(0);
+		}
+
+		//this should be 1000 not lower, but without this SetFPS(60) results in 55
+		fpsTimer = float(GetSystemTimeAccurate()) + (1000.0f / (float(g_frameDelayMS)));
+		
+	}
+
+
 	SDL_GL_SwapBuffers();
 }
 
@@ -816,6 +834,18 @@ EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userDa
 	return 0;
 }
 
+void FirstClickUnlock()
+{
+	LogMsg("Unlocking audio");
+	//this kill and init is only needed for FMOD
+// 	GetAudioManager()->Kill();
+// 	GetAudioManager()->Init();
+// 	
+	
+	GetAudioManager()->Play("audio/blank.wav");
+
+
+}
 #define TEST_RESULT(x) if (ret != EMSCRIPTEN_RESULT_SUCCESS) printf("%s returned %s.\n", #x, emscripten_result_to_string(ret));
 
 EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userData)
@@ -848,8 +878,7 @@ EM_BOOL mouse_callback(int eventType, const EmscriptenMouseEvent *e, void *userD
 				if (bFirstTime)
 				{
 					//unlock audio on iOS
-					LogMsg("Unlocking audio");
-					GetAudioManager()->Play("audio/blank.wav");
+					FirstClickUnlock();
 					bFirstTime = false;
 				} 
 			}
@@ -960,9 +989,7 @@ EM_BOOL touch_callback(int eventType, const EmscriptenTouchEvent *e, void *userD
 			static bool bFirstTime = true;
 			if (bFirstTime)
 			{
-				//unlock audio on iOS
-				LogMsg("Unlocking audio");
-				GetAudioManager()->Play("audio/blank.wav");
+				FirstClickUnlock();
 				bFirstTime = false;
 			} 
 
