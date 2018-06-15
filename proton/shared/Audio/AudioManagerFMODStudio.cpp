@@ -36,7 +36,6 @@ AudioManagerFMOD::~AudioManagerFMOD()
 	Kill();
 }
 
-
 bool AudioManagerFMOD::Init()
 {
 	FMOD_RESULT       result;
@@ -74,6 +73,39 @@ bool AudioManagerFMOD::Init()
 	ERRCHECK(result);
 	LogMsg("FMOD initted");
 	return true;
+}
+
+void AudioManagerFMOD::ReinitForHTML5()
+{
+	//this gets around the Safari ios audio block, if called on a touch-down.  Doing a Kill() and Init() also works, but this way
+	//we can try to continue the song that was playing
+
+	uint32 musicPosition = 0;
+	bool bResumeMusic = false;
+	 
+	if ((!m_lastMusicFileName.empty()) && GetMusicEnabled() && IsPlaying(GetMusicChannel()))
+	{
+		bResumeMusic = true;
+		musicPosition = GetPos(GetMusicChannel());
+	}
+
+	KillCachedSounds(true, true, 0, 0, true);
+	system->close();
+	FMOD_RESULT       result;
+	void             *extradriverdata = 0;
+	
+	result = system->init(1024, FMOD_INIT_NORMAL, extradriverdata);
+	ERRCHECK(result);
+	LogMsg("FMOD initted again to enable audio on Safari");
+
+	//start back up the music?
+	if (bResumeMusic)
+	{
+		Play(m_lastMusicFileName, true, true, true);
+		SetPos(GetMusicChannel(), musicPosition);
+	}
+	
+	
 }
 
 void AudioManagerFMOD::KillCachedSounds(bool bKillMusic, bool bKillLooping, int ignoreSoundsUsedInLastMS, int killSoundsLowerPriorityThanThis, bool bKillSoundsPlaying)
@@ -127,7 +159,7 @@ void AudioManagerFMOD::Kill()
 {
 	if (system)
 	{
-		KillCachedSounds(true, true, 0, 100, true);
+		KillCachedSounds(true, true, 0, 0, true);
 		FMOD_RESULT  result;
 		result = system->close();
 		FMOD_ERROR_CHECK(result);
@@ -375,13 +407,14 @@ void AudioManagerFMOD::Stop( AudioHandle soundID )
 {
 	if (!system) return;
 
-	if (!soundID) return;
+	if (soundID == AUDIO_HANDLE_BLANK) return;
+
 	FMOD::Channel *pChannel = (FMOD::Channel*) soundID;
 	pChannel->stop();
 	if (pChannel == m_pMusicChannel)
 	{
 		//m_lastMusicFileName = "";
-		m_pMusicChannel = NULL;
+		m_pMusicChannel = (FMOD::Channel*)AUDIO_HANDLE_BLANK;
 	}
 	
 }
@@ -394,9 +427,9 @@ AudioHandle AudioManagerFMOD::GetMusicChannel()
 
 bool AudioManagerFMOD::IsPlaying( AudioHandle soundID )
 {
-	if (soundID == 0) return false;
+	if (soundID == AUDIO_HANDLE_BLANK) return false;
 
-	assert(system && soundID);
+	assert(system);
 	FMOD::Channel *pChannel = (FMOD::Channel*) soundID;
 	bool bPlaying = false;
 	pChannel->isPlaying(&bPlaying);
@@ -472,9 +505,6 @@ int AudioManagerFMOD::GetMemoryUsed()
 	
 			*/
 		
-		
-	
-
 		int memUsed, maxAlloced;
 		FMOD_Memory_GetStats(&memUsed, &maxAlloced, false);
 		return memUsed;
@@ -486,7 +516,7 @@ int AudioManagerFMOD::GetMemoryUsed()
 void AudioManagerFMOD::SetFrequency( AudioHandle soundID, int freq )
 {
 	assert(system);
-	if (!soundID) return;
+	if (soundID == AUDIO_HANDLE_BLANK) return;
 	FMOD::Channel *pChannel = (FMOD::Channel*) soundID;
 	pChannel->setFrequency(float(freq));
 
@@ -494,14 +524,16 @@ void AudioManagerFMOD::SetFrequency( AudioHandle soundID, int freq )
 
 void AudioManagerFMOD::SetPan( AudioHandle soundID, float pan )
 {
-	assert(system && soundID);
+	assert(system);
+	if (soundID == AUDIO_HANDLE_BLANK) return;
 	FMOD::Channel *pChannel = (FMOD::Channel*) soundID;
 	pChannel->setPan(pan);
 }
 
 uint32 AudioManagerFMOD::GetPos( AudioHandle soundID )
 {
-	assert(system && soundID);
+	assert(system);
+	if (soundID == AUDIO_HANDLE_BLANK) return 0;
 	FMOD::Channel *pChannel = (FMOD::Channel*) soundID;
 	unsigned int pos;
 	pChannel->getPosition(&pos, FMOD_TIMEUNIT_MS);
@@ -511,7 +543,7 @@ uint32 AudioManagerFMOD::GetPos( AudioHandle soundID )
 void AudioManagerFMOD::SetPos( AudioHandle soundID, uint32 posMS )
 {
 	assert(system);
-	if (!soundID) return;
+	if (soundID == AUDIO_HANDLE_BLANK) return;
 	FMOD::Channel *pChannel = (FMOD::Channel*) soundID;
 	
 	pChannel->setPosition(posMS, FMOD_TIMEUNIT_MS);
@@ -521,7 +553,7 @@ void AudioManagerFMOD::SetPos( AudioHandle soundID, uint32 posMS )
 void AudioManagerFMOD::SetVol( AudioHandle soundID, float vol )
 {
 	assert(system);
-	if (!soundID) return;
+	if (soundID == AUDIO_HANDLE_BLANK) return;
 	FMOD::Channel *pChannel = (FMOD::Channel*) soundID;
 	pChannel->setVolume(vol);
 }
@@ -529,10 +561,9 @@ void AudioManagerFMOD::SetVol( AudioHandle soundID, float vol )
 void AudioManagerFMOD::SetMusicVol(float vol )
 {
 	assert(system);
-	if (m_pMusicChannel)
+	if (m_pMusicChannel != AUDIO_HANDLE_BLANK)
 	{
 		m_pMusicChannel->setVolume(vol);
-
 	}
 	m_musicVol = vol;
 }
@@ -543,20 +574,22 @@ void AudioManagerFMOD::SetPriority( AudioHandle soundID, int priority )
 
 }
 
+void AudioManagerFMOD::SetGlobalPause(bool bPaused)
+{
+	FMOD::ChannelGroup *pChannelGroup = NULL;
+	system->getMasterChannelGroup(&pChannelGroup);
+	pChannelGroup->setPaused(bPaused);
+}
+
 void AudioManagerFMOD::Suspend()
 {
-	if (m_pMusicChannel)
-	{
-		m_pMusicChannel->setPaused(true);
-	}
+	if (!system) return;
+	SetGlobalPause(true);
 }
 
 void AudioManagerFMOD::Resume()
 {
-	if (m_pMusicChannel)
-	{
-		m_pMusicChannel->setPaused(false);
-	}
-
+	if (!system) return;
+	SetGlobalPause(false);
 }
 #endif

@@ -73,11 +73,14 @@ public:
 	virtual void SetPan(AudioHandle soundID, float pan); //0 is normal stereo, -1 is all left, +1 is all right
 	virtual void SetVol(AudioHandle soundID, float vol);
 	virtual void SetPriority(AudioHandle soundID, int priority);
-	virtual uint32 GetPos( AudioHandle soundID );
+	void SetGlobalPause(bool bPaused);
+	virtual uint32 GetPos(AudioHandle soundID);
 	virtual void SetPos( AudioHandle soundID, uint32 posMS );
 	virtual void SetMusicVol(float vol);
 	virtual void Suspend(); //stop all audio, app when into background or something
 	virtual void Resume(); //restore audio that was stopped
+	virtual string GetAudioSystemName(){ return "fmodstudio"; }
+	virtual void ReinitForHTML5();
 
 	FMOD::System * GetSystem() {return system;}
 

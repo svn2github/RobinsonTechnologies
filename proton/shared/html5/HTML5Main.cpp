@@ -834,16 +834,14 @@ EM_BOOL uievent_callback(int eventType, const EmscriptenUiEvent *e, void *userDa
 	return 0;
 }
 
+
 void FirstClickUnlock()
 {
 	LogMsg("Unlocking audio");
 	//this kill and init is only needed for FMOD
-// 	GetAudioManager()->Kill();
-// 	GetAudioManager()->Init();
-// 	
-	
-	GetAudioManager()->Play("audio/blank.wav");
 
+	GetAudioManager()->ReinitForHTML5();
+	GetAudioManager()->Play("audio/blank.wav");
 
 }
 #define TEST_RESULT(x) if (ret != EMSCRIPTEN_RESULT_SUCCESS) printf("%s returned %s.\n", #x, emscripten_result_to_string(ret));

@@ -144,6 +144,8 @@ public:
 	bool PreferOGG() {return m_bPreferOGG;}
 	void SetPreferOGG(bool bNew) {m_bPreferOGG = bNew;}
 	void SetDefaultVol(float vol){m_defaultVol = vol;}
+	virtual string GetAudioSystemName(); //will return "unknown" or "fmodstudio" for example, the subclass returns it if it cares
+	virtual void ReinitForHTML5() {};
 
 protected:
 	

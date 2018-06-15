@@ -57,3 +57,8 @@ string AudioManager::ModifiedFileName(string fName)
 
 	return ModifyFileExtension(fName, m_forcedAudioExtension);
 }
+
+std::string AudioManager::GetAudioSystemName()
+{
+	return "unknown";
+}

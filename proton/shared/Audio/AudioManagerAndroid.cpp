@@ -347,7 +347,7 @@ AudioHandle AudioManagerAndroid::GetMusicChannel()
 
 bool AudioManagerAndroid::IsPlaying( AudioHandle soundID )
 {
-	if (soundID == 0) return false;
+	if (soundID == AUDIO_HANDLE_BLANK) return false;
 
 	if (soundID == (AudioHandle) m_lastMusicID)
 	{
