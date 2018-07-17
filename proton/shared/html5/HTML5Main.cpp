@@ -1049,13 +1049,23 @@ void SyncPersistentData()
 		LogMsg("Ignoring SyncUserSaveData(), we're still loading our initial persistent data!");
 		return;
 	}
+
+#ifdef _DEBUG
+	LogMsg("Syncing data...");
+#endif
 	EM_ASM(
 		//Module.print("Start File write sync..");
 	Module.waitingFileWriteSync = 1;
 	FS.syncfs(false, function(err) 
 	{
-		assert(!err);
-		Module.print("Synced save files.");
+		if (err)
+		{
+			Module.print("Uh oh, SyncPersistentData error: " + err);
+		}
+		else
+		{
+			Module.print("Synced save files.");
+		}
 		Module.waitingFileWriteSync = 0;
 	});
 	);

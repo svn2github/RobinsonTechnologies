@@ -75,7 +75,7 @@ bool TarHandler::WriteBZipStream(byte *pData, int size)
 
 	int headerSize = sizeof(tar_header);
 #ifdef _DEBUG
-	LogMsg("Writing %d..", size);
+	//LogMsg("Writing %d..", size);
 #endif
 	switch (m_tarState)
 	{

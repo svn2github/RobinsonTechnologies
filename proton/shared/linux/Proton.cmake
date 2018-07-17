@@ -295,7 +295,18 @@ endif(PROTON_USE_SDL_AUDIO)
 
 if(RASPBERRYPI_GLES11)
 #note: GLESv2 has the v1.1 and v2 libraries on rasberry pi, you don't use GLESv1_CM!
-	target_link_libraries(${PROJECT_NAME} GLESv2 EGL pthread bcm_host SDL2)
+target_link_libraries(${PROJECT_NAME} pthread bcm_host SDL2)
+
+find_library(PI_GLSTUFF GLESv2)
+
+if (PI_GLSTUFF)
+	target_link_libraries(${PROJECT_NAME} GLESv2 EGL)
+else()
+	#raspian stretch has renamed these files:
+	target_link_libraries(${PROJECT_NAME} libbrcmGLESv2.so libbrcmEGL.so)
+endif()
+
+
 else(RASPBERRYPI_GLES11)
 	
 	

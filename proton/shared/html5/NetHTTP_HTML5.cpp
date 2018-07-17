@@ -201,9 +201,9 @@ LogMsg("Opening %s on port %d.  Postdata has %d chars", m_serverName.c_str(), m_
 	m_emscriptenWgetHandle = emscripten_async_wget2_data( finalURL.c_str(), stCommand.c_str(), m_postData.c_str(), this, 1, NetHTTP::onLoaded, NetHTTP::onError, NetHTTP::onProgress);
 
 #ifdef _DEBUG
-	LogMsg("Final URL is %s.   Handle is %d", finalURL.c_str(),  m_emscriptenWgetHandle);
+	LogMsg("Final URL is %s.   Handle is %d.", finalURL.c_str(),  m_emscriptenWgetHandle);
 #endif
-
+	m_state = STATE_ACTIVE;
 	return true;
 }
 
@@ -356,12 +356,14 @@ void NetHTTP::SetBuffer(const char *pData, int byteSize)
 
 void NetHTTP::onLoaded( unsigned int handle, void* parent, void * file, unsigned int byteSize) 
 {
-#ifdef _DEBUG
-	LogMsg("Finished download - got %d bytes", byteSize);
-#endif
 	NetHTTP *pMe = (NetHTTP*)parent;
 	pMe->SetBuffer((const char*)file, byteSize);
 	pMe->FinishDownload();
+
+#ifdef _DEBUG
+	LogMsg("Finished download - got %d bytes.  State is %d", byteSize, pMe->GetState());
+#endif
+
 	//http* req = reinterpret_cast<http*>(parent);
 	//req->onLoaded(file);
 }
@@ -386,9 +388,11 @@ void NetHTTP::SetProgress(int bytesDownloaded, int totalBytes)
 void NetHTTP::onProgress(unsigned int handle, void* parent, int bytesDownloaded, int totalBytes) 
 {
 	NetHTTP *pMe = (NetHTTP*)parent;
+
 	pMe->SetProgress(bytesDownloaded, totalBytes);
+
 #ifdef _DEBUG
-	LogMsg("progress %d of %d", bytesDownloaded, totalBytes);
+	//LogMsg("progress %d of %d, state on object is %d. ", bytesDownloaded, totalBytes, (int)pMe->GetState());
 #endif
 }
 

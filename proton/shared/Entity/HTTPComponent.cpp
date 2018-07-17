@@ -92,11 +92,9 @@ void HTTPComponent::InitAndStart(VariantList *pVList)
 
 void HTTPComponent::PrepareConnection(VariantList *pVList)
 {
-
 	OSMessage o;
 	o.m_type = OSMessage::MESSAGE_CHECK_CONNECTION;
 	GetBaseApp()->AddOSMessage(o);
-
 }
 
 void HTTPComponent::AddPostData(VariantList *pVList)
@@ -132,6 +130,7 @@ void HTTPComponent::OnUpdate(VariantList *pVList)
 		return;
 	}
 
+	
 	if (m_netHTTP.GetState() == NetHTTP::STATE_ACTIVE)
 	{
         VariantList vList(this, uint32(m_netHTTP.GetDownloadedBytes()),uint32(m_netHTTP.GetExpectedBytes()));
@@ -155,11 +154,8 @@ void HTTPComponent::OnUpdate(VariantList *pVList)
 		{
             VariantList vList(this,Variant(""));
 			GetFunction("OnFinish")->sig_function(&vList);
-
 		}
-		
 	}
-
 }
 
 void HTTPComponent::OnOS(VariantList *pVList)

@@ -372,7 +372,7 @@ int GetDaysSinceDate(int month,int day, int year)
 bool RTCreateDirectory(const std::string &dir_name)
 {
 #ifdef _DEBUG
-	LogMsg("CreateDirectory: %s", dir_name.c_str());
+	//LogMsg("CreateDirectory: %s", dir_name.c_str());
 #endif
 
 	if (dir_name.empty())
