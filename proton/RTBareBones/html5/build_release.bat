@@ -9,8 +9,9 @@ SET DEBUG=0
 SET USE_HTML5_CUSTOM_MAIN=1
 :If 1, set one of these as well:
 
-SET CUSTOM_TEMPLATE=CustomMain3-2AspectRatioTemplate.html
-:SET CUSTOM_TEMPLATE=CustomMainFullTemplate.html
+:SET CUSTOM_TEMPLATE=..\..\shared\html5\templates\CustomMain4-3AspectRatioTemplate.html
+:SET CUSTOM_TEMPLATE=..\..\shared\html5\templates\CustomMain3-2AspectRatioTemplate.html
+SET CUSTOM_TEMPLATE=..\..\shared\html5\templates\CustomMainFullTemplate.html
 
 
 set CURPATH=%cd%
@@ -92,7 +93,7 @@ SET SECOND_CUSTOM_FLAGS=-
 
 IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
 :add this define so we'll manually call mainf from the html later instead of it being auto
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -DRT_HTML5_USE_CUSTOM_MAIN -s EXPORTED_FUNCTIONS=['_mainf'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -DRT_HTML5_USE_CUSTOM_MAIN -s EXPORTED_FUNCTIONS=['_mainf','_PROTON_SystemMessage','_PROTON_GUIMessage'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
 SET FINAL_EXTENSION=js
 ) else (
 SET FINAL_EXTENSION=html
@@ -120,6 +121,12 @@ del %APP_NAME%.data
 
 del %APP_NAME%.mem
 del temp.bc
+
+
+:grab our shared WebLoaderData, this has default graphics and scripts that handle various emscripten/html5 communication
+:if you need to customize it, you can stop copying these and customize yours instead
+mkdir WebLoaderData
+copy /Y ..\..\shared\html5\templates\WebLoaderData .\WebLoaderData
 
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 %SRC% %APP_SRC% %COMPONENT_SRC% %ZLIB_SRC% ^

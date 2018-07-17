@@ -17,7 +17,7 @@ set(CMAKE_BUILD_TYPE "Release") #use Release or Debug
 
 project(rtbarebones)
 include(../../shared/linux/Proton.cmake)
-include(../source)
+#include(../source)
 
 proton_include_components(FocusInputComponent)
 proton_include_components(CustomInputComponent ArcadeInputComponent)
