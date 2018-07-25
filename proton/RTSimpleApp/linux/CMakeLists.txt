@@ -9,10 +9,16 @@ project(rtsimpleapp)
 
 include(../../shared/linux/Proton.cmake)
 
+add_definitions(-DRT_LINUX -RT_RASPBERRY)
+
 proton_include_all_components()
 proton_use_jpeg_support()
 proton_use_sdl_audio()
 proton_use_linearparticles()
+
+
+Find_Package (SDL_mixer REQUIRED)
+set(APP SDL_mixer::SDL_mixer)
 
 set(APP "../source")
 include_directories("${APP}")
