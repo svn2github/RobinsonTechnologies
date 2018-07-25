@@ -3,9 +3,14 @@
 
 //all RT file formats start with the same main header...
 
+//Don't change!
+#define C_RTFILE_PACKAGE_LATEST_VERSION 0
+#define C_RTFILE_PACKAGE_HEADER "RTPACK"
+#define C_RTFILE_PACKAGE_HEADER_BYTE_SIZE 6
+
 struct RTFileHeader
 {
-	char fileTypeID[6]; 
+	char fileTypeID[C_RTFILE_PACKAGE_HEADER_BYTE_SIZE];
 	byte version;
 	byte reserved[1];
 };
@@ -17,8 +22,7 @@ enum eCompressionType
 	C_COMPRESSION_ZLIB = 1
 };
 
-#define C_RTFILE_PACKAGE_LATEST_VERSION 0
-#define C_RTFILE_PACKAGE_HEADER "RTPACK"
+
 
 struct rtpack_header
 {

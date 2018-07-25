@@ -22,10 +22,10 @@ private:
 };
 void BreakDownURLIntoPieces(string url, string &domainOut, string &requestOut, int &port);
 string GetDomainFromURL(string url);
-char *Base64Encode(const char *data, size_t input_length,size_t *output_length); //up to you to free what it gives ya
+std::string base64_decode(const void* data, const size_t len);
+std::string base64_encode(const unsigned char *src, size_t len);
 void DecToHexString ( uint32 value, byte * pOut, int16 charArrayMaxSize);
 void GetSimpleGUID(uint32 *guid); //makes GUID by using date and whatever current rand() seed is, along with some weird stuff
 string GetSimpleGUIDAsString(); //makes GUID by using date and whatever current rand() seed is, along with some weird stuff
-unsigned char * base64_decode(const unsigned char *src, size_t len,
-	size_t *out_len);
+	
 #endif // NetUtils_h__

@@ -2,14 +2,6 @@
 
 //NOTE:  Much of this code is from the tiltodemo sample from the Palm WebBOS PDK
 
-#if defined RT_WEBOS || defined RT_USE_SDL_AUDIO
-
-#ifdef PLATFORM_HTML5
-//Emscripten only supports SDL1's mixer
-#include "SDL/SDL_mixer.h"
-#else
-#include "SDL2/SDL_mixer.h"
-#endif
 
 #define NUM_CHANNELS 64
 
@@ -95,7 +87,7 @@ bool AudioManagerSDL::Init()
 
 	//valid is directsound or winmm
 	
-#ifndef PLATFORM_HTML5 
+#ifndef RT_USE_SDL1_MIXER
 	//emscripten doesn't handle this
 	if (SDL_AudioInit("directsound") != 0)
 	{

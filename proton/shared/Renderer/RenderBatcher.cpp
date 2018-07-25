@@ -367,7 +367,7 @@ void RenderBatcher::Flush3D( bool bUseNormals, bool bUseTextures, bool bUseColor
 	
 	CHECK_GL_ERROR();
 
-	::glDrawArrays(GL_TRIANGLES, 0, m_verts.size());
+	::glDrawArrays(GL_TRIANGLES, 0, (GLsizei) m_verts.size());
 	CHECK_GL_ERROR();
 	glDisable( GL_BLEND );
 

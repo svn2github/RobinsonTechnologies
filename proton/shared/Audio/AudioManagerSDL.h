@@ -14,8 +14,13 @@
 
 #if defined RT_WEBOS || defined RT_USE_SDL_AUDIO
 
-#ifdef PLATFORM_HTML5
-//Emscripten only supports SDL1's mixer
+#if defined(PLATFORM_HTML5) || defined (RT_LINUX)
+//find, it's really the same mixer (there is no sdl2_mixer), but helps me with path differences on different oses
+#define RT_USE_SDL1_MIXER 
+#endif
+
+#ifdef RT_USE_SDL1_MIXER
+
 #include "SDL/SDL_mixer.h"
 #else
 #include "SDL2/SDL_mixer.h"

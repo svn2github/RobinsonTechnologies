@@ -1070,7 +1070,7 @@ CHECK_GL_ERROR();
 
 bool Surface::InitBlankSurface( int x, int y)
 {
-	Kill();
+	HardKill();
 
 	assert(x && y);
 	GLenum colorFormat = GL_RGBA;

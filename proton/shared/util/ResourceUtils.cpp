@@ -173,11 +173,7 @@ return NULL;
 #else
 	rtpack_header *pHeader = (rtpack_header*)pMem;
 	byte *pDeCompressed = zLibInflateToMemory( pMem+sizeof(rtpack_header), pHeader->compressedSize, pHeader->decompressedSize);
-
-	if (pDecompressedSize)
-	{
-		*pDecompressedSize = pHeader->decompressedSize;
-	}
+	*pDecompressedSize = pHeader->decompressedSize;
 	return pDeCompressed;
 #endif
 }
@@ -227,7 +223,7 @@ byte * LoadFileIntoMemoryBasic(string fileName, unsigned int *length, bool bUseS
 
 bool IsAPackedFile(byte *pFile)
 {
-	return (strncmp((char*)pFile, C_RTFILE_PACKAGE_HEADER, 6) == 0);
+	return (strncmp((char*)pFile, C_RTFILE_PACKAGE_HEADER, C_RTFILE_PACKAGE_HEADER_BYTE_SIZE) == 0);
 }
 
 bool IsARTFile(byte *pFile)
@@ -241,7 +237,7 @@ bool CompressFile(string fName)
 	unsigned int size;
 	byte *pInput = LoadFileIntoMemoryBasic(fName, &size, false, false); //the basic means don't try to decompress it
 
-	if (IsAPackedFile(pInput))
+	if (size >= C_RTFILE_PACKAGE_HEADER_BYTE_SIZE && IsAPackedFile(pInput))
 	{
 		SAFE_DELETE_ARRAY(pInput);
 		LogMsg("%s is already packed, ignoring.", fName.c_str());
@@ -281,6 +277,50 @@ bool CompressFile(string fName)
 #endif
 	return true;
 }
+
+
+
+byte * CompressMemoryToRTPack(byte *pSourceMem, unsigned int sourceByteSize, unsigned int *pCompressedSizeOut)
+{
+	*pCompressedSizeOut = 0;
+#ifdef _DEBUG
+	if (sourceByteSize >= C_RTFILE_PACKAGE_HEADER_BYTE_SIZE && IsAPackedFile(pSourceMem))
+	{
+		assert(!"Uh, did you realize this is already packed?");
+	}
+#endif
+
+	byte *pDest = 0;
+
+#ifdef C_NO_ZLIB
+
+	assert(!"ZLIB disabled with C_NO_ZLIB flag, no can do, sir");
+	return false;
+#else
+	int compressedSize;
+	byte *pCompressedFile = zlibDeflateToMemory(pSourceMem, sourceByteSize, &compressedSize);
+	
+	rtpack_header header = BuildRTPackHeader(sourceByteSize, compressedSize);
+
+
+	int headerSize = sizeof(rtpack_header);
+
+	//save out the real file... to memory
+	pDest = new byte[compressedSize + headerSize + 1]; //the 1 is for a secret extra null on the end, helps with text processing
+
+	//copy crap to memory
+	memcpy(pDest, &header, headerSize);
+	memcpy(pDest+ headerSize, pCompressedFile, compressedSize);
+	pDest[headerSize + compressedSize] = 0; //add the null at the end
+	SAFE_DELETE_ARRAY(pCompressedFile);
+#endif
+
+	*pCompressedSizeOut = compressedSize+headerSize;
+
+
+	return pDest;
+}
+
 
 rtpack_header BuildRTPackHeader(int size, int compressedSize)
 {

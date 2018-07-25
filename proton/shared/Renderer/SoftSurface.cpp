@@ -2304,3 +2304,77 @@ void SoftSurface::Scale( int newX, int newY )
 	GetBaseApp()->ModMemUsed(m_memUsed - oldMem); //adjust for our memory counter
 
 }
+
+float SoftSurface::GetAverageLumaFromRect(const CL_Vec2i vAreaPos, const CL_Vec2i vAreaSize)
+{
+
+	assert(vAreaPos.x >= 0 && vAreaPos.y >= 0 && vAreaPos.x < GetWidth() && vAreaPos.y < GetHeight() && "Starting point isn't in the bitmap?");
+	assert(vAreaSize.x >= 1 && vAreaSize.y >= 1 && "Can't ask for an area this small");
+	assert(vAreaPos.x + vAreaSize.x < GetWidth() && "Area too wide");
+	assert(vAreaPos.y + vAreaSize.y < GetHeight() && "Area too tall");
+
+	byte *pPixels = GetPointerToPixel(0, 0);
+
+	float totalLuma = 0;
+
+	int pixelsToLookAt = vAreaSize.x * vAreaSize.y;
+
+	glColorBytes glColor;
+
+	for (int y = vAreaPos.y; y < vAreaPos.y + vAreaSize.y; y++)
+	{
+		for (int x = vAreaPos.x; x < vAreaPos.x + vAreaSize.x; x++)
+		{
+			glColor = GetPixel(x, y);
+
+			totalLuma += (0.299f* ((float)glColor.r/255.0f) + 0.587f*((float)glColor.g / 255.0f) + 0.114f*((float)glColor.b / 255.0f)) *((float)glColor.a / 255.0f);
+		
+		}
+	}
+	return totalLuma/pixelsToLookAt;
+}
+
+
+float SoftSurface::GetAverageComplexityFromRect(const CL_Vec2i vAreaPos, const CL_Vec2i vAreaSize)
+{
+
+	assert(vAreaPos.x >= 0 && vAreaPos.y >= 0 && vAreaPos.x < GetWidth() && vAreaPos.y < GetHeight() && "Starting point isn't in the bitmap?");
+	assert(vAreaSize.x >= 1 && vAreaSize.y >= 1 && "Can't ask for an area this small");
+	assert(vAreaPos.x + vAreaSize.x < GetWidth() && "Area too wide");
+	assert(vAreaPos.y + vAreaSize.y < GetHeight() && "Area too tall");
+
+	byte *pPixels = GetPointerToPixel(0, 0);
+
+	long totalComplexity = 0;
+
+	long pixelsToLookAt = vAreaSize.x * vAreaSize.y;
+
+	glColorBytes glColor;
+	glColorBytes glColorLast;
+
+	for (int y = vAreaPos.y; y < vAreaPos.y + vAreaSize.y; y++)
+	{
+		for (int x = vAreaPos.x; x < vAreaPos.x + vAreaSize.x; x++)
+		{
+			
+			glColor = GetPixel(x, y);
+
+			if (y == vAreaPos.y && x == vAreaPos.x)
+			{
+				//special case, ignore this one
+				glColorLast = glColor;
+				//break;
+			}
+
+			totalComplexity += abs((glColor.r - glColorLast.r));
+			totalComplexity += abs((glColor.g - glColorLast.g));
+			totalComplexity += abs((glColor.b - glColorLast.b));
+			totalComplexity += abs((glColor.a - glColorLast.a));
+
+			
+
+			glColorLast = glColor;
+		}
+	}
+	return (double)totalComplexity / (double)pixelsToLookAt;
+}

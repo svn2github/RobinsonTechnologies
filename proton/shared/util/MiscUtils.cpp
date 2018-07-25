@@ -285,6 +285,36 @@ string FloatToMoney(float f, int decimalsOfCents)
 	return string(buf);
 }
 
+string DataToByteHexDisplay(string data, int maxNumCharsToShow)
+{
+
+	string hexData = "Hex data: ";
+
+	char temp[255];
+	for (int i = 0; i < maxNumCharsToShow && i < data.length(); i++)
+	{
+		sprintf(temp, "%hhx,", data[i]);
+		hexData += (string(temp) + " ");
+	}
+	
+	return hexData;
+}
+
+string DataToByteHexDisplay(byte *pData, int maxNumCharsToShow)
+{
+
+	string hexData = "Hex data: ";
+
+	char temp[255];
+	for (int i = 0; i < maxNumCharsToShow; i++)
+	{
+		sprintf(temp, "%hhx,", pData[i]);
+		hexData += (string(temp) + " ");
+	}
+
+	return hexData;
+}
+
 string IntToMoneyBillions(int bil,int n)
 {
 	while(n>1000000000)
@@ -524,6 +554,15 @@ string GetFileNameFromString(const string &path)
 	return path;
 }
 
+string GetFileNameWithoutExtension(const string fileName)
+{
+	string fName = GetFileNameFromString(fileName);
+
+	size_t dotIndex = fName.find_first_of('.');
+	if (dotIndex == string::npos) return fName;
+	return fName.substr(0, dotIndex);
+
+}
 string GetPathFromString(const string &path)
 {
 
@@ -851,3 +890,4 @@ bool IsVowel(char c)
 	return (c=='a' || c=='e' || c=='i' || c=='o' || c=='u' ||
 		c=='A' || c=='E' || c=='I' || c=='O' || c=='U');
 }
+

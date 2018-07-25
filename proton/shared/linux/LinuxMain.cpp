@@ -1,3 +1,9 @@
+/*
+
+NOTE:  Seth now uses the SDL2Main.cpp file instead of this for linux builds
+*/
+
+
 #include "BaseApp.h"
 #include "LinuxUtils.h"
 #include "util/VideoModeSelector.h"

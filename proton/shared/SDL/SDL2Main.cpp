@@ -730,6 +730,18 @@ int SDL_main(int argc, char *argv[])
 
 	
 
+	for (int l = 0; argv[l]; l++)
+	{
+		
+		vector<string> parms = StringTokenize(argv[l], " ");
+
+		for (unsigned int i = 0; i < parms.size(); i++)
+		{
+			GetBaseApp()->AddCommandLineParm(parms[i]);
+		}
+	}
+
+
 #ifndef C_GL_MODE
  bcm_host_init();
  graphics_get_display_size(0 /* LCD */, &width, &height);
@@ -901,3 +913,13 @@ cleanup:
 #endif
 	return 0;
 }
+
+
+void ForceVideoUpdate()
+{
+	g_globalBatcher.Flush();
+
+	SDL_GL_SwapWindow(g_window);
+	LogMsg("Did SDL_GL_SwapWindow");
+}
+

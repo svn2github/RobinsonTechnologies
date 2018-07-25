@@ -100,7 +100,12 @@ public:
 			break;
 
 		case SURFACE_RGB:
-			return *((glColorBytes*)((m_pPixels+(y*m_usedPitch+x*3))));
+		{
+			glColorBytes temp;
+			memcpy(&temp, (glColorBytes*)((m_pPixels + (y*m_usedPitch + x * 3))), 3);
+			temp.a = 255;
+			return temp;
+		}
 			break;
 
 		default:
@@ -133,8 +138,12 @@ public:
 	void FillAlphaBit(unsigned char alpha);
 	void Scale(int newX, int newY); //does simple linear scaling
 	void SetForceBlackAndWhiteOnBmpPalettes(bool bNew) { m_bForceBlackAndWhiteOnBmpPalettes = bNew; }
+	float GetAverageLumaFromRect(const CL_Vec2i vAreaPos, const CL_Vec2i vAreaSize); //send the upper left, and the width/height you want.  Measures brightness of pixels
+	float GetAverageComplexityFromRect(const CL_Vec2i vAreaPos, const CL_Vec2i vAreaSize); //measures variation between pixels
 
 private:
+
+	SoftSurface(const SoftSurface&); //don't allow copy operation.  Use Blit or Surface::CreateFromSoftSurface instead
 
 	void CheckDinkColorKey();
 	void BlitRGBAFrom8Bit( int dstX, int dstY, SoftSurface *pSrc, int srcX /*= 0*/, int srcY /*= 0*/, int srcWidth /*= 0*/, int srcHeight /*= 0*/ );

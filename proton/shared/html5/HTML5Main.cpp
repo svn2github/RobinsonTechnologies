@@ -638,7 +638,7 @@ void MainEventLoop()
 			//pretend we did it
 			GetMessageManager()->SendGUI(MESSAGE_TYPE_OS_CONNECTION_CHECKED, (float)RT_kCFStreamEventOpenCompleted, 0.0f);	
 			break;
-
+			 
 		case OSMessage::MESSAGE_OPEN_TEXT_BOX:
 			break;
 

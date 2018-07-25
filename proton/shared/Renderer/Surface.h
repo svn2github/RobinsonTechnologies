@@ -23,6 +23,13 @@ struct glColorBytes
 	GLubyte r, g, b, a;
 };
 
+struct glColorBytesRGB
+{
+	glColorBytesRGB() {};
+	glColorBytesRGB(GLubyte _r, GLubyte _g, GLubyte _b) : r(_r), g(_g), b(_b) {};
+	bool Compare(const glColorBytesRGB &c) { return *(int*)&r == *(int*)&c.r; } //I couldn't get == working on this struct, a weird GUID error under windows?!, so I did this..
+	GLubyte r, g, b;
+};
 
 class SoftSurface;
 class RenderBatcher;

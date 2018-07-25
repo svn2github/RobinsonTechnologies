@@ -12,49 +12,100 @@
 
 //************ for base64 encoding, needed for http auth stuff *********
 
+//both taken from: https://stackoverflow.com/questions/342409/how-do-i-base64-encode-decode-in-c/41094722#41094722
 
-static char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-'w', 'x', 'y', 'z', '0', '1', '2', '3',
-'4', '5', '6', '7', '8', '9', '+', '/'};
+static const int B64index[256] = { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 62, 63, 62, 62, 63, 52, 53, 54, 55,
+56, 57, 58, 59, 60, 61,  0,  0,  0,  0,  0,  0,  0,  0,  1,  2,  3,  4,  5,  6,
+7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,  0,
+0,  0,  0, 63,  0, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51 };
 
-static int mod_table[] = {0, 2, 1};
+std::string base64_decode(const void* data, const size_t len)
+{
+	unsigned char* p = (unsigned char*)data;
+	int pad = len > 0 && (len % 4 || p[len - 1] == '=');
+	const size_t L = ((len + 3) / 4 - pad) * 4;
+	std::string str(L / 4 * 3 + pad, '\0');
+
+	for (size_t i = 0, j = 0; i < L; i += 4)
+	{
+		int n = B64index[p[i]] << 18 | B64index[p[i + 1]] << 12 | B64index[p[i + 2]] << 6 | B64index[p[i + 3]];
+		str[j++] = n >> 16;
+		str[j++] = n >> 8 & 0xFF;
+		str[j++] = n & 0xFF;
+	}
+	if (pad)
+	{
+		int n = B64index[p[L]] << 18 | B64index[p[L + 1]] << 12;
+		str[str.size() - 1] = n >> 16;
+
+		if (len > L + 2 && p[L + 2] != '=')
+		{
+			n |= B64index[p[L + 2]] << 6;
+			str.push_back(n >> 8 & 0xFF);
+		}
+	}
+	return str;
+}
+
+
 
 static const unsigned char base64_table[65] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-
-char *Base64Encode(const char *data, size_t input_length,size_t *output_length) 
+/**
+* base64_encode - Base64 encode
+* @src: Data to be encoded
+* @len: Length of the data to be encoded
+* @out_len: Pointer to output length variable, or %NULL if not used
+* Returns: Allocated buffer of out_len bytes of encoded data,
+* or empty string on failure
+*/
+std::string base64_encode(const unsigned char *src, size_t len)
 {
-	*output_length = (size_t) (4.0 * ceil((double) input_length / 3.0));
+	unsigned char *out, *pos;
+	const unsigned char *end, *in;
 
-	char *encoded_data = (char*)malloc(*output_length);
-	if (encoded_data == NULL) return NULL;
+	size_t olen;
 
-	for (uint32 i = 0, j = 0; i < input_length;) {
+	olen = 4 * ((len + 2) / 3); /* 3-byte blocks to 4-byte */
 
-		uint32 octet_a = i < input_length ? data[i++] : 0;
-		uint32 octet_b = i < input_length ? data[i++] : 0;
-		uint32 octet_c = i < input_length ? data[i++] : 0;
+	if (olen < len)
+		return std::string(); /* integer overflow */
 
-		uint32 triple = (octet_a << 0x10) + (octet_b << 0x08) + octet_c;
+	std::string outStr;
+	outStr.resize(olen);
+	out = (unsigned char*)&outStr[0];
 
-		encoded_data[j++] = encoding_table[(triple >> 3 * 6) & 0x3F];
-		encoded_data[j++] = encoding_table[(triple >> 2 * 6) & 0x3F];
-		encoded_data[j++] = encoding_table[(triple >> 1 * 6) & 0x3F];
-		encoded_data[j++] = encoding_table[(triple >> 0 * 6) & 0x3F];
+	end = src + len;
+	in = src;
+	pos = out;
+	while (end - in >= 3) {
+		*pos++ = base64_table[in[0] >> 2];
+		*pos++ = base64_table[((in[0] & 0x03) << 4) | (in[1] >> 4)];
+		*pos++ = base64_table[((in[1] & 0x0f) << 2) | (in[2] >> 6)];
+		*pos++ = base64_table[in[2] & 0x3f];
+		in += 3;
 	}
 
-	for (int i = 0; i < mod_table[input_length % 3]; i++)
-		encoded_data[*output_length - 1 - i] = '=';
+	if (end - in) {
+		*pos++ = base64_table[in[0] >> 2];
+		if (end - in == 1) {
+			*pos++ = base64_table[(in[0] & 0x03) << 4];
+			*pos++ = '=';
+		}
+		else {
+			*pos++ = base64_table[((in[0] & 0x03) << 4) |
+				(in[1] >> 4)];
+			*pos++ = base64_table[(in[1] & 0x0f) << 2];
+		}
+		*pos++ = '=';
+	}
 
-	return encoded_data;
+	return outStr;
 }
-//*************************
 
 
 /** web.h
@@ -310,84 +361,4 @@ string GetSimpleGUIDAsString()
 
 
 	return final;
-}
-
-/*
-* Base64 encoding/decoding (RFC1341)
-* Copyright (c) 2005-2011, Jouni Malinen <j@w1.fi>
-*
-* This software may be distributed under the terms of the BSD license.
-* See README for more details.
-*/
-
-
-
-/**
-* base64_decode - Base64 decode
-* @src: Data to be decoded
-* @len: Length of the data to be decoded
-* @out_len: Pointer to output length variable
-* Returns: Allocated buffer of out_len bytes of decoded data,
-* or %NULL on failure
-*
-* Caller is responsible for freeing the returned buffer.
-*/
-unsigned char * base64_decode(const unsigned char *src, size_t len,
-	size_t *out_len)
-{
-	unsigned char dtable[256], *out, *pos, block[4], tmp;
-	size_t i, count, olen;
-	int pad = 0;
-
-	memset(dtable, 0x80, 256);
-	for (i = 0; i < sizeof(base64_table) - 1; i++)
-		dtable[base64_table[i]] = (unsigned char)i;
-	dtable['='] = 0;
-
-	count = 0;
-	for (i = 0; i < len; i++) {
-		if (dtable[src[i]] != 0x80)
-			count++;
-	}
-
-	if (count == 0 || count % 4)
-		return NULL;
-
-	olen = count / 4 * 3;
-	pos = out = (unsigned char*) malloc(olen);
-	if (out == NULL)
-		return NULL;
-
-	count = 0;
-	for (i = 0; i < len; i++) {
-		tmp = dtable[src[i]];
-		if (tmp == 0x80)
-			continue;
-
-		if (src[i] == '=')
-			pad++;
-		block[count] = tmp;
-		count++;
-		if (count == 4) {
-			*pos++ = (block[0] << 2) | (block[1] >> 4);
-			*pos++ = (block[1] << 4) | (block[2] >> 2);
-			*pos++ = (block[2] << 6) | block[3];
-			count = 0;
-			if (pad) {
-				if (pad == 1)
-					pos--;
-				else if (pad == 2)
-					pos -= 2;
-				else {
-					/* Invalid padding */
-					free(out);
-					return NULL;
-				}
-				break;
-			}
-		}
-	}
-
-	*out_len = pos - out;
-	return out;
 }

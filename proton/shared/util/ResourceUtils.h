@@ -49,6 +49,8 @@ bool SaveToFile(const std::string &str, FILE *fp);
 
 bool IsPowerOf2(int n);
 byte * DecompressRTPackToMemory(byte *pMem, unsigned int *pDecompressedSize=NULL);
+byte * CompressMemoryToRTPack(byte *pSourceMem, unsigned int sourceByteSize, unsigned int *pCompressedSizeOut);
+
 int GetFileSize(const std::string &fName);
 std::string AddIPADToFileName(std::string file); //appends _ipad to a file name if we are indeed running on an ipad (or large screen)
 std::string ReplaceWithDeviceNameInFileName(const std::string &fName); //replace "iphone" with "ipad" in filename, if on ipad

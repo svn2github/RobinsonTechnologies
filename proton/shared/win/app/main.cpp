@@ -1706,6 +1706,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, TCHAR *lpCmdLin
 	g_hInstance = hInstance;
 	RemoveFile("log.txt", true);
 
+
 	if (lpCmdLine[0])
 	{
 		vector<string> parms = StringTokenize(lpCmdLine, " ");

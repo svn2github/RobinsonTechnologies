@@ -11,7 +11,7 @@ if(RASPBERRYPI_GLES11)
 	
 	#this is for SDL_mixer
 	link_directories("/usr/lib/arm-linux-gnueabihf")
-	#don't why, but raspi needs this to include egl.h without errors
+	#don't know why, but raspi needs this to include egl.h without errors
 	include_directories("/opt/vc/include")
 	include_directories("/opt/vc/include/interface/vcos/pthreads")
 	include_directories("/usr/include/interface/vmcs_host/linux")
