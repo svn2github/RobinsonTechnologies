@@ -313,9 +313,10 @@ byte * CompressMemoryToRTPack(byte *pSourceMem, unsigned int sourceByteSize, uns
 	memcpy(pDest+ headerSize, pCompressedFile, compressedSize);
 	pDest[headerSize + compressedSize] = 0; //add the null at the end
 	SAFE_DELETE_ARRAY(pCompressedFile);
+	*pCompressedSizeOut = compressedSize+headerSize;
+
 #endif
 
-	*pCompressedSizeOut = compressedSize+headerSize;
 
 
 	return pDest;
